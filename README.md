@@ -296,9 +296,9 @@ The production Express server serves the compiled React application (`client/dis
 
 ---
 
-# 👩‍💻 Author
+# 👭 Author
 
-**Xingran Ma**
+**Jinyin Cao, Xingran Ma**
 
 Computer Science Student, University of British Columbia
 
