@@ -300,7 +300,7 @@ PetalPal is developed by **TX Technologies Inc.**, an AI-first startup building 
 
 Designed for public release on iOS and Android, PetalPal empowers users to reflect, grow, and build lasting connections through AI-powered journaling, virtual gardening, and social interaction.
 
-## 🎨 Jinyin Cao — Co-Founder & Product / Frontend Lead
+## 👩🏻‍💻 Jinyin Cao — Co-Founder & Product / Frontend Lead
 
 Jinyin leads PetalPal's product strategy, mobile development, user experience, visual design, and product growth.
 
@@ -342,7 +342,7 @@ Jinyin leads PetalPal's product strategy, mobile development, user experience, v
 - Beta Testing & Product Iteration
 - App Store Launch Materials
 
-## 🧠 Xingran Ma — Co-Founder & Technical / AI Lead
+## 👩🏻‍💻 Xingran Ma — Co-Founder & Technical / AI Lead
 
 Xingran leads the overall technical architecture of PetalPal, focusing on AI systems, backend engineering, cloud infrastructure, security, and scalable production deployment.
 
