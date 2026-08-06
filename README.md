@@ -284,7 +284,7 @@ The production Express server serves the compiled React application (`client/dis
 - Configured Express to serve the production React application.
 - Structured the application into reusable React components.
 
----
+--- 
 
 # 🔮 Future Improvements
 
@@ -296,8 +296,9 @@ The production Express server serves the compiled React application (`client/dis
 
 ---
 # 👥 JX Technologies Inc.
+PetalPal is developed by **TX Technologies Inc.**, an AI-first startup building production-ready consumer applications that combine artificial intelligence, emotional wellness, and meaningful social experiences.
 
-PetalPal is developed by two co-founders with complementary responsibilities across AI engineering, cloud infrastructure, product design, and mobile development.
+Designed for public release on iOS and Android, PetalPal empowers users to reflect, grow, and build lasting connections through AI-powered journaling, virtual gardening, and social interaction.
 
 ## 🎨 Jinyin Cao — Co-Founder & Product / Frontend Lead
 
@@ -381,7 +382,7 @@ Xingran leads the overall technical architecture of PetalPal, focusing on AI sys
 - AI Evaluation Framework
 - Backend Documentation
 
-## 🌸 About TX Technologies
+## 🌸 About TX Technologies Inc.
 
 **TX Technologies** is dedicated to building AI-native consumer applications that combine intelligent technology with thoughtful product design.
 
