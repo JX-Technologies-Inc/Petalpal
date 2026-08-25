@@ -17,13 +17,14 @@ import {
   createAccessToken,
   requireOwnUser
 } from "./lib/auth.js";
+import { verifyFirebaseIdToken } from "./lib/firebase-auth.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -456,7 +457,105 @@ app.get("/users/:userId/garden", async (req, res) => {
     res.status(500).json({ error: "Failed to get garden" });
   }
 });
-app.post("/register", async (req, res) => {
+app.post("/auth/firebase", async (req, res) => {
+  try {
+    const {
+      idToken,
+      name,
+      avatar,
+      timezone: requestedTimezone,
+      aiConsent = false
+    } = req.body || {};
+    const firebaseUser = await verifyFirebaseIdToken(idToken);
+
+    if (firebaseUser.email_verified !== true) {
+      return res.status(403).json({
+        error: "Verify your email before creating a PetalPal account"
+      });
+    }
+
+    const normalizedEmail = String(firebaseUser.email).trim().toLowerCase();
+    const firebaseUid = String(firebaseUser.sub);
+    const timezone = normalizeTimezone(requestedTimezone) || "UTC";
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [{ firebaseUid }, { email: normalizedEmail }]
+      }
+    });
+
+    if (user) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          firebaseUid,
+          email: normalizedEmail,
+          emailVerifiedAt: user.emailVerifiedAt || new Date(),
+          ...(name?.trim() ? { name: name.trim() } : {}),
+          ...(avatar ? { avatar } : {}),
+          ...(requestedTimezone ? { timezone } : {})
+        }
+      });
+    } else {
+      const now = Date.now();
+      user = await prisma.user.create({
+        data: {
+          id: `user_${now}`,
+          accountId: `PP${String(now).slice(-8)}`,
+          firebaseUid,
+          name: name?.trim() || normalizedEmail.split("@")[0],
+          email: normalizedEmail,
+          emailVerifiedAt: new Date(),
+          avatar: avatar || "🦋",
+          timezone,
+          garden: { create: { year: new Date().getFullYear() } },
+          fairyState: { create: {} },
+          aiConsent: {
+            create: {
+              termsVersion: AI_TERMS_VERSION,
+              aiProcessing: Boolean(aiConsent),
+              grantedAt: aiConsent ? new Date() : null
+            }
+          },
+          subscriptionEntitlement: { create: {} }
+        }
+      });
+    }
+
+    const safeUser = {
+      id: user.id,
+      accountId: user.accountId,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      timezone: user.timezone,
+      emailVerified: Boolean(user.emailVerifiedAt)
+    };
+
+    return res.json({
+      user: safeUser,
+      token: createAccessToken(safeUser)
+    });
+  } catch (error) {
+    console.error("POST /auth/firebase error:", error);
+    return res.status(401).json({
+      error: "Invalid Firebase session or unverified email"
+    });
+  }
+});
+
+app.post("/register", (_req, res) => {
+  res.status(410).json({
+    error: "Registration now requires Firebase email verification"
+  });
+});
+
+app.post("/login", (_req, res) => {
+  res.status(410).json({
+    error: "Login now requires Firebase Authentication"
+  });
+});
+
+app.post("/legacy-register-disabled", async (req, res) => {
     try {
       const {
         name,
@@ -561,7 +660,7 @@ app.post("/register", async (req, res) => {
     }
   });
 
-  app.post("/login", async (req, res) => {
+  app.post("/legacy-login-disabled", async (req, res) => {
     try {
       const { email, password } = req.body;
   

@@ -1,7 +1,9 @@
 import { useState } from "react";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "";
+import {
+  beginFirebaseRegistration,
+  completePendingRegistration,
+  resendVerificationEmail
+} from "./firebaseSession";
 
 function RegisterForm({ onRegister }) {
   const [name, setName] = useState("");
@@ -14,6 +16,7 @@ function RegisterForm({ onRegister }) {
   const [message, setMessage] = useState("");
   const [accountId, setAccountId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationPending, setVerificationPending] = useState(false);
 
   async function handleRegister(event) {
     event.preventDefault();
@@ -46,64 +49,15 @@ function RegisterForm({ onRegister }) {
       setMessage("");
       setAccountId("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: trimmedName,
-            email: trimmedEmail,
-            password,
-            avatar,
-            timezone:
-              Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
-            aiConsent,
-          }),
-        }
-      );
-
-      const contentType =
-        response.headers.get("content-type") || "";
-
-      if (!contentType.includes("application/json")) {
-        throw new Error(
-          `Server returned a non-JSON response (${response.status}).`
-        );
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-            data.message ||
-            "Unable to register."
-        );
-      }
-
-      if (!data.user || !data.token) {
-        throw new Error("Server did not return a valid login session.");
-      }
-
-      localStorage.setItem(
-        "petalPalAccessToken",
-        data.token
-      );
-
-      localStorage.setItem(
-        "petalPalCurrentUser",
-        JSON.stringify(data.user)
-      );
-
-      setAccountId(data.user.accountId || "");
-      setMessage("Registration successful!");
-
-      if (typeof onRegister === "function") {
-        onRegister(data.user);
-      }
+      await beginFirebaseRegistration(trimmedEmail, password, {
+        name: trimmedName,
+        avatar,
+        timezone:
+          Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+        aiConsent
+      });
+      setVerificationPending(true);
+      setMessage("Verification email sent. Open it before continuing.");
     } catch (error) {
       console.error("Register error:", error);
 
@@ -111,6 +65,33 @@ function RegisterForm({ onRegister }) {
         error.message ||
           "Something went wrong while registering."
       );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleVerificationComplete() {
+    try {
+      setIsLoading(true);
+      setMessage("");
+      const user = await completePendingRegistration();
+      setAccountId(user.accountId || "");
+      setMessage("Email verified. Registration successful!");
+      if (typeof onRegister === "function") onRegister(user);
+    } catch (error) {
+      setMessage(error.message || "Email has not been verified yet.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    try {
+      setIsLoading(true);
+      await resendVerificationEmail();
+      setMessage("A new verification email has been sent.");
+    } catch (error) {
+      setMessage(error.message || "Unable to resend verification email.");
     } finally {
       setIsLoading(false);
     }
@@ -235,6 +216,17 @@ function RegisterForm({ onRegister }) {
           ? "Creating Account..."
           : "Create My Garden"}
       </button>
+
+      {verificationPending && (
+        <div className="verification-actions">
+          <button type="button" disabled={isLoading} onClick={handleVerificationComplete}>
+            I Have Verified My Email
+          </button>
+          <button type="button" disabled={isLoading} onClick={handleResend}>
+            Resend Verification Email
+          </button>
+        </div>
+      )}
 
       <p
         id="registerMessage"

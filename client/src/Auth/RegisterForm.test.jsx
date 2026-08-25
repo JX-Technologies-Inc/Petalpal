@@ -1,18 +1,29 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import RegisterForm from "./RegisterForm";
+import {
+  beginFirebaseRegistration,
+  completePendingRegistration
+} from "./firebaseSession";
+
+vi.mock("./firebaseSession", () => ({
+  beginFirebaseRegistration: vi.fn(),
+  completePendingRegistration: vi.fn(),
+  resendVerificationEmail: vi.fn()
+}));
 
 describe("RegisterForm", () => {
-  it("creates a session and immediately hands the user to App", async () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("requires email verification before handing the user to App", async () => {
     const onRegister = vi.fn();
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      headers: { get: () => "application/json" },
-      json: async () => ({
-        user: { id: "user-new", name: "Bloom", accountId: "PP123" },
-        token: "registration-token"
-      })
+    beginFirebaseRegistration.mockResolvedValue({ uid: "firebase-1" });
+    completePendingRegistration.mockResolvedValue({
+      id: "user-new",
+      name: "Bloom",
+      accountId: "PP123",
+      emailVerified: true
     });
 
     render(<RegisterForm onRegister={onRegister} />);
@@ -22,12 +33,14 @@ describe("RegisterForm", () => {
     await userEvent.type(screen.getByLabelText(/confirm password/i), "secret12");
     await userEvent.click(screen.getByRole("button", { name: /create my garden/i }));
 
-    expect(await screen.findByText("Registration successful!")).toBeInTheDocument();
-    expect(localStorage.getItem("petalPalAccessToken")).toBe("registration-token");
-    expect(onRegister).toHaveBeenCalledWith({
+    expect(await screen.findByText(/verification email sent/i)).toBeInTheDocument();
+    expect(onRegister).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole("button", { name: /i have verified/i }));
+    expect(await screen.findByText(/email verified/i)).toBeInTheDocument();
+    expect(onRegister).toHaveBeenCalledWith(expect.objectContaining({
       id: "user-new",
-      name: "Bloom",
-      accountId: "PP123"
-    });
+      emailVerified: true
+    }));
   });
 });

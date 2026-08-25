@@ -9,6 +9,7 @@ import {
   
   import { io } from "socket.io-client";
   import { apiRequest } from "./api";
+  import { logoutFirebase } from "./Auth/firebaseSession";
   
   import LoginForm from "./Auth/LoginForm";
   import RegisterForm from "./Auth/RegisterForm";
@@ -587,6 +588,7 @@ import {
     }
   
     function handleLogout() {
+      void logoutFirebase();
       setCurrentUser(null);
       setActiveAuthTab("login");
   

@@ -25,13 +25,14 @@ test("Month 1 vertical slice survives a database restart", async () => {
   try {
     await database.exec(await migration("202608250000_baseline"));
     await database.exec(await migration("202608250001_month1_product_models"));
+    await database.exec(await migration("202608250002_firebase_auth"));
 
     // Registration creates the user, garden and resumable onboarding state.
     await database.exec(`
       INSERT INTO "User"
-        ("id", "accountId", "name", "email", "passwordHash", "timezone")
+        ("id", "accountId", "name", "email", "firebaseUid", "emailVerifiedAt", "timezone")
       VALUES
-        ('vertical-user', 'PP0001', 'Bloom', 'bloom@example.com', 'hash', 'America/Vancouver');
+        ('vertical-user', 'PP0001', 'Bloom', 'bloom@example.com', 'firebase-verified-user', CURRENT_TIMESTAMP, 'America/Vancouver');
       INSERT INTO "Garden" ("id", "ownerId")
       VALUES ('vertical-garden', 'vertical-user');
       INSERT INTO "FairyState" ("id", "userId", "updatedAt")
@@ -88,6 +89,8 @@ test("Month 1 vertical slice survives a database restart", async () => {
     const restored = await database.query(`
       SELECT
         u."email",
+        u."firebaseUid",
+        u."emailVerifiedAt",
         f."onboardingCompleted",
         f."onboardingStep",
         d."localDate",
@@ -105,6 +108,8 @@ test("Month 1 vertical slice survives a database restart", async () => {
 
     assert.deepEqual(restored.rows[0], {
       email: "bloom@example.com",
+      firebaseUid: "firebase-verified-user",
+      emailVerifiedAt: restored.rows[0].emailVerifiedAt,
       onboardingCompleted: true,
       onboardingStep: "GARDEN_UNLOCKED",
       localDate: "2026-08-25",
@@ -112,6 +117,7 @@ test("Month 1 vertical slice survives a database restart", async () => {
       emotion: "calm",
       flower: "Lotus"
     });
+    assert.ok(restored.rows[0].emailVerifiedAt);
   } finally {
     await database.close().catch(() => {});
     await rm(dataDirectory, { recursive: true, force: true });

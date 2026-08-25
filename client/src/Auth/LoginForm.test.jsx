@@ -1,18 +1,23 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import LoginForm from "./LoginForm";
+import { loginWithFirebase } from "./firebaseSession";
+
+vi.mock("./firebaseSession", () => ({
+  loginWithFirebase: vi.fn(),
+  completePendingRegistration: vi.fn(),
+  resendVerificationEmail: vi.fn()
+}));
 
 describe("LoginForm", () => {
-  it("stores the authenticated user and access token", async () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("hands a Firebase-verified user to App", async () => {
     const onLogin = vi.fn();
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      headers: { get: () => "application/json" },
-      json: async () => ({
-        user: { id: "user-1", name: "Petal" },
-        token: "signed-token"
-      })
+    loginWithFirebase.mockResolvedValue({
+      pendingVerification: false,
+      user: { id: "user-1", name: "Petal", emailVerified: true }
     });
 
     render(<LoginForm onLogin={onLogin} />);
@@ -21,24 +26,22 @@ describe("LoginForm", () => {
     await userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     expect(await screen.findByText("Login successful!")).toBeInTheDocument();
-    expect(localStorage.getItem("petalPalAccessToken")).toBe("signed-token");
-    expect(onLogin).toHaveBeenCalledWith({ id: "user-1", name: "Petal" });
+    expect(onLogin).toHaveBeenCalledWith({
+      id: "user-1",
+      name: "Petal",
+      emailVerified: true
+    });
   });
 
-  it("shows the backend authentication error", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: false,
-      headers: { get: () => "application/json" },
-      json: async () => ({ error: "Invalid email or password" })
-    });
+  it("blocks an unverified Firebase user", async () => {
+    loginWithFirebase.mockResolvedValue({ pendingVerification: true });
 
     render(<LoginForm />);
-    await userEvent.type(screen.getByLabelText(/email/i), "bad@example.com");
-    await userEvent.type(screen.getByLabelText(/password/i), "wrongpass");
+    await userEvent.type(screen.getByLabelText(/email/i), "pending@example.com");
+    await userEvent.type(screen.getByLabelText(/password/i), "secret12");
     await userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
-    expect(
-      await screen.findByText("Invalid email or password")
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/email is not verified/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /i have verified/i })).toBeInTheDocument();
   });
 });

@@ -1,13 +1,16 @@
 import { useState } from "react";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "";
+import {
+  completePendingRegistration,
+  loginWithFirebase,
+  resendVerificationEmail
+} from "./firebaseSession";
 
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationPending, setVerificationPending] = useState(false);
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -23,56 +26,15 @@ function LoginForm({ onLogin }) {
       setIsLoading(true);
       setMessage("");
 
-      const response = await fetch(
-        `${API_BASE_URL}/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: trimmedEmail,
-            password,
-          }),
-        }
-      );
+      const result = await loginWithFirebase(trimmedEmail, password);
 
-      const contentType =
-        response.headers.get("content-type") || "";
-
-      if (!contentType.includes("application/json")) {
-        await response.text();
-
-        throw new Error(
-          `Server returned a non-JSON response (${response.status}).`
-        );
+      if (result.pendingVerification) {
+        setVerificationPending(true);
+        setMessage("Email is not verified. We sent you a new verification email.");
+        return;
       }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message ||
-            data.error ||
-            "Unable to log in."
-        );
-      }
-
-      const loggedInUser = data.user;
-
-      if (!loggedInUser || !data.token) {
-        throw new Error("Server did not return a valid login session.");
-      }
-
-      localStorage.setItem(
-        "petalPalAccessToken",
-        data.token
-      );
-
-      localStorage.setItem(
-        "petalPalCurrentUser",
-        JSON.stringify(loggedInUser)
-      );
+      const loggedInUser = result.user;
 
       setMessage("Login successful!");
 
@@ -86,6 +48,31 @@ function LoginForm({ onLogin }) {
         error.message ||
           "Something went wrong while logging in."
       );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleVerifiedLogin() {
+    try {
+      setIsLoading(true);
+      const user = await completePendingRegistration();
+      setMessage("Email verified. Login successful!");
+      if (typeof onLogin === "function") onLogin(user);
+    } catch (error) {
+      setMessage(error.message || "Email has not been verified yet.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    try {
+      setIsLoading(true);
+      await resendVerificationEmail();
+      setMessage("A new verification email has been sent.");
+    } catch (error) {
+      setMessage(error.message || "Unable to resend verification email.");
     } finally {
       setIsLoading(false);
     }
@@ -144,6 +131,17 @@ function LoginForm({ onLogin }) {
       >
         {isLoading ? "Logging In..." : "Log In"}
       </button>
+
+      {verificationPending && (
+        <div className="verification-actions">
+          <button type="button" disabled={isLoading} onClick={handleVerifiedLogin}>
+            I Have Verified My Email
+          </button>
+          <button type="button" disabled={isLoading} onClick={handleResend}>
+            Resend Verification Email
+          </button>
+        </div>
+      )}
 
       <p
         id="loginMessage"

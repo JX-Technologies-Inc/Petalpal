@@ -2,14 +2,14 @@
     "type": "module",
     "scripts": {
         "start": "node server.js",
-        "build": "npm install --prefix client && npm run build --prefix client",
+        "build": "npm install --include=dev --prefix client && npm run build --prefix client",
         "build:client": "npm run build --prefix client -- --configLoader runner",
         "lint": "npm run lint --prefix client",
         "test": "npm run test:backend && npm run test:client",
         "test:backend": "node --test test/back/*.test.js",
         "test:client": "npm test --prefix client",
         "test:data-models": "node --test test/back/verticalSlice.persistence.test.js",
-        "check": "npm test && npm run lint && npm run build:client && npx prisma validate && node --check server.js && node --check lib/auth.js",
+        "check": "npm test && npm run lint && npm run build:client && npx prisma validate && node --check server.js && node --check lib/auth.js && node --check lib/firebase-auth.js",
         "postinstall": "npx prisma generate"
     },
     "devDependencies": {
@@ -22,6 +22,8 @@
         "cors": "^2.8.6",
         "dotenv": "^17.4.2",
         "express": "^5.2.1",
+        "firebase": "^12.18.0",
+        "jose": "^6.2.10",
         "jsonwebtoken": "^9.0.3",
         "natural": "^8.1.1",
         "pg": "^8.22.0",
