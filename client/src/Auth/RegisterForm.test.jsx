@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RegisterForm from "./RegisterForm";
@@ -33,14 +33,12 @@ describe("RegisterForm", () => {
     await userEvent.type(screen.getByLabelText(/confirm password/i), "secret12");
     await userEvent.click(screen.getByRole("button", { name: /create my garden/i }));
 
-    expect(await screen.findByText(/verification email sent/i)).toBeInTheDocument();
-    expect(onRegister).not.toHaveBeenCalled();
-
-    await userEvent.click(screen.getByRole("button", { name: /i have verified/i }));
-    expect(await screen.findByText(/email verified/i)).toBeInTheDocument();
-    expect(onRegister).toHaveBeenCalledWith(expect.objectContaining({
-      id: "user-new",
-      emailVerified: true
-    }));
+    expect(await screen.findByText(/checking verification status/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(onRegister).toHaveBeenCalledWith(expect.objectContaining({
+        id: "user-new",
+        emailVerified: true
+      }));
+    });
   });
 });

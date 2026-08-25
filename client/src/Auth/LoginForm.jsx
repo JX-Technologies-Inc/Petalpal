@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   completePendingRegistration,
-  loginWithFirebase,
-  resendVerificationEmail
+  loginWithFirebase
 } from "./firebaseSession";
 
 function LoginForm({ onLogin }) {
@@ -11,6 +10,38 @@ function LoginForm({ onLogin }) {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [verificationPending, setVerificationPending] = useState(false);
+
+  useEffect(() => {
+    if (!verificationPending) return undefined;
+    let active = true;
+    let checking = false;
+
+    async function checkVerification() {
+      if (checking) return;
+      checking = true;
+      try {
+        const user = await completePendingRegistration();
+        if (active && typeof onLogin === "function") onLogin(user);
+      } catch {
+        // Wait until the verification link has been opened.
+      } finally {
+        checking = false;
+      }
+    }
+
+    const handleFocus = () => void checkVerification();
+    const timer = window.setInterval(checkVerification, 4000);
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+    void checkVerification();
+
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [verificationPending, onLogin]);
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -53,29 +84,18 @@ function LoginForm({ onLogin }) {
     }
   }
 
-  async function handleVerifiedLogin() {
-    try {
-      setIsLoading(true);
-      const user = await completePendingRegistration();
-      setMessage("Email verified. Login successful!");
-      if (typeof onLogin === "function") onLogin(user);
-    } catch (error) {
-      setMessage(error.message || "Email has not been verified yet.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleResend() {
-    try {
-      setIsLoading(true);
-      await resendVerificationEmail();
-      setMessage("A new verification email has been sent.");
-    } catch (error) {
-      setMessage(error.message || "Unable to resend verification email.");
-    } finally {
-      setIsLoading(false);
-    }
+  if (verificationPending) {
+    return (
+      <section className="auth-form verification-panel" aria-live="polite">
+        <div className="verification-icon">✉️</div>
+        <h3>Verify your email</h3>
+        <p>
+          We sent a verification link to <strong>{email.trim()}</strong>.
+          Click it, then return here to continue automatically.
+        </p>
+        <p className="verification-waiting">Waiting for verification…</p>
+      </section>
+    );
   }
 
   return (
@@ -131,17 +151,6 @@ function LoginForm({ onLogin }) {
       >
         {isLoading ? "Logging In..." : "Log In"}
       </button>
-
-      {verificationPending && (
-        <div className="verification-actions">
-          <button type="button" disabled={isLoading} onClick={handleVerifiedLogin}>
-            I Have Verified My Email
-          </button>
-          <button type="button" disabled={isLoading} onClick={handleResend}>
-            Resend Verification Email
-          </button>
-        </div>
-      )}
 
       <p
         id="loginMessage"

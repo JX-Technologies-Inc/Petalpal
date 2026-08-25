@@ -28,6 +28,41 @@ function RegisterForm({ onRegister }) {
     return () => window.clearTimeout(timer);
   }, [resendCooldown]);
 
+  useEffect(() => {
+    if (!verificationPending) return undefined;
+    let active = true;
+    let checking = false;
+
+    async function checkVerification() {
+      if (checking) return;
+      checking = true;
+      try {
+        const user = await completePendingRegistration();
+        if (!active) return;
+        setAccountId(user.accountId || "");
+        setMessage("Email verified. Opening your garden...");
+        if (typeof onRegister === "function") onRegister(user);
+      } catch {
+        // Being unverified is expected while the user checks their inbox.
+      } finally {
+        checking = false;
+      }
+    }
+
+    const handleFocus = () => void checkVerification();
+    const timer = window.setInterval(checkVerification, 4000);
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+    void checkVerification();
+
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, [verificationPending, onRegister]);
+
   function readableFirebaseError(error, fallback) {
     if (error?.code === "auth/too-many-requests") {
       return "Too many attempts. Please wait a few minutes before trying again.";
@@ -94,21 +129,6 @@ function RegisterForm({ onRegister }) {
     }
   }
 
-  async function handleVerificationComplete() {
-    try {
-      setIsLoading(true);
-      setMessage("");
-      const user = await completePendingRegistration();
-      setAccountId(user.accountId || "");
-      setMessage("Email verified. Registration successful!");
-      if (typeof onRegister === "function") onRegister(user);
-    } catch (error) {
-      setMessage(error.message || "Email has not been verified yet.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   async function handleResend() {
     try {
       setIsLoading(true);
@@ -136,14 +156,12 @@ function RegisterForm({ onRegister }) {
         <ol>
           <li>Open your email inbox or spam folder.</li>
           <li>Click the link from Firebase / PetalPal.</li>
-          <li>Return here and press the button below.</li>
+          <li>Return here. PetalPal will sign you in automatically.</li>
         </ol>
-        <button type="button" disabled={isLoading} onClick={handleVerificationComplete}>
-          {isLoading ? "Checking..." : "I Have Verified My Email"}
-        </button>
+        <p className="verification-waiting">Checking verification status…</p>
         <button
           type="button"
-          className="secondary-auth-button"
+          className="verification-resend-link"
           disabled={isLoading || resendCooldown > 0}
           onClick={handleResend}
         >

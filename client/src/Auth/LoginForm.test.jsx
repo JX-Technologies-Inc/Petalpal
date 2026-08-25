@@ -2,7 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import LoginForm from "./LoginForm";
-import { loginWithFirebase } from "./firebaseSession";
+import {
+  completePendingRegistration,
+  loginWithFirebase
+} from "./firebaseSession";
 
 vi.mock("./firebaseSession", () => ({
   loginWithFirebase: vi.fn(),
@@ -35,13 +38,16 @@ describe("LoginForm", () => {
 
   it("blocks an unverified Firebase user", async () => {
     loginWithFirebase.mockResolvedValue({ pendingVerification: true });
+    completePendingRegistration.mockRejectedValue(
+      new Error("Email is not verified yet")
+    );
 
     render(<LoginForm />);
     await userEvent.type(screen.getByLabelText(/email/i), "pending@example.com");
     await userEvent.type(screen.getByLabelText(/password/i), "secret12");
     await userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
-    expect(await screen.findByText(/email is not verified/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /i have verified/i })).toBeInTheDocument();
+    expect(await screen.findByText(/verify your email/i)).toBeInTheDocument();
+    expect(screen.getByText(/waiting for verification/i)).toBeInTheDocument();
   });
 });
