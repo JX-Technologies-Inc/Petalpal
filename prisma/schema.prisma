@@ -17,7 +17,6 @@ model User {
   email           String?   @unique
   firebaseUid     String?   @unique
   emailVerifiedAt DateTime?
-  passwordHash    String?
   avatar          String    @default("🦋")
   timezone        String    @default("UTC") @db.VarChar(64)
   createdAt       DateTime  @default(now())

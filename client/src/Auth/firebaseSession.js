@@ -1,104 +1,89 @@
 import {
   createUserWithEmailAndPassword,
-  reload,
+  isSignInWithEmailLink,
   sendEmailVerification,
+  sendSignInLinkToEmail,
   signInWithEmailAndPassword,
+  signInWithEmailLink,
+  signInWithPopup,
   signOut,
   updateProfile
 } from "firebase/auth";
-import { firebaseAuth } from "../firebase";
 import { API_BASE_URL } from "../api";
+import { firebaseAuth, googleProvider } from "../firebase";
 
-const PENDING_PROFILE_KEY = "petalPalPendingProfile";
+const EMAIL_FOR_SIGN_IN = "emailForSignIn";
+const PENDING_PASSWORD_PROFILE = "petalPalPendingPasswordProfile";
 
-function verificationSettings() {
-  return { url: window.location.origin };
-}
-
-export function savePendingProfile(profile) {
-  localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify(profile));
-}
-
-export function readPendingProfile() {
-  try {
-    return JSON.parse(localStorage.getItem(PENDING_PROFILE_KEY)) || {};
-  } catch {
-    return {};
-  }
-}
-
-export async function beginFirebaseRegistration(email, password, profile) {
-  const credential = await createUserWithEmailAndPassword(
-    firebaseAuth,
-    email,
-    password
-  );
-
-  await updateProfile(credential.user, { displayName: profile.name });
-  savePendingProfile(profile);
-  await sendEmailVerification(credential.user, verificationSettings());
-  return credential.user;
-}
-
-export async function resendVerificationEmail() {
-  const user = firebaseAuth.currentUser;
-  if (!user) throw new Error("Please sign in again before resending.");
-  await sendEmailVerification(user, verificationSettings());
-}
-
-export async function exchangeVerifiedUser(user, profile = {}) {
-  await reload(user);
-
-  if (!user.emailVerified) {
-    throw new Error("Email is not verified yet. Open the email link first.");
-  }
-
+async function syncUser(user, profile = {}) {
   const idToken = await user.getIdToken(true);
-  const response = await fetch(`${API_BASE_URL}/auth/firebase`, {
+  const response = await fetch(`${API_BASE_URL}/auth/session`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      idToken,
-      ...readPendingProfile(),
-      ...profile
-    })
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`
+    },
+    body: JSON.stringify(profile)
   });
   const data = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(data?.error || "Unable to start PetalPal session");
 
-  if (!response.ok || !data?.user || !data?.token) {
-    throw new Error(data?.error || "Unable to start the verified session.");
-  }
-
-  localStorage.setItem("petalPalAccessToken", data.token);
+  localStorage.setItem("petalPalAccessToken", idToken);
   localStorage.setItem("petalPalCurrentUser", JSON.stringify(data.user));
-  localStorage.removeItem(PENDING_PROFILE_KEY);
-  return data.user;
+  return data;
 }
 
-export async function completePendingRegistration() {
-  const user = firebaseAuth.currentUser;
-  if (!user) throw new Error("Please sign in again after verifying your email.");
-  return exchangeVerifiedUser(user);
+export async function sendPasswordlessLoginLink(email) {
+  await sendSignInLinkToEmail(firebaseAuth, email, {
+    url: `${window.location.origin}/finish-sign-in`,
+    handleCodeInApp: true
+  });
+  localStorage.setItem(EMAIL_FOR_SIGN_IN, email);
 }
 
-export async function loginWithFirebase(email, password) {
-  const credential = await signInWithEmailAndPassword(
-    firebaseAuth,
-    email,
-    password
-  );
+export function isPasswordlessCallback(url = window.location.href) {
+  return isSignInWithEmailLink(firebaseAuth, url);
+}
 
+export function savedPasswordlessEmail() {
+  return localStorage.getItem(EMAIL_FOR_SIGN_IN) || "";
+}
+
+export async function finishPasswordlessLogin(email, url = window.location.href) {
+  const credential = await signInWithEmailLink(firebaseAuth, email, url);
+  localStorage.removeItem(EMAIL_FOR_SIGN_IN);
+  const data = await syncUser(credential.user);
+  window.history.replaceState({}, "", "/");
+  return data;
+}
+
+export async function loginWithPassword(email, password) {
+  const credential = await signInWithEmailAndPassword(firebaseAuth, email, password);
   if (!credential.user.emailVerified) {
-    await sendEmailVerification(credential.user, verificationSettings());
-    return { pendingVerification: true, user: credential.user };
+    throw new Error("Verify your email before signing in with a password.");
   }
+  let profile;
+  try {
+    profile = JSON.parse(localStorage.getItem(PENDING_PASSWORD_PROFILE)) || {};
+  } catch {
+    profile = {};
+  }
+  const data = await syncUser(credential.user, profile);
+  localStorage.removeItem(PENDING_PASSWORD_PROFILE);
+  return data;
+}
 
-  return {
-    pendingVerification: false,
-    user: await exchangeVerifiedUser(credential.user, {
-      name: credential.user.displayName || email.split("@")[0]
-    })
-  };
+export async function registerWithPassword(email, password, profile) {
+  const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+  await updateProfile(credential.user, { displayName: profile.name });
+  localStorage.setItem(PENDING_PASSWORD_PROFILE, JSON.stringify(profile));
+  await sendEmailVerification(credential.user, { url: window.location.origin });
+  await signOut(firebaseAuth);
+}
+
+export async function loginWithGoogle() {
+  const credential = await signInWithPopup(firebaseAuth, googleProvider);
+  return syncUser(credential.user);
 }
 
 export async function logoutFirebase() {

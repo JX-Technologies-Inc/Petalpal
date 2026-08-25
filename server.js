@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import bcrypt from "bcrypt";
 import { createHash } from "crypto";
 
 import prisma from "./lib/prisma.js";
@@ -14,10 +13,9 @@ import { Server } from "socket.io";
 import {
   authenticateRequest,
   authenticateSocket,
-  createAccessToken,
+  authenticateFirebaseIdentity,
   requireOwnUser
 } from "./lib/auth.js";
-import { verifyFirebaseIdToken } from "./lib/firebase-auth.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -140,6 +138,32 @@ io.on("connection", (socket) => {
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req, res, next) => {
+  const isPublicPage =
+    req.method === "GET" &&
+    (req.path === "/" ||
+      req.path === "/finish-sign-in" ||
+      Boolean(path.extname(req.path)));
+  const isFirebaseSession =
+    req.method === "POST" && req.path === "/auth/session";
+  const isRemovedLegacyAuth =
+    req.method === "POST" &&
+    [
+      "/register",
+      "/login",
+      "/auth/email-code/request",
+      "/auth/email-code/verify",
+      "/legacy-register-disabled",
+      "/legacy-login-disabled"
+    ].includes(req.path);
+
+  if (isPublicPage || isFirebaseSession || isRemovedLegacyAuth) {
+    return next();
+  }
+
+  return authenticateRequest(req, res, next);
+});
 
 const activeVisitorsByGarden = {};
  
@@ -457,67 +481,202 @@ app.get("/users/:userId/garden", async (req, res) => {
     res.status(500).json({ error: "Failed to get garden" });
   }
 });
-app.post("/auth/firebase", async (req, res) => {
+app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
   try {
-    const {
-      idToken,
-      name,
-      avatar,
-      timezone: requestedTimezone,
-      aiConsent = false
-    } = req.body || {};
-    const firebaseUser = await verifyFirebaseIdToken(idToken);
-
-    if (firebaseUser.email_verified !== true) {
+    const identity = req.firebase;
+    if (!identity.email || !identity.emailVerified) {
       return res.status(403).json({
-        error: "Verify your email before creating a PetalPal account"
+        error: "Verify your email before entering PetalPal"
       });
     }
 
-    const normalizedEmail = String(firebaseUser.email).trim().toLowerCase();
-    const firebaseUid = String(firebaseUser.sub);
-    const timezone = normalizeTimezone(requestedTimezone) || "UTC";
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [{ firebaseUid }, { email: normalizedEmail }]
+    const normalizedEmail = identity.email.trim().toLowerCase();
+    let user = await prisma.user.findUnique({
+      where: { firebaseUid: identity.uid }
+    });
+    let isNewUser = false;
+
+    if (!user) {
+      const legacyUser = await prisma.user.findUnique({
+        where: { email: normalizedEmail }
+      });
+      if (legacyUser) {
+        user = await prisma.user.update({
+          where: { id: legacyUser.id },
+          data: {
+            firebaseUid: identity.uid,
+            emailVerifiedAt: legacyUser.emailVerifiedAt || new Date()
+          }
+        });
+      } else {
+        isNewUser = true;
+        const now = Date.now();
+        const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
+        user = await prisma.user.create({
+          data: {
+            id: `user_${now}`,
+            accountId: `PP${String(now).slice(-8)}`,
+            firebaseUid: identity.uid,
+            name: String(req.body?.name || identity.name || normalizedEmail.split("@")[0]).trim(),
+            email: normalizedEmail,
+            emailVerifiedAt: new Date(),
+            avatar: req.body?.avatar || "🦋",
+            timezone,
+            garden: { create: { year: new Date().getFullYear() } },
+            fairyState: { create: {} },
+            aiConsent: {
+              create: {
+                termsVersion: AI_TERMS_VERSION,
+                aiProcessing: Boolean(req.body?.aiConsent),
+                grantedAt: req.body?.aiConsent ? new Date() : null
+              }
+            },
+            subscriptionEntitlement: { create: {} }
+          }
+        });
+      }
+    }
+
+    return res.json({
+      user: {
+        id: user.id,
+        accountId: user.accountId,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        timezone: user.timezone,
+        emailVerified: true
+      },
+      isNewUser
+    });
+  } catch (error) {
+    console.error("POST /auth/session error:", error);
+    return res.status(500).json({ error: "Unable to create PetalPal session" });
+  }
+});
+
+app.post("/auth/email-code/request", async (_req, res) => {
+  return res.status(410).json({ error: "Use Firebase Authentication" });
+  /* legacy implementation retained temporarily
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const purpose = req.body?.purpose === "REGISTER" ? "REGISTER" : "LOGIN";
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+
+    if (purpose === "REGISTER" && existingUser) {
+      return res.status(409).json({ error: "This email already has an account. Log in instead." });
+    }
+    if (purpose === "LOGIN" && !existingUser) {
+      return res.status(404).json({ error: "No account exists for this email. Create one first." });
+    }
+
+    const latest = await prisma.emailAuthCode.findFirst({
+      where: { email, purpose, consumedAt: null },
+      orderBy: { createdAt: "desc" }
+    });
+    if (latest && Date.now() - latest.createdAt.getTime() < OTP_RESEND_MS) {
+      return res.status(429).json({ error: "Wait 60 seconds before requesting another code." });
+    }
+
+    const code = generateEmailCode();
+    const record = await prisma.emailAuthCode.create({
+      data: {
+        email,
+        purpose,
+        codeHash: hashEmailCode(email, code),
+        expiresAt: new Date(Date.now() + OTP_TTL_MS)
       }
     });
 
-    if (user) {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          firebaseUid,
-          email: normalizedEmail,
-          emailVerifiedAt: user.emailVerifiedAt || new Date(),
-          ...(name?.trim() ? { name: name.trim() } : {}),
-          ...(avatar ? { avatar } : {}),
-          ...(requestedTimezone ? { timezone } : {})
-        }
+    try {
+      await sendEmailCode(email, code);
+    } catch (error) {
+      await prisma.emailAuthCode.delete({ where: { id: record.id } }).catch(() => {});
+      throw error;
+    }
+
+    return res.json({ success: true, expiresInSeconds: OTP_TTL_MS / 1000 });
+  } catch (error) {
+    console.error("POST /auth/email-code/request error:", error);
+    return res.status(500).json({ error: error.message || "Unable to send verification code" });
+  }
+  */
+});
+
+app.post("/auth/email-code/verify", async (_req, res) => {
+  return res.status(410).json({ error: "Use Firebase Authentication" });
+  /* legacy implementation retained temporarily
+  try {
+    const email = normalizeEmail(req.body?.email);
+    const code = String(req.body?.code || "").trim();
+    const purpose = req.body?.purpose === "REGISTER" ? "REGISTER" : "LOGIN";
+    if (!/^\d{6}$/.test(code)) {
+      return res.status(400).json({ error: "Enter the 6-digit verification code" });
+    }
+
+    const record = await prisma.emailAuthCode.findFirst({
+      where: { email, purpose, consumedAt: null },
+      orderBy: { createdAt: "desc" }
+    });
+    if (!record || record.expiresAt <= new Date()) {
+      return res.status(400).json({ error: "This code has expired. Request a new one." });
+    }
+    if (record.attempts >= OTP_MAX_ATTEMPTS) {
+      return res.status(429).json({ error: "Too many incorrect attempts. Request a new code." });
+    }
+    if (!emailCodesMatch(record.codeHash, email, code)) {
+      await prisma.emailAuthCode.update({
+        where: { id: record.id },
+        data: { attempts: { increment: 1 } }
       });
-    } else {
+      return res.status(400).json({ error: "Incorrect verification code" });
+    }
+
+    let user = await prisma.user.findUnique({ where: { email } });
+    if (purpose === "LOGIN" && !user) {
+      return res.status(404).json({ error: "Account not found" });
+    }
+    const requestedName = String(req.body?.name || "").trim();
+    if (purpose === "REGISTER" && !user && !requestedName) {
+      return res.status(400).json({ error: "Display name is required" });
+    }
+
+    const consumed = await prisma.emailAuthCode.updateMany({
+      where: { id: record.id, consumedAt: null },
+      data: { consumedAt: new Date() }
+    });
+    if (consumed.count !== 1) {
+      return res.status(409).json({ error: "This code has already been used" });
+    }
+
+    if (!user) {
       const now = Date.now();
+      const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
       user = await prisma.user.create({
         data: {
           id: `user_${now}`,
           accountId: `PP${String(now).slice(-8)}`,
-          firebaseUid,
-          name: name?.trim() || normalizedEmail.split("@")[0],
-          email: normalizedEmail,
+          name: requestedName,
+          email,
           emailVerifiedAt: new Date(),
-          avatar: avatar || "🦋",
+          avatar: req.body?.avatar || "🦋",
           timezone,
           garden: { create: { year: new Date().getFullYear() } },
           fairyState: { create: {} },
           aiConsent: {
             create: {
               termsVersion: AI_TERMS_VERSION,
-              aiProcessing: Boolean(aiConsent),
-              grantedAt: aiConsent ? new Date() : null
+              aiProcessing: Boolean(req.body?.aiConsent),
+              grantedAt: req.body?.aiConsent ? new Date() : null
             }
           },
           subscriptionEntitlement: { create: {} }
         }
+      });
+    } else if (!user.emailVerifiedAt) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerifiedAt: new Date() }
       });
     }
 
@@ -528,34 +687,31 @@ app.post("/auth/firebase", async (req, res) => {
       email: user.email,
       avatar: user.avatar,
       timezone: user.timezone,
-      emailVerified: Boolean(user.emailVerifiedAt)
+      emailVerified: true
     };
-
-    return res.json({
-      user: safeUser,
-      token: createAccessToken(safeUser)
-    });
+    return res.json({ user: safeUser, token: createAccessToken(safeUser) });
   } catch (error) {
-    console.error("POST /auth/firebase error:", error);
-    return res.status(401).json({
-      error: "Invalid Firebase session or unverified email"
-    });
+    console.error("POST /auth/email-code/verify error:", error);
+    return res.status(500).json({ error: error.message || "Unable to verify code" });
   }
+  */
 });
 
 app.post("/register", (_req, res) => {
   res.status(410).json({
-    error: "Registration now requires Firebase email verification"
+    error: "Use Firebase Authentication to register"
   });
 });
 
 app.post("/login", (_req, res) => {
   res.status(410).json({
-    error: "Login now requires Firebase Authentication"
+    error: "Use Firebase Authentication to log in"
   });
 });
 
 app.post("/legacy-register-disabled", async (req, res) => {
+    return res.status(410).json({ error: "Use Firebase Authentication" });
+    /* legacy implementation retained temporarily
     try {
       const {
         name,
@@ -658,9 +814,12 @@ app.post("/legacy-register-disabled", async (req, res) => {
         error: "Failed to register"
       });
     }
+    */
   });
 
   app.post("/legacy-login-disabled", async (req, res) => {
+    return res.status(410).json({ error: "Use Firebase Authentication" });
+    /* legacy implementation retained temporarily
     try {
       const { email, password } = req.body;
   
@@ -715,19 +874,8 @@ app.post("/legacy-register-disabled", async (req, res) => {
         error: "Failed to log in"
       });
     }
+    */
   });
-  app.use((req, res, next) => {
-    const isPublicFrontendAsset =
-      req.method === "GET" &&
-      (req.path === "/" || Boolean(path.extname(req.path)));
-
-    if (isPublicFrontendAsset) {
-      return next();
-    }
-
-    return authenticateRequest(req, res, next);
-  });
-
   app.put("/users/avatar", async (req, res) => {
     try {
       const { avatar } = req.body;

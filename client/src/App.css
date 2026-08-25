@@ -2121,3 +2121,34 @@ body {
   box-shadow: none;
   text-decoration: underline;
 }
+.auth-methods,
+.auth-methods form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-methods h4 {
+  margin: 0;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.75;
+  text-align: center;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.google-auth-button {
+  background: #fff;
+  color: #202124;
+}

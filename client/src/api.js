@@ -2,9 +2,10 @@ export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "";
 
 export async function apiRequest(path, options = {}) {
-  const token = localStorage.getItem(
-    "petalPalAccessToken"
-  );
+  await firebaseAuth.authStateReady();
+  const token = firebaseAuth.currentUser
+    ? await firebaseAuth.currentUser.getIdToken()
+    : localStorage.getItem("petalPalAccessToken");
 
   const response = await fetch(
     `${API_BASE_URL}${path}`,
@@ -43,3 +44,4 @@ export async function apiRequest(path, options = {}) {
 
   return data;
 }
+import { firebaseAuth } from "./firebase";

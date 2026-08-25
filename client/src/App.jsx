@@ -968,7 +968,7 @@ import {
                     />
                   ) : (
                     <RegisterForm
-                      onRegister={handleLogin}
+                      onSwitchToLogin={() => setActiveAuthTab("login")}
                     />
                   )}
                 </section>

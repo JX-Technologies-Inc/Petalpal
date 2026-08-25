@@ -26,6 +26,7 @@ test("Month 1 vertical slice survives a database restart", async () => {
     await database.exec(await migration("202608250000_baseline"));
     await database.exec(await migration("202608250001_month1_product_models"));
     await database.exec(await migration("202608250002_firebase_auth"));
+    await database.exec(await migration("202608250003_remove_legacy_passwords"));
 
     // Registration creates the user, garden and resumable onboarding state.
     await database.exec(`
