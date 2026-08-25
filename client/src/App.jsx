@@ -12,6 +12,7 @@ import {
   
   import LoginForm from "./Auth/LoginForm";
   import RegisterForm from "./Auth/RegisterForm";
+  import OnboardingFlow from "./Onboarding/OnboardingFlow";
   
   import CurrentProfile from "./Profile/CurrentProfile";
   
