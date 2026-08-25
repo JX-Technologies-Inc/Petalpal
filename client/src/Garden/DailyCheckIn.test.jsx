@@ -4,6 +4,12 @@ import { describe, expect, it, vi } from "vitest";
 import DailyCheckIn from "./DailyCheckIn";
 
 describe("DailyCheckIn", () => {
+  it("shows the persisted completion state for today", () => {
+    render(<DailyCheckIn onBloom={vi.fn()} completed />);
+    expect(screen.getByText(/already growing/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Bloom" })).not.toBeInTheDocument();
+  });
+
   it("requires a mood or optional journal text", async () => {
     const onBloom = vi.fn();
     render(<DailyCheckIn onBloom={onBloom} />);

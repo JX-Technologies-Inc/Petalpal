@@ -212,6 +212,13 @@ import {
         visitRecords: [],
         activeVisitors: []
       });
+
+    const [experience, setExperience] = useState({
+      fairyState: null,
+      todayCheckIn: null,
+      hasCheckedInToday: false,
+      loading: Boolean(currentUser?.id)
+    });
   
     const [
       gardenLoading,
@@ -299,14 +306,55 @@ import {
       },
       []
     );
+
+    const loadSession = useCallback(async () => {
+      try {
+        setGardenLoading(true);
+        setGardenError("");
+
+        const data = await apiRequest("/session");
+
+        setCurrentUser(data.user);
+        localStorage.setItem(
+          "petalPalCurrentUser",
+          JSON.stringify(data.user)
+        );
+
+        setExperience({
+          fairyState: data.fairyState || null,
+          todayCheckIn: data.todayCheckIn || null,
+          hasCheckedInToday: Boolean(data.hasCheckedInToday),
+          loading: false
+        });
+
+        setGardenData({
+          owner: data.garden?.owner || data.user,
+          flowers: Array.isArray(data.garden?.flowers)
+            ? data.garden.flowers
+            : [],
+          visitRecords: Array.isArray(data.garden?.visitRecords)
+            ? data.garden.visitRecords
+            : [],
+          activeVisitors: Array.isArray(data.garden?.activeVisitors)
+            ? data.garden.activeVisitors
+            : []
+        });
+      } catch (error) {
+        console.error("Load session error:", error);
+        setGardenError(error.message || "Failed to restore your garden.");
+        setExperience((current) => ({ ...current, loading: false }));
+      } finally {
+        setGardenLoading(false);
+      }
+    }, []);
   
     useEffect(() => {
       if (!currentUser?.id) {
         return;
       }
   
-      loadGarden(currentUser.id);
-    }, [currentUser?.id, loadGarden]);
+      loadSession();
+    }, [currentUser?.id, loadSession]);
 
     useEffect(() => {
       viewedGardenOwnerIdRef.current =
@@ -551,6 +599,12 @@ import {
   
       setSelectedCalendarDate("");
       setGardenError("");
+      setExperience({
+        fairyState: null,
+        todayCheckIn: null,
+        hasCheckedInToday: false,
+        loading: false
+      });
       viewedGardenOwnerIdRef.current = null;
   
       localStorage.removeItem(
@@ -559,6 +613,23 @@ import {
       localStorage.removeItem(
         "petalPalAccessToken"
       );
+    }
+
+    async function handleOnboardingAdvance(update) {
+      if (!currentUser?.id) return;
+
+      const fairyState = await apiRequest(
+        `/users/${encodeURIComponent(currentUser.id)}/fairy-state`,
+        {
+          method: "PUT",
+          body: JSON.stringify(update)
+        }
+      );
+
+      setExperience((current) => ({
+        ...current,
+        fairyState
+      }));
     }
   
     function handleAvatarChange(avatar) {
@@ -754,15 +825,8 @@ import {
             })
           }
         );
-  
-      setGardenData((current) => ({
-        ...current,
-  
-        flowers: [
-          newFlower,
-          ...current.flowers
-        ]
-      }));
+
+      await loadSession();
   
       setSelectedCalendarDate("");
   
@@ -887,7 +951,9 @@ import {
                       onLogin={handleLogin}
                     />
                   ) : (
-                    <RegisterForm />
+                    <RegisterForm
+                      onRegister={handleLogin}
+                    />
                   )}
                 </section>
               ) : (
@@ -896,14 +962,25 @@ import {
                     user={currentUser}
                     onLogout={handleLogout}
                   />
-  
-                  <DailyCheckIn
-                    onBloom={handleBloom}
-                    disabled={
-                      gardenLoading ||
-                      !isOwnGarden
-                    }
-                  />
+
+                  {experience.loading ? (
+                    <p className="garden-status-message">
+                      Restoring your garden...
+                    </p>
+                  ) : !experience.fairyState?.onboardingCompleted ? (
+                    <OnboardingFlow
+                      fairyState={experience.fairyState}
+                      onAdvance={handleOnboardingAdvance}
+                      onBloom={handleBloom}
+                      disabled={gardenLoading}
+                    />
+                  ) : (
+                    <DailyCheckIn
+                      onBloom={handleBloom}
+                      completed={experience.hasCheckedInToday}
+                      disabled={gardenLoading || !isOwnGarden}
+                    />
+                  )}
   
                   <VisitorForm
                     currentUser={currentUser}

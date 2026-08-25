@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-function DailyCheckIn({ onBloom, disabled = false }) {
+function DailyCheckIn({
+  onBloom,
+  disabled = false,
+  completed = false
+}) {
   const [eventText, setEventText] = useState("");
   const [selectedMood, setSelectedMood] =
     useState("");
@@ -47,6 +51,13 @@ function DailyCheckIn({ onBloom, disabled = false }) {
   return (
     <section className="checkin-section">
       <h2>Daily Check-In</h2>
+
+      {completed ? (
+        <p className="auth-message">
+          Today&apos;s flower is already growing. Come back tomorrow 🌸
+        </p>
+      ) : (
+        <>
 
       <textarea
         id="eventInput"
@@ -98,6 +109,8 @@ function DailyCheckIn({ onBloom, disabled = false }) {
         <p className="auth-message">
           {message}
         </p>
+      )}
+        </>
       )}
     </section>
   );

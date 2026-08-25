@@ -659,6 +659,57 @@ app.post("/users", (_req, res) => {
   });
 });
 
+app.get("/session", async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.auth.userId },
+    select: {
+      id: true,
+      accountId: true,
+      name: true,
+      email: true,
+      avatar: true,
+      timezone: true
+    }
+  });
+
+  if (!user) {
+    return res.status(401).json({ error: "Authenticated user no longer exists" });
+  }
+
+  const timezone = normalizeTimezone(user.timezone) || "UTC";
+  const localDate = getLocalDate(timezone);
+
+  const [fairyState, todayCheckIn, garden] = await Promise.all([
+    prisma.fairyState.upsert({
+      where: { userId: user.id },
+      update: {},
+      create: { userId: user.id }
+    }),
+    prisma.dailyCheckIn.findUnique({
+      where: {
+        userId_localDate: {
+          userId: user.id,
+          localDate
+        }
+      },
+      include: {
+        journal: true,
+        emotionResult: true,
+        flower: { include: { messages: true } }
+      }
+    }),
+    getGardenResponse(user.id)
+  ]);
+
+  res.json({
+    user,
+    fairyState,
+    todayCheckIn,
+    hasCheckedInToday: Boolean(todayCheckIn),
+    garden
+  });
+});
+
 app.get("/users/:userId/check-ins", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 

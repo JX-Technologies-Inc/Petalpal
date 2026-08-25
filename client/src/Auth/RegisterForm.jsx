@@ -249,7 +249,6 @@ function RegisterForm({ onRegister }) {
           id="accountResult"
           className="account-result"
         >
-          <p>Registration successful!</p>
           <p>Your PetalPal account ID is:</p>
           <strong id="generatedAccountId">
             {accountId}

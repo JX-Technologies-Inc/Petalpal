@@ -2069,3 +2069,21 @@ body {
     color: #7b6b60;
     font-size: 13px;
   }
+.onboarding-flow {
+  padding: 1.25rem;
+  border: 1px solid rgba(185, 117, 151, 0.28);
+  border-radius: 18px;
+  background: rgba(255, 250, 253, 0.92);
+  box-shadow: 0 12px 30px rgba(116, 68, 91, 0.1);
+}
+
+.onboarding-fairy {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+
+.onboarding-flow > button {
+  width: 100%;
+  margin-top: 0.75rem;
+}

@@ -8,7 +8,7 @@
         "test": "npm run test:backend && npm run test:client",
         "test:backend": "node --test test/back/*.test.js",
         "test:client": "npm test --prefix client",
-        "test:data-models": "node --test test/back/productModels.integration.test.js",
+        "test:data-models": "node --test test/back/verticalSlice.persistence.test.js",
         "check": "npm test && npm run lint && npm run build:client && npx prisma validate && node --check server.js && node --check lib/auth.js",
         "postinstall": "npx prisma generate"
     },
