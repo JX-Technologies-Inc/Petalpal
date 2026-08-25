@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   beginFirebaseRegistration,
   completePendingRegistration,
@@ -17,6 +17,29 @@ function RegisterForm({ onRegister }) {
   const [accountId, setAccountId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [verificationPending, setVerificationPending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return undefined;
+    const timer = window.setTimeout(
+      () => setResendCooldown((seconds) => seconds - 1),
+      1000
+    );
+    return () => window.clearTimeout(timer);
+  }, [resendCooldown]);
+
+  function readableFirebaseError(error, fallback) {
+    if (error?.code === "auth/too-many-requests") {
+      return "Too many attempts. Please wait a few minutes before trying again.";
+    }
+    if (error?.code === "auth/email-already-in-use") {
+      return "This email already has an account. Use the Log In tab to continue.";
+    }
+    if (error?.code === "auth/invalid-email") {
+      return "Enter a valid email address.";
+    }
+    return error?.message || fallback;
+  }
 
   async function handleRegister(event) {
     event.preventDefault();
@@ -57,14 +80,15 @@ function RegisterForm({ onRegister }) {
         aiConsent
       });
       setVerificationPending(true);
+      setResendCooldown(60);
       setMessage("Verification email sent. Open it before continuing.");
     } catch (error) {
       console.error("Register error:", error);
 
-      setMessage(
-        error.message ||
-          "Something went wrong while registering."
-      );
+      setMessage(readableFirebaseError(
+        error,
+        "Something went wrong while registering."
+      ));
     } finally {
       setIsLoading(false);
     }
@@ -89,12 +113,47 @@ function RegisterForm({ onRegister }) {
     try {
       setIsLoading(true);
       await resendVerificationEmail();
+      setResendCooldown(60);
       setMessage("A new verification email has been sent.");
     } catch (error) {
-      setMessage(error.message || "Unable to resend verification email.");
+      setMessage(readableFirebaseError(
+        error,
+        "Unable to resend verification email."
+      ));
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (verificationPending) {
+    return (
+      <section className="auth-form verification-panel" aria-live="polite">
+        <div className="verification-icon">✉️</div>
+        <h3>Check your email</h3>
+        <p>
+          We sent a verification link to <strong>{email.trim()}</strong>.
+        </p>
+        <ol>
+          <li>Open your email inbox or spam folder.</li>
+          <li>Click the link from Firebase / PetalPal.</li>
+          <li>Return here and press the button below.</li>
+        </ol>
+        <button type="button" disabled={isLoading} onClick={handleVerificationComplete}>
+          {isLoading ? "Checking..." : "I Have Verified My Email"}
+        </button>
+        <button
+          type="button"
+          className="secondary-auth-button"
+          disabled={isLoading || resendCooldown > 0}
+          onClick={handleResend}
+        >
+          {resendCooldown > 0
+            ? `Resend available in ${resendCooldown}s`
+            : "Resend Verification Email"}
+        </button>
+        <p className="auth-message">{message}</p>
+      </section>
+    );
   }
 
   return (
@@ -216,17 +275,6 @@ function RegisterForm({ onRegister }) {
           ? "Creating Account..."
           : "Create My Garden"}
       </button>
-
-      {verificationPending && (
-        <div className="verification-actions">
-          <button type="button" disabled={isLoading} onClick={handleVerificationComplete}>
-            I Have Verified My Email
-          </button>
-          <button type="button" disabled={isLoading} onClick={handleResend}>
-            Resend Verification Email
-          </button>
-        </div>
-      )}
 
       <p
         id="registerMessage"
