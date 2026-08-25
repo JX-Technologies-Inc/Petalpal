@@ -321,7 +321,12 @@ import {
 
       const socket = io(getSocketUrl(), {
         transports: ["websocket", "polling"],
-        reconnection: true
+        reconnection: true,
+        auth: {
+          token: localStorage.getItem(
+            "petalPalAccessToken"
+          )
+        }
       });
 
       socketRef.current = socket;
@@ -549,6 +554,9 @@ import {
   
       localStorage.removeItem(
         "petalPalCurrentUser"
+      );
+      localStorage.removeItem(
+        "petalPalAccessToken"
       );
     }
   

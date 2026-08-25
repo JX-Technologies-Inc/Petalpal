@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -9,6 +10,12 @@ import flowerDB from "./data/flowerDB.js";
 import { predictMood, loadMoodModel } from "./moodClassifier.js";
 import http from "http";
 import { Server } from "socket.io";
+import {
+  authenticateRequest,
+  authenticateSocket,
+  createAccessToken,
+  requireOwnUser
+} from "./lib/auth.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,17 +32,14 @@ const io = new Server(server, {
   }
 });
 
+io.use(authenticateSocket);
+
 //ROS
 io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
   
-    socket.on("join-user", (userId) => {
-      if (!userId) {
-        return;
-      }
-
-      const normalizedUserId =
-        String(userId);
+    socket.on("join-user", () => {
+      const normalizedUserId = String(socket.data.currentUserId);
 
       if (
         socket.data.currentUserId &&
@@ -59,24 +63,12 @@ io.on("connection", (socket) => {
       );
     });
 
-    socket.on("leave-user", (userId) => {
-      if (!userId) {
-        return;
-      }
-
-      const normalizedUserId =
-        String(userId);
+    socket.on("leave-user", () => {
+      const normalizedUserId = String(socket.data.currentUserId);
 
       socket.leave(
         `user:${normalizedUserId}`
       );
-
-      if (
-        socket.data.currentUserId ===
-        normalizedUserId
-      ) {
-        socket.data.currentUserId = null;
-      }
 
       console.log(
         `${socket.id} left user:${normalizedUserId}`
@@ -98,18 +90,16 @@ io.on("connection", (socket) => {
         `${socket.id} joined garden:${gardenOwnerId}`
       );
     });
-    socket.on("move-avatar", (data) => {
+    socket.on("move-avatar", async (data) => {
         const {
-          visitorId,
           gardenOwnerId,
-          name,
-          avatar,
           x,
           y
         } = data || {};
+
+        const visitorId = String(socket.data.currentUserId);
       
         if (
-          !visitorId ||
           !gardenOwnerId ||
           typeof x !== "number" ||
           typeof y !== "number"
@@ -117,6 +107,13 @@ io.on("connection", (socket) => {
           return;
         }
       
+        const visitor = await prisma.user.findUnique({
+          where: { id: visitorId },
+          select: { name: true, avatar: true }
+        });
+
+        if (!visitor) return;
+
         io.to(`garden:${gardenOwnerId}`).emit(
           "avatarMoved",
           {
@@ -124,8 +121,8 @@ io.on("connection", (socket) => {
             userId: visitorId,
             gardenOwnerId,
             ownerId: gardenOwnerId,
-            name,
-            avatar,
+            name: visitor.name,
+            avatar: visitor.avatar,
             x,
             y
           }
@@ -473,7 +470,10 @@ app.post("/register", async (req, res) => {
         }
       });
   
-      res.status(201).json(user);
+      res.status(201).json({
+        user,
+        token: createAccessToken(user)
+      });
     } catch (err) {
       console.error("REGISTER error:", err);
       res.status(500).json({
@@ -518,12 +518,17 @@ app.post("/register", async (req, res) => {
         });
       }
   
-      res.json({
+      const safeUser = {
         id: user.id,
         accountId: user.accountId,
         name: user.name,
         email: user.email,
         avatar: user.avatar
+      };
+
+      res.json({
+        user: safeUser,
+        token: createAccessToken(safeUser)
       });
     } catch (err) {
       console.error("LOGIN error:", err);
@@ -532,9 +537,22 @@ app.post("/register", async (req, res) => {
       });
     }
   });
+  app.use((req, res, next) => {
+    const isPublicFrontendAsset =
+      req.method === "GET" &&
+      (req.path === "/" || Boolean(path.extname(req.path)));
+
+    if (isPublicFrontendAsset) {
+      return next();
+    }
+
+    return authenticateRequest(req, res, next);
+  });
+
   app.put("/users/avatar", async (req, res) => {
     try {
-      const { userId, avatar } = req.body;
+      const { avatar } = req.body;
+      const userId = req.auth.userId;
   
       const user = await prisma.user.update({
         where: {
@@ -555,54 +573,10 @@ app.post("/register", async (req, res) => {
     }
   });
 
-app.post("/users", async (req, res) => {
-  try {
-    const { name, avatar } = req.body;
-
-    if (!name || !name.trim()) {
-      return res.status(400).json({ error: "Name is required" });
-    }
-
-    const trimmedName = name.trim();
-
-    const nameExists = await prisma.user.findFirst({
-      where: {
-        name: {
-          equals: trimmedName,
-          mode: "insensitive",
-        },
-      },
-    });
-
-    if (nameExists) {
-      return res.status(400).json({ error: "Name already exists" });
-    }
-
-    const newUserId = `user_${Date.now()}`;
-
-    const newUser = await prisma.user.create({
-      data: {
-        id: newUserId,
-        name: trimmedName,
-        avatar: avatar || "🦋",
-        garden: {
-          create: {
-            year: new Date().getFullYear(),
-          },
-        },
-      },
-    });
-
-    res.status(201).json({
-      id: newUser.id,
-      name: newUser.name,
-      avatar: newUser.avatar,
-      friends: [],
-    });
-  } catch (err) {
-    console.error("POST /users error:", err);
-    res.status(500).json({ error: "Failed to create user" });
-  }
+app.post("/users", (_req, res) => {
+  res.status(410).json({
+    error: "This endpoint has been removed. Use /register instead."
+  });
 });
 
 // =========================================================
@@ -613,9 +587,9 @@ app.post("/users", async (req, res) => {
 app.post("/friends/request", async (req, res) => {
     try {
       const {
-        senderId,
         receiverId
       } = req.body;
+      const senderId = req.auth.userId;
   
       if (!senderId || !receiverId) {
         return res.status(400).json({
@@ -809,6 +783,8 @@ app.post("/friends/request", async (req, res) => {
       try {
         const userId =
           req.params.userId;
+
+        if (!requireOwnUser(req, res, userId)) return;
   
         const user =
           await prisma.user.findUnique({
@@ -889,15 +865,7 @@ app.post("/friends/request", async (req, res) => {
         const requestId =
           req.params.requestId;
   
-        const {
-          userId
-        } = req.body;
-  
-        if (!userId) {
-          return res.status(400).json({
-            error: "Current user ID is required"
-          });
-        }
+        const userId = req.auth.userId;
   
         const friendRequest =
           await prisma.friendRequest.findUnique({
@@ -1025,15 +993,7 @@ app.post("/friends/request", async (req, res) => {
         const requestId =
           req.params.requestId;
   
-        const {
-          userId
-        } = req.body;
-  
-        if (!userId) {
-          return res.status(400).json({
-            error: "Current user ID is required"
-          });
-        }
+        const userId = req.auth.userId;
   
         const friendRequest =
           await prisma.friendRequest.findUnique({
@@ -1096,7 +1056,8 @@ app.post("/friends/request", async (req, res) => {
 
 app.post("/friends/remove", async (req, res) => {
   try {
-    const { userId, friendId } = req.body;
+    const { friendId } = req.body;
+    const userId = req.auth.userId;
 
     await prisma.friendship.deleteMany({
       where: {
@@ -1130,6 +1091,8 @@ app.post("/friends/remove", async (req, res) => {
 
 app.post("/users/:userId/flowers", async (req, res) => {
   try {
+    if (!requireOwnUser(req, res, req.params.userId)) return;
+
     const user = await prisma.user.findUnique({
       where: {
         id: req.params.userId,
@@ -1200,7 +1163,8 @@ app.post(
   
       try {
         const { userId, flowerId } = req.params;
-        const { visitorUserId, visitorAvatar } = req.body;
+        const { visitorAvatar } = req.body;
+        const visitorUserId = req.auth.userId;
   
 
         const flower = await prisma.flower.findFirst({
@@ -1318,11 +1282,10 @@ app.post(
         const { userId, flowerId } = req.params;
   
         const {
-          author,
           text,
-          visitorUserId,
           visitorAvatar
         } = req.body;
+        const visitorUserId = req.auth.userId;
   
         const trimmedText =
           typeof text === "string"
@@ -1353,30 +1316,23 @@ app.post(
           });
         }
   
-        const [newMessage, visitor] =
-          await Promise.all([
-            prisma.message.create({
-              data: {
-                author: author || "Friend",
-                text: trimmedText,
-                flowerId: flower.id,
-                userId
-              }
-            }),
-  
-            visitorUserId
-              ? prisma.user.findUnique({
-                  where: {
-                    id: visitorUserId
-                  },
-                  select: {
-                    id: true,
-                    name: true,
-                    avatar: true
-                  }
-                })
-              : Promise.resolve(null)
-          ]);
+        const visitor = await prisma.user.findUnique({
+          where: { id: visitorUserId },
+          select: { id: true, name: true, avatar: true }
+        });
+
+        if (!visitor) {
+          return res.status(401).json({ error: "Authenticated user not found" });
+        }
+
+        const newMessage = await prisma.message.create({
+          data: {
+            author: visitor.name,
+            text: trimmedText,
+            flowerId: flower.id,
+            userId: visitor.id
+          }
+        });
   
         const updatedFlower =
           await prisma.flower.findUnique({
@@ -1447,6 +1403,8 @@ app.post(
 
 app.delete("/users/:userId/flowers/:flowerId", async (req, res) => {
   try {
+    if (!requireOwnUser(req, res, req.params.userId)) return;
+
     const user = await prisma.user.findUnique({
       where: {
         id: req.params.userId,
@@ -1495,11 +1453,11 @@ app.post("/visit", async (req, res) => {
   try {
     const {
       hostUserId,
-      visitorUserId,
       visitorAvatar,
       x = 120,
       y = 520,
     } = req.body;
+    const visitorUserId = req.auth.userId;
 
     const host = await prisma.user.findUnique({
       where: {
@@ -1584,7 +1542,8 @@ app.post("/visit", async (req, res) => {
 
 app.post("/visit/move", async (req, res) => {
   try {
-    const { hostUserId, visitorUserId, x, y, visitorAvatar } = req.body;
+    const { hostUserId, x, y, visitorAvatar } = req.body;
+    const visitorUserId = req.auth.userId;
 
     if (typeof x !== "number" || typeof y !== "number") {
       return res.status(400).json({ error: "x and y must be numbers" });
@@ -1654,9 +1613,9 @@ app.post("/leave", async (req, res) => {
     try {
       const {
         hostUserId,
-        visitorUserId,
         visitorAvatar
       } = req.body;
+      const visitorUserId = req.auth.userId;
   
       const [host, visitor] =
         await Promise.all([
@@ -1787,6 +1746,8 @@ app.post("/analyze-mood", async (req, res) => {
 app.delete("/users/:id", async (req, res) => {
     try {
       const id = req.params.id;
+
+      if (!requireOwnUser(req, res, id)) return;
   
       const user = await prisma.user.findUnique({
         where: { id }

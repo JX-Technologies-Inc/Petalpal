@@ -58,7 +58,16 @@ function LoginForm({ onLogin }) {
         );
       }
 
-      const loggedInUser = data.user || data;
+      const loggedInUser = data.user;
+
+      if (!loggedInUser || !data.token) {
+        throw new Error("Server did not return a valid login session.");
+      }
+
+      localStorage.setItem(
+        "petalPalAccessToken",
+        data.token
+      );
 
       localStorage.setItem(
         "petalPalCurrentUser",

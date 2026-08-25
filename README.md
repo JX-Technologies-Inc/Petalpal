@@ -148,6 +148,7 @@ Create a `.env` file in the project root:
 
 ```env
 DATABASE_URL=your_postgresql_connection_string
+JWT_SECRET=replace_with_a_random_secret_of_at_least_32_characters
 ```
 
 Build and start the application:

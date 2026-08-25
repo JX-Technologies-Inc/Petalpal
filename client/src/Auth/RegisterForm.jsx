@@ -80,11 +80,25 @@ function RegisterForm({ onRegister }) {
         );
       }
 
-      setAccountId(data.accountId || "");
+      if (!data.user || !data.token) {
+        throw new Error("Server did not return a valid login session.");
+      }
+
+      localStorage.setItem(
+        "petalPalAccessToken",
+        data.token
+      );
+
+      localStorage.setItem(
+        "petalPalCurrentUser",
+        JSON.stringify(data.user)
+      );
+
+      setAccountId(data.user.accountId || "");
       setMessage("Registration successful!");
 
       if (typeof onRegister === "function") {
-        onRegister(data);
+        onRegister(data.user);
       }
     } catch (error) {
       console.error("Register error:", error);
