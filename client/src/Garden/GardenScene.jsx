@@ -8,6 +8,8 @@ const FLOWER_IMAGE_MAP = {
   Tulip: "/assets/tulip.png"
 };
 
+const EMPTY_LIST = Object.freeze([]);
+
 function getFlowerImagePath(flower) {
   if (!flower) {
     return "/assets/pink.png";
@@ -75,8 +77,8 @@ function GardenScene({
   owner,
   currentUser,
   socket,
-  flowers = [],
-  activeVisitors = [],
+  flowers = EMPTY_LIST,
+  activeVisitors = EMPTY_LIST,
   isOwnGarden = false,
   highlightedDate = "",
   onDeleteFlower = async () => {}

@@ -20,13 +20,9 @@ export async function apiRequest(path, options = {}) {
     }
   );
 
-  let data = null;
-
-  try {
-    data = await response.json();
-  } catch {
-    data = null;
-  }
+  const data = await response
+    .json()
+    .catch(() => null);
 
   if (!response.ok) {
     throw new Error(

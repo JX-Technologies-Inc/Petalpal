@@ -41,7 +41,7 @@ function LoginForm({ onLogin }) {
         response.headers.get("content-type") || "";
 
       if (!contentType.includes("application/json")) {
-        const responseText = await response.text();
+        await response.text();
 
         throw new Error(
           `Server returned a non-JSON response (${response.status}).`
