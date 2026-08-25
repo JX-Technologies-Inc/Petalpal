@@ -25,10 +25,20 @@ export async function apiRequest(path, options = {}) {
     .catch(() => null);
 
   if (!response.ok) {
-    throw new Error(
+    const error = new Error(
       data?.error ||
       `Request failed with status ${response.status}`
     );
+
+    error.status = response.status;
+
+    if (response.status === 401) {
+      localStorage.removeItem("petalPalAccessToken");
+      localStorage.removeItem("petalPalCurrentUser");
+      window.dispatchEvent(new Event("petalpal:unauthorized"));
+    }
+
+    throw error;
   }
 
   return data;

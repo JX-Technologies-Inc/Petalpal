@@ -615,6 +615,20 @@ import {
       );
     }
 
+    useEffect(() => {
+      window.addEventListener(
+        "petalpal:unauthorized",
+        handleLogout
+      );
+
+      return () => {
+        window.removeEventListener(
+          "petalpal:unauthorized",
+          handleLogout
+        );
+      };
+    }, []);
+
     async function handleOnboardingAdvance(update) {
       if (!currentUser?.id) return;
 

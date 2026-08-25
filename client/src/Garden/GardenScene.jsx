@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { apiRequest } from "../api";
 
 const FLOWER_IMAGE_MAP = {
   "Cherry Blossom": "/assets/pink.png",
@@ -560,48 +561,15 @@ function GardenScene({
     }
   }
 
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    "http://localhost:3000";
-
   async function postJson(path, body) {
     const normalizedPath = path.startsWith("/")
       ? path
       : `/${path}`;
 
-    const response = await fetch(
-      `${API_BASE_URL}${normalizedPath}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body || {})
-      }
-    );
-
-    const responseText = await response.text();
-
-    let data = {};
-
-    if (responseText) {
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        data = {
-          error: responseText
-        };
-      }
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        data.error ||
-          `Request failed: ${response.status}`
-      );
-    }
-
-    return data;
+    return apiRequest(normalizedPath, {
+      method: "POST",
+      body: JSON.stringify(body || {})
+    });
   }
 
   async function handleGiveSupport() {
