@@ -4,6 +4,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
+import { createHash } from "crypto";
 
 import prisma from "./lib/prisma.js";
 import flowerDB from "./data/flowerDB.js";
@@ -147,6 +148,57 @@ function getActiveVisitors(gardenId) {
 
 function setActiveVisitors(gardenId, visitors) {
   activeVisitorsByGarden[gardenId] = visitors;
+}
+
+const AI_TERMS_VERSION = "2026-08-25";
+const REPORT_CATEGORIES = new Set([
+  "HARASSMENT",
+  "HATE_SPEECH",
+  "SELF_HARM",
+  "SPAM",
+  "PRIVACY",
+  "OTHER"
+]);
+const FAIRY_STEPS = new Set([
+  "EMPTY_GARDEN",
+  "FAIRY_APPEARS",
+  "MOOD_SELECTION",
+  "PLANT_FIRST_FLOWER",
+  "FLOWER_BLOOM",
+  "GARDEN_UNLOCKED"
+]);
+
+function normalizeTimezone(value) {
+  const timezone =
+    typeof value === "string" && value.trim()
+      ? value.trim()
+      : "UTC";
+
+  try {
+    new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format();
+    return timezone;
+  } catch {
+    return null;
+  }
+}
+
+function getLocalDate(timezone) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  const values = Object.fromEntries(
+    parts.map(({ type, value }) => [type, value])
+  );
+
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function hashAiInput(text) {
+  return createHash("sha256").update(text).digest("hex");
 }
 
 async function getUser(userId) {
@@ -406,7 +458,14 @@ app.get("/users/:userId/garden", async (req, res) => {
 });
 app.post("/register", async (req, res) => {
     try {
-      const { name, email, password, avatar } = req.body;
+      const {
+        name,
+        email,
+        password,
+        avatar,
+        timezone: requestedTimezone,
+        aiConsent = false
+      } = req.body;
   
       if (!name || !email || !password) {
         return res.status(400).json({
@@ -415,6 +474,11 @@ app.post("/register", async (req, res) => {
       }
   
       const normalizedEmail = email.trim().toLowerCase();
+      const timezone = normalizeTimezone(requestedTimezone);
+
+      if (!timezone) {
+        return res.status(400).json({ error: "Invalid timezone" });
+      }
   
       if (password.length < 6) {
         return res.status(400).json({
@@ -455,10 +519,24 @@ app.post("/register", async (req, res) => {
           email: normalizedEmail,
           passwordHash,
           avatar: avatar || "🦋",
+          timezone,
           garden: {
             create: {
               year: new Date().getFullYear()
             }
+          },
+          fairyState: {
+            create: {}
+          },
+          aiConsent: {
+            create: {
+              termsVersion: AI_TERMS_VERSION,
+              aiProcessing: Boolean(aiConsent),
+              grantedAt: aiConsent ? new Date() : null
+            }
+          },
+          subscriptionEntitlement: {
+            create: {}
           }
         },
         select: {
@@ -466,7 +544,8 @@ app.post("/register", async (req, res) => {
           accountId: true,
           name: true,
           email: true,
-          avatar: true
+          avatar: true,
+          timezone: true
         }
       });
   
@@ -523,7 +602,8 @@ app.post("/register", async (req, res) => {
         accountId: user.accountId,
         name: user.name,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar,
+        timezone: user.timezone
       };
 
       res.json({
@@ -577,6 +657,176 @@ app.post("/users", (_req, res) => {
   res.status(410).json({
     error: "This endpoint has been removed. Use /register instead."
   });
+});
+
+app.get("/users/:userId/check-ins", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const checkIns = await prisma.dailyCheckIn.findMany({
+    where: { userId: req.auth.userId },
+    include: {
+      journal: true,
+      emotionResult: true,
+      flower: { include: { messages: true } }
+    },
+    orderBy: { localDate: "desc" },
+    take: 366
+  });
+
+  res.json(checkIns);
+});
+
+app.get("/users/:userId/fairy-state", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const fairyState = await prisma.fairyState.upsert({
+    where: { userId: req.auth.userId },
+    update: {},
+    create: { userId: req.auth.userId }
+  });
+
+  res.json(fairyState);
+});
+
+app.put("/users/:userId/fairy-state", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const { onboardingStep, onboardingCompleted, lastEvent, unlockedFeatures } =
+    req.body;
+
+  if (onboardingStep && !FAIRY_STEPS.has(onboardingStep)) {
+    return res.status(400).json({ error: "Invalid onboarding step" });
+  }
+
+  if (unlockedFeatures && !Array.isArray(unlockedFeatures)) {
+    return res.status(400).json({ error: "unlockedFeatures must be an array" });
+  }
+
+  const data = {
+    ...(onboardingStep ? { onboardingStep } : {}),
+    ...(typeof onboardingCompleted === "boolean"
+      ? { onboardingCompleted }
+      : {}),
+    ...(typeof lastEvent === "string"
+      ? { lastEvent: lastEvent.slice(0, 64) }
+      : {}),
+    ...(Array.isArray(unlockedFeatures)
+      ? { unlockedFeatures: unlockedFeatures.slice(0, 50) }
+      : {})
+  };
+
+  const fairyState = await prisma.fairyState.upsert({
+    where: { userId: req.auth.userId },
+    update: data,
+    create: { userId: req.auth.userId, ...data }
+  });
+
+  res.json(fairyState);
+});
+
+app.get("/users/:userId/ai-consent", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const consent = await prisma.aiConsent.upsert({
+    where: { userId: req.auth.userId },
+    update: {},
+    create: {
+      userId: req.auth.userId,
+      termsVersion: AI_TERMS_VERSION
+    }
+  });
+
+  res.json(consent);
+});
+
+app.put("/users/:userId/ai-consent", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const aiProcessing = Boolean(req.body.aiProcessing);
+  const personalization = aiProcessing && Boolean(req.body.personalization);
+  const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
+  const now = new Date();
+
+  const consent = await prisma.aiConsent.upsert({
+    where: { userId: req.auth.userId },
+    update: {
+      termsVersion: AI_TERMS_VERSION,
+      aiProcessing,
+      personalization,
+      memoryEnabled,
+      grantedAt: aiProcessing ? now : null,
+      revokedAt: aiProcessing ? null : now
+    },
+    create: {
+      userId: req.auth.userId,
+      termsVersion: AI_TERMS_VERSION,
+      aiProcessing,
+      personalization,
+      memoryEnabled,
+      grantedAt: aiProcessing ? now : null,
+      revokedAt: aiProcessing ? null : now
+    }
+  });
+
+  res.json(consent);
+});
+
+app.get("/users/:userId/subscription", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const entitlement = await prisma.subscriptionEntitlement.upsert({
+    where: { userId: req.auth.userId },
+    update: {},
+    create: { userId: req.auth.userId }
+  });
+
+  res.json(entitlement);
+});
+
+app.post("/reports", async (req, res) => {
+  const { reportedUserId, messageId, category, details } = req.body;
+
+  if (!REPORT_CATEGORIES.has(category)) {
+    return res.status(400).json({ error: "Invalid report category" });
+  }
+
+  if (!reportedUserId && !messageId) {
+    return res.status(400).json({
+      error: "A reported user or message is required"
+    });
+  }
+
+  if (reportedUserId === req.auth.userId) {
+    return res.status(400).json({ error: "You cannot report yourself" });
+  }
+
+  const [reportedUser, message] = await Promise.all([
+    reportedUserId
+      ? prisma.user.findUnique({ where: { id: reportedUserId } })
+      : Promise.resolve(null),
+    messageId
+      ? prisma.message.findUnique({ where: { id: messageId } })
+      : Promise.resolve(null)
+  ]);
+
+  if ((reportedUserId && !reportedUser) || (messageId && !message)) {
+    return res.status(404).json({ error: "Reported content was not found" });
+  }
+
+  const report = await prisma.report.create({
+    data: {
+      reporterId: req.auth.userId,
+      reportedUserId: reportedUserId || null,
+      messageId: messageId || null,
+      category,
+      details:
+        typeof details === "string" && details.trim()
+          ? details.trim().slice(0, 2000)
+          : null
+    }
+  });
+
+  res.status(201).json(report);
 });
 
 // =========================================================
@@ -1097,19 +1347,82 @@ app.post("/users/:userId/flowers", async (req, res) => {
       where: {
         id: req.params.userId,
       },
+      select: {
+        id: true,
+        timezone: true,
+        aiConsent: {
+          select: { aiProcessing: true }
+        }
+      }
     });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { mood, event } = req.body;
+    const event =
+      typeof req.body.event === "string"
+        ? req.body.event.trim().slice(0, 2000)
+        : "";
+    let mood =
+      typeof req.body.mood === "string"
+        ? req.body.mood.trim().toLowerCase()
+        : "";
+    let emotionSource = "USER";
+    let aiMetadata = null;
 
     if (!mood) {
-      return res.status(400).json({ error: "Mood is required" });
+      if (!event) {
+        return res.status(400).json({
+          error: "Choose a mood or write an optional journal entry"
+        });
+      }
+
+      if (!user.aiConsent?.aiProcessing) {
+        return res.status(403).json({
+          error: "AI mood analysis requires your consent. Choose a mood manually or enable AI processing."
+        });
+      }
+
+      const startedAt = Date.now();
+      mood = await predictMood(event);
+      emotionSource = "MODEL";
+      aiMetadata = {
+        task: "EMOTION_CLASSIFICATION",
+        provider: "LOCAL",
+        model: "natural-mood-classifier",
+        inputHash: hashAiInput(event),
+        outputLabel: mood,
+        latencyMs: Date.now() - startedAt,
+        success: true
+      };
+    }
+
+    if (!Object.hasOwn(flowerDB, mood)) {
+      return res.status(400).json({ error: "Unsupported mood" });
     }
 
     const garden = await ensureGarden(user.id);
+    const timezone = normalizeTimezone(user.timezone) || "UTC";
+    const localDate = getLocalDate(timezone);
+
+    const existingCheckIn = await prisma.dailyCheckIn.findUnique({
+      where: {
+        userId_localDate: {
+          userId: user.id,
+          localDate
+        }
+      },
+      include: { flower: { include: { messages: true } } }
+    });
+
+    if (existingCheckIn) {
+      return res.status(409).json({
+        error: "You have already completed today's check-in",
+        checkInId: existingCheckIn.id,
+        flower: existingCheckIn.flower
+      });
+    }
 
     const existingFlowers = await prisma.flower.findMany({
       where: {
@@ -1131,27 +1444,89 @@ const chosen =
 const position =
   getNonOverlappingPosition(existingFlowers);
 
-const flower = await prisma.flower.create({
-  data: {
-    mood,
-    event: event || "",
-    name: chosen.name,
-    meaning: chosen.meaning,
-    img: chosen.img,
-    left: position.left,
-    top: position.top,
-    supportCount: 0,
-    userId: user.id,
-    gardenId: garden.id,
-  },
-  include: {
-    messages: true,
-  },
+const flower = await prisma.$transaction(async (tx) => {
+  const checkIn = await tx.dailyCheckIn.create({
+    data: {
+      userId: user.id,
+      localDate,
+      timezone,
+      ...(event
+        ? {
+            journal: {
+              create: {
+                userId: user.id,
+                content: event
+              }
+            }
+          }
+        : {}),
+      emotionResult: {
+        create: {
+          userId: user.id,
+          label: mood,
+          source: emotionSource,
+          modelVersion:
+            emotionSource === "MODEL"
+              ? "natural-mood-classifier"
+              : null
+        }
+      }
+    }
+  });
+
+  const createdFlower = await tx.flower.create({
+    data: {
+      mood,
+      event,
+      name: chosen.name,
+      meaning: chosen.meaning,
+      img: chosen.img,
+      left: position.left,
+      top: position.top,
+      supportCount: 0,
+      userId: user.id,
+      gardenId: garden.id,
+      dailyCheckInId: checkIn.id
+    },
+    include: { messages: true }
+  });
+
+  if (aiMetadata) {
+    await tx.aiInteractionMetadata.create({
+      data: {
+        userId: user.id,
+        dailyCheckInId: checkIn.id,
+        ...aiMetadata
+      }
+    });
+  }
+
+  await tx.fairyState.upsert({
+    where: { userId: user.id },
+    update: {
+      onboardingStep: "GARDEN_UNLOCKED",
+      onboardingCompleted: true,
+      lastEvent: "FLOWER_BLOOM"
+    },
+    create: {
+      userId: user.id,
+      onboardingStep: "GARDEN_UNLOCKED",
+      onboardingCompleted: true,
+      lastEvent: "FLOWER_BLOOM"
+    }
+  });
+
+  return createdFlower;
 });
 
     res.status(201).json(flower);
   } catch (err) {
     console.error("POST /users/:userId/flowers error:", err);
+    if (err?.code === "P2002") {
+      return res.status(409).json({
+        error: "You have already completed today's check-in"
+      });
+    }
     res.status(500).json({ error: "Failed to create flower" });
   }
 });
@@ -1735,7 +2110,33 @@ app.post("/analyze-mood", async (req, res) => {
       return res.status(400).json({ error: "Text is required" });
     }
 
-    const mood = await predictMood(text);
+    const consent = await prisma.aiConsent.findUnique({
+      where: { userId: req.auth.userId }
+    });
+
+    if (!consent?.aiProcessing) {
+      return res.status(403).json({
+        error: "AI mood analysis requires your consent"
+      });
+    }
+
+    const normalizedText = text.trim().slice(0, 2000);
+    const startedAt = Date.now();
+    const mood = await predictMood(normalizedText);
+
+    await prisma.aiInteractionMetadata.create({
+      data: {
+        userId: req.auth.userId,
+        task: "EMOTION_CLASSIFICATION",
+        provider: "LOCAL",
+        model: "natural-mood-classifier",
+        inputHash: hashAiInput(normalizedText),
+        outputLabel: mood,
+        latencyMs: Date.now() - startedAt,
+        success: true
+      }
+    });
+
     res.json({ mood });
   } catch (err) {
     console.error("Mood analysis error:", err);

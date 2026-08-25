@@ -9,6 +9,7 @@ function RegisterForm({ onRegister }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState("🦋");
+  const [aiConsent, setAiConsent] = useState(false);
 
   const [message, setMessage] = useState("");
   const [accountId, setAccountId] = useState("");
@@ -57,6 +58,9 @@ function RegisterForm({ onRegister }) {
             email: trimmedEmail,
             password,
             avatar,
+            timezone:
+              Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+            aiConsent,
           }),
         }
       );
@@ -209,6 +213,18 @@ function RegisterForm({ onRegister }) {
         <option value="🐝">🐝 Bee</option>
         <option value="🐦">🐦 Bird</option>
       </select>
+
+      <label className="consent-option" htmlFor="registerAiConsent">
+        <input
+          id="registerAiConsent"
+          type="checkbox"
+          checked={aiConsent}
+          disabled={isLoading}
+          onChange={(event) => setAiConsent(event.target.checked)}
+        />
+        Allow PetalPal to analyze optional journal text for mood detection.
+        You can change this later.
+      </label>
 
       <button
         id="registerBtn"

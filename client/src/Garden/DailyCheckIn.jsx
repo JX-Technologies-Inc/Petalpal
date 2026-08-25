@@ -11,9 +11,9 @@ function DailyCheckIn({ onBloom, disabled = false }) {
   async function handleSubmit() {
     const trimmedEvent = eventText.trim();
 
-    if (!trimmedEvent) {
+    if (!trimmedEvent && !selectedMood) {
       setMessage(
-        "Please write what happened today."
+        "Choose a mood, or write an optional journal entry for AI detection."
       );
       return;
     }
@@ -50,7 +50,7 @@ function DailyCheckIn({ onBloom, disabled = false }) {
 
       <textarea
         id="eventInput"
-        placeholder="What happened today?"
+        placeholder="Optional: what happened today?"
         value={eventText}
         disabled={disabled || isSubmitting}
         onChange={(event) =>

@@ -17,6 +17,7 @@ model User {
   email        String?  @unique
   passwordHash String?
   avatar       String   @default("🦋")
+  timezone     String   @default("UTC") @db.VarChar(64)
   createdAt    DateTime @default(now())
 
   garden       Garden?
@@ -29,6 +30,16 @@ model User {
 
   sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
   receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
+
+  dailyCheckIns           DailyCheckIn[]
+  journals                Journal[]
+  emotionResults          EmotionResult[]
+  fairyState              FairyState?
+  reportsCreated          Report[]                 @relation("ReportReporter")
+  reportsReceived         Report[]                 @relation("ReportTargetUser")
+  aiConsent               AiConsent?
+  aiInteractions          AiInteractionMetadata[]
+  subscriptionEntitlement SubscriptionEntitlement?
 }
 
 model Garden {
@@ -54,12 +65,14 @@ model Flower {
   supportCount Int      @default(0)
   createdAt    DateTime @default(now())
 
-  userId   String
-  gardenId String
+  userId         String
+  gardenId       String
+  dailyCheckInId String? @unique
 
-  user     User      @relation(fields: [userId], references: [id])
-  garden   Garden    @relation(fields: [gardenId], references: [id])
-  messages Message[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  garden       Garden        @relation(fields: [gardenId], references: [id], onDelete: Cascade)
+  dailyCheckIn DailyCheckIn? @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
+  messages     Message[]
 }
 
 model Message {
@@ -71,8 +84,9 @@ model Message {
   flowerId String
   userId   String?
 
-  flower Flower @relation(fields: [flowerId], references: [id])
-  user   User?  @relation(fields: [userId], references: [id])
+  flower  Flower   @relation(fields: [flowerId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
+  reports Report[]
 }
 
 model VisitRecord {
@@ -114,4 +128,173 @@ model FriendRequest {
   receiver User @relation("ReceivedFriendRequests", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([senderId, receiverId])
+}
+
+model DailyCheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  localDate String   @db.VarChar(10)
+  timezone  String   @default("UTC") @db.VarChar(64)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user           User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journal        Journal?
+  emotionResult  EmotionResult?
+  flower         Flower?
+  aiInteractions AiInteractionMetadata[]
+
+  @@unique([userId, localDate])
+  @@index([userId, createdAt])
+}
+
+model Journal {
+  id             String   @id @default(cuid())
+  userId         String
+  dailyCheckInId String   @unique
+  content        String   @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyCheckIn DailyCheckIn @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model EmotionResult {
+  id             String        @id @default(cuid())
+  userId         String
+  dailyCheckInId String        @unique
+  label          String        @db.VarChar(32)
+  source         EmotionSource
+  confidence     Float?
+  modelVersion   String?       @db.VarChar(128)
+  createdAt      DateTime      @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyCheckIn DailyCheckIn @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model FairyState {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  onboardingStep      String   @default("EMPTY_GARDEN") @db.VarChar(64)
+  onboardingCompleted Boolean  @default(false)
+  lastEvent           String?  @db.VarChar(64)
+  unlockedFeatures    Json     @default("[]")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id             String         @id @default(cuid())
+  reporterId     String
+  reportedUserId String?
+  messageId      String?
+  category       ReportCategory
+  details        String?        @db.Text
+  status         ReportStatus   @default(PENDING)
+  resolutionNote String?        @db.Text
+  createdAt      DateTime       @default(now())
+  reviewedAt     DateTime?
+
+  reporter     User     @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser User?    @relation("ReportTargetUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+  message      Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@index([reporterId, createdAt])
+  @@index([status, createdAt])
+}
+
+model AiConsent {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  termsVersion    String    @db.VarChar(32)
+  aiProcessing    Boolean   @default(false)
+  personalization Boolean   @default(false)
+  memoryEnabled   Boolean   @default(false)
+  grantedAt       DateTime?
+  revokedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AiInteractionMetadata {
+  id             String   @id @default(cuid())
+  userId         String
+  dailyCheckInId String?
+  task           String   @db.VarChar(64)
+  provider       String   @db.VarChar(64)
+  model          String   @db.VarChar(128)
+  inputHash      String?  @db.VarChar(64)
+  outputLabel    String?  @db.VarChar(64)
+  confidence     Float?
+  latencyMs      Int?
+  inputTokens    Int?
+  outputTokens   Int?
+  success        Boolean  @default(true)
+  errorCode      String?  @db.VarChar(64)
+  createdAt      DateTime @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyCheckIn DailyCheckIn? @relation(fields: [dailyCheckInId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([task, createdAt])
+}
+
+model SubscriptionEntitlement {
+  id                     String             @id @default(cuid())
+  userId                 String             @unique
+  tier                   SubscriptionTier   @default(FREE)
+  status                 SubscriptionStatus @default(INACTIVE)
+  source                 String?            @db.VarChar(32)
+  externalCustomerId     String?            @unique @db.VarChar(191)
+  externalSubscriptionId String?            @unique @db.VarChar(191)
+  currentPeriodEnd       DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum EmotionSource {
+  USER
+  MODEL
+}
+
+enum ReportCategory {
+  HARASSMENT
+  HATE_SPEECH
+  SELF_HARM
+  SPAM
+  PRIVACY
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+enum SubscriptionTier {
+  FREE
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  ACTIVE
+  GRACE_PERIOD
+  EXPIRED
+  CANCELED
 }

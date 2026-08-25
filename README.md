@@ -201,11 +201,23 @@ Generate Prisma Client:
 npx prisma generate
 ```
 
-Sync the database:
+Apply versioned database migrations on a fresh database:
 
 ```bash
-npx prisma db push
+npx prisma migrate deploy
 ```
+
+If the database was created by an older PetalPal version using
+`prisma db push`, baseline the existing tables once before deployment:
+
+```bash
+npx prisma migrate resolve --applied 202608250000_baseline
+npx prisma migrate deploy
+```
+
+Back up production data before the first migration. Do not run the baseline
+command on an empty database; fresh databases should run `migrate deploy`
+directly.
 
 Start the backend:
 

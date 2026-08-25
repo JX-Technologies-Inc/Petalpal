@@ -739,30 +739,6 @@ import {
         );
       }
   
-      let finalMood = mood;
-  
-      if (!finalMood) {
-        const analysis =
-          await apiRequest(
-            "/analyze-mood",
-            {
-              method: "POST",
-  
-              body: JSON.stringify({
-                text: event
-              })
-            }
-          );
-  
-        finalMood = analysis?.mood;
-      }
-  
-      if (!finalMood) {
-        throw new Error(
-          "PetalPal could not detect a mood."
-        );
-      }
-  
       const newFlower =
         await apiRequest(
           `/users/${encodeURIComponent(
@@ -772,7 +748,7 @@ import {
             method: "POST",
   
             body: JSON.stringify({
-              mood: finalMood,
+              mood,
               event
             })
           }
