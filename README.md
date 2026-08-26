@@ -188,7 +188,11 @@ npx prisma migrate deploy
 
 ### Persistent Fairy runtime
 
-The Render backend owns the Fairy runtime state. `FairyState` stores the current semantic state and location plus `stateStartedAt`, `nextTransitionAt`, and `lastActiveAt`. Session and Fairy-state reads reconcile elapsed time, including multiple transitions while the user was offline. A recent single transition returns `runtimeTransition.shouldAnimate=true`; older offline transitions return the final state without replaying every animation.
+The Render backend owns the Fairy runtime state. `FairyState` stores resumable onboarding progress; each owned `UserFairy` has its own `FairyRuntime` with semantic states, locations, timestamps, transition ID, and version. Runtime reads reconcile elapsed offline time. One recent transition may animate; multiple elapsed transitions return only the final state.
+
+The collection-ready Fairy design, ownership rules, monthly activity unlocks, API contracts, and frontend boundary are documented in [`docs/fairy-backend.md`](docs/fairy-backend.md). Legacy runtime columns on `FairyState` remain temporarily only for migration compatibility.
+
+All monthly Fairy rewards use one centralized rule: 20 distinct `DailyCheckIn` local calendar days within the same month. Days do not need to be consecutive, progress resets by month without deleting history, and journal text remains optional.
 
 Build and start the application:
 

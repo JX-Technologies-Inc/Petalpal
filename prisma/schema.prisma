@@ -41,6 +41,8 @@ model User {
   aiConsent               AiConsent?
   aiInteractions          AiInteractionMetadata[]
   subscriptionEntitlement SubscriptionEntitlement?
+  fairies                 UserFairy[]
+  fairyMonthlyProgress    FairyMonthlyProgress[]
 }
 
 model Garden {
@@ -194,6 +196,7 @@ model FairyState {
   onboardingCompleted Boolean   @default(false)
   lastEvent           String?   @db.VarChar(64)
   unlockedFeatures    Json      @default("[]")
+  /// Deprecated runtime columns retained temporarily for a safe production migration.
   currentState        String    @default("IDLE") @db.VarChar(32)
   currentLocation     String    @default("GARDEN_CENTER") @db.VarChar(32)
   stateStartedAt      DateTime?
@@ -203,6 +206,65 @@ model FairyState {
   updatedAt           DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserFairy {
+  id           String   @id @default(cuid())
+  userId       String
+  fairyType    String   @db.VarChar(64)
+  name         String   @db.VarChar(64)
+  unlockSource String   @db.VarChar(32)
+  unlockMonth  String?  @db.VarChar(7)
+  isActive     Boolean  @default(false)
+  level        Int      @default(1)
+  progression  Int      @default(0)
+  unlockedAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runtime       FairyRuntime?
+  monthlyUnlock FairyMonthlyProgress?
+
+  @@unique([userId, fairyType])
+  @@unique([userId, unlockMonth])
+  @@index([userId, unlockedAt])
+}
+
+model FairyRuntime {
+  id               String    @id @default(cuid())
+  userFairyId      String    @unique
+  currentState     String    @default("IDLE") @db.VarChar(32)
+  currentLocation  String    @default("DEFAULT_AREA") @db.VarChar(32)
+  previousState    String?   @db.VarChar(32)
+  previousLocation String?   @db.VarChar(32)
+  stateStartedAt   DateTime?
+  nextTransitionAt DateTime?
+  lastActiveAt     DateTime?
+  transitionId     String?   @db.VarChar(64)
+  runtimeVersion   Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  fairy UserFairy @relation(fields: [userFairyId], references: [id], onDelete: Cascade)
+}
+
+model FairyMonthlyProgress {
+  id                String   @id @default(cuid())
+  userId            String
+  month             String   @db.VarChar(7)
+  activeDays        Int      @default(0)
+  requiredDays      Int
+  unlockedThisMonth Boolean  @default(false)
+  unlockedFairyId   String?  @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unlockedFairy UserFairy? @relation(fields: [unlockedFairyId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, month])
+  @@index([userId, month])
 }
 
 model Report {

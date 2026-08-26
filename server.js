@@ -10,7 +10,17 @@ import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
 import { generateFlowerMetadata } from "./lib/flower-engine.js";
-import { reconcileFairyRuntime } from "./lib/fairy-runtime.js";
+import {
+  reconcileFairyRuntime,
+  formatFairyRuntimeResponse
+} from "./lib/fairy-runtime.js";
+import {
+  STARTER_FAIRY,
+  MONTHLY_FAIRY_UNLOCK_ACTIVE_DAYS,
+  withOnboardingGuideFairy,
+  nextUnlockableFairy
+} from "./lib/fairy-config.js";
+import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -195,6 +205,22 @@ const FAIRY_STEPS = new Set([
   "FLOWER_BLOOM",
   "GARDEN_UNLOCKED"
 ]);
+const FAIRY_STEP_ORDER = [
+  "EMPTY_GARDEN",
+  "FAIRY_APPEARS",
+  "MOOD_SELECTION",
+  "PLANT_FIRST_FLOWER",
+  "FLOWER_BLOOM",
+  "GARDEN_UNLOCKED"
+];
+const FAIRY_ONBOARDING_EVENTS = {
+  EMPTY_GARDEN: "FIRST_LOGIN",
+  FAIRY_APPEARS: "FAIRY_APPEARS",
+  MOOD_SELECTION: "FIRST_MOOD_SELECTION",
+  PLANT_FIRST_FLOWER: "FIRST_FLOWER",
+  FLOWER_BLOOM: "FIRST_FLOWER_BLOOM",
+  GARDEN_UNLOCKED: "ONBOARDING_COMPLETE"
+};
 
 function normalizeTimezone(value) {
   const timezone =
@@ -229,18 +255,118 @@ function hashAiInput(text) {
   return createHash("sha256").update(text).digest("hex");
 }
 
-async function getReconciledFairyState(userId, now = new Date()) {
-  const existing = await prisma.fairyState.upsert({
-    where: { userId },
-    update: {},
-    create: { userId }
+async function lockTransaction(tx, namespace, value) {
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`${namespace}:${value}`}))`;
+}
+
+async function ensureStarterFairy(userId) {
+  return prisma.$transaction(async (tx) => {
+    await lockTransaction(tx, "fairy-owner", userId);
+    const [existingStarter, activeFairy] = await Promise.all([
+      tx.userFairy.findUnique({
+        where: { userId_fairyType: { userId, fairyType: STARTER_FAIRY.type } },
+        include: { runtime: true }
+      }),
+      tx.userFairy.findFirst({ where: { userId, isActive: true } })
+    ]);
+
+    const starter = existingStarter || await tx.userFairy.create({
+      data: {
+        userId,
+        fairyType: STARTER_FAIRY.type,
+        name: STARTER_FAIRY.name,
+        unlockSource: STARTER_FAIRY.unlockSource,
+        isActive: !activeFairy,
+        runtime: { create: {} }
+      },
+      include: { runtime: true }
+    });
+
+    if (!starter.runtime) {
+      await tx.fairyRuntime.create({ data: { userFairyId: starter.id } });
+    }
+    return activeFairy || starter;
   });
-  const runtime = reconcileFairyRuntime(existing, now);
-  const fairyState = await prisma.fairyState.update({
-    where: { userId },
-    data: runtime.update
+}
+
+async function ensureStarterFairyInTransaction(tx, userId) {
+  await lockTransaction(tx, "fairy-owner", userId);
+  const existing = await tx.userFairy.findUnique({
+    where: { userId_fairyType: { userId, fairyType: STARTER_FAIRY.type } }
   });
-  return { ...fairyState, runtimeTransition: runtime.transition };
+  if (existing) {
+    await tx.fairyRuntime.upsert({
+      where: { userFairyId: existing.id },
+      update: {},
+      create: { userFairyId: existing.id }
+    });
+    return existing;
+  }
+  const active = await tx.userFairy.findFirst({ where: { userId, isActive: true } });
+  return tx.userFairy.create({
+    data: {
+      userId,
+      fairyType: STARTER_FAIRY.type,
+      name: STARTER_FAIRY.name,
+      unlockSource: STARTER_FAIRY.unlockSource,
+      isActive: !active,
+      runtime: { create: {} }
+    }
+  });
+}
+
+async function syncMonthlyFairyProgress(tx, userId, month) {
+  await lockTransaction(tx, "fairy-progress", userId);
+  const [activeDays, owned] = await Promise.all([
+    tx.dailyCheckIn.count({
+      where: { userId, localDate: { startsWith: `${month}-` } }
+    }),
+    tx.userFairy.findMany({
+      where: { userId },
+      select: { fairyType: true }
+    })
+  ]);
+  const nextFairy = nextUnlockableFairy(owned.map(({ fairyType }) => fairyType));
+  const requiredDays = MONTHLY_FAIRY_UNLOCK_ACTIVE_DAYS;
+  let progress = await tx.fairyMonthlyProgress.upsert({
+    where: { userId_month: { userId, month } },
+    update: { activeDays, requiredDays },
+    create: { userId, month, activeDays, requiredDays }
+  });
+  let unlockedFairy = progress.unlockedFairyId
+    ? await tx.userFairy.findUnique({ where: { id: progress.unlockedFairyId } })
+    : null;
+
+  if (!progress.unlockedThisMonth && nextFairy && activeDays >= requiredDays) {
+    unlockedFairy = await tx.userFairy.upsert({
+      where: { userId_unlockMonth: { userId, unlockMonth: month } },
+      update: {},
+      create: {
+        userId,
+        fairyType: nextFairy.type,
+        name: nextFairy.name,
+        unlockSource: nextFairy.unlockSource,
+        unlockMonth: month,
+        isActive: false,
+        runtime: { create: {} }
+      }
+    });
+    progress = await tx.fairyMonthlyProgress.update({
+      where: { id: progress.id },
+      data: {
+        unlockedThisMonth: true,
+        unlockedFairyId: unlockedFairy.id
+      }
+    });
+  }
+
+  return {
+    ...normalizeProgress(progress),
+    nextFairy: nextFairy
+      ? { type: nextFairy.type, name: nextFairy.name }
+      : null,
+    unlockedFairy
+  };
 }
 
 async function getUser(userId) {
@@ -956,7 +1082,11 @@ app.get("/session", async (req, res) => {
   const localDate = getLocalDate(timezone);
 
   const [fairyState, todayCheckIn, garden] = await Promise.all([
-    getReconciledFairyState(user.id),
+    prisma.fairyState.upsert({
+      where: { userId: user.id },
+      update: {},
+      create: { userId: user.id }
+    }),
     prisma.dailyCheckIn.findUnique({
       where: {
         userId_localDate: {
@@ -975,7 +1105,7 @@ app.get("/session", async (req, res) => {
 
   res.json({
     user,
-    fairyState,
+    fairyState: withOnboardingGuideFairy(fairyState),
     todayCheckIn,
     hasCheckedInToday: Boolean(todayCheckIn),
     garden
@@ -1002,33 +1132,189 @@ app.get("/users/:userId/check-ins", async (req, res) => {
 app.get("/users/:userId/fairy-state", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 
-  const fairyState = await getReconciledFairyState(req.auth.userId);
+  const fairyState = await prisma.fairyState.upsert({
+    where: { userId: req.auth.userId },
+    update: {},
+    create: { userId: req.auth.userId }
+  });
 
-  res.json(fairyState);
+  res.json(withOnboardingGuideFairy(fairyState));
+});
+
+app.get("/api/fairies", async (req, res) => {
+  const onboarding = await prisma.fairyState.findUnique({
+    where: { userId: req.auth.userId },
+    select: { onboardingCompleted: true }
+  });
+  if (onboarding?.onboardingCompleted) {
+    await ensureStarterFairy(req.auth.userId);
+  }
+  const fairies = await prisma.userFairy.findMany({
+    where: { userId: req.auth.userId },
+    orderBy: { unlockedAt: "asc" },
+    select: {
+      id: true,
+      fairyType: true,
+      name: true,
+      unlockSource: true,
+      unlockMonth: true,
+      unlockedAt: true,
+      isActive: true,
+      level: true,
+      progression: true
+    }
+  });
+  res.json({
+    fairies: fairies.map(({ fairyType, ...fairy }) => ({
+      ...fairy,
+      type: fairyType
+    })),
+    activeFairyId: fairies.find(({ isActive }) => isActive)?.id || null
+  });
+});
+
+app.put("/api/fairies/:fairyId/active", async (req, res) => {
+  try {
+    const activeFairy = await prisma.$transaction(async (tx) => {
+      await lockTransaction(tx, "fairy-owner", req.auth.userId);
+      const owned = await tx.userFairy.findFirst({
+        where: { id: req.params.fairyId, userId: req.auth.userId }
+      });
+      if (!owned) return null;
+      await tx.userFairy.updateMany({
+        where: { userId: req.auth.userId, isActive: true },
+        data: { isActive: false }
+      });
+      return tx.userFairy.update({
+        where: { id: owned.id },
+        data: { isActive: true }
+      });
+    });
+    if (!activeFairy) return res.status(404).json({ error: "Fairy not owned" });
+    res.json({
+      activeFairyId: activeFairy.id,
+      fairy: {
+        id: activeFairy.id,
+        type: activeFairy.fairyType,
+        name: activeFairy.name
+      }
+    });
+  } catch (error) {
+    console.error("PUT /api/fairies/:fairyId/active error:", error);
+    res.status(500).json({ error: "Unable to select active Fairy" });
+  }
+});
+
+app.get("/api/fairy/progress", async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.auth.userId },
+    select: { timezone: true }
+  });
+  if (!user) return res.status(404).json({ error: "User not found" });
+  const timezone = normalizeTimezone(user.timezone) || "UTC";
+  const requestedMonth = typeof req.query.month === "string" ? req.query.month : null;
+  const month = requestedMonth || monthFromLocalDate(getLocalDate(timezone));
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+    return res.status(400).json({ error: "month must use YYYY-MM format" });
+  }
+  const progress = await prisma.$transaction((tx) =>
+    syncMonthlyFairyProgress(tx, req.auth.userId, month)
+  );
+  res.json(progress);
+});
+
+app.get("/api/fairy/runtime", async (req, res) => {
+  try {
+    const onboarding = await prisma.fairyState.findUnique({
+      where: { userId: req.auth.userId },
+      select: { onboardingCompleted: true }
+    });
+    if (!onboarding?.onboardingCompleted) {
+      return res.status(409).json({
+        error: "Complete onboarding before starting the Fairy runtime",
+        onboardingCompleted: false
+      });
+    }
+
+    await ensureStarterFairy(req.auth.userId);
+    const user = await prisma.user.findUnique({
+      where: { id: req.auth.userId },
+      select: { timezone: true }
+    });
+    const result = await prisma.$transaction(async (tx) => {
+      let activeFairy = await tx.userFairy.findFirst({
+        where: { userId: req.auth.userId, isActive: true },
+        include: { runtime: true }
+      });
+      if (!activeFairy) throw new Error("ACTIVE_FAIRY_NOT_FOUND");
+      await lockTransaction(tx, "fairy-runtime", activeFairy.id);
+      activeFairy = await tx.userFairy.findUnique({
+        where: { id: activeFairy.id },
+        include: { runtime: true }
+      });
+      const runtime = activeFairy.runtime || await tx.fairyRuntime.create({
+        data: { userFairyId: activeFairy.id }
+      });
+      const reconciled = reconcileFairyRuntime(runtime, {
+        now: new Date(),
+        timezone: normalizeTimezone(user?.timezone) || "UTC"
+      });
+      const persisted = await tx.fairyRuntime.update({
+        where: { userFairyId: activeFairy.id },
+        data: reconciled.update
+      });
+      return formatFairyRuntimeResponse(
+        activeFairy,
+        persisted,
+        reconciled.transition
+      );
+    });
+    res.json(result);
+  } catch (error) {
+    console.error("GET /api/fairy/runtime error:", error);
+    res.status(500).json({ error: "Unable to load Fairy runtime" });
+  }
 });
 
 app.put("/users/:userId/fairy-state", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 
-  const { onboardingStep, onboardingCompleted, lastEvent, unlockedFeatures } =
-    req.body;
+  const { onboardingStep, lastEvent, unlockedFeatures } = req.body;
 
   if (onboardingStep && !FAIRY_STEPS.has(onboardingStep)) {
     return res.status(400).json({ error: "Invalid onboarding step" });
+  }
+  if (["FLOWER_BLOOM", "GARDEN_UNLOCKED"].includes(onboardingStep)) {
+    return res.status(400).json({
+      error: "Flower completion steps are controlled by the backend"
+    });
   }
 
   if (unlockedFeatures && !Array.isArray(unlockedFeatures)) {
     return res.status(400).json({ error: "unlockedFeatures must be an array" });
   }
 
+  const existing = await prisma.fairyState.findUnique({
+    where: { userId: req.auth.userId }
+  });
+  if (existing?.onboardingCompleted) {
+    return res.json(withOnboardingGuideFairy(existing));
+  }
+  if (onboardingStep && existing) {
+    const currentIndex = FAIRY_STEP_ORDER.indexOf(existing.onboardingStep);
+    const requestedIndex = FAIRY_STEP_ORDER.indexOf(onboardingStep);
+    if (requestedIndex < currentIndex) {
+      return res.status(409).json({ error: "Onboarding cannot move backwards" });
+    }
+  }
+
   const data = {
     ...(onboardingStep ? { onboardingStep } : {}),
-    ...(typeof onboardingCompleted === "boolean"
-      ? { onboardingCompleted }
-      : {}),
-    ...(typeof lastEvent === "string"
-      ? { lastEvent: lastEvent.slice(0, 64) }
-      : {}),
+    ...(onboardingStep
+      ? { lastEvent: FAIRY_ONBOARDING_EVENTS[onboardingStep] }
+      : typeof lastEvent === "string"
+        ? { lastEvent: lastEvent.slice(0, 64) }
+        : {}),
     ...(Array.isArray(unlockedFeatures)
       ? { unlockedFeatures: unlockedFeatures.slice(0, 50) }
       : {})
@@ -1040,7 +1326,7 @@ app.put("/users/:userId/fairy-state", async (req, res) => {
     create: { userId: req.auth.userId, ...data }
   });
 
-  res.json(fairyState);
+  res.json(withOnboardingGuideFairy(fairyState));
 });
 
 app.get("/users/:userId/ai-consent", async (req, res) => {
@@ -1851,20 +2137,27 @@ const flower = await prisma.$transaction(async (tx) => {
     update: {
       onboardingStep: "GARDEN_UNLOCKED",
       onboardingCompleted: true,
-      lastEvent: "FLOWER_BLOOM"
+      lastEvent: "ONBOARDING_COMPLETE"
     },
     create: {
       userId: user.id,
       onboardingStep: "GARDEN_UNLOCKED",
       onboardingCompleted: true,
-      lastEvent: "FLOWER_BLOOM"
+      lastEvent: "ONBOARDING_COMPLETE"
     }
   });
 
-  return createdFlower;
+  await ensureStarterFairyInTransaction(tx, user.id);
+  const fairyProgress = await syncMonthlyFairyProgress(
+    tx,
+    user.id,
+    monthFromLocalDate(localDate)
+  );
+
+  return { createdFlower, fairyProgress };
 });
 
-    res.status(201).json(flower);
+    res.status(201).json({ ...flower.createdFlower, fairyProgress: flower.fairyProgress });
   } catch (err) {
     console.error("POST /users/:userId/flowers error:", err);
     if (err?.code === "P2002") {
