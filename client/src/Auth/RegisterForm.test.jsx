@@ -33,6 +33,7 @@ describe("RegisterForm", () => {
     );
     expect(await screen.findByRole("heading", { name: /verify your email/i })).toBeInTheDocument();
     expect(screen.getByText(/verification link to bloom@example\.com/i)).toBeInTheDocument();
+    expect(screen.getByText(/open it on any device/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /use passwordless login instead/i })).not.toBeInTheDocument();
   });
 

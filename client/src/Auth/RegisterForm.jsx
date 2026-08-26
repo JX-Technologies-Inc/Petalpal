@@ -67,7 +67,7 @@ function RegisterForm({ onLogin }) {
       });
       setEmail(registeredUser?.email || email.trim());
       setAwaitingVerification(true);
-      setMessage("Account created. Check your email and click the verification link. Return here after verification to continue to Onboarding.");
+      setMessage("Account created. Open the verification link on any device, then return to this page to continue to Onboarding.");
     } catch (error) {
       setMessage(error.message || "Unable to create account.");
     } finally {
@@ -83,7 +83,7 @@ function RegisterForm({ onLogin }) {
           {email
             ? `We sent a verification link to ${email}.`
             : "We sent a verification link to your registered email."}
-          {" "}Click it once, then return to PetalPal.
+          {" "}You can open it on any device. After verifying, return to this page and click the button below.
         </p>
         <button type="button" disabled={isLoading} onClick={() => void finishRegistration()}>
           {isLoading ? "Checking..." : "I’ve Verified My Email"}

@@ -114,7 +114,7 @@ export async function completeVerifiedRegistration() {
   }
   await user.reload();
   if (!user.emailVerified) {
-    throw new Error("Email is not verified yet. Open the verification email, then return to PetalPal.");
+    throw new Error("Email is not verified yet. Open the verification link on any device, then click this button again.");
   }
   const profile = pendingPasswordRegistration() || {
     name: user.displayName || String(user.email || "").split("@")[0],
