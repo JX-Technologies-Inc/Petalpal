@@ -81,7 +81,8 @@ export async function loginWithPassword(email, password) {
 export async function registerWithPassword(email, password, profile) {
   const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
   await updateProfile(credential.user, { displayName: profile.name });
-  localStorage.setItem(PENDING_PASSWORD_PROFILE, JSON.stringify({ ...profile, email }));
+  const registrationEmail = credential.user.email || email;
+  localStorage.setItem(PENDING_PASSWORD_PROFILE, JSON.stringify({ ...profile, email: registrationEmail }));
   await sendEmailVerification(credential.user, { url: window.location.origin });
   return credential.user;
 }
@@ -95,15 +96,22 @@ export function pendingPasswordRegistration() {
 }
 
 export async function completeVerifiedRegistration() {
+  await firebaseAuth.authStateReady();
   const user = firebaseAuth.currentUser;
-  const profile = pendingPasswordRegistration();
-  if (!user || !profile) {
+  if (!user) {
     throw new Error("Your registration session is unavailable. Log in with your PetalPal password after verifying your email.");
   }
   await user.reload();
   if (!user.emailVerified) {
     throw new Error("Email is not verified yet. Open the verification email, then return to PetalPal.");
   }
+  const profile = pendingPasswordRegistration() || {
+    name: user.displayName || String(user.email || "").split("@")[0],
+    email: user.email,
+    avatar: "🦋",
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+    aiConsent: false
+  };
   const data = await syncUser(user, profile);
   localStorage.removeItem(PENDING_PASSWORD_PROFILE);
   return data;

@@ -6,15 +6,16 @@ import {
 } from "./firebaseSession";
 
 function RegisterForm({ onLogin }) {
+  const initialRegistration = pendingPasswordRegistration();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialRegistration?.email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState("🦋");
   const [aiConsent, setAiConsent] = useState(false);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [awaitingVerification, setAwaitingVerification] = useState(() => Boolean(pendingPasswordRegistration()));
+  const [awaitingVerification, setAwaitingVerification] = useState(Boolean(initialRegistration));
 
   const finishRegistration = useCallback(async ({ quiet = false } = {}) => {
     try {
@@ -50,12 +51,13 @@ function RegisterForm({ onLogin }) {
 
     try {
       setIsLoading(true);
-      await registerWithPassword(email.trim(), password, {
+      const registeredUser = await registerWithPassword(email.trim(), password, {
         name: name.trim(),
         avatar,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
         aiConsent
       });
+      setEmail(registeredUser?.email || email.trim());
       setAwaitingVerification(true);
       setMessage("Account created. Check your email and click the verification link. Return here after verification to continue to Onboarding.");
     } catch (error) {
@@ -69,7 +71,7 @@ function RegisterForm({ onLogin }) {
     return (
       <section className="auth-form" aria-live="polite">
         <h3>Verify Your Email</h3>
-        <p>We sent a verification link to {email || pendingPasswordRegistration()?.email}. Click it once, then return to PetalPal.</p>
+        <p>We sent a verification link to {email}. Click it once, then return to PetalPal.</p>
         <button type="button" disabled={isLoading} onClick={() => void finishRegistration()}>
           {isLoading ? "Checking..." : "I’ve Verified My Email"}
         </button>

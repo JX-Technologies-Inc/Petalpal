@@ -17,7 +17,7 @@ describe("RegisterForm", () => {
   });
 
   it("creates a Firebase password account and requests email verification", async () => {
-    registerWithPassword.mockResolvedValue();
+    registerWithPassword.mockResolvedValue({ email: "bloom@example.com" });
     render(<RegisterForm />);
     await userEvent.type(screen.getByLabelText(/display name/i), "Bloom");
     await userEvent.type(screen.getByLabelText(/^email$/i), "bloom@example.com");
@@ -30,6 +30,13 @@ describe("RegisterForm", () => {
       expect.objectContaining({ name: "Bloom" })
     );
     expect(await screen.findByRole("heading", { name: /verify your email/i })).toBeInTheDocument();
+    expect(screen.getByText(/verification link to bloom@example\.com/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /use passwordless login instead/i })).not.toBeInTheDocument();
+  });
+
+  it("restores the registration email while awaiting verification", () => {
+    pendingPasswordRegistration.mockReturnValue({ email: "saved@example.com" });
+    render(<RegisterForm />);
+    expect(screen.getByText(/verification link to saved@example\.com/i)).toBeInTheDocument();
   });
 });
