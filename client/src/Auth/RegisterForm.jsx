@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   completeVerifiedRegistration,
   pendingPasswordRegistration,
+  recoverPendingRegistrationEmail,
   registerWithPassword
 } from "./firebaseSession";
 
@@ -44,6 +45,13 @@ function RegisterForm({ onLogin }) {
     };
   }, [awaitingVerification, finishRegistration]);
 
+  useEffect(() => {
+    if (!awaitingVerification || email) return;
+    void recoverPendingRegistrationEmail().then((recoveredEmail) => {
+      if (recoveredEmail) setEmail(recoveredEmail);
+    });
+  }, [awaitingVerification, email]);
+
   async function handleRegister(event) {
     event.preventDefault();
     if (password.length < 6) return setMessage("Password must be at least 6 characters.");
@@ -71,7 +79,12 @@ function RegisterForm({ onLogin }) {
     return (
       <section className="auth-form" aria-live="polite">
         <h3>Verify Your Email</h3>
-        <p>We sent a verification link to {email}. Click it once, then return to PetalPal.</p>
+        <p>
+          {email
+            ? `We sent a verification link to ${email}.`
+            : "We sent a verification link to your registered email."}
+          {" "}Click it once, then return to PetalPal.
+        </p>
         <button type="button" disabled={isLoading} onClick={() => void finishRegistration()}>
           {isLoading ? "Checking..." : "I’ve Verified My Email"}
         </button>

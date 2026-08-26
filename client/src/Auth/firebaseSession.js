@@ -95,6 +95,17 @@ export function pendingPasswordRegistration() {
   }
 }
 
+export async function recoverPendingRegistrationEmail() {
+  await firebaseAuth.authStateReady();
+  const email = firebaseAuth.currentUser?.email || "";
+  if (!email) return "";
+  const profile = pendingPasswordRegistration();
+  if (profile && !profile.email) {
+    localStorage.setItem(PENDING_PASSWORD_PROFILE, JSON.stringify({ ...profile, email }));
+  }
+  return email;
+}
+
 export async function completeVerifiedRegistration() {
   await firebaseAuth.authStateReady();
   const user = firebaseAuth.currentUser;

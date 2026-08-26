@@ -2,11 +2,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RegisterForm from "./RegisterForm";
-import { pendingPasswordRegistration, registerWithPassword } from "./firebaseSession";
+import { pendingPasswordRegistration, recoverPendingRegistrationEmail, registerWithPassword } from "./firebaseSession";
 
 vi.mock("./firebaseSession", () => ({
   completeVerifiedRegistration: vi.fn(),
   pendingPasswordRegistration: vi.fn(),
+  recoverPendingRegistrationEmail: vi.fn(),
   registerWithPassword: vi.fn()
 }));
 
@@ -14,6 +15,7 @@ describe("RegisterForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     pendingPasswordRegistration.mockReturnValue(null);
+    recoverPendingRegistrationEmail.mockResolvedValue("");
   });
 
   it("creates a Firebase password account and requests email verification", async () => {
@@ -38,5 +40,12 @@ describe("RegisterForm", () => {
     pendingPasswordRegistration.mockReturnValue({ email: "saved@example.com" });
     render(<RegisterForm />);
     expect(screen.getByText(/verification link to saved@example\.com/i)).toBeInTheDocument();
+  });
+
+  it("never renders an empty email sentence for a legacy pending registration", () => {
+    pendingPasswordRegistration.mockReturnValue({ name: "Legacy Bloom" });
+    render(<RegisterForm />);
+    expect(screen.getByText(/verification link to your registered email/i)).toBeInTheDocument();
+    expect(screen.queryByText(/verification link to \s*\./i)).not.toBeInTheDocument();
   });
 });
