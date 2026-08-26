@@ -14,8 +14,8 @@ import { firebaseAuth, googleProvider } from "../firebase";
 const EMAIL_FOR_SIGN_IN = "emailForSignIn";
 const PENDING_PASSWORD_PROFILE = "petalPalPendingPasswordProfile";
 
-async function syncUser(user, profile = {}) {
-  const idToken = await user.getIdToken(true);
+async function syncUser(user, profile = {}, refreshedIdToken) {
+  const idToken = refreshedIdToken || await user.getIdToken(true);
   const response = await fetch(`${API_BASE_URL}/auth/session`, {
     method: "POST",
     headers: {
@@ -109,17 +109,21 @@ export async function recoverPendingRegistrationEmail() {
 
 export async function completeVerifiedRegistration() {
   await firebaseAuth.authStateReady();
-  const user = firebaseAuth.currentUser;
-  if (!user) {
+  if (!firebaseAuth.currentUser) {
     throw new Error("Your registration session is unavailable. Log in with your PetalPal password after verifying your email.");
   }
-  await user.reload();
-  if (!user.emailVerified) {
+  await firebaseAuth.currentUser.reload();
+  const refreshedUser = firebaseAuth.currentUser;
+  if (!refreshedUser) {
+    throw new Error("Your registration session is unavailable. Log in with your PetalPal password after verifying your email.");
+  }
+  const refreshedIdToken = await refreshedUser.getIdToken(true);
+  if (!refreshedUser.emailVerified) {
     throw new Error("Email is not verified yet. Open the verification link on any device, then click this button again.");
   }
-  const data = await syncUser(user, { deferProfileCreation: true });
+  const data = await syncUser(refreshedUser, { deferProfileCreation: true }, refreshedIdToken);
   localStorage.removeItem(PENDING_PASSWORD_PROFILE);
-  return { ...data, email: user.email, authMethod: "password" };
+  return { ...data, email: refreshedUser.email, authMethod: "password" };
 }
 
 export async function loginWithGoogle() {

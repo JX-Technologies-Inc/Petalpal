@@ -988,6 +988,7 @@ import {
                   ) : (
                     <RegisterForm
                       onVerified={handleLogin}
+                      onRequireLogin={() => setActiveAuthTab("login")}
                     />
                   )}
                 </section>

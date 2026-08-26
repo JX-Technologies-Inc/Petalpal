@@ -7,7 +7,7 @@ import {
   registerWithPassword
 } from "./firebaseSession";
 
-function RegisterForm({ onVerified }) {
+function RegisterForm({ onVerified, onRequireLogin }) {
   const initialRegistration = pendingPasswordRegistration();
   const [email, setEmail] = useState(initialRegistration?.email || "");
   const [password, setPassword] = useState("");
@@ -23,6 +23,10 @@ function RegisterForm({ onVerified }) {
       if (typeof onVerified === "function") onVerified(data.user, data);
       return true;
     } catch (error) {
+      if (/session is unavailable/i.test(error.message || "")) {
+        if (typeof onRequireLogin === "function") onRequireLogin();
+        return false;
+      }
       if (!quiet || !/not verified yet|session is unavailable/i.test(error.message || "")) {
         setMessage(error.message || "Unable to confirm email verification.");
       }
@@ -30,7 +34,7 @@ function RegisterForm({ onVerified }) {
     } finally {
       if (!quiet) setIsLoading(false);
     }
-  }, [onVerified]);
+  }, [onRequireLogin, onVerified]);
 
   useEffect(() => {
     if (!awaitingVerification) return undefined;
