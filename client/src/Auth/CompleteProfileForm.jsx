@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { completePasswordlessProfile } from "./firebaseSession";
 
-function CompleteProfileForm({ email, onComplete, onCancel }) {
+function CompleteProfileForm({ email, authMethod = "passwordless", onComplete, onCancel }) {
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("🦋");
   const [aiConsent, setAiConsent] = useState(false);
@@ -29,7 +29,9 @@ function CompleteProfileForm({ email, onComplete, onCancel }) {
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h3>Complete Profile</h3>
-      <p className="auth-form-description">You’re signed in as {email}. No password is needed for this account.</p>
+      <p className="auth-form-description">
+        You’re signed in as {email}. {authMethod === "password" ? "Your email is verified. Complete your profile to continue." : "No password is needed for this account."}
+      </p>
       <label htmlFor="completeProfileName">Display Name</label>
       <input id="completeProfileName" value={name} onChange={(event) => setName(event.target.value)} required />
       <label htmlFor="completeProfileAvatar">Choose Avatar</label>

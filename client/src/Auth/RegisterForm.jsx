@@ -3,17 +3,15 @@ import {
   completeVerifiedRegistration,
   pendingPasswordRegistration,
   recoverPendingRegistrationEmail,
+  resendRegistrationVerificationEmail,
   registerWithPassword
 } from "./firebaseSession";
 
-function RegisterForm({ onLogin }) {
+function RegisterForm({ onVerified }) {
   const initialRegistration = pendingPasswordRegistration();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState(initialRegistration?.email || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [avatar, setAvatar] = useState("🦋");
-  const [aiConsent, setAiConsent] = useState(false);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [awaitingVerification, setAwaitingVerification] = useState(Boolean(initialRegistration));
@@ -22,7 +20,7 @@ function RegisterForm({ onLogin }) {
     try {
       if (!quiet) setIsLoading(true);
       const data = await completeVerifiedRegistration();
-      if (typeof onLogin === "function") onLogin(data.user);
+      if (typeof onVerified === "function") onVerified(data.user, data);
       return true;
     } catch (error) {
       if (!quiet || !/not verified yet|session is unavailable/i.test(error.message || "")) {
@@ -32,7 +30,7 @@ function RegisterForm({ onLogin }) {
     } finally {
       if (!quiet) setIsLoading(false);
     }
-  }, [onLogin]);
+  }, [onVerified]);
 
   useEffect(() => {
     if (!awaitingVerification) return undefined;
@@ -59,17 +57,24 @@ function RegisterForm({ onLogin }) {
 
     try {
       setIsLoading(true);
-      const registeredUser = await registerWithPassword(email.trim(), password, {
-        name: name.trim(),
-        avatar,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
-        aiConsent
-      });
+      const registeredUser = await registerWithPassword(email.trim(), password);
       setEmail(registeredUser?.email || email.trim());
       setAwaitingVerification(true);
       setMessage("Account created. Open the verification link on any device, then return to this page to continue to Onboarding.");
     } catch (error) {
       setMessage(error.message || "Unable to create account.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    try {
+      setIsLoading(true);
+      await resendRegistrationVerificationEmail();
+      setMessage("A new verification email has been sent. Check your inbox and spam folder.");
+    } catch (error) {
+      setMessage(error.message || "Unable to resend the verification email.");
     } finally {
       setIsLoading(false);
     }
@@ -88,6 +93,9 @@ function RegisterForm({ onLogin }) {
         <button type="button" disabled={isLoading} onClick={() => void finishRegistration()}>
           {isLoading ? "Checking..." : "I’ve Verified My Email"}
         </button>
+        <button type="button" className="verification-resend-link" disabled={isLoading} onClick={() => void handleResend()}>
+          Resend Verification Email
+        </button>
         <p className="auth-message">{message}</p>
       </section>
     );
@@ -96,25 +104,13 @@ function RegisterForm({ onLogin }) {
   return (
     <form id="registerForm" className="auth-form" onSubmit={handleRegister}>
       <h3>Create Account</h3>
-      <p className="auth-form-description">Create your PetalPal account and verify your email once. Your PetalPal password is used for future password login.</p>
-      <label htmlFor="registerName">Display Name</label>
-      <input id="registerName" value={name} onChange={(e) => setName(e.target.value)} required />
+      <p className="auth-form-description">Step 1 of 3 — Create your sign-in credentials. You’ll verify your email before completing your PetalPal profile.</p>
       <label htmlFor="registerEmail">Email</label>
       <input id="registerEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
       <label htmlFor="registerPassword">PetalPal Password</label>
       <input id="registerPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <label htmlFor="registerConfirmPassword">Confirm Password</label>
       <input id="registerConfirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-      <label htmlFor="registerAvatar">Choose Avatar</label>
-      <select id="registerAvatar" value={avatar} onChange={(e) => setAvatar(e.target.value)}>
-        <option value="🦋">🦋 Butterfly</option>
-        <option value="🐝">🐝 Bee</option>
-        <option value="🐦">🐦 Bird</option>
-      </select>
-      <label className="consent-option" htmlFor="registerAiConsent">
-        <input id="registerAiConsent" type="checkbox" checked={aiConsent} onChange={(e) => setAiConsent(e.target.checked)} />
-        Allow PetalPal to analyze optional journal text for mood detection.
-      </label>
       <button type="submit" disabled={isLoading}>{isLoading ? "Creating..." : "Create account"}</button>
       <p className="auth-message" aria-live="polite">{message}</p>
     </form>

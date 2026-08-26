@@ -8,6 +8,7 @@ vi.mock("./firebaseSession", () => ({
   completeVerifiedRegistration: vi.fn(),
   pendingPasswordRegistration: vi.fn(),
   recoverPendingRegistrationEmail: vi.fn(),
+  resendRegistrationVerificationEmail: vi.fn(),
   registerWithPassword: vi.fn()
 }));
 
@@ -21,20 +22,19 @@ describe("RegisterForm", () => {
   it("creates a Firebase password account and requests email verification", async () => {
     registerWithPassword.mockResolvedValue({ email: "bloom@example.com" });
     render(<RegisterForm />);
-    await userEvent.type(screen.getByLabelText(/display name/i), "Bloom");
     await userEvent.type(screen.getByLabelText(/^email$/i), "bloom@example.com");
     await userEvent.type(screen.getByLabelText(/^petalpal password$/i), "secret12");
     await userEvent.type(screen.getByLabelText(/confirm password/i), "secret12");
     await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
     expect(registerWithPassword).toHaveBeenCalledWith(
       "bloom@example.com",
-      "secret12",
-      expect.objectContaining({ name: "Bloom" })
+      "secret12"
     );
     expect(await screen.findByRole("heading", { name: /verify your email/i })).toBeInTheDocument();
     expect(screen.getByText(/verification link to bloom@example\.com/i)).toBeInTheDocument();
     expect(screen.getByText(/open it on any device/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /use passwordless login instead/i })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/display name|avatar|consent/i)).not.toBeInTheDocument();
   });
 
   it("restores the registration email while awaiting verification", () => {

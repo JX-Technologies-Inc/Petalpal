@@ -207,6 +207,7 @@ import {
       }
     });
     const [pendingProfileEmail, setPendingProfileEmail] = useState("");
+    const [pendingProfileAuthMethod, setPendingProfileAuthMethod] = useState("passwordless");
   
     const [gardenData, setGardenData] =
       useState({
@@ -583,9 +584,11 @@ import {
     function handleLogin(user, authResult = {}) {
       if (authResult.needsProfile) {
         setPendingProfileEmail(authResult.email || "");
+        setPendingProfileAuthMethod(authResult.authMethod || "passwordless");
         return;
       }
       setPendingProfileEmail("");
+      setPendingProfileAuthMethod("passwordless");
       setCurrentUser(user);
   
       localStorage.setItem(
@@ -598,6 +601,7 @@ import {
       void logoutFirebase();
       setCurrentUser(null);
       setPendingProfileEmail("");
+      setPendingProfileAuthMethod("passwordless");
       setActiveAuthTab("login");
   
       setGardenData({
@@ -972,6 +976,7 @@ import {
                   {pendingProfileEmail ? (
                     <CompleteProfileForm
                       email={pendingProfileEmail}
+                      authMethod={pendingProfileAuthMethod}
                       onComplete={(user) => handleLogin(user)}
                       onCancel={handleLogout}
                     />
@@ -982,7 +987,7 @@ import {
                     />
                   ) : (
                     <RegisterForm
-                      onLogin={handleLogin}
+                      onVerified={handleLogin}
                     />
                   )}
                 </section>
