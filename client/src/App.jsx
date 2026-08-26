@@ -9,11 +9,9 @@ import {
   
   import { io } from "socket.io-client";
   import { apiRequest } from "./api";
-  import { logoutFirebase, pendingPasswordRegistration } from "./Auth/firebaseSession";
+  import { logoutFirebase } from "./Auth/firebaseSession";
   
-  import LoginForm from "./Auth/LoginForm";
-  import RegisterForm from "./Auth/RegisterForm";
-  import CompleteProfileForm from "./Auth/CompleteProfileForm";
+  import AuthFlow from "./Auth/AuthFlow";
   import OnboardingFlow from "./Onboarding/OnboardingFlow";
   
   import CurrentProfile from "./Profile/CurrentProfile";
@@ -185,11 +183,6 @@ import {
   
   function App() {
     const [
-      activeAuthTab,
-      setActiveAuthTab
-    ] = useState(() => pendingPasswordRegistration() ? "register" : "login");
-  
-    const [
       currentUser,
       setCurrentUser
     ] = useState(() => {
@@ -206,10 +199,6 @@ import {
         return null;
       }
     });
-    const [pendingProfileEmail, setPendingProfileEmail] = useState("");
-    const [pendingProfileAuthMethod, setPendingProfileAuthMethod] = useState("passwordless");
-    const [isAwaitingEmailVerification, setIsAwaitingEmailVerification] = useState(() => Boolean(pendingPasswordRegistration()));
-  
     const [gardenData, setGardenData] =
       useState({
         owner: null,
@@ -582,16 +571,7 @@ import {
       );
     }, [gardenData.owner?.id]);
   
-    function handleLogin(user, authResult = {}) {
-      if (authResult.needsProfile) {
-        setIsAwaitingEmailVerification(false);
-        setPendingProfileEmail(authResult.email || "");
-        setPendingProfileAuthMethod(authResult.authMethod || "passwordless");
-        return;
-      }
-      setPendingProfileEmail("");
-      setPendingProfileAuthMethod("passwordless");
-      setIsAwaitingEmailVerification(false);
+    function handleLogin(user) {
       setCurrentUser(user);
   
       localStorage.setItem(
@@ -603,10 +583,6 @@ import {
     function handleLogout() {
       void logoutFirebase();
       setCurrentUser(null);
-      setPendingProfileEmail("");
-      setPendingProfileAuthMethod("passwordless");
-      setIsAwaitingEmailVerification(false);
-      setActiveAuthTab("login");
   
       setGardenData({
         owner: null,
@@ -939,66 +915,10 @@ import {
                     </div>
                   </div>
   
-                  {!isAwaitingEmailVerification && !pendingProfileEmail && <div className="auth-tabs">
-                    <button
-                      id="showLoginBtn"
-                      className={`auth-tab ${
-                        activeAuthTab ===
-                        "login"
-                          ? "active"
-                          : ""
-                      }`}
-                      type="button"
-                      onClick={() =>
-                        setActiveAuthTab(
-                          "login"
-                        )
-                      }
-                    >
-                      Log In
-                    </button>
-  
-                    <button
-                      id="showRegisterBtn"
-                      className={`auth-tab ${
-                        activeAuthTab ===
-                        "register"
-                          ? "active"
-                          : ""
-                      }`}
-                      type="button"
-                      onClick={() =>
-                        setActiveAuthTab(
-                          "register"
-                        )
-                      }
-                    >
-                      Create Account
-                    </button>
-                  </div>}
-  
-                  {pendingProfileEmail ? (
-                    <CompleteProfileForm
-                      email={pendingProfileEmail}
-                      authMethod={pendingProfileAuthMethod}
-                      onComplete={(user) => handleLogin(user)}
-                      onCancel={handleLogout}
-                    />
-                  ) : activeAuthTab ===
-                  "login" ? (
-                    <LoginForm
-                      onLogin={handleLogin}
-                    />
-                  ) : (
-                    <RegisterForm
-                      onVerified={handleLogin}
-                      onRequireLogin={() => {
-                        setIsAwaitingEmailVerification(false);
-                        setActiveAuthTab("login");
-                      }}
-                      onVerificationStateChange={setIsAwaitingEmailVerification}
-                    />
-                  )}
+                  <AuthFlow
+                    onAuthenticated={handleLogin}
+                    onLogout={handleLogout}
+                  />
                 </section>
               ) : (
                 <>
