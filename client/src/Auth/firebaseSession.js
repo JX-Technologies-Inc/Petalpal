@@ -117,10 +117,10 @@ export async function completeVerifiedRegistration() {
   if (!refreshedUser) {
     throw new Error("Your registration session is unavailable. Log in with your PetalPal password after verifying your email.");
   }
-  const refreshedIdToken = await refreshedUser.getIdToken(true);
   if (!refreshedUser.emailVerified) {
-    throw new Error("Email is not verified yet. Open the verification link on any device, then click this button again.");
+    throw new Error("Email is not verified yet.");
   }
+  const refreshedIdToken = await refreshedUser.getIdToken(true);
   const data = await syncUser(refreshedUser, { deferProfileCreation: true }, refreshedIdToken);
   localStorage.removeItem(PENDING_PASSWORD_PROFILE);
   return { ...data, email: refreshedUser.email, authMethod: "password" };

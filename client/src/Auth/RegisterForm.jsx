@@ -7,7 +7,7 @@ import {
   registerWithPassword
 } from "./firebaseSession";
 
-function RegisterForm({ onVerified, onRequireLogin }) {
+function RegisterForm({ onVerified, onRequireLogin, onVerificationStateChange }) {
   const initialRegistration = pendingPasswordRegistration();
   const [email, setEmail] = useState(initialRegistration?.email || "");
   const [password, setPassword] = useState("");
@@ -15,6 +15,12 @@ function RegisterForm({ onVerified, onRequireLogin }) {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [awaitingVerification, setAwaitingVerification] = useState(Boolean(initialRegistration));
+
+  useEffect(() => {
+    if (typeof onVerificationStateChange === "function") {
+      onVerificationStateChange(awaitingVerification);
+    }
+  }, [awaitingVerification, onVerificationStateChange]);
 
   const finishRegistration = useCallback(async ({ quiet = false } = {}) => {
     try {
@@ -88,12 +94,7 @@ function RegisterForm({ onVerified, onRequireLogin }) {
     return (
       <section className="auth-form" aria-live="polite">
         <h3>Verify Your Email</h3>
-        <p>
-          {email
-            ? `We sent a verification link to ${email}.`
-            : "We sent a verification link to your registered email."}
-          {" "}You can open it on any device. After verifying, return to this page and click the button below.
-        </p>
+        <p>{email ? `Verification email sent to ${email}` : "Verification email sent to your registered email"}</p>
         <button type="button" disabled={isLoading} onClick={() => void finishRegistration()}>
           {isLoading ? "Checking..." : "I’ve Verified My Email"}
         </button>

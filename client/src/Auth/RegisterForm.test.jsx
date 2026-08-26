@@ -31,8 +31,11 @@ describe("RegisterForm", () => {
       "secret12"
     );
     expect(await screen.findByRole("heading", { name: /verify your email/i })).toBeInTheDocument();
-    expect(screen.getByText(/verification link to bloom@example\.com/i)).toBeInTheDocument();
-    expect(screen.getByText(/open it on any device/i)).toBeInTheDocument();
+    expect(screen.getByText(/verification email sent to bloom@example\.com/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/^email$/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/password/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /i’ve verified my email/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /resend verification email/i })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /use passwordless login instead/i })).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/display name|avatar|consent/i)).not.toBeInTheDocument();
   });
@@ -40,13 +43,13 @@ describe("RegisterForm", () => {
   it("restores the registration email while awaiting verification", () => {
     pendingPasswordRegistration.mockReturnValue({ email: "saved@example.com" });
     render(<RegisterForm />);
-    expect(screen.getByText(/verification link to saved@example\.com/i)).toBeInTheDocument();
+    expect(screen.getByText(/verification email sent to saved@example\.com/i)).toBeInTheDocument();
   });
 
   it("never renders an empty email sentence for a legacy pending registration", () => {
     pendingPasswordRegistration.mockReturnValue({ name: "Legacy Bloom" });
     render(<RegisterForm />);
-    expect(screen.getByText(/verification link to your registered email/i)).toBeInTheDocument();
-    expect(screen.queryByText(/verification link to \s*\./i)).not.toBeInTheDocument();
+    expect(screen.getByText(/verification email sent to your registered email/i)).toBeInTheDocument();
+    expect(screen.queryByText(/verification email sent to \s*\./i)).not.toBeInTheDocument();
   });
 });

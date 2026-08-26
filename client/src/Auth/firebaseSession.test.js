@@ -77,7 +77,7 @@ describe("verified registration synchronization", () => {
   it("does not contact the backend before email verification", async () => {
     await expect(completeVerifiedRegistration()).rejects.toThrow(/not verified yet/i);
     expect(mocks.user.reload).toHaveBeenCalledOnce();
-    expect(mocks.user.getIdToken).toHaveBeenCalledWith(true);
+    expect(mocks.user.getIdToken).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
 });

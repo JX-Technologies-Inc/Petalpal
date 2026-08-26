@@ -208,6 +208,7 @@ import {
     });
     const [pendingProfileEmail, setPendingProfileEmail] = useState("");
     const [pendingProfileAuthMethod, setPendingProfileAuthMethod] = useState("passwordless");
+    const [isAwaitingEmailVerification, setIsAwaitingEmailVerification] = useState(() => Boolean(pendingPasswordRegistration()));
   
     const [gardenData, setGardenData] =
       useState({
@@ -583,12 +584,14 @@ import {
   
     function handleLogin(user, authResult = {}) {
       if (authResult.needsProfile) {
+        setIsAwaitingEmailVerification(false);
         setPendingProfileEmail(authResult.email || "");
         setPendingProfileAuthMethod(authResult.authMethod || "passwordless");
         return;
       }
       setPendingProfileEmail("");
       setPendingProfileAuthMethod("passwordless");
+      setIsAwaitingEmailVerification(false);
       setCurrentUser(user);
   
       localStorage.setItem(
@@ -602,6 +605,7 @@ import {
       setCurrentUser(null);
       setPendingProfileEmail("");
       setPendingProfileAuthMethod("passwordless");
+      setIsAwaitingEmailVerification(false);
       setActiveAuthTab("login");
   
       setGardenData({
@@ -935,7 +939,7 @@ import {
                     </div>
                   </div>
   
-                  <div className="auth-tabs">
+                  {!isAwaitingEmailVerification && !pendingProfileEmail && <div className="auth-tabs">
                     <button
                       id="showLoginBtn"
                       className={`auth-tab ${
@@ -971,7 +975,7 @@ import {
                     >
                       Create Account
                     </button>
-                  </div>
+                  </div>}
   
                   {pendingProfileEmail ? (
                     <CompleteProfileForm
@@ -988,7 +992,11 @@ import {
                   ) : (
                     <RegisterForm
                       onVerified={handleLogin}
-                      onRequireLogin={() => setActiveAuthTab("login")}
+                      onRequireLogin={() => {
+                        setIsAwaitingEmailVerification(false);
+                        setActiveAuthTab("login");
+                      }}
+                      onVerificationStateChange={setIsAwaitingEmailVerification}
                     />
                   )}
                 </section>
