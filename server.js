@@ -7,7 +7,8 @@ import { createHash } from "crypto";
 
 import prisma from "./lib/prisma.js";
 import flowerDB from "./data/flowerDB.js";
-import { predictMood, loadMoodModel } from "./moodClassifier.js";
+import { loadMoodModel } from "./moodClassifier.js";
+import { classifyEmotion } from "./lib/emotion-classifier.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -1694,17 +1695,19 @@ app.post("/users/:userId/flowers", async (req, res) => {
         });
       }
 
-      const startedAt = Date.now();
-      mood = await predictMood(event);
+      const classification = await classifyEmotion(event);
+      mood = classification.label;
       emotionSource = "MODEL";
       aiMetadata = {
         task: "EMOTION_CLASSIFICATION",
-        provider: "LOCAL",
-        model: "natural-mood-classifier",
+        provider: classification.provider,
+        model: classification.model,
         inputHash: hashAiInput(event),
         outputLabel: mood,
-        latencyMs: Date.now() - startedAt,
-        success: true
+        confidence: classification.confidence,
+        latencyMs: classification.latencyMs,
+        success: classification.success,
+        errorCode: classification.errorCode
       };
     }
 
@@ -1775,10 +1778,8 @@ const flower = await prisma.$transaction(async (tx) => {
           userId: user.id,
           label: mood,
           source: emotionSource,
-          modelVersion:
-            emotionSource === "MODEL"
-              ? "natural-mood-classifier"
-              : null
+          confidence: aiMetadata?.confidence ?? null,
+          modelVersion: aiMetadata?.model ?? null
         }
       }
     }

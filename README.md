@@ -148,8 +148,35 @@ Create a `.env` file in the project root:
 
 ```env
 DATABASE_URL=your_postgresql_connection_string
-JWT_SECRET=replace_with_a_random_secret_of_at_least_32_characters
+FIREBASE_PROJECT_ID=petalpal-b212c
+FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account","project_id":"petalpal-b212c","private_key":"...","client_email":"..."}
 ```
+
+The browser/mobile app uses the Firebase Web SDK to create users and obtain ID tokens. The Render backend must separately use a Firebase Admin service account to verify those tokens. In Firebase Console, open **Project settings → Service accounts → Generate new private key**, then add the downloaded JSON as the Render secret `FIREBASE_SERVICE_ACCOUNT_JSON`.
+
+As an alternative on Render, configure both `FIREBASE_CLIENT_EMAIL` and `FIREBASE_PRIVATE_KEY`. Keep `\n` sequences in the private key; the backend normalizes them at startup. Never commit the service-account JSON or private key.
+
+### Cloudflare Workers AI emotion classification
+
+PetalPal sends journal text to Workers AI only when the user has enabled AI processing and has not manually selected a mood. The Render backend remains the trusted caller; browsers never receive the shared Worker secret.
+
+Deploy the Worker from the repository root:
+
+```bash
+npx wrangler login
+npx wrangler secret put RENDER_SHARED_SECRET --config cloudflare-worker/wrangler.jsonc
+npx wrangler deploy --config cloudflare-worker/wrangler.jsonc
+```
+
+Then add these environment variables to the Render service and redeploy it:
+
+```env
+CLOUDFLARE_WORKER_AI_URL=https://petalpal-emotion-ai.YOUR_SUBDOMAIN.workers.dev
+CLOUDFLARE_WORKER_AI_TOKEN=the-exact-value-entered-for-RENDER_SHARED_SECRET
+AI_REQUEST_TIMEOUT_MS=3000
+```
+
+If the Worker is unavailable, times out, or returns invalid output, the existing local classifier is used automatically. The selected provider, model, confidence, latency, and fallback error code are stored in `AiInteractionMetadata`.
 
 Build and start the application:
 
