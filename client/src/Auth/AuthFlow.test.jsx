@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, it, vi } from "vitest";
 import AuthFlow from "./AuthFlow";
-import { completeVerifiedRegistration, pendingPasswordRegistration, registerWithPassword } from "./firebaseSession";
+import { completeVerifiedRegistration, pendingPasswordRegistration, registerWithPassword, restorePendingPasswordRegistration } from "./firebaseSession";
 
 vi.mock("./firebaseSession", () => ({
   completePasswordlessProfile: vi.fn(),
@@ -10,6 +10,7 @@ vi.mock("./firebaseSession", () => ({
   loginWithPassword: vi.fn(),
   pendingPasswordRegistration: vi.fn(),
   recoverPendingRegistrationEmail: vi.fn().mockResolvedValue(""),
+  restorePendingPasswordRegistration: vi.fn(),
   registerWithPassword: vi.fn(),
   resendRegistrationVerificationEmail: vi.fn()
 }));
@@ -17,6 +18,14 @@ vi.mock("./firebaseSession", () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   pendingPasswordRegistration.mockReturnValue(null);
+});
+
+it("clears a stale pending registration and returns to create account", async () => {
+  pendingPasswordRegistration.mockReturnValue({ email: "" });
+  restorePendingPasswordRegistration.mockResolvedValue(null);
+  render(<AuthFlow />);
+  expect(await screen.findByRole("heading", { name: /create account/i })).toBeInTheDocument();
+  expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument();
 });
 
 it("transitions CREATE_ACCOUNT to VERIFY_EMAIL to COMPLETE_PROFILE", async () => {

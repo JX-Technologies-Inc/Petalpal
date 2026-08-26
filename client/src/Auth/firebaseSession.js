@@ -96,6 +96,26 @@ export function pendingPasswordRegistration() {
   }
 }
 
+export function clearPendingPasswordRegistration() {
+  localStorage.removeItem(PENDING_PASSWORD_PROFILE);
+}
+
+export async function restorePendingPasswordRegistration() {
+  const pending = pendingPasswordRegistration();
+  if (!pending) return null;
+  await firebaseAuth.authStateReady();
+  const user = firebaseAuth.currentUser;
+  if (!user) {
+    clearPendingPasswordRegistration();
+    return null;
+  }
+  const email = user.email || pending.email || "";
+  if (email !== pending.email) {
+    localStorage.setItem(PENDING_PASSWORD_PROFILE, JSON.stringify({ ...pending, email }));
+  }
+  return { email };
+}
+
 export async function recoverPendingRegistrationEmail() {
   await firebaseAuth.authStateReady();
   const email = firebaseAuth.currentUser?.email || "";

@@ -26,7 +26,7 @@ vi.mock("firebase/auth", () => ({
 vi.mock("../firebase", () => ({ firebaseAuth: mocks.auth, googleProvider: {} }));
 vi.mock("../api", () => ({ API_BASE_URL: "https://render.example.com" }));
 
-import { completeVerifiedRegistration } from "./firebaseSession";
+import { completeVerifiedRegistration, restorePendingPasswordRegistration } from "./firebaseSession";
 
 function backendResponse(body) {
   fetch.mockResolvedValue({ ok: true, json: vi.fn().mockResolvedValue(body) });
@@ -79,5 +79,11 @@ describe("verified registration synchronization", () => {
     expect(mocks.user.reload).toHaveBeenCalledOnce();
     expect(mocks.user.getIdToken).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("discards stale registration state when the Firebase user no longer exists", async () => {
+    mocks.auth.currentUser = null;
+    await expect(restorePendingPasswordRegistration()).resolves.toBeNull();
+    expect(localStorage.getItem("petalPalPendingPasswordProfile")).toBeNull();
   });
 });
