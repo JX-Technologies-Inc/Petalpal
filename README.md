@@ -186,6 +186,10 @@ The production `npm start` command automatically applies pending Prisma migratio
 npx prisma migrate deploy
 ```
 
+### Persistent Fairy runtime
+
+The Render backend owns the Fairy runtime state. `FairyState` stores the current semantic state and location plus `stateStartedAt`, `nextTransitionAt`, and `lastActiveAt`. Session and Fairy-state reads reconcile elapsed time, including multiple transitions while the user was offline. A recent single transition returns `runtimeTransition.shouldAnimate=true`; older offline transitions return the final state without replaying every animation.
+
 Build and start the application:
 
 ```bash

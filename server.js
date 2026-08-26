@@ -10,6 +10,7 @@ import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
 import { generateFlowerMetadata } from "./lib/flower-engine.js";
+import { reconcileFairyRuntime } from "./lib/fairy-runtime.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -226,6 +227,20 @@ function getLocalDate(timezone) {
 
 function hashAiInput(text) {
   return createHash("sha256").update(text).digest("hex");
+}
+
+async function getReconciledFairyState(userId, now = new Date()) {
+  const existing = await prisma.fairyState.upsert({
+    where: { userId },
+    update: {},
+    create: { userId }
+  });
+  const runtime = reconcileFairyRuntime(existing, now);
+  const fairyState = await prisma.fairyState.update({
+    where: { userId },
+    data: runtime.update
+  });
+  return { ...fairyState, runtimeTransition: runtime.transition };
 }
 
 async function getUser(userId) {
@@ -941,11 +956,7 @@ app.get("/session", async (req, res) => {
   const localDate = getLocalDate(timezone);
 
   const [fairyState, todayCheckIn, garden] = await Promise.all([
-    prisma.fairyState.upsert({
-      where: { userId: user.id },
-      update: {},
-      create: { userId: user.id }
-    }),
+    getReconciledFairyState(user.id),
     prisma.dailyCheckIn.findUnique({
       where: {
         userId_localDate: {
@@ -991,11 +1002,7 @@ app.get("/users/:userId/check-ins", async (req, res) => {
 app.get("/users/:userId/fairy-state", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 
-  const fairyState = await prisma.fairyState.upsert({
-    where: { userId: req.auth.userId },
-    update: {},
-    create: { userId: req.auth.userId }
-  });
+  const fairyState = await getReconciledFairyState(req.auth.userId);
 
   res.json(fairyState);
 });

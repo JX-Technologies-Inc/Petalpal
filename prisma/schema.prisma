@@ -188,14 +188,19 @@ model EmotionResult {
 }
 
 model FairyState {
-  id                  String   @id @default(cuid())
-  userId              String   @unique
-  onboardingStep      String   @default("EMPTY_GARDEN") @db.VarChar(64)
-  onboardingCompleted Boolean  @default(false)
-  lastEvent           String?  @db.VarChar(64)
-  unlockedFeatures    Json     @default("[]")
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  onboardingStep      String    @default("EMPTY_GARDEN") @db.VarChar(64)
+  onboardingCompleted Boolean   @default(false)
+  lastEvent           String?   @db.VarChar(64)
+  unlockedFeatures    Json      @default("[]")
+  currentState        String    @default("IDLE") @db.VarChar(32)
+  currentLocation     String    @default("GARDEN_CENTER") @db.VarChar(32)
+  stateStartedAt      DateTime?
+  nextTransitionAt    DateTime?
+  lastActiveAt        DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
