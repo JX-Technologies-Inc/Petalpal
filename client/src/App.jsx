@@ -9,7 +9,7 @@ import {
   
   import { io } from "socket.io-client";
   import { apiRequest } from "./api";
-  import { logoutFirebase } from "./Auth/firebaseSession";
+  import { logoutFirebase, pendingPasswordRegistration } from "./Auth/firebaseSession";
   
   import LoginForm from "./Auth/LoginForm";
   import RegisterForm from "./Auth/RegisterForm";
@@ -187,7 +187,7 @@ import {
     const [
       activeAuthTab,
       setActiveAuthTab
-    ] = useState("login");
+    ] = useState(() => pendingPasswordRegistration() ? "register" : "login");
   
     const [
       currentUser,
@@ -982,7 +982,7 @@ import {
                     />
                   ) : (
                     <RegisterForm
-                      onSwitchToLogin={() => setActiveAuthTab("login")}
+                      onLogin={handleLogin}
                     />
                   )}
                 </section>

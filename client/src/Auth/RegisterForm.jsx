@@ -1,7 +1,11 @@
-import { useState } from "react";
-import { registerWithPassword } from "./firebaseSession";
+import { useCallback, useEffect, useState } from "react";
+import {
+  completeVerifiedRegistration,
+  pendingPasswordRegistration,
+  registerWithPassword
+} from "./firebaseSession";
 
-function RegisterForm({ onSwitchToLogin }) {
+function RegisterForm({ onLogin }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,6 +14,34 @@ function RegisterForm({ onSwitchToLogin }) {
   const [aiConsent, setAiConsent] = useState(false);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [awaitingVerification, setAwaitingVerification] = useState(() => Boolean(pendingPasswordRegistration()));
+
+  const finishRegistration = useCallback(async ({ quiet = false } = {}) => {
+    try {
+      if (!quiet) setIsLoading(true);
+      const data = await completeVerifiedRegistration();
+      if (typeof onLogin === "function") onLogin(data.user);
+      return true;
+    } catch (error) {
+      if (!quiet || !/not verified yet|session is unavailable/i.test(error.message || "")) {
+        setMessage(error.message || "Unable to confirm email verification.");
+      }
+      return false;
+    } finally {
+      if (!quiet) setIsLoading(false);
+    }
+  }, [onLogin]);
+
+  useEffect(() => {
+    if (!awaitingVerification) return undefined;
+    const checkVerification = () => void finishRegistration({ quiet: true });
+    window.addEventListener("focus", checkVerification);
+    const timer = window.setInterval(checkVerification, 4000);
+    return () => {
+      window.removeEventListener("focus", checkVerification);
+      window.clearInterval(timer);
+    };
+  }, [awaitingVerification, finishRegistration]);
 
   async function handleRegister(event) {
     event.preventDefault();
@@ -24,7 +56,8 @@ function RegisterForm({ onSwitchToLogin }) {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
         aiConsent
       });
-      setMessage("Account created. Check your email to verify it, then sign in with your password.");
+      setAwaitingVerification(true);
+      setMessage("Account created. Check your email and click the verification link. Return here after verification to continue to Onboarding.");
     } catch (error) {
       setMessage(error.message || "Unable to create account.");
     } finally {
@@ -32,15 +65,28 @@ function RegisterForm({ onSwitchToLogin }) {
     }
   }
 
+  if (awaitingVerification) {
+    return (
+      <section className="auth-form" aria-live="polite">
+        <h3>Verify Your Email</h3>
+        <p>We sent a verification link to {email || pendingPasswordRegistration()?.email}. Click it once, then return to PetalPal.</p>
+        <button type="button" disabled={isLoading} onClick={() => void finishRegistration()}>
+          {isLoading ? "Checking..." : "I’ve Verified My Email"}
+        </button>
+        <p className="auth-message">{message}</p>
+      </section>
+    );
+  }
+
   return (
     <form id="registerForm" className="auth-form" onSubmit={handleRegister}>
-      <h3>Create a password account</h3>
-      <p className="auth-form-description">Prefer no password? Use “Send me a login link” on the Log In tab.</p>
+      <h3>Create Account</h3>
+      <p className="auth-form-description">Create your PetalPal account and verify your email once. Your PetalPal password is used for future password login.</p>
       <label htmlFor="registerName">Display Name</label>
       <input id="registerName" value={name} onChange={(e) => setName(e.target.value)} required />
       <label htmlFor="registerEmail">Email</label>
       <input id="registerEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <label htmlFor="registerPassword">Password</label>
+      <label htmlFor="registerPassword">PetalPal Password</label>
       <input id="registerPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <label htmlFor="registerConfirmPassword">Confirm Password</label>
       <input id="registerConfirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
@@ -55,7 +101,6 @@ function RegisterForm({ onSwitchToLogin }) {
         Allow PetalPal to analyze optional journal text for mood detection.
       </label>
       <button type="submit" disabled={isLoading}>{isLoading ? "Creating..." : "Create account"}</button>
-      <button type="button" className="verification-resend-link" onClick={onSwitchToLogin}>Use passwordless login instead</button>
       <p className="auth-message" aria-live="polite">{message}</p>
     </form>
   );
