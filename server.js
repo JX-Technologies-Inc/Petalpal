@@ -9,6 +9,7 @@ import prisma from "./lib/prisma.js";
 import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
+import { generateFlowerMetadata } from "./lib/flower-engine.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -1681,6 +1682,8 @@ app.post("/users/:userId/flowers", async (req, res) => {
         : "";
     let emotionSource = "USER";
     let aiMetadata = null;
+    let secondaryEmotion = null;
+    let emotionIntensity = null;
 
     if (!mood) {
       if (!event) {
@@ -1697,6 +1700,8 @@ app.post("/users/:userId/flowers", async (req, res) => {
 
       const classification = await classifyEmotion(event);
       mood = classification.label;
+      secondaryEmotion = classification.secondaryEmotion;
+      emotionIntensity = classification.intensity;
       emotionSource = "MODEL";
       aiMetadata = {
         task: "EMOTION_CLASSIFICATION",
@@ -1743,6 +1748,13 @@ app.post("/users/:userId/flowers", async (req, res) => {
       },
     });
 
+    const recentFlowers = await prisma.flower.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { name: true }
+    });
+
     const options = flowerDB[mood] || flowerDB.calm;
 
 if (!Array.isArray(options) || options.length === 0) {
@@ -1751,8 +1763,15 @@ if (!Array.isArray(options) || options.length === 0) {
   });
 }
 
-const chosen =
-  options[Math.floor(Math.random() * options.length)];
+const chosen = generateFlowerMetadata({
+  options,
+  mood,
+  secondaryEmotion,
+  intensity: emotionIntensity,
+  localDate,
+  userId: user.id,
+  recentFlowers
+});
 
 const position =
   getNonOverlappingPosition(existingFlowers);
@@ -1779,6 +1798,8 @@ const flower = await prisma.$transaction(async (tx) => {
           label: mood,
           source: emotionSource,
           confidence: aiMetadata?.confidence ?? null,
+          secondaryEmotion,
+          intensity: emotionIntensity,
           modelVersion: aiMetadata?.model ?? null
         }
       }
@@ -1795,6 +1816,12 @@ const flower = await prisma.$transaction(async (tx) => {
       left: position.left,
       top: position.top,
       supportCount: 0,
+      variant: chosen.variant,
+      rarity: chosen.rarity,
+      growthState: chosen.growthState,
+      visualEffect: chosen.visualEffect,
+      season: chosen.season,
+      generationSeed: chosen.generationSeed,
       userId: user.id,
       gardenId: garden.id,
       dailyCheckInId: checkIn.id

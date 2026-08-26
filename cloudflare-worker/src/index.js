@@ -25,7 +25,7 @@ export default {
         messages: [
           {
             role: "system",
-            content: "Classify the user's current emotional tone. Choose exactly one PetalPal label. Do not diagnose mental health conditions."
+            content: "Classify the user's emotional tone. Choose one primary PetalPal label, an optional different secondary label (or none), and emotional intensity from 0 to 1. Do not diagnose mental health conditions."
           },
           { role: "user", content: text }
         ],
@@ -35,18 +35,32 @@ export default {
             type: "object",
             properties: {
               label: { type: "string", enum: MOODS },
+              secondaryEmotion: { type: "string", enum: ["none", ...MOODS] },
+              intensity: { type: "number", minimum: 0, maximum: 1 },
               confidence: { type: "number", minimum: 0, maximum: 1 }
             },
-            required: ["label", "confidence"],
+            required: ["label", "secondaryEmotion", "intensity", "confidence"],
             additionalProperties: false
           }
         }
       });
       const output = typeof result?.response === "string" ? JSON.parse(result.response) : result?.response;
-      if (!output || !MOODS.includes(output.label) || !Number.isFinite(output.confidence)) {
+      if (
+        !output ||
+        !MOODS.includes(output.label) ||
+        !["none", ...MOODS].includes(output.secondaryEmotion) ||
+        !Number.isFinite(output.intensity) ||
+        !Number.isFinite(output.confidence)
+      ) {
         return json({ error: "Model returned invalid structured output" }, 502);
       }
-      return json({ label: output.label, confidence: output.confidence, model: MODEL });
+      return json({
+        label: output.label,
+        secondaryEmotion: output.secondaryEmotion,
+        intensity: output.intensity,
+        confidence: output.confidence,
+        model: MODEL
+      });
     } catch {
       return json({ error: "Emotion inference failed" }, 502);
     }

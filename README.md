@@ -178,6 +178,14 @@ AI_REQUEST_TIMEOUT_MS=3000
 
 If the Worker is unavailable, times out, or returns invalid output, the existing local classifier is used automatically. The selected provider, model, confidence, latency, and fallback error code are stored in `AiInteractionMetadata`.
 
+The structured emotion result includes a primary mood, optional secondary emotion, intensity, and confidence. The context-aware flower engine combines those values with the user's local date, season, and recent flower history. It produces deterministic metadata (`variant`, `rarity`, `growthState`, `visualEffect`, and `generationSeed`) so retries cannot silently change the flower result.
+
+The production `npm start` command automatically applies pending Prisma migrations before starting the backend. To apply it manually in another environment, run:
+
+```bash
+npx prisma migrate deploy
+```
+
 Build and start the application:
 
 ```bash

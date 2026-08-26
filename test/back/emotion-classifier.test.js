@@ -19,6 +19,8 @@ test("classifyWithCloudflare sends the secret and validates structured output", 
       return Response.json({
         label: "happy",
         confidence: 0.91,
+        secondaryEmotion: "calm",
+        intensity: 0.8,
         model: "test-model"
       });
     }
@@ -27,6 +29,8 @@ test("classifyWithCloudflare sends the secret and validates structured output", 
   assert.deepEqual(result, {
     label: "happy",
     confidence: 0.91,
+    secondaryEmotion: "calm",
+    intensity: 0.8,
     provider: "CLOUDFLARE_WORKERS_AI",
     model: "test-model"
   });
