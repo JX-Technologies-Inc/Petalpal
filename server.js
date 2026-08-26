@@ -510,6 +510,18 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
         });
       } else {
         isNewUser = true;
+        if (req.body?.deferProfileCreation === true) {
+          return res.json({
+            user: null,
+            isNewUser: true,
+            needsProfile: true,
+            email: normalizedEmail
+          });
+        }
+        const requestedName = String(req.body?.name || identity.name || "").trim();
+        if (!requestedName) {
+          return res.status(400).json({ error: "Display name is required" });
+        }
         const now = Date.now();
         const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
         user = await prisma.user.create({
@@ -517,7 +529,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
             id: `user_${now}`,
             accountId: `PP${String(now).slice(-8)}`,
             firebaseUid: identity.uid,
-            name: String(req.body?.name || identity.name || normalizedEmail.split("@")[0]).trim(),
+            name: requestedName,
             email: normalizedEmail,
             emailVerifiedAt: new Date(),
             avatar: req.body?.avatar || "🦋",

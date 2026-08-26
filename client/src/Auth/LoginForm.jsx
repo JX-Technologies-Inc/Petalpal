@@ -9,8 +9,7 @@ import {
 } from "./firebaseSession";
 
 function LoginForm({ onLogin }) {
-  const [linkEmail, setLinkEmail] = useState("");
-  const [passwordEmail, setPasswordEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [callbackEmail, setCallbackEmail] = useState("");
   const [needsCallbackEmail, setNeedsCallbackEmail] = useState(false);
@@ -18,11 +17,17 @@ function LoginForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
   const callbackStarted = useRef(false);
 
+  function notifyLogin(data) {
+    if (typeof onLogin !== "function") return;
+    if (data.needsProfile) onLogin(null, data);
+    else onLogin(data.user);
+  }
+
   async function completeLink(email) {
     try {
       setIsLoading(true);
       const data = await finishPasswordlessLogin(email);
-      if (typeof onLogin === "function") onLogin(data.user);
+      notifyLogin(data);
     } catch (error) {
       callbackStarted.current = false;
       setMessage(error.message || "Unable to complete email-link sign-in.");
@@ -46,8 +51,8 @@ function LoginForm({ onLogin }) {
     event.preventDefault();
     try {
       setIsLoading(true);
-      await sendPasswordlessLoginLink(linkEmail.trim());
-      setMessage(`Login link sent to ${linkEmail.trim()}. No password is required.`);
+      await sendPasswordlessLoginLink(email.trim());
+      setMessage(`Login link sent to ${email.trim()}. No password is required.`);
     } catch (error) {
       setMessage(error.message || "Unable to send login link.");
     } finally {
@@ -59,8 +64,8 @@ function LoginForm({ onLogin }) {
     event.preventDefault();
     try {
       setIsLoading(true);
-      const data = await loginWithPassword(passwordEmail.trim(), password);
-      if (typeof onLogin === "function") onLogin(data.user);
+      const data = await loginWithPassword(email.trim(), password);
+      notifyLogin(data);
     } catch (error) {
       setMessage(error.message || "Unable to sign in with password.");
     } finally {
@@ -72,7 +77,7 @@ function LoginForm({ onLogin }) {
     try {
       setIsLoading(true);
       const data = await loginWithGoogle();
-      if (typeof onLogin === "function") onLogin(data.user);
+      notifyLogin(data);
     } catch (error) {
       setMessage(error.message || "Unable to sign in with Google.");
     } finally {
@@ -105,19 +110,16 @@ function LoginForm({ onLogin }) {
       </button>
       <div className="auth-divider"><span>or</span></div>
 
-      <form onSubmit={handleSendLink}>
-        <h4>Passwordless email link</h4>
-        <label htmlFor="linkEmail">Email</label>
-        <input id="linkEmail" type="email" value={linkEmail} onChange={(e) => setLinkEmail(e.target.value)} required />
-        <button type="submit" disabled={isLoading}>Send me a login link</button>
-      </form>
-
-      <div className="auth-divider"><span>or sign in with password</span></div>
       <form onSubmit={handlePasswordLogin}>
-        <label htmlFor="passwordEmail">Email</label>
-        <input id="passwordEmail" type="email" value={passwordEmail} onChange={(e) => setPasswordEmail(e.target.value)} required />
-        <label htmlFor="loginPassword">Password</label>
+        <h4>Passwordless email link</h4>
+        <label htmlFor="loginEmail">Email</label>
+        <input id="loginEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <button type="button" disabled={isLoading || !email.trim()} onClick={handleSendLink}>Send me a login link</button>
+
+        <div className="auth-divider"><span>or sign in with password</span></div>
+        <label htmlFor="loginPassword">PetalPal Password</label>
         <input id="loginPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <p className="auth-form-description">Use the PetalPal password you set when creating your account—not your email provider password.</p>
         <button type="submit" disabled={isLoading}>Sign in with password</button>
       </form>
       <p className="auth-message" aria-live="polite">{message}</p>

@@ -13,6 +13,7 @@ import {
   
   import LoginForm from "./Auth/LoginForm";
   import RegisterForm from "./Auth/RegisterForm";
+  import CompleteProfileForm from "./Auth/CompleteProfileForm";
   import OnboardingFlow from "./Onboarding/OnboardingFlow";
   
   import CurrentProfile from "./Profile/CurrentProfile";
@@ -205,6 +206,7 @@ import {
         return null;
       }
     });
+    const [pendingProfileEmail, setPendingProfileEmail] = useState("");
   
     const [gardenData, setGardenData] =
       useState({
@@ -578,7 +580,12 @@ import {
       );
     }, [gardenData.owner?.id]);
   
-    function handleLogin(user) {
+    function handleLogin(user, authResult = {}) {
+      if (authResult.needsProfile) {
+        setPendingProfileEmail(authResult.email || "");
+        return;
+      }
+      setPendingProfileEmail("");
       setCurrentUser(user);
   
       localStorage.setItem(
@@ -590,6 +597,7 @@ import {
     function handleLogout() {
       void logoutFirebase();
       setCurrentUser(null);
+      setPendingProfileEmail("");
       setActiveAuthTab("login");
   
       setGardenData({
@@ -961,7 +969,13 @@ import {
                     </button>
                   </div>
   
-                  {activeAuthTab ===
+                  {pendingProfileEmail ? (
+                    <CompleteProfileForm
+                      email={pendingProfileEmail}
+                      onComplete={(user) => handleLogin(user)}
+                      onCancel={handleLogout}
+                    />
+                  ) : activeAuthTab ===
                   "login" ? (
                     <LoginForm
                       onLogin={handleLogin}

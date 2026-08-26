@@ -52,9 +52,14 @@ export function savedPasswordlessEmail() {
 export async function finishPasswordlessLogin(email, url = window.location.href) {
   const credential = await signInWithEmailLink(firebaseAuth, email, url);
   localStorage.removeItem(EMAIL_FOR_SIGN_IN);
-  const data = await syncUser(credential.user);
+  const data = await syncUser(credential.user, { deferProfileCreation: true });
   window.history.replaceState({}, "", "/");
   return data;
+}
+
+export async function completePasswordlessProfile(profile) {
+  if (!firebaseAuth.currentUser) throw new Error("Your sign-in session has expired. Request a new email link.");
+  return syncUser(firebaseAuth.currentUser, profile);
 }
 
 export async function loginWithPassword(email, password) {

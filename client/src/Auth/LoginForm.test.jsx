@@ -29,7 +29,7 @@ describe("LoginForm", () => {
   it("sends a passwordless Firebase email link", async () => {
     sendPasswordlessLoginLink.mockResolvedValue();
     render(<LoginForm />);
-    await userEvent.type(screen.getByLabelText("Email", { selector: "#linkEmail" }), "link@example.com");
+    await userEvent.type(screen.getByLabelText("Email", { selector: "#loginEmail" }), "link@example.com");
     await userEvent.click(screen.getByRole("button", { name: /send me a login link/i }));
     expect(sendPasswordlessLoginLink).toHaveBeenCalledWith("link@example.com");
     expect(await screen.findByText(/no password is required/i)).toBeInTheDocument();
@@ -44,14 +44,29 @@ describe("LoginForm", () => {
     await waitFor(() => expect(onLogin).toHaveBeenCalledWith({ id: "link-user" }));
   });
 
+  it("routes a new passwordless user to profile completion", async () => {
+    const onLogin = vi.fn();
+    isPasswordlessCallback.mockReturnValue(true);
+    savedPasswordlessEmail.mockReturnValue("new@example.com");
+    const result = { user: null, needsProfile: true, email: "new@example.com" };
+    finishPasswordlessLogin.mockResolvedValue(result);
+    render(<LoginForm onLogin={onLogin} />);
+    await waitFor(() => expect(onLogin).toHaveBeenCalledWith(null, result));
+  });
+
   it("supports Firebase email and password login separately", async () => {
     const onLogin = vi.fn();
     loginWithPassword.mockResolvedValue({ user: { id: "password-user" } });
     render(<LoginForm onLogin={onLogin} />);
-    await userEvent.type(screen.getByLabelText("Email", { selector: "#passwordEmail" }), "password@example.com");
-    await userEvent.type(screen.getByLabelText(/password/i), "secret12");
+    await userEvent.type(screen.getByLabelText("Email", { selector: "#loginEmail" }), "password@example.com");
+    await userEvent.type(screen.getByLabelText(/petalpal password/i), "secret12");
     await userEvent.click(screen.getByRole("button", { name: /sign in with password/i }));
     expect(onLogin).toHaveBeenCalledWith({ id: "password-user" });
+  });
+
+  it("shares one email field between link and password login", () => {
+    render(<LoginForm />);
+    expect(screen.getAllByLabelText(/^email$/i)).toHaveLength(1);
   });
 
   it("supports Google sign-in", async () => {
