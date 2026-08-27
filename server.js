@@ -11,6 +11,11 @@ import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
 import { generateFlowerMetadata } from "./lib/flower-engine.js";
 import {
+  isSupportedPrimaryGardenMood,
+  speciesPoolForPrimary
+} from "./lib/flower-variant-config.js";
+import { selectFlowerSecondaryEmotions } from "./lib/secondary-emotion-selector.js";
+import {
   reconcileFairyRuntime,
   formatFairyRuntimeResponse
 } from "./lib/fairy-runtime.js";
@@ -1980,9 +1985,11 @@ app.post("/users/:userId/flowers", async (req, res) => {
 
     const { event, mood, emotionSource, classification } = resolvedEmotion;
     let aiMetadata = null;
-    const secondaryEmotions = Array.isArray(classification?.secondaryEmotions)
-      ? classification.secondaryEmotions.slice(0, 2)
-      : [];
+    const selectedSecondaryEmotions = selectFlowerSecondaryEmotions({
+      primaryGardenMood: mood,
+      candidates: classification?.secondaryEmotions || []
+    });
+    const secondaryEmotions = selectedSecondaryEmotions.map(({ label }) => label);
     const secondaryEmotion = secondaryEmotions[0] || null;
     const emotionIntensity = classification?.intensity ?? null;
     const inferencePath = classification?.inferencePath || "NO_AI";
@@ -2002,7 +2009,7 @@ app.post("/users/:userId/flowers", async (req, res) => {
       };
     }
 
-    if (!Object.hasOwn(flowerDB, mood)) {
+    if (!isSupportedPrimaryGardenMood(mood)) {
       return res.status(400).json({ error: "Unsupported mood" });
     }
 
@@ -2041,7 +2048,7 @@ app.post("/users/:userId/flowers", async (req, res) => {
       select: { name: true }
     });
 
-    const options = flowerDB[mood] || flowerDB.calm;
+    const { pool: options, source: speciesPoolSource } = speciesPoolForPrimary(mood, flowerDB);
 
 if (!Array.isArray(options) || options.length === 0) {
   return res.status(400).json({
@@ -2051,8 +2058,8 @@ if (!Array.isArray(options) || options.length === 0) {
 
 const chosen = generateFlowerMetadata({
   options,
-  mood,
-  secondaryEmotion,
+  primaryGardenMood: mood,
+  secondaryEmotions: selectedSecondaryEmotions,
   intensity: emotionIntensity,
   localDate,
   userId: user.id,
@@ -2097,6 +2104,8 @@ const createdFlower = await prisma.$transaction(async (tx) => {
   const createdFlower = await tx.flower.create({
     data: {
       mood,
+      speciesCode: chosen.speciesCode,
+      colorAccent: chosen.colorAccent,
       event,
       name: chosen.name,
       meaning: chosen.meaning,
@@ -2164,7 +2173,20 @@ const createdFlower = await prisma.$transaction(async (tx) => {
       });
     }
 
-    res.status(201).json({ ...createdFlower, fairyProgress });
+    res.status(201).json({
+      ...createdFlower,
+      primaryGardenMood: mood,
+      secondaryEmotions,
+      flower: {
+        species: createdFlower.speciesCode,
+        variant: {
+          colorAccent: createdFlower.colorAccent,
+          effect: createdFlower.visualEffect
+        },
+        speciesPoolSource
+      },
+      fairyProgress
+    });
   } catch (err) {
     console.error("POST /users/:userId/flowers error:", err);
     if (err?.code === "P2002") {

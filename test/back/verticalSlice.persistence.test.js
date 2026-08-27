@@ -90,6 +90,7 @@ test("Month 1 vertical slice survives a database restart", async () => {
 
     await database.exec(await migration("202608260004_monthly_fairy_twenty_days"));
     await database.exec(await migration("202608270001_emotion_routing"));
+    await database.exec(await migration("202608270002_flower_variant_semantics"));
 
     await assert.rejects(
       database.exec(`
@@ -154,6 +155,8 @@ test("Month 1 vertical slice survives a database restart", async () => {
         e."secondaryEmotions" AS "secondaryEmotions",
         e."inferencePath" AS "inferencePath",
         flower."name" AS flower,
+        flower."speciesCode" AS "speciesCode",
+        flower."colorAccent" AS "colorAccent",
         owned."fairyType" AS "fairyType",
         owned."isActive" AS "isActive",
         runtime."currentState" AS "runtimeState",
@@ -183,6 +186,8 @@ test("Month 1 vertical slice survives a database restart", async () => {
       secondaryEmotions: [],
       inferencePath: "NO_AI",
       flower: "Lotus",
+      speciesCode: null,
+      colorAccent: null,
       fairyType: "BLOOM",
       isActive: true,
       runtimeState: "IDLE",

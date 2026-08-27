@@ -59,6 +59,8 @@ model Garden {
 model Flower {
   id             String   @id @default(cuid())
   mood           String
+  speciesCode    String?  @db.VarChar(32)
+  colorAccent    String?  @db.VarChar(32)
   event          String   @default("")
   name           String
   meaning        String

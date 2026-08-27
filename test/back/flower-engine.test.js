@@ -11,8 +11,10 @@ const options = [
 test("flower metadata is deterministic for the same daily check-in", () => {
   const input = {
     options,
-    mood: "happy",
-    secondaryEmotion: "calm",
+    primaryGardenMood: "SUNNY_BLOOM",
+    secondaryEmotions: [
+      { label: "gratitude", score: 0.8, role: "PRIMARY_VARIANT" }
+    ],
     intensity: 0.7,
     localDate: "2026-08-26",
     userId: "user-1",
@@ -25,15 +27,32 @@ test("flower metadata is deterministic for the same daily check-in", () => {
 test("flower engine avoids the most recent species when another is available", () => {
   const result = generateFlowerMetadata({
     options,
-    mood: "happy",
+    primaryGardenMood: "happy",
     localDate: "2026-08-26",
     userId: "user-2",
     recentFlowers: [{ name: "Sunflower" }]
   });
 
   assert.equal(result.name, "Tulip");
+  assert.equal(result.speciesCode, "TULIP");
   assert.equal(result.season, "SUMMER");
   assert.match(result.generationSeed, /^[a-f0-9]{64}$/);
+});
+
+test("secondary emotions modify semantic color and effect without changing species pool", () => {
+  const result = generateFlowerMetadata({
+    options,
+    primaryGardenMood: "SUNNY_BLOOM",
+    secondaryEmotions: [
+      { label: "gratitude", score: 0.9, role: "PRIMARY_VARIANT" }
+    ],
+    localDate: "2026-08-26",
+    userId: "user-variant",
+    recentFlowers: []
+  });
+  assert.ok(options.some(({ name }) => name === result.name));
+  assert.equal(result.colorAccent, "WARM_GOLD");
+  assert.equal(result.visualEffect, "SOFT_SPARKLE");
 });
 
 test("seasonForLocalDate maps calendar months", () => {

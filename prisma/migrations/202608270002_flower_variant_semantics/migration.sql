@@ -1,0 +1,3 @@
+ALTER TABLE "Flower"
+ADD COLUMN "speciesCode" VARCHAR(32),
+ADD COLUMN "colorAccent" VARCHAR(32);
