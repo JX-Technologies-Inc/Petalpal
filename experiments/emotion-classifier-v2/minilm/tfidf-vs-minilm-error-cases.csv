@@ -1,0 +1,421 @@
+label,outcome,truth,tfidf_prediction,minilm_prediction,tfidf_score,minilm_score,text
+admiration,fixed_by_minilm,0,1,0,0.694842,0.39448,"Kings fan here, good luck to you guys! Will be an interesting game to watch! "
+admiration,fixed_by_minilm,1,0,1,0.278178,0.863368,This guy is a little turd but I love him so dearly. I'll pass on your kisses :)
+admiration,fixed_by_minilm,1,0,1,0.383103,0.837528,New Haven has tons of locations that have strong cyber punk-y vibes at night!
+admiration,fixed_by_minilm,0,1,0,0.826896,0.293692,Thanks for the good news!
+admiration,fixed_by_minilm,0,1,0,0.6439,0.525744,"Wow, an [NAME] sighting"
+admiration,fixed_by_minilm,0,1,0,0.624536,0.446742,"Wow that’s scary, she’s so young and healthy. I hate that. "
+admiration,fixed_by_minilm,0,1,0,0.744216,0.4797,Works for me. The video is called : The great porn experiment | [NAME] | TEDxGlasgow
+admiration,fixed_by_minilm,0,1,0,0.73287,0.482092,that's why r/theredpill is such a thing. you arnt the first. you're showing a few nice guy warming signs bud.
+admiration,fixed_by_minilm,1,0,1,0.228816,0.836245,"I’m a fan of them in the wild, weasels are interesting. Not as pets, nope. "
+admiration,fixed_by_minilm,0,1,0,0.810928,0.20636,"They're off thinking about ways they can avoid topics and deflect more, since they seem so good at that lately."
+admiration,regressed_in_minilm,0,0,1,0.200773,0.783663,Lol! But I love your last name though. XD
+admiration,regressed_in_minilm,1,1,0,0.96323,0.600769,"It's great that you're a recovering addict, that's cool. Have you ever tried DMT?"
+admiration,regressed_in_minilm,1,1,0,0.842293,0.486801,Lol looks delicious
+admiration,regressed_in_minilm,1,1,0,0.824238,0.517659,Some great advice right here!!!!!! I forgot about this
+admiration,regressed_in_minilm,1,1,0,0.897324,0.701243,I'm on board the Saints hype train. [NAME] is an amazing QB.
+admiration,regressed_in_minilm,0,0,1,0.220311,0.750551,"Hope gallery for sure, had [NAME] do mine and a good friend back in 2015. Not sure if he’s still there, however."
+admiration,regressed_in_minilm,0,0,1,0.22714,0.815644,helpful quad helped him to his feet!
+admiration,regressed_in_minilm,0,0,1,0.378191,0.794316,This viral video of her gets posted every once in a while too: Her legs are ridiculously strong.
+admiration,regressed_in_minilm,0,0,1,0.478848,0.843145,I genuinely think that would be an iconic shot if it was in a famous horror film. The way the legs just keep on coming is terrifying.
+admiration,regressed_in_minilm,0,0,1,0.095901,0.862333,Thank you! I ended up assigning a dbq and paired students up
+amusement,fixed_by_minilm,0,1,0,0.491202,0.848077,Man I hate double standards. I love the show but change the word ‘white’ to ‘black’ and it’s suddenly not funny anymore
+amusement,fixed_by_minilm,0,1,0,0.562038,0.274206,"My friend and I have been having good fun queuing Mei/Winston, trololo, and 2 bottles of whisky."
+amusement,fixed_by_minilm,0,1,0,0.580687,0.85808,Lmao I hope I’m not the only one who gets this
+amusement,fixed_by_minilm,0,1,0,0.489311,0.44361,Don't include me in this us! Just kidding.. We need some love and fast.
+amusement,fixed_by_minilm,0,1,0,0.446339,0.028693,Probably the most rational way to look at this entire scenario - thanks for posting this my dude. That comment set me straight again.
+amusement,fixed_by_minilm,0,1,0,0.718373,0.839939,clearly no one is getting my joke oof.
+amusement,fixed_by_minilm,0,1,0,0.78529,0.75595,Good luck and have fun
+amusement,fixed_by_minilm,0,1,0,0.677275,0.14152,"[NAME]! Fun fact, it was [NAME]. who led the stacked 86 Mets rotation in wins with 18."
+amusement,fixed_by_minilm,0,1,0,0.493191,0.283563,Protestantism never cease to amaze me with its joke of theology and non existent historical justification.
+amusement,fixed_by_minilm,0,1,0,0.5209,0.757549,"I’ve learned to just laugh these off, and try not to dwell on them. "
+amusement,regressed_in_minilm,1,1,0,0.963389,0.045206,in what universe? lol the mr. blue sky cover is one of the best on the album imo.
+amusement,regressed_in_minilm,1,1,0,0.769404,0.711776,i love how the caption implies that the only unrealistic thing/ the only thing that gives away the photoshop is the sleeve lol
+amusement,regressed_in_minilm,1,1,0,0.703227,0.887131,Make fun of them all you want; fact is they won during the regular season when we couldn't.
+amusement,regressed_in_minilm,1,1,0,0.984388,0.640908,"[NAME]?! Is that [NAME]? I know ""meegwetch"" means thank you lol"
+amusement,regressed_in_minilm,0,0,1,0.364167,0.911319,Lmfao lonzo? That guy is not nba talent. World is gonna spank that ass
+amusement,regressed_in_minilm,1,1,0,0.65745,0.808527,Your username makes me think you would appreciate this joke of mine.
+amusement,regressed_in_minilm,1,1,0,0.969195,0.812156,/u/897w346354365fdddfs said: > You're funny You're shilly
+amusement,regressed_in_minilm,1,1,0,0.784178,0.634386,That’s funny to me because all of the teachers of the month this year (with 1 exception) have been science.
+amusement,regressed_in_minilm,1,1,0,0.860744,0.876662,It’s funny because this is the summary of most discussion posts on this sub
+amusement,regressed_in_minilm,1,1,0,0.508603,0.627236,Hunting would at least be more rewarding and fun. Every time I wanna meal prep in RDO I just horseback ride and lock-on to deer.
+anger,fixed_by_minilm,0,1,0,0.865595,0.638403,Borrowed time is stupid
+anger,fixed_by_minilm,0,1,0,0.615566,0.743746,Fucking love [NAME]. [NAME] best couple don't @ me
+anger,fixed_by_minilm,0,1,0,0.668412,0.784271,Must be why I'm alive. That sucks.
+anger,fixed_by_minilm,0,1,0,0.622958,0.684399,That was an incredibly dumb thing to do. [NAME] is an idiot for trusting her.
+anger,fixed_by_minilm,0,1,0,0.856216,0.288495,"Hate to be that guy, but that's not DDR, that's Pump It Up, the Korean DDR rip-off."
+anger,fixed_by_minilm,0,1,0,0.641063,0.647187,Pretty shit tbh with you
+anger,fixed_by_minilm,1,0,1,0.170715,0.981332,“You have no clue what fascism is” Goes on to promote literal genocide tactics. You’re despicable
+anger,fixed_by_minilm,0,1,0,0.679939,0.70092,"MeToo is about sharing personal stories of sexual assault. Reframing it as accusation based, and as furthering a kidnap, is fucking disgusting."
+anger,fixed_by_minilm,0,1,0,0.609444,0.242184,"Despite all the [NAME] hate in/on /Melbourne, here is a beautiful Indian song for you all "
+anger,fixed_by_minilm,1,0,1,0.179568,0.852742,Shes awful and its all about her. Try again. And when the show has awful ratings thatll be confirmed.
+anger,regressed_in_minilm,0,0,1,0.412421,0.878306,"I know you're joking, but there are people here either stupid or desperate enough to believe and perpetuate such idiocy. "
+anger,regressed_in_minilm,0,0,1,0.168658,0.881014,"Help, help, I'm being repressed!"
+anger,regressed_in_minilm,0,0,1,0.326474,0.879106,Man I hate double standards. I love the show but change the word ‘white’ to ‘black’ and it’s suddenly not funny anymore
+anger,regressed_in_minilm,1,1,0,0.65256,0.687353,Talk about an oldddd school shit coin.
+anger,regressed_in_minilm,0,0,1,0.349548,0.850667,Ha. Do you have evidence of his cheating? Send it to his family and don’t say another word.
+anger,regressed_in_minilm,0,0,1,0.407834,0.862686,i think people are just getting more and more fed up with playing against him
+anger,regressed_in_minilm,0,0,1,0.327866,0.871757,Ouch. That hurt the ego. And that’s not easy to do.
+anger,regressed_in_minilm,1,1,0,0.883025,0.753331,He’s going to the Bengals at 11 and I hate it so much
+anger,regressed_in_minilm,0,0,1,0.49343,0.921442,The UN said the election was a sham. The man is causing death destruction and starvation. Your morals are completely and utterly fucked.
+anger,regressed_in_minilm,0,0,1,0.267625,0.894589,Break up and be firm about. You’ve already admitted to being dishonest. Why lead him on?
+annoyance,fixed_by_minilm,0,1,0,0.520932,0.592569,It's wonderful because it's awful. At not with.
+annoyance,fixed_by_minilm,0,1,0,0.545185,0.268648,"Again, overall, not just for me. "
+annoyance,fixed_by_minilm,1,0,1,0.50859,0.860847,Get back on your meds mate..You aren't funny at all...
+annoyance,fixed_by_minilm,0,1,0,0.583672,0.498384,Crap. I need more Excedrin. STAT.
+annoyance,fixed_by_minilm,0,1,0,0.550927,0.463041,Not really cringey. Its not really embarrassing for you i think people might just feel bad upon reading it.
+annoyance,fixed_by_minilm,1,0,1,0.228371,0.797957,Wouldn't wipe my arse with it.
+annoyance,fixed_by_minilm,0,1,0,0.53015,0.557656,You could still pay them... Just saying.
+annoyance,fixed_by_minilm,0,1,0,0.750088,0.544643,The worst bbq in Texas Edit: Some of you are getting seriously r/wooooshed It's their slogan.
+annoyance,fixed_by_minilm,0,1,0,0.550529,0.367261,Just be honest with this person. Sorry I didn’t read the whole thing I don’t have time rn :(
+annoyance,fixed_by_minilm,0,1,0,0.597165,0.657521,That's a weird way of spelling Disenchanted
+annoyance,regressed_in_minilm,0,0,1,0.174474,0.688787,"Girlfriend weak as well, that jump was pathetic."
+annoyance,regressed_in_minilm,0,0,1,0.119897,0.726231,The thought of shooting anything at asylum seekers is appalling.
+annoyance,regressed_in_minilm,0,0,1,0.358871,0.871006,Imagine having to pretend you didn't edit your link. The inferiority is dripping off you.
+annoyance,regressed_in_minilm,0,0,1,0.482184,0.751605,You didn't watch it to the end.
+annoyance,regressed_in_minilm,0,0,1,0.30425,0.687705,I think the fan base is mostly past that at this point. Almost everyone has MASSIVE problems with some of the decisions Nintendo makes.
+annoyance,regressed_in_minilm,0,0,1,0.227576,0.890641,so wont back up your words? thats how i thought this would go.justifies *everything* I HAVE SAID.
+annoyance,regressed_in_minilm,0,0,1,0.283811,0.800846,You take that back right now! [NAME] does not deserve this.
+annoyance,regressed_in_minilm,0,0,1,0.23346,0.821317,Even the royals aren't immune to it.
+annoyance,regressed_in_minilm,0,0,1,0.130857,0.712039,I'm sorry that's what you read because it isn't what I said.
+annoyance,regressed_in_minilm,0,0,1,0.457374,0.927421,Man I hate double standards. I love the show but change the word ‘white’ to ‘black’ and it’s suddenly not funny anymore
+approval,fixed_by_minilm,0,1,0,0.657275,0.478597,I've also heard that intriguing but also kinda scary
+approval,fixed_by_minilm,0,1,0,0.877955,0.651354,Same here but it seems like that will make it more rewarding to actually build a base with gardens and stuff.
+approval,fixed_by_minilm,0,1,0,0.684903,0.678127,I think the fan base is mostly past that at this point. Almost everyone has MASSIVE problems with some of the decisions Nintendo makes.
+approval,fixed_by_minilm,0,1,0,0.642019,0.411824,It’s Woosh with 4 o’s r/woooosh (The most popular one)
+approval,fixed_by_minilm,0,1,0,0.629825,0.657856,Some great advice right here!!!!!! I forgot about this
+approval,fixed_by_minilm,0,1,0,0.655564,0.514954,"My girl has slowly been getting more and more into different [NAME] music, but she will always make it a point to play this track. I love it"
+approval,fixed_by_minilm,1,0,1,0.313676,0.687007,I don’t think that would be an issue with [NAME]. He doesn’t seem like work ethic is his problem
+approval,fixed_by_minilm,0,1,0,0.65817,0.600271,"Ok, fair enough. From your original post, it wasn't really clear that you looked at sources other than YouTube."
+approval,fixed_by_minilm,0,1,0,0.62925,0.269364,"Just rumors online, it most likely won't happen"
+approval,fixed_by_minilm,0,1,0,0.698868,0.592302,"Don't say ""no comment"". Say ""I would like to talk with an attorney before talking with you."""
+approval,regressed_in_minilm,0,0,1,0.266399,0.760069,"Again, overall, not just for me. "
+approval,regressed_in_minilm,0,0,1,0.369573,0.800337,"Possibly, but not if it actually succedes"
+approval,regressed_in_minilm,0,0,1,0.321315,0.708803,so wont back up your words? thats how i thought this would go.justifies *everything* I HAVE SAID.
+approval,regressed_in_minilm,0,0,1,0.196494,0.811825,You sure? They seem so much brighter on screen lol
+approval,regressed_in_minilm,0,0,1,0.242015,0.772241,Not at all. I'm not going to argue with someone who doesn't understand what a strawman is.
+approval,regressed_in_minilm,0,0,1,0.315536,0.813877,I feel you mate
+approval,regressed_in_minilm,0,0,1,0.376306,0.745957,You could still pay them... Just saying.
+approval,regressed_in_minilm,0,0,1,0.426068,0.813766,You have a nice bro.
+approval,regressed_in_minilm,0,0,1,0.176033,0.747267,"I would hope the guy is genuine and honest, but in my circumstances, there's not much closure. "
+approval,regressed_in_minilm,0,0,1,0.394274,0.727009,Unfortunately for us it’s not too early. But if you want way too early 2020 draft discussion I’m really high on [NAME] from Wisconsin
+caring,fixed_by_minilm,1,0,1,0.469153,0.851504,please dont bring a woman in as a sex toy for you both. hire a sex worker instead
+caring,fixed_by_minilm,0,1,0,0.755493,0.513553,OP is just a kid. Let's just move on.
+caring,fixed_by_minilm,0,1,0,0.772146,0.110639,"They started seeling alcohol a while ago, when she called her mafia friend to get help for the speakeasy."
+caring,fixed_by_minilm,0,1,0,0.72584,0.581393,I feel you mate
+caring,fixed_by_minilm,1,0,1,0.420539,0.85627,"Hi, [NAME]! I thought I would stop by and wish you a wonderful and prosperous year! Have a good one! -HappyFriendlyBot"
+caring,fixed_by_minilm,1,0,1,0.276219,0.926568,Just be honest with this person. Sorry I didn’t read the whole thing I don’t have time rn :(
+caring,fixed_by_minilm,1,0,1,0.289497,0.937878,Praying for me family.
+caring,fixed_by_minilm,0,1,0,0.655792,0.613328,"I am generally a happy person. If you like to pay millions of dollars to semi-literates to represent your government, it's up to you!"
+caring,fixed_by_minilm,0,1,0,0.668075,0.788381,"Well done dude! Seriously :) But keep it up, don't lose this momentum."
+caring,fixed_by_minilm,1,0,1,0.410211,0.874689,"Let it go, look to the future, do not live in the past"
+caring,regressed_in_minilm,0,0,1,0.2088,0.841911,"I’m really sorry about your situation :( Although I love the names Sapphira, Cirilla, and Scarlett!"
+caring,regressed_in_minilm,0,0,1,0.26215,0.914185,"if the pain doesn't go away after 4 hours or so, it's broke."
+caring,regressed_in_minilm,0,0,1,0.11775,0.874305,This guy is a little turd but I love him so dearly. I'll pass on your kisses :)
+caring,regressed_in_minilm,0,0,1,0.059035,0.957591,Some great advice right here!!!!!! I forgot about this
+caring,regressed_in_minilm,0,0,1,0.078322,0.805052,Because of this bad situation some people are afraid of becoming youtubers because of this
+caring,regressed_in_minilm,0,0,1,0.531868,0.820681,Ghost them. It’ll drive them crazy and give you the satisfaction
+caring,regressed_in_minilm,0,0,1,0.466008,0.799371,helpful quad helped him to his feet!
+caring,regressed_in_minilm,0,0,1,0.478336,0.919454,"Tl, dr - Take the abuse. Squirming only gets them off more."
+caring,regressed_in_minilm,0,0,1,0.508419,0.818682,Thanks! Do you think I should talk to her or drop it for now?
+caring,regressed_in_minilm,0,0,1,0.132602,0.866589,"It turns out he works for [NAME], so maybe your instinctive distrust might not have been the worst first reaction."
+confusion,fixed_by_minilm,0,1,0,0.886973,0.166842,Thank you for asking questions and recognizing that there may be things that you don’t know or understand about police tactics. Seriously. Thank you.
+confusion,fixed_by_minilm,1,0,1,0.539745,0.795741,I know people around here may mock me from my optimism but what if we get actual desings for the crusaders in Heroes?
+confusion,fixed_by_minilm,0,1,0,0.853372,0.18489,"Hope gallery for sure, had [NAME] do mine and a good friend back in 2015. Not sure if he’s still there, however."
+confusion,fixed_by_minilm,0,1,0,0.964844,0.064321,wh is that undertale
+confusion,fixed_by_minilm,1,0,1,0.305518,0.846442,Where were they? I was trying to track them down and couldn’t remember where I saw them.
+confusion,fixed_by_minilm,1,0,1,0.641251,0.865351,*looks at YouTube comments sections* Um. I'm not so sure.
+confusion,fixed_by_minilm,0,1,0,0.957834,0.609139,How do you know this?
+confusion,fixed_by_minilm,0,1,0,0.78494,0.385038,"What do you think women do? I’m quiet as a churchmouse when I mastrubate, too"
+confusion,fixed_by_minilm,0,1,0,0.737019,0.188296,[NAME] and [NAME] going on a bike tour is awesome IDK why I love it so much
+confusion,fixed_by_minilm,0,1,0,0.75956,0.360434,how does asperger feel like
+confusion,regressed_in_minilm,0,0,1,0.077267,0.919326,What's your source for that? Just curious (and yes I know it sounds like a tired contrarian statement).
+confusion,regressed_in_minilm,0,0,1,0.161103,0.768961,"I totally thought the same thing! I was like, oh honey nooooo!"
+confusion,regressed_in_minilm,0,0,1,0.063049,0.927137,HUGE difference e b/t “seniors housing” and “nursing home.” HUGE DIFFERENCE.
+confusion,regressed_in_minilm,0,0,1,0.125806,0.805984,"I would hope the guy is genuine and honest, but in my circumstances, there's not much closure. "
+confusion,regressed_in_minilm,0,0,1,0.076381,0.936007,"It depends on who you ask. i didnt downvote you, im answering now"
+confusion,regressed_in_minilm,0,0,1,0.115848,0.835056,i think people are just getting more and more fed up with playing against him
+confusion,regressed_in_minilm,0,0,1,0.228182,0.886952,You also can’t prove it happened so logically this doesn’t exist and is a paradox that never happened therefore pi = 3.14159
+confusion,regressed_in_minilm,0,0,1,0.35076,0.819899,Call it whatever you want. I’m just clearing a meaning that many atheists aren’t aware of or don’t consider.
+confusion,regressed_in_minilm,0,0,1,0.142992,0.892575,"Yes, oops "
+confusion,regressed_in_minilm,0,0,1,0.534809,0.791132,>if your car is so great why do you have to fill it with petrol all the time This is how stupid you sound
+curiosity,fixed_by_minilm,0,1,0,0.70007,0.675249,I know people around here may mock me from my optimism but what if we get actual desings for the crusaders in Heroes?
+curiosity,fixed_by_minilm,0,1,0,0.661476,0.015168,That’s how you know they’re happy.
+curiosity,fixed_by_minilm,0,1,0,0.960044,0.793311,"Did they really have overhead projectors in the late 00s/early 10s? If so, how underfunded was your school?"
+curiosity,fixed_by_minilm,0,1,0,0.812035,0.604373,How was the problem resolved??? Having the same issue????
+curiosity,fixed_by_minilm,0,1,0,0.727567,0.404874,>if your car is so great why do you have to fill it with petrol all the time This is how stupid you sound
+curiosity,fixed_by_minilm,0,1,0,0.823286,0.281398,The sad part about this is that these memes are more Gen Z if anything...
+curiosity,fixed_by_minilm,0,1,0,0.996039,0.05415,wh is that undertale
+curiosity,fixed_by_minilm,0,1,0,0.773635,0.357154,"Seeing how I was as a teen and how most teens are, nope! Dont want to deal with that."
+curiosity,fixed_by_minilm,0,1,0,0.686751,0.209723,Time flies when you're a semiprofessional quotemaker. I wonder what he's up to these days.
+curiosity,fixed_by_minilm,0,1,0,0.862284,0.837227,Have you tried having wealthy parents?
+curiosity,regressed_in_minilm,0,0,1,0.110014,0.85214,May regret asking but foid ?
+curiosity,regressed_in_minilm,1,1,0,0.983466,0.770328,What's your source for that? Just curious (and yes I know it sounds like a tired contrarian statement).
+curiosity,regressed_in_minilm,1,1,0,0.69924,0.409969,What you mean you weren’t looking forward to that scene? ;)
+curiosity,regressed_in_minilm,0,0,1,0.470984,0.887745,I'm not sure I have heard of this. Really interesting.
+curiosity,regressed_in_minilm,0,0,1,0.532364,0.949591,Not sure how anyone whos been paying attention could
+curiosity,regressed_in_minilm,0,0,1,0.474163,0.930071,"It depends on who you ask. i didnt downvote you, im answering now"
+curiosity,regressed_in_minilm,1,1,0,0.651778,0.814762,Well what would make us special? He's vouching for his friend.
+curiosity,regressed_in_minilm,0,0,1,0.111279,0.894877,"My friend and I have been having good fun queuing Mei/Winston, trololo, and 2 bottles of whisky."
+curiosity,regressed_in_minilm,0,0,1,0.02195,0.97598,"Yes, oops "
+curiosity,regressed_in_minilm,0,0,1,0.172828,0.855795,"Yes, he did. "
+disappointment,fixed_by_minilm,0,1,0,0.649507,0.724151,And some of us wish to die first so we don't have to deal with the loneliness.
+disappointment,fixed_by_minilm,0,1,0,0.699254,0.59603,Not really cringey. Its not really embarrassing for you i think people might just feel bad upon reading it.
+disappointment,fixed_by_minilm,0,1,0,0.711268,0.278807,Unfortunately for us it’s not too early. But if you want way too early 2020 draft discussion I’m really high on [NAME] from Wisconsin
+disappointment,fixed_by_minilm,0,1,0,0.576498,0.427714,"Wife just had our baby, and this story freaked me out. I can't imagine going through something like that."
+disappointment,fixed_by_minilm,0,1,0,0.599131,0.606866,Not sad enough fo here the skeleton is dead so he can't comit sucide
+disappointment,fixed_by_minilm,0,1,0,0.565853,0.258482,Pretty shit tbh with you
+disappointment,fixed_by_minilm,0,1,0,0.758007,0.628182,I just see two inflated peacocks with a dumb and disgusting look in their face. But unfortunately I am not the gender evaluating them.
+disappointment,fixed_by_minilm,1,0,1,0.157476,0.852437,The UN said the election was a sham. The man is causing death destruction and starvation. Your morals are completely and utterly fucked.
+disappointment,fixed_by_minilm,0,1,0,0.711655,0.260499,"I have no faith, but the theodicy problem has multiple answers, I’m not too concerned with it."
+disappointment,fixed_by_minilm,0,1,0,0.56769,0.2834,Oh god another injury
+disappointment,regressed_in_minilm,0,0,1,0.043887,0.882864,I’m sorry to hear that friend :(. It’s for the best most likely if she didn’t accept you for who you are
+disappointment,regressed_in_minilm,0,0,1,0.335808,0.789521,"if the pain doesn't go away after 4 hours or so, it's broke."
+disappointment,regressed_in_minilm,0,0,1,0.309421,0.828891,NJ has zero of their own picks from the 2010 draft still in the org
+disappointment,regressed_in_minilm,0,0,1,0.30471,0.83798,I'm going to hold out hope for something minor even though it looked really bad. Just going to wait for the official news.
+disappointment,regressed_in_minilm,0,0,1,0.135802,0.904209,You didn't watch it to the end.
+disappointment,regressed_in_minilm,0,0,1,0.21899,0.767696,I think the fan base is mostly past that at this point. Almost everyone has MASSIVE problems with some of the decisions Nintendo makes.
+disappointment,regressed_in_minilm,0,0,1,0.394008,0.902898,"Help, help, I'm being repressed!"
+disappointment,regressed_in_minilm,0,0,1,0.245894,0.759687,Papa Johns in my area basically gives away their pizza. I can smell the desperation in the store
+disappointment,regressed_in_minilm,0,0,1,0.069571,0.918954,What happened to one of your star players?? i saw the headline 'freak injury' or someting like that.. but i was too scared to see someting gruesome..
+disappointment,regressed_in_minilm,0,0,1,0.231021,0.759057,i think people are just getting more and more fed up with playing against him
+disapproval,fixed_by_minilm,1,0,1,0.469636,0.993048,You didn't watch it to the end.
+disapproval,fixed_by_minilm,0,1,0,0.57116,0.627724,It's real and it plays SO OFTEN I CAN'T STAND IT!!
+disapproval,fixed_by_minilm,0,1,0,0.691291,0.617688,If there is no goal on this powerplay it will be difficult not to be hopeless
+disapproval,fixed_by_minilm,1,0,1,0.503021,0.759466,No point in getting rid of Keemun for another Keemun.
+disapproval,fixed_by_minilm,0,1,0,0.676032,0.472946,"No no she was ""[NAME]"""
+disapproval,fixed_by_minilm,0,1,0,0.840366,0.479897,"Don't say ""no comment"". Say ""I would like to talk with an attorney before talking with you."""
+disapproval,fixed_by_minilm,0,1,0,0.724784,0.645395,I have a bad feeling I’m gonna regret not tuning into this
+disapproval,fixed_by_minilm,0,1,0,0.557194,0.617002,"No, what’s sad is saying the same message like it’s news. He’s a copy paste machine. No original thought."
+disapproval,fixed_by_minilm,0,1,0,0.706349,0.194896,He has a girlfriend. Unfortunately she is not thick. He needs to take a page out of [NAME] book.
+disapproval,fixed_by_minilm,0,1,0,0.702551,0.417472,Who needs sciences. It's most fake news they peddle in anyways...
+disapproval,regressed_in_minilm,1,1,0,0.697521,0.46543,I never wanted to punch osap harder after seeing that However not too hardly I cant afford them taking everything away
+disapproval,regressed_in_minilm,0,0,1,0.333155,0.797984,"I know you're joking, but there are people here either stupid or desperate enough to believe and perpetuate such idiocy. "
+disapproval,regressed_in_minilm,0,0,1,0.533202,0.850499,"Possibly, but not if it actually succedes"
+disapproval,regressed_in_minilm,0,0,1,0.034363,0.741018,What's your source for that? Just curious (and yes I know it sounds like a tired contrarian statement).
+disapproval,regressed_in_minilm,0,0,1,0.174592,0.772007,Imagine having to pretend you didn't edit your link. The inferiority is dripping off you.
+disapproval,regressed_in_minilm,0,0,1,0.377628,0.800843,I like to bring up the fact that all of these pyramid schemes have corporate offices that have the exact same structure they are railing against.
+disapproval,regressed_in_minilm,0,0,1,0.307558,0.739633,I think the fan base is mostly past that at this point. Almost everyone has MASSIVE problems with some of the decisions Nintendo makes.
+disapproval,regressed_in_minilm,0,0,1,0.063347,0.716603,so wont back up your words? thats how i thought this would go.justifies *everything* I HAVE SAID.
+disapproval,regressed_in_minilm,1,1,0,0.656602,0.426451,"""But Aunt [NAME], I don't *want* to send Grandma back to Italy!"""
+disapproval,regressed_in_minilm,0,0,1,0.471506,0.845547,Even the royals aren't immune to it.
+disgust,fixed_by_minilm,0,1,0,0.972311,0.570986,The worst bbq in Texas Edit: Some of you are getting seriously r/wooooshed It's their slogan.
+disgust,fixed_by_minilm,0,1,0,0.943005,0.947531,Shes awful and its all about her. Try again. And when the show has awful ratings thatll be confirmed.
+disgust,fixed_by_minilm,0,1,0,0.949858,0.788899,This is creepy.
+disgust,fixed_by_minilm,0,1,0,0.946038,0.905196,Yeah mason wasps are nasty little Tucker’s.
+disgust,fixed_by_minilm,1,0,1,0.288005,0.97072,"That's horrible, good to know she is with an awesome guy."
+disgust,fixed_by_minilm,1,0,1,0.492667,0.970955,Isn't she like a worse version of [NAME]? I always hear from everyone that she is pretty trash.
+disgust,fixed_by_minilm,1,0,1,0.164396,0.967991,Tiki Lounge always smells like sewage. I'm surprise it's lasted this long.
+disgust,fixed_by_minilm,0,1,0,0.858639,0.533313,i am a man and i disagree. i mean you logic is worse if you believe it.
+disgust,fixed_by_minilm,0,1,0,0.985488,0.818728,[NAME] is the worst coach in bulls history
+disgust,fixed_by_minilm,0,1,0,0.903364,0.932447,There is no assuming the worst. Its experience and taking things at face value.
+disgust,regressed_in_minilm,0,0,1,0.098041,0.985917,Imagine having to pretend you didn't edit your link. The inferiority is dripping off you.
+disgust,regressed_in_minilm,0,0,1,0.240525,0.985352,Not really cringey. Its not really embarrassing for you i think people might just feel bad upon reading it.
+disgust,regressed_in_minilm,1,1,0,0.965541,0.460066,This sounds an awful lot like khorne......
+disgust,regressed_in_minilm,0,0,1,0.423068,0.953973,Hey! Your mom sucks.
+disgust,regressed_in_minilm,1,1,0,0.833798,0.736051,[NAME] can’t space and [NAME] is getting worse defensively
+disgust,regressed_in_minilm,0,0,1,0.205416,0.982336,Yikes that's cringe
+disgust,regressed_in_minilm,1,1,0,0.903101,0.836812,"MeToo is about sharing personal stories of sexual assault. Reframing it as accusation based, and as furthering a kidnap, is fucking disgusting."
+disgust,regressed_in_minilm,0,0,1,0.049094,0.976736,Wich stinks for you
+disgust,regressed_in_minilm,0,0,1,0.652283,0.998907,Oof that’s terrible
+disgust,regressed_in_minilm,0,0,1,0.572375,0.96995,"I would try rubbing alcohol, high percentage. Looks greasy to me."
+excitement,fixed_by_minilm,0,1,0,0.901945,0.594631,Oh boy 🤣🤣
+excitement,fixed_by_minilm,0,1,0,0.677067,0.436739,Wow what a disappointing game. Wish we would have showed up
+excitement,fixed_by_minilm,1,0,1,0.076054,0.901962,I'm so doing this!
+excitement,fixed_by_minilm,1,0,1,0.351068,0.923715,Welcome to the freedom and democracy circus that is 'mercuh! 👍
+excitement,fixed_by_minilm,1,0,1,0.167428,0.89948,Wowowowow!!!! I’ve been campaigning for [NAME] too!
+excitement,fixed_by_minilm,0,1,0,0.681076,0.67654,"Wow, 5 downvotes in 3 minutes. Go you!"
+excitement,fixed_by_minilm,0,1,0,0.652936,0.50391,Now go to Gulag!!!!
+excitement,fixed_by_minilm,0,1,0,0.801363,0.883228,I listened to this song the other day for the first time and... oh boy yeah
+excitement,fixed_by_minilm,0,1,0,0.761714,0.416798,Wiggins midrange magic!
+excitement,fixed_by_minilm,0,1,0,0.739919,0.789544,You know a giant lady as a character would be very interesting in my opinion.
+excitement,regressed_in_minilm,0,0,1,0.475443,0.913204,100%! Congrats on your job too!
+excitement,regressed_in_minilm,0,0,1,0.095861,0.94092,Same here but it seems like that will make it more rewarding to actually build a base with gardens and stuff.
+excitement,regressed_in_minilm,0,0,1,0.032241,0.900303,What's that like? Like what's the thought process? I dunno. I know what's a weird question..i just can't imagine
+excitement,regressed_in_minilm,0,0,1,0.029585,0.998018,A surprise turn of events! I'm so glad you heard such great things about yourself!
+excitement,regressed_in_minilm,0,0,1,0.280458,0.925186,This is honestly the cherry on top of the cake with this story. That's absolutely hilarious!
+excitement,regressed_in_minilm,0,0,1,0.196316,0.965881,"My friend and I have been having good fun queuing Mei/Winston, trololo, and 2 bottles of whisky."
+excitement,regressed_in_minilm,0,0,1,0.040889,0.937159,Hhhhhaaarrryyy [NAME]!
+excitement,regressed_in_minilm,0,0,1,0.264509,0.984327,"That's what I'd hope for! Retool the D day 1, if we could find a gem at QB day 2. "
+excitement,regressed_in_minilm,0,0,1,0.626501,0.989887,"Thank you, that is interesting!"
+excitement,regressed_in_minilm,0,0,1,0.374164,0.921206,CAPTAIN!! ye-yeah? LOOK!!!
+fear,fixed_by_minilm,1,0,1,0.03526,0.941353,"Help, help, I'm being repressed!"
+fear,fixed_by_minilm,0,1,0,0.698572,0.486797,"Verisimilitude, which here means, utter bs meant to help justify terrible favouritism."
+fear,fixed_by_minilm,0,1,0,0.563208,0.405417,China cheating the rest of the world is horrible for the economy and society.
+fear,fixed_by_minilm,0,1,0,0.642433,0.037691,It’s a terrible thing when someone who doesn’t let themselves laugh has a reddit account
+fear,fixed_by_minilm,0,1,0,0.568912,0.748925,The only cringe is some of y'all obsessing over every little thing Eureka does.
+fear,fixed_by_minilm,0,1,0,0.611816,0.012371,That’s pretty accurate
+fear,fixed_by_minilm,1,0,1,0.13467,0.994222,Don't you're making me paranoid man
+fear,fixed_by_minilm,0,1,0,0.628683,0.657326,"A horrendous amount of Sesame oil, god, that would be awful."
+fear,fixed_by_minilm,1,0,1,0.320067,0.988958,Yikes. This kind of freaks me out.
+fear,fixed_by_minilm,0,1,0,0.730771,0.107481,Your friend must have had a horrible time writing papers if adjectives like that were off limits
+fear,regressed_in_minilm,0,0,1,0.060812,0.994043,Not really cringey. Its not really embarrassing for you i think people might just feel bad upon reading it.
+fear,regressed_in_minilm,0,0,1,0.360251,0.997411,"Wife just had our baby, and this story freaked me out. I can't imagine going through something like that."
+fear,regressed_in_minilm,1,1,0,0.92361,0.880187,Yikes that's cringe
+fear,regressed_in_minilm,0,0,1,0.270539,0.948113,I've always wanted one of those but like worry it'll make a huge mess in my washer
+fear,regressed_in_minilm,0,0,1,0.090377,0.951706,Looks like he has a history of being an awful human:
+fear,regressed_in_minilm,0,0,1,0.055491,0.915554,I think teams will still cut the cross-seam that made [NAME] and [NAME] so deadly last year. This is awesome nonetheless.
+fear,regressed_in_minilm,0,0,1,0.134388,0.986682,I've picked scabs bigger than most aborted fetuses get. I don't see the police knocking on my door for committing assault against a human being.
+fear,regressed_in_minilm,0,0,1,0.112485,0.919256,[NAME] can’t hurt us anymore.
+fear,regressed_in_minilm,0,0,1,0.388345,0.973508,"I've had a few blisters from hot welds, but nothing that bad..."
+fear,regressed_in_minilm,0,0,1,0.163466,0.969525,Should I watch this? Will it aggravate me?
+gratitude,fixed_by_minilm,0,1,0,0.970308,0.660793,thats amazing!! Congrats!
+gratitude,fixed_by_minilm,0,1,0,0.700257,0.299103,Welcome to the freedom and democracy circus that is 'mercuh! 👍
+gratitude,fixed_by_minilm,0,1,0,0.989856,0.288991,"[NAME]?! Is that [NAME]? I know ""meegwetch"" means thank you lol"
+gratitude,fixed_by_minilm,1,0,1,0.508797,0.956546,Happy cake day to him
+gratitude,fixed_by_minilm,1,0,1,0.298187,0.815861,I believe that you can search for providers here. Good luck and good on ya.
+gratitude,fixed_by_minilm,1,0,1,0.269645,0.98366,"Of course man, I really appreciate this. But it's okay, I can just message you through here. It's fine:)"
+gratitude,fixed_by_minilm,1,0,1,0.643076,0.923011,"Congrats! Enjoy a free slice, I think you know what to do with this 🍕"
+gratitude,fixed_by_minilm,1,0,1,0.28897,0.821211,So he is half decent. Glad to see your finally making some sense.
+gratitude,fixed_by_minilm,0,1,0,0.993388,0.604766,No thanks probably stank af.
+gratitude,fixed_by_minilm,0,1,0,0.680207,0.773627,I really like this ring so I’m glad to hear that.
+gratitude,regressed_in_minilm,0,0,1,0.216703,0.949379,"I’m so proud of you for taking care of you and your babies, mama! We love you and stay strong."
+gratitude,regressed_in_minilm,0,0,1,0.197639,0.984207,"Hi, [NAME]! I thought I would stop by and wish you a wonderful and prosperous year! Have a good one! -HappyFriendlyBot"
+gratitude,regressed_in_minilm,0,0,1,0.538221,0.990147,I’m glad you had a great time here! Wishing you safe travels!
+gratitude,regressed_in_minilm,0,0,1,0.259473,0.943798,Proud of you.
+gratitude,regressed_in_minilm,1,1,0,0.946633,0.407615,Thanks! Do you think I should talk to her or drop it for now?
+gratitude,regressed_in_minilm,0,0,1,0.196307,0.949012,"Well done dude! Seriously :) But keep it up, don't lose this momentum."
+gratitude,regressed_in_minilm,1,1,0,0.97045,0.709004,Thank you for this. This sub isn’t a rating or selfie sub. There’s literally no poly content on this post.
+gratitude,regressed_in_minilm,1,1,0,0.970492,0.122563,Please explain “Hoover/ed”. Not familiar with the term. Thank you-
+gratitude,regressed_in_minilm,1,1,0,0.999438,0.243023,Which side story? Thanks for the info!
+gratitude,regressed_in_minilm,0,0,1,0.047702,0.915864,"Awesome, love the input! I totally get what you’re saying!"
+joy,fixed_by_minilm,0,1,0,0.790418,0.575554,Thanks for the good news!
+joy,fixed_by_minilm,1,0,1,0.57083,0.888606,>happily live in any hole they find. What's my love life got to do with this
+joy,fixed_by_minilm,1,0,1,0.622944,0.980757,"I am generally a happy person. If you like to pay millions of dollars to semi-literates to represent your government, it's up to you!"
+joy,fixed_by_minilm,0,1,0,0.883076,0.484239,"[NAME], [NAME] is starting a marriage with infidelity and drunk proposals. I hope a happy and long married life for him."
+joy,fixed_by_minilm,1,0,1,0.109096,0.857212,I know a couple of people who are. It's amazing to watch.
+joy,fixed_by_minilm,0,1,0,0.687899,0.424763,U guys are like match made in heaven ♥️♥️♥️
+joy,fixed_by_minilm,0,1,0,0.844446,0.665575,This is really cool and well made!
+joy,fixed_by_minilm,1,0,1,0.652343,0.905888,I'm here again to say I love your art and it brings me joy when you post it on this sub bye!
+joy,fixed_by_minilm,0,1,0,0.671376,0.685098,Also one of my favorite parts of this story.
+joy,fixed_by_minilm,1,0,1,0.152981,0.904626,"Paraphrasing [NAME], this brought warm feelings to my heart."
+joy,regressed_in_minilm,0,0,1,0.097231,0.951574,100%! Congrats on your job too!
+joy,regressed_in_minilm,0,0,1,0.123086,0.963809,Same here but it seems like that will make it more rewarding to actually build a base with gardens and stuff.
+joy,regressed_in_minilm,0,0,1,0.224669,0.864729,This is honestly the cherry on top of the cake with this story. That's absolutely hilarious!
+joy,regressed_in_minilm,0,0,1,0.425026,0.953779,Loving everyone so far. This is going to be a great season.
+joy,regressed_in_minilm,0,0,1,0.273121,0.888326,"Hi, [NAME]! I thought I would stop by and wish you a wonderful and prosperous year! Have a good one! -HappyFriendlyBot"
+joy,regressed_in_minilm,0,0,1,0.23301,0.882747,Life Hack Attack has become Attack Everyone's Life and Hack. I love it.
+joy,regressed_in_minilm,0,0,1,0.078365,0.915709,Me too buddy
+joy,regressed_in_minilm,0,0,1,0.2218,0.85938,It's on here daily. Karma whores eh?
+joy,regressed_in_minilm,0,0,1,0.176812,0.905536,I **LOVE** that the players are finally getting into the game. People feel invested! I like that!
+joy,regressed_in_minilm,0,0,1,0.614841,0.904288,Make fun of them all you want; fact is they won during the regular season when we couldn't.
+love,fixed_by_minilm,0,1,0,0.978865,0.746572,"I’m really sorry about your situation :( Although I love the names Sapphira, Cirilla, and Scarlett!"
+love,fixed_by_minilm,1,0,1,0.546049,0.998191,Loving everyone so far. This is going to be a great season.
+love,fixed_by_minilm,0,1,0,0.996335,0.756005,Eff your video - love Canada 🇨🇦 Stupid geolock
+love,fixed_by_minilm,0,1,0,0.714789,0.578956,i love how the caption implies that the only unrealistic thing/ the only thing that gives away the photoshop is the sleeve lol
+love,fixed_by_minilm,0,1,0,0.966917,0.767311,Do you have the link to that ? I would love to hear the story from him
+love,fixed_by_minilm,0,1,0,0.850447,0.656496,Loook all around youuuu. All throughout Nature is evidence of a creator and his love ❤️for us
+love,fixed_by_minilm,1,0,1,0.583987,0.906904,Well thanks for sharing. I loved it. Do you know of any others from them that aren't well known?
+love,fixed_by_minilm,0,1,0,0.985764,0.07197,Because your considered “boring”. Girls love drama. It’s a thing.
+love,fixed_by_minilm,0,1,0,0.716546,0.257714,It really do be like that
+love,fixed_by_minilm,1,0,1,0.506146,0.996967,I like her too! I hope she does well and stays away from [NAME].
+love,regressed_in_minilm,0,0,1,0.047113,0.893834,It's wonderful because it's awful. At not with.
+love,regressed_in_minilm,1,1,0,0.995307,0.820219,If you have any other links handy I'd love to see them.
+love,regressed_in_minilm,1,1,0,0.908278,0.445042,Man I hate double standards. I love the show but change the word ‘white’ to ‘black’ and it’s suddenly not funny anymore
+love,regressed_in_minilm,1,1,0,0.948428,0.838508,Life Hack Attack has become Attack Everyone's Life and Hack. I love it.
+love,regressed_in_minilm,0,0,1,0.158968,0.940967,"I’m a fan of them in the wild, weasels are interesting. Not as pets, nope. "
+love,regressed_in_minilm,0,0,1,0.118661,0.92034,I have a really nice tempurpedic one and about 6 king sized fluffy ones that I use to just fall asleep hugging
+love,regressed_in_minilm,0,0,1,0.072468,0.886882,I much prefer when the CB is given a taste of their own medicine. Far more satisfying than being polite. This one is great!
+love,regressed_in_minilm,0,0,1,0.291373,0.870037,My boy [NAME] <3
+love,regressed_in_minilm,0,0,1,0.128364,0.952784,Yes! My Big Fat Fabulous Life
+love,regressed_in_minilm,1,1,0,0.957569,0.799534,Would I love to be a fly on your wall right now and watch this whole debacle.
+neutral,fixed_by_minilm,0,1,0,0.564861,0.483655,"Girlfriend weak as well, that jump was pathetic."
+neutral,fixed_by_minilm,0,1,0,0.580825,0.446896,I never wanted to punch osap harder after seeing that However not too hardly I cant afford them taking everything away
+neutral,fixed_by_minilm,1,0,1,0.356157,0.514073,What's that like? Like what's the thought process? I dunno. I know what's a weird question..i just can't imagine
+neutral,fixed_by_minilm,1,0,1,0.454981,0.816387,"I didn't know this was a ""reveal"" he'd been talking about for awhile. "
+neutral,fixed_by_minilm,0,1,0,0.525418,0.405224,Crap. I need more Excedrin. STAT.
+neutral,fixed_by_minilm,0,1,0,0.775725,0.409242,My only issue with private schooling is it discourages those with children in private schools from wanting money to go towards public education.
+neutral,fixed_by_minilm,0,1,0,0.521957,0.426295,"You gotta work on you dude!! If you're not confident you're not ready, get yourself straight And all will fall into place. "
+neutral,fixed_by_minilm,0,1,0,0.656201,0.410568,death of fear is certain.
+neutral,fixed_by_minilm,0,1,0,0.668103,0.285006,"I agree. His parents were very supportive then. When they did a cast change, they decided to make his parents jerks! "
+neutral,fixed_by_minilm,0,1,0,0.643812,0.331386,If there is no goal on this powerplay it will be difficult not to be hopeless
+neutral,regressed_in_minilm,1,1,0,0.570593,0.440421,"Again, overall, not just for me. "
+neutral,regressed_in_minilm,1,1,0,0.667484,0.255139,Imagine having to pretend you didn't edit your link. The inferiority is dripping off you.
+neutral,regressed_in_minilm,1,1,0,0.552315,0.45774,"""We need more content."" ""OK. here's some ballerina shoes."""
+neutral,regressed_in_minilm,1,1,0,0.671508,0.292155,I like to bring up the fact that all of these pyramid schemes have corporate offices that have the exact same structure they are railing against.
+neutral,regressed_in_minilm,0,0,1,0.298282,0.604925,You didn't watch it to the end.
+neutral,regressed_in_minilm,1,1,0,0.484705,0.255786,"I thought it said “now my biggest fear is the thing living inside my casket” like, *weet doo feek?!*"
+neutral,regressed_in_minilm,1,1,0,0.731695,0.438711,HUGE difference e b/t “seniors housing” and “nursing home.” HUGE DIFFERENCE.
+neutral,regressed_in_minilm,0,0,1,0.202929,0.660945,"Help, help, I'm being repressed!"
+neutral,regressed_in_minilm,0,0,1,0.228105,0.769387,Borrowed time is stupid
+neutral,regressed_in_minilm,1,1,0,0.595427,0.454372,It’s Woosh with 4 o’s r/woooosh (The most popular one)
+optimism,fixed_by_minilm,0,1,0,0.824237,0.81967,"Kings fan here, good luck to you guys! Will be an interesting game to watch! "
+optimism,fixed_by_minilm,1,0,1,0.553883,0.959348,I know people around here may mock me from my optimism but what if we get actual desings for the crusaders in Heroes?
+optimism,fixed_by_minilm,1,0,1,0.460059,0.856385,I’m glad you had a great time here! Wishing you safe travels!
+optimism,fixed_by_minilm,1,0,1,0.361023,0.989354,"Just rumors online, it most likely won't happen"
+optimism,fixed_by_minilm,1,0,1,0.401258,0.90889,I've always wanted one of those but like worry it'll make a huge mess in my washer
+optimism,fixed_by_minilm,0,1,0,0.913181,0.632287,Our father will protect us <3
+optimism,fixed_by_minilm,0,1,0,0.941341,0.780751,No superbowl @ lambo for this generation; hopefully global warming will make an impact in the next 30 years. :)
+optimism,fixed_by_minilm,1,0,1,0.27747,0.95034,"Yea, I'm willing to bet the auto makers have known about this technology for quite a while."
+optimism,fixed_by_minilm,0,1,0,0.908586,0.38918,I believe that you can search for providers here. Good luck and good on ya.
+optimism,fixed_by_minilm,1,0,1,0.723472,0.966524,Yeah I wish they could just finish 9th every year in the conference
+optimism,regressed_in_minilm,0,0,1,0.241342,0.963778,I’m sorry to hear that friend :(. It’s for the best most likely if she didn’t accept you for who you are
+optimism,regressed_in_minilm,0,0,1,0.433641,0.979778,If there is no goal on this powerplay it will be difficult not to be hopeless
+optimism,regressed_in_minilm,1,1,0,0.907045,0.845625,"I would hope the guy is genuine and honest, but in my circumstances, there's not much closure. "
+optimism,regressed_in_minilm,0,0,1,0.350214,0.869461,Gotta keep losing to make sure 5th is our worst case scenario
+optimism,regressed_in_minilm,0,0,1,0.050202,0.872878,Thanks! Do you think I should talk to her or drop it for now?
+optimism,regressed_in_minilm,0,0,1,0.756307,0.86399,"Better ye, make some Pho and use lots of sriracha. Things will definitely get heated."
+optimism,regressed_in_minilm,0,0,1,0.069879,0.901075,"i know there were talks about it, but its doubtful :( "
+optimism,regressed_in_minilm,0,0,1,0.196936,0.854077,This happens to me a lot. I'll also sing the same phrase over and over.
+optimism,regressed_in_minilm,0,0,1,0.194701,0.900312,Interesting. I thought so too. I’m just thankful I have another parish I can easily drive to for mass. Thanks again
+optimism,regressed_in_minilm,0,0,1,0.348927,0.853121,The hell? That’s like one-in-a-million chance! Only thing that’d make it crazier is if we’re in the same city lol
+remorse,fixed_by_minilm,0,1,0,0.916825,0.545259,That feeling when your mascot is there but none of his players. Sorry Youppi
+remorse,fixed_by_minilm,0,1,0,0.87976,0.861418,Sorry you had to live there. Good news is they are demolishing it in 2020.
+remorse,fixed_by_minilm,0,1,0,0.826353,0.48928,I miss [NAME]
+remorse,fixed_by_minilm,0,1,0,0.815047,0.740438,Omg I just looked it up and all the places look so beautiful there 😍 also I’m sorry that it’s homophobic
+remorse,fixed_by_minilm,0,1,0,0.835547,0.92814,Sorry you can’t enjoy things cause other people enjoy them lol. Your loss
+remorse,fixed_by_minilm,0,1,0,0.931157,0.217807,"Hahahahahahahaa (Sorry, that is all I can say, it does not require a more intelligible comment.) "
+remorse,fixed_by_minilm,0,1,0,0.954117,0.376347,Sorry if this has been covered a bunch but what happened on the play where [NAME] got injured?
+remorse,fixed_by_minilm,0,1,0,0.895244,0.091326,I’m always reminded by my relatives on my birthday asking me if I have a girlfriend yet. Sorry bro ima yeet out of the social norm.
+remorse,fixed_by_minilm,1,0,1,0.239763,0.967405,I felt the same guilt when I stopped believing in [NAME]
+remorse,fixed_by_minilm,0,1,0,0.851458,0.725013,"I see notifications of people commenting the source but this sub must auto delete or something. Sorry, guys. I binged her and found me quick though. "
+remorse,regressed_in_minilm,1,1,0,0.9736,0.913454,May regret asking but foid ?
+remorse,regressed_in_minilm,0,0,1,0.020847,0.941468,"Yes, oops "
+remorse,regressed_in_minilm,0,0,1,0.023019,0.952891,Ouch. That hurt the ego. And that’s not easy to do.
+remorse,regressed_in_minilm,1,1,0,0.999693,0.898854,Sorry to be the bearer of bad tidings.
+remorse,regressed_in_minilm,0,0,1,0.076963,0.988836,I'm not apologizing for it. I just didn't think there was something this blatantly immoral in the new testament.
+remorse,regressed_in_minilm,0,0,1,0.043743,0.99136,"Of course man, I really appreciate this. But it's okay, I can just message you through here. It's fine:)"
+remorse,regressed_in_minilm,1,1,0,0.91908,0.683427,Guilty as well!
+remorse,regressed_in_minilm,0,0,1,0.019501,0.999651,No worries! 😊
+remorse,regressed_in_minilm,0,0,1,0.187564,0.969671,"Don't apologize. Go grab your favorite drink, some popcorn and watch 500 days of summer instead"
+remorse,regressed_in_minilm,0,0,1,0.437959,0.949434,They literally don’t have enough time on the planet to regret their actions.
+sadness,fixed_by_minilm,1,0,1,0.694895,0.938883,"if the pain doesn't go away after 4 hours or so, it's broke."
+sadness,fixed_by_minilm,1,0,1,0.184458,0.96121,Must be why I'm alive. That sucks.
+sadness,fixed_by_minilm,0,1,0,0.780711,0.715528,"Wife just had our baby, and this story freaked me out. I can't imagine going through something like that."
+sadness,fixed_by_minilm,0,1,0,0.935181,0.865464,"I'm sorry you fell for the carnie, bro."
+sadness,fixed_by_minilm,0,1,0,0.794185,0.665993,Sorry your right
+sadness,fixed_by_minilm,0,1,0,0.879752,0.854184,That's sad. I'm 16 and where I am there are loads of athiests my age. It's great.
+sadness,fixed_by_minilm,1,0,1,0.489116,0.945295,"College is a very lonely place. Very stressful, very lonely. [NAME]. Good luck out there man."
+sadness,fixed_by_minilm,1,0,1,0.06722,0.891673,[NAME] wept.
+sadness,fixed_by_minilm,0,1,0,0.782631,0.457094,I had to watch x3 to make sure I didn't miss something 😂
+sadness,fixed_by_minilm,0,1,0,0.857409,0.762282,"I'm sorry, I can't hear your useless badgering over me drinking my 38' from a wine bottle and enjoying my extra $200."
+sadness,regressed_in_minilm,0,0,1,0.521627,0.973675,I’m sorry to hear that friend :(. It’s for the best most likely if she didn’t accept you for who you are
+sadness,regressed_in_minilm,0,0,1,0.144617,0.983,And some of us wish to die first so we don't have to deal with the loneliness.
+sadness,regressed_in_minilm,0,0,1,0.320612,0.950182,"Help, help, I'm being repressed!"
+sadness,regressed_in_minilm,0,0,1,0.12826,0.97028,What happened to one of your star players?? i saw the headline 'freak injury' or someting like that.. but i was too scared to see someting gruesome..
+sadness,regressed_in_minilm,0,0,1,0.689967,0.871286,I have a bad feeling I’m gonna regret not tuning into this
+sadness,regressed_in_minilm,0,0,1,0.056491,0.90336,"i know there were talks about it, but its doubtful :( "
+sadness,regressed_in_minilm,0,0,1,0.536237,0.990461,Ouch. That hurt the ego. And that’s not easy to do.
+sadness,regressed_in_minilm,0,0,1,0.248568,0.895546,"Yeah, without the music that scene would have been much worse."
+sadness,regressed_in_minilm,0,0,1,0.219472,0.943235,Have you tried having wealthy parents?
+sadness,regressed_in_minilm,0,0,1,0.351142,0.898568,Because in some cases parents are basically having their own children kidnapped and held against their will and forced into these programs. This is child abuse.
+surprise,fixed_by_minilm,1,0,1,0.263771,0.994678,A surprise turn of events! I'm so glad you heard such great things about yourself!
+surprise,fixed_by_minilm,0,1,0,0.693867,0.595598,"Wow that’s scary, she’s so young and healthy. I hate that. "
+surprise,fixed_by_minilm,0,1,0,0.800666,0.85327,Oh boy 🤣🤣
+surprise,fixed_by_minilm,1,0,1,0.490644,0.98099,Oh [NAME] it's happening again!
+surprise,fixed_by_minilm,1,0,1,0.24801,0.904469,Not yet! But I waiting for a miracle any year now!!
+surprise,fixed_by_minilm,1,0,1,0.570933,0.934295,Holy shit that’s nothing
+surprise,fixed_by_minilm,0,1,0,0.881628,0.734935,Oh god another injury
+surprise,fixed_by_minilm,0,1,0,0.911908,0.59673,"Wow, you folks sure are salty about losing the midterms! Pathetic?"
+surprise,fixed_by_minilm,0,1,0,0.792196,0.631578,"Omg, thank you!"
+surprise,fixed_by_minilm,0,1,0,0.730452,0.745392,AOC used the exact version that [NAME] had been pushing for years. So it's no surprise that its nuclear-phobic.
+surprise,regressed_in_minilm,0,0,1,0.577661,0.968378,What's that like? Like what's the thought process? I dunno. I know what's a weird question..i just can't imagine
+surprise,regressed_in_minilm,0,0,1,0.431343,0.998197,"I totally thought the same thing! I was like, oh honey nooooo!"
+surprise,regressed_in_minilm,0,0,1,0.202997,0.86629,Hey that's a thought! Maybe we need [NAME] to be the celebrity vaccine endorsement!
+surprise,regressed_in_minilm,0,0,1,0.27076,0.980821,I'm not sure I have heard of this. Really interesting.
+surprise,regressed_in_minilm,1,1,0,0.970591,0.744052,I thought this allegation was squashed when it came out. I was surprised to see it still making headlines. Poor guy.
+surprise,regressed_in_minilm,0,0,1,0.094447,0.879753,What happened to one of your star players?? i saw the headline 'freak injury' or someting like that.. but i was too scared to see someting gruesome..
+surprise,regressed_in_minilm,1,1,0,0.758286,0.140572,[NAME]. Gave up in October and haven’t looked back. I can’t believe how easy I’ve found it.
+surprise,regressed_in_minilm,0,0,1,0.088598,0.884191,thats amazing!! Congrats!
+surprise,regressed_in_minilm,0,0,1,0.291158,0.887456,"i know there were talks about it, but its doubtful :( "
+surprise,regressed_in_minilm,0,0,1,0.088695,0.920805,The hell? That’s like one-in-a-million chance! Only thing that’d make it crazier is if we’re in the same city lol

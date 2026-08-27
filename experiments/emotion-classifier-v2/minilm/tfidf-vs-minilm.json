@@ -1,0 +1,165 @@
+{
+  "macro_f1": {
+    "tfidf": 0.506177,
+    "minilm": 0.413176,
+    "difference": -0.093001
+  },
+  "micro_f1": {
+    "tfidf": 0.549516,
+    "minilm": 0.461068,
+    "difference": -0.088448
+  },
+  "garden_micro_f1": {
+    "tfidf": 0.680929,
+    "minilm": 0.623985,
+    "difference": -0.056944
+  },
+  "latency_median_ms": {
+    "tfidf": 1.0697,
+    "minilm": 10.5435,
+    "difference": 9.4738
+  },
+  "latency_p95_ms": {
+    "tfidf": 1.2582,
+    "minilm": 11.8858,
+    "difference": 10.6276
+  },
+  "artifact_megabytes": {
+    "tfidf": 9.2505,
+    "minilm": 87.6298,
+    "difference": 78.3793
+  },
+  "training_seconds": {
+    "tfidf": 25.0128,
+    "minilm": 259.8293,
+    "difference": 234.8165
+  },
+  "per_label": [
+    {
+      "label": "admiration",
+      "tfidf_f1": 0.625475,
+      "minilm_f1": 0.517688,
+      "difference": -0.107787
+    },
+    {
+      "label": "amusement",
+      "tfidf_f1": 0.793919,
+      "minilm_f1": 0.72093,
+      "difference": -0.072989
+    },
+    {
+      "label": "anger",
+      "tfidf_f1": 0.419811,
+      "minilm_f1": 0.382688,
+      "difference": -0.037123
+    },
+    {
+      "label": "annoyance",
+      "tfidf_f1": 0.319742,
+      "minilm_f1": 0.275449,
+      "difference": -0.044293
+    },
+    {
+      "label": "approval",
+      "tfidf_f1": 0.308081,
+      "minilm_f1": 0.293388,
+      "difference": -0.014693
+    },
+    {
+      "label": "caring",
+      "tfidf_f1": 0.274627,
+      "minilm_f1": 0.300203,
+      "difference": 0.025576
+    },
+    {
+      "label": "confusion",
+      "tfidf_f1": 0.38835,
+      "minilm_f1": 0.236273,
+      "difference": -0.152077
+    },
+    {
+      "label": "curiosity",
+      "tfidf_f1": 0.391586,
+      "minilm_f1": 0.375209,
+      "difference": -0.016377
+    },
+    {
+      "label": "disappointment",
+      "tfidf_f1": 0.228029,
+      "minilm_f1": 0.171761,
+      "difference": -0.056268
+    },
+    {
+      "label": "disapproval",
+      "tfidf_f1": 0.324937,
+      "minilm_f1": 0.276892,
+      "difference": -0.048045
+    },
+    {
+      "label": "disgust",
+      "tfidf_f1": 0.472362,
+      "minilm_f1": 0.378641,
+      "difference": -0.093721
+    },
+    {
+      "label": "excitement",
+      "tfidf_f1": 0.36,
+      "minilm_f1": 0.289474,
+      "difference": -0.070526
+    },
+    {
+      "label": "fear",
+      "tfidf_f1": 0.654545,
+      "minilm_f1": 0.443439,
+      "difference": -0.211106
+    },
+    {
+      "label": "gratitude",
+      "tfidf_f1": 0.900433,
+      "minilm_f1": 0.759236,
+      "difference": -0.141197
+    },
+    {
+      "label": "joy",
+      "tfidf_f1": 0.566474,
+      "minilm_f1": 0.400922,
+      "difference": -0.165552
+    },
+    {
+      "label": "love",
+      "tfidf_f1": 0.769857,
+      "minilm_f1": 0.618395,
+      "difference": -0.151462
+    },
+    {
+      "label": "neutral",
+      "tfidf_f1": 0.664071,
+      "minilm_f1": 0.633908,
+      "difference": -0.030163
+    },
+    {
+      "label": "optimism",
+      "tfidf_f1": 0.577259,
+      "minilm_f1": 0.416476,
+      "difference": -0.160783
+    },
+    {
+      "label": "remorse",
+      "tfidf_f1": 0.657343,
+      "minilm_f1": 0.503311,
+      "difference": -0.154032
+    },
+    {
+      "label": "sadness",
+      "tfidf_f1": 0.490566,
+      "minilm_f1": 0.406332,
+      "difference": -0.084234
+    },
+    {
+      "label": "surprise",
+      "tfidf_f1": 0.442244,
+      "minilm_f1": 0.276074,
+      "difference": -0.16617
+    }
+  ]
+}

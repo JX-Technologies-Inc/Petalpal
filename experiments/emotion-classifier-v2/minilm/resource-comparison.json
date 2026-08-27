@@ -1,0 +1,17 @@
+{
+  "measurement": "Clean Python 3.12 process RSS after loading each complete artifact and running one inference",
+  "tfidf": {
+    "baseline_rss_mb": 16.75,
+    "loaded_rss_mb": 152.75,
+    "after_inference_rss_mb": 152.9688,
+    "incremental_after_inference_rss_mb": 136.2188
+  },
+  "minilm": {
+    "baseline_rss_mb": 16.6562,
+    "loaded_rss_mb": 364.9531,
+    "after_inference_rss_mb": 415.4375,
+    "incremental_after_inference_rss_mb": 398.7812
+  },
+  "difference_incremental_after_inference_rss_mb": 262.5624,
+  "minilm_to_tfidf_incremental_memory_ratio": 2.9275
+}

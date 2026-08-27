@@ -1,0 +1,211 @@
+label,error_type,score,true_labels,predicted_labels,text
+admiration,false_positive,0.994068,gratitude,admiration|approval|gratitude,Thank you. ❤️ I really appreciate your comment
+admiration,false_positive,0.992538,gratitude,admiration|gratitude,Thank you :)
+admiration,false_positive,0.988586,gratitude,admiration|gratitude,Adoration is definitely something I could do more of. Thank you!
+admiration,false_positive,0.986657,neutral,admiration,"Sphh, that was badass. I say that went well."
+admiration,false_positive,0.985775,gratitude,admiration|gratitude,Thanks!!
+admiration,false_negative,0.082712,admiration,disappointment|disapproval|neutral,"Don't underestimate him, he can do it in 2"
+admiration,false_negative,0.092551,admiration,neutral,"Intersectionality might seem strange at first, but it really is a good framework for understanding people’s individual struggles within the context of society’s biases."
+admiration,false_negative,0.098978,admiration,confusion|neutral,thats some very advanced way of thinking - and I dont think I was able to do that when I was 18
+admiration,false_negative,0.103435,admiration|anger,disappointment|sadness,The bitch doesnt need drag race (bc shes amazing) but im still sad.
+admiration,false_negative,0.10483,admiration,neutral|surprise,excuse me what. [NAME] played midfield pretty much the entire half of last season for Liverpool
+amusement,false_positive,0.999991,disapproval,amusement|annoyance|joy,"I guess some people just hate fun, lol"
+amusement,false_positive,0.999941,neutral,amusement|confusion|curiosity,Certainly not haha
+amusement,false_positive,0.999909,neutral,amusement|surprise,This made me gag lol
+amusement,false_positive,0.999598,neutral,amusement|confusion|curiosity,some people just want attention..lol
+amusement,false_positive,0.998819,disappointment,amusement|joy,I used the call screening on my sister for a laugh.. she was not as amused as I was :)
+amusement,false_negative,0.014423,admiration|amusement,neutral,The way him and his mom talk to each other is like a little boy and his Mommy!
+amusement,false_negative,0.02186,amusement,admiration|excitement,shits awesome!
+amusement,false_negative,0.03779,amusement,admiration,Looking cool [NAME]
+amusement,false_negative,0.045206,admiration|amusement,admiration,in what universe? lol the mr. blue sky cover is one of the best on the album imo.
+amusement,false_negative,0.059857,amusement,,Funny how we get more anxious about our heroes than their victims
+anger,false_positive,0.995857,neutral,anger|annoyance,"Damned if nobody knows who they are, damned if they do"
+anger,false_positive,0.993851,annoyance,anger|annoyance|neutral,"They stole my joke, damn them!"
+anger,false_positive,0.991917,disapproval,anger|annoyance,I hate people
+anger,false_positive,0.990886,annoyance,anger|annoyance,"Was already mad when it wasn’t center. Then when it got knock over, i was furious. Damn machine has no brains."
+anger,false_positive,0.987709,annoyance,anger|annoyance,"How offensive. I, am NOT a duck!"
+anger,false_negative,0.010364,anger,neutral,BASED AND REDPILLED
+anger,false_negative,0.026421,anger,neutral,Maybe [NAME].
+anger,false_negative,0.028969,anger|annoyance,confusion|curiosity,"No, the full video shows that the kids surrounded and berated the native elder man "
+anger,false_negative,0.043784,anger|curiosity,confusion|curiosity|disapproval|neutral,"I pose you this question, ""How do you know [RELIGION] is not the right religion?"""
+anger,false_negative,0.056448,anger,gratitude,Yeah thank you you ungrateful bast.....
+annoyance,false_positive,0.986726,anger,anger|annoyance,"You really don't comprehend anything my man, now do you? Goodness gracious the amount of stupidity. "
+annoyance,false_positive,0.968548,anger,anger|annoyance|disapproval,How dare you! Don’t you know seatbelts cause autism!
+annoyance,false_positive,0.967394,disappointment,anger|annoyance|disapproval,"You just made my point, you obnoxious whining kid"
+annoyance,false_positive,0.967275,disapproval,anger|annoyance|neutral,Personal insults aren't allowed around here. 1 week ban for first offense.
+annoyance,false_positive,0.962007,neutral,anger|annoyance|disapproval,Nobody is mad about that.
+annoyance,false_negative,0.029221,annoyance,approval|confusion|disapproval,It is. You generally need 5 down and 5 up to play reliably. Also wired.
+annoyance,false_negative,0.038472,annoyance|disapproval,neutral,My cousin is coming back as interim exec chef this week until we get a new chef. If you are my cousin the answer is NO!
+annoyance,false_negative,0.064649,annoyance,neutral,I have always found them grating
+annoyance,false_negative,0.095137,anger|annoyance,confusion|curiosity,"No, the full video shows that the kids surrounded and berated the native elder man "
+annoyance,false_negative,0.097542,annoyance,approval|disapproval|neutral,That doesn't sound right but I don't know enough about stars to dispute it
+approval,false_positive,0.972881,gratitude,approval|gratitude|neutral,"Right, ok thank you."
+approval,false_positive,0.962191,admiration|gratitude,admiration|approval|caring|gratitude,"Hm, I haven’t heard that opinion before but it sounds good. Thanks for the advice!"
+approval,false_positive,0.957664,neutral,approval,So you agree.
+approval,false_positive,0.955433,neutral,approval|neutral,I feel this!
+approval,false_positive,0.953397,admiration,admiration|approval,yea I was gonna say that looks pretty good to me
+approval,false_negative,0.108984,approval|excitement|surprise,gratitude|joy,Wow! Congratulations on taking your sex life back! Nice to wake up and see such positivity.
+approval,false_negative,0.139918,approval|neutral,curiosity|disapproval|neutral,Not from but I lived there for 12 years until very recently
+approval,false_negative,0.14138,approval,neutral,LPT: Make sure your chickens aren't pink anywhere by just chucking them in a 1000° oven
+approval,false_negative,0.160137,approval|caring|love,caring|disappointment|disapproval|optimism,"Shhhhhhh ... It will be ok, honey."
+approval,false_negative,0.180462,approval,neutral,[NAME] SHOT THE PUCK *AND* WE SCORE Who woulda thunk
+caring,false_positive,0.997974,optimism,annoyance|caring|disappointment|fear,"Look on the bright side, you might never need to worry about that ever again."
+caring,false_positive,0.997112,gratitude,caring|gratitude,Don't stress it. Good Luck!
+caring,false_positive,0.994141,optimism,caring|optimism,I hope your daughter gets the help she needs and someday gets better.
+caring,false_positive,0.992974,gratitude|optimism,approval|caring|gratitude|optimism,"Thank you, I hope you do too. You can always message me if you need to talk."
+caring,false_positive,0.992171,optimism|remorse,caring|disappointment|optimism|remorse|sadness,"Oh dear, I'm so sorry you are going through this. I don't have any sage advice but I hope things get better for you."
+caring,false_negative,0.020098,amusement|annoyance|caring,amusement|annoyance,Guys how are we doing? Asking because dumb TV in my country prefers Copa d'Italia to fucking Real Madrid lol
+caring,false_negative,0.047204,caring,neutral,I was more concerned that your comment held a frame of reference assuming it was real.
+caring,false_negative,0.052341,caring,neutral,Cats/dogs for sure. It would be refreshing.
+caring,false_negative,0.113008,caring|neutral,neutral,"""Grab your Glock when you see [NAME], call the cops when you see [NAME]..."""
+caring,false_negative,0.121515,caring,disapproval|neutral,"I'd be careful with that, could be construed as cybersquatting which is illegal."
+confusion,false_positive,0.998208,curiosity,confusion|curiosity|neutral,"Okay, I’m honestly curious as to why it is you’d assume that?"
+confusion,false_positive,0.98649,curiosity|neutral,confusion|curiosity|neutral,It kinda makes sense. What’s the debate here?
+confusion,false_positive,0.983837,neutral,caring|confusion|curiosity|neutral,If by probe you mean “ask questions” then it’s To fully understand what you’re trying to say — why else?
+confusion,false_positive,0.982278,disapproval,confusion|curiosity|disapproval,"Not really, just wanted to know why specifically you thought he was on gear. (Because I honestly don't see it)"
+confusion,false_positive,0.981045,surprise,confusion|neutral|surprise,I wondered the same thing. I never knew that this is a thing.
+confusion,false_negative,0.057417,confusion,,What was I expecting smh
+confusion,false_negative,0.070728,confusion|disapproval,admiration|approval,True. I don't know the survival rates of the women in ancient rome but I can't imagine it was fantastic.
+confusion,false_negative,0.100476,confusion,approval|neutral,"Pretty sure you could do that with a cargo ship too, so I'm not sure I buy that argument."
+confusion,false_negative,0.120498,confusion,approval|disapproval,I haven’t read the Quran and I doubt you have either so I can’t agree or disagree with this statement.
+confusion,false_negative,0.126885,admiration|confusion|excitement|joy,admiration,"I'm glad you have your kids, but have you seen Brooklyn 99 like the op stated? It's worth living for too."
+curiosity,false_positive,0.998695,amusement,amusement|confusion|curiosity,"Lol. Unfortunately, yes. >sigh<"
+curiosity,false_positive,0.994361,confusion,annoyance|confusion|curiosity|disapproval,Why are you trying to do that? What’s going on?
+curiosity,false_positive,0.991218,neutral,confusion|curiosity|neutral,"""are you related?"" ""No"" ""Are you <more specific type of related>?"""
+curiosity,false_positive,0.988695,approval,confusion|curiosity|neutral,* yes * yes * yes * yes
+curiosity,false_positive,0.987708,neutral,amusement|confusion|curiosity,Certainly not haha
+curiosity,false_negative,0.035703,curiosity,approval|joy,You too huh?
+curiosity,false_negative,0.048315,curiosity|sadness,disappointment|sadness|surprise,"I know, right?! I was literally in tears Saturday night 😪 It's only 3 years old!!"
+curiosity,false_negative,0.066377,annoyance|curiosity,annoyance,"Hey, [NAME] isn't *that* annoying"
+curiosity,false_negative,0.068598,curiosity,neutral|optimism,Or getting lucky. Most [NAME] have jobs so their must be a way.
+curiosity,false_negative,0.074764,approval|curiosity|love,love,I like waitresses. Aren't they swell.
+disappointment,false_positive,0.992549,neutral,annoyance|caring|disappointment|disapproval|disgust|sadness,they do poorly making me feel otherwise
+disappointment,false_positive,0.987354,remorse,anger|annoyance|disappointment|remorse|sadness,Damn. I'm sorry. What misery.
+disappointment,false_positive,0.98505,annoyance|disgust,annoyance|disappointment|disapproval|disgust|fear|sadness,Ugh...terrible.
+disappointment,false_positive,0.984637,remorse,anger|disappointment|disapproval|neutral|remorse|sadness,"No one ever laid on their death bed and said, “I regret not working even harder.”"
+disappointment,false_positive,0.983692,neutral,disappointment|disapproval|neutral,They were barely given a chance
+disappointment,false_negative,0.042729,disappointment|neutral,annoyance|confusion|curiosity|disapproval|neutral,That doesn't answer my question.
+disappointment,false_negative,0.085914,disappointment,approval,"Yes! My SO does that, unfortunately the requirements are stricter and I can't :("
+disappointment,false_negative,0.092364,disappointment,anger|annoyance|disgust|neutral,That’s an insult!! To fecal matter.
+disappointment,false_negative,0.098842,disappointment,neutral,"""what you want"" is a populated, limited set, and thus discrete."
+disappointment,false_negative,0.104301,disappointment|neutral,neutral,"Well you wrote out this big comment, and it reads well but when you actually think about what you’ve said, IMO it really means nothing."
+disapproval,false_positive,0.982276,annoyance,disapproval|neutral,Don't endorse violence against people.
+disapproval,false_positive,0.981585,remorse,annoyance|disapproval|remorse,I'm sorry that's what you read because it isn't what I said.
+disapproval,false_positive,0.979841,neutral,disapproval|neutral,You can't choose what genes you pass on.
+disapproval,false_positive,0.977167,neutral,approval|disapproval|neutral,"I hear that if you say you aren't doing something, when you do it, you're not actually doing it."
+disapproval,false_positive,0.976315,annoyance,disapproval|neutral,"I didn't say it was proof that anything was a scam with no future, perhaps you're projecting."
+disapproval,false_negative,0.058225,disapproval,confusion|curiosity|neutral,"I think years...I'm not ready and I know it, but I know years"
+disapproval,false_negative,0.073617,disapproval,disappointment|neutral|sadness,I just unassigned and left
+disapproval,false_negative,0.108227,admiration|disapproval,disappointment|joy,"can't remember much of what happens. All I do remember is I was miserable. Good performances, but it was a bit dour for my taste."
+disapproval,false_negative,0.125152,disapproval,confusion,They call it the hub and spoke system. They neglected to include a wheel.
+disapproval,false_negative,0.143022,disapproval,,It's the universe trying to kill us with radiation :D
+disgust,false_positive,0.998907,fear,anger|annoyance|disappointment|disgust|fear,Oof that’s terrible
+disgust,false_positive,0.997841,neutral,annoyance|disappointment|disgust,"Ah yes, the poison. The worst part of any poisoning. "
+disgust,false_positive,0.997666,excitement,annoyance|disgust,"Interesting read, but horrible format on mobile."
+disgust,false_positive,0.996973,amusement,anger|annoyance|disapproval|disgust|fear,This has to be a joke. Your written word is atrocious.
+disgust,false_positive,0.99621,admiration,admiration|disappointment|disapproval|disgust|fear,At least it isn't too terrible? Actually it's not bad at all. Still VERY delusional!! Good post
+disgust,false_negative,0.024607,annoyance|disgust,disapproval|neutral,I'm not being told I have issues by a guy who actually and genuinely has an interest in coprophagia.
+disgust,false_negative,0.025845,disgust|fear,caring|optimism,That’s always my worst fear when the idea of leaving during January comes up. I wish you the best of luck in unthawing them!
+disgust,false_negative,0.033503,annoyance|disgust,neutral,What a horseshit response
+disgust,false_negative,0.045698,disgust,annoyance,Ironically every /pol/ meetup is more diverse than the people pushing diversity and race mixing. Weird how that works huh
+disgust,false_negative,0.06594,disgust,neutral,that’s awful🤣🤣
+excitement,false_positive,0.998018,joy|surprise,admiration|excitement|joy|surprise,A surprise turn of events! I'm so glad you heard such great things about yourself!
+excitement,false_positive,0.99535,admiration|gratitude,admiration|excitement|gratitude|joy,Awesome! Welcome aboard! I'm glad your first game was a win!
+excitement,false_positive,0.994793,curiosity,admiration|excitement,"You said it baby, can't wait to see what marvelous wonders the rest of 2019 will bring!"
+excitement,false_positive,0.994677,gratitude,excitement|optimism,Congrats!!! Thatll be me in May and I cant freaking wait!
+excitement,false_positive,0.994402,curiosity,confusion|curiosity|excitement|surprise,It is certainly interesting.....but is it anything?.....
+excitement,false_negative,0.02511,excitement,annoyance|disgust,"Interesting read, but horrible format on mobile."
+excitement,false_negative,0.033571,excitement,approval|neutral,"Am interested in responses as I'm in a similar situation, though my tech school is a TDY"
+excitement,false_negative,0.034602,excitement|optimism,admiration|gratitude|joy,Omg I commented on your original post. I hope you’re doing better and I’m glad this all came out and you got closure.
+excitement,false_negative,0.075671,admiration|excitement,admiration|neutral,What a finish
+excitement,false_negative,0.114027,excitement,neutral,Reminds me of [NAME] in IASIP
+fear,false_positive,0.998118,neutral,fear,Yeah this is downright spooky; she's not even using that face mask.
+fear,false_positive,0.998083,neutral,fear|neutral,He’s had nightmares ever since the storm
+fear,false_positive,0.997411,surprise,fear,"Wife just had our baby, and this story freaked me out. I can't imagine going through something like that."
+fear,false_positive,0.997381,neutral,caring|fear|neutral,[NAME] should worry you.
+fear,false_positive,0.99734,annoyance,fear,Have you ever consider knocking three times and that hide and seek/stalker vibe is terrifying. It's the most disturbing thing I can link you my AR 15.
+fear,false_negative,0.007965,annoyance|fear,annoyance|neutral,"Some people just need reassurance that they are, in fact, dumb. "
+fear,false_negative,0.03172,fear,,"Aaaand I'm still here. I don't have a alt account but whoever you reported I""m sure is alive and well. You're terrible."
+fear,false_negative,0.090395,fear|neutral,neutral,Try wearing something unattractive when that student is around.
+fear,false_negative,0.100617,fear,anger|neutral,Of course he will lie cheat and steal to make him self relevant to the public. Horrible person.
+fear,false_negative,0.108075,fear,annoyance|caring|neutral,"Tl, dr - Take the abuse. Squirming only gets them off more."
+gratitude,false_positive,1.0,joy,gratitude|joy,"No problem, glad to help."
+gratitude,false_positive,0.999902,caring,gratitude,"No problem at all! If you ever want to talk to some internet random again, feel free to talk to me."
+gratitude,false_positive,0.999759,neutral,admiration|approval|gratitude,No problem. If you read it let me know what you think!
+gratitude,false_positive,0.997704,admiration,caring|gratitude|optimism,Good luck and Godspeed.
+gratitude,false_positive,0.994486,approval|caring,gratitude|remorse|sadness,No worries! 😊
+gratitude,false_negative,0.006404,gratitude,neutral,That’s because [NAME] thinks he’s the man oin this team. [NAME] I can’t wait till he’s gone
+gratitude,false_negative,0.037586,gratitude,,I once went alert on N1 and killed 3 people.. 2 maf and a doc. Doc got resurrected later thankfully
+gratitude,false_negative,0.037908,gratitude,curiosity,Did you kill the shark to get the shark teeth for your necklace yourself or was it premade? Thanks [NAME]!
+gratitude,false_negative,0.050778,gratitude,approval|fear,Yeah this is pretty eye opening. I’ve had pretty weird relationships with my reflection in the past but thankfully it’s not always this way.
+gratitude,false_negative,0.061256,gratitude,,Thank god I'm not dating anymore. I wouldn't want to risk some girl I'm trying to bang seeing my reddit history.
+joy,false_positive,0.99376,remorse,caring|gratitude|joy|optimism|remorse|sadness,Sorry. I know I should be grateful and happy.
+joy,false_positive,0.992724,amusement,amusement|joy,I think this is the only place on the internet that is happy with this commercial hahaha
+joy,false_positive,0.991526,love,joy|love,> complains about fun > plays game mode with the most fun > loves it FTFY
+joy,false_positive,0.990359,caring,amusement|caring|joy,Sometimes those are the only options. Laughing makes other people feel better at least so that's what you gotta do.
+joy,false_positive,0.990238,gratitude,admiration|gratitude|joy,you are so welcome. I’m glad I could bring sunshine to your day.
+joy,false_negative,0.013028,joy|neutral,approval|neutral,"That may be — we are talking about the stock market, though. :)"
+joy,false_negative,0.053382,joy,admiration|neutral,[NAME] living her best life in Germany.
+joy,false_negative,0.089588,approval|excitement|joy,neutral,"I gotchu bro, house By Gucci Mane I’m a huge Gucci mane fan. "
+joy,false_negative,0.109793,joy,annoyance|confusion,"Because they enjoy their toxic umoderated cesspool, apparently. Either way i'm done trying to care."
+joy,false_negative,0.139152,joy,confusion|curiosity|neutral,You need to recheck your science. A simple Google search will yield research articles showing a biological and genetic basis for being LGBT. Happy reading!
+love,false_positive,0.999459,disapproval,annoyance|disappointment|disapproval|joy|love,"Right now, it feels like a good thing but not a great thing. I don't love it... But I don't hate it. "
+love,false_positive,0.998244,neutral,love,Love is war
+love,false_positive,0.997858,neutral,love|neutral,[NAME] loves rui too afterall
+love,false_positive,0.997525,admiration,admiration|caring|gratitude|joy|love|optimism,Great to hear you're so loving together! Wishing you all the best. Feel free to PM me anytime!
+love,false_positive,0.996408,caring|disapproval,caring|love,She does NOT love you. Try to ask yourself why you are accepting this treatment.
+love,false_negative,0.01017,approval|caring|love,caring|disappointment|disapproval|optimism,"Shhhhhhh ... It will be ok, honey."
+love,false_negative,0.017962,disapproval|love,annoyance|disapproval,You should like a troll. Not saying you are.
+love,false_negative,0.050076,caring|love,caring|joy,"Dive into that sweet sweet goodness, buddy. View the meetup the woman being lucky to be around you, and it gets much easier."
+love,false_negative,0.069229,love,neutral,How hard is it to kill 9 year olds!? One of my favorite movies.
+love,false_negative,0.117004,love|neutral,neutral,[NAME]. Starring [NAME] as the goofy and lovable [NAME].
+neutral,false_positive,0.941178,caring,neutral,Fixed That For You
+neutral,false_positive,0.939848,annoyance,neutral,Download it again.
+neutral,false_positive,0.936624,confusion,confusion|curiosity|neutral,This is his speculation or a leak?
+neutral,false_positive,0.936332,confusion,confusion|curiosity|neutral,*looks at YouTube comments sections* Um. I'm not so sure.
+neutral,false_positive,0.932492,curiosity,curiosity|neutral,Has he?
+neutral,false_negative,0.02164,neutral,admiration|approval|gratitude,No problem. If you read it let me know what you think!
+neutral,false_negative,0.05027,neutral,admiration|annoyance,"Yes, your trolling is very good. You’re so brave for giving us the opportunity to downvote your sock account to hell."
+neutral,false_negative,0.068273,neutral,gratitude|optimism,Thank you! [NAME] seems to realize how toxic this fanbase can be also.. Now lets hope you all keep your composure whether we win or lose week 1.
+neutral,false_negative,0.075503,neutral,amusement|surprise,This made me gag lol
+neutral,false_negative,0.07702,neutral,admiration,You're cool
+optimism,false_positive,0.997782,gratitude,excitement|gratitude|joy|optimism,"Hey congrats man, that’s what I’m hoping happens as well!"
+optimism,false_positive,0.994862,disappointment,caring|disappointment|fear|optimism,Just keep going and don't lose hope. Stuff like this can happen all the time to anybody. It's just bad luck
+optimism,false_positive,0.994343,admiration,approval|optimism,I think she has a good chance
+optimism,false_positive,0.992205,admiration,admiration|optimism,That’s great! I hope s/he gets better!
+optimism,false_positive,0.990332,caring,caring|optimism|sadness,Hope all is well now xo
+optimism,false_negative,0.024029,approval|optimism,neutral,"It's a shortcut, dude, he just knows the map!"
+optimism,false_negative,0.059811,optimism,,[NAME] bless them and their racist logo
+optimism,false_negative,0.062193,approval|optimism,confusion|neutral,Pretty sure it was New Orleans.
+optimism,false_negative,0.068402,optimism|surprise,surprise,And oops AND a yikes. Maybe even as much as an OOF. Definitely a wow from me
+optimism,false_negative,0.093587,optimism,neutral,"Shaving her legs, hoping the video didn’t cut short and that’s all she shaved in there...."
+remorse,false_positive,0.99997,sadness,remorse,I didn’t know I’m sorry
+remorse,false_positive,0.999968,gratitude,gratitude|remorse|sadness,thanks for apologizing
+remorse,false_positive,0.999808,sadness,remorse,Oh. Sorry.
+remorse,false_positive,0.999651,approval|caring,gratitude|remorse|sadness,No worries! 😊
+remorse,false_positive,0.999357,sadness,disappointment|optimism|remorse|sadness,I'm sorry it happened like that for you. I really can't imagine.
+remorse,false_negative,0.008529,neutral|remorse,,I've been watching too much my 600lb life...I instantly hear dr. [NAME]
+remorse,false_negative,0.046472,disappointment|remorse,neutral,"“[NAME], I tried to make ramen in the coffee pot and I broke everything” - [NAME]"
+remorse,false_negative,0.340382,remorse,neutral,Read his post again. 'It's more fact based than Fox.' I'm sorry but you might have some extra chromosomes.
+remorse,false_negative,0.369006,remorse,annoyance,"I'm sorry, I can't hear your useless badgering over me drinking my 38' from a wine bottle and enjoying my extra $200."
+remorse,false_negative,0.372902,remorse,gratitude|neutral,"Sorry, but anarcho-anything are bot welcome there"
+sadness,false_positive,0.99965,remorse,anger|annoyance|disappointment|remorse|sadness,Damn. I'm sorry. What misery.
+sadness,false_positive,0.996532,neutral,annoyance|disappointment|sadness,It still hurts 15 years later. I don't know how people can be so callous their own child
+sadness,false_positive,0.995561,optimism|remorse,caring|gratitude|optimism|remorse|sadness,I'm really sorry for your loss friend. I hope everything is okay on your end too.
+sadness,false_positive,0.99531,annoyance|optimism,caring|disappointment|optimism|remorse|sadness,"That sucks man, I'm sorry. Things will get better, they always do in the end"
+sadness,false_positive,0.994423,caring,caring|neutral|sadness,Please seek medical help
+sadness,false_negative,0.021187,disappointment|sadness,neutral,I was just gonna say this look like fake karma.
+sadness,false_negative,0.059503,sadness,,Maybe it's fantasy.....I just feel like the stock for a lot of these Ducks is reallllll low right now
+sadness,false_negative,0.142195,sadness,anger|annoyance,Can't stand having sex with you...?? Just horrible thing to say... You deserve better!!!
+sadness,false_negative,0.145233,disappointment|sadness,neutral,"I go to a neighborhood mexican restaurant monthly for the past 2.5 years, but nobody knows my name ☹"
+sadness,false_negative,0.155907,disappointment|sadness,disappointment|disapproval|neutral,But but r/49ers said it was just bad luck!
+surprise,false_positive,0.999528,confusion,annoyance|disappointment|disapproval|surprise,Why is anyone surprised. It has never worked.
+surprise,false_positive,0.998197,neutral,confusion|neutral|surprise,"I totally thought the same thing! I was like, oh honey nooooo!"
+surprise,false_positive,0.99744,neutral,neutral|surprise,Oh oh oh
+surprise,false_positive,0.996941,neutral,anger|neutral|surprise,*oh god oh fuck*
+surprise,false_positive,0.996595,excitement,excitement|optimism|surprise,"Yeah, I wouldn't be too surprised by that either. I'm so excited to see or hear SOMETHING though. "
+surprise,false_negative,0.009849,gratitude|surprise,excitement|gratitude|joy,Happy cake day to him
+surprise,false_negative,0.042062,surprise,approval|optimism,I do not trust our defense at all. I do not believe you can increase the range of Andujar.
+surprise,false_negative,0.089757,fear|surprise,neutral,Yow thats gnarly.
+surprise,false_negative,0.096103,surprise,,I wondered where the quote about “supporting your azz” and was very pleased to finally find the train wreck that said it.
+surprise,false_negative,0.096262,surprise,annoyance|confusion,"I'm not saying to hate them, I'm wondering why this sub just started worshiping them."
