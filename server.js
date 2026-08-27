@@ -21,6 +21,7 @@ import {
   nextUnlockableFairy
 } from "./lib/fairy-config.js";
 import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
+import { resolveDailyFlowerEmotion } from "./lib/daily-flower-input.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -1965,37 +1966,24 @@ app.post("/users/:userId/flowers", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const event =
-      typeof req.body.event === "string"
-        ? req.body.event.trim().slice(0, 2000)
-        : "";
-    let mood =
-      typeof req.body.mood === "string"
-        ? req.body.mood.trim().toLowerCase()
-        : "";
-    let emotionSource = "USER";
+    let resolvedEmotion;
+    try {
+      resolvedEmotion = await resolveDailyFlowerEmotion({
+        mood: req.body.mood,
+        event: req.body.event,
+        aiProcessingAllowed: Boolean(user.aiConsent?.aiProcessing),
+        classify: classifyEmotion
+      });
+    } catch (error) {
+      return res.status(error.status || 500).json({ error: error.message });
+    }
+
+    const { event, mood, emotionSource, classification } = resolvedEmotion;
     let aiMetadata = null;
-    let secondaryEmotion = null;
-    let emotionIntensity = null;
+    const secondaryEmotion = classification?.secondaryEmotion || null;
+    const emotionIntensity = classification?.intensity ?? null;
 
-    if (!mood) {
-      if (!event) {
-        return res.status(400).json({
-          error: "Choose a mood or write an optional journal entry"
-        });
-      }
-
-      if (!user.aiConsent?.aiProcessing) {
-        return res.status(403).json({
-          error: "AI mood analysis requires your consent. Choose a mood manually or enable AI processing."
-        });
-      }
-
-      const classification = await classifyEmotion(event);
-      mood = classification.label;
-      secondaryEmotion = classification.secondaryEmotion;
-      emotionIntensity = classification.intensity;
-      emotionSource = "MODEL";
+    if (classification) {
       aiMetadata = {
         task: "EMOTION_CLASSIFICATION",
         provider: classification.provider,
@@ -2069,7 +2057,7 @@ const chosen = generateFlowerMetadata({
 const position =
   getNonOverlappingPosition(existingFlowers);
 
-const flower = await prisma.$transaction(async (tx) => {
+const createdFlower = await prisma.$transaction(async (tx) => {
   const checkIn = await tx.dailyCheckIn.create({
     data: {
       userId: user.id,
@@ -2147,17 +2135,29 @@ const flower = await prisma.$transaction(async (tx) => {
     }
   });
 
-  await ensureStarterFairyInTransaction(tx, user.id);
-  const fairyProgress = await syncMonthlyFairyProgress(
-    tx,
-    user.id,
-    monthFromLocalDate(localDate)
-  );
-
-  return { createdFlower, fairyProgress };
+  return createdFlower;
 });
 
-    res.status(201).json({ ...flower.createdFlower, fairyProgress: flower.fairyProgress });
+    let fairyProgress = null;
+    try {
+      fairyProgress = await prisma.$transaction(async (tx) => {
+        await ensureStarterFairyInTransaction(tx, user.id);
+        return syncMonthlyFairyProgress(
+          tx,
+          user.id,
+          monthFromLocalDate(localDate)
+        );
+      });
+    } catch (progressError) {
+      console.error("POST /users/:userId/flowers Fairy progression error:", {
+        userId: user.id,
+        localDate,
+        code: progressError?.code,
+        message: progressError?.message
+      });
+    }
+
+    res.status(201).json({ ...createdFlower, fairyProgress });
   } catch (err) {
     console.error("POST /users/:userId/flowers error:", err);
     if (err?.code === "P2002") {
