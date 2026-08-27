@@ -1980,10 +1980,14 @@ app.post("/users/:userId/flowers", async (req, res) => {
 
     const { event, mood, emotionSource, classification } = resolvedEmotion;
     let aiMetadata = null;
-    const secondaryEmotion = classification?.secondaryEmotion || null;
+    const secondaryEmotions = Array.isArray(classification?.secondaryEmotions)
+      ? classification.secondaryEmotions.slice(0, 2)
+      : [];
+    const secondaryEmotion = secondaryEmotions[0] || null;
     const emotionIntensity = classification?.intensity ?? null;
+    const inferencePath = classification?.inferencePath || "NO_AI";
 
-    if (classification) {
+    if (classification?.provider) {
       aiMetadata = {
         task: "EMOTION_CLASSIFICATION",
         provider: classification.provider,
@@ -1993,7 +1997,8 @@ app.post("/users/:userId/flowers", async (req, res) => {
         confidence: classification.confidence,
         latencyMs: classification.latencyMs,
         success: classification.success,
-        errorCode: classification.errorCode
+        errorCode: classification.errorCode,
+        inferencePath
       };
     }
 
@@ -2080,8 +2085,10 @@ const createdFlower = await prisma.$transaction(async (tx) => {
           source: emotionSource,
           confidence: aiMetadata?.confidence ?? null,
           secondaryEmotion,
+          secondaryEmotions,
           intensity: emotionIntensity,
-          modelVersion: aiMetadata?.model ?? null
+          modelVersion: aiMetadata?.model ?? null,
+          inferencePath
         }
       }
     }

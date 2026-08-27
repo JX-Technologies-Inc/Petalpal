@@ -1,0 +1,321 @@
+{
+  "experiment": "PetalPal Emotion Classifier V2 Phase 1 TF-IDF baseline",
+  "production_modified": false,
+  "training_labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "approval",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disapproval",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "neutral",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "excluded_labels": [
+    "desire",
+    "embarrassment",
+    "grief",
+    "nervousness",
+    "pride",
+    "realization",
+    "relief"
+  ],
+  "explicitly_not_added": [
+    "loneliness",
+    "anxiety",
+    "frustration",
+    "numbness",
+    "peace",
+    "calm",
+    "tired",
+    "stressed"
+  ],
+  "data_source": "Official GoEmotions TSV files only",
+  "official_splits_preserved": true,
+  "split_sample_counts_after_label_filter": {
+    "train": 41949,
+    "dev": 5245,
+    "test": 5228
+  },
+  "per_label_counts": {
+    "admiration": {
+      "train": 4130,
+      "dev": 488,
+      "test": 504
+    },
+    "amusement": {
+      "train": 2328,
+      "dev": 303,
+      "test": 264
+    },
+    "anger": {
+      "train": 1567,
+      "dev": 195,
+      "test": 198
+    },
+    "annoyance": {
+      "train": 2470,
+      "dev": 303,
+      "test": 320
+    },
+    "approval": {
+      "train": 2939,
+      "dev": 397,
+      "test": 351
+    },
+    "caring": {
+      "train": 1087,
+      "dev": 153,
+      "test": 135
+    },
+    "confusion": {
+      "train": 1368,
+      "dev": 152,
+      "test": 153
+    },
+    "curiosity": {
+      "train": 2191,
+      "dev": 248,
+      "test": 284
+    },
+    "disappointment": {
+      "train": 1269,
+      "dev": 163,
+      "test": 151
+    },
+    "disapproval": {
+      "train": 2022,
+      "dev": 292,
+      "test": 267
+    },
+    "disgust": {
+      "train": 793,
+      "dev": 97,
+      "test": 123
+    },
+    "excitement": {
+      "train": 853,
+      "dev": 96,
+      "test": 103
+    },
+    "fear": {
+      "train": 596,
+      "dev": 90,
+      "test": 78
+    },
+    "gratitude": {
+      "train": 2662,
+      "dev": 358,
+      "test": 352
+    },
+    "joy": {
+      "train": 1452,
+      "dev": 172,
+      "test": 161
+    },
+    "love": {
+      "train": 2086,
+      "dev": 252,
+      "test": 238
+    },
+    "neutral": {
+      "train": 14219,
+      "dev": 1766,
+      "test": 1787
+    },
+    "optimism": {
+      "train": 1581,
+      "dev": 209,
+      "test": 186
+    },
+    "remorse": {
+      "train": 545,
+      "dev": 68,
+      "test": 56
+    },
+    "sadness": {
+      "train": 1326,
+      "dev": 143,
+      "test": 156
+    },
+    "surprise": {
+      "train": 1060,
+      "dev": 129,
+      "test": 141
+    }
+  },
+  "model": {
+    "type": "TF-IDF + One-vs-Rest Logistic Regression",
+    "tfidf_features": 56548,
+    "training_seconds": 25.0128,
+    "artifact": "artifacts/tfidf-ovr-logreg.joblib",
+    "artifact_bytes": 9699870,
+    "artifact_megabytes": 9.2505,
+    "python": "3.14.6 (main, Jul 26 2026, 03:27:03) [Clang 14.0.3 (clang-1403.0.22.14.1)]",
+    "scikit_learn": "1.7.2",
+    "numpy": "2.5.2"
+  },
+  "test": {
+    "macro_precision": 0.481423,
+    "macro_recall": 0.554329,
+    "macro_f1": 0.506177,
+    "micro_precision": 0.485689,
+    "micro_recall": 0.632656,
+    "micro_f1": 0.549516,
+    "easiest_labels_by_f1": [
+      {
+        "label": "gratitude",
+        "f1": 0.900433
+      },
+      {
+        "label": "amusement",
+        "f1": 0.793919
+      },
+      {
+        "label": "love",
+        "f1": 0.769857
+      },
+      {
+        "label": "neutral",
+        "f1": 0.664071
+      },
+      {
+        "label": "remorse",
+        "f1": 0.657343
+      }
+    ],
+    "hardest_labels_by_f1": [
+      {
+        "label": "disapproval",
+        "f1": 0.324937
+      },
+      {
+        "label": "annoyance",
+        "f1": 0.319742
+      },
+      {
+        "label": "approval",
+        "f1": 0.308081
+      },
+      {
+        "label": "caring",
+        "f1": 0.274627
+      },
+      {
+        "label": "disappointment",
+        "f1": 0.228029
+      }
+    ]
+  },
+  "latency": {
+    "single_text_samples": 1000,
+    "single_text_mean_ms": 1.1045,
+    "single_text_median_ms": 1.0697,
+    "single_text_p95_ms": 1.2582,
+    "batch_total_ms": 26.5316,
+    "batch_per_text_ms": 0.0265,
+    "platform": "macOS-13.3-arm64-arm-64bit-Mach-O"
+  },
+  "garden_mood_evaluation": {
+    "mapping": {
+      "admiration": "Gentle Bloom",
+      "amusement": "Sunny Bloom",
+      "anger": "Fire Bloom",
+      "annoyance": "Fire Bloom",
+      "approval": "Gentle Bloom",
+      "caring": "Gentle Bloom",
+      "curiosity": "Wonder Bloom",
+      "disappointment": "Healing Bloom",
+      "disapproval": "Fire Bloom",
+      "disgust": "Fire Bloom",
+      "excitement": "Sunny Bloom",
+      "fear": "Fire Bloom",
+      "gratitude": "Gentle Bloom",
+      "joy": "Sunny Bloom",
+      "love": "Gentle Bloom",
+      "optimism": "Sunny Bloom",
+      "remorse": "Healing Bloom",
+      "sadness": "Quiet Bloom"
+    },
+    "unmapped_labels": [
+      "confusion",
+      "surprise",
+      "neutral"
+    ],
+    "evaluable_test_samples": 3398,
+    "excluded_unmapped_only_test_samples": 1830,
+    "macro_f1_over_all_8_moods": 0.446836,
+    "macro_f1_over_supported_moods": 0.595781,
+    "micro_f1": 0.680929,
+    "per_mood": {
+      "Sunny Bloom": {
+        "precision": 0.730303,
+        "recall": 0.709867,
+        "f1": 0.71994,
+        "support": 679
+      },
+      "Gentle Bloom": {
+        "precision": 0.795918,
+        "recall": 0.721233,
+        "f1": 0.756737,
+        "support": 1460
+      },
+      "Quiet Bloom": {
+        "precision": 0.643564,
+        "recall": 0.416667,
+        "f1": 0.505837,
+        "support": 156
+      },
+      "Healing Bloom": {
+        "precision": 0.379845,
+        "recall": 0.475728,
+        "f1": 0.422414,
+        "support": 206
+      },
+      "Fire Bloom": {
+        "precision": 0.707879,
+        "recall": 0.650334,
+        "f1": 0.677887,
+        "support": 898
+      },
+      "Wonder Bloom": {
+        "precision": 0.581731,
+        "recall": 0.426056,
+        "f1": 0.49187,
+        "support": 284
+      },
+      "Drifting Bloom": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "Peaceful Bloom": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      }
+    },
+    "note": "Drifting Bloom and Peaceful Bloom have no direct Phase 1 labels; zero support is reported rather than inventing supervision."
+  },
+  "dataset_checksums": {
+    "train.tsv": "1c254a142be5c00e80d819b9ae1bbd36d94b2eeb8f4b1271846508d57e57d9c5",
+    "dev.tsv": "575489c079c9de1097062a01738f998590d6b7ead66dd1c9fd1d2ba01fd8bc62",
+    "test.tsv": "0587b2dd8b27b97352adbfc3fb083d46005c8946657fdc2b1ca8b1cc7f1f8be4",
+    "emotions.txt": "45c3ef86782d2a4d7fedcd6d8c111aa0d0e94720689bd164fac94fefb4495a89"
+  }
+}

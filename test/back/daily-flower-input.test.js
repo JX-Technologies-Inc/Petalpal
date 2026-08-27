@@ -3,63 +3,50 @@ import assert from "node:assert/strict";
 
 import { resolveDailyFlowerEmotion } from "../../lib/daily-flower-input.js";
 
-test("event plus a manual mood always plants without invoking AI", async () => {
-  let classifierCalled = false;
+test("no journal is NO_AI and never invokes a classifier", async () => {
+  let called = false;
   const result = await resolveDailyFlowerEmotion({
-    event: "I presented my project today",
-    mood: "happy",
-    aiProcessingAllowed: false,
-    classify: async () => {
-      classifierCalled = true;
-      throw new Error("AI must not run for a manual mood");
-    }
+    event: "", mood: "CALM", aiProcessingAllowed: true,
+    classify: async () => { called = true; }
   });
-
-  assert.equal(classifierCalled, false);
-  assert.deepEqual(result, {
-    event: "I presented my project today",
-    mood: "happy",
-    emotionSource: "USER",
-    classification: null
-  });
+  assert.equal(called, false);
+  assert.equal(result.mood, "calm");
+  assert.equal(result.classification.inferencePath, "NO_AI");
 });
 
-test("a manual mood works without journal text or AI consent", async () => {
+test("journal plus selected mood runs cheap routing but preserves user primary", async () => {
+  let options;
   const result = await resolveDailyFlowerEmotion({
-    event: "",
-    mood: "CALM",
-    aiProcessingAllowed: false,
-    classify: async () => {
-      throw new Error("not expected");
+    event: "I presented my project", mood: "happy", aiProcessingAllowed: true,
+    classify: async (_text, received) => {
+      options = received;
+      return { label: "stressed", secondaryEmotions: ["stressed"], inferencePath: "LOCAL_CLASSIFIER" };
     }
   });
-  assert.equal(result.mood, "calm");
-  assert.equal(result.event, "");
+  assert.equal(options.userSelectedMood, "happy");
+  assert.equal(result.mood, "happy");
   assert.equal(result.emotionSource, "USER");
 });
 
-test("journal-only detection requires consent", async () => {
-  await assert.rejects(
-    resolveDailyFlowerEmotion({
-      event: "A complicated day",
-      mood: "",
-      aiProcessingAllowed: false,
-      classify: async () => ({ label: "stressed" })
-    }),
-    (error) => error.status === 403
-  );
+test("selected mood without AI consent still plants with NO_AI", async () => {
+  const result = await resolveDailyFlowerEmotion({
+    event: "Private journal", mood: "sad", aiProcessingAllowed: false,
+    classify: async () => { throw new Error("not expected"); }
+  });
+  assert.equal(result.mood, "sad");
+  assert.equal(result.classification.inferencePath, "NO_AI");
 });
 
-test("journal-only detection uses the classifier when consent is present", async () => {
+test("journal-only classification still requires consent", async () => {
+  await assert.rejects(resolveDailyFlowerEmotion({
+    event: "A complicated day", mood: "", aiProcessingAllowed: false, classify: async () => ({})
+  }), (error) => error.status === 403);
+});
+
+test("journal-only classification supplies the primary mood", async () => {
   const result = await resolveDailyFlowerEmotion({
-    event: "I am exhausted",
-    mood: "",
-    aiProcessingAllowed: true,
-    classify: async () => ({
-      label: "tired",
-      secondaryEmotion: null,
-      intensity: 0.8
-    })
+    event: "I am exhausted", mood: "", aiProcessingAllowed: true,
+    classify: async () => ({ label: "tired", secondaryEmotions: [], inferencePath: "LOCAL_CLASSIFIER" })
   });
   assert.equal(result.mood, "tired");
   assert.equal(result.emotionSource, "MODEL");

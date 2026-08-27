@@ -25,7 +25,7 @@ export default {
         messages: [
           {
             role: "system",
-            content: "Classify the user's emotional tone. Choose one primary PetalPal label, an optional different secondary label (or none), and emotional intensity from 0 to 1. Do not diagnose mental health conditions."
+            content: "Classify the user's emotional tone. Choose one primary PetalPal label, up to two different secondary labels, and emotional intensity from 0 to 1. Do not diagnose mental health conditions."
           },
           { role: "user", content: text }
         ],
@@ -35,11 +35,16 @@ export default {
             type: "object",
             properties: {
               label: { type: "string", enum: MOODS },
-              secondaryEmotion: { type: "string", enum: ["none", ...MOODS] },
+              secondaryEmotions: {
+                type: "array",
+                items: { type: "string", enum: MOODS },
+                maxItems: 2,
+                uniqueItems: true
+              },
               intensity: { type: "number", minimum: 0, maximum: 1 },
               confidence: { type: "number", minimum: 0, maximum: 1 }
             },
-            required: ["label", "secondaryEmotion", "intensity", "confidence"],
+            required: ["label", "secondaryEmotions", "intensity", "confidence"],
             additionalProperties: false
           }
         }
@@ -48,7 +53,9 @@ export default {
       if (
         !output ||
         !MOODS.includes(output.label) ||
-        !["none", ...MOODS].includes(output.secondaryEmotion) ||
+        !Array.isArray(output.secondaryEmotions) ||
+        output.secondaryEmotions.length > 2 ||
+        output.secondaryEmotions.some((label) => !MOODS.includes(label)) ||
         !Number.isFinite(output.intensity) ||
         !Number.isFinite(output.confidence)
       ) {
@@ -56,7 +63,9 @@ export default {
       }
       return json({
         label: output.label,
-        secondaryEmotion: output.secondaryEmotion,
+        secondaryEmotions: [...new Set(output.secondaryEmotions)]
+          .filter((label) => label !== output.label)
+          .slice(0, 2),
         intensity: output.intensity,
         confidence: output.confidence,
         model: MODEL

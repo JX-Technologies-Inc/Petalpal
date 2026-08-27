@@ -172,21 +172,24 @@ model Journal {
 }
 
 model EmotionResult {
-  id               String        @id @default(cuid())
-  userId           String
-  dailyCheckInId   String        @unique
-  label            String        @db.VarChar(32)
-  source           EmotionSource
-  confidence       Float?
-  secondaryEmotion String?       @db.VarChar(32)
-  intensity        Float?
-  modelVersion     String?       @db.VarChar(128)
-  createdAt        DateTime      @default(now())
+  id                String        @id @default(cuid())
+  userId            String
+  dailyCheckInId    String        @unique
+  label             String        @db.VarChar(32)
+  source            EmotionSource
+  confidence        Float?
+  secondaryEmotion  String?       @db.VarChar(32)
+  secondaryEmotions Json          @default("[]")
+  intensity         Float?
+  modelVersion      String?       @db.VarChar(128)
+  inferencePath     String        @default("NO_AI") @db.VarChar(32)
+  createdAt         DateTime      @default(now())
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   dailyCheckIn DailyCheckIn @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+  @@index([inferencePath, createdAt])
 }
 
 model FairyState {
@@ -317,6 +320,7 @@ model AiInteractionMetadata {
   outputTokens   Int?
   success        Boolean  @default(true)
   errorCode      String?  @db.VarChar(64)
+  inferencePath  String?  @db.VarChar(32)
   createdAt      DateTime @default(now())
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -324,6 +328,7 @@ model AiInteractionMetadata {
 
   @@index([userId, createdAt])
   @@index([task, createdAt])
+  @@index([inferencePath, createdAt])
 }
 
 model SubscriptionEntitlement {

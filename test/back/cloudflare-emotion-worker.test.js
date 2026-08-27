@@ -36,7 +36,7 @@ test("emotion Worker returns a validated PetalPal mood", async () => {
           return {
             response: {
               label: "happy",
-              secondaryEmotion: "calm",
+              secondaryEmotions: ["calm"],
               intensity: 0.77,
               confidence: 0.88
             }
@@ -50,7 +50,7 @@ test("emotion Worker returns a validated PetalPal mood", async () => {
   assert.equal(receivedInput.response_format.type, "json_schema");
   assert.deepEqual(await response.json(), {
     label: "happy",
-    secondaryEmotion: "calm",
+    secondaryEmotions: ["calm"],
     intensity: 0.77,
     confidence: 0.88,
     model: "@cf/meta/llama-3.1-8b-instruct-fast"

@@ -1,0 +1,86 @@
+{
+  "admiration": {
+    "threshold": 0.61,
+    "dev_f1": 0.692384
+  },
+  "amusement": {
+    "threshold": 0.43,
+    "dev_f1": 0.76411
+  },
+  "anger": {
+    "threshold": 0.6,
+    "dev_f1": 0.460048
+  },
+  "annoyance": {
+    "threshold": 0.51,
+    "dev_f1": 0.296875
+  },
+  "approval": {
+    "threshold": 0.59,
+    "dev_f1": 0.328029
+  },
+  "caring": {
+    "threshold": 0.63,
+    "dev_f1": 0.39011
+  },
+  "confusion": {
+    "threshold": 0.73,
+    "dev_f1": 0.408163
+  },
+  "curiosity": {
+    "threshold": 0.65,
+    "dev_f1": 0.439479
+  },
+  "disappointment": {
+    "threshold": 0.51,
+    "dev_f1": 0.265169
+  },
+  "disapproval": {
+    "threshold": 0.55,
+    "dev_f1": 0.366625
+  },
+  "disgust": {
+    "threshold": 0.8,
+    "dev_f1": 0.413408
+  },
+  "excitement": {
+    "threshold": 0.63,
+    "dev_f1": 0.328767
+  },
+  "fear": {
+    "threshold": 0.55,
+    "dev_f1": 0.625698
+  },
+  "gratitude": {
+    "threshold": 0.68,
+    "dev_f1": 0.911466
+  },
+  "joy": {
+    "threshold": 0.67,
+    "dev_f1": 0.583569
+  },
+  "love": {
+    "threshold": 0.7,
+    "dev_f1": 0.78245
+  },
+  "neutral": {
+    "threshold": 0.48,
+    "dev_f1": 0.654408
+  },
+  "optimism": {
+    "threshold": 0.78,
+    "dev_f1": 0.606061
+  },
+  "remorse": {
+    "threshold": 0.54,
+    "dev_f1": 0.759494
+  },
+  "sadness": {
+    "threshold": 0.76,
+    "dev_f1": 0.474074
+  },
+  "surprise": {
+    "threshold": 0.66,
+    "dev_f1": 0.484211
+  }
+}
