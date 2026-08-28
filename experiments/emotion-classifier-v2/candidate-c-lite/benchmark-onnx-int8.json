@@ -1,0 +1,14 @@
+{
+  "runtime": "onnx-int8",
+  "samples": 200,
+  "median_ms": 47.1351,
+  "p95_ms": 81.1852,
+  "artifact_bytes": 125895662,
+  "artifact_megabytes": 120.0635,
+  "rss_baseline_mb": 29.33,
+  "rss_loaded_mb": 667.77,
+  "rss_after_inference_mb": 669.14,
+  "incremental_rss_after_inference_mb": 639.81,
+  "platform": "macOS-13.3-arm64-arm-64bit",
+  "thread_count": 1
+}

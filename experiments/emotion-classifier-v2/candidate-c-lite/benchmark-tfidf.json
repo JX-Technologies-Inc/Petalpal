@@ -1,0 +1,14 @@
+{
+  "runtime": "tfidf",
+  "samples": 200,
+  "median_ms": 1.043,
+  "p95_ms": 1.1279,
+  "artifact_bytes": 9699870,
+  "artifact_megabytes": 9.2505,
+  "rss_baseline_mb": 30.28,
+  "rss_loaded_mb": 163.44,
+  "rss_after_inference_mb": 163.8,
+  "incremental_rss_after_inference_mb": 133.52,
+  "platform": "macOS-13.3-arm64-arm-64bit",
+  "thread_count": 1
+}

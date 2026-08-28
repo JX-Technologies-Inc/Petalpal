@@ -1,0 +1,162 @@
+{
+  "experiment": "PetalPal Emotion Classifier V2 Candidate C pretrained GoEmotions Transformer",
+  "production_modified": false,
+  "checkpoint": "SamLowe/roberta-base-go_emotions",
+  "training_labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "approval",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disapproval",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "neutral",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "garden_mapping": {
+    "admiration": "Gentle Bloom",
+    "amusement": "Sunny Bloom",
+    "anger": "Fire Bloom",
+    "annoyance": "Fire Bloom",
+    "approval": "Gentle Bloom",
+    "caring": "Gentle Bloom",
+    "curiosity": "Wonder Bloom",
+    "disappointment": "Healing Bloom",
+    "disapproval": "Fire Bloom",
+    "disgust": "Fire Bloom",
+    "excitement": "Sunny Bloom",
+    "fear": "Fire Bloom",
+    "gratitude": "Gentle Bloom",
+    "joy": "Sunny Bloom",
+    "love": "Gentle Bloom",
+    "optimism": "Sunny Bloom",
+    "remorse": "Healing Bloom",
+    "sadness": "Quiet Bloom"
+  },
+  "official_test_dataset_shared_with_candidate_a": true,
+  "threshold_selection": "Per-label best F1 on official dev split; test remains held out",
+  "model": {
+    "type": "RobertaForSequenceClassification",
+    "artifact": "artifacts/checkpoint",
+    "artifact_bytes": 503510599,
+    "artifact_megabytes": 480.1851,
+    "transformers": "4.57.6",
+    "torch": "2.11.0",
+    "python": "3.12.13 (main, Aug  7 2026, 02:15:23) [Clang 22.1.3 ]"
+  },
+  "test": {
+    "samples": 5228,
+    "macro_precision": 0.550963,
+    "macro_recall": 0.616283,
+    "macro_f1": 0.573226,
+    "micro_precision": 0.565799,
+    "micro_recall": 0.683422,
+    "micro_f1": 0.619073
+  },
+  "latency": {
+    "single_text_samples": 200,
+    "single_text_median_ms": 54.5907,
+    "single_text_p95_ms": 59.3793,
+    "platform": "macOS-13.3-arm64-arm-64bit",
+    "torch_threads": 1
+  },
+  "memory": {
+    "rss_before_model_mb": 338.02,
+    "rss_after_load_mb": 441.44,
+    "rss_after_benchmark_mb": 633.78,
+    "approx_model_load_delta_mb": 103.42
+  },
+  "garden_mood_evaluation": {
+    "mapping": {
+      "admiration": "Gentle Bloom",
+      "amusement": "Sunny Bloom",
+      "anger": "Fire Bloom",
+      "annoyance": "Fire Bloom",
+      "approval": "Gentle Bloom",
+      "caring": "Gentle Bloom",
+      "curiosity": "Wonder Bloom",
+      "disappointment": "Healing Bloom",
+      "disapproval": "Fire Bloom",
+      "disgust": "Fire Bloom",
+      "excitement": "Sunny Bloom",
+      "fear": "Fire Bloom",
+      "gratitude": "Gentle Bloom",
+      "joy": "Sunny Bloom",
+      "love": "Gentle Bloom",
+      "optimism": "Sunny Bloom",
+      "remorse": "Healing Bloom",
+      "sadness": "Quiet Bloom"
+    },
+    "unmapped_labels": [
+      "confusion",
+      "surprise",
+      "neutral"
+    ],
+    "evaluable_test_samples": 3398,
+    "macro_f1_over_all_8_moods": 0.519336,
+    "macro_f1_over_supported_moods": 0.692449,
+    "micro_f1": 0.75758,
+    "per_mood": {
+      "Sunny Bloom": {
+        "precision": 0.823117,
+        "recall": 0.692194,
+        "f1": 0.752,
+        "support": 679
+      },
+      "Gentle Bloom": {
+        "precision": 0.868672,
+        "recall": 0.810959,
+        "f1": 0.838824,
+        "support": 1460
+      },
+      "Quiet Bloom": {
+        "precision": 0.571429,
+        "recall": 0.666667,
+        "f1": 0.615385,
+        "support": 156
+      },
+      "Healing Bloom": {
+        "precision": 0.47032,
+        "recall": 0.5,
+        "f1": 0.484706,
+        "support": 206
+      },
+      "Fire Bloom": {
+        "precision": 0.822626,
+        "recall": 0.655902,
+        "f1": 0.729864,
+        "support": 898
+      },
+      "Wonder Bloom": {
+        "precision": 0.725086,
+        "recall": 0.742958,
+        "f1": 0.733913,
+        "support": 284
+      },
+      "Drifting Bloom": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "Peaceful Bloom": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      }
+    }
+  }
+}

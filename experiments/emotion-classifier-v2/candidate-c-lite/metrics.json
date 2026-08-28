@@ -1,0 +1,124 @@
+{
+  "experiment": "Candidate C-Lite ONNX Runtime dynamic INT8",
+  "production_modified": false,
+  "checkpoint": "SamLowe/roberta-base-go_emotions",
+  "test_samples": 5228,
+  "labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "approval",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disapproval",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "neutral",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "garden_mapping": {
+    "admiration": "Gentle Bloom",
+    "amusement": "Sunny Bloom",
+    "anger": "Fire Bloom",
+    "annoyance": "Fire Bloom",
+    "approval": "Gentle Bloom",
+    "caring": "Gentle Bloom",
+    "curiosity": "Wonder Bloom",
+    "disappointment": "Healing Bloom",
+    "disapproval": "Fire Bloom",
+    "disgust": "Fire Bloom",
+    "excitement": "Sunny Bloom",
+    "fear": "Fire Bloom",
+    "gratitude": "Gentle Bloom",
+    "joy": "Sunny Bloom",
+    "love": "Gentle Bloom",
+    "optimism": "Sunny Bloom",
+    "remorse": "Healing Bloom",
+    "sadness": "Quiet Bloom"
+  },
+  "thresholds_reused_from_candidate_c": true,
+  "dataset_checksums": {
+    "train.tsv": "1c254a142be5c00e80d819b9ae1bbd36d94b2eeb8f4b1271846508d57e57d9c5",
+    "dev.tsv": "575489c079c9de1097062a01738f998590d6b7ead66dd1c9fd1d2ba01fd8bc62",
+    "test.tsv": "0587b2dd8b27b97352adbfc3fb083d46005c8946657fdc2b1ca8b1cc7f1f8be4",
+    "emotions.txt": "45c3ef86782d2a4d7fedcd6d8c111aa0d0e94720689bd164fac94fefb4495a89"
+  },
+  "software": {
+    "onnx": "1.19.1",
+    "onnxruntime": "1.22.1",
+    "torch": "2.11.0",
+    "transformers": "4.57.6"
+  },
+  "results": {
+    "pytorch_fp32": {
+      "macro_precision": 0.550963,
+      "macro_recall": 0.616283,
+      "macro_f1": 0.573226,
+      "micro_precision": 0.565799,
+      "micro_recall": 0.683422,
+      "micro_f1": 0.619073,
+      "garden": {
+        "micro_f1": 0.75758,
+        "macro_f1_over_all_8_moods": 0.519336,
+        "macro_f1_over_supported_moods": 0.692449
+      }
+    },
+    "onnx_fp32": {
+      "macro_precision": 0.550963,
+      "macro_recall": 0.616283,
+      "macro_f1": 0.573226,
+      "micro_precision": 0.565799,
+      "micro_recall": 0.683422,
+      "micro_f1": 0.619073,
+      "garden": {
+        "micro_f1": 0.75758,
+        "macro_f1_over_all_8_moods": 0.519336,
+        "macro_f1_over_supported_moods": 0.692449
+      }
+    },
+    "onnx_int8": {
+      "macro_precision": 0.554547,
+      "macro_recall": 0.612957,
+      "macro_f1": 0.573398,
+      "micro_precision": 0.568087,
+      "micro_recall": 0.679095,
+      "micro_f1": 0.61865,
+      "garden": {
+        "micro_f1": 0.756672,
+        "macro_f1_over_all_8_moods": 0.518568,
+        "macro_f1_over_supported_moods": 0.691424
+      }
+    }
+  },
+  "prediction_verification": {
+    "onnx_fp32": {
+      "max_absolute_probability_difference": 1.103e-05,
+      "mean_absolute_probability_difference": 6e-08,
+      "binary_decision_disagreement_rate": 0.0,
+      "sample_any_label_disagreement_rate": 0.0
+    },
+    "onnx_int8": {
+      "max_absolute_probability_difference": 0.5715251,
+      "mean_absolute_probability_difference": 0.00473566,
+      "binary_decision_disagreement_rate": 0.00541954,
+      "sample_any_label_disagreement_rate": 0.1048202
+    }
+  },
+  "artifacts": {
+    "onnx_fp32_bytes": 498911582,
+    "onnx_fp32_megabytes": 475.7992,
+    "onnx_int8_bytes": 125895662,
+    "onnx_int8_megabytes": 120.0635,
+    "size_reduction_percent": 74.7659
+  }
+}

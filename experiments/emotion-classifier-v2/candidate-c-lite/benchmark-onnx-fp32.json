@@ -1,0 +1,14 @@
+{
+  "runtime": "onnx-fp32",
+  "samples": 200,
+  "median_ms": 62.6403,
+  "p95_ms": 109.3668,
+  "artifact_bytes": 498911582,
+  "artifact_megabytes": 475.7992,
+  "rss_baseline_mb": 30.05,
+  "rss_loaded_mb": 953.83,
+  "rss_after_inference_mb": 832.14,
+  "incremental_rss_after_inference_mb": 802.09,
+  "platform": "macOS-13.3-arm64-arm-64bit",
+  "thread_count": 1
+}

@@ -1,0 +1,10 @@
+metric,candidate_a,candidate_c_pytorch_fp32,candidate_c_onnx_fp32,candidate_c_onnx_int8
+macro_f1,0.506177,0.573226,0.573226,0.573398
+micro_f1,0.549516,0.619073,0.619073,0.618650
+garden_mood_micro_f1,0.680929,0.757580,0.757580,0.756672
+supported_garden_mood_macro_f1,0.595781,0.692449,0.692449,0.691424
+cpu_median_latency_ms,1.0430,55.9173,62.6403,47.1351
+cpu_p95_latency_ms,1.1279,67.4154,109.3668,81.1852
+model_file_megabytes,9.2505,475.5905,475.7992,120.0635
+process_rss_after_inference_megabytes,163.80,510.20,832.14,669.14
+incremental_rss_after_inference_megabytes,133.52,479.83,802.09,639.81

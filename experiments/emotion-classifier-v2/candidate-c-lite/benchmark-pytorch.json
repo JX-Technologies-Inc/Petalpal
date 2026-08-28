@@ -1,0 +1,14 @@
+{
+  "runtime": "pytorch",
+  "samples": 200,
+  "median_ms": 55.9173,
+  "p95_ms": 67.4154,
+  "artifact_bytes": 498692800,
+  "artifact_megabytes": 475.5905,
+  "rss_baseline_mb": 30.38,
+  "rss_loaded_mb": 346.28,
+  "rss_after_inference_mb": 510.2,
+  "incremental_rss_after_inference_mb": 479.83,
+  "platform": "macOS-13.3-arm64-arm-64bit",
+  "thread_count": 1
+}

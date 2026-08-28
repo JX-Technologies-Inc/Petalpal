@@ -6,3 +6,8 @@ coverage/
 !.env.example
 
 /generated/prisma
+
+# Local ML model artifacts
+experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint/model.safetensors
+experiments/emotion-classifier-v2/candidate-c-lite/artifacts/model-fp32.onnx
+experiments/emotion-classifier-v2/candidate-c-lite/artifacts/model-int8.onnx

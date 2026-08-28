@@ -1,0 +1,7 @@
+metric,candidate_a,candidate_c,difference
+Macro-F1,0.506177,0.573226,0.067049
+Micro-F1,0.549516,0.619073,0.069557
+Garden Mood micro-F1,0.680929,0.75758,0.076651
+CPU median latency ms,1.0697,54.5907,53.521
+CPU p95 latency ms,1.2582,59.3793,58.1211
+Model size MB,9.2505,480.1851,470.9346
