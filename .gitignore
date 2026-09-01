@@ -12,3 +12,6 @@ experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint/model.safeten
 experiments/emotion-classifier-v2/candidate-c-lite/artifacts/model-fp32.onnx
 experiments/emotion-classifier-v2/candidate-c-lite/artifacts/model-int8.onnx
 graphify-out/
+
+__pycache__/
+*.pyc
