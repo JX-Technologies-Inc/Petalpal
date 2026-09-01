@@ -1,0 +1,4106 @@
+{
+  "analysis": "PetalPal in-domain v1 Candidate C-Lite INT8 failure analysis",
+  "frozenEvaluationExamples": 100,
+  "failedExamples": 58,
+  "classificationMethod": {
+    "category1": "No best/acceptable label passed threshold, and no label reached 75% of its threshold; also includes false positives on abstention gold.",
+    "category2": "No best/acceptable label passed, but at least one reached >=65% of its current threshold (diagnostic near-miss only; not a tuning recommendation).",
+    "category3": "A best/acceptable label passed but selector removed it, or an accepted output was accompanied by an output/count-policy violation.",
+    "categories4to6": "Non-exclusive evidence tags layered on the mechanical category; proportions may overlap."
+  },
+  "mechanicalCategoryCounts": {
+    "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 51,
+    "2_THRESHOLD_NEAR_MISS": 4,
+    "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 3
+  },
+  "mechanicalCategoryRates": {
+    "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 0.87931,
+    "2_THRESHOLD_NEAR_MISS": 0.068966,
+    "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 0.051724
+  },
+  "semanticEvidenceCounts": {
+    "4_SEMANTIC_MISUNDERSTANDING_RISK": 39,
+    "5_DOMAIN_MISMATCH_EVIDENCE": 34
+  },
+  "semanticEvidenceRates": {
+    "4_SEMANTIC_MISUNDERSTANDING_RISK": 0.672414,
+    "5_DOMAIN_MISMATCH_EVIDENCE": 0.586207
+  },
+  "focusSliceSummary": {
+    "SHORT": {
+      "examples": 15,
+      "failures": 14,
+      "failureRate": 0.933333,
+      "mechanicalCategories": {
+        "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 13,
+        "2_THRESHOLD_NEAR_MISS": 0,
+        "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 1
+      }
+    },
+    "NEGATION": {
+      "examples": 10,
+      "failures": 9,
+      "failureRate": 0.9,
+      "mechanicalCategories": {
+        "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 8,
+        "2_THRESHOLD_NEAR_MISS": 1,
+        "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 0
+      }
+    },
+    "EMOJI_HEAVY": {
+      "examples": 8,
+      "failures": 3,
+      "failureRate": 0.375,
+      "mechanicalCategories": {
+        "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 3,
+        "2_THRESHOLD_NEAR_MISS": 0,
+        "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 0
+      }
+    },
+    "SUBTLE_IMPLICIT": {
+      "examples": 23,
+      "failures": 14,
+      "failureRate": 0.608696,
+      "mechanicalCategories": {
+        "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 12,
+        "2_THRESHOLD_NEAR_MISS": 1,
+        "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 1
+      }
+    },
+    "SLANG_TYPOS": {
+      "examples": 10,
+      "failures": 7,
+      "failureRate": 0.7,
+      "mechanicalCategories": {
+        "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE": 5,
+        "2_THRESHOLD_NEAR_MISS": 1,
+        "3_SELECTOR_FILTER_OR_OUTPUT_POLICY": 1
+      }
+    }
+  },
+  "failures": [
+    {
+      "id": "PP-EVAL-001",
+      "journal": "Finished my presentation!",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "excitement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "joy",
+          "probability": 0.47936437,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "excitement",
+          "probability": 0.21683808,
+          "threshold": 0.4,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.1432419,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.1226882,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "admiration",
+          "probability": 0.02377606,
+          "threshold": 0.31,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "excitement",
+          "probability": 0.21683808,
+          "threshold": 0.4,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.5421
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-002",
+      "journal": "Mom saved me dinner.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "SHORT"
+      ],
+      "goldBest": [
+        "gratitude",
+        "love"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.946841,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.02428018,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.00639785,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.00549759,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "love",
+          "probability": 0.00491548,
+          "threshold": 0.19,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "gratitude",
+          "probability": 0.0027572,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0077
+        },
+        {
+          "label": "love",
+          "probability": 0.00491548,
+          "threshold": 0.19,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0259
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.946841,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-003",
+      "journal": "Missed them again today.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "annoyance",
+        "remorse"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "sadness",
+          "probability": 0.5890696,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.267252,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.25582948,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "remorse",
+          "probability": 0.01608943,
+          "threshold": 0.39,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.01153728,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "annoyance",
+          "probability": 0.01153728,
+          "threshold": 0.2,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0577
+        },
+        {
+          "label": "remorse",
+          "probability": 0.01608943,
+          "threshold": 0.39,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0413
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "sadness",
+          "score": 0.5890696,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        },
+        {
+          "label": "neutral",
+          "score": 0.25582948,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-004",
+      "journal": "Trying again tomorrow.",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "optimism"
+      ],
+      "acceptable": [
+        "disappointment"
+      ],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.73100269,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "optimism",
+          "probability": 0.23434885,
+          "threshold": 0.43,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.02424807,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00681614,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "caring",
+          "probability": 0.00589448,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "optimism",
+          "probability": 0.23434885,
+          "threshold": 0.43,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.545
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.00337933,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0188
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.73100269,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-005",
+      "journal": "That was completely unfair.",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disgust"
+      ],
+      "acceptable": [
+        "disappointment"
+      ],
+      "topProbabilities": [
+        {
+          "label": "annoyance",
+          "probability": 0.41207126,
+          "threshold": 0.2,
+          "passed": true
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.30973965,
+          "threshold": 0.26,
+          "passed": true
+        },
+        {
+          "label": "anger",
+          "probability": 0.15178072,
+          "threshold": 0.32,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.14584151,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.04990869,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disgust",
+          "probability": 0.0161458,
+          "threshold": 0.27,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0598
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.04990869,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.2773
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "disapproval",
+          "score": 0.30973965,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "annoyance"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-007",
+      "journal": "I can't decide anything.",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disappointment",
+        "sadness"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "confusion",
+          "probability": 0.84190202,
+          "threshold": 0.37,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.14395949,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.08822566,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.02957462,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.02748825,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disappointment",
+          "probability": 0.01812147,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.1007
+        },
+        {
+          "label": "sadness",
+          "probability": 0.00453712,
+          "threshold": 0.24,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0189
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "confusion",
+          "score": 0.84190202,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-008",
+      "journal": "Quiet tea before bed.",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "joy"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.95062351,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.02706808,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.0077078,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00688343,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "caring",
+          "probability": 0.00598095,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "joy",
+          "probability": 0.0077078,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0154
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.95062351,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-009",
+      "journal": "Got the internship offer.",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "excitement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.437033,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.2715953,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "excitement",
+          "probability": 0.09465788,
+          "threshold": 0.4,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.0483722,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "love",
+          "probability": 0.01591478,
+          "threshold": 0.19,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "excitement",
+          "probability": 0.09465788,
+          "threshold": 0.4,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.2366
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.437033,
+          "decision": "FILTER_EXCLUDED"
+        },
+        {
+          "label": "approval",
+          "score": 0.2715953,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-010",
+      "journal": "She checked in on me.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "SHORT"
+      ],
+      "goldBest": [
+        "gratitude"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.96945077,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.01518512,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00783428,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.00369211,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.00340159,
+          "threshold": 0.26,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "gratitude",
+          "probability": 0.00103353,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0029
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.96945077,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-011",
+      "journal": "The room feels emptier.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "disappointment",
+          "probability": 0.39080492,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "sadness",
+          "probability": 0.37365785,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.17637053,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.10343095,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.01913111,
+          "threshold": 0.26,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "sadness",
+          "score": 0.37365785,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-012",
+      "journal": "One small step forward.",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "joy",
+        "optimism"
+      ],
+      "acceptable": [
+        "excitement"
+      ],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.96772122,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.01429748,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00736881,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.00410151,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.00389852,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "joy",
+          "probability": 0.00138507,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0028
+        },
+        {
+          "label": "optimism",
+          "probability": 0.00307206,
+          "threshold": 0.43,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0071
+        },
+        {
+          "label": "excitement",
+          "probability": 0.00176627,
+          "threshold": 0.4,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0044
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.96772122,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-013",
+      "journal": "They ignored my message again.",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "sliceTags": [
+        "SHORT"
+      ],
+      "goldBest": [
+        "annoyance",
+        "disgust"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.44941366,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.33152136,
+          "threshold": 0.2,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.20671482,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.07102121,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "anger",
+          "probability": 0.02737325,
+          "threshold": 0.32,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "annoyance",
+          "probability": 0.33152136,
+          "threshold": 0.2,
+          "decision": "PASS",
+          "thresholdRatio": 1.6576
+        },
+        {
+          "label": "disgust",
+          "probability": 0.00442718,
+          "threshold": 0.27,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0164
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.44941366,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "annoyance",
+        "disappointment"
+      ],
+      "mechanicalCategory": "3_SELECTOR_FILTER_OR_OUTPUT_POLICY",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "Accepted label(s) annoyance survived, but extra output(s) disappointment violated the gold output policy."
+    },
+    {
+      "id": "PP-EVAL-014",
+      "journal": "I saw Saturn's rings.",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "admiration"
+      ],
+      "acceptable": [
+        "joy"
+      ],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.9260872,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.02478188,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "excitement",
+          "probability": 0.01136191,
+          "threshold": 0.4,
+          "passed": false
+        },
+        {
+          "label": "admiration",
+          "probability": 0.00781693,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.00567847,
+          "threshold": 0.5,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "admiration",
+          "probability": 0.00781693,
+          "threshold": 0.31,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0252
+        },
+        {
+          "label": "joy",
+          "probability": 0.00567847,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0114
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.9260872,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-015",
+      "journal": "Everything feels a little off.",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "sliceTags": [
+        "SHORT",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "disappointment",
+          "probability": 0.40843812,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.27695227,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.12272678,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.1226376,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.04560589,
+          "threshold": 0.37,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.27695227,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-016",
+      "journal": "I woke before everyone else and made coffee while the apartment was still quiet. Nothing special happened, but I liked having a slow start. I watched the light move across the kitchen floor.",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "joy",
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "approval",
+          "probability": 0.38831779,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "joy",
+          "probability": 0.33005619,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "love",
+          "probability": 0.23887806,
+          "threshold": 0.19,
+          "passed": true
+        },
+        {
+          "label": "admiration",
+          "probability": 0.09811468,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.08774238,
+          "threshold": 0.25,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "joy",
+          "probability": 0.33005619,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.6601
+        },
+        {
+          "label": "amusement",
+          "probability": 0.00367294,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0127
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "approval",
+          "score": 0.38831779,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "love"
+      ],
+      "mechanicalCategory": "2_THRESHOLD_NEAR_MISS",
+      "semanticCategories": [],
+      "diagnosis": "Best accepted near-miss was joy at 66.0% of its threshold."
+    },
+    {
+      "id": "PP-EVAL-017",
+      "journal": "The interview was harder than I expected, and I stumbled on one answer. Then the recruiter told me my portfolio stood out and invited me to the next round. I keep replaying both parts in my head.",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "excitement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.53733134,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.30612597,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.03282923,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.02901456,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.02221806,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "excitement",
+          "probability": 0.00298492,
+          "threshold": 0.4,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0075
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.53733134,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-018",
+      "journal": "My roommate noticed I had skipped lunch and left a bowl of soup by my door. We have both been busy and barely talked this week. That little gesture stayed with me all afternoon.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "gratitude"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.62984908,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.02946586,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.02139173,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.0210422,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.01647391,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "gratitude",
+          "probability": 0.00181827,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0051
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.62984908,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-021",
+      "journal": "The group submitted our work without adding my name. I asked about it twice and nobody answered until the deadline passed. Now they are acting as if it was a harmless mistake.",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disgust"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.82399112,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.08247732,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.03825731,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.03233015,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.02329088,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disgust",
+          "probability": 0.00176471,
+          "threshold": 0.27,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0065
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.82399112,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-022",
+      "journal": "The museum had a room where every sound changed the lights on the walls. I stayed much longer than I planned because each corner behaved differently. I want to understand how they built it.",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "surprise"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "curiosity",
+          "probability": 0.57311153,
+          "threshold": 0.22,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.21648021,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.04614528,
+          "threshold": 0.37,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.01872599,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.01593981,
+          "threshold": 0.43,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "surprise",
+          "probability": 0.00481941,
+          "threshold": 0.16,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0301
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "curiosity",
+          "score": 0.57311153,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-024",
+      "journal": "I walked the usual route after dinner and called my sister on the way home. We talked about groceries, work, and a show we both watch. It was an ordinary evening, and that was enough.",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "ABSTENTION_PREFERRED",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "amusement"
+      ],
+      "acceptable": [
+        "caring"
+      ],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.64817864,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.19179817,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.02397081,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00757027,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "admiration",
+          "probability": 0.00571902,
+          "threshold": 0.31,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.00420498,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0145
+        },
+        {
+          "label": "caring",
+          "probability": 0.00148,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0082
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.64817864,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-025",
+      "journal": "We finally launched the project after weeks of late nights. I am proud of the team and relieved that it works, but I will miss our daily calls. Tomorrow I get to sleep in.",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "LONG",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "admiration"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "disappointment",
+          "probability": 0.43115658,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.11416094,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.1020681,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.06111178,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.0573382,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "admiration",
+          "probability": 0.04376562,
+          "threshold": 0.31,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.1412
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-026",
+      "journal": "I was embarrassed that I forgot her birthday, but she laughed and said my late card was still sweet.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "remorse"
+      ],
+      "acceptable": [
+        "love",
+        "gratitude"
+      ],
+      "topProbabilities": [
+        {
+          "label": "amusement",
+          "probability": 0.42314911,
+          "threshold": 0.29,
+          "passed": true
+        },
+        {
+          "label": "joy",
+          "probability": 0.05188324,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "remorse",
+          "probability": 0.03830344,
+          "threshold": 0.39,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.0309131,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.01952114,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "remorse",
+          "probability": 0.03830344,
+          "threshold": 0.39,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0982
+        },
+        {
+          "label": "love",
+          "probability": 0.00459993,
+          "threshold": 0.19,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0242
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.00376697,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0105
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "amusement"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-032",
+      "journal": "The trip was beautiful, and I am also glad to be back in my own quiet room.",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "joy",
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "admiration",
+          "probability": 0.72963959,
+          "threshold": 0.31,
+          "passed": true
+        },
+        {
+          "label": "joy",
+          "probability": 0.64386076,
+          "threshold": 0.5,
+          "passed": true
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.08270758,
+          "threshold": 0.36,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.04861273,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "excitement",
+          "probability": 0.01928523,
+          "threshold": 0.4,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "joy",
+          "probability": 0.64386076,
+          "threshold": 0.5,
+          "decision": "PASS",
+          "thresholdRatio": 1.2877
+        },
+        {
+          "label": "amusement",
+          "probability": 0.00536211,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0185
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "admiration",
+        "joy"
+      ],
+      "mechanicalCategory": "3_SELECTOR_FILTER_OR_OUTPUT_POLICY",
+      "semanticCategories": [],
+      "diagnosis": "Accepted label(s) joy survived, but extra output(s) admiration violated the gold output policy."
+    },
+    {
+      "id": "PP-EVAL-034",
+      "journal": "He brought flowers to apologize, and I appreciate the effort even though I am not ready to forgive him.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "admiration",
+          "probability": 0.53378409,
+          "threshold": 0.31,
+          "passed": true
+        },
+        {
+          "label": "remorse",
+          "probability": 0.47029993,
+          "threshold": 0.39,
+          "passed": true
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.1676258,
+          "threshold": 0.36,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.09628041,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "caring",
+          "probability": 0.05751844,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "admiration",
+        "remorse"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-035",
+      "journal": "Looking at old photos made me smile and then suddenly miss everyone.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "amusement",
+        "love"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "sadness",
+          "probability": 0.72561121,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.16049947,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.0979133,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.02751923,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.01976621,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.01227617,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0423
+        },
+        {
+          "label": "love",
+          "probability": 0.00938188,
+          "threshold": 0.19,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0494
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "sadness",
+          "score": 0.72561121,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-036",
+      "journal": "I cried after therapy, but for once it felt like something had loosened instead of broken.",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "joy"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "sadness",
+          "probability": 0.7679835,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.08583411,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.07882533,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.04814453,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.04388674,
+          "threshold": 0.5,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "joy",
+          "probability": 0.04388674,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0878
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "sadness"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-038",
+      "journal": "I cannot stop thinking about the question, even though not knowing the answer makes me uneasy.",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "confusion"
+      ],
+      "acceptable": [
+        "fear"
+      ],
+      "topProbabilities": [
+        {
+          "label": "fear",
+          "probability": 0.11123525,
+          "threshold": 0.17,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.10151596,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.08920508,
+          "threshold": 0.37,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.08642291,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.04300082,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "confusion",
+          "probability": 0.08920508,
+          "threshold": 0.37,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.2411
+        },
+        {
+          "label": "fear",
+          "probability": 0.11123525,
+          "threshold": 0.17,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.6543
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [],
+      "mechanicalCategory": "2_THRESHOLD_NEAR_MISS",
+      "semanticCategories": [],
+      "diagnosis": "Best accepted near-miss was fear at 65.4% of its threshold."
+    },
+    {
+      "id": "PP-EVAL-040",
+      "journal": "The house is finally quiet, but I keep wondering whether I forgot something important.",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "confusion"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "surprise",
+          "probability": 0.79593158,
+          "threshold": 0.16,
+          "passed": true
+        },
+        {
+          "label": "curiosity",
+          "probability": 0.12633884,
+          "threshold": 0.22,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.04498228,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.0429953,
+          "threshold": 0.37,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.02872531,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "confusion",
+          "probability": 0.0429953,
+          "threshold": 0.37,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.1162
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "surprise"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-042",
+      "journal": "I was worried about him, then he called to say he was safe and thanked me for checking.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "joy"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "caring",
+          "probability": 0.55961657,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.40527231,
+          "threshold": 0.36,
+          "passed": true
+        },
+        {
+          "label": "sadness",
+          "probability": 0.04121072,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.03454493,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.0340795,
+          "threshold": 0.5,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "joy",
+          "probability": 0.0340795,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0682
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "caring",
+          "score": 0.55961657,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [
+        "gratitude"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-043",
+      "journal": "I expected to feel only sad at graduation, but I am proud too.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [],
+      "acceptable": [
+        "admiration"
+      ],
+      "topProbabilities": [
+        {
+          "label": "disappointment",
+          "probability": 0.230451,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "sadness",
+          "probability": 0.11397185,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "admiration",
+          "probability": 0.11153884,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.10136177,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.0864832,
+          "threshold": 0.25,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "admiration",
+          "probability": 0.11153884,
+          "threshold": 0.31,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.3598
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-044",
+      "journal": "Today was exhausting, yet finishing one task made tomorrow feel possible.",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "goldBest": [
+        "optimism"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "disappointment",
+          "probability": 0.52838778,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.19467014,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.12387266,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.09263069,
+          "threshold": 0.43,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.08808931,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "optimism",
+          "probability": 0.09263069,
+          "threshold": 0.43,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.2154
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "disappointment"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-052",
+      "journal": "Washed the sheets and put them back on the bed.",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.94776434,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.02410425,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.01637025,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "disgust",
+          "probability": 0.00563722,
+          "threshold": 0.27,
+          "passed": false
+        },
+        {
+          "label": "anger",
+          "probability": 0.00551044,
+          "threshold": 0.32,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.00234691,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0081
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.94776434,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-054",
+      "journal": "I bought rice, tomatoes, and soap after work.",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.94560993,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.02721456,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00708365,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.00281842,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.00236122,
+          "threshold": 0.5,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.00147687,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0051
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.94560993,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-059",
+      "journal": "The library closed at its usual time.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "surprise",
+        "disappointment"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.87346458,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.09486211,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.00855852,
+          "threshold": 0.43,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00575154,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.00554377,
+          "threshold": 0.26,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "surprise",
+          "probability": 0.00109585,
+          "threshold": 0.16,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0068
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.00531214,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0295
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.87346458,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-061",
+      "journal": "I am not angry; I just need them to stop interrupting me.",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disgust"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "annoyance",
+          "probability": 0.41467959,
+          "threshold": 0.2,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.23813021,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "anger",
+          "probability": 0.15241629,
+          "threshold": 0.32,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.13049753,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "caring",
+          "probability": 0.05503451,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disgust",
+          "probability": 0.00442961,
+          "threshold": 0.27,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0164
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "annoyance"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-063",
+      "journal": "I do not regret saying no, even if I keep thinking about it.",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "optimism"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "remorse",
+          "probability": 0.50797421,
+          "threshold": 0.39,
+          "passed": true
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.13290149,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.13127905,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.10806422,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "sadness",
+          "probability": 0.04868457,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "optimism",
+          "probability": 0.00995687,
+          "threshold": 0.43,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0232
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "remorse"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-064",
+      "journal": "I was not bored; I was enjoying having nothing to do.",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "joy",
+          "probability": 0.8884598,
+          "threshold": 0.5,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.05068191,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.03121465,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "admiration",
+          "probability": 0.02458,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "amusement",
+          "probability": 0.02302377,
+          "threshold": 0.29,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.02302377,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0794
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "joy"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-065",
+      "journal": "I cannot say I hated the party; I actually stayed until the end.",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "disapproval",
+          "probability": 0.40863651,
+          "threshold": 0.26,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.22180234,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.22113524,
+          "threshold": 0.2,
+          "passed": true
+        },
+        {
+          "label": "anger",
+          "probability": 0.09485443,
+          "threshold": 0.32,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.05688269,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.00222225,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0077
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "disapproval",
+          "score": 0.40863651,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "annoyance"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-066",
+      "journal": "She did not ask for praise; she quietly fixed the problem for everyone.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "admiration",
+        "gratitude"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.62062937,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.34021589,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "admiration",
+          "probability": 0.02837293,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.01707589,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "caring",
+          "probability": 0.01442408,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "admiration",
+          "probability": 0.02837293,
+          "threshold": 0.31,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0915
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.00856156,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0238
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.62062937,
+          "decision": "FILTER_EXCLUDED"
+        },
+        {
+          "label": "approval",
+          "score": 0.34021589,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-067",
+      "journal": "I am not disappointed in her, only in how the day turned out.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disappointment"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "approval",
+          "probability": 0.41814452,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.30165797,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "admiration",
+          "probability": 0.12054363,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.06302885,
+          "threshold": 0.43,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.01982111,
+          "threshold": 0.26,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disappointment",
+          "probability": 0.01589233,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0883
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "approval",
+          "score": 0.41814452,
+          "decision": "FILTER_EXCLUDED"
+        },
+        {
+          "label": "neutral",
+          "score": 0.30165797,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-068",
+      "journal": "The pain is not gone, but it no longer decides my whole day.",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "optimism"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.4817256,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "sadness",
+          "probability": 0.14291836,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.06564403,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.05280417,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.03996605,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "optimism",
+          "probability": 0.00432595,
+          "threshold": 0.43,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0101
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.4817256,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-069",
+      "journal": "I do not dislike the idea; I dislike being rushed into it.",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "disgust",
+        "annoyance"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "disapproval",
+          "probability": 0.79176331,
+          "threshold": 0.26,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.14910458,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.09178196,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "anger",
+          "probability": 0.04894,
+          "threshold": 0.32,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.02140777,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disgust",
+          "probability": 0.01464123,
+          "threshold": 0.27,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0542
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.14910458,
+          "threshold": 0.2,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.7455
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "disapproval",
+          "score": 0.79176331,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "2_THRESHOLD_NEAR_MISS",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "Best accepted near-miss was annoyance at 74.6% of its threshold."
+    },
+    {
+      "id": "PP-EVAL-070",
+      "journal": "I was not confused by the answer; it just opened three more questions.",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "confusion",
+          "probability": 0.62871253,
+          "threshold": 0.37,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.39047438,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.07375519,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "curiosity",
+          "probability": 0.03319153,
+          "threshold": 0.22,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.01708313,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.39047438,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [
+        "confusion"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-071",
+      "journal": "idk why but today felt kinda weird tbh",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "confusion",
+          "probability": 0.40556312,
+          "threshold": 0.37,
+          "passed": true
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.25355002,
+          "threshold": 0.2,
+          "passed": true
+        },
+        {
+          "label": "disgust",
+          "probability": 0.22158156,
+          "threshold": 0.27,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.07062981,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "curiosity",
+          "probability": 0.0617652,
+          "threshold": 0.22,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "confusion",
+          "score": 0.40556312,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [
+        "annoyance"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-072",
+      "journal": "just vibing at home, no drama lol",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "amusement",
+          "probability": 0.88966012,
+          "threshold": 0.29,
+          "passed": true
+        },
+        {
+          "label": "joy",
+          "probability": 0.09011195,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.04376795,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.01617702,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00672377,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "amusement"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-073",
+      "journal": "we actualy did it omg best day",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "excitement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "admiration",
+          "probability": 0.84218031,
+          "threshold": 0.31,
+          "passed": true
+        },
+        {
+          "label": "joy",
+          "probability": 0.26315096,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.06577707,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "excitement",
+          "probability": 0.0426507,
+          "threshold": 0.4,
+          "passed": false
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.03018104,
+          "threshold": 0.36,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "excitement",
+          "probability": 0.0426507,
+          "threshold": 0.4,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.1066
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "admiration"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-074",
+      "journal": "my bro came thru when i needed him fr",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS"
+      ],
+      "goldBest": [
+        "gratitude"
+      ],
+      "acceptable": [
+        "joy"
+      ],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.94402242,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.02500697,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00546484,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.00493818,
+          "threshold": 0.43,
+          "passed": false
+        },
+        {
+          "label": "caring",
+          "probability": 0.00372553,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "gratitude",
+          "probability": 0.0016035,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0045
+        },
+        {
+          "label": "joy",
+          "probability": 0.00147404,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0029
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.94402242,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-075",
+      "journal": "lowkey miss how things used to be",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disappointment"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.73062724,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "sadness",
+          "probability": 0.25279912,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.12032159,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.01733842,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.01167879,
+          "threshold": 0.24,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disappointment",
+          "probability": 0.12032159,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.6685
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.73062724,
+          "decision": "FILTER_EXCLUDED"
+        },
+        {
+          "label": "sadness",
+          "score": 0.25279912,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "2_THRESHOLD_NEAR_MISS",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "Best accepted near-miss was disappointment at 66.8% of its threshold."
+    },
+    {
+      "id": "PP-EVAL-076",
+      "journal": "was a rough day but im gettin there",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "optimism"
+      ],
+      "acceptable": [
+        "disappointment"
+      ],
+      "topProbabilities": [
+        {
+          "label": "sadness",
+          "probability": 0.63118774,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.21951145,
+          "threshold": 0.18,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.13964434,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.0278579,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.02210497,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "optimism",
+          "probability": 0.00723711,
+          "threshold": 0.43,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0168
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.21951145,
+          "threshold": 0.18,
+          "decision": "PASS",
+          "thresholdRatio": 1.2195
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "disappointment",
+          "score": 0.21951145,
+          "decision": "FILTER_CLUSTER_REFLECTIVE"
+        }
+      ],
+      "finalOutput": [
+        "sadness"
+      ],
+      "mechanicalCategory": "3_SELECTOR_FILTER_OR_OUTPUT_POLICY",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK"
+      ],
+      "diagnosis": "Accepted label(s) disappointment passed threshold but selector removed them."
+    },
+    {
+      "id": "PP-EVAL-080",
+      "journal": "made tea n watched rain, pretty chill",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "goldBest": [
+        "amusement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "admiration",
+          "probability": 0.65200365,
+          "threshold": 0.31,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.17323571,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.14938554,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "joy",
+          "probability": 0.02862113,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "excitement",
+          "probability": 0.00836064,
+          "threshold": 0.4,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "amusement",
+          "probability": 0.00637932,
+          "threshold": 0.29,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.022
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [
+        "admiration"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-082",
+      "journal": "She brought me soup 🥹💗",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "EMOJI_HEAVY"
+      ],
+      "goldBest": [
+        "gratitude"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.76009864,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.25724766,
+          "threshold": 0.24,
+          "passed": true
+        },
+        {
+          "label": "caring",
+          "probability": 0.02042918,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "love",
+          "probability": 0.0110265,
+          "threshold": 0.19,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.00904308,
+          "threshold": 0.43,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "gratitude",
+          "probability": 0.00086433,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0024
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.76009864,
+          "decision": "FILTER_EXCLUDED"
+        },
+        {
+          "label": "approval",
+          "score": 0.25724766,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-086",
+      "journal": "This tiny mushroom glows?? 🍄✨🤯",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "surprise"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "curiosity",
+          "probability": 0.70921338,
+          "threshold": 0.22,
+          "passed": true
+        },
+        {
+          "label": "neutral",
+          "probability": 0.19264197,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.13394874,
+          "threshold": 0.37,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.08354525,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "surprise",
+          "probability": 0.01650177,
+          "threshold": 0.16,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "surprise",
+          "probability": 0.01650177,
+          "threshold": 0.16,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.1031
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "curiosity",
+          "score": 0.70921338,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-087",
+      "journal": "New plan? old plan? 😵‍💫🤷",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "curiosity",
+          "probability": 0.58865684,
+          "threshold": 0.22,
+          "passed": true
+        },
+        {
+          "label": "confusion",
+          "probability": 0.56140029,
+          "threshold": 0.37,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.1326347,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.10654394,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.02917664,
+          "threshold": 0.43,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "decision": "Gold requests abstention; no accepted emotion."
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "confusion",
+          "score": 0.56140029,
+          "decision": "FILTER_PRIMARY_REDUNDANT"
+        }
+      ],
+      "finalOutput": [
+        "curiosity"
+      ],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "Gold prefers no output, but the model/selector emitted a false positive."
+    },
+    {
+      "id": "PP-EVAL-089",
+      "journal": "I kept checking the message because the good news did not quite feel real yet.",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "excitement"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "joy",
+          "probability": 0.26740167,
+          "threshold": 0.5,
+          "passed": false
+        },
+        {
+          "label": "neutral",
+          "probability": 0.17611979,
+          "threshold": 0.25,
+          "passed": false
+        },
+        {
+          "label": "excitement",
+          "probability": 0.10966675,
+          "threshold": 0.4,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.06139458,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "surprise",
+          "probability": 0.05868436,
+          "threshold": 0.16,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "excitement",
+          "probability": 0.10966675,
+          "threshold": 0.4,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.2742
+        }
+      ],
+      "filtersApplied": [],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-090",
+      "journal": "He remembered the tiny detail I mentioned months ago.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "surprise",
+        "gratitude"
+      ],
+      "acceptable": [
+        "joy"
+      ],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.84693849,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.03629055,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.0053598,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00516678,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.00386365,
+          "threshold": 0.37,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "surprise",
+          "probability": 0.00154227,
+          "threshold": 0.16,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0096
+        },
+        {
+          "label": "gratitude",
+          "probability": 0.00178701,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.005
+        },
+        {
+          "label": "joy",
+          "probability": 0.00184965,
+          "threshold": 0.5,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0037
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.84693849,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-094",
+      "journal": "The more I read, the larger the question seemed to become.",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "confusion"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.68758792,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.14090818,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "admiration",
+          "probability": 0.01091801,
+          "threshold": 0.31,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.01064452,
+          "threshold": 0.37,
+          "passed": false
+        },
+        {
+          "label": "optimism",
+          "probability": 0.00633929,
+          "threshold": 0.43,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "confusion",
+          "probability": 0.01064452,
+          "threshold": 0.37,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0288
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.68758792,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-098",
+      "journal": "She moved her umbrella so there was room for me underneath.",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT"
+      ],
+      "goldBest": [
+        "gratitude"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.96466529,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "approval",
+          "probability": 0.01910171,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.00683622,
+          "threshold": 0.2,
+          "passed": false
+        },
+        {
+          "label": "disapproval",
+          "probability": 0.00393453,
+          "threshold": 0.26,
+          "passed": false
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.00313917,
+          "threshold": 0.18,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "gratitude",
+          "probability": 0.00102519,
+          "threshold": 0.36,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.0028
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.96466529,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    },
+    {
+      "id": "PP-EVAL-099",
+      "journal": "I almost sent the photo to them before remembering we do not talk anymore.",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "goldBest": [
+        "disappointment"
+      ],
+      "acceptable": [],
+      "topProbabilities": [
+        {
+          "label": "neutral",
+          "probability": 0.5476625,
+          "threshold": 0.25,
+          "passed": true
+        },
+        {
+          "label": "disappointment",
+          "probability": 0.03428791,
+          "threshold": 0.18,
+          "passed": false
+        },
+        {
+          "label": "approval",
+          "probability": 0.02029539,
+          "threshold": 0.24,
+          "passed": false
+        },
+        {
+          "label": "confusion",
+          "probability": 0.01530198,
+          "threshold": 0.37,
+          "passed": false
+        },
+        {
+          "label": "annoyance",
+          "probability": 0.01483632,
+          "threshold": 0.2,
+          "passed": false
+        }
+      ],
+      "thresholdDecision": [
+        {
+          "label": "disappointment",
+          "probability": 0.03428791,
+          "threshold": 0.18,
+          "decision": "BLOCK",
+          "thresholdRatio": 0.1905
+        }
+      ],
+      "filtersApplied": [
+        {
+          "label": "neutral",
+          "score": 0.5476625,
+          "decision": "FILTER_EXCLUDED"
+        }
+      ],
+      "finalOutput": [],
+      "mechanicalCategory": "1_MODEL_PROBABILITY_OR_FALSE_POSITIVE",
+      "semanticCategories": [
+        "4_SEMANTIC_MISUNDERSTANDING_RISK",
+        "5_DOMAIN_MISMATCH_EVIDENCE"
+      ],
+      "diagnosis": "All best/acceptable labels were materially below their current thresholds."
+    }
+  ]
+}

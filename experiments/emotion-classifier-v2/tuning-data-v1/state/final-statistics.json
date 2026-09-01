@@ -1,0 +1,41 @@
+{
+  "train": 2000,
+  "dev": 400,
+  "sliceCounts": {
+    "SUBTLE_IMPLICIT": 450,
+    "STANDARD_DAILY_GROW": 500,
+    "SHORT": 500,
+    "EMOJI_HEAVY": 250,
+    "NEGATION": 400,
+    "SLANG_TYPOS": 300
+  },
+  "modelLabelCounts": {
+    "admiration": 135,
+    "amusement": 112,
+    "anger": 82,
+    "annoyance": 176,
+    "approval": 78,
+    "caring": 107,
+    "confusion": 125,
+    "curiosity": 172,
+    "disappointment": 116,
+    "disapproval": 120,
+    "disgust": 77,
+    "excitement": 106,
+    "fear": 74,
+    "gratitude": 104,
+    "joy": 75,
+    "love": 89,
+    "neutral": 523,
+    "optimism": 77,
+    "remorse": 137,
+    "sadness": 82,
+    "surprise": 78
+  },
+  "abstentionCount": 600,
+  "abstentionRatio": 0.25,
+  "sha256": {
+    "train": "a7fbd3d959f3264a520095b1cebdd53406e015aca29edb38f1915519fe65d89c",
+    "dev": "678fb9025aadec4a37794fa4ef19f4c1858fb66606d926dd96226fb32db4307d"
+  }
+}

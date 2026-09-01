@@ -1,0 +1,21 @@
+{
+  "accepted": 2400,
+  "schemaErrors": [],
+  "safeFixes": 2476,
+  "splitCounts": {
+    "train": 2000,
+    "dev": 400
+  },
+  "sliceCounts": {
+    "SUBTLE_IMPLICIT": 450,
+    "STANDARD_DAILY_GROW": 500,
+    "SHORT": 500,
+    "EMOJI_HEAVY": 250,
+    "NEGATION": 400,
+    "SLANG_TYPOS": 300
+  },
+  "abstention": 600,
+  "exactOrNormalizedDuplicateGroups": [],
+  "nearDuplicatePairs": [],
+  "frozenLeakageFlags": []
+}

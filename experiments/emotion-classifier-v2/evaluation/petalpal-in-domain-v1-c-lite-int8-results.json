@@ -1,0 +1,4633 @@
+{
+  "evaluation": "PetalPal in-domain v1",
+  "evaluatedAt": "2026-09-01T04:54:31.369Z",
+  "goldWorkbook": {
+    "filename": "PetalPal_ML_Sample_filled_CODEX_READY.xlsx",
+    "sha256": "3ae958ce13b4b1091232d4b7b84526e60f81ac056234e55dc8001aadcaf71bba",
+    "validation": {
+      "rows": 100,
+      "uniqueIds": 100,
+      "inputMismatches": 0,
+      "invalidIssues": 0
+    }
+  },
+  "runtime": {
+    "candidate": "Candidate C-Lite",
+    "model": "SamLowe/roberta-base-go_emotions",
+    "format": "ONNX INT8 dynamic quantization",
+    "modelFile": "candidate-c-lite/artifacts/model-int8.onnx",
+    "thresholdFile": "candidate-c-lite/thresholds.json",
+    "selectorFile": "lib/secondary-emotion-selector.js",
+    "frozen": true
+  },
+  "metricDefinitions": {
+    "strictSecondaryPrecision": "Gold best-emotion hits divided by all selected outputs.",
+    "acceptableSecondaryPrecision": "Gold best-or-acceptable hits divided by all selected outputs.",
+    "usefulCoverage": "Required-output examples (gold min > 0) with at least one best-or-acceptable output.",
+    "correctAbstentionRate": "Prefer-NONE examples with zero outputs.",
+    "unwantedAbstentionRate": "Required-output examples (gold min > 0) with zero outputs.",
+    "clearlyWrongEmotionRate": "Outputs explicitly marked clearly wrong divided by all selected outputs.",
+    "primaryRedundancyRate": "Outputs marked redundant with the selected Primary Mood divided by all selected outputs.",
+    "exactExpectedMatchRate": "Examples whose selected set exactly equals the gold best-emotion set.",
+    "acceptableMatchRate": "Examples whose count is within gold min/max and every output is best-or-acceptable."
+  },
+  "overall": {
+    "examples": 100,
+    "predictions": 44,
+    "strictSecondaryPrecision": 0.318182,
+    "acceptableSecondaryPrecision": 0.363636,
+    "usefulCoverage": 0.225806,
+    "correctAbstentionRate": 0.774194,
+    "unwantedAbstentionRate": 0.5,
+    "clearlyWrongEmotionRate": 0.045455,
+    "primaryRedundancyRate": 0,
+    "outputCountDistribution": {
+      "0": 61,
+      "1": 34,
+      "2": 5
+    },
+    "exactExpectedMatchRate": 0.34,
+    "acceptableMatchRate": 0.42
+  },
+  "bySlice": {
+    "ABSTENTION_PREFERRED": {
+      "examples": 29,
+      "predictions": 7,
+      "strictSecondaryPrecision": 0.142857,
+      "acceptableSecondaryPrecision": 0.142857,
+      "usefulCoverage": 0.111111,
+      "correctAbstentionRate": 0.85,
+      "unwantedAbstentionRate": 0.555556,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 22,
+        "1": 7,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.62069,
+      "acceptableMatchRate": 0.62069
+    },
+    "EMOJI_HEAVY": {
+      "examples": 8,
+      "predictions": 1,
+      "strictSecondaryPrecision": 0,
+      "acceptableSecondaryPrecision": 0,
+      "usefulCoverage": 0,
+      "correctAbstentionRate": 0.75,
+      "unwantedAbstentionRate": 1,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 7,
+        "1": 1,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.625,
+      "acceptableMatchRate": 0.625
+    },
+    "EMPTY_JOURNAL": {
+      "examples": 5,
+      "predictions": 0,
+      "strictSecondaryPrecision": null,
+      "acceptableSecondaryPrecision": null,
+      "usefulCoverage": null,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": null,
+      "clearlyWrongEmotionRate": null,
+      "primaryRedundancyRate": null,
+      "outputCountDistribution": {
+        "0": 5,
+        "1": 0,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 1,
+      "acceptableMatchRate": 1
+    },
+    "LONG": {
+      "examples": 10,
+      "predictions": 5,
+      "strictSecondaryPrecision": 0.4,
+      "acceptableSecondaryPrecision": 0.4,
+      "usefulCoverage": 0.222222,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": 0.444444,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 5,
+        "1": 5,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.1,
+      "acceptableMatchRate": 0.3
+    },
+    "MIXED_EMOTIONS": {
+      "examples": 21,
+      "predictions": 20,
+      "strictSecondaryPrecision": 0.45,
+      "acceptableSecondaryPrecision": 0.55,
+      "usefulCoverage": 0.5625,
+      "correctAbstentionRate": 0.5,
+      "unwantedAbstentionRate": 0.125,
+      "clearlyWrongEmotionRate": 0.05,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 5,
+        "1": 12,
+        "2": 4
+      },
+      "exactExpectedMatchRate": 0.238095,
+      "acceptableMatchRate": 0.52381
+    },
+    "MIXED_POSITIVE_NEGATIVE": {
+      "examples": 22,
+      "predictions": 20,
+      "strictSecondaryPrecision": 0.4,
+      "acceptableSecondaryPrecision": 0.5,
+      "usefulCoverage": 0.5,
+      "correctAbstentionRate": 0.5,
+      "unwantedAbstentionRate": 0.111111,
+      "clearlyWrongEmotionRate": 0.05,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 4,
+        "1": 16,
+        "2": 2
+      },
+      "exactExpectedMatchRate": 0.136364,
+      "acceptableMatchRate": 0.5
+    },
+    "NEGATION": {
+      "examples": 10,
+      "predictions": 5,
+      "strictSecondaryPrecision": 0,
+      "acceptableSecondaryPrecision": 0,
+      "usefulCoverage": 0,
+      "correctAbstentionRate": 0.5,
+      "unwantedAbstentionRate": 0.5,
+      "clearlyWrongEmotionRate": 0.2,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 5,
+        "1": 5,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.1,
+      "acceptableMatchRate": 0.1
+    },
+    "NEUTRAL_EVERYDAY": {
+      "examples": 15,
+      "predictions": 0,
+      "strictSecondaryPrecision": null,
+      "acceptableSecondaryPrecision": null,
+      "usefulCoverage": 0,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": 1,
+      "clearlyWrongEmotionRate": null,
+      "primaryRedundancyRate": null,
+      "outputCountDistribution": {
+        "0": 15,
+        "1": 0,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.8,
+      "acceptableMatchRate": 0.8
+    },
+    "PRIMARY_REDUNDANCY": {
+      "examples": 45,
+      "predictions": 21,
+      "strictSecondaryPrecision": 0.285714,
+      "acceptableSecondaryPrecision": 0.380952,
+      "usefulCoverage": 0.214286,
+      "correctAbstentionRate": 0.692308,
+      "unwantedAbstentionRate": 0.535714,
+      "clearlyWrongEmotionRate": 0.047619,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 27,
+        "1": 15,
+        "2": 3
+      },
+      "exactExpectedMatchRate": 0.311111,
+      "acceptableMatchRate": 0.377778
+    },
+    "SHORT": {
+      "examples": 15,
+      "predictions": 6,
+      "strictSecondaryPrecision": 0.166667,
+      "acceptableSecondaryPrecision": 0.166667,
+      "usefulCoverage": 0.083333,
+      "correctAbstentionRate": 0.333333,
+      "unwantedAbstentionRate": 0.75,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 10,
+        "1": 4,
+        "2": 1
+      },
+      "exactExpectedMatchRate": 0.066667,
+      "acceptableMatchRate": 0.066667
+    },
+    "SLANG_TYPOS": {
+      "examples": 10,
+      "predictions": 6,
+      "strictSecondaryPrecision": 0.166667,
+      "acceptableSecondaryPrecision": 0.166667,
+      "usefulCoverage": 0.166667,
+      "correctAbstentionRate": 0.333333,
+      "unwantedAbstentionRate": 0.333333,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 4,
+        "1": 6,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.3,
+      "acceptableMatchRate": 0.3
+    },
+    "SUBTLE_IMPLICIT": {
+      "examples": 23,
+      "predictions": 4,
+      "strictSecondaryPrecision": 0.25,
+      "acceptableSecondaryPrecision": 0.25,
+      "usefulCoverage": 0.066667,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": 0.733333,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 19,
+        "1": 4,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.391304,
+      "acceptableMatchRate": 0.391304
+    }
+  },
+  "byPrimaryGardenMood": {
+    "DRIFTING_BLOOM": {
+      "examples": 12,
+      "predictions": 5,
+      "strictSecondaryPrecision": 0.2,
+      "acceptableSecondaryPrecision": 0.2,
+      "usefulCoverage": 0.333333,
+      "correctAbstentionRate": 0.571429,
+      "unwantedAbstentionRate": 0.333333,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 7,
+        "1": 5,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.583333,
+      "acceptableMatchRate": 0.583333
+    },
+    "FIRE_BLOOM": {
+      "examples": 12,
+      "predictions": 8,
+      "strictSecondaryPrecision": 0.625,
+      "acceptableSecondaryPrecision": 0.625,
+      "usefulCoverage": 0.555556,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": 0.222222,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 5,
+        "1": 6,
+        "2": 1
+      },
+      "exactExpectedMatchRate": 0.333333,
+      "acceptableMatchRate": 0.583333
+    },
+    "GENTLE_BLOOM": {
+      "examples": 13,
+      "predictions": 4,
+      "strictSecondaryPrecision": 0,
+      "acceptableSecondaryPrecision": 0,
+      "usefulCoverage": 0,
+      "correctAbstentionRate": 0.666667,
+      "unwantedAbstentionRate": 0.8,
+      "clearlyWrongEmotionRate": 0.25,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 10,
+        "1": 2,
+        "2": 1
+      },
+      "exactExpectedMatchRate": 0.153846,
+      "acceptableMatchRate": 0.153846
+    },
+    "HEALING_BLOOM": {
+      "examples": 13,
+      "predictions": 5,
+      "strictSecondaryPrecision": 0.4,
+      "acceptableSecondaryPrecision": 0.4,
+      "usefulCoverage": 0.222222,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": 0.444444,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 8,
+        "1": 5,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.307692,
+      "acceptableMatchRate": 0.461538
+    },
+    "PEACEFUL_BLOOM": {
+      "examples": 12,
+      "predictions": 7,
+      "strictSecondaryPrecision": 0.142857,
+      "acceptableSecondaryPrecision": 0.142857,
+      "usefulCoverage": 0.142857,
+      "correctAbstentionRate": 0.8,
+      "unwantedAbstentionRate": 0.285714,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 6,
+        "1": 5,
+        "2": 1
+      },
+      "exactExpectedMatchRate": 0.333333,
+      "acceptableMatchRate": 0.333333
+    },
+    "QUIET_BLOOM": {
+      "examples": 13,
+      "predictions": 5,
+      "strictSecondaryPrecision": 0.2,
+      "acceptableSecondaryPrecision": 0.4,
+      "usefulCoverage": 0.25,
+      "correctAbstentionRate": 0.666667,
+      "unwantedAbstentionRate": 0.625,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 8,
+        "1": 5,
+        "2": 0
+      },
+      "exactExpectedMatchRate": 0.230769,
+      "acceptableMatchRate": 0.384615
+    },
+    "SUNNY_BLOOM": {
+      "examples": 13,
+      "predictions": 6,
+      "strictSecondaryPrecision": 0.166667,
+      "acceptableSecondaryPrecision": 0.333333,
+      "usefulCoverage": 0.125,
+      "correctAbstentionRate": 1,
+      "unwantedAbstentionRate": 0.375,
+      "clearlyWrongEmotionRate": 0,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 8,
+        "1": 4,
+        "2": 1
+      },
+      "exactExpectedMatchRate": 0.384615,
+      "acceptableMatchRate": 0.461538
+    },
+    "WONDER_BLOOM": {
+      "examples": 12,
+      "predictions": 4,
+      "strictSecondaryPrecision": 0.75,
+      "acceptableSecondaryPrecision": 0.75,
+      "usefulCoverage": 0.25,
+      "correctAbstentionRate": 0.75,
+      "unwantedAbstentionRate": 0.75,
+      "clearlyWrongEmotionRate": 0.25,
+      "primaryRedundancyRate": 0,
+      "outputCountDistribution": {
+        "0": 9,
+        "1": 2,
+        "2": 1
+      },
+      "exactExpectedMatchRate": 0.416667,
+      "acceptableMatchRate": 0.416667
+    }
+  },
+  "examples": [
+    {
+      "id": "PP-EVAL-001",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "Finished my presentation!",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "excitement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I would prefer one secondary emotion here, and excitement feels like the best fit.",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-002",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "Mom saved me dinner.",
+      "sliceTags": [
+        "SHORT"
+      ],
+      "expectedSecondaryEmotions": [
+        "gratitude",
+        "love"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "Gratitude is clear, and love is also strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.946841
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-003",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "Missed them again today.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "annoyance",
+        "remorse"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "annoyance is clear, and remorse is also strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.267252
+        },
+        {
+          "label": "neutral",
+          "score": 0.25582948
+        },
+        {
+          "label": "sadness",
+          "score": 0.5890696
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.267252,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-004",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "Trying again tomorrow.",
+      "sliceTags": [
+        "SHORT",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "optimism"
+      ],
+      "acceptableAlternatives": [
+        "disappointment"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I would prefer one secondary emotion; optimism is my first choice, but disappointment would also be acceptable.\n",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.73100269
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-005",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "That was completely unfair.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disgust"
+      ],
+      "acceptableAlternatives": [
+        "disappointment"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "anger"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I would prefer one secondary emotion; digust is my first choice, but disappointment would also be acceptable.\n",
+      "thresholdedCandidates": [
+        {
+          "label": "annoyance",
+          "score": 0.41207126
+        },
+        {
+          "label": "disapproval",
+          "score": 0.30973965
+        }
+      ],
+      "modelOutput": [
+        "annoyance"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "annoyance",
+          "score": 0.41207126,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-006",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "How did that happen?",
+      "sliceTags": [
+        "SHORT",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "curiosity",
+          "score": 0.68617535
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-007",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "I can't decide anything.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment",
+        "sadness"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "Disappointment is clear, and sadness is also strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "confusion",
+          "score": 0.84190202
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-008",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "Quiet tea before bed.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Joy is expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.95062351
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-009",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "Got the internship offer.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "excitement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Excitement is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.2715953
+        },
+        {
+          "label": "neutral",
+          "score": 0.437033
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-010",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "She checked in on me.",
+      "sliceTags": [
+        "SHORT"
+      ],
+      "expectedSecondaryEmotions": [
+        "gratitude"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Gratitude is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.96945077
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-011",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "The room feels emptier.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.39080492
+        },
+        {
+          "label": "sadness",
+          "score": 0.37365785
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.39080492,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-012",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "One small step forward.",
+      "sliceTags": [
+        "SHORT",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy",
+        "optimism"
+      ],
+      "acceptableAlternatives": [
+        "excitement"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "Joy is clear, and optimism is also strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.96772122
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-013",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "They ignored my message again.",
+      "sliceTags": [
+        "SHORT"
+      ],
+      "expectedSecondaryEmotions": [
+        "annoyance",
+        "disgust"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "anger"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "annoyance is clear, and disgust is also strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "annoyance",
+          "score": 0.33152136
+        },
+        {
+          "label": "disappointment",
+          "score": 0.20671482
+        },
+        {
+          "label": "neutral",
+          "score": 0.44941366
+        }
+      ],
+      "modelOutput": [
+        "annoyance",
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "annoyance",
+          "score": 0.33152136,
+          "role": "PRIMARY_VARIANT"
+        },
+        {
+          "label": "disappointment",
+          "score": 0.20671482,
+          "role": "ACCENT_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "annoyance"
+      ],
+      "acceptableHits": [
+        "annoyance"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-014",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "I saw Saturn's rings.",
+      "sliceTags": [
+        "SHORT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "admiration"
+      ],
+      "acceptableAlternatives": [
+        "joy"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I would prefer one secondary emotion; admiration is my first choice, but joy would also be acceptable.\n",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.9260872
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-015",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "Everything feels a little off.",
+      "sliceTags": [
+        "SHORT",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.40843812
+        },
+        {
+          "label": "neutral",
+          "score": 0.27695227
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.40843812,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-016",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "I woke before everyone else and made coffee while the apartment was still quiet. Nothing special happened, but I liked having a slow start. I watched the light move across the kitchen floor.",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy",
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "Joy is clear, and amusement is also strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.38831779
+        },
+        {
+          "label": "love",
+          "score": 0.23887806
+        }
+      ],
+      "modelOutput": [
+        "love"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "love",
+          "score": 0.23887806,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-017",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "The interview was harder than I expected, and I stumbled on one answer. Then the recruiter told me my portfolio stood out and invited me to the next round. I keep replaying both parts in my head.",
+      "sliceTags": [
+        "LONG",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "excitement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Excitement is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.30612597
+        },
+        {
+          "label": "neutral",
+          "score": 0.53733134
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.30612597,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-018",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "My roommate noticed I had skipped lunch and left a bowl of soup by my door. We have both been busy and barely talked this week. That little gesture stayed with me all afternoon.",
+      "sliceTags": [
+        "LONG",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "gratitude"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Gratitude is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.62984908
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-019",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I packed the last box from my old room today. I know moving is the right choice, but closing the door felt heavier than I expected. The new place is exciting and unfamiliar at the same time.",
+      "sliceTags": [
+        "LONG",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "excitement",
+        "disappointment"
+      ],
+      "acceptableAlternatives": [
+        "fear"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of excitement and disappointment.",
+      "thresholdedCandidates": [
+        {
+          "label": "excitement",
+          "score": 0.64266121
+        }
+      ],
+      "modelOutput": [
+        "excitement"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "excitement",
+          "score": 0.64266121,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "excitement"
+      ],
+      "acceptableHits": [
+        "excitement"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-020",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "I apologized for how I spoke yesterday. The conversation was uncomfortable, but they listened and we agreed to try again. I still feel bad, although the distance between us seems smaller.",
+      "sliceTags": [
+        "LONG",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "sadness",
+        "remorse"
+      ],
+      "acceptableAlternatives": [
+        "optimism"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of sadness and remorese, also optimism is acceptable.",
+      "thresholdedCandidates": [
+        {
+          "label": "remorse",
+          "score": 0.50267082
+        },
+        {
+          "label": "sadness",
+          "score": 0.49570516
+        }
+      ],
+      "modelOutput": [
+        "remorse"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "remorse",
+          "score": 0.50267082,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "remorse"
+      ],
+      "acceptableHits": [
+        "remorse"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-021",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "The group submitted our work without adding my name. I asked about it twice and nobody answered until the deadline passed. Now they are acting as if it was a harmless mistake.",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disgust"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "anger"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Disgust is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.82399112
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-022",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "The museum had a room where every sound changed the lights on the walls. I stayed much longer than I planned because each corner behaved differently. I want to understand how they built it.",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "surprise"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Surprise is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "curiosity",
+          "score": 0.57311153
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-023",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "Three people gave me different advice about the same decision. Every option sounds sensible until I imagine choosing it. I made another list, but now I feel less certain than before.",
+      "sliceTags": [
+        "LONG",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "confusion",
+          "score": 0.69801497
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-024",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "I walked the usual route after dinner and called my sister on the way home. We talked about groceries, work, and a show we both watch. It was an ordinary evening, and that was enough.",
+      "sliceTags": [
+        "LONG",
+        "ABSTENTION_PREFERRED",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement"
+      ],
+      "acceptableAlternatives": [
+        "caring"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I would prefer one secondary emotion; amusement is my first choice, but caring would also be acceptable.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.64817864
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-025",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "We finally launched the project after weeks of late nights. I am proud of the team and relieved that it works, but I will miss our daily calls. Tomorrow I get to sleep in.",
+      "sliceTags": [
+        "LONG",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "admiration"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "admiration is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.43115658
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.43115658,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-026",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "I was embarrassed that I forgot her birthday, but she laughed and said my late card was still sweet.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "remorse"
+      ],
+      "acceptableAlternatives": [
+        "love",
+        "gratitude"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of remorse, love, and gratitute.",
+      "thresholdedCandidates": [
+        {
+          "label": "amusement",
+          "score": 0.42314911
+        }
+      ],
+      "modelOutput": [
+        "amusement"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "amusement",
+          "score": 0.42314911,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-027",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I am happy for my friend, but hearing their news reminded me of what I lost.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment"
+      ],
+      "acceptableAlternatives": [
+        "admiration",
+        "joy"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a mix of disappointment, admiration and joy (these are different kinds of mood)",
+      "thresholdedCandidates": [
+        {
+          "label": "joy",
+          "score": 0.5329892
+        },
+        {
+          "label": "sadness",
+          "score": 0.39624837
+        }
+      ],
+      "modelOutput": [
+        "joy"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "joy",
+          "score": 0.5329892,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [
+        "joy"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-028",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "The test result was better than last time, although I am scared the progress will not last.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy",
+        "fear"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of joy and fear.",
+      "thresholdedCandidates": [
+        {
+          "label": "fear",
+          "score": 0.80960077
+        }
+      ],
+      "modelOutput": [
+        "fear"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "fear",
+          "score": 0.80960077,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "fear"
+      ],
+      "acceptableHits": [
+        "fear"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-029",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "I wanted to celebrate my promotion, then found out my closest teammate was laid off.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy",
+        "sadness"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of joy and sadness (these are two opposite mood)",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.21893929
+        },
+        {
+          "label": "sadness",
+          "score": 0.4272272
+        }
+      ],
+      "modelOutput": [
+        "sadness"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "sadness",
+          "score": 0.4272272,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "sadness"
+      ],
+      "acceptableHits": [
+        "sadness"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-030",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "The ending surprised me and I loved it, but I still cannot tell what the last scene meant.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "surprise",
+        "love"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "surprise and love are strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "love",
+          "score": 0.57730538
+        },
+        {
+          "label": "surprise",
+          "score": 0.82883406
+        }
+      ],
+      "modelOutput": [
+        "surprise",
+        "love"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "surprise",
+          "score": 0.82883406,
+          "role": "PRIMARY_VARIANT"
+        },
+        {
+          "label": "love",
+          "score": 0.57730538,
+          "role": "ACCENT_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "surprise",
+        "love"
+      ],
+      "acceptableHits": [
+        "surprise",
+        "love"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-031",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "Part of me wants to accept the offer, and part of me wants everything to stay the same.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.70462203
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-032",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "The trip was beautiful, and I am also glad to be back in my own quiet room.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy",
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "Joy and amusement are strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "admiration",
+          "score": 0.72963959
+        },
+        {
+          "label": "joy",
+          "score": 0.64386076
+        }
+      ],
+      "modelOutput": [
+        "admiration",
+        "joy"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "admiration",
+          "score": 0.72963959,
+          "role": "PRIMARY_VARIANT"
+        },
+        {
+          "label": "joy",
+          "score": 0.64386076,
+          "role": "ACCENT_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "joy"
+      ],
+      "acceptableHits": [
+        "joy"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-033",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "I won the contest, but seeing the runner-up cry made the moment feel strange.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "confusion"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-034",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "He brought flowers to apologize, and I appreciate the effort even though I am not ready to forgive him.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "admiration",
+          "score": 0.53378409
+        },
+        {
+          "label": "remorse",
+          "score": 0.47029993
+        }
+      ],
+      "modelOutput": [
+        "admiration",
+        "remorse"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "admiration",
+          "score": 0.53378409,
+          "role": "PRIMARY_VARIANT"
+        },
+        {
+          "label": "remorse",
+          "score": 0.47029993,
+          "role": "ACCENT_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-035",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "Looking at old photos made me smile and then suddenly miss everyone.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement",
+        "love"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of amusement, love, and sadness.",
+      "thresholdedCandidates": [
+        {
+          "label": "sadness",
+          "score": 0.72561121
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-036",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "I cried after therapy, but for once it felt like something had loosened instead of broken.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Joy is expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "sadness",
+          "score": 0.7679835
+        }
+      ],
+      "modelOutput": [
+        "sadness"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "sadness",
+          "score": 0.7679835,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-037",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "I am furious they canceled, but honestly I was nervous about going anyway.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disgust",
+        "fear"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "anger"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of disgust and fear.",
+      "thresholdedCandidates": [
+        {
+          "label": "fear",
+          "score": 0.25026339
+        }
+      ],
+      "modelOutput": [
+        "fear"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "fear",
+          "score": 0.25026339,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "fear"
+      ],
+      "acceptableHits": [
+        "fear"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-038",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "I cannot stop thinking about the question, even though not knowing the answer makes me uneasy.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "confusion"
+      ],
+      "acceptableAlternatives": [
+        "fear"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "confusion is strongly expressed, and fear is acceptable.",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-039",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "I feel relieved the decision is over and disappointed that it was not mine to make.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "confusion"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "disappointment is obvious.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.77693564
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.77693564,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "disappointment"
+      ],
+      "acceptableHits": [
+        "disappointment"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-040",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "The house is finally quiet, but I keep wondering whether I forgot something important.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "confusion"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Cnofusion is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "surprise",
+          "score": 0.79593158
+        }
+      ],
+      "modelOutput": [
+        "surprise"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "surprise",
+          "score": 0.79593158,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-041",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "My friends surprised me with dinner; I laughed all night and felt a little guilty they paid for everything.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "surprise",
+        "caring"
+      ],
+      "acceptableAlternatives": [
+        "amusement"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of surprise, caring; amusement is acceptable.",
+      "thresholdedCandidates": [
+        {
+          "label": "amusement",
+          "score": 0.48347598
+        },
+        {
+          "label": "surprise",
+          "score": 0.16384432
+        }
+      ],
+      "modelOutput": [
+        "amusement",
+        "surprise"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "amusement",
+          "score": 0.48347598,
+          "role": "PRIMARY_VARIANT"
+        },
+        {
+          "label": "surprise",
+          "score": 0.16384432,
+          "role": "ACCENT_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "surprise"
+      ],
+      "acceptableHits": [
+        "amusement",
+        "surprise"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-042",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "I was worried about him, then he called to say he was safe and thanked me for checking.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "gratitude"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "This scenario is misleading because it describes someone else feeling gratitude rather than the user experiencing gratitude.",
+      "thresholdedCandidates": [
+        {
+          "label": "caring",
+          "score": 0.55961657
+        },
+        {
+          "label": "gratitude",
+          "score": 0.40527231
+        }
+      ],
+      "modelOutput": [
+        "gratitude"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "gratitude",
+          "score": 0.40527231,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [
+        "gratitude"
+      ],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-043",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I expected to feel only sad at graduation, but I am proud too.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "admiration"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.230451
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.230451,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-044",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "Today was exhausting, yet finishing one task made tomorrow feel possible.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "optimism"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "optimism is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.52838778
+        }
+      ],
+      "modelOutput": [
+        "disappointment"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "disappointment",
+          "score": 0.52838778,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-045",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "Their apology sounded sincere, which somehow made me both calmer and more upset.",
+      "sliceTags": [
+        "MIXED_EMOTIONS",
+        "MIXED_POSITIVE_NEGATIVE"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment",
+        "sadness"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "anger"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "disappointment and sadness is expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.18150634
+        },
+        {
+          "label": "sadness",
+          "score": 0.51432192
+        }
+      ],
+      "modelOutput": [
+        "sadness"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "sadness",
+          "score": 0.51432192,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "sadness"
+      ],
+      "acceptableHits": [
+        "sadness"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-046",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "EMPTY_JOURNAL",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-047",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "EMPTY_JOURNAL",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-048",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "EMPTY_JOURNAL",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-049",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "EMPTY_JOURNAL",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-050",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "EMPTY_JOURNAL",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-051",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I took the bus to campus and arrived at nine.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.86189866
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-052",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "Washed the sheets and put them back on the bed.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "amusement maybe expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.94776434
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-053",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "The meeting moved from two o'clock to three.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "anger"
+      ],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "I can't find any emotion described, and i think it really depends on people.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.88772154
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-054",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "I bought rice, tomatoes, and soap after work.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "curiosity"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "amusement may be expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.94560993
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-055",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "The package is scheduled to arrive on Thursday.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.90874386
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-056",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "I watered the plants and opened the window.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.88169163
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-057",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "Lunch was noodles and an apple.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.91969824
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-058",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "I replied to three emails before noon.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.92708158
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-059",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "The library closed at its usual time.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "surprise",
+        "disappointment"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "surprise and disappointment are strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.87346458
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-060",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "I charged my phone and set an alarm.",
+      "sliceTags": [
+        "NEUTRAL_EVERYDAY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.82139677
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-061",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "I am not angry; I just need them to stop interrupting me.",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disgust"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "anger"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "disgust can be expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "annoyance",
+          "score": 0.41467959
+        }
+      ],
+      "modelOutput": [
+        "annoyance"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "annoyance",
+          "score": 0.41467959,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-062",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "It was not surprising, but I still want to know why it happened.",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "surprise"
+      ],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "curiosity",
+          "score": 0.85042489
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-063",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "I do not regret saying no, even if I keep thinking about it.",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "optimism"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "optimism is expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "remorse",
+          "score": 0.50797421
+        }
+      ],
+      "modelOutput": [
+        "remorse"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "remorse",
+          "score": 0.50797421,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-064",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "I was not bored; I was enjoying having nothing to do.",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "amusement is expressed",
+      "thresholdedCandidates": [
+        {
+          "label": "joy",
+          "score": 0.8884598
+        }
+      ],
+      "modelOutput": [
+        "joy"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "joy",
+          "score": 0.8884598,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-065",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "I cannot say I hated the party; I actually stayed until the end.",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "amusement is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "annoyance",
+          "score": 0.22113524
+        },
+        {
+          "label": "disapproval",
+          "score": 0.40863651
+        }
+      ],
+      "modelOutput": [
+        "annoyance"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "annoyance",
+          "score": 0.22113524,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-066",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "She did not ask for praise; she quietly fixed the problem for everyone.",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "admiration",
+        "gratitude"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "admiration and gratitude are strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.34021589
+        },
+        {
+          "label": "neutral",
+          "score": 0.62062937
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-067",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I am not disappointed in her, only in how the day turned out.",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "This scenario has some misleading info, but the overall mood should be disappointment and sadness.",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.41814452
+        },
+        {
+          "label": "neutral",
+          "score": 0.30165797
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-068",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "The pain is not gone, but it no longer decides my whole day.",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "optimism"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "optimism is expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.4817256
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-069",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "I do not dislike the idea; I dislike being rushed into it.",
+      "sliceTags": [
+        "NEGATION",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "disgust",
+        "annoyance"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "disgust is clear, and annoyance is also expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "disapproval",
+          "score": 0.79176331
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-070",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "I was not confused by the answer; it just opened three more questions.",
+      "sliceTags": [
+        "NEGATION",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "confusion"
+      ],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "confusion",
+          "score": 0.62871253
+        },
+        {
+          "label": "neutral",
+          "score": 0.39047438
+        }
+      ],
+      "modelOutput": [
+        "confusion"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "confusion",
+          "score": 0.62871253,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [
+        "confusion"
+      ],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-071",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "idk why but today felt kinda weird tbh",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "annoyance",
+          "score": 0.25355002
+        },
+        {
+          "label": "confusion",
+          "score": 0.40556312
+        }
+      ],
+      "modelOutput": [
+        "annoyance"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "annoyance",
+          "score": 0.25355002,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-072",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "just vibing at home, no drama lol",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "amusement",
+          "score": 0.88966012
+        }
+      ],
+      "modelOutput": [
+        "amusement"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "amusement",
+          "score": 0.88966012,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-073",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "we actualy did it omg best day",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "excitement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Excitement is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "admiration",
+          "score": 0.84218031
+        }
+      ],
+      "modelOutput": [
+        "admiration"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "admiration",
+          "score": 0.84218031,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-074",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "my bro came thru when i needed him fr",
+      "sliceTags": [
+        "SLANG_TYPOS"
+      ],
+      "expectedSecondaryEmotions": [
+        "gratitude"
+      ],
+      "acceptableAlternatives": [
+        "joy"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Gratitude is strongly expressed and joy can be acceptable.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.94402242
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-075",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "lowkey miss how things used to be",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "disappointment is obvious.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.73062724
+        },
+        {
+          "label": "sadness",
+          "score": 0.25279912
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-076",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "was a rough day but im gettin there",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "optimism"
+      ],
+      "acceptableAlternatives": [
+        "disappointment"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "I think this scenario is very typical and hard to deal with because it involves a complex mix of optimism and disappointment.",
+      "thresholdedCandidates": [
+        {
+          "label": "disappointment",
+          "score": 0.21951145
+        },
+        {
+          "label": "sadness",
+          "score": 0.63118774
+        }
+      ],
+      "modelOutput": [
+        "sadness"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "sadness",
+          "score": 0.63118774,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-077",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "nah that msg was sooo uncalled for",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "anger"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.60905266
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-078",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "wait how does this even work tho",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "confusion"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "confusion is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "confusion",
+          "score": 0.37377134
+        },
+        {
+          "label": "curiosity",
+          "score": 0.48856658
+        },
+        {
+          "label": "neutral",
+          "score": 0.30976176
+        }
+      ],
+      "modelOutput": [
+        "confusion"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "confusion",
+          "score": 0.37377134,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "confusion"
+      ],
+      "acceptableHits": [
+        "confusion"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-079",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "brain said yes then no then maybe 💀",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "MIXED_EMOTIONS"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "annoyance"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.32480764
+        },
+        {
+          "label": "neutral",
+          "score": 0.3174676
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-080",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "made tea n watched rain, pretty chill",
+      "sliceTags": [
+        "SLANG_TYPOS",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "amusement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "amusement is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "admiration",
+          "score": 0.65200365
+        }
+      ],
+      "modelOutput": [
+        "admiration"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "admiration",
+          "score": 0.65200365,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-081",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "They said yes!!! 🎉🌟",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "excitement"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.56181377
+        },
+        {
+          "label": "neutral",
+          "score": 0.53917027
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-082",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "She brought me soup 🥹💗",
+      "sliceTags": [
+        "EMOJI_HEAVY"
+      ],
+      "expectedSecondaryEmotions": [
+        "gratitude"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Gratitude is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.25724766
+        },
+        {
+          "label": "neutral",
+          "score": 0.76009864
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-083",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "Found their old note today 😭",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.61268181
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-084",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "First walk outside in weeks 🌱🙂",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "amusement"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "amusement can be expressed.",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-085",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "They did it AGAIN 😤🙄",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "anger"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.46583363
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-086",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "This tiny mushroom glows?? 🍄✨🤯",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "surprise"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "surprise is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "curiosity",
+          "score": 0.70921338
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-087",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "New plan? old plan? 😵‍💫🤷",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [
+        "confusion"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "confusion",
+          "score": 0.56140029
+        },
+        {
+          "label": "curiosity",
+          "score": 0.58865684
+        }
+      ],
+      "modelOutput": [
+        "curiosity"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "curiosity",
+          "score": 0.58865684,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-088",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "🌧️☕📖",
+      "sliceTags": [
+        "EMOJI_HEAVY",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.37054762
+        },
+        {
+          "label": "neutral",
+          "score": 0.53438056
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-089",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "I kept checking the message because the good news did not quite feel real yet.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "excitement"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "joy"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Excitement is strongly expressed.",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-090",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "He remembered the tiny detail I mentioned months ago.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "surprise",
+        "gratitude"
+      ],
+      "acceptableAlternatives": [
+        "joy"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 2,
+      "rationale": "Surprise and gratitude are strongly expressed; joy is also acceptable.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.84693849
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-091",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I set two plates before remembering I only needed one.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "remorse"
+      ],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "remorse can be acceptable.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.67673814
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-092",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "I noticed I went the whole morning without rehearsing that old conversation.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-093",
+      "primaryGardenMood": "FIRE_BLOOM",
+      "journal": "I smiled through the meeting and wrote down exactly what they said.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [
+        "joy"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [
+        "anger"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "Joy can be expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "approval",
+          "score": 0.24305421
+        },
+        {
+          "label": "joy",
+          "score": 0.72770506
+        }
+      ],
+      "modelOutput": [
+        "joy"
+      ],
+      "selectedWithScores": [
+        {
+          "label": "joy",
+          "score": 0.72770506,
+          "role": "PRIMARY_VARIANT"
+        }
+      ],
+      "strictHits": [
+        "joy"
+      ],
+      "acceptableHits": [
+        "joy"
+      ],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": true
+    },
+    {
+      "id": "PP-EVAL-094",
+      "primaryGardenMood": "WONDER_BLOOM",
+      "journal": "The more I read, the larger the question seemed to become.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "confusion"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "curiosity"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "confusion is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.68758792
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-095",
+      "primaryGardenMood": "DRIFTING_BLOOM",
+      "journal": "I opened the application form three times and closed it each time.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [
+        "annoyance",
+        "fear"
+      ],
+      "clearlyWrongEmotions": [
+        "confusion"
+      ],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 1,
+      "rationale": "annoyance and fear are acceptable",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.92376232
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": false,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-096",
+      "primaryGardenMood": "PEACEFUL_BLOOM",
+      "journal": "For once, the silence did not need to be filled.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.69244564
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-097",
+      "primaryGardenMood": "SUNNY_BLOOM",
+      "journal": "Everyone else cheered, and I realized I had been holding my breath.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-098",
+      "primaryGardenMood": "GENTLE_BLOOM",
+      "journal": "She moved her umbrella so there was room for me underneath.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT"
+      ],
+      "expectedSecondaryEmotions": [
+        "gratitude"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "caring"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "gratitude is strongly expressed.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.96466529
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-099",
+      "primaryGardenMood": "QUIET_BLOOM",
+      "journal": "I almost sent the photo to them before remembering we do not talk anymore.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "PRIMARY_REDUNDANCY"
+      ],
+      "expectedSecondaryEmotions": [
+        "disappointment"
+      ],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": false,
+      "primaryRedundantEmotions": [
+        "sadness"
+      ],
+      "expectedOutputMin": 1,
+      "expectedOutputMax": 1,
+      "rationale": "disappointment is obvious.",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.5476625
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": false,
+      "acceptableMatch": false,
+      "correctAbstention": false,
+      "unwantedAbstention": true,
+      "usefulCovered": false
+    },
+    {
+      "id": "PP-EVAL-100",
+      "primaryGardenMood": "HEALING_BLOOM",
+      "journal": "I left the unopened letter on the table and went outside instead.",
+      "sliceTags": [
+        "SUBTLE_IMPLICIT",
+        "ABSTENTION_PREFERRED"
+      ],
+      "expectedSecondaryEmotions": [],
+      "acceptableAlternatives": [],
+      "clearlyWrongEmotions": [],
+      "preferNoSecondaryEmotion": true,
+      "primaryRedundantEmotions": [],
+      "expectedOutputMin": 0,
+      "expectedOutputMax": 0,
+      "rationale": "",
+      "thresholdedCandidates": [
+        {
+          "label": "neutral",
+          "score": 0.93666995
+        }
+      ],
+      "modelOutput": [],
+      "selectedWithScores": [],
+      "strictHits": [],
+      "acceptableHits": [],
+      "clearlyWrongHits": [],
+      "primaryRedundantHits": [],
+      "exactExpectedMatch": true,
+      "acceptableMatch": true,
+      "correctAbstention": true,
+      "unwantedAbstention": false,
+      "usefulCovered": false
+    }
+  ]
+}
