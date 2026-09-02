@@ -15,3 +15,11 @@ graphify-out/
 
 __pycache__/
 *.pyc
+
+# Local ML checkpoints
+experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-v1/best-checkpoint/
+experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-hybrid-v2/best-checkpoint/
+
+# Generated hybrid training data
+experiments/emotion-classifier-v2/hybrid-data-v2/train.jsonl
+experiments/emotion-classifier-v2/hybrid-data-v2/dev.jsonl
