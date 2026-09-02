@@ -20,14 +20,49 @@
 - Failure analysis completed for all 58 unacceptable-match cases: 51 (`87.93%`) are model-probability/false-positive failures, 4 (`6.90%`) are diagnostic threshold near-misses, and 3 (`5.17%`) involve selector/output policy. Short, negation, slang, and subtle Daily Grow language show the largest gaps; threshold tuning alone is unlikely to solve them.
 - Failure details: `evaluation/petalpal-in-domain-v1-c-lite-int8-failure-analysis.md` and `.json`.
 - In-domain tuning/dev v1 generation and independent review completed: exactly `2,400` accepted (`2,000` Train / `400` Dev), `25%` abstention. Final schema, label, slice, split, exact/normalized duplicate, deterministic near-duplicate, and frozen-100 leakage checks all pass. Files: `tuning-data-v1/train.jsonl`, `tuning-data-v1/dev.jsonl`; QC: `tuning-data-v1/state/final-validation-report.json` and `final-statistics.json`.
+- Candidate C-Lite in-domain fine-tuning completed for 5 epochs. Epoch 4 is the locked best checkpoint with Dev 21-label macro-F1 `0.9304`.
+- Frozen 100 final product evaluation completed: strict 18-label macro-F1 `0.2908`, micro-F1 `0.2880`, acceptable match `0.48`, exact expected match `0.38`, useful coverage `0.2903`, clearly-wrong emotion rate `0.0233`, and unwanted abstention rate `0.4677`. The main failure mode is over-abstention / low recall.
+- Frozen over-abstention analysis: 59/100 returned no variant. The locked final report did not persist per-example probabilities or pre/post-selector candidates, so the 59 cannot be exactly apportioned without rerunning the opened set. Existing pre-fine-tune Frozen diagnostics attribute failures mainly to weak/incorrect model probabilities plus in-domain mismatch (`51/58`), with threshold near-misses (`4/58`) and selector policy (`3/58`) secondary. The fixed `0.5` cutoff amplifies low recall when in-domain scores fall below Dev levels; the selector then intentionally removes excluded, Primary-redundant, and semantic-duplicate labels. The large synthetic Dev (`0.9304`) versus human Frozen (`0.2908`) gap is strongest evidence of Train/Dev-to-product distribution mismatch, not a selector defect.
+- Opened Frozen positive-score diagnostic at fixed `0.5` (distribution is min/median/max; FN is positives below threshold):
+
+| Product label | Positive score distribution | FN | Diagnostic |
+|---|---:|---:|---|
+| admiration | `.015/.128/.840` | 2/3 | representation/distribution |
+| amusement | `.002/.004/.014` | 9/9 | representation/distribution |
+| anger | no positives | 0 | insufficient Frozen coverage |
+| annoyance | `.008/.186/.670` | 2/3 | representation/distribution |
+| caring | `.009/.009/.009` | 1/1 | representation/distribution |
+| confusion | `.151/.466/.814` | 2/4 | mixed calibration/representation |
+| curiosity | no positives | 0 | insufficient Frozen coverage |
+| disappointment | `.004/.217/.645` | 8/9 | mainly representation/distribution |
+| disgust | `.003/.011/.033` | 6/6 | representation/distribution |
+| excitement | `.016/.263/.794` | 5/6 | mainly representation/distribution |
+| fear | `.746/.780/.814` | 0/2 | no observed FN |
+| gratitude | `.023/.095/.767` | 6/8 | representation/distribution |
+| joy | `.001/.026/.867` | 8/9 | representation/distribution |
+| love | `.006/.694/.719` | 1/3 | isolated representation miss |
+| optimism | `.006/.336/.937` | 3/6 | bimodal distribution mismatch |
+| remorse | `.012/.408/.940` | 2/3 | mixed calibration/representation |
+| sadness | `.003/.099/.773` | 3/4 | representation/distribution |
+| surprise | `.001/.017/.422` | 6/6 | mainly representation/distribution |
+
+- Conclusion: most missed positives are far below `0.5`, so threshold calibration alone cannot explain or repair the recall gap. The dominant evidence remains representation/product-distribution mismatch; confusion and remorse contain limited near-threshold calibration cases. Anger and curiosity cannot be assessed from this Frozen set because they have no strict-positive examples.
+- Train/Dev data audit: exact/normalized overlap is zero and `sourceGroupId` is split-disjoint, but lexical/template separation is weak. Dev-to-Train nearest char-ngram similarity has median `0.822`; `235/400` Dev rows are ≥`0.80`, `39/400` are ≥`0.90`, and several pairs differ only by a person/location substitution or an appended stock sentence. Repeated frames include “I really admire how…”, “I was disappointed that…”, and “The moment stayed with me…”.
+- Only about `2.1–2.3%` of positive labels appear literally in the journal, so direct label-word leakage is not the main issue. However, examples are generally short (median `12` words), clean, canonical, and emotionally unambiguous compared with real Daily Grow input. Shared generation templates and near-paraphrases make Dev unusually easy and likely inflate its `0.9304` macro-F1; the large human-product gap supports this conclusion. Treat current Dev as pipeline validation, not a reliable estimate of product generalization.
+- Hybrid human-majority dataset v2 completed separately at `hybrid-data-v2/`: `2,000` Train / `400` Dev, all 18 Flower Variant labels balanced at `111–112` Train and `22–23` Dev examples. Train sources: EmpatheticDialogues `1,379`, GoEmotions `531`, retained PetalPal synthetic `90`; Dev: `276`, `106`, `18`. Journals are `1–57` words in Train and `1–54` in Dev (median `15` each).
+- Hybrid v2 audit: normalized duplicate overlap `0`, source-group overlap `0`; 14 Dev candidates at char-ngram similarity ≥`0.80` were rejected. Final Dev→Train nearest similarity is median `0.335`, P95 `0.563`, max `0.798`. Files: `hybrid-data-v2/train.jsonl`, `dev.jsonl`, and `audit.json`. Existing datasets and Frozen sets remain unchanged.
+- Hybrid-data-v2 best-checkpoint Dev evaluation at threshold `0.5`: 18-label Macro P/R/F1 `0.7945 / 0.6805 / 0.7289`; Micro P/R/F1 `0.8000 / 0.6800 / 0.7351`. Per-label F1: admiration `0.7619`, amusement `0.9130`, anger `0.4865`, annoyance `0.5854`, caring `0.7805`, confusion `0.6512`, curiosity `0.7179`, disappointment `0.5143`, disgust `0.7692`, excitement `0.6842`, fear `0.8372`, gratitude `0.7805`, joy `0.7111`, love `0.8837`, optimism `0.7442`, remorse `0.9333`, sadness `0.6667`, surprise `0.7000`.
+- Metric scope note: the previous training Macro-F1 `0.6248` included all 21 classifier labels; the product-relevant 18-label Macro-F1 is `0.7289` and is the appropriate Flower Variant metric.
 
 ## Current Work
 
-- The 2,400-example in-domain tuning/dev dataset is complete and frozen for the next experiment stage; no fine-tuning has started.
+- Candidate C-Lite fine-tuning and Frozen 100 final evaluation are complete; no further model-selection work is active.
 
 ## Next Steps
 
-- Design and run the first Candidate C-Lite in-domain fine-tuning experiment only after explicit instruction.
+- V2 direction: create a new held-out final evaluation set first; use only separate Train/Dev data to improve realistic Daily Grow coverage and calibrate per-label thresholds/abstention, then verify selector behavior and perform one final evaluation on the new untouched set.
+- **P1:** Build in-domain PetalPal Train/Dev data matching real product journals; preserve a new untouched Frozen-2 final set; retrain from the locked C-Lite checkpoint or base model with the same 21-label classifier → 18-label product mapping; evaluate representation shift before any threshold tuning.
+- **P2:** Only after V2 training, calibrate a global or per-label threshold on Dev, then evaluate exactly once on Frozen-2.
 
 ## Do Not Redo
 
@@ -36,6 +71,7 @@
 - Do not rerun the Render Free 512 MiB memory feasibility benchmark unless the model or runtime changes.
 - Do not tune thresholds or selector behavior against the 100-example in-domain gold evaluation set.
 - Do not train on, fine-tune on, modify, imitate, or use the frozen 100-example final evaluation set for data-generation prompts or preprocessing-rule optimization; it is final evaluation/failure-analysis only.
+- Frozen 100 has now been opened and must not be used for tuning, model selection, or another future final-quality claim.
 - Do not benchmark a higher Render tier until production traffic assumptions or latency SLOs are defined.
 - Do not train BERT/DistilBERT or add legacy `moodTrainingData.json` to V2.
 - Do not connect TF-IDF, MiniLM, Candidate C, or C-Lite to production yet.

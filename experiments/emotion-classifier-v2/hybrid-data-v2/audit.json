@@ -1,0 +1,89 @@
+{
+  "version": "petalpal-hybrid-v2",
+  "seed": 42,
+  "counts": {
+    "train": 2000,
+    "dev": 400
+  },
+  "sourceCounts": {
+    "train": {
+      "EMPATHETIC_DIALOGUES": 1379,
+      "GOEMOTIONS": 531,
+      "PETALPAL_SYNTHETIC": 90
+    },
+    "dev": {
+      "EMPATHETIC_DIALOGUES": 276,
+      "PETALPAL_SYNTHETIC": 18,
+      "GOEMOTIONS": 106
+    }
+  },
+  "labelCounts": {
+    "train": {
+      "admiration": 112,
+      "disappointment": 111,
+      "amusement": 112,
+      "gratitude": 111,
+      "excitement": 111,
+      "remorse": 111,
+      "caring": 111,
+      "sadness": 111,
+      "disgust": 111,
+      "anger": 111,
+      "fear": 111,
+      "curiosity": 111,
+      "optimism": 111,
+      "annoyance": 111,
+      "confusion": 111,
+      "joy": 111,
+      "love": 111,
+      "surprise": 111
+    },
+    "dev": {
+      "joy": 22,
+      "anger": 23,
+      "optimism": 22,
+      "excitement": 22,
+      "disappointment": 22,
+      "sadness": 22,
+      "confusion": 22,
+      "remorse": 22,
+      "amusement": 23,
+      "love": 22,
+      "gratitude": 22,
+      "surprise": 22,
+      "curiosity": 22,
+      "fear": 22,
+      "annoyance": 23,
+      "disgust": 22,
+      "caring": 22,
+      "admiration": 23
+    }
+  },
+  "lengthWords": {
+    "train": {
+      "min": 1,
+      "median": 15.0,
+      "max": 57
+    },
+    "dev": {
+      "min": 1,
+      "median": 15.0,
+      "max": 54
+    }
+  },
+  "audit": {
+    "exactNormalizedOverlap": 0,
+    "sourceGroupOverlap": 0,
+    "devTrainCharNgramNearest": {
+      "min": 0.1453928003640148,
+      "p25": 0.2749173270266875,
+      "median": 0.33519016229027926,
+      "p75": 0.4200936637681501,
+      "p90": 0.5183356181800741,
+      "p95": 0.5626461731596163,
+      "max": 0.7978124703266032
+    },
+    "threshold": 0.8,
+    "rejectedDevCandidatesAtOrAboveThreshold": 14
+  }
+}
