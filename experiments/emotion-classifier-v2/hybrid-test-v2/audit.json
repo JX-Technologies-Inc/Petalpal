@@ -1,0 +1,48 @@
+{
+  "version": "petalpal-hybrid-test-v2",
+  "status": "PERMANENTLY_UNTOUCHED_UNTIL_FINAL_EVALUATION",
+  "count": 360,
+  "sourceCounts": {
+    "EMPATHETIC_DIALOGUES": 260,
+    "GOEMOTIONS": 100
+  },
+  "labelCounts": {
+    "joy": 20,
+    "caring": 20,
+    "anger": 20,
+    "disgust": 20,
+    "admiration": 20,
+    "fear": 20,
+    "curiosity": 20,
+    "gratitude": 20,
+    "surprise": 20,
+    "love": 20,
+    "sadness": 20,
+    "confusion": 20,
+    "amusement": 20,
+    "excitement": 20,
+    "disappointment": 20,
+    "remorse": 20,
+    "annoyance": 20,
+    "optimism": 20
+  },
+  "wordCounts": {
+    "min": 1,
+    "median": 18.0,
+    "p95": 39.0,
+    "max": 52
+  },
+  "audit": {
+    "normalizedOverlapWithHybridTrainDev": 0,
+    "sourceGroupOverlapWithHybridTrainDev": 0,
+    "testInternalNormalizedDuplicates": 0,
+    "nearDuplicateThreshold": 0.8,
+    "rejectedCandidates": 3,
+    "nearestHybridTrainDev": {
+      "median": 0.296929124500772,
+      "p95": 0.4889156170950736,
+      "max": 0.7740460013309172
+    },
+    "maxInternalSimilarity": 0.7360793536999225
+  }
+}

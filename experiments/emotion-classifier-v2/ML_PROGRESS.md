@@ -55,6 +55,7 @@
 - Hybrid-data-v2 best-checkpoint Dev evaluation at threshold `0.5`: 18-label Macro P/R/F1 `0.7945 / 0.6805 / 0.7289`; Micro P/R/F1 `0.8000 / 0.6800 / 0.7351`. Per-label F1: admiration `0.7619`, amusement `0.9130`, anger `0.4865`, annoyance `0.5854`, caring `0.7805`, confusion `0.6512`, curiosity `0.7179`, disappointment `0.5143`, disgust `0.7692`, excitement `0.6842`, fear `0.8372`, gratitude `0.7805`, joy `0.7111`, love `0.8837`, optimism `0.7442`, remorse `0.9333`, sadness `0.6667`, surprise `0.7000`.
 - Metric scope note: the previous training Macro-F1 `0.6248` included all 21 classifier labels; the product-relevant 18-label Macro-F1 is `0.7289` and is the appropriate Flower Variant metric.
 - Hybrid V2 Clean final 18-label Dev: Macro P/R/F1 `0.8079 / 0.6942 / 0.7438`; Micro P/R/F1 `0.8105 / 0.6950 / 0.7483`. Improvement over V2: Macro-F1 `0.7289 → 0.7438`; Micro-F1 `0.7351 → 0.7483`. Best current checkpoint: `candidate-c-lite/fine-tuned-hybrid-v2-clean/best-checkpoint`.
+- Hybrid-test-v2 final evaluation completed on 360 previously untouched human-written examples, exactly 20 per Flower Variant label. Macro P/R/F1 `0.8024 / 0.6861 / 0.7319`; Micro P/R/F1 `0.7994 / 0.6861 / 0.7384`. Per-label F1: admiration `0.8649`, amusement `0.9756`, anger `0.7222`, annoyance `0.5714`, caring `0.7895`, confusion `0.7429`, curiosity `0.7692`, disappointment `0.6500`, disgust `0.7027`, excitement `0.5882`, fear `0.8718`, gratitude `0.7027`, joy `0.4737`, love `0.8780`, optimism `0.7179`, remorse `0.9189`, sadness `0.7500`, surprise `0.4848`. The set is now opened/final and prohibited from all future tuning or model selection.
 
 ## Current Work
 
@@ -74,6 +75,7 @@
 - Do not tune thresholds or selector behavior against the 100-example in-domain gold evaluation set.
 - Do not train on, fine-tune on, modify, imitate, or use the frozen 100-example final evaluation set for data-generation prompts or preprocessing-rule optimization; it is final evaluation/failure-analysis only.
 - Frozen 100 has now been opened and must not be used for tuning, model selection, or another future final-quality claim.
+- `hybrid-test-v2/test.jsonl` is opened/final: never use it for future tuning, training, threshold calibration, preprocessing decisions, or model selection.
 - Do not benchmark a higher Render tier until production traffic assumptions or latency SLOs are defined.
 - Do not train BERT/DistilBERT or add legacy `moodTrainingData.json` to V2.
 - Do not connect TF-IDF, MiniLM, Candidate C, or C-Lite to production yet.

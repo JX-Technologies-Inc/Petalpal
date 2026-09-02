@@ -1,6 +1,5 @@
 {
   "version": "petalpal-hybrid-v2",
-  "seed": 42,
   "counts": {
     "train": 2000,
     "dev": 400
@@ -40,11 +39,11 @@
     },
     "dev": {
       "joy": 22,
-      "anger": 23,
-      "optimism": 22,
+      "anger": 22,
+      "optimism": 23,
       "excitement": 22,
-      "disappointment": 22,
-      "sadness": 22,
+      "disappointment": 21,
+      "sadness": 23,
       "confusion": 22,
       "remorse": 22,
       "amusement": 23,
@@ -53,8 +52,8 @@
       "surprise": 22,
       "curiosity": 22,
       "fear": 22,
-      "annoyance": 23,
-      "disgust": 22,
+      "annoyance": 22,
+      "disgust": 23,
       "caring": 22,
       "admiration": 23
     }
@@ -63,11 +62,13 @@
     "train": {
       "min": 1,
       "median": 15.0,
+      "p95": 32.049999999999955,
       "max": 57
     },
     "dev": {
       "min": 1,
       "median": 15.0,
+      "p95": 32.049999999999955,
       "max": 54
     }
   },
@@ -76,14 +77,35 @@
     "sourceGroupOverlap": 0,
     "devTrainCharNgramNearest": {
       "min": 0.1453928003640148,
-      "p25": 0.2749173270266875,
-      "median": 0.33519016229027926,
+      "p25": 0.2735000597442947,
+      "median": 0.3345756911138055,
       "p75": 0.4200936637681501,
       "p90": 0.5183356181800741,
       "p95": 0.5626461731596163,
       "max": 0.7978124703266032
     },
-    "threshold": 0.8,
-    "rejectedDevCandidatesAtOrAboveThreshold": 14
+    "threshold": 0.8
+  },
+  "sourceLabelCorrections": {
+    "remapped": {
+      "ed-valid-hit:530_conv:1060": "sadness",
+      "ed-valid-hit:340_conv:680": "disgust",
+      "ed-valid-hit:6820_conv:13641": "optimism",
+      "ed-valid-hit:2129_conv:4258": "annoyance"
+    },
+    "dropped": [
+      "ed-valid-hit:10811_conv:21623",
+      "ed-valid-hit:1561_conv:3122",
+      "ed-valid-hit:6448_conv:12896",
+      "ed-valid-hit:7889_conv:15778",
+      "ed-valid-hit:9832_conv:19665"
+    ],
+    "replacementIds": [
+      "ed-valid-hit:12000_conv:24000",
+      "ed-valid-hit:8020_conv:16041",
+      "ed-valid-hit:3368_conv:6737",
+      "ed-valid-hit:4858_conv:9716",
+      "ed-valid-hit:9416_conv:18832"
+    ]
   }
 }
