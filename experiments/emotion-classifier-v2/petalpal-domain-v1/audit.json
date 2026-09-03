@@ -1,0 +1,88 @@
+{
+  "version": "petalpal-domain-v1",
+  "counts": {
+    "train": 2000,
+    "dev": 400
+  },
+  "policyCounts": {
+    "train": {
+      "REQUIRED": 1240,
+      "NONE": 620,
+      "OPTIONAL": 140
+    },
+    "dev": {
+      "REQUIRED": 248,
+      "NONE": 124,
+      "OPTIONAL": 28
+    }
+  },
+  "sourceCounts": {
+    "train": {
+      "EMPATHETIC_DIALOGUES": 895,
+      "GOEMOTIONS": 1105
+    },
+    "dev": {
+      "EMPATHETIC_DIALOGUES": 179,
+      "GOEMOTIONS": 221
+    }
+  },
+  "requiredLabelCounts": {
+    "train": {
+      "joy": 69,
+      "annoyance": 69,
+      "confusion": 69,
+      "anger": 69,
+      "disappointment": 69,
+      "surprise": 68,
+      "sadness": 68,
+      "love": 69,
+      "gratitude": 69,
+      "fear": 69,
+      "caring": 69,
+      "curiosity": 69,
+      "optimism": 69,
+      "remorse": 69,
+      "disgust": 69,
+      "excitement": 69,
+      "admiration": 69,
+      "amusement": 69
+    },
+    "dev": {
+      "sadness": 13,
+      "amusement": 14,
+      "fear": 14,
+      "gratitude": 14,
+      "excitement": 14,
+      "joy": 14,
+      "love": 14,
+      "disappointment": 14,
+      "confusion": 14,
+      "admiration": 14,
+      "annoyance": 14,
+      "curiosity": 14,
+      "caring": 14,
+      "remorse": 13,
+      "disgust": 14,
+      "anger": 14,
+      "optimism": 13,
+      "surprise": 13
+    }
+  },
+  "multiLabelCounts": {
+    "train": 22,
+    "dev": 4
+  },
+  "wordCounts": {
+    "min": 4,
+    "median": 10.0,
+    "p95": 14.0,
+    "max": 18
+  },
+  "audit": {
+    "existingOverlap": 0,
+    "trainDevNormalizedOverlap": 0,
+    "trainDevSourceGroupOverlap": 0,
+    "nearDuplicateThreshold": 0.8,
+    "maxPairSimilarity": 0.7981085112449341
+  }
+}

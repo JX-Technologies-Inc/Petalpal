@@ -23,3 +23,9 @@ experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-hybrid-v2/best-che
 # Generated hybrid training data
 experiments/emotion-classifier-v2/hybrid-data-v2/train.jsonl
 experiments/emotion-classifier-v2/hybrid-data-v2/dev.jsonl
+
+# Local fine-tuned model checkpoints
+experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-*/best-checkpoint/
+
+# Keep held-out test local
+experiments/emotion-classifier-v2/hybrid-test-v2/test.jsonl
