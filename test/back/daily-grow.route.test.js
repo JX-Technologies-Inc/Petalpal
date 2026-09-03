@@ -9,6 +9,7 @@ const originals = {
   userFindUnique: prisma.user.findUnique,
   gardenFindUnique: prisma.garden.findUnique,
   gardenCreate: prisma.garden.create,
+  fairyStateUpsert: prisma.fairyState.upsert,
   checkInFindFirst: prisma.dailyCheckIn.findFirst,
   checkInFindMany: prisma.dailyCheckIn.findMany,
   flowerFindMany: prisma.flower.findMany,
@@ -75,6 +76,7 @@ function installPrismaStub() {
       }
     : { id: "garden-1", ownerId: owner.id };
   prisma.garden.create = async () => ({ id: "garden-1", ownerId: owner.id });
+  prisma.fairyState.upsert = async () => ({ onboardingCompleted: true });
   prisma.dailyCheckIn.findFirst = async () => state.checkIn
     ? { ...state.checkIn, flower: state.flower }
     : null;
@@ -92,6 +94,7 @@ function restorePrisma() {
   prisma.user.findUnique = originals.userFindUnique;
   prisma.garden.findUnique = originals.gardenFindUnique;
   prisma.garden.create = originals.gardenCreate;
+  prisma.fairyState.upsert = originals.fairyStateUpsert;
   prisma.dailyCheckIn.findFirst = originals.checkInFindFirst;
   prisma.dailyCheckIn.findMany = originals.checkInFindMany;
   prisma.flower.findMany = originals.flowerFindMany;
@@ -251,6 +254,11 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
       assert.equal(first.status, 201);
       assert.equal(second.status, 201);
       assert.equal(state.checkIn.dailyLimitEnforced, false);
+
+      const session = await api(baseUrl, "/session");
+      assert.equal(session.status, 200);
+      assert.equal(session.body.hasCheckedInToday, true);
+      assert.equal(session.body.dailyGrowLimitEnabled, false);
     } finally {
       if (previousValue === undefined) delete process.env.DAILY_GROW_LIMIT_ENABLED;
       else process.env.DAILY_GROW_LIMIT_ENABLED = previousValue;

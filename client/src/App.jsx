@@ -211,6 +211,7 @@ import {
       fairyState: null,
       todayCheckIn: null,
       hasCheckedInToday: false,
+      dailyGrowLimitEnabled: true,
       loading: Boolean(currentUser?.id)
     });
   
@@ -318,6 +319,7 @@ import {
           fairyState: data.fairyState || null,
           todayCheckIn: data.todayCheckIn || null,
           hasCheckedInToday: Boolean(data.hasCheckedInToday),
+          dailyGrowLimitEnabled: data.dailyGrowLimitEnabled !== false,
           loading: false
         });
 
@@ -597,6 +599,7 @@ import {
         fairyState: null,
         todayCheckIn: null,
         hasCheckedInToday: false,
+        dailyGrowLimitEnabled: true,
         loading: false
       });
       viewedGardenOwnerIdRef.current = null;
@@ -942,6 +945,7 @@ import {
                     <DailyCheckIn
                       onBloom={handleBloom}
                       completed={experience.hasCheckedInToday}
+                      limitEnabled={experience.dailyGrowLimitEnabled}
                       disabled={gardenLoading || !isOwnGarden}
                     />
                   )}

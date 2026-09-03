@@ -10,6 +10,12 @@ describe("DailyCheckIn", () => {
     expect(screen.queryByRole("button", { name: "Bloom" })).not.toBeInTheDocument();
   });
 
+  it("keeps Daily Grow available when the test limit is disabled", () => {
+    render(<DailyCheckIn onBloom={vi.fn()} completed limitEnabled={false} />);
+    expect(screen.getByRole("button", { name: "Bloom" })).toBeInTheDocument();
+    expect(screen.queryByText(/already growing/i)).not.toBeInTheDocument();
+  });
+
   it("requires a canonical Primary Bloom", async () => {
     const onBloom = vi.fn();
     render(<DailyCheckIn onBloom={onBloom} />);

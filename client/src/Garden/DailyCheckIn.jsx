@@ -3,7 +3,8 @@ import { useState } from "react";
 function DailyCheckIn({
   onBloom,
   disabled = false,
-  completed = false
+  completed = false,
+  limitEnabled = true
 }) {
   const [eventText, setEventText] = useState("");
   const [selectedMood, setSelectedMood] =
@@ -51,7 +52,7 @@ function DailyCheckIn({
     <section className="checkin-section">
       <h2>Daily Check-In</h2>
 
-      {completed ? (
+      {completed && limitEnabled ? (
         <p className="auth-message">
           Today&apos;s flower is already growing. Come back tomorrow 🌸
         </p>

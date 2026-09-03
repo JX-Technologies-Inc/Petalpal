@@ -1121,6 +1121,7 @@ app.get("/session", async (req, res) => {
     fairyState: withOnboardingGuideFairy(fairyState),
     todayCheckIn,
     hasCheckedInToday: Boolean(todayCheckIn),
+    dailyGrowLimitEnabled: isDailyGrowLimitEnabled(),
     garden
   });
 });
