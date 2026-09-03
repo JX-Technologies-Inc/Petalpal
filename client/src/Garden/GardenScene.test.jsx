@@ -10,6 +10,8 @@ const flower = {
   event: "A bright day",
   meaning: "Joy",
   supportCount: 2,
+  left: "37%",
+  top: "61%",
   messages: []
 };
 
@@ -34,6 +36,10 @@ describe("GardenScene", () => {
     );
 
     await userEvent.click(screen.getByAltText("Sunflower"));
+    expect(screen.getByAltText("Sunflower").closest("article")).toHaveStyle({
+      left: "37%",
+      top: "61%"
+    });
     expect(screen.getByText("A bright day")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Delete Flower" }));

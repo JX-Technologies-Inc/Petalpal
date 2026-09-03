@@ -50,27 +50,10 @@ function getFlowerImagePath(flower) {
   return "/assets/pink.png";
 }
 
-function getFlowerPosition(flower, index) {
-  const fallbackPositions = [
-    { left: "18%", top: "62%" },
-    { left: "32%", top: "55%" },
-    { left: "46%", top: "64%" },
-    { left: "60%", top: "53%" },
-    { left: "74%", top: "63%" },
-    { left: "85%", top: "50%" },
-    { left: "25%", top: "74%" },
-    { left: "52%", top: "76%" },
-    { left: "78%", top: "75%" }
-  ];
-
-  const fallback =
-    fallbackPositions[
-      index % fallbackPositions.length
-    ];
-
+function getFlowerPosition(flower) {
   return {
-    left: flower.left || fallback.left,
-    top: flower.top || fallback.top
+    left: flower.left,
+    top: flower.top
   };
 }
 
@@ -1115,7 +1098,7 @@ function GardenScene({
             </p>
           )}
 
-          {liveFlowers.map((flower, index) => {
+          {liveFlowers.map((flower) => {
             const highlighted =
               isHighlighted(flower);
 
@@ -1124,10 +1107,7 @@ function GardenScene({
               !highlighted;
 
             const position =
-              getFlowerPosition(
-                flower,
-                index
-              );
+              getFlowerPosition(flower);
 
             return (
               <article

@@ -10,7 +10,7 @@ describe("DailyCheckIn", () => {
     expect(screen.queryByRole("button", { name: "Bloom" })).not.toBeInTheDocument();
   });
 
-  it("requires a mood or optional journal text", async () => {
+  it("requires a canonical Primary Bloom", async () => {
     const onBloom = vi.fn();
     render(<DailyCheckIn onBloom={onBloom} />);
 
@@ -18,7 +18,7 @@ describe("DailyCheckIn", () => {
 
     expect(onBloom).not.toHaveBeenCalled();
     expect(
-      screen.getByText(/choose a mood, or write an optional journal/i)
+      screen.getByText("Choose a Primary Bloom.")
     ).toBeInTheDocument();
   });
 
@@ -26,14 +26,14 @@ describe("DailyCheckIn", () => {
     const onBloom = vi.fn().mockResolvedValue({ id: "flower-1" });
     render(<DailyCheckIn onBloom={onBloom} />);
 
-    await userEvent.selectOptions(screen.getByRole("combobox"), "calm");
+    await userEvent.selectOptions(screen.getByRole("combobox"), "PEACEFUL_BLOOM");
     await userEvent.click(screen.getByRole("button", { name: "Bloom" }));
 
-    expect(onBloom).toHaveBeenCalledWith({ event: "", mood: "calm" });
+    expect(onBloom).toHaveBeenCalledWith({ event: "", mood: "PEACEFUL_BLOOM" });
     expect(await screen.findByText(/bloomed successfully/i)).toBeInTheDocument();
   });
 
-  it("submits journal text for automatic detection", async () => {
+  it("submits optional journal text with the canonical Primary Bloom", async () => {
     const onBloom = vi.fn().mockResolvedValue({ id: "flower-2" });
     render(<DailyCheckIn onBloom={onBloom} />);
 
@@ -41,11 +41,39 @@ describe("DailyCheckIn", () => {
       screen.getByPlaceholderText(/optional: what happened/i),
       "A peaceful afternoon"
     );
+    await userEvent.selectOptions(screen.getByRole("combobox"), "SUNNY_BLOOM");
     await userEvent.click(screen.getByRole("button", { name: "Bloom" }));
 
     expect(onBloom).toHaveBeenCalledWith({
       event: "A peaceful afternoon",
-      mood: ""
+      mood: "SUNNY_BLOOM"
     });
+  });
+
+  it("offers all 8 canonical Primary Bloom codes", () => {
+    render(<DailyCheckIn onBloom={vi.fn()} />);
+
+    expect(
+      Array.from(screen.getByRole("combobox").options).slice(1).map(({ value }) => value)
+    ).toEqual([
+      "SUNNY_BLOOM",
+      "GENTLE_BLOOM",
+      "QUIET_BLOOM",
+      "HEALING_BLOOM",
+      "FIRE_BLOOM",
+      "WONDER_BLOOM",
+      "DRIFTING_BLOOM",
+      "PEACEFUL_BLOOM"
+    ]);
+  });
+
+  it("shows the product message for a duplicate Daily Grow", async () => {
+    const error = Object.assign(new Error("backend duplicate"), { status: 409 });
+    render(<DailyCheckIn onBloom={vi.fn().mockRejectedValue(error)} />);
+
+    await userEvent.selectOptions(screen.getByRole("combobox"), "SUNNY_BLOOM");
+    await userEvent.click(screen.getByRole("button", { name: "Bloom" }));
+
+    expect(await screen.findByText("Today’s flower is already growing.")).toBeInTheDocument();
   });
 });

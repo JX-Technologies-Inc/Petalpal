@@ -15,11 +15,14 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 - Flower placement model and persistence.
 - Secret hygiene: local `.env` is ignored and removed from Git tracking.
 - Database credential rotation completed: Render uses the new Prisma Postgres connection string and old connection strings are revoked.
+- Cloudflare Worker dry-run passed, its shared secret was synchronized with Render, and the updated Worker was deployed successfully.
+- Latest backend changes are pushed to GitHub; Render deployed successfully with no pending Prisma migrations, and the service is Live.
 - All eight canonical Primary Bloom inputs normalize and validate consistently; legacy mood compatibility is preserved.
 - Owner reads preserve Journal-linked Flower data; social garden reads use an explicit safe Flower allowlist.
 - Production Cloudflare secondary-emotion output uses the shared 21-label contract; legacy five-label output is limited to primary fallback routing.
 - All eight canonical Primary Blooms use explicit pools containing only existing approved species; canonical generation no longer uses a shared fallback.
 - Route-level Month 1 vertical slice covers Mood/Journal, AI success/fallback, canonical Flower generation, transaction/idempotency, privacy, safe errors, and persisted reload.
+- Web prototype now submits canonical Primary Bloom codes, restores Garden/Daily Grow state from `/session`, renders backend Flower placement, and handles duplicate Grow responses.
 - Backend suite: 42/42 passing, including database-restart persistence.
 
 ## IN PROGRESS
@@ -60,3 +63,4 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 - Production secondary-emotion taxonomy aligned; 28 focused routing/Worker/selector/Flower tests pass.
 - Canonical species pools completed; 22 focused Primary/Flower/selector tests pass.
 - Core HTTP vertical slice locked down; 6 focused route/persistence tests pass.
+- Lightweight web production-test client aligned with the Month 1 Daily Grow contract; focused frontend tests, lint, and production build pass.

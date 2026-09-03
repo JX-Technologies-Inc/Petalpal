@@ -15,10 +15,8 @@ function DailyCheckIn({
   async function handleSubmit() {
     const trimmedEvent = eventText.trim();
 
-    if (!trimmedEvent && !selectedMood) {
-      setMessage(
-        "Choose a mood, or write an optional journal entry for AI detection."
-      );
+    if (!selectedMood) {
+      setMessage("Choose a Primary Bloom.");
       return;
     }
 
@@ -40,8 +38,9 @@ function DailyCheckIn({
       console.error("Bloom error:", error);
 
       setMessage(
-        error.message ||
-        "Failed to bloom a flower."
+        error.status === 409
+          ? "Today’s flower is already growing."
+          : error.message || "Failed to bloom a flower."
       );
     } finally {
       setIsSubmitting(false);
@@ -80,17 +79,15 @@ function DailyCheckIn({
             setSelectedMood(event.target.value)
           }
         >
-          <option value="">
-            Auto detect from what happened today
-          </option>
-
-          <option value="happy">Happy</option>
-          <option value="calm">Calm</option>
-          <option value="tired">Tired</option>
-          <option value="sad">Sad</option>
-          <option value="stressed">
-            Stressed
-          </option>
+          <option value="">Choose a Primary Bloom</option>
+          <option value="SUNNY_BLOOM">Sunny Bloom</option>
+          <option value="GENTLE_BLOOM">Gentle Bloom</option>
+          <option value="QUIET_BLOOM">Quiet Bloom</option>
+          <option value="HEALING_BLOOM">Healing Bloom</option>
+          <option value="FIRE_BLOOM">Fire Bloom</option>
+          <option value="WONDER_BLOOM">Wonder Bloom</option>
+          <option value="DRIFTING_BLOOM">Drifting Bloom</option>
+          <option value="PEACEFUL_BLOOM">Peaceful Bloom</option>
         </select>
       </div>
 
