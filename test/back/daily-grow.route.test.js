@@ -9,7 +9,7 @@ const originals = {
   userFindUnique: prisma.user.findUnique,
   gardenFindUnique: prisma.garden.findUnique,
   gardenCreate: prisma.garden.create,
-  checkInFindUnique: prisma.dailyCheckIn.findUnique,
+  checkInFindFirst: prisma.dailyCheckIn.findFirst,
   checkInFindMany: prisma.dailyCheckIn.findMany,
   flowerFindMany: prisma.flower.findMany,
   transaction: prisma.$transaction
@@ -43,6 +43,7 @@ const transaction = {
         id: "checkin-1",
         localDate: data.localDate,
         timezone: data.timezone,
+        dailyLimitEnforced: data.dailyLimitEnforced,
         journal: state.journal,
         emotionResult: state.emotion
       };
@@ -74,7 +75,7 @@ function installPrismaStub() {
       }
     : { id: "garden-1", ownerId: owner.id };
   prisma.garden.create = async () => ({ id: "garden-1", ownerId: owner.id });
-  prisma.dailyCheckIn.findUnique = async () => state.checkIn
+  prisma.dailyCheckIn.findFirst = async () => state.checkIn
     ? { ...state.checkIn, flower: state.flower }
     : null;
   prisma.dailyCheckIn.findMany = async () => state.checkIn
@@ -91,7 +92,7 @@ function restorePrisma() {
   prisma.user.findUnique = originals.userFindUnique;
   prisma.garden.findUnique = originals.gardenFindUnique;
   prisma.garden.create = originals.gardenCreate;
-  prisma.dailyCheckIn.findUnique = originals.checkInFindUnique;
+  prisma.dailyCheckIn.findFirst = originals.checkInFindFirst;
   prisma.dailyCheckIn.findMany = originals.checkInFindMany;
   prisma.flower.findMany = originals.flowerFindMany;
   prisma.$transaction = originals.transaction;
@@ -194,12 +195,19 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(socialFlower.name, state.flower.name);
     assert.equal(socialFlower.speciesCode, state.flower.speciesCode);
 
-    const duplicate = await api(baseUrl, `/users/${owner.id}/flowers`, {
-      method: "POST",
-      body: { mood: "SUNNY_BLOOM", event: "A private thankful moment" }
-    });
-    assert.equal(duplicate.status, 409);
-    assert.equal(duplicate.body.error, "You have already completed today's check-in");
+    const previousValue = process.env.DAILY_GROW_LIMIT_ENABLED;
+    process.env.DAILY_GROW_LIMIT_ENABLED = "true";
+    try {
+      const duplicate = await api(baseUrl, `/users/${owner.id}/flowers`, {
+        method: "POST",
+        body: { mood: "SUNNY_BLOOM", event: "A private thankful moment" }
+      });
+      assert.equal(duplicate.status, 409);
+      assert.equal(duplicate.body.error, "You have already completed today's check-in");
+    } finally {
+      if (previousValue === undefined) delete process.env.DAILY_GROW_LIMIT_ENABLED;
+      else process.env.DAILY_GROW_LIMIT_ENABLED = previousValue;
+    }
   });
 
   await t.test("deterministic AI fallback still completes and persists Daily Grow", async () => {
@@ -223,5 +231,29 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(result.status, 201);
     assert.equal(state.emotion.inferencePath, "DETERMINISTIC_FALLBACK");
     assert.equal(state.flower.dailyCheckInId, "checkin-1");
+  });
+
+  await t.test("DAILY_GROW_LIMIT_ENABLED=false allows repeated test grows", async () => {
+    resetState();
+    const previousValue = process.env.DAILY_GROW_LIMIT_ENABLED;
+    process.env.DAILY_GROW_LIMIT_ENABLED = "false";
+
+    try {
+      const first = await api(baseUrl, `/users/${owner.id}/flowers`, {
+        method: "POST",
+        body: { mood: "SUNNY_BLOOM", event: "" }
+      });
+      const second = await api(baseUrl, `/users/${owner.id}/flowers`, {
+        method: "POST",
+        body: { mood: "SUNNY_BLOOM", event: "" }
+      });
+
+      assert.equal(first.status, 201);
+      assert.equal(second.status, 201);
+      assert.equal(state.checkIn.dailyLimitEnforced, false);
+    } finally {
+      if (previousValue === undefined) delete process.env.DAILY_GROW_LIMIT_ENABLED;
+      else process.env.DAILY_GROW_LIMIT_ENABLED = previousValue;
+    }
   });
 });

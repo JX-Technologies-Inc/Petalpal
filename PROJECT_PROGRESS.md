@@ -23,6 +23,7 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 - All eight canonical Primary Blooms use explicit pools containing only existing approved species; canonical generation no longer uses a shared fallback.
 - Route-level Month 1 vertical slice covers Mood/Journal, AI success/fallback, canonical Flower generation, transaction/idempotency, privacy, safe errors, and persisted reload.
 - Web prototype now submits canonical Primary Bloom codes, restores Garden/Daily Grow state from `/session`, renders backend Flower placement, and handles duplicate Grow responses.
+- Test deployments can explicitly set `DAILY_GROW_LIMIT_ENABLED=false` for repeated Daily Grow; production remains one-per-day when true or unset.
 - Backend suite: 42/42 passing, including database-restart persistence.
 
 ## IN PROGRESS

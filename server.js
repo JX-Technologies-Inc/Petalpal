@@ -46,6 +46,10 @@ const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 let emotionClassifier = classifyEmotion;
 
+function isDailyGrowLimitEnabled() {
+  return process.env.DAILY_GROW_LIMIT_ENABLED !== "false";
+}
+
 export function setEmotionClassifierForTests(classifier) {
   emotionClassifier = classifier || classifyEmotion;
 }
@@ -1097,13 +1101,12 @@ app.get("/session", async (req, res) => {
       update: {},
       create: { userId: user.id }
     }),
-    prisma.dailyCheckIn.findUnique({
+    prisma.dailyCheckIn.findFirst({
       where: {
-        userId_localDate: {
-          userId: user.id,
-          localDate
-        }
+        userId: user.id,
+        localDate
       },
+      orderBy: { createdAt: "desc" },
       include: {
         journal: true,
         emotionResult: true,
@@ -2021,13 +2024,13 @@ app.post("/users/:userId/flowers", async (req, res) => {
     const timezone = normalizeTimezone(user.timezone) || "UTC";
     const localDate = getLocalDate(timezone);
 
-    const existingCheckIn = await prisma.dailyCheckIn.findUnique({
+    const dailyGrowLimitEnabled = isDailyGrowLimitEnabled();
+    const existingCheckIn = dailyGrowLimitEnabled && await prisma.dailyCheckIn.findFirst({
       where: {
-        userId_localDate: {
-          userId: user.id,
-          localDate
-        }
+        userId: user.id,
+        localDate
       },
+      orderBy: { createdAt: "desc" },
       include: { flower: { include: { messages: true } } }
     });
 
@@ -2079,6 +2082,7 @@ const createdFlower = await prisma.$transaction(async (tx) => {
       userId: user.id,
       localDate,
       timezone,
+      dailyLimitEnforced: dailyGrowLimitEnabled,
       ...(event
         ? {
             journal: {
