@@ -12,6 +12,15 @@ const flower = {
   supportCount: 2,
   left: "37%",
   top: "61%",
+  dailyCheckIn: {
+    createdAt: "2026-09-03T00:00:00.000Z",
+    journal: { content: "A bright day" },
+    emotionResult: {
+      secondaryEmotions: ["gratitude", "love"],
+      intensity: 0.7,
+      confidence: 0.91
+    }
+  },
   messages: []
 };
 
@@ -41,8 +50,35 @@ describe("GardenScene", () => {
       top: "61%"
     });
     expect(screen.getByText("A bright day")).toBeInTheDocument();
+    expect(screen.getByText(/gratitude, love/i)).toBeInTheDocument();
+    expect(screen.getByText("0.7")).toBeInTheDocument();
+    expect(screen.getByText("0.91")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Delete Flower" }));
     expect(onDeleteFlower).toHaveBeenCalledWith("flower-1");
+  });
+
+  it("shows no secondary result without exposing private ML fields socially", async () => {
+    const { rerender } = render(
+      <GardenScene
+        owner={{ id: "user-1", name: "Petal" }}
+        currentUser={{ id: "user-1", name: "Petal" }}
+        flowers={[{ ...flower, dailyCheckIn: undefined }]}
+        isOwnGarden
+      />
+    );
+
+    await userEvent.click(screen.getByAltText("Sunflower"));
+    expect(screen.getByText("None")).toBeInTheDocument();
+
+    rerender(
+      <GardenScene
+        owner={{ id: "user-1", name: "Petal" }}
+        currentUser={{ id: "friend-1", name: "Friend" }}
+        flowers={[flower]}
+        isOwnGarden={false}
+      />
+    );
+    expect(screen.queryByText("Secondary:")).not.toBeInTheDocument();
   });
 });

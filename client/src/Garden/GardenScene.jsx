@@ -1259,6 +1259,31 @@ function GardenScene({
               </p>
             )}
 
+            {isOwnGarden && (
+              <>
+                <p>
+                  <strong>Secondary:</strong>{" "}
+                  {selectedFlower.dailyCheckIn?.emotionResult?.secondaryEmotions?.length
+                    ? selectedFlower.dailyCheckIn.emotionResult.secondaryEmotions.join(", ")
+                    : "None"}
+                </p>
+
+                {selectedFlower.dailyCheckIn?.emotionResult?.intensity != null && (
+                  <p>
+                    <strong>Intensity:</strong>{" "}
+                    {selectedFlower.dailyCheckIn.emotionResult.intensity}
+                  </p>
+                )}
+
+                {selectedFlower.dailyCheckIn?.emotionResult?.confidence != null && (
+                  <p>
+                    <strong>Confidence:</strong>{" "}
+                    {selectedFlower.dailyCheckIn.emotionResult.confidence}
+                  </p>
+                )}
+              </>
+            )}
+
             <p>
               <strong>Support:</strong>{" "}
               {selectedFlower.supportCount ||

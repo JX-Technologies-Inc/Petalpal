@@ -474,6 +474,24 @@ async function getGardenResponse(userId, { includePrivate = false } = {}) {
       flowers: {
         include: {
           messages: true,
+          ...(includePrivate
+            ? {
+                dailyCheckIn: {
+                  select: {
+                    createdAt: true,
+                    journal: { select: { content: true } },
+                    emotionResult: {
+                      select: {
+                        label: true,
+                        secondaryEmotions: true,
+                        intensity: true,
+                        confidence: true
+                      }
+                    }
+                  }
+                }
+              }
+            : {})
         },
         orderBy: {
           createdAt: "desc",

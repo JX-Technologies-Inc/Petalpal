@@ -25,6 +25,8 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 - Web prototype now submits canonical Primary Bloom codes, restores Garden/Daily Grow state from `/session`, renders backend Flower placement, and handles duplicate Grow responses.
 - Test deployments can explicitly set `DAILY_GROW_LIMIT_ENABLED=false` for repeated Daily Grow; production remains one-per-day when true or unset.
 - `/session` exposes the non-secret Daily Grow limit state so the web test client keeps its form available when the limit is disabled.
+- Owner Flower details expose stored secondary-emotion validation metadata; social Garden responses continue to exclude Journal and ML fields.
+- ML validation data retrieval: `Journal` + `EmotionResult` + `DailyCheckIn` + `Flower` are linked through the existing Daily Grow relations and can later be joined/exported as journal text, Primary Bloom, secondary emotions, intensity, confidence, timestamp, and flower/result IDs. Purpose: private in-domain ML evaluation/error analysis only; not automatic training data.
 - Backend suite: 42/42 passing, including database-restart persistence.
 
 ## IN PROGRESS

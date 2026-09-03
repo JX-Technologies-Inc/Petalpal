@@ -53,7 +53,12 @@ const transaction = {
   },
   flower: {
     create: async ({ data }) => {
-      state.flower = { id: "flower-1", ...data, messages: [] };
+      state.flower = {
+        id: "flower-1",
+        ...data,
+        dailyCheckIn: state.checkIn,
+        messages: []
+      };
       return state.flower;
     }
   },
@@ -188,11 +193,15 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
 
     const ownerGarden = await api(baseUrl, `/users/${owner.id}/garden`);
     assert.equal(ownerGarden.body.flowers[0].event, "A private thankful moment");
+    assert.deepEqual(
+      ownerGarden.body.flowers[0].dailyCheckIn.emotionResult.secondaryEmotions,
+      ["gratitude"]
+    );
 
     const socialGarden = await api(baseUrl, `/users/${owner.id}/garden`, { token: "friend-token" });
     const socialFlower = socialGarden.body.flowers[0];
     assert.equal(socialGarden.status, 200);
-    for (const field of ["event", "generationSeed", "dailyCheckInId", "emotionResult"]) {
+    for (const field of ["event", "generationSeed", "dailyCheckInId", "dailyCheckIn", "emotionResult"]) {
       assert.equal(Object.hasOwn(socialFlower, field), false);
     }
     assert.equal(socialFlower.name, state.flower.name);

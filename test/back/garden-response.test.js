@@ -25,6 +25,16 @@ const privateFlower = {
   userId: "owner-1",
   gardenId: "garden-1",
   dailyCheckInId: "checkin-1",
+  dailyCheckIn: {
+    createdAt: "2026-09-03T00:00:00.000Z",
+    journal: { content: "A private journal entry" },
+    emotionResult: {
+      label: "SUNNY_BLOOM",
+      secondaryEmotions: ["gratitude"],
+      intensity: 0.7,
+      confidence: 0.9
+    }
+  },
   emotionResult: { confidence: 0.9 },
   messages: [{
     id: "message-1",
@@ -48,12 +58,13 @@ function response(includePrivate) {
 test("owner garden response preserves private Journal-linked flower data", () => {
   assert.equal(response(true).flowers[0].event, "A private journal entry");
   assert.equal(response(true).flowers[0].generationSeed, "private-seed");
+  assert.deepEqual(response(true).flowers[0].dailyCheckIn.emotionResult.secondaryEmotions, ["gratitude"]);
 });
 
 test("social garden response excludes Journal, AI and internal relation fields", () => {
   const flower = response(false).flowers[0];
   for (const field of [
-    "event", "generationSeed", "userId", "gardenId", "dailyCheckInId", "emotionResult"
+    "event", "generationSeed", "userId", "gardenId", "dailyCheckInId", "dailyCheckIn", "emotionResult"
   ]) {
     assert.equal(Object.hasOwn(flower, field), false);
   }
