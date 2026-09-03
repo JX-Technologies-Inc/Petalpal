@@ -2,11 +2,49 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { generateFlowerMetadata, seasonForLocalDate } from "../../lib/flower-engine.js";
+import flowerDB from "../../data/flowerDB.js";
+import {
+  CANONICAL_PRIMARY_GARDEN_MOODS,
+  LEGACY_PRIMARY_MOODS,
+  compatibilitySpeciesPool,
+  speciesPoolForPrimary
+} from "../../lib/flower-variant-config.js";
 
 const options = [
   { name: "Sunflower", meaning: "Happiness", img: "🌻" },
   { name: "Tulip", meaning: "Joy", img: "🌷" }
 ];
+
+test("all canonical Primary Blooms use explicit approved species pools", () => {
+  const approvedCodes = new Set(compatibilitySpeciesPool(flowerDB).map(({ speciesCode }) => speciesCode));
+  for (const mood of CANONICAL_PRIMARY_GARDEN_MOODS) {
+    const { pool, source } = speciesPoolForPrimary(mood, flowerDB);
+    assert.equal(source, "PRIMARY_CONFIG");
+    assert.ok(pool.length > 0);
+    assert.ok(pool.every(({ speciesCode }) => approvedCodes.has(speciesCode)));
+  }
+});
+
+test("canonical species selection remains deterministic for every Bloom", () => {
+  for (const mood of CANONICAL_PRIMARY_GARDEN_MOODS) {
+    const { pool } = speciesPoolForPrimary(mood, flowerDB);
+    const input = {
+      options: pool,
+      primaryGardenMood: mood,
+      localDate: "2026-09-03",
+      userId: "canonical-user"
+    };
+    assert.deepEqual(generateFlowerMetadata(input), generateFlowerMetadata(input));
+  }
+});
+
+test("legacy Primary moods retain their existing catalog pools", () => {
+  for (const mood of LEGACY_PRIMARY_MOODS) {
+    const { pool, source } = speciesPoolForPrimary(mood, flowerDB);
+    assert.equal(source, "LEGACY_PRIMARY_CONFIG");
+    assert.equal(pool.length, flowerDB[mood].length);
+  }
+});
 
 test("flower metadata is deterministic for the same daily check-in", () => {
   const input = {

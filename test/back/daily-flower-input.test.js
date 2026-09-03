@@ -2,6 +2,28 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { resolveDailyFlowerEmotion } from "../../lib/daily-flower-input.js";
+import {
+  CANONICAL_PRIMARY_GARDEN_MOODS,
+  LEGACY_PRIMARY_MOODS
+} from "../../lib/flower-variant-config.js";
+
+test("all canonical Primary Bloom codes survive Daily Grow normalization", async () => {
+  for (const mood of CANONICAL_PRIMARY_GARDEN_MOODS) {
+    const result = await resolveDailyFlowerEmotion({
+      event: "", mood, aiProcessingAllowed: true, classify: async () => assert.fail()
+    });
+    assert.equal(result.mood, mood);
+  }
+});
+
+test("existing legacy moods retain case-insensitive lowercase compatibility", async () => {
+  for (const mood of LEGACY_PRIMARY_MOODS) {
+    const result = await resolveDailyFlowerEmotion({
+      event: "", mood: mood.toUpperCase(), aiProcessingAllowed: true, classify: async () => assert.fail()
+    });
+    assert.equal(result.mood, mood);
+  }
+});
 
 test("no journal is NO_AI and never invokes a classifier", async () => {
   let called = false;

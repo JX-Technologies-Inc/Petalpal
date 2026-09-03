@@ -17,7 +17,7 @@ test("emotion Worker rejects callers without the shared secret", async () => {
   assert.equal(response.status, 401);
 });
 
-test("emotion Worker returns a validated PetalPal mood", async () => {
+test("emotion Worker returns a legacy primary fallback plus 21-label secondary emotions", async () => {
   let receivedInput;
   const response = await worker.fetch(
     new Request(endpoint, {
@@ -36,7 +36,7 @@ test("emotion Worker returns a validated PetalPal mood", async () => {
           return {
             response: {
               label: "happy",
-              secondaryEmotions: ["calm"],
+              secondaryEmotions: ["gratitude", "love"],
               intensity: 0.77,
               confidence: 0.88
             }
@@ -50,9 +50,10 @@ test("emotion Worker returns a validated PetalPal mood", async () => {
   assert.equal(receivedInput.response_format.type, "json_schema");
   assert.deepEqual(await response.json(), {
     label: "happy",
-    secondaryEmotions: ["calm"],
+    secondaryEmotions: ["gratitude", "love"],
     intensity: 0.77,
     confidence: 0.88,
     model: "@cf/meta/llama-3.1-8b-instruct-fast"
   });
+  assert.ok(receivedInput.response_format.json_schema.properties.secondaryEmotions.items.enum.includes("remorse"));
 });

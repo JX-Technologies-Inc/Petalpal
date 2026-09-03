@@ -1,5 +1,9 @@
+import {
+  LEGACY_PRIMARY_MOODS,
+  SECONDARY_EMOTION_LABELS
+} from "../../lib/flower-variant-config.js";
+
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
-const MOODS = ["happy", "calm", "tired", "sad", "stressed"];
 
 function json(body, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -25,7 +29,7 @@ export default {
         messages: [
           {
             role: "system",
-            content: "Classify the user's emotional tone. Choose one primary PetalPal label, up to two different secondary labels, and emotional intensity from 0 to 1. Do not diagnose mental health conditions."
+            content: "Classify the user's emotional tone. Choose one legacy primary fallback mood and up to two fine-grained secondary emotions. Secondary emotions must add useful detail. Also return emotional intensity and confidence from 0 to 1. Do not diagnose mental health conditions."
           },
           { role: "user", content: text }
         ],
@@ -34,10 +38,10 @@ export default {
           json_schema: {
             type: "object",
             properties: {
-              label: { type: "string", enum: MOODS },
+              label: { type: "string", enum: LEGACY_PRIMARY_MOODS },
               secondaryEmotions: {
                 type: "array",
-                items: { type: "string", enum: MOODS },
+                items: { type: "string", enum: SECONDARY_EMOTION_LABELS },
                 maxItems: 2,
                 uniqueItems: true
               },
@@ -52,10 +56,10 @@ export default {
       const output = typeof result?.response === "string" ? JSON.parse(result.response) : result?.response;
       if (
         !output ||
-        !MOODS.includes(output.label) ||
+        !LEGACY_PRIMARY_MOODS.includes(output.label) ||
         !Array.isArray(output.secondaryEmotions) ||
         output.secondaryEmotions.length > 2 ||
-        output.secondaryEmotions.some((label) => !MOODS.includes(label)) ||
+        output.secondaryEmotions.some((label) => !SECONDARY_EMOTION_LABELS.includes(label)) ||
         !Number.isFinite(output.intensity) ||
         !Number.isFinite(output.confidence)
       ) {
@@ -64,7 +68,6 @@ export default {
       return json({
         label: output.label,
         secondaryEmotions: [...new Set(output.secondaryEmotions)]
-          .filter((label) => label !== output.label)
           .slice(0, 2),
         intensity: output.intensity,
         confidence: output.confidence,

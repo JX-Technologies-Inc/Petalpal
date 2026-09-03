@@ -27,6 +27,7 @@ import {
 } from "./lib/fairy-config.js";
 import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
 import { resolveDailyFlowerEmotion } from "./lib/daily-flower-input.js";
+import { serializeGardenResponse } from "./lib/garden-response.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -43,6 +44,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
+let emotionClassifier = classifyEmotion;
+
+export function setEmotionClassifierForTests(classifier) {
+  emotionClassifier = classifier || classifyEmotion;
+}
 
 const io = new Server(server, {
   cors: {
@@ -449,7 +455,7 @@ function getNonOverlappingPosition(existingFlowers) {
   }
   
 
-async function getGardenResponse(userId) {
+async function getGardenResponse(userId, { includePrivate = false } = {}) {
   const user = await getUser(userId);
 
   if (!user) {
@@ -478,16 +484,12 @@ async function getGardenResponse(userId) {
     },
   });
 
-  return {
-    owner: {
-      id: user.id,
-      name: user.name,
-      avatar: user.avatar,
-    },
-    flowers: fullGarden.flowers,
-    visitRecords: fullGarden.visitRecords,
+  return serializeGardenResponse({
+    owner: user,
+    garden: fullGarden,
     activeVisitors: getActiveVisitors(fullGarden.id),
-  };
+    includePrivate
+  });
 }
 
 
@@ -618,7 +620,9 @@ app.get("/users/:userId/friends", async (req, res) => {
 
 app.get("/users/:userId/garden", async (req, res) => {
   try {
-    const gardenResponse = await getGardenResponse(req.params.userId);
+    const gardenResponse = await getGardenResponse(req.params.userId, {
+      includePrivate: req.auth.userId === req.params.userId
+    });
 
     if (!gardenResponse) {
       return res.status(404).json({ error: "User not found" });
@@ -1106,7 +1110,7 @@ app.get("/session", async (req, res) => {
         flower: { include: { messages: true } }
       }
     }),
-    getGardenResponse(user.id)
+    getGardenResponse(user.id, { includePrivate: true })
   ]);
 
   res.json({
@@ -1977,7 +1981,7 @@ app.post("/users/:userId/flowers", async (req, res) => {
         mood: req.body.mood,
         event: req.body.event,
         aiProcessingAllowed: Boolean(user.aiConsent?.aiProcessing),
-        classify: classifyEmotion
+        classify: emotionClassifier
       });
     } catch (error) {
       return res.status(error.status || 500).json({ error: error.message });
@@ -2922,13 +2926,16 @@ app.delete("/users/:id", async (req, res) => {
     }
   });
 
-loadMoodModel()
-  .then(() => {
-    console.log("Mood model loaded.");
-  })
-  .catch((err) => {
-    console.error("Failed to load mood model:", err);
-  });
+const isDirectRun = process.argv[1] && path.resolve(process.argv[1]) === __filename;
+if (isDirectRun) {
+  loadMoodModel()
+    .then(() => {
+      console.log("Mood model loaded.");
+    })
+    .catch((err) => {
+      console.error("Failed to load mood model:", err);
+    });
+}
   const clientDistPath = path.join(
     __dirname,
     "client",
@@ -2953,6 +2960,10 @@ loadMoodModel()
     );
   });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (isDirectRun) {
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+export { app };

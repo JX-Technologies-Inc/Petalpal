@@ -38,7 +38,7 @@ test("deduplicates labels and semantic clusters and returns at most two", () => 
   ]);
 });
 
-test("current coarse classifier labels are safely ignored until a 21-label provider exists", () => {
+test("legacy coarse classifier labels never enter the 21-label selector", () => {
   const selected = selectFlowerSecondaryEmotions({
     primaryGardenMood: "FIRE_BLOOM",
     candidates: ["happy", "calm", "stressed"]
