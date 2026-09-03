@@ -1,0 +1,83 @@
+{
+  "version": "hybrid-v3",
+  "counts": {
+    "train": 2000,
+    "dev": 400
+  },
+  "cardinalityCounts": {
+    "train": {
+      "1": 1300,
+      "2": 600,
+      "3+": 100
+    },
+    "dev": {
+      "1": 260,
+      "2": 120,
+      "3+": 20
+    }
+  },
+  "sourceCounts": {
+    "train": {
+      "EMPATHETIC_DIALOGUES": 352,
+      "GOEMOTIONS": 1648
+    },
+    "dev": {
+      "EMPATHETIC_DIALOGUES": 68,
+      "GOEMOTIONS": 332
+    }
+  },
+  "labelSupport": {
+    "train": {
+      "admiration": 156,
+      "amusement": 156,
+      "anger": 156,
+      "annoyance": 156,
+      "caring": 156,
+      "confusion": 156,
+      "curiosity": 156,
+      "disappointment": 156,
+      "disgust": 156,
+      "excitement": 156,
+      "fear": 156,
+      "gratitude": 156,
+      "joy": 156,
+      "love": 156,
+      "optimism": 156,
+      "remorse": 156,
+      "sadness": 156,
+      "surprise": 156
+    },
+    "dev": {
+      "admiration": 32,
+      "amusement": 32,
+      "anger": 31,
+      "annoyance": 31,
+      "caring": 31,
+      "confusion": 31,
+      "curiosity": 31,
+      "disappointment": 31,
+      "disgust": 31,
+      "excitement": 31,
+      "fear": 31,
+      "gratitude": 31,
+      "joy": 31,
+      "love": 31,
+      "optimism": 31,
+      "remorse": 31,
+      "sadness": 31,
+      "surprise": 31
+    }
+  },
+  "validation": {
+    "humanWrittenOnly": true,
+    "syntheticCount": 0,
+    "originalFlowerLabelsPreserved": true,
+    "existingSourceGroupOverlap": 0,
+    "trainDevSourceGroupOverlap": 0,
+    "exactNormalizedDuplicates": 0,
+    "nearDuplicateThreshold": 0.8,
+    "maxInternalSimilarity": 0.7570718033821872,
+    "maxSimilarityToExistingDatasets": 0.7880285090700968,
+    "frozenAccessed": false
+  }
+}

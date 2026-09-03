@@ -22,6 +22,10 @@ LABELS = [
     "remorse", "sadness", "surprise",
 ]
 FROZEN_MARKER = "petalpal-in-domain-v1"
+PRIMARY_GARDEN_MOODS = {
+    "SUNNY_BLOOM", "GENTLE_BLOOM", "QUIET_BLOOM", "FIRE_BLOOM",
+    "WONDER_BLOOM", "DRIFTING_BLOOM",
+}
 
 
 def guard_training_path(path: Path) -> Path:
@@ -48,10 +52,11 @@ def label_positions(model) -> list[int]:
 
 
 class PetalPalDataset(Dataset):
-    def __init__(self, path: Path, tokenizer, max_length: int = 128):
+    def __init__(self, path: Path, tokenizer, max_length: int = 128, condition_on_primary: bool = False):
         self.path = guard_training_path(path)
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.condition_on_primary = condition_on_primary
         self.rows = [json.loads(line) for line in self.path.open() if line.strip()]
         for row in self.rows:
             labels = row.get("modelLabels")
@@ -59,7 +64,9 @@ class PetalPalDataset(Dataset):
                 raise ValueError(f"Invalid journal in {self.path}: {row.get('id')}")
             if not isinstance(labels, list) or not set(labels) <= set(LABELS):
                 raise ValueError(f"Invalid labels in {self.path}: {row.get('id')}")
-            if not isinstance(row.get("preferNoSecondaryEmotion"), bool):
+            if condition_on_primary and row.get("primaryGardenMood") not in PRIMARY_GARDEN_MOODS:
+                raise ValueError(f"Invalid Primary Mood in {self.path}: {row.get('id')}")
+            if "preferNoSecondaryEmotion" in row and not isinstance(row["preferNoSecondaryEmotion"], bool):
                 raise ValueError(f"Invalid abstention target in {self.path}: {row.get('id')}")
 
     def __len__(self) -> int:
@@ -67,8 +74,10 @@ class PetalPalDataset(Dataset):
 
     def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
         row = self.rows[index]
+        text = (f"Primary mood: {row['primaryGardenMood']}. Journal: {row['journal']}"
+                if self.condition_on_primary else row["journal"])
         encoded = self.tokenizer(
-            row["journal"], padding="max_length", truncation=True,
+            text, padding="max_length", truncation=True,
             max_length=self.max_length, return_tensors="pt",
         )
         targets = torch.zeros(len(LABELS), dtype=torch.float32)
@@ -123,8 +132,8 @@ def train(args) -> dict:
     if model.config.num_labels != 28 or len(positions) != 21:
         raise ValueError("Expected a 28-output checkpoint with a 21-label PetalPal projection")
 
-    train_data = PetalPalDataset(args.train, tokenizer, args.max_length)
-    dev_data = PetalPalDataset(args.dev, tokenizer, args.max_length)
+    train_data = PetalPalDataset(args.train, tokenizer, args.max_length, args.condition_on_primary)
+    dev_data = PetalPalDataset(args.dev, tokenizer, args.max_length, args.condition_on_primary)
     generator = torch.Generator().manual_seed(args.seed)
     if args.smoke_test:
         train_data, dev_data = Subset(train_data, range(1)), Subset(dev_data, range(1))
@@ -185,6 +194,7 @@ def train(args) -> dict:
         "status": "SMOKE_TEST_PASSED" if args.smoke_test else "TRAINING_COMPLETE",
         "checkpoint": str(checkpoint), "bestCheckpoint": str(best_path),
         "labels": LABELS, "selectedLogitPositions": positions,
+        "conditionOnPrimary": args.condition_on_primary,
         "frozenEvaluationUsed": False, "frozenGuardPassed": True,
         "forwardBackwardPassed": True, "devEvaluationPassed": True,
         "bestDevMacroF1": best_macro_f1,
@@ -209,6 +219,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=2)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-length", type=int, default=128)
+    parser.add_argument("--condition-on-primary", action="store_true")
     parser.add_argument("--smoke-test", action="store_true")
     args = parser.parse_args()
     guard_training_path(args.train); guard_training_path(args.dev)

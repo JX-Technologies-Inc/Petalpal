@@ -1,0 +1,59 @@
+{
+  "version": "conditional-v1",
+  "counts": {
+    "train": 2000,
+    "dev": 400
+  },
+  "primaryMoodCounts": {
+    "train": {
+      "DRIFTING_BLOOM": 333,
+      "FIRE_BLOOM": 333,
+      "GENTLE_BLOOM": 334,
+      "QUIET_BLOOM": 333,
+      "SUNNY_BLOOM": 334,
+      "WONDER_BLOOM": 333
+    },
+    "dev": {
+      "DRIFTING_BLOOM": 66,
+      "FIRE_BLOOM": 67,
+      "GENTLE_BLOOM": 67,
+      "QUIET_BLOOM": 67,
+      "SUNNY_BLOOM": 67,
+      "WONDER_BLOOM": 66
+    }
+  },
+  "targetTypeCounts": {
+    "train": {
+      "multi-emotion": 702,
+      "primary-only": 1298
+    },
+    "dev": {
+      "multi-emotion": 138,
+      "primary-only": 262
+    }
+  },
+  "sourceCounts": {
+    "train": {
+      "ED": 305,
+      "GOEMOTIONS": 1695
+    },
+    "dev": {
+      "ED": 56,
+      "GOEMOTIONS": 344
+    }
+  },
+  "validation": {
+    "humanWrittenOnly": true,
+    "schemaValid": true,
+    "primaryDerivedFromOriginalLabel": true,
+    "primaryEmotionExcludedFromModelLabels": true,
+    "existingSourceGroupOverlap": 0,
+    "trainDevSourceGroupOverlap": 0,
+    "normalizedDuplicateOverlap": 0,
+    "nearDuplicateThreshold": 0.8,
+    "maxInternalSimilarity": 0.7485235511016095,
+    "maxSimilarityToExistingDatasets": 0.7937576233257612,
+    "frozenAccessed": false
+  },
+  "selectedSourceGroupDigest": "205e01a832e25524b8fa3ce9470c3e98121b3444d7b8f6680eb08d3da3d2bc72"
+}
