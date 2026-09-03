@@ -14,6 +14,7 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 - Transactional daily check-in/Journal/emotion/Flower creation with daily uniqueness.
 - Flower placement model and persistence.
 - Secret hygiene: local `.env` is ignored and removed from Git tracking.
+- Database credential rotation completed: Render uses the new Prisma Postgres connection string and old connection strings are revoked.
 - All eight canonical Primary Bloom inputs normalize and validate consistently; legacy mood compatibility is preserved.
 - Owner reads preserve Journal-linked Flower data; social garden reads use an explicit safe Flower allowlist.
 - Production Cloudflare secondary-emotion output uses the shared 21-label contract; legacy five-label output is limited to primary fallback routing.
@@ -31,7 +32,6 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 
 ## BLOCKED
 
-- Database credential rotation requires manual action at the database provider and Render.
 - Production use of Candidate C-Lite remains explicitly out of scope pending an integration decision.
 
 ## P0 Completion Estimate
@@ -54,7 +54,7 @@ Current phase: Month 1 — Backend/AI MVP, P0 closure
 
 - P0 status: 12 DONE, 14 PARTIAL, 2 NOT STARTED; no implementation blocker beyond the noted product/integration decisions.
 - NOT STARTED: pgvector extension migration; basic rate limiting.
-- Secret audit: `.env` is no longer tracked and remains local; the exposed `DATABASE_URL` must be rotated because it exists in Git history.
+- Secret audit closed: `.env` remains local/ignored, Render was redeployed with a new database credential, and old Prisma connection strings were revoked.
 - Canonical Bloom input mismatch resolved; 19 focused Daily Grow/Flower tests pass.
 - Private Journal/social Flower boundary resolved; 5 focused serializer/auth tests pass.
 - Production secondary-emotion taxonomy aligned; 28 focused routing/Worker/selector/Flower tests pass.
