@@ -9,6 +9,15 @@ function json(body, status = 200) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
 }
 
+function inferenceFailure(code, error) {
+  console.error({
+    event: "emotion_inference_failed",
+    code,
+    ...(error ? { errorName: error instanceof Error ? error.name : "UnknownError" } : {})
+  });
+  return json({ error: "Emotion inference failed", code }, 502);
+}
+
 function authorized(request, env) {
   const expected = env.RENDER_SHARED_SECRET;
   return Boolean(expected) && request.headers.get("Authorization") === `Bearer ${expected}`;
@@ -24,8 +33,9 @@ export default {
     const text = typeof body?.text === "string" ? body.text.trim() : "";
     if (!text || text.length > 2000) return json({ error: "Text must contain 1-2000 characters" }, 400);
 
+    let result;
     try {
-      const result = await env.AI.run(MODEL, {
+      result = await env.AI.run(MODEL, {
         messages: [
           {
             role: "system",
@@ -53,28 +63,36 @@ export default {
           }
         }
       });
-      const output = typeof result?.response === "string" ? JSON.parse(result.response) : result?.response;
-      if (
-        !output ||
-        !LEGACY_PRIMARY_MOODS.includes(output.label) ||
-        !Array.isArray(output.secondaryEmotions) ||
-        output.secondaryEmotions.length > 2 ||
-        output.secondaryEmotions.some((label) => !SECONDARY_EMOTION_LABELS.includes(label)) ||
-        !Number.isFinite(output.intensity) ||
-        !Number.isFinite(output.confidence)
-      ) {
-        return json({ error: "Model returned invalid structured output" }, 502);
-      }
-      return json({
-        label: output.label,
-        secondaryEmotions: [...new Set(output.secondaryEmotions)]
-          .slice(0, 2),
-        intensity: output.intensity,
-        confidence: output.confidence,
-        model: MODEL
-      });
-    } catch {
-      return json({ error: "Emotion inference failed" }, 502);
+    } catch (error) {
+      return inferenceFailure("AI_RUN_FAILED", error);
     }
+
+    let output;
+    try {
+      output = typeof result?.response === "string" ? JSON.parse(result.response) : result?.response;
+    } catch (error) {
+      return inferenceFailure("JSON_PARSE_FAILED", error);
+    }
+
+    if (
+      !output ||
+      !LEGACY_PRIMARY_MOODS.includes(output.label) ||
+      !Array.isArray(output.secondaryEmotions) ||
+      output.secondaryEmotions.length > 2 ||
+      output.secondaryEmotions.some((label) => !SECONDARY_EMOTION_LABELS.includes(label)) ||
+      !Number.isFinite(output.intensity) ||
+      !Number.isFinite(output.confidence)
+    ) {
+      return inferenceFailure("SCHEMA_VALIDATION_FAILED");
+    }
+
+    return json({
+      label: output.label,
+      secondaryEmotions: [...new Set(output.secondaryEmotions)]
+        .slice(0, 2),
+      intensity: output.intensity,
+      confidence: output.confidence,
+      model: MODEL
+    });
   }
 };

@@ -14,6 +14,12 @@ const privateFlower = {
   img: "/sunflower.png",
   left: 12,
   top: 34,
+  regionId: null,
+  slotId: null,
+  scale: 1,
+  rotation: 0,
+  layer: 0,
+  layoutVersion: 1,
   supportCount: 2,
   variant: "standard",
   rarity: "COMMON",
@@ -82,6 +88,12 @@ test("social garden response retains normal Flower display metadata", () => {
   assert.equal(flower.img, "/sunflower.png");
   assert.equal(flower.left, 12);
   assert.equal(flower.top, 34);
+  assert.equal(flower.regionId, null);
+  assert.equal(flower.slotId, null);
+  assert.equal(flower.scale, 1);
+  assert.equal(flower.rotation, 0);
+  assert.equal(flower.layer, 0);
+  assert.equal(flower.layoutVersion, 1);
   assert.equal(flower.colorAccent, "WARM_GOLD");
   assert.equal(flower.visualEffect, "SOFT_SPARKLE");
 });

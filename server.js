@@ -36,6 +36,12 @@ import {
   authenticateFirebaseIdentity,
   requireOwnUser
 } from "./lib/auth.js";
+import { rateLimiters } from "./lib/rate-limit.js";
+import {
+  endpointNotFound,
+  handleHttpError,
+  requireJsonObject
+} from "./lib/http-errors.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -44,6 +50,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
+const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rateLimiters();
+
+app.set("trust proxy", 1);
 let emotionClassifier = classifyEmotion;
 
 function isDailyGrowLimitEnabled() {
@@ -165,8 +174,10 @@ io.on("connection", (socket) => {
 
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "32kb" }));
+app.use(requireJsonObject);
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/auth", authRateLimit);
 
 app.use((req, res, next) => {
   const isPublicPage =
@@ -193,6 +204,7 @@ app.use((req, res, next) => {
 
   return authenticateRequest(req, res, next);
 });
+app.use(generalRateLimit);
 
 const activeVisitorsByGarden = {};
  
@@ -247,6 +259,17 @@ function normalizeTimezone(value) {
   try {
     new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format();
     return timezone;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeLocale(value) {
+  if (typeof value !== "string" || !value.trim() || value.trim().length > 35) {
+    return null;
+  }
+  try {
+    return new Intl.Locale(value.trim()).toString();
   } catch {
     return null;
   }
@@ -699,6 +722,12 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
         }
         const now = Date.now();
         const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
+        const preferredLocale = req.body?.preferredLocale === undefined
+          ? "en"
+          : normalizeLocale(req.body.preferredLocale);
+        if (!preferredLocale) {
+          return res.status(400).json({ error: "Invalid preferred locale" });
+        }
         user = await prisma.user.create({
           data: {
             id: `user_${now}`,
@@ -709,6 +738,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
             emailVerifiedAt: new Date(),
             avatar: req.body?.avatar || "🦋",
             timezone,
+            preferredLocale,
             garden: { create: { year: new Date().getFullYear() } },
             fairyState: { create: {} },
             aiConsent: {
@@ -732,6 +762,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
         email: user.email,
         avatar: user.avatar,
         timezone: user.timezone,
+        preferredLocale: user.preferredLocale,
         emailVerified: true
       },
       isNewUser
@@ -1087,6 +1118,31 @@ app.post("/legacy-register-disabled", async (req, res) => {
     }
   });
 
+app.put("/users/:userId/profile", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+
+  const preferredLocale = normalizeLocale(req.body?.preferredLocale);
+  if (!preferredLocale) {
+    return res.status(400).json({ error: "Invalid preferred locale" });
+  }
+
+  const user = await prisma.user.update({
+    where: { id: req.auth.userId },
+    data: { preferredLocale },
+    select: {
+      id: true,
+      accountId: true,
+      name: true,
+      email: true,
+      avatar: true,
+      timezone: true,
+      preferredLocale: true
+    }
+  });
+
+  res.json({ user });
+});
+
 app.post("/users", (_req, res) => {
   res.status(410).json({
     error: "This endpoint has been removed. Use /register instead."
@@ -1102,7 +1158,8 @@ app.get("/session", async (req, res) => {
       name: true,
       email: true,
       avatar: true,
-      timezone: true
+      timezone: true,
+      preferredLocale: true
     }
   });
 
@@ -1976,7 +2033,7 @@ app.post("/friends/remove", async (req, res) => {
   }
 });
 
-app.post("/users/:userId/flowers", async (req, res) => {
+app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
   try {
     if (!requireOwnUser(req, res, req.params.userId)) return;
 
@@ -2796,7 +2853,7 @@ app.post("/leave", async (req, res) => {
     }
   });
 
-app.post("/analyze-mood", async (req, res) => {
+app.post("/analyze-mood", aiRateLimit, async (req, res) => {
   try {
     const { text } = req.body;
 
@@ -2982,6 +3039,9 @@ if (isDirectRun) {
       )
     );
   });
+
+app.use(endpointNotFound);
+app.use(handleHttpError);
 
 if (isDirectRun) {
   server.listen(PORT, "0.0.0.0", () => {

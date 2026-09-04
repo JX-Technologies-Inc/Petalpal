@@ -1,0 +1,2 @@
+ALTER TABLE "User"
+ADD COLUMN "preferredLocale" VARCHAR(35) NOT NULL DEFAULT 'en';

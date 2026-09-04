@@ -1,0 +1,8 @@
+-- Reserve placement metadata without changing existing left/top behavior.
+ALTER TABLE "Flower"
+ADD COLUMN "regionId" VARCHAR(64),
+ADD COLUMN "slotId" VARCHAR(64),
+ADD COLUMN "scale" DOUBLE PRECISION NOT NULL DEFAULT 1,
+ADD COLUMN "rotation" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ADD COLUMN "layer" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN "layoutVersion" INTEGER NOT NULL DEFAULT 1;

@@ -62,11 +62,16 @@
 - Conditional-v1 human-written Train/Dev created at `conditional-v1/`: `2,000 / 400`, balanced across the six defensibly assignable Primary Moods. It contains `1,298 / 262` Primary-only examples and `702 / 138` multi-emotion examples; Primary labels are deterministically derived from ED/GoEmotions source labels and removed from `modelLabels`. Schema, source-group isolation, exact/normalized duplicates, and `<0.80` near-duplicate checks against existing Train/Dev/Test all pass; Frozen 100 was not accessed. See `conditional-v1/audit.json`.
 - Conditional V1 A/B completed on identical human-written `conditional-v1` data. Conditioned (`Primary Mood + Journal`) ran 5 epochs; best epoch `4`, Dev Macro-F1 `0.2904`, Micro-F1 `0.5704`. Journal-only control was manually stopped after epoch 3; best observed epoch `2`, Dev Macro-F1 `0.2875`, Micro-F1 `0.5703`. Primary Mood conditioning showed no meaningful improvement over the matched control; do not pursue Conditional V2/V3 using this approach. Hybrid V2 Clean remains the current best general classifier (held-out Human Test Macro-F1 `0.7319`).
 - Hybrid V3 used `65%` single-label / `30%` two-label / `5%` three-or-more-label data. Best Dev Macro-F1: `0.6197`. Human Test Macro P/R/F1: `0.6517 / 0.6361 / 0.6263`; Micro P/R/F1: `0.6326 / 0.6361 / 0.6343`. Versus Hybrid V2 Clean, Macro-F1 regressed `10.56pp` and Micro-F1 regressed `10.41pp`. The current multi-label mixture degrades held-out generalization; do not promote V3. Hybrid V2 Clean remains the current best.
+- Phase 1 conclusion: Hybrid V2 Clean Train/Dev is `100%` single-label and remains the strongest general-emotion baseline/backbone (held-out Human Test Macro-F1 `0.7319`), but its Frozen 100 Macro-F1 `0.2102` does not validate it for PetalPal-specific secondary-emotion production. Hybrid V3 added real multi-label supervision (`65% / 30% / 5%` for one/two/three-or-more labels), scoring Human Test Macro-F1 `0.6263` and Frozen Macro-F1 `0.2379`; its slight Frozen classification gain came with substantial generalization and product-metric regressions, so V3 is archived. Public ED/GoEmotions data is sufficient for a general baseline but not the PetalPal-specific task; do not continue V4/V5 on these public datasets. The next ML phase must wait for real or deliberately human-annotated PetalPal-style journals, then create new Train/Dev/untouched Test data for domain adaptation. Frozen 100 remains opened diagnostic data only and is prohibited from further tuning or model selection.
 - V2 Clean Frozen 100 product evaluation: Macro-F1 `0.2102`, Micro-F1 `0.2720`, acceptable precision `0.5116`, useful coverage `0.3226`, correct abstention `0.7742`, unwanted abstention `0.4516`, clearly-wrong emotion rate `0.0465`, exact match `0.37`, and acceptable match `0.51`. Frozen 100 is opened diagnostic data and must not be used for further tuning or model selection.
 
 ## Current Work
 
-- Candidate C-Lite fine-tuning and Frozen 100 final evaluation are complete; no further model-selection work is active.
+- Synthetic V1 is an archived biased baseline; do not use it for further tuning or model selection.
+- PetalPal-domain V1 is an archived failed experiment; do not promote it.
+- Conditional V1 and its matched control are archived; Primary Mood conditioning showed no meaningful gain.
+- Hybrid V2 Clean is the current best general baseline/candidate backbone, not a production-validated PetalPal secondary-emotion model.
+- Hybrid V3 is archived.
 
 ## Next Steps
 

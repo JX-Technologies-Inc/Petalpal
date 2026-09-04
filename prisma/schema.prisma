@@ -19,6 +19,7 @@ model User {
   emailVerifiedAt DateTime?
   avatar          String    @default("🦋")
   timezone        String    @default("UTC") @db.VarChar(64)
+  preferredLocale String    @default("en") @db.VarChar(35)
   createdAt       DateTime  @default(now())
 
   garden       Garden?
@@ -67,6 +68,12 @@ model Flower {
   img            String
   left           Float
   top            Float
+  regionId       String?  @db.VarChar(64)
+  slotId         String?  @db.VarChar(64)
+  scale          Float    @default(1)
+  rotation       Float    @default(0)
+  layer          Int      @default(0)
+  layoutVersion  Int      @default(1)
   supportCount   Int      @default(0)
   variant        String   @default("standard") @db.VarChar(32)
   rarity         String   @default("COMMON") @db.VarChar(16)
