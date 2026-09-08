@@ -8,3 +8,4 @@ Only confirmed deferred work is listed here.
 - **Multi-instance rate limiting:** Replace the in-process rate-limit store with a shared store when Render runs multiple instances or limits must survive restarts.
 - **Daily Grow Fast LLM fallback:** Remove the default low-confidence Fast LLM emotion fallback; the classifier should abstain when secondary-emotion confidence is insufficient.
 - **Month 2 pgvector/RAG:** Implement embeddings, pgvector-backed retrieval, and RAG only as part of the Month 2 memory work.
+- **RBAC:** Defer until the first admin-only moderation/report review endpoint exists. Then add a trusted `USER`/`ADMIN` role, expose it as `req.auth.role`, enforce it with `requireAdmin` middleware, and test ordinary-user `403`, admin success, and that clients cannot alter their own role.

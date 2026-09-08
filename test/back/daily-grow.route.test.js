@@ -20,7 +20,7 @@ let state;
 let transactionCalls;
 
 function resetState() {
-  state = { checkIn: null, journal: null, emotion: null, flower: null, ai: null };
+  state = { checkIn: null, journal: null, emotion: null, flower: null, ai: null, fairyState: null };
   transactionCalls = 0;
 }
 
@@ -30,6 +30,7 @@ const owner = {
   avatar: "flower.png",
   timezone: "UTC",
   aiConsent: { aiProcessing: true },
+  fairyState: { onboardingStep: "MOOD_SELECTION", onboardingCompleted: false },
   garden: { id: "garden-1" }
 };
 
@@ -65,7 +66,12 @@ const transaction = {
   aiInteractionMetadata: {
     create: async ({ data }) => { state.ai = data; return data; }
   },
-  fairyState: { upsert: async () => ({}) }
+  fairyState: {
+    upsert: async ({ update }) => {
+      state.fairyState = update;
+      return update;
+    }
+  }
 };
 
 function installPrismaStub() {
@@ -160,6 +166,12 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.ok(["SUNFLOWER", "TULIP"].includes(result.body.flower.species));
     assert.equal(state.journal, null);
     assert.equal(state.emotion.inferencePath, "NO_AI");
+    assert.deepEqual(result.body.fairyEvent, {
+      code: "FIRST_FLOWER",
+      dialogueKey: "fairy.first_flower",
+      actionKey: "CELEBRATE_FLOWER"
+    });
+    assert.equal(state.fairyState.lastEvent, "FIRST_FLOWER");
   });
 
   await t.test("persists valid AI analysis and keeps private data owner-only", async () => {

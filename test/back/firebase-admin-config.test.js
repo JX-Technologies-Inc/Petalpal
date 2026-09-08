@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFirebaseAdminConfig } from "../../lib/firebase-admin.js";
+import { deleteFirebaseUser, readFirebaseAdminConfig } from "../../lib/firebase-admin.js";
 
 test("reads a Firebase service account JSON for Render", () => {
   const config = readFirebaseAdminConfig({
@@ -30,5 +30,19 @@ test("rejects partial Firebase Admin credentials", () => {
   assert.throws(
     () => readFirebaseAdminConfig({ FIREBASE_CLIENT_EMAIL: "firebase-admin@example.com" }),
     /must be configured together/
+  );
+});
+
+test("Firebase user deletion treats user-not-found as idempotent success", async () => {
+  await assert.doesNotReject(deleteFirebaseUser("missing", {
+    deleteUser: async () => {
+      throw Object.assign(new Error("missing"), { code: "auth/user-not-found" });
+    }
+  }));
+  await assert.rejects(
+    deleteFirebaseUser("failed", {
+      deleteUser: async () => { throw new Error("Firebase unavailable"); }
+    }),
+    /Firebase unavailable/
   );
 });

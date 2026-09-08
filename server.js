@@ -27,7 +27,12 @@ import {
 } from "./lib/fairy-config.js";
 import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
 import { resolveDailyFlowerEmotion } from "./lib/daily-flower-input.js";
-import { serializeGardenResponse } from "./lib/garden-response.js";
+import { resolveFairyEvent } from "./lib/fairy-events.js";
+import {
+  serializeGardenResponse,
+  toSocialFlower,
+  toSocialMessage
+} from "./lib/garden-response.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -37,6 +42,7 @@ import {
   requireOwnUser
 } from "./lib/auth.js";
 import { rateLimiters } from "./lib/rate-limit.js";
+import { deleteFirebaseUser } from "./lib/firebase-admin.js";
 import {
   endpointNotFound,
   handleHttpError,
@@ -54,6 +60,7 @@ const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rate
 
 app.set("trust proxy", 1);
 let emotionClassifier = classifyEmotion;
+let firebaseUserDeleter = deleteFirebaseUser;
 
 function isDailyGrowLimitEnabled() {
   return process.env.DAILY_GROW_LIMIT_ENABLED !== "false";
@@ -61,6 +68,10 @@ function isDailyGrowLimitEnabled() {
 
 export function setEmotionClassifierForTests(classifier) {
   emotionClassifier = classifier || classifyEmotion;
+}
+
+export function setFirebaseUserDeleterForTests(deleter) {
+  firebaseUserDeleter = deleter || deleteFirebaseUser;
 }
 
 const io = new Server(server, {
@@ -241,15 +252,6 @@ const FAIRY_STEP_ORDER = [
   "FLOWER_BLOOM",
   "GARDEN_UNLOCKED"
 ];
-const FAIRY_ONBOARDING_EVENTS = {
-  EMPTY_GARDEN: "FIRST_LOGIN",
-  FAIRY_APPEARS: "FAIRY_APPEARS",
-  MOOD_SELECTION: "FIRST_MOOD_SELECTION",
-  PLANT_FIRST_FLOWER: "FIRST_FLOWER",
-  FLOWER_BLOOM: "FIRST_FLOWER_BLOOM",
-  GARDEN_UNLOCKED: "ONBOARDING_COMPLETE"
-};
-
 function normalizeTimezone(value) {
   const timezone =
     typeof value === "string" && value.trim()
@@ -693,6 +695,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
       where: { firebaseUid: identity.uid }
     });
     let isNewUser = false;
+    let fairyEvent = null;
 
     if (!user) {
       const legacyUser = await prisma.user.findUnique({
@@ -728,6 +731,11 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
         if (!preferredLocale) {
           return res.status(400).json({ error: "Invalid preferred locale" });
         }
+        fairyEvent = resolveFairyEvent({
+          onboardingStep: "EMPTY_GARDEN",
+          onboardingCompleted: false,
+          distinctCheckInCount: 0
+        });
         user = await prisma.user.create({
           data: {
             id: `user_${now}`,
@@ -740,7 +748,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
             timezone,
             preferredLocale,
             garden: { create: { year: new Date().getFullYear() } },
-            fairyState: { create: {} },
+            fairyState: { create: { lastEvent: fairyEvent.code } },
             aiConsent: {
               create: {
                 termsVersion: AI_TERMS_VERSION,
@@ -765,7 +773,8 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
         preferredLocale: user.preferredLocale,
         emailVerified: true
       },
-      isNewUser
+      isNewUser,
+      fairyEvent
     });
   } catch (error) {
     console.error("POST /auth/session error:", error);
@@ -1368,7 +1377,7 @@ app.get("/api/fairy/runtime", async (req, res) => {
 app.put("/users/:userId/fairy-state", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 
-  const { onboardingStep, lastEvent, unlockedFeatures } = req.body;
+  const { onboardingStep, unlockedFeatures } = req.body;
 
   if (onboardingStep && !FAIRY_STEPS.has(onboardingStep)) {
     return res.status(400).json({ error: "Invalid onboarding step" });
@@ -1399,11 +1408,6 @@ app.put("/users/:userId/fairy-state", async (req, res) => {
 
   const data = {
     ...(onboardingStep ? { onboardingStep } : {}),
-    ...(onboardingStep
-      ? { lastEvent: FAIRY_ONBOARDING_EVENTS[onboardingStep] }
-      : typeof lastEvent === "string"
-        ? { lastEvent: lastEvent.slice(0, 64) }
-        : {}),
     ...(Array.isArray(unlockedFeatures)
       ? { unlockedFeatures: unlockedFeatures.slice(0, 50) }
       : {})
@@ -2046,6 +2050,12 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
         timezone: true,
         aiConsent: {
           select: { aiProcessing: true }
+        },
+        fairyState: {
+          select: {
+            onboardingStep: true,
+            onboardingCompleted: true
+          }
         }
       }
     });
@@ -2131,6 +2141,16 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
       select: { name: true }
     });
 
+    const priorCheckIns = await prisma.dailyCheckIn.findMany({
+      where: { userId: user.id },
+      distinct: ["localDate"],
+      select: { localDate: true }
+    });
+    const distinctCheckInCount = new Set([
+      ...priorCheckIns.map((checkIn) => checkIn.localDate),
+      localDate
+    ]).size;
+
     const { pool: options, source: speciesPoolSource } = speciesPoolForPrimary(mood, flowerDB);
 
 if (!Array.isArray(options) || options.length === 0) {
@@ -2147,6 +2167,13 @@ const chosen = generateFlowerMetadata({
   localDate,
   userId: user.id,
   recentFlowers
+});
+
+const fairyEvent = resolveFairyEvent({
+  onboardingStep: user.fairyState?.onboardingStep,
+  onboardingCompleted: user.fairyState?.onboardingCompleted,
+  distinctCheckInCount,
+  newFlowerRarity: chosen.rarity
 });
 
 const position =
@@ -2225,13 +2252,13 @@ const createdFlower = await prisma.$transaction(async (tx) => {
     update: {
       onboardingStep: "GARDEN_UNLOCKED",
       onboardingCompleted: true,
-      lastEvent: "ONBOARDING_COMPLETE"
+      ...(fairyEvent ? { lastEvent: fairyEvent.code } : {})
     },
     create: {
       userId: user.id,
       onboardingStep: "GARDEN_UNLOCKED",
       onboardingCompleted: true,
-      lastEvent: "ONBOARDING_COMPLETE"
+      lastEvent: fairyEvent?.code || null
     }
   });
 
@@ -2269,6 +2296,7 @@ const createdFlower = await prisma.$transaction(async (tx) => {
         },
         speciesPoolSource
       },
+      fairyEvent,
       fairyProgress
     });
   } catch (err) {
@@ -2339,10 +2367,11 @@ app.post(
             : Promise.resolve(null)
         ]);
   
+        const socialFlower = toSocialFlower(updatedFlower);
         const supportPayload = {
           gardenOwnerId: userId,
           flowerId: updatedFlower.id,
-          flower: updatedFlower
+          flower: socialFlower
         };
   
       
@@ -2381,7 +2410,7 @@ app.post(
           `support completed in ${Date.now() - startTime}ms`
         );
   
-        res.json(updatedFlower);
+        res.json(socialFlower);
       } catch (err) {
         console.error(
           "POST /users/:userId/flowers/:flowerId/support error:",
@@ -2470,11 +2499,12 @@ app.post(
             }
           });
   
+        const socialFlower = toSocialFlower(updatedFlower);
         const messagePayload = {
           gardenOwnerId: userId,
           flowerId: updatedFlower.id,
-          message: newMessage,
-          flower: updatedFlower
+          message: toSocialMessage(newMessage),
+          flower: socialFlower
         };
   
         io
@@ -2511,7 +2541,7 @@ app.post(
           `message completed in ${Date.now() - startTime}ms`
         );
   
-        res.json(updatedFlower);
+        res.json(socialFlower);
   
       } catch (err) {
         console.error(
@@ -2900,100 +2930,44 @@ app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
 
       if (!requireOwnUser(req, res, id)) return;
-  
-      const user = await prisma.user.findUnique({
-        where: { id }
-      });
-  
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-  
-      await prisma.friendship.deleteMany({
-        where: {
-          OR: [
-            { userId: id },
-            { friendId: id }
-          ]
+
+      const deleted = await prisma.$transaction(async (tx) => {
+        const user = await tx.user.findUnique({ where: { id } });
+        if (!user) return false;
+
+        await tx.friendship.deleteMany({
+          where: { OR: [{ userId: id }, { friendId: id }] }
+        });
+        await tx.friendRequest.deleteMany({
+          where: { OR: [{ senderId: id }, { receiverId: id }] }
+        });
+
+        const garden = await tx.garden.findUnique({ where: { ownerId: id } });
+        if (garden) {
+          const flowers = await tx.flower.findMany({
+            where: { gardenId: garden.id },
+            select: { id: true }
+          });
+          const flowerIds = flowers.map((flower) => flower.id);
+          if (flowerIds.length > 0) {
+            await tx.message.deleteMany({ where: { flowerId: { in: flowerIds } } });
+            await tx.flower.deleteMany({ where: { id: { in: flowerIds } } });
+          }
+          await tx.visitRecord.deleteMany({ where: { gardenId: garden.id } });
+          await tx.garden.delete({ where: { id: garden.id } });
         }
+
+        await tx.visitRecord.deleteMany({ where: { visitorId: id } });
+        await tx.message.deleteMany({ where: { userId: id } });
+        await tx.user.delete({ where: { id } });
+        if (user.firebaseUid) await firebaseUserDeleter(user.firebaseUid);
+        return true;
       });
 
-      await prisma.friendRequest.deleteMany({
-        where: {
-          OR: [
-            { senderId: id },
-            { receiverId: id }
-          ]
-        }
-      });
-  
-      const garden = await prisma.garden.findUnique({
-        where: {
-          ownerId: id
-        }
-      });
-  
-      if (garden) {
-        const flowers = await prisma.flower.findMany({
-          where: {
-            gardenId: garden.id
-          },
-          select: {
-            id: true
-          }
-        });
-  
-        const flowerIds = flowers.map((flower) => flower.id);
-  
-        if (flowerIds.length > 0) {
-          await prisma.message.deleteMany({
-            where: {
-              flowerId: {
-                in: flowerIds
-              }
-            }
-          });
-  
-          await prisma.flower.deleteMany({
-            where: {
-              id: {
-                in: flowerIds
-              }
-            }
-          });
-        }
-  
-        await prisma.visitRecord.deleteMany({
-          where: {
-            gardenId: garden.id
-          }
-        });
-  
-        await prisma.garden.delete({
-          where: {
-            id: garden.id
-          }
-        });
+      if (!deleted) {
+        return res.status(404).json({ error: "User not found" });
       }
-  
-      await prisma.visitRecord.deleteMany({
-        where: {
-          visitorId: id
-        }
-      });
-  
-      await prisma.message.deleteMany({
-        where: {
-          userId: id
-        }
-      });
-  
-      await prisma.user.delete({
-        where: {
-          id
-        }
-      });
-  
+
       res.json({
         success: true,
         message: "User deleted successfully"
@@ -3049,4 +3023,4 @@ if (isDirectRun) {
   });
 }
 
-export { app };
+export { app, server };
