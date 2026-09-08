@@ -1,0 +1,26 @@
+{
+  "status": "COHORT_LOCKED_BEFORE_ANNOTATION_AND_CANDIDATE_INFERENCE",
+  "referenceNameRequired": "human-written, Gemini-annotated / Gemini-adjudicated evaluation",
+  "selection": {
+    "source": "CoSoWELL v1 yesterday narratives already acquired and provenance-audited",
+    "candidatePartition": "candidate-train only; excludes all 320 pilot-selected authors",
+    "rule": "first 300 by SHA256(petalpal-gemini-eval-v1-20260908:id)",
+    "emotionBlind": true,
+    "candidatePredictionBlind": true,
+    "selected": 300,
+    "reservedForDevelopmentNotEvaluation": 149
+  },
+  "isolation": {
+    "oneNarrativePerAuthor": true,
+    "sourceGroupUniqueWithinEvaluation": true,
+    "disjointFromPilotSelection": true,
+    "limitations": "Same CoSoWELL source/domain as prior pilot and historical 367, but entirely new authors and texts. Older North-American/pandemic-era cohort; not population representative."
+  },
+  "hashes": {
+    "protocolSha256": "47a3173a7193e537ad7c1fad2a21a45adf386fa83d1fa6b661358f0ec1e3f7ea",
+    "blindCohortSha256": "ccb7bb53c74327aba6299a13c47acd105992f0c01181b75be995ca99874b27d9",
+    "candidateTrainInputSha256": "2dbf073775941f965a68b8cd34f88ee43b4836b287c6777d63c1e3e62f43030d",
+    "pilotBlindInputSha256": "f46871e0967b92cb6d034822fabf5a4848db1c8e4cc2b4f7ee88189438c5738f"
+  },
+  "candidateInferencePerformed": false
+}

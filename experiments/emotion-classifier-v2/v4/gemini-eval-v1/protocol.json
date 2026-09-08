@@ -1,0 +1,68 @@
+{
+  "protocolId": "petalpal-gemini-blind-v1-20260908",
+  "status": "LOCKED_BEFORE_COHORT_SELECTION_AND_CANDIDATE_INFERENCE",
+  "lockedAt": "2026-09-08T00:00:00-07:00",
+  "referenceNameRequired": "human-written, Gemini-annotated / Gemini-adjudicated evaluation",
+  "task": "Select the best zero, one, or two useful secondary emotions expressed by the raw human-written text.",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "outputSemantics": {
+    "minimumLabels": 0,
+    "maximumLabels": 2,
+    "preferOneWhenSufficient": true,
+    "zero": "Use no label when the text is neutral, purely factual, too ambiguous, or has no sufficiently evidenced taxonomy emotion.",
+    "secondary": "A label must add a distinct, useful emotional characterization. Do not output synonyms or two labels for the same affective signal.",
+    "speakerRule": "Label the writer's own emotion, not merely an emotion attributed to another person.",
+    "evidenceRule": "Implicit emotion is allowed only when strongly supported by the event and wording; do not invent unstated feelings."
+  },
+  "definitions": {
+    "admiration": "respectful approval or being impressed by someone or something",
+    "amusement": "finding something funny, playful, or entertaining",
+    "anger": "strong displeasure, hostility, or rage",
+    "annoyance": "milder irritation, frustration, or being bothered",
+    "caring": "concern for, nurturing of, or desire to support another",
+    "confusion": "uncertainty about understanding, interpretation, or what to do",
+    "curiosity": "interest or desire to know, learn, or investigate",
+    "disappointment": "sadness or dissatisfaction because hopes or expectations were unmet",
+    "disgust": "revulsion, strong aversion, or moral/physical repugnance",
+    "excitement": "high-energy positive anticipation or enthusiasm",
+    "fear": "anxiety, worry, threat, dread, or feeling unsafe",
+    "gratitude": "thankfulness or appreciation for a benefit or kindness received",
+    "joy": "happiness, delight, contentment, or positive pleasure",
+    "love": "deep affection, attachment, or warmth toward someone",
+    "optimism": "hopeful expectation or confidence about a favorable future",
+    "remorse": "guilt, regret, or sorrow over one's own action or failure",
+    "sadness": "sorrow, grief, loneliness, or unhappiness",
+    "surprise": "being startled or encountering something notably unexpected"
+  },
+  "blindness": {
+    "allowedInputs": ["immutable row id", "raw human-written text", "fixed taxonomy", "fixed definitions", "fixed 0-2 semantics"],
+    "forbiddenInputs": [
+      "candidate or model predictions", "probabilities", "current model errors",
+      "Macro-F1 or Micro-F1", "thresholds or cutoffs", "training results",
+      "Codex/Astra suggested labels", "source emotion labels", "information designed to improve candidate scores"
+    ]
+  },
+  "passes": {
+    "A": {"model": "gemini-3.6-flash", "temperature": 0, "independentContext": true, "labelOrder": "canonical"},
+    "B": {"model": "gemini-3.5-flash", "temperature": 0, "independentContext": true, "labelOrder": "reverse"}
+  },
+  "agreement": "Exact set equality after validating allowed labels, uniqueness, and cardinality 0-2.",
+  "adjudication": {
+    "trigger": "Pass A and Pass B label sets are not exactly equal, or either pass is invalid after one format-only retry.",
+    "model": "gemini-3.6-flash",
+    "temperature": 0,
+    "newIndependentRequest": true,
+    "inputs": ["raw text", "fixed taxonomy/definitions/semantics", "Pass A labels and rationale", "Pass B labels and rationale"],
+    "rule": "Choose the best final 0-2 set from the text. The final set need not equal either pass, but may not use information outside allowed inputs.",
+    "invalidAfterRetry": "Exclude row for annotation failure before any candidate inference; never infer a reference label locally."
+  },
+  "locking": {
+    "candidateInferenceGate": "No candidate may read the evaluation texts until cohort manifest, pass outputs, adjudications, final labels, exclusions, hashes, and leakage audit are complete and marked LOCKED.",
+    "postInferenceRelabeling": "Forbidden. Prediction errors can never trigger Gemini re-annotation or label changes.",
+    "metric": "Macro-F1 over all 18 labels with zero_division=0; Micro-F1 may be supplementary only."
+  }
+}
