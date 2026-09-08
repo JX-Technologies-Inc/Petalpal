@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import hashlib
 import random
 from pathlib import Path
 
@@ -21,18 +22,11 @@ LABELS = [
     "excitement", "fear", "gratitude", "joy", "love", "neutral", "optimism",
     "remorse", "sadness", "surprise",
 ]
-FROZEN_MARKER = "petalpal-in-domain-v1"
+from data_safety import guard_training_path, assert_disjoint, accumulation_weight
 PRIMARY_GARDEN_MOODS = {
     "SUNNY_BLOOM", "GENTLE_BLOOM", "QUIET_BLOOM", "FIRE_BLOOM",
-    "WONDER_BLOOM", "DRIFTING_BLOOM",
+    "WONDER_BLOOM", "DRIFTING_BLOOM", "HEALING_BLOOM", "PEACEFUL_BLOOM",
 }
-
-
-def guard_training_path(path: Path) -> Path:
-    resolved = path.expanduser().resolve()
-    if FROZEN_MARKER in resolved.name.lower() or "evaluation" in {part.lower() for part in resolved.parts}:
-        raise ValueError(f"Frozen evaluation data is forbidden in training: {resolved}")
-    return resolved
 
 
 def set_seed(seed: int) -> None:
@@ -58,7 +52,11 @@ class PetalPalDataset(Dataset):
         self.max_length = max_length
         self.condition_on_primary = condition_on_primary
         self.rows = [json.loads(line) for line in self.path.open() if line.strip()]
+        if not self.rows:
+            raise ValueError("Empty dataset")
         for row in self.rows:
+            if row.get("frozenStatus") or row.get("split", "").lower() in {"test", "frozen"}:
+                raise ValueError("Held-out row is forbidden in development")
             labels = row.get("modelLabels")
             if not isinstance(row.get("journal"), str) or not row["journal"].strip():
                 raise ValueError(f"Invalid journal in {self.path}: {row.get('id')}")
@@ -112,18 +110,24 @@ def metrics(targets: torch.Tensor, probabilities: torch.Tensor) -> dict:
 def evaluate(model, loader, positions, loss_fn, device, max_batches=None) -> dict:
     model.eval()
     losses, targets, probabilities = [], [], []
+    example_count = 0
     for batch_index, batch in enumerate(loader):
         labels = batch.pop("labels").to(device)
         logits = model(**{key: value.to(device) for key, value in batch.items()}).logits[:, positions]
-        losses.append(loss_fn(logits, labels).item())
+        losses.append(loss_fn(logits, labels).item() * len(labels))
+        example_count += len(labels)
         targets.append(labels.cpu())
         probabilities.append(torch.sigmoid(logits).cpu())
         if max_batches and batch_index + 1 >= max_batches:
             break
-    return {"loss": sum(losses) / len(losses), **metrics(torch.cat(targets), torch.cat(probabilities))}
+    return {"loss": sum(losses) / example_count, **metrics(torch.cat(targets), torch.cat(probabilities))}
 
 
 def train(args) -> dict:
+    if min(args.batch_size, args.gradient_accumulation, args.epochs, args.patience, args.max_length) < 1:
+        raise ValueError("Batch, accumulation, epochs, patience, and max length must be positive")
+    if args.learning_rate <= 0 or not 0 <= args.warmup_ratio <= 1:
+        raise ValueError("Invalid learning rate or warmup ratio")
     set_seed(args.seed)
     checkpoint = args.checkpoint.resolve()
     tokenizer = AutoTokenizer.from_pretrained(checkpoint, local_files_only=True)
@@ -134,6 +138,7 @@ def train(args) -> dict:
 
     train_data = PetalPalDataset(args.train, tokenizer, args.max_length, args.condition_on_primary)
     dev_data = PetalPalDataset(args.dev, tokenizer, args.max_length, args.condition_on_primary)
+    assert_disjoint(train_data.rows, dev_data.rows)
     generator = torch.Generator().manual_seed(args.seed)
     if args.smoke_test:
         train_data, dev_data = Subset(train_data, range(1)), Subset(dev_data, range(1))
@@ -157,6 +162,8 @@ def train(args) -> dict:
     loss_fn = torch.nn.BCEWithLogitsLoss()
     output = args.output.resolve()
     best_path = output / "best-checkpoint"
+    if output.exists() and any(output.iterdir()):
+        raise ValueError(f"Refusing to overwrite experiment: {output}")
     output.mkdir(parents=True, exist_ok=True)
     best_macro_f1, stale, history = -1.0, 0, []
 
@@ -169,15 +176,17 @@ def train(args) -> dict:
             selected = logits[:, positions]
             if selected.shape[-1] != len(LABELS):
                 raise AssertionError(f"Expected 21 selected logits, got {selected.shape}")
-            loss = loss_fn(selected, labels) / args.gradient_accumulation
-            loss.backward(); running_loss += loss.item() * args.gradient_accumulation
+            raw_loss = loss_fn(selected, labels)
+            weight = accumulation_weight(batch_index, len(train_data), train_loader.batch_size, args.gradient_accumulation)
+            loss = raw_loss * weight
+            loss.backward(); running_loss += raw_loss.item() * len(labels)
             if (batch_index + 1) % args.gradient_accumulation == 0 or batch_index + 1 == len(train_loader):
                 optimizer.step(); scheduler.step(); optimizer.zero_grad()
             if args.smoke_test:
                 break
 
         dev = evaluate(model, dev_loader, positions, loss_fn, device, max_batches=1 if args.smoke_test else None)
-        record = {"epoch": epoch + 1, "train_loss": running_loss, "dev": dev}
+        record = {"epoch": epoch + 1, "train_loss": running_loss / len(train_data), "dev": dev}
         history.append(record)
         with (output / "training-metrics.jsonl").open("a") as handle:
             handle.write(json.dumps(record) + "\n")
@@ -191,6 +200,10 @@ def train(args) -> dict:
                 break
 
     summary = {
+        "trainRows": len(train_data), "devRows": len(dev_data),
+        "trainSha256": hashlib.sha256(args.train.read_bytes()).hexdigest(),
+        "devSha256": hashlib.sha256(args.dev.read_bytes()).hexdigest(),
+        "hyperparameters": {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         "status": "SMOKE_TEST_PASSED" if args.smoke_test else "TRAINING_COMPLETE",
         "checkpoint": str(checkpoint), "bestCheckpoint": str(best_path),
         "labels": LABELS, "selectedLogitPositions": positions,

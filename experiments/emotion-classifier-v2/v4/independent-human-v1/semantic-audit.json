@@ -1,0 +1,25 @@
+{
+  "threshold": 0.85,
+  "counts": {
+    "train": 769,
+    "dev": 368
+  },
+  "excluded": [
+    {
+      "id": "COSO-1debaf7cb0795e01359c6f9b7b9a598f_yesterday_cov_2",
+      "similarity": 0.851241946220398,
+      "referenceType": "candidate",
+      "candidateMatch": "COSO-3cd95515c03123954a2def51550d44ed_yesterday_cov_2"
+    },
+    {
+      "id": "COSO-3cd95515c03123954a2def51550d44ed_yesterday_cov_2",
+      "similarity": 0.851241946220398,
+      "referenceType": "candidate",
+      "candidateMatch": "COSO-1debaf7cb0795e01359c6f9b7b9a598f_yesterday_cov_2"
+    }
+  ],
+  "model": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/minilm/artifacts/all-MiniLM-L6-v2",
+  "maxTokens": 512,
+  "limitations": "Embedding truncation can miss late-document similarities; original full texts and lexical audit retained. Pretrained GoEmotions exact-only firewall; not proof of foundation pretraining isolation.",
+  "studentInferencePerformed": false
+}

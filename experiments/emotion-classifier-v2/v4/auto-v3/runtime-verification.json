@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "examples": 125,
+  "maxAbsoluteProbabilityDifference": 4.172325134277344e-07,
+  "selectorOutputsIdentical": true,
+  "emptyJournalAbstains": true,
+  "suppliedPrimaryPreservedAndRedundancyFiltered": true,
+  "maxTwoOutputs": true,
+  "inference": "CPU; load original and adapted checkpoints sequentially, mean probabilities, actual existing JS selector"
+}

@@ -1,0 +1,56 @@
+{
+  "status": "CANDIDATE_NOT_VALIDATED_NOT_LABELED",
+  "selectionSeed": "petalpal-author-split-v1",
+  "source": "https://osf.io/x4s28/",
+  "originalDocuments": 7975,
+  "yesterdayDocuments": 1994,
+  "eligibleDocuments": 1930,
+  "eligibleAuthors": 1147,
+  "candidateCounts": {
+    "dev": 370,
+    "train": 769
+  },
+  "exclusionCounts": {
+    "outside_20_400_words_full_text_only": 53,
+    "no_first_person_reference": 11,
+    "lexical_near_duplicate_ge_0.8": 8
+  },
+  "historicalReferenceFiles": [
+    {
+      "path": "tuning-data-v1/train-human-augmented-v3.jsonl",
+      "sha256": "3b6229c04d29509ada750b1b87f0121aedf745a4b8d874a0ee0ff8718e0f6d1f"
+    },
+    {
+      "path": "v4/auto-v4/train.jsonl",
+      "sha256": "8e613f86bcc9b24056def6ebab3f27d1b0a636e438d9423e406412d23e366508"
+    },
+    {
+      "path": "v4/auto-v3/dev.jsonl",
+      "sha256": "0748d222ccc41e007db1f4ae221ec8e8099f49cbd5204d3778bf523145002f0b"
+    },
+    {
+      "path": "frozen-2/frozen-2.jsonl",
+      "sha256": "6565a51da3203929eb64f65f213ac3d0b31be5e2016126b152f73c3019f021fe"
+    },
+    {
+      "path": "evaluation/petalpal-in-domain-v1.jsonl",
+      "sha256": "8f1972de9265176947608ee1f86f83e80673dadd196713644c1dcc3ce7a33e84"
+    },
+    {
+      "path": "hybrid-test-v2/test.jsonl",
+      "sha256": "6781f7666fe72853ac282f5290eccdc7810927171f76352af313f2b98676ab63"
+    }
+  ],
+  "oldDevRetiredFromSelection": true,
+  "benchmarkLabelsAccessed": false,
+  "frozen3Created": false,
+  "remainingGates": [
+    "semantic overlap audit",
+    "automated text-only emotion adjudication before student inference",
+    "license.txt absent in published v1 listing: resolve terms",
+    "natural language quality review",
+    "report actual label support without emotion-targeted sampling"
+  ],
+  "selectionUsesEmotionLabels": false,
+  "selectionUsesStudentScores": false
+}

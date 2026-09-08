@@ -1,0 +1,92 @@
+{
+  "status": "LOCKED_AI_REFERENCE_NOT_HUMAN_GOLD",
+  "rows": 367,
+  "authors": 367,
+  "sha256": "952394ce159c40c585ac70c65a2cff8374ddb4b6abd3a7eaa0158584c80a8f8b",
+  "labelSupport": {
+    "admiration": 8,
+    "amusement": 10,
+    "anger": 13,
+    "annoyance": 36,
+    "caring": 29,
+    "confusion": 3,
+    "curiosity": 2,
+    "disappointment": 17,
+    "disgust": 0,
+    "excitement": 9,
+    "fear": 33,
+    "gratitude": 16,
+    "joy": 107,
+    "love": 11,
+    "optimism": 15,
+    "remorse": 3,
+    "sadness": 40,
+    "surprise": 13
+  },
+  "abstentionRows": 108,
+  "qualityExclusions": [
+    {
+      "id": "COSO-b37ae75aa7b60c7b775acd5aca914624_yesterday_cov_1",
+      "sourceGroupId": "cosowell-author:b37ae75aa7b60c7b775acd5aca914624",
+      "reason": "QUALITY EXCLUSION: switches into copied English usage instruction, not coherent original journal."
+    }
+  ],
+  "secondPassChanges": [
+    {
+      "id": "COSO-f7fa93d0f426064901e96bea79fc9350_yesterday_cov_2",
+      "before": [
+        "confusion"
+      ],
+      "after": [],
+      "reason": "A curious diagnostic anomaly is not sufficient evidence of author confusion."
+    },
+    {
+      "id": "COSO-6f78c4953060aa9d9932bc594d37d66a_yesterday_cov_2",
+      "before": [
+        "joy"
+      ],
+      "after": [],
+      "reason": "Permission to continue mission is a favorable event but author emotion is unstated."
+    }
+  ],
+  "macroLabels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "zeroSupportLabels": [
+    "disgust"
+  ],
+  "fewPositiveLabels": [
+    "confusion",
+    "curiosity",
+    "disgust",
+    "remorse"
+  ],
+  "zeroDivision": 0,
+  "sourceDisjointFromCandidateTrain": true,
+  "studentPredictionsSeen": false,
+  "selectionPolicy": "New dev is a source-specific validation cohort; never choose or relabel based on old125. Establish fixed previous model baseline first. Training/calibration uses new Train with author-disjoint internal calibration; do not tune directly on this cohort. Not Frozen-3.",
+  "limitations": [
+    "AI same-assistant reference, no independent gold agreement",
+    "single older-adult mostly pandemic source with self-report authenticity limits",
+    "rare/absent labels must stay in macro18; no emotion-quota resampling",
+    "no observed Primary",
+    "reference top2 salient labels, distinct co-occurring labels retained even if selector clusters conflict"
+  ]
+}

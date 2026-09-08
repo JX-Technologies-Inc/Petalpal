@@ -1,0 +1,676 @@
+{
+  "experiment": "v4f-fixed-blend",
+  "threshold": 0.35,
+  "buckets": {
+    "custom_only": {
+      "rows": 14,
+      "exact": 9,
+      "falsePositiveLabels": 6,
+      "falseNegativeLabels": 0,
+      "emptyPredictions": 9,
+      "exactRate": 0.6428571428571429
+    },
+    "explicit_or_inferred_fixed": {
+      "rows": 66,
+      "exact": 34,
+      "falsePositiveLabels": 15,
+      "falseNegativeLabels": 28,
+      "emptyPredictions": 9,
+      "exactRate": 0.5151515151515151
+    },
+    "ambiguous_context": {
+      "rows": 45,
+      "exact": 32,
+      "falsePositiveLabels": 13,
+      "falseNegativeLabels": 1,
+      "emptyPredictions": 32,
+      "exactRate": 0.7111111111111111
+    }
+  },
+  "perLabelWithTrainSupport": {
+    "admiration": {
+      "trainSupport": 12,
+      "precision": 0.14285714285714285,
+      "recall": 1.0,
+      "f1": 0.25,
+      "support": 2
+    },
+    "amusement": {
+      "trainSupport": 22,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "f1": 0.5,
+      "support": 2
+    },
+    "anger": {
+      "trainSupport": 8,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4,
+      "support": 4
+    },
+    "annoyance": {
+      "trainSupport": 28,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 3
+    },
+    "caring": {
+      "trainSupport": 7,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 2
+    },
+    "confusion": {
+      "trainSupport": 18,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "support": 2
+    },
+    "curiosity": {
+      "trainSupport": 5,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "disappointment": {
+      "trainSupport": 22,
+      "precision": 0.5,
+      "recall": 0.6,
+      "f1": 0.5454545454545454,
+      "support": 5
+    },
+    "disgust": {
+      "trainSupport": 19,
+      "precision": 0.5,
+      "recall": 0.3333333333333333,
+      "f1": 0.4,
+      "support": 3
+    },
+    "excitement": {
+      "trainSupport": 13,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "support": 2
+    },
+    "fear": {
+      "trainSupport": 15,
+      "precision": 0.6666666666666666,
+      "recall": 1.0,
+      "f1": 0.8,
+      "support": 2
+    },
+    "gratitude": {
+      "trainSupport": 42,
+      "precision": 1.0,
+      "recall": 0.6470588235294118,
+      "f1": 0.7857142857142857,
+      "support": 17
+    },
+    "joy": {
+      "trainSupport": 90,
+      "precision": 0.6363636363636364,
+      "recall": 0.7368421052631579,
+      "f1": 0.6829268292682927,
+      "support": 19
+    },
+    "love": {
+      "trainSupport": 31,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273,
+      "support": 7
+    },
+    "optimism": {
+      "trainSupport": 24,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "support": 2
+    },
+    "remorse": {
+      "trainSupport": 7,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+    },
+    "sadness": {
+      "trainSupport": 21,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 2
+    },
+    "surprise": {
+      "trainSupport": 21,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 1
+    }
+  },
+  "errors": [
+    {
+      "id": "PHQ-019",
+      "sourceGroupId": "reddit:1530bwz",
+      "expected": [
+        "gratitude",
+        "joy"
+      ],
+      "predicted": [
+        "sadness"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-020",
+      "sourceGroupId": "reddit:1fm43gl",
+      "expected": [
+        "surprise"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-022",
+      "sourceGroupId": "reddit:1kffgxd",
+      "expected": [
+        "anger",
+        "annoyance"
+      ],
+      "predicted": [
+        "annoyance"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-031",
+      "sourceGroupId": "reddit:hp2bcb",
+      "expected": [
+        "joy"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-041",
+      "sourceGroupId": "reddit:1mwu5do",
+      "expected": [
+        "amusement"
+      ],
+      "predicted": [
+        "amusement",
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-054",
+      "sourceGroupId": "reddit:1np38d6",
+      "expected": [
+        "love"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-055",
+      "sourceGroupId": "reddit:1np38d6",
+      "expected": [
+        "gratitude",
+        "love"
+      ],
+      "predicted": [
+        "love"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-069",
+      "sourceGroupId": "reddit:13fy247",
+      "expected": [
+        "confusion",
+        "disappointment"
+      ],
+      "predicted": [
+        "disappointment"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-076",
+      "sourceGroupId": "reddit:1sp44im",
+      "expected": [
+        "gratitude"
+      ],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-085",
+      "sourceGroupId": "reddit:hdfm6x",
+      "expected": [
+        "sadness"
+      ],
+      "predicted": [
+        "amusement"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-092",
+      "sourceGroupId": "reddit:1fyjhro",
+      "expected": [
+        "curiosity",
+        "joy"
+      ],
+      "predicted": [
+        "curiosity"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-095",
+      "sourceGroupId": "reddit:1fyjhro",
+      "expected": [
+        "excitement",
+        "love"
+      ],
+      "predicted": [
+        "love"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-097",
+      "sourceGroupId": "reddit:1k65y57",
+      "expected": [
+        "joy"
+      ],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-098",
+      "sourceGroupId": "reddit:1k65y57",
+      "expected": [
+        "gratitude",
+        "joy"
+      ],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-099",
+      "sourceGroupId": "reddit:1k65y57",
+      "expected": [
+        "joy"
+      ],
+      "predicted": [
+        "admiration",
+        "joy"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-109",
+      "sourceGroupId": "reddit:gw5a82",
+      "expected": [],
+      "predicted": [
+        "amusement"
+      ],
+      "annotationAmbiguity": "negated laughter"
+    },
+    {
+      "id": "PHQ-116",
+      "sourceGroupId": "reddit:1qtdf3q",
+      "expected": [],
+      "predicted": [
+        "joy",
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-117",
+      "sourceGroupId": "reddit:1qtdf3q",
+      "expected": [
+        "joy"
+      ],
+      "predicted": [
+        "admiration",
+        "joy"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-123",
+      "sourceGroupId": "reddit:1vsa8rt",
+      "expected": [
+        "gratitude",
+        "joy"
+      ],
+      "predicted": [
+        "joy",
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-151",
+      "sourceGroupId": "reddit:oghxaw",
+      "expected": [],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": "quoted other-person compliment"
+    },
+    {
+      "id": "PHQ-152",
+      "sourceGroupId": "reddit:oghxaw",
+      "expected": [],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": "quoted other-person compliment"
+    },
+    {
+      "id": "PHQ-153",
+      "sourceGroupId": "reddit:1dn7ts0",
+      "expected": [
+        "disappointment"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-154",
+      "sourceGroupId": "reddit:1dn7ts0",
+      "expected": [],
+      "predicted": [
+        "amusement"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-155",
+      "sourceGroupId": "reddit:1dn7ts0",
+      "expected": [
+        "disappointment"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-156",
+      "sourceGroupId": "reddit:1dn7ts0",
+      "expected": [
+        "disappointment",
+        "sadness"
+      ],
+      "predicted": [
+        "disappointment"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-252",
+      "sourceGroupId": "reddit:1gio77i",
+      "expected": [
+        "gratitude"
+      ],
+      "predicted": [
+        "gratitude",
+        "joy"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-253",
+      "sourceGroupId": "reddit:1gio77i",
+      "expected": [
+        "joy"
+      ],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-286",
+      "sourceGroupId": "reddit:vcfhvs",
+      "expected": [
+        "caring"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-308",
+      "sourceGroupId": "reddit:h87985",
+      "expected": [],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": "context missing"
+    },
+    {
+      "id": "PHQ-312",
+      "sourceGroupId": "reddit:h87985",
+      "expected": [
+        "joy",
+        "love"
+      ],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-355",
+      "sourceGroupId": "reddit:16b34e1",
+      "expected": [
+        "admiration"
+      ],
+      "predicted": [
+        "amusement",
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-360",
+      "sourceGroupId": "reddit:g0yqzf",
+      "expected": [
+        "caring"
+      ],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-365",
+      "sourceGroupId": "reddit:1lrfdiv",
+      "expected": [],
+      "predicted": [
+        "disappointment"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-366",
+      "sourceGroupId": "reddit:1lrfdiv",
+      "expected": [],
+      "predicted": [
+        "disappointment"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-423",
+      "sourceGroupId": "reddit:g0yqzf",
+      "expected": [
+        "optimism"
+      ],
+      "predicted": [
+        "disappointment"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-443",
+      "sourceGroupId": "reddit:1kffgxd",
+      "expected": [
+        "anger"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-445",
+      "sourceGroupId": "reddit:1kffgxd",
+      "expected": [
+        "anger"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-446",
+      "sourceGroupId": "reddit:1kffgxd",
+      "expected": [
+        "disgust"
+      ],
+      "predicted": [
+        "sadness"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-472",
+      "sourceGroupId": "reddit:1qxj7rn",
+      "expected": [],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": "other person's emotion"
+    },
+    {
+      "id": "PHQ-477",
+      "sourceGroupId": "reddit:kw1gk0",
+      "expected": [],
+      "predicted": [
+        "sadness"
+      ],
+      "annotationAmbiguity": "emotion not explicit"
+    },
+    {
+      "id": "PHQ-478",
+      "sourceGroupId": "reddit:kw1gk0",
+      "expected": [
+        "disgust"
+      ],
+      "predicted": [
+        "sadness"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-479",
+      "sourceGroupId": "reddit:kw1gk0",
+      "expected": [],
+      "predicted": [
+        "disgust"
+      ],
+      "annotationAmbiguity": "context missing"
+    },
+    {
+      "id": "PHQ-512",
+      "sourceGroupId": "reddit:1qxj7rn",
+      "expected": [],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": "description not emotion"
+    },
+    {
+      "id": "PHQ-534",
+      "sourceGroupId": "reddit:1l0xv0y",
+      "expected": [],
+      "predicted": [
+        "fear"
+      ],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-562",
+      "sourceGroupId": "reddit:1w7uu71",
+      "expected": [
+        "love"
+      ],
+      "predicted": [],
+      "annotationAmbiguity": null
+    },
+    {
+      "id": "PHQ-572",
+      "sourceGroupId": "reddit:13rcg8l",
+      "expected": [],
+      "predicted": [
+        "admiration"
+      ],
+      "annotationAmbiguity": "other person's compliment"
+    },
+    {
+      "id": "PHQ-606",
+      "sourceGroupId": "reddit:1iqhes4",
+      "expected": [],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": "implicit feeling"
+    },
+    {
+      "id": "PHQ-612",
+      "sourceGroupId": "reddit:1w7uu71",
+      "expected": [
+        "gratitude"
+      ],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": "implicit appreciation"
+    },
+    {
+      "id": "PHQ-614",
+      "sourceGroupId": "reddit:jshfze",
+      "expected": [],
+      "predicted": [
+        "sadness"
+      ],
+      "annotationAmbiguity": "other person's emotion"
+    },
+    {
+      "id": "PHQ-621",
+      "sourceGroupId": "reddit:1nicmz5",
+      "expected": [],
+      "predicted": [
+        "joy"
+      ],
+      "annotationAmbiguity": "weather report"
+    }
+  ],
+  "prohibition": "These are errors relative to locked automated annotations, not human-adjudicated product errors. Do not alter Dev labels based on them."
+}

@@ -1,0 +1,24 @@
+{
+  "devSha256": "952394ce159c40c585ac70c65a2cff8374ddb4b6abd3a7eaa0158584c80a8f8b",
+  "spec": {
+    "type": "equal_probability_average",
+    "weights": [
+      0.5,
+      0.5
+    ],
+    "checkpoints": [
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/auto-v4/experiments/v4d-extra-human/best-checkpoint"
+    ],
+    "devSha256": "0748d222ccc41e007db1f4ae221ec8e8099f49cbd5204d3778bf523145002f0b",
+    "note": "Fixed alpha, no labelwise mixing. Requires two model inferences; not deployed or latency validated.",
+    "maxLengths": [
+      128,
+      384
+    ],
+    "threshold": 0.35,
+    "selector": "existing production cluster policy",
+    "status": "EXPERIMENTAL_AI_ANNOTATED_HUMAN_DEV_ONLY"
+  },
+  "selection": "prespecified previous candidate, no new tuning"
+}
