@@ -1,0 +1,15 @@
+{
+  "checkpoints": [
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-experiment/best-checkpoint"
+  ],
+  "weights": [
+    0.5,
+    0.5
+  ],
+  "maxLengths": [
+    128,
+    512
+  ],
+  "threshold": 0.35
+}

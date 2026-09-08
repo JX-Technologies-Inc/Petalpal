@@ -1,0 +1,29 @@
+{
+  "epochs": 2,
+  "lr": 5e-06,
+  "maxLength": 512,
+  "batchSize": 2,
+  "accumulation": 8,
+  "seed": 42,
+  "selection": "minimum internal calibration mean BCE21, including epoch0",
+  "hashes": {
+    "train": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "calibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7"
+  },
+  "lengthAudit": {
+    "train": {
+      "max": 447,
+      "over512": 0,
+      "over128": 155,
+      "count": 777
+    },
+    "calibration": {
+      "max": 496,
+      "over512": 0,
+      "over128": 38,
+      "count": 64
+    }
+  },
+  "lengthPolicy": "512-token model capacity to preserve new full journals; longer examples truncated; no Dev lengths inspected",
+  "device": "cpu"
+}

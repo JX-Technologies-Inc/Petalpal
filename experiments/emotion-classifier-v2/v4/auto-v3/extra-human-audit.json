@@ -1,0 +1,47 @@
+{
+  "inputHumanConsented": 54,
+  "retained": 54,
+  "excludedSourceGroups": 0,
+  "prefixRepairs": [
+    {
+      "id": "HUM-A3-01",
+      "removedPrefixCharacters": 293,
+      "rawSha256": "dabfedf57f273487a31b5db7a581db74255f5a264724c05156c28c73834d380c"
+    },
+    {
+      "id": "HUM-A3-02",
+      "removedPrefixCharacters": 74,
+      "rawSha256": "1912ef5af015d24c65916529b061efb7354dd5408f5495da56209102262f6b31"
+    },
+    {
+      "id": "HUM-A3-04",
+      "removedPrefixCharacters": 74,
+      "rawSha256": "dd8af709ed96bde8f870a12c5a78116375d378e411203d7415b1506a736691bc"
+    },
+    {
+      "id": "HUM-A3-05",
+      "removedPrefixCharacters": 74,
+      "rawSha256": "83851b507401565da0c855d19b0be4685e23a422396a947e2db8cd65a5db8931"
+    },
+    {
+      "id": "HUM-A3-06",
+      "removedPrefixCharacters": 74,
+      "rawSha256": "5cabad07501e17ffb591c9ba1e163b98fed4785daef33b42d66b13c9afa0e13c"
+    }
+  ],
+  "sourceTypesNotRebranded": {
+    "ADAPTED_SYNTHETIC": 111,
+    "HUMAN_CONSENTED": 54,
+    "PUBLIC_HUMAN": 32
+  },
+  "lexicalMax": 0.32470847931478874,
+  "semanticMax": 0.6366898417472839,
+  "tokenLengths": {
+    "max": 352,
+    "over128": 2,
+    "over512": 0
+  },
+  "devChanged": false,
+  "sourceAndNormalizedFirewallAgainstOpenedBenchmarks": true,
+  "benchmarkLabelsUsed": false
+}

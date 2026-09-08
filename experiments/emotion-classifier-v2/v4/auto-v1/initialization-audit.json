@@ -1,0 +1,16 @@
+{
+  "scope": "Original GoEmotions train TSV normalized text only; no label usage",
+  "path": "/Users/xingranma/google-research/goemotions/data/train.tsv",
+  "sha256": "1c254a142be5c00e80d819b9ae1bbd36d94b2eeb8f4b1271846508d57e57d9c5",
+  "overlaps": {
+    "train": [
+      "PHQ-204",
+      "PHQ-408",
+      "PHQ-458"
+    ],
+    "dev": [
+      "PHQ-430"
+    ]
+  },
+  "threadIsolation": "GoEmotions TSV has comment IDs, not thread metadata; pretrained corpus thread-level exclusion not proven."
+}

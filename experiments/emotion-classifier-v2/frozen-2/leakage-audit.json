@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "frozenStatus": "FROZEN_2_LOCKED",
+  "frozenCount": 100,
+  "trainFile": "tuning-data-v1/train-human-augmented-v3.jsonl",
+  "devFile": "tuning-data-v1/dev.jsonl",
+  "exactOverlapCount": 0,
+  "normalizedOverlapCount": 0,
+  "sourceGroupOrThreadOverlapCount": 0,
+  "nearDuplicateThreshold": 0.8,
+  "nearDuplicateVsTrainDevCount": 0,
+  "internalDuplicateCount": 0,
+  "internalNearDuplicateCount": 0,
+  "modelPredictionsRead": false,
+  "evaluationRun": false
+}

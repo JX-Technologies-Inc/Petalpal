@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "check": "Saved head restored into base model; one internal example full-model inference agrees with cached-feature predictions",
+  "maxAbsoluteDifference": 1.1920928955078125e-07,
+  "tolerance": 1e-05,
+  "externalRowsRead": 0
+}

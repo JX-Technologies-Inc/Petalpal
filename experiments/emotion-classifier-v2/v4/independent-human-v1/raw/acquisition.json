@@ -1,0 +1,50 @@
+[
+  {
+    "file": "happydb-original.csv",
+    "url": "https://raw.githubusercontent.com/megagonlabs/HappyDB/master/happydb/data/original_hm.csv",
+    "sha256": "d2bf9b04838191bceeb2112e89ba5b65d9a587fc59d13e8d28944424d925730d",
+    "bytes": 10805949,
+    "retrieved": "2026-09-07",
+    "transport": "curl HTTPS certificate verification enabled"
+  },
+  {
+    "file": "dreaddit.zip",
+    "url": "https://www.cs.columbia.edu/~eturcan/data/dreaddit.zip",
+    "sha256": "6c7d8859764231cca47410d6995d8941ac45b08a446a561923fd73b34f3f61cb",
+    "bytes": 1348791,
+    "retrieved": "2026-09-07",
+    "transport": "curl HTTPS certificate verification enabled"
+  },
+  {
+    "file": "cosowell_corpus_v1.txt.gz",
+    "url": "https://osf.io/download/6feq7/",
+    "sha256": "8cba6b0c2a5f83facfa6ed36f64cebd136e958ab8189ed93c0cfb80364a5cbe8",
+    "bytes": 36284332,
+    "retrieved": "2026-09-07",
+    "transport": "curl HTTPS certificate verification enabled"
+  },
+  {
+    "file": "cosowell-node.json",
+    "url": "https://api.osf.io/v2/nodes/x4s28/",
+    "sha256": "06fa11ceda35241f58812527919d572d85672d1173dae48242cc20bbdf38424e",
+    "bytes": 4948,
+    "retrieved": "2026-09-07",
+    "transport": "curl HTTPS certificate verification enabled"
+  },
+  {
+    "file": "cosowell-license.json",
+    "url": "https://api.osf.io/v2/licenses/563c1cf88c5e4a3877f9e96e/",
+    "sha256": "da0a1badc22f4953181c2df202bd2df8baffa818c608f1f22c30f9441156c9b7",
+    "bytes": 304,
+    "retrieved": "2026-09-07",
+    "transport": "curl HTTPS certificate verification enabled"
+  },
+  {
+    "file": "cosowell-README.txt",
+    "url": "https://osf.io/download/8az6r/",
+    "sha256": "9fd911d8393ca9c381a73e4a81251625955d3f09ccb5c8ae2dbde6878ef2bfc6",
+    "bytes": 568,
+    "retrieved": "2026-09-07",
+    "transport": "curl HTTPS certificate verification enabled"
+  }
+]

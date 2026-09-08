@@ -1,0 +1,17 @@
+{
+  "grid": [
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5
+  ],
+  "precisionFloor": 0.5,
+  "selection": "median of five thresholds, each selected on other four author folds by macro18 F1; ties higher threshold; fallback .35",
+  "foldSalt": "cosowell-calibration-threshold-v1:",
+  "checkpointSelection": "already selected by calibration BCE; cross-fitting only threshold, not unbiased full-pipeline validation",
+  "externalDevSeen": false
+}

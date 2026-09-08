@@ -1,0 +1,15 @@
+{
+  "status": "NOT_PROMOTED",
+  "reason": "Internal threshold-only OOF Macro-F1 and Micro-P below incumbent; human-labeled external acceptance cohort unavailable",
+  "candidateOOF": {
+    "macroF1": 0.34333364529442956,
+    "microPrecision": 0.5555555555555556
+  },
+  "incumbentOOF": {
+    "macroF1": 0.34908409491742826,
+    "microPrecision": 0.6785714285714286
+  },
+  "externalEvaluationRun": false,
+  "nextPriority": "Independent human multilabel validation reference; keep current incumbent",
+  "caveat": "Both OOF estimates share checkpoint-selection calibration and are not independent full-pipeline estimates; no significance claim"
+}

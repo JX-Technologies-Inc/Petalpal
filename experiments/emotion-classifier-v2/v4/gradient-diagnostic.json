@@ -1,0 +1,27 @@
+{
+  "optimizerUpdates": 0,
+  "diagnostics": [
+    {
+      "rowIndex": 0,
+      "id": "c-0001",
+      "sourceType": "AI_SYNTHETIC",
+      "loss": 0.024332648143172264,
+      "selectedHeadGradientNorm": 0.29739731550216675
+    },
+    {
+      "rowIndex": 2000,
+      "id": "PHQ-001",
+      "sourceType": "PUBLIC_HUMAN",
+      "loss": 0.008916482329368591,
+      "selectedHeadGradientNorm": 0.10384718328714371
+    },
+    {
+      "rowIndex": 2002,
+      "id": "PHQ-003",
+      "sourceType": "PUBLIC_HUMAN",
+      "loss": 0.0965777114033699,
+      "selectedHeadGradientNorm": 0.8307080268859863
+    }
+  ],
+  "interpretation": "Nonzero gradients verify inclusion only; they do not establish annotation correctness or helpful updates."
+}

@@ -1,0 +1,25 @@
+{
+  "status": "COMPLETE",
+  "bestEpoch": 2,
+  "bestCalibrationLoss": 0.10238249530084431,
+  "epochs": [
+    {
+      "epoch": 0,
+      "calibrationLoss": 0.14623190741986036
+    },
+    {
+      "epoch": 1,
+      "trainLoss": 0.11659192607919068,
+      "calibrationLoss": 0.1069460294675082,
+      "elapsed": 259.9031128883362
+    },
+    {
+      "epoch": 2,
+      "trainLoss": 0.09457909307673938,
+      "calibrationLoss": 0.10238249530084431,
+      "elapsed": 1373.1384801864624
+    }
+  ],
+  "selection": "calibration BCE only; external Dev never loaded",
+  "elapsedSeconds": 1374.3151919841766
+}

@@ -1,0 +1,25 @@
+{
+  "status": "RUNNING",
+  "baseCheckpoint": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-experiment/best-checkpoint",
+  "maxLength": 512,
+  "seed": 42,
+  "epochs": 20,
+  "checkpoints": [
+    0,
+    5,
+    10,
+    20
+  ],
+  "lr": 0.0001,
+  "weightDecay": 0.1,
+  "batchSize": 32,
+  "loss": "BCE21; pos_weight=sqrt(negative/positive), clipped[1,4], Train only",
+  "selection": "internal macro18 at fixed .25 with microPrecision>=.5; tie lower unweighted BCE then earlier epoch; fallback epoch0",
+  "thresholdFollowup": "same prespecified global grid and author-hash cross-fitting as pilot; conditional on checkpoint selection, not independent validation",
+  "externalAccess": false,
+  "dataHashes": {
+    "train": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "calibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7"
+  },
+  "limitations": "64 AI-labeled calibration authors; four product labels absent; selected metrics optimistic; no human-gold target claim"
+}

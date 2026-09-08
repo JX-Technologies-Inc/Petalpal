@@ -1,0 +1,131 @@
+{
+  "support": {
+    "train": {
+      "admiration": 12,
+      "amusement": 29,
+      "anger": 20,
+      "annoyance": 50,
+      "approval": 3,
+      "caring": 33,
+      "confusion": 23,
+      "curiosity": 6,
+      "disappointment": 36,
+      "disapproval": 3,
+      "disgust": 20,
+      "excitement": 22,
+      "fear": 25,
+      "gratitude": 53,
+      "joy": 180,
+      "love": 38,
+      "neutral": 0,
+      "optimism": 34,
+      "remorse": 9,
+      "sadness": 39,
+      "surprise": 39
+    },
+    "calibration": {
+      "admiration": 2,
+      "amusement": 3,
+      "anger": 1,
+      "annoyance": 7,
+      "approval": 0,
+      "caring": 4,
+      "confusion": 1,
+      "curiosity": 0,
+      "disappointment": 1,
+      "disapproval": 0,
+      "disgust": 0,
+      "excitement": 0,
+      "fear": 7,
+      "gratitude": 6,
+      "joy": 23,
+      "love": 4,
+      "neutral": 0,
+      "optimism": 3,
+      "remorse": 0,
+      "sadness": 7,
+      "surprise": 1
+    }
+  },
+  "existingPilotGrid": [
+    {
+      "threshold": 0.15,
+      "macroF1": 0.3421702220444359,
+      "micro": {
+        "precision": 0.56,
+        "recall": 0.6,
+        "f1": 0.5793103448275863
+      }
+    },
+    {
+      "threshold": 0.2,
+      "macroF1": 0.33578478529458927,
+      "micro": {
+        "precision": 0.5797101449275363,
+        "recall": 0.5714285714285714,
+        "f1": 0.5755395683453237
+      }
+    },
+    {
+      "threshold": 0.25,
+      "macroF1": 0.36500435190911384,
+      "micro": {
+        "precision": 0.6666666666666666,
+        "recall": 0.5714285714285714,
+        "f1": 0.6153846153846154
+      }
+    },
+    {
+      "threshold": 0.3,
+      "macroF1": 0.35294681021631374,
+      "micro": {
+        "precision": 0.6981132075471698,
+        "recall": 0.5285714285714286,
+        "f1": 0.6016260162601627
+      }
+    },
+    {
+      "threshold": 0.35,
+      "macroF1": 0.33282334231946636,
+      "micro": {
+        "precision": 0.7272727272727273,
+        "recall": 0.45714285714285713,
+        "f1": 0.5614035087719298
+      }
+    },
+    {
+      "threshold": 0.4,
+      "macroF1": 0.3255892255892256,
+      "micro": {
+        "precision": 0.8055555555555556,
+        "recall": 0.4142857142857143,
+        "f1": 0.5471698113207547
+      }
+    },
+    {
+      "threshold": 0.45,
+      "macroF1": 0.3258537758537759,
+      "micro": {
+        "precision": 0.8387096774193549,
+        "recall": 0.37142857142857144,
+        "f1": 0.5148514851485149
+      }
+    },
+    {
+      "threshold": 0.5,
+      "macroF1": 0.32076719576719576,
+      "micro": {
+        "precision": 0.8620689655172413,
+        "recall": 0.35714285714285715,
+        "f1": 0.5050505050505051
+      }
+    }
+  ],
+  "absentCalibrationProductLabels": [
+    "curiosity",
+    "disgust",
+    "excitement",
+    "remorse"
+  ],
+  "hypothesis": "Frozen representations may support better minority recall with train-derived capped positive class weights. No external errors used."
+}

@@ -1,0 +1,4 @@
+{
+  "status": "INTERRUPTED_INTERNAL_DUPLICATE_AUDIT",
+  "reason": "Within-split normalized duplicates must not inflate evaluation count; preserve this exploratory run, restart unique-text protocol"
+}

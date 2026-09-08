@@ -1,0 +1,834 @@
+{
+  "scope": "Development inputs only; no Frozen contents accessed",
+  "original": {
+    "rows": 2000,
+    "labels": {
+      "neutral": 439,
+      "disapproval": 98,
+      "admiration": 117,
+      "curiosity": 143,
+      "confusion": 104,
+      "amusement": 92,
+      "disappointment": 96,
+      "annoyance": 145,
+      "excitement": 91,
+      "caring": 93,
+      "gratitude": 89,
+      "anger": 70,
+      "remorse": 115,
+      "love": 72,
+      "optimism": 62,
+      "surprise": 68,
+      "disgust": 62,
+      "joy": 63,
+      "fear": 65,
+      "sadness": 64,
+      "approval": 67
+    },
+    "labelCardinality": {
+      "1": 1786,
+      "2": 213,
+      "3": 1
+    },
+    "cooccurrence": {
+      "curiosity|neutral": 58,
+      "annoyance|disapproval": 23,
+      "curiosity|surprise": 7,
+      "disappointment|neutral": 7,
+      "confusion|remorse": 2,
+      "excitement|optimism": 3,
+      "admiration|approval": 16,
+      "caring|gratitude": 2,
+      "admiration|caring": 2,
+      "curiosity|excitement": 3,
+      "amusement|optimism": 2,
+      "gratitude|optimism": 1,
+      "disappointment|remorse": 1,
+      "admiration|curiosity": 1,
+      "approval|curiosity": 1,
+      "admiration|confusion": 8,
+      "fear|love": 8,
+      "anger|annoyance": 6,
+      "gratitude|joy": 3,
+      "anger|curiosity": 4,
+      "disappointment|sadness": 8,
+      "disgust|remorse": 7,
+      "amusement|joy": 3,
+      "amusement|caring": 5,
+      "anger|sadness": 2,
+      "caring|optimism": 3,
+      "disgust|joy": 5,
+      "anger|joy": 4,
+      "confusion|sadness": 2,
+      "curiosity|optimism": 3,
+      "confusion|optimism": 1,
+      "caring|disgust": 2,
+      "anger|optimism": 3,
+      "curiosity|love": 2,
+      "anger|caring": 2,
+      "anger|excitement": 2,
+      "joy|optimism": 2,
+      "anger|confusion": 1,
+      "confusion|joy": 1
+    },
+    "canonicalSources": 855,
+    "topSources": [
+      [
+        "gen-a-short-train",
+        420
+      ],
+      [
+        "gen-a-emoji_heavy-train",
+        205
+      ],
+      [
+        "gen-b-negation-train-000",
+        10
+      ],
+      [
+        "gen-b-negation-train-001",
+        10
+      ],
+      [
+        "gen-b-negation-train-002",
+        10
+      ],
+      [
+        "gen-b-negation-train-003",
+        10
+      ],
+      [
+        "gen-b-negation-train-004",
+        10
+      ],
+      [
+        "gen-b-negation-train-005",
+        10
+      ],
+      [
+        "gen-b-negation-train-006",
+        10
+      ],
+      [
+        "gen-b-negation-train-007",
+        10
+      ],
+      [
+        "gen-b-negation-train-008",
+        10
+      ],
+      [
+        "gen-b-negation-train-009",
+        10
+      ],
+      [
+        "gen-b-negation-train-010",
+        10
+      ],
+      [
+        "gen-b-negation-train-011",
+        10
+      ],
+      [
+        "gen-b-negation-train-012",
+        10
+      ]
+    ],
+    "exactDuplicateExcess": 0,
+    "normalizedDuplicateExcess": 0,
+    "customRows": 0,
+    "customOnlyRows": 0,
+    "nullPrimary": 0
+  },
+  "human625": {
+    "rows": 625,
+    "labels": {
+      "neutral": 45,
+      "joy": 206,
+      "gratitude": 119,
+      "love": 59,
+      "sadness": 41,
+      "optimism": 32,
+      "caring": 39,
+      "remorse": 13,
+      "disappointment": 40,
+      "annoyance": 60,
+      "confusion": 16,
+      "surprise": 51,
+      "excitement": 17,
+      "anger": 13,
+      "amusement": 59,
+      "fear": 17,
+      "disgust": 41,
+      "curiosity": 4,
+      "admiration": 6,
+      "approval": 9
+    },
+    "labelCardinality": {
+      "1": 351,
+      "2": 247,
+      "3": 14,
+      "0": 13
+    },
+    "cooccurrence": {
+      "gratitude|love": 19,
+      "optimism|sadness": 2,
+      "caring|gratitude": 15,
+      "disappointment|remorse": 2,
+      "confusion|disappointment": 3,
+      "gratitude|joy": 46,
+      "annoyance|surprise": 1,
+      "anger|annoyance": 4,
+      "caring|joy": 10,
+      "amusement|love": 5,
+      "amusement|joy": 15,
+      "amusement|surprise": 6,
+      "fear|surprise": 3,
+      "annoyance|remorse": 2,
+      "joy|surprise": 20,
+      "annoyance|optimism": 1,
+      "caring|love": 8,
+      "amusement|gratitude": 2,
+      "annoyance|disappointment": 4,
+      "disappointment|optimism": 2,
+      "annoyance|caring": 1,
+      "anger|disgust": 1,
+      "joy|love": 34,
+      "excitement|joy": 13,
+      "joy|optimism": 4,
+      "neutral|optimism": 1,
+      "curiosity|optimism": 2,
+      "gratitude|optimism": 4,
+      "excitement|gratitude": 1,
+      "disappointment|sadness": 3,
+      "annoyance|neutral": 1,
+      "annoyance|sadness": 3,
+      "gratitude|surprise": 8,
+      "caring|surprise": 2,
+      "caring|sadness": 2,
+      "fear|sadness": 2,
+      "confusion|sadness": 1,
+      "admiration|joy": 3,
+      "approval|joy": 3,
+      "approval|gratitude": 3,
+      "annoyance|love": 2,
+      "joy|sadness": 2,
+      "annoyance|gratitude": 1,
+      "gratitude|sadness": 2,
+      "amusement|confusion": 1,
+      "sadness|surprise": 1,
+      "admiration|amusement": 1,
+      "approval|caring": 1,
+      "annoyance|disgust": 3,
+      "amusement|annoyance": 1,
+      "disgust|surprise": 1,
+      "amusement|disgust": 1,
+      "annoyance|confusion": 1,
+      "disgust|fear": 2,
+      "disappointment|fear": 1,
+      "love|surprise": 1,
+      "disappointment|disgust": 1,
+      "amusement|sadness": 1,
+      "amusement|fear": 1,
+      "anger|surprise": 1,
+      "amusement|neutral": 1
+    },
+    "canonicalSources": 179,
+    "topSources": [
+      [
+        "reddit:1rec523",
+        14
+      ],
+      [
+        "reddit:ukpddo",
+        13
+      ],
+      [
+        "reddit:1lrfdiv",
+        13
+      ],
+      [
+        "reddit:1jtv4p8",
+        12
+      ],
+      [
+        "reddit:1t7slgd",
+        9
+      ],
+      [
+        "reddit:xk712f",
+        8
+      ],
+      [
+        "reddit:1elj2lp",
+        8
+      ],
+      [
+        "reddit:fb37yl",
+        7
+      ],
+      [
+        "reddit:unofgy",
+        7
+      ],
+      [
+        "reddit:h87985",
+        7
+      ],
+      [
+        "reddit:1f3lmhj",
+        7
+      ],
+      [
+        "reddit:1uvt8vq",
+        7
+      ],
+      [
+        "reddit:1np38d6",
+        6
+      ],
+      [
+        "reddit:1r82kp5",
+        6
+      ],
+      [
+        "reddit:1dh61a3",
+        6
+      ]
+    ],
+    "exactDuplicateExcess": 0,
+    "normalizedDuplicateExcess": 4,
+    "customRows": 78,
+    "customOnlyRows": 21,
+    "nullPrimary": 625
+  },
+  "manuallyMarked20": {
+    "rows": 20,
+    "labels": {
+      "neutral": 2,
+      "joy": 1,
+      "fear": 4
+    },
+    "labelCardinality": {
+      "0": 13,
+      "1": 7
+    },
+    "cooccurrence": {},
+    "canonicalSources": 17,
+    "topSources": [
+      [
+        "reddit:r8slvj",
+        2
+      ],
+      [
+        "reddit:1ncq3bn",
+        2
+      ],
+      [
+        "reddit:cj6pp9",
+        2
+      ],
+      [
+        "reddit:1mtcrf2",
+        1
+      ],
+      [
+        "reddit:1k8jytq",
+        1
+      ],
+      [
+        "reddit:ktrczg",
+        1
+      ],
+      [
+        "reddit:1oadqsw",
+        1
+      ],
+      [
+        "reddit:wajvh8",
+        1
+      ],
+      [
+        "reddit:znwgp4",
+        1
+      ],
+      [
+        "reddit:1l0xv0y",
+        1
+      ],
+      [
+        "reddit:1lrfdiv",
+        1
+      ],
+      [
+        "reddit:118cxys",
+        1
+      ],
+      [
+        "reddit:1ej90yx",
+        1
+      ],
+      [
+        "reddit:15ttv4n",
+        1
+      ],
+      [
+        "reddit:1v3b2wk",
+        1
+      ]
+    ],
+    "exactDuplicateExcess": 0,
+    "normalizedDuplicateExcess": 0,
+    "customRows": 20,
+    "customOnlyRows": 15,
+    "nullPrimary": 20
+  },
+  "previous197": {
+    "rows": 197,
+    "labels": {
+      "annoyance": 33,
+      "joy": 62,
+      "amusement": 16,
+      "fear": 23,
+      "remorse": 9,
+      "confusion": 16,
+      "admiration": 17,
+      "curiosity": 16,
+      "surprise": 13,
+      "excitement": 19,
+      "optimism": 23,
+      "love": 16,
+      "gratitude": 21,
+      "sadness": 12,
+      "caring": 23,
+      "neutral": 22,
+      "anger": 17,
+      "disgust": 13,
+      "approval": 8,
+      "disapproval": 2,
+      "disappointment": 6
+    },
+    "labelCardinality": {
+      "1": 46,
+      "2": 117,
+      "3": 30,
+      "4": 3,
+      "5": 1
+    },
+    "cooccurrence": {
+      "amusement|joy": 8,
+      "annoyance|joy": 3,
+      "confusion|fear": 5,
+      "confusion|remorse": 3,
+      "fear|remorse": 3,
+      "admiration|curiosity": 3,
+      "excitement|joy": 10,
+      "excitement|surprise": 2,
+      "joy|surprise": 9,
+      "curiosity|joy": 3,
+      "confusion|curiosity": 1,
+      "joy|optimism": 5,
+      "amusement|surprise": 2,
+      "joy|love": 8,
+      "fear|joy": 2,
+      "fear|optimism": 7,
+      "gratitude|joy": 8,
+      "gratitude|love": 3,
+      "excitement|optimism": 7,
+      "confusion|sadness": 2,
+      "fear|sadness": 4,
+      "caring|confusion": 2,
+      "caring|love": 6,
+      "confusion|love": 1,
+      "amusement|gratitude": 1,
+      "curiosity|excitement": 3,
+      "curiosity|optimism": 2,
+      "annoyance|remorse": 1,
+      "annoyance|sadness": 3,
+      "remorse|sadness": 1,
+      "amusement|annoyance": 2,
+      "annoyance|fear": 3,
+      "amusement|remorse": 2,
+      "amusement|fear": 1,
+      "annoyance|surprise": 1,
+      "amusement|excitement": 1,
+      "annoyance|optimism": 1,
+      "curiosity|neutral": 3,
+      "anger|annoyance": 9,
+      "anger|remorse": 1,
+      "anger|sadness": 2,
+      "anger|confusion": 1,
+      "disgust|sadness": 2,
+      "disgust|remorse": 2,
+      "amusement|disgust": 1,
+      "disgust|surprise": 1,
+      "anger|disgust": 2,
+      "annoyance|disgust": 4,
+      "confusion|disgust": 1,
+      "admiration|gratitude": 3,
+      "admiration|optimism": 2,
+      "admiration|caring": 3,
+      "admiration|joy": 4,
+      "caring|gratitude": 8,
+      "caring|fear": 3,
+      "admiration|excitement": 2,
+      "neutral|optimism": 1,
+      "approval|joy": 6,
+      "admiration|confusion": 1,
+      "admiration|fear": 2,
+      "confusion|excitement": 1,
+      "excitement|fear": 2,
+      "caring|joy": 3,
+      "caring|optimism": 1,
+      "gratitude|optimism": 1,
+      "confusion|disappointment": 2,
+      "confusion|disapproval": 1,
+      "disappointment|disapproval": 1,
+      "approval|surprise": 1,
+      "approval|curiosity": 1,
+      "approval|optimism": 1,
+      "annoyance|love": 1,
+      "disappointment|sadness": 2,
+      "confusion|optimism": 2,
+      "optimism|sadness": 3,
+      "approval|excitement": 2,
+      "annoyance|confusion": 2,
+      "disappointment|optimism": 1,
+      "annoyance|disappointment": 3,
+      "excitement|love": 3,
+      "annoyance|gratitude": 1,
+      "disappointment|gratitude": 1,
+      "anger|disapproval": 1,
+      "annoyance|approval": 1,
+      "fear|love": 1,
+      "love|optimism": 1,
+      "disappointment|fear": 1,
+      "fear|neutral": 1
+    },
+    "canonicalSources": 52,
+    "topSources": [
+      [
+        "reddit:1n7lfta",
+        17
+      ],
+      [
+        "reddit:qvz6l4",
+        10
+      ],
+      [
+        "reddit:1rec523",
+        10
+      ],
+      [
+        "reddit:fqctgj",
+        8
+      ],
+      [
+        "reddit:1md0icp",
+        8
+      ],
+      [
+        "reddit:1pmrfb5",
+        8
+      ],
+      [
+        "reddit:1vkskso",
+        6
+      ],
+      [
+        "reddit:1ajunxs",
+        6
+      ],
+      [
+        "reddit:158ilyh",
+        5
+      ],
+      [
+        "reddit:kvje3j",
+        5
+      ],
+      [
+        "human-consen-5921bc832b",
+        5
+      ],
+      [
+        "human-consen-dba19b7c1e",
+        5
+      ],
+      [
+        "human-consen-16ca3066d4",
+        5
+      ],
+      [
+        "human-consen-859b463098",
+        5
+      ],
+      [
+        "human-consen-321167aeab",
+        5
+      ]
+    ],
+    "exactDuplicateExcess": 0,
+    "normalizedDuplicateExcess": 0,
+    "customRows": 30,
+    "customOnlyRows": 0,
+    "nullPrimary": 197
+  },
+  "oldHumanDev13": {
+    "rows": 13,
+    "labels": {
+      "amusement": 4,
+      "annoyance": 2,
+      "curiosity": 4,
+      "excitement": 2,
+      "joy": 2,
+      "admiration": 5,
+      "caring": 2,
+      "fear": 1,
+      "remorse": 1,
+      "disappointment": 1
+    },
+    "labelCardinality": {
+      "1": 2,
+      "2": 11
+    },
+    "cooccurrence": {
+      "amusement|annoyance": 2,
+      "curiosity|excitement": 1,
+      "curiosity|joy": 1,
+      "amusement|joy": 1,
+      "admiration|curiosity": 2,
+      "admiration|excitement": 1,
+      "admiration|caring": 1,
+      "caring|fear": 1,
+      "disappointment|remorse": 1
+    },
+    "canonicalSources": 6,
+    "topSources": [
+      [
+        "reddit:1u5y5vk",
+        6
+      ],
+      [
+        "reddit:1c410yj",
+        3
+      ],
+      [
+        "reddit:1uzcf14",
+        1
+      ],
+      [
+        "reddit:1uqnkai",
+        1
+      ],
+      [
+        "reddit:kqbcm0",
+        1
+      ],
+      [
+        "reddit:zw7mlu",
+        1
+      ]
+    ],
+    "exactDuplicateExcess": 0,
+    "normalizedDuplicateExcess": 0,
+    "customRows": 0,
+    "customOnlyRows": 0,
+    "nullPrimary": 13
+  },
+  "combinedRows": 2625,
+  "originalPrefixIdentical": true,
+  "reviewStatus": {
+    "USER_MARKED_ELIGIBLE": 605,
+    "MANUALLY_REVIEWED_CORRECTED": 20
+  },
+  "annotationConfidence": {
+    "MEDIUM": 605,
+    "HIGH": 20
+  },
+  "pendingReviewWithUserReviewTag": 605,
+  "explicitFinalPrimary": 0,
+  "reviewedProductCoverage": [
+    "fear",
+    "joy"
+  ],
+  "humanGradientRowFraction": 0.23809523809523808,
+  "inputHashes": {
+    "train-human-augmented-v2.jsonl": "5949c8efe90cbd4d9b3b083f4a84a07f6afeca45cbac051f0aaa29c31ecd04f1",
+    "train.jsonl": "a7fbd3d959f3264a520095b1cebdd53406e015aca29edb38f1915519fe65d89c",
+    "train-human-augmented-v3.jsonl": "3b6229c04d29509ada750b1b87f0121aedf745a4b8d874a0ee0ff8718e0f6d1f",
+    "real-heavy-v2-train.jsonl": "01ce113ebebd334ca45d6031a36ac2ba2c1c3b7bcca944f00e2f5a653226806b",
+    "dev.jsonl": "678fb9025aadec4a37794fa4ef19f4c1858fb66606d926dd96226fb32db4307d",
+    "real-heavy-v2-dev.jsonl": "8e0e182f64c81fc1991ebe90314c4a43d99f2c39fd4d9dfe69ffdc55ed2b6489"
+  },
+  "overlap_previous197": {
+    "exactRows": 0,
+    "normalizedRows": 0,
+    "sourceRows": 37
+  },
+  "overlap_oldHumanDev13": {
+    "exactRows": 0,
+    "normalizedRows": 0,
+    "sourceRows": 0
+  },
+  "overlap_syntheticDev400": {
+    "exactRows": 0,
+    "normalizedRows": 0,
+    "sourceRows": 0
+  },
+  "canonicalSourcesWithMultipleGroupIds": {
+    "reddit:1rthhfz": [
+      "SRC-03",
+      "SRC-74"
+    ],
+    "reddit:1vrk409": [
+      "SRC-06",
+      "SRC-093"
+    ],
+    "reddit:18tfyrd": [
+      "SRC-08",
+      "SRC-094"
+    ],
+    "reddit:ox04h2": [
+      "SRC-11",
+      "SRC-53"
+    ],
+    "reddit:1kffgxd": [
+      "SRC-139",
+      "SRC-21"
+    ],
+    "reddit:ukpddo": [
+      "SRC-23",
+      "SRC-80"
+    ],
+    "reddit:1rec523": [
+      "SRC-122",
+      "SRC-41"
+    ],
+    "reddit:1becsma": [
+      "SRC-217",
+      "SRC-57"
+    ],
+    "reddit:1r82kp5": [
+      "SRC-140",
+      "SRC-61"
+    ],
+    "reddit:t1hms2": [
+      "SRC-193",
+      "SRC-77"
+    ],
+    "reddit:xk712f": [
+      "SRC-132",
+      "SRC-79"
+    ],
+    "reddit:oghxaw": [
+      "SRC-190",
+      "SRC-82"
+    ],
+    "reddit:1rzvipe": [
+      "SRC-172",
+      "SRC-69"
+    ],
+    "reddit:1jtv4p8": [
+      "SRC-091",
+      "SRC-197"
+    ],
+    "reddit:1elj2lp": [
+      "SRC-092",
+      "SRC-198"
+    ],
+    "reddit:fdgohg": [
+      "SRC-110",
+      "SRC-224"
+    ],
+    "reddit:1lrfdiv": [
+      "SRC-123",
+      "SRC-176"
+    ],
+    "reddit:1uvt8vq": [
+      "SRC-142",
+      "SRC-205"
+    ]
+  },
+  "lexicalNearDuplicatePairsAt080": [
+    {
+      "a": "PHQ-022",
+      "b": "PHQ-444",
+      "similarity": 0.8482357472884817
+    },
+    {
+      "a": "PHQ-058",
+      "b": "PHQ-070",
+      "similarity": 0.921131411593935
+    },
+    {
+      "a": "PHQ-142",
+      "b": "PHQ-327",
+      "similarity": 0.8779976685035589
+    },
+    {
+      "a": "PHQ-298",
+      "b": "PHQ-539",
+      "similarity": 0.8068167171464282
+    },
+    {
+      "a": "PHQ-318",
+      "b": "PHQ-578",
+      "similarity": 0.8055561060186834
+    },
+    {
+      "a": "PHQ-374",
+      "b": "PHQ-543",
+      "similarity": 0.9066447630812647
+    }
+  ],
+  "semanticCandidatesAt085": [
+    {
+      "a": "PHQ-012",
+      "b": "PHQ-060",
+      "similarity": 0.8823482990264893
+    },
+    {
+      "a": "PHQ-022",
+      "b": "PHQ-444",
+      "similarity": 0.8874325156211853
+    },
+    {
+      "a": "PHQ-058",
+      "b": "PHQ-070",
+      "similarity": 0.8815784454345703
+    },
+    {
+      "a": "PHQ-086",
+      "b": "PHQ-110",
+      "similarity": 0.8834646344184875
+    },
+    {
+      "a": "PHQ-142",
+      "b": "PHQ-327",
+      "similarity": 0.8853916525840759
+    },
+    {
+      "a": "PHQ-210",
+      "b": "PHQ-420",
+      "similarity": 0.909980058670044
+    },
+    {
+      "a": "PHQ-298",
+      "b": "PHQ-539",
+      "similarity": 0.9565703868865967
+    },
+    {
+      "a": "PHQ-318",
+      "b": "PHQ-578",
+      "similarity": 0.9514937400817871
+    },
+    {
+      "a": "PHQ-461",
+      "b": "PHQ-565",
+      "similarity": 0.9703794717788696
+    }
+  ],
+  "semanticAuditStatus": "Retrieval complete; pairs require equivalence review before any split can be approved",
+  "validHumanDevStatus": "BLOCKED: no verified secondary-task gold; only two product labels in manually marked subset; source workbook pending"
+}

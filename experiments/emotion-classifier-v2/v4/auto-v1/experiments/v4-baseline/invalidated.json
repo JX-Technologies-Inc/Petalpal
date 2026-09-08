@@ -1,0 +1,4 @@
+{
+  "status": "INVALIDATED_LEAKAGE_AUDIT",
+  "reason": "Pretrained GoEmotions train normalized overlap detected; score not eligible"
+}

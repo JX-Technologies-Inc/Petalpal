@@ -1,0 +1,98 @@
+{
+  "status": "LOCKED_AI_ANNOTATED_HUMAN_TEXT_PROXY",
+  "humanWritten": true,
+  "humanGold": false,
+  "independentAnnotationReview": false,
+  "primaryObserved": false,
+  "annotationMethod": "Text-only LLM annotation, same-assistant adjudication, schema and consistency audit before student inference",
+  "dataPolicy": "No journal rewritten, no difficult rows dropped; source-overlap quarantine only",
+  "split": {
+    "seed": 42,
+    "candidateCount": 5000,
+    "selectedTrial": 4718,
+    "objective": 29.4,
+    "selectedBeforePredictions": true,
+    "components": 174
+  },
+  "counts": {
+    "train": 489,
+    "dev": 136
+  },
+  "supports": {
+    "train": {
+      "admiration": 9,
+      "amusement": 21,
+      "anger": 6,
+      "annoyance": 23,
+      "caring": 6,
+      "confusion": 11,
+      "curiosity": 2,
+      "disappointment": 19,
+      "disgust": 26,
+      "excitement": 8,
+      "fear": 8,
+      "gratitude": 40,
+      "joy": 75,
+      "love": 27,
+      "optimism": 17,
+      "remorse": 7,
+      "sadness": 21,
+      "surprise": 14
+    },
+    "dev": {
+      "admiration": 2,
+      "amusement": 5,
+      "anger": 4,
+      "annoyance": 4,
+      "caring": 2,
+      "confusion": 2,
+      "curiosity": 2,
+      "disappointment": 5,
+      "disgust": 7,
+      "excitement": 2,
+      "fear": 2,
+      "gratitude": 17,
+      "joy": 19,
+      "love": 7,
+      "optimism": 2,
+      "remorse": 2,
+      "sadness": 2,
+      "surprise": 2
+    }
+  },
+  "emptyProductTargets": {
+    "train": 199,
+    "dev": 60
+  },
+  "ambiguousRows": {
+    "train": 132,
+    "dev": 49
+  },
+  "hashes": {
+    "train": "cc9e4ec4eeaf457a6a7becea4729e3847815973d5e4207a0e54fbe781d8d49d1",
+    "dev": "a2b4f8b928f585a8829ae99582b58844156d5c4c17a340aeb32ef55524c94fae"
+  },
+  "quarantinedRows": 0,
+  "benchmarkSourceOnlyChecks": [
+    {
+      "path": "frozen-2/frozen-2.jsonl",
+      "rows": 100,
+      "sha256": "6565a51da3203929eb64f65f213ac3d0b31be5e2016126b152f73c3019f021fe"
+    },
+    {
+      "path": "evaluation/petalpal-in-domain-v1.jsonl",
+      "rows": 100,
+      "sha256": "8f1972de9265176947608ee1f86f83e80673dadd196713644c1dcc3ce7a33e84"
+    },
+    {
+      "path": "hybrid-test-v2/test.jsonl",
+      "rows": 360,
+      "sha256": "6781f7666fe72853ac282f5290eccdc7810927171f76352af313f2b98676ab63"
+    }
+  ],
+  "benchmarkSemanticExclusion": "Not recomputed on protected text; historical audit plus new source/exact firewall only",
+  "nearDuplicatePolicy": "Existing source/lexical/semantic connected components preserved across split; semantic screen is not proof of equivalence",
+  "scoreScope": "All 18 fixed labels, zero_division=0, including zero-support classes. Also actual max-two selector with no Primary. Primary redundancy unavailable.",
+  "experimentBudget": "Base checkpoint baseline at .5; human-only adaptation 3 epochs; one mixed-data control 3 epochs; coarse thresholds .2,.35,.5 only; no per-label fitting.",
+  "checkpointPolicy": "Only original candidate-c checkpoint and newly trained descendants; V2/V3/V3-B prohibited because they saw these rows."
+}

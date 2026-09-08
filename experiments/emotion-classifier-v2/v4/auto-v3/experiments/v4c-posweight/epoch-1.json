@@ -1,0 +1,601 @@
+{
+  "epoch": 1,
+  "loss": 0.22109208370630556,
+  "elapsed": 62.447866678237915,
+  "metrics": {
+    "threshold": 0.5,
+    "raw18": {
+      "macro": {
+        "precision": 0.5714483047816381,
+        "recall": 0.6794244598424165,
+        "f1": 0.5362323350152964
+      },
+      "micro": {
+        "precision": 0.448,
+        "recall": 0.717948717948718,
+        "f1": 0.5517241379310345
+      },
+      "perLabel": {
+        "admiration": {
+          "precision": 0.13333333333333333,
+          "recall": 1.0,
+          "f1": 0.23529411764705882,
+          "support": 2
+        },
+        "amusement": {
+          "precision": 0.2857142857142857,
+          "recall": 1.0,
+          "f1": 0.4444444444444444,
+          "support": 2
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.25,
+          "f1": 0.4,
+          "support": 4
+        },
+        "annoyance": {
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.8571428571428571,
+          "support": 3
+        },
+        "caring": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666,
+          "support": 2
+        },
+        "confusion": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666,
+          "support": 2
+        },
+        "curiosity": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "disappointment": {
+          "precision": 0.3333333333333333,
+          "recall": 0.8,
+          "f1": 0.47058823529411764,
+          "support": 5
+        },
+        "disgust": {
+          "precision": 0.5,
+          "recall": 0.3333333333333333,
+          "f1": 0.4,
+          "support": 3
+        },
+        "excitement": {
+          "precision": 0.14285714285714285,
+          "recall": 0.5,
+          "f1": 0.2222222222222222,
+          "support": 2
+        },
+        "fear": {
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1": 0.8,
+          "support": 2
+        },
+        "gratitude": {
+          "precision": 0.9166666666666666,
+          "recall": 0.6470588235294118,
+          "f1": 0.7586206896551724,
+          "support": 17
+        },
+        "joy": {
+          "precision": 0.48484848484848486,
+          "recall": 0.8421052631578947,
+          "f1": 0.6153846153846154,
+          "support": 19
+        },
+        "love": {
+          "precision": 0.46153846153846156,
+          "recall": 0.8571428571428571,
+          "f1": 0.6,
+          "support": 7
+        },
+        "optimism": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666,
+          "support": 2
+        },
+        "remorse": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "sadness": {
+          "precision": 0.1111111111111111,
+          "recall": 0.5,
+          "f1": 0.18181818181818182,
+          "support": 2
+        },
+        "surprise": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        }
+      }
+    },
+    "selected18": {
+      "macro": {
+        "precision": 0.5277118341634471,
+        "recall": 0.5960911265090831,
+        "f1": 0.5000965376403973
+      },
+      "micro": {
+        "precision": 0.4774774774774775,
+        "recall": 0.6794871794871795,
+        "f1": 0.5608465608465608
+      },
+      "perLabel": {
+        "admiration": {
+          "precision": 0.08333333333333333,
+          "recall": 0.5,
+          "f1": 0.14285714285714285,
+          "support": 2
+        },
+        "amusement": {
+          "precision": 0.2857142857142857,
+          "recall": 1.0,
+          "f1": 0.4444444444444444,
+          "support": 2
+        },
+        "anger": {
+          "precision": 1.0,
+          "recall": 0.25,
+          "f1": 0.4,
+          "support": 4
+        },
+        "annoyance": {
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.8571428571428571,
+          "support": 3
+        },
+        "caring": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666,
+          "support": 2
+        },
+        "confusion": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "curiosity": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "disappointment": {
+          "precision": 0.36363636363636365,
+          "recall": 0.8,
+          "f1": 0.5,
+          "support": 5
+        },
+        "disgust": {
+          "precision": 0.5,
+          "recall": 0.3333333333333333,
+          "f1": 0.4,
+          "support": 3
+        },
+        "excitement": {
+          "precision": 0.3333333333333333,
+          "recall": 0.5,
+          "f1": 0.4,
+          "support": 2
+        },
+        "fear": {
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1": 0.8,
+          "support": 2
+        },
+        "gratitude": {
+          "precision": 1.0,
+          "recall": 0.6470588235294118,
+          "f1": 0.7857142857142857,
+          "support": 17
+        },
+        "joy": {
+          "precision": 0.5161290322580645,
+          "recall": 0.8421052631578947,
+          "f1": 0.64,
+          "support": 19
+        },
+        "love": {
+          "precision": 0.5,
+          "recall": 0.8571428571428571,
+          "f1": 0.631578947368421,
+          "support": 7
+        },
+        "optimism": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666,
+          "support": 2
+        },
+        "remorse": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "sadness": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "surprise": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        }
+      }
+    },
+    "product": {
+      "strictSecondaryPrecision": 0.4774774774774775,
+      "acceptableSecondaryPrecision": null,
+      "usefulCoverage": 0.7611940298507462,
+      "correctAbstentionRate": 0.4827586206896552,
+      "unwantedAbstentionRate": 0.04477611940298507,
+      "clearlyWrongEmotionRate": null,
+      "primaryRedundancyRate": null,
+      "outputCountDistribution": {
+        "0": 31,
+        "1": 77,
+        "2": 17
+      },
+      "exactExpectedMatchRate": 0.488,
+      "acceptableMatchRate": null
+    },
+    "primaryPolicy": "unavailable, no redundancy filter applied; not a Primary-aware product validation",
+    "outputs": [
+      [
+        "sadness"
+      ],
+      [
+        "sadness"
+      ],
+      [],
+      [
+        "annoyance"
+      ],
+      [
+        "excitement"
+      ],
+      [
+        "joy",
+        "love"
+      ],
+      [],
+      [
+        "amusement"
+      ],
+      [
+        "amusement",
+        "admiration"
+      ],
+      [],
+      [],
+      [
+        "gratitude"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "joy",
+        "love"
+      ],
+      [
+        "love",
+        "joy"
+      ],
+      [
+        "disappointment"
+      ],
+      [
+        "admiration"
+      ],
+      [],
+      [
+        "joy"
+      ],
+      [
+        "love"
+      ],
+      [
+        "amusement"
+      ],
+      [],
+      [],
+      [
+        "joy",
+        "curiosity"
+      ],
+      [
+        "love",
+        "joy"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "love"
+      ],
+      [
+        "admiration"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "joy",
+        "admiration"
+      ],
+      [],
+      [],
+      [
+        "amusement"
+      ],
+      [
+        "disappointment"
+      ],
+      [
+        "joy",
+        "admiration"
+      ],
+      [
+        "joy",
+        "admiration"
+      ],
+      [
+        "optimism",
+        "gratitude"
+      ],
+      [
+        "joy",
+        "admiration"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "admiration"
+      ],
+      [
+        "love"
+      ],
+      [
+        "disappointment"
+      ],
+      [
+        "amusement"
+      ],
+      [
+        "amusement"
+      ],
+      [
+        "disappointment"
+      ],
+      [],
+      [
+        "love"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "gratitude",
+        "joy"
+      ],
+      [
+        "admiration"
+      ],
+      [
+        "fear"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "caring"
+      ],
+      [],
+      [
+        "joy"
+      ],
+      [
+        "excitement"
+      ],
+      [
+        "joy"
+      ],
+      [],
+      [
+        "joy"
+      ],
+      [],
+      [
+        "excitement"
+      ],
+      [],
+      [],
+      [
+        "gratitude"
+      ],
+      [
+        "curiosity"
+      ],
+      [
+        "annoyance",
+        "disappointment"
+      ],
+      [
+        "amusement",
+        "admiration"
+      ],
+      [],
+      [],
+      [
+        "admiration"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "disappointment"
+      ],
+      [
+        "disappointment"
+      ],
+      [
+        "annoyance"
+      ],
+      [
+        "sadness"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "gratitude"
+      ],
+      [
+        "love",
+        "joy"
+      ],
+      [
+        "remorse"
+      ],
+      [
+        "disappointment"
+      ],
+      [],
+      [],
+      [],
+      [],
+      [
+        "joy"
+      ],
+      [
+        "disappointment"
+      ],
+      [],
+      [
+        "annoyance"
+      ],
+      [],
+      [
+        "sadness"
+      ],
+      [],
+      [
+        "joy"
+      ],
+      [
+        "disgust"
+      ],
+      [
+        "sadness"
+      ],
+      [
+        "sadness"
+      ],
+      [
+        "disgust"
+      ],
+      [
+        "love"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "joy"
+      ],
+      [],
+      [
+        "fear"
+      ],
+      [
+        "disappointment"
+      ],
+      [
+        "fear"
+      ],
+      [],
+      [],
+      [
+        "disappointment"
+      ],
+      [
+        "remorse"
+      ],
+      [
+        "love"
+      ],
+      [
+        "joy",
+        "love"
+      ],
+      [
+        "admiration"
+      ],
+      [],
+      [
+        "anger"
+      ],
+      [],
+      [
+        "joy"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "joy",
+        "sadness"
+      ],
+      [
+        "sadness"
+      ],
+      [],
+      [],
+      [
+        "joy"
+      ],
+      [
+        "joy"
+      ],
+      [
+        "joy"
+      ]
+    ]
+  }
+}

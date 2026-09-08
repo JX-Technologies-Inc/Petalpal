@@ -16,6 +16,41 @@ graphify-out/
 __pycache__/
 *.pyc
 
+# Generated ML binaries, checkpoints, caches, and runtime logs
+*.log
+*.npy
+*.pt
+*.safetensors
+*.onnx
+*.joblib
+*.zip
+*.xlsx
+**/best-checkpoint/
+
+# Local/raw human-text corpora and generated annotation datasets
+experiments/emotion-classifier-v2/frozen-2/*.jsonl
+experiments/emotion-classifier-v2/frozen-2/*.xlsx
+experiments/emotion-classifier-v2/tuning-data-v1/real-heavy-*.jsonl
+experiments/emotion-classifier-v2/tuning-data-v1/train-human-augmented-*.jsonl
+experiments/emotion-classifier-v2/v4/annotation-queue.jsonl
+experiments/emotion-classifier-v2/v4/*-review.jsonl
+experiments/emotion-classifier-v2/v4/auto-v*/annotations.txt
+experiments/emotion-classifier-v2/v4/auto-v*/dev.jsonl
+experiments/emotion-classifier-v2/v4/auto-v*/train.jsonl
+experiments/emotion-classifier-v2/v4/auto-v*/pass*.jsonl
+experiments/emotion-classifier-v2/v4/auto-v*/quarantine.jsonl
+experiments/emotion-classifier-v2/v4/auto-v*/synthetic-safe.jsonl
+experiments/emotion-classifier-v2/v4/auto-v*/extra-human-train.jsonl
+experiments/emotion-classifier-v2/v4/human-goemotions-v1/raw/
+experiments/emotion-classifier-v2/v4/independent-human-v1/raw/*
+experiments/emotion-classifier-v2/v4/independent-human-v1/*-dev.jsonl
+experiments/emotion-classifier-v2/v4/independent-human-v1/*-train.jsonl
+experiments/emotion-classifier-v2/v4/independent-human-v1/dev*.jsonl
+experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-*.jsonl
+experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-data/*.jsonl
+experiments/emotion-classifier-v2/v4/gemini-eval-v1/blind-cohort.jsonl
+experiments/emotion-classifier-v2/v4/gemini-eval-v1/pass-*.jsonl
+
 # Local ML checkpoints
 experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-v1/best-checkpoint/
 experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-hybrid-v2/best-checkpoint/

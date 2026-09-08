@@ -1,0 +1,9 @@
+{
+  "source": "candidate-c README and evaluator confirm downloaded SamLowe checkpoint; no PetalPal fine-tuning in initialization script",
+  "sha256": {
+    "candidate-c/artifacts/checkpoint/config.json": "cde641cc1d9a2248bdfdc13844c7a58526dec77da4f08fce2f6cea507eb65478",
+    "candidate-c/artifacts/checkpoint/model.safetensors": "f99b7fdcfd4594c7dbdc70efbc66815c0c070c9d8baf6572cecc4fab1a5de130",
+    "candidate-c/artifacts/checkpoint/tokenizer.json": "ca14bc374ac4b23ba26396e94788eb92fa03e2b8a9405b792e47457baac297cd"
+  },
+  "limitations": "Original model pretraining corpus is not completely auditable. Original GoEmotions train exact/lexical exclusion is recorded separately."
+}

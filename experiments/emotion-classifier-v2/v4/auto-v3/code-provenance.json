@@ -1,0 +1,11 @@
+{
+  "files": {
+    "experiments/emotion-classifier-v2/v4/auto-v1/experiment.py": "e1fb0479e4623e3fd9f9fda9f8d98e45b422a0186b73aa4460c79554eb7a74c8",
+    "experiments/emotion-classifier-v2/v4/auto-v1/summarize.py": "f283a883e855c54ace4be705d1e48673d79d8d470e32d342ab4608698a3afbd2",
+    "experiments/emotion-classifier-v2/candidate-c-lite/scripts/data_safety.py": "507f433c8eca924dff31d5e182ed8ae2678c6d7d61b9c9b44ca3a836e66f2605",
+    "experiments/emotion-classifier-v2/candidate-c-lite/scripts/evaluate_frozen_100.py": "5c8b24021999f0f35883498a7705f7b3e5e9c43ea4a14b3a0ccc7fddedc61290",
+    "lib/secondary-emotion-selector.js": "a86b27c785c41b5076f2b3679b419f7a9b01424c8af58830a3321e4ff0de76b4",
+    "lib/flower-variant-config.js": "8bc463a33255563b8f75bc30b45b800d8944cd0b5ff69d8c4def6d766c26b3fd"
+  },
+  "note": "Shared engine imports definitions only; experiments never call read_frozen or main."
+}

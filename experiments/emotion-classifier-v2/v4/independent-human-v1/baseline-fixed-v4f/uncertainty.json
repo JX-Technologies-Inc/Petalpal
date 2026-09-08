@@ -1,0 +1,31 @@
+{
+  "macroF1": 0.2535470549460082,
+  "authorBootstrap95Percentile": [
+    0.20383012967169223,
+    0.29019121434892786
+  ],
+  "replicates": 2000,
+  "seed": 42,
+  "rows": 367,
+  "labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "limitations": "Conditional on this source and fixed AI labels; does not quantify annotation error or transport to other populations. Zero-support labels retained with zeroDivision0. No model selection."
+}

@@ -1,0 +1,64 @@
+{
+  "rows": {
+    "train": 777,
+    "newTrain": 255,
+    "existingTrain": 522,
+    "calibration": 64
+  },
+  "hashes": {
+    "train": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "calibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7"
+  },
+  "qualityExclusions": [
+    {
+      "id": "COSO-b17bde38c7a3d8e7f654e6a319003af6_yesterday_cov_1",
+      "modelLabels": [],
+      "customEmotions": [],
+      "confidence": "MEDIUM",
+      "qualityEligible": false,
+      "rationale": "QUALITY EXCLUSION: third-person Beatles article with quotations, not participant's yesterday narrative.",
+      "method": "current assistant text-only",
+      "humanGold": false
+    }
+  ],
+  "devSha256": "952394ce159c40c585ac70c65a2cff8374ddb4b6abd3a7eaa0158584c80a8f8b",
+  "annotationStatus": "AI reference, same assistant, no independent gold agreement",
+  "selection": "Predeclared author hash; calibration BCE only; no Dev selection",
+  "labelSupport": {
+    "newTrain": {
+      "joy": 90,
+      "caring": 26,
+      "anger": 12,
+      "optimism": 10,
+      "disappointment": 14,
+      "annoyance": 22,
+      "gratitude": 11,
+      "fear": 10,
+      "love": 7,
+      "excitement": 9,
+      "surprise": 18,
+      "amusement": 7,
+      "confusion": 5,
+      "sadness": 18,
+      "curiosity": 1,
+      "disgust": 1,
+      "remorse": 2
+    },
+    "calibration": {
+      "sadness": 7,
+      "caring": 4,
+      "joy": 23,
+      "fear": 7,
+      "amusement": 3,
+      "confusion": 1,
+      "admiration": 2,
+      "love": 4,
+      "gratitude": 6,
+      "annoyance": 7,
+      "optimism": 3,
+      "surprise": 1,
+      "anger": 1,
+      "disappointment": 1
+    }
+  }
+}

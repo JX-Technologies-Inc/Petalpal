@@ -1,0 +1,12 @@
+{
+  "status": "PRE_ANNOTATION_PRE_BASELINE_RESULT",
+  "selection": "first320 author hash newhuman-train-pilot-v1; no labels or scores",
+  "trainAuthors": 256,
+  "internalCalibrationAuthors": 64,
+  "remainingUnannotated": 449,
+  "purpose": "Bounded first new-data adaptation; choose checkpoint on calibration loss, retain global0.35 and fixed50/50 blend initially. New367 Dev not used for gradient, threshold or checkpoint choice.",
+  "epochs": 2,
+  "learningRate": 5e-06,
+  "initialization": "original Candidate C checkpoint",
+  "existingHumanTrain": 522
+}

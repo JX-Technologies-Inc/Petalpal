@@ -1,0 +1,23 @@
+{
+  "admiration": 4.0,
+  "amusement": 4.0,
+  "anger": 4.0,
+  "annoyance": 3.8131351470947266,
+  "approval": 4.0,
+  "caring": 4.0,
+  "confusion": 4.0,
+  "curiosity": 4.0,
+  "disappointment": 4.0,
+  "disapproval": 4.0,
+  "disgust": 4.0,
+  "excitement": 4.0,
+  "fear": 4.0,
+  "gratitude": 3.6959948539733887,
+  "joy": 1.821171760559082,
+  "love": 4.0,
+  "neutral": 4.0,
+  "optimism": 4.0,
+  "remorse": 4.0,
+  "sadness": 4.0,
+  "surprise": 4.0
+}

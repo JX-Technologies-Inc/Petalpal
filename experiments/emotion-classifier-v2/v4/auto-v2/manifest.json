@@ -1,0 +1,172 @@
+{
+  "status": "LOCKED_AI_ANNOTATED_HUMAN_TEXT_PROXY",
+  "humanWritten": true,
+  "humanGold": false,
+  "independentAnnotationReview": false,
+  "primaryObserved": false,
+  "annotationMethod": "Text-only LLM annotation, same-assistant adjudication, schema and consistency audit before student inference",
+  "dataPolicy": "All original625 accounted for:596 retained and29 provenance-quarantined, no difficulty-based removal.",
+  "split": {
+    "seed": 42,
+    "candidateCount": 5000,
+    "selectedTrial": 4718,
+    "objective": 29.4,
+    "selectedBeforePredictions": true,
+    "components": 174
+  },
+  "counts": {
+    "train": 469,
+    "dev": 127
+  },
+  "supports": {
+    "train": {
+      "admiration": 8,
+      "amusement": 21,
+      "anger": 6,
+      "annoyance": 23,
+      "caring": 6,
+      "confusion": 10,
+      "curiosity": 2,
+      "disappointment": 19,
+      "disgust": 19,
+      "excitement": 8,
+      "fear": 8,
+      "gratitude": 39,
+      "joy": 73,
+      "love": 25,
+      "optimism": 17,
+      "remorse": 7,
+      "sadness": 20,
+      "surprise": 14
+    },
+    "dev": {
+      "admiration": 2,
+      "amusement": 2,
+      "anger": 4,
+      "annoyance": 3,
+      "caring": 2,
+      "confusion": 2,
+      "curiosity": 1,
+      "disappointment": 5,
+      "disgust": 3,
+      "excitement": 2,
+      "fear": 2,
+      "gratitude": 17,
+      "joy": 19,
+      "love": 7,
+      "optimism": 2,
+      "remorse": 2,
+      "sadness": 2,
+      "surprise": 1
+    }
+  },
+  "emptyProductTargets": {
+    "train": 194,
+    "dev": 60
+  },
+  "ambiguousRows": {
+    "train": 127,
+    "dev": 47
+  },
+  "hashes": {
+    "train": "7c23dc0027875a7a6471a1b6c0842d0270210ae1f5b7118cab2f93d09bce0ac0",
+    "dev": "cbd83d30b5fe0d3d0bdbf1a425adc2390556c944d67de5721fd18393b8070f80"
+  },
+  "quarantinedRows": 29,
+  "benchmarkSourceOnlyChecks": [
+    {
+      "path": "frozen-2/frozen-2.jsonl",
+      "rows": 100,
+      "sha256": "6565a51da3203929eb64f65f213ac3d0b31be5e2016126b152f73c3019f021fe"
+    },
+    {
+      "path": "evaluation/petalpal-in-domain-v1.jsonl",
+      "rows": 100,
+      "sha256": "8f1972de9265176947608ee1f86f83e80673dadd196713644c1dcc3ce7a33e84"
+    },
+    {
+      "path": "hybrid-test-v2/test.jsonl",
+      "rows": 360,
+      "sha256": "6781f7666fe72853ac282f5290eccdc7810927171f76352af313f2b98676ab63"
+    }
+  ],
+  "benchmarkSemanticExclusion": "Not recomputed on protected text; historical audit plus new source/exact firewall only",
+  "nearDuplicatePolicy": "Existing source/lexical/semantic connected components preserved across split; semantic screen is not proof of equivalence",
+  "scoreScope": "All 18 fixed labels, zero_division=0, including zero-support classes. Also actual max-two selector with no Primary. Primary redundancy unavailable.",
+  "experimentBudget": "Base checkpoint baseline at .5; human-only adaptation 3 epochs; one mixed-data control 3 epochs; coarse thresholds .2,.35,.5 only; no per-label fitting.",
+  "checkpointPolicy": "Only original candidate-c checkpoint and newly trained descendants; V2/V3/V3-B prohibited because they saw these rows.",
+  "version": "auto-v2",
+  "parentVersion": "auto-v1",
+  "correction": "29 rows quarantined via full source components for pretrained-task training-text normalized/lexical matches. Original split assignments and annotations unchanged. No post-prediction label editing.",
+  "initializationTextAuditPassed": true,
+  "initializationAudit": {
+    "matches": [
+      {
+        "id": "PHQ-204",
+        "exactNormalized": true,
+        "lexicalCosine": 0.7130539962983594,
+        "component": "35f788791c1813efc5f40dca4cb0756500e6bc1e391a67ecba01c8d17545abbd"
+      },
+      {
+        "id": "PHQ-408",
+        "exactNormalized": true,
+        "lexicalCosine": 0.638313884501488,
+        "component": "f5be8733022f04b213b7561bff62363fbf923c4ae8d066941ed710c575a64c3a"
+      },
+      {
+        "id": "PHQ-455",
+        "exactNormalized": false,
+        "lexicalCosine": 0.9169396295408575,
+        "component": "c7340013abe0f16503a5ee510b7054f3eaf41797290163cf4cc3287ed80622cb"
+      },
+      {
+        "id": "PHQ-458",
+        "exactNormalized": true,
+        "lexicalCosine": 0.9123572113969465,
+        "component": "c7340013abe0f16503a5ee510b7054f3eaf41797290163cf4cc3287ed80622cb"
+      },
+      {
+        "id": "PHQ-604",
+        "exactNormalized": false,
+        "lexicalCosine": 0.8670998983367934,
+        "component": "e3db94e08715795d3881c4ce74519e0cdfd39171b55d33aceec02f3e12bb17b4"
+      },
+      {
+        "id": "PHQ-430",
+        "exactNormalized": true,
+        "lexicalCosine": 1.0000000000000002,
+        "component": "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f"
+      },
+      {
+        "id": "PHQ-461",
+        "exactNormalized": false,
+        "lexicalCosine": 0.8448082773096727,
+        "component": "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f"
+      },
+      {
+        "id": "PHQ-565",
+        "exactNormalized": false,
+        "lexicalCosine": 0.8147634443803418,
+        "component": "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f"
+      },
+      {
+        "id": "PHQ-574",
+        "exactNormalized": false,
+        "lexicalCosine": 0.9558528333379949,
+        "component": "486fa9d2e43e6d9b39d6b23d8156f646a3840977111e5d0e4fdb01f4b32d685d"
+      }
+    ],
+    "quarantinedComponents": [
+      "35f788791c1813efc5f40dca4cb0756500e6bc1e391a67ecba01c8d17545abbd",
+      "486fa9d2e43e6d9b39d6b23d8156f646a3840977111e5d0e4fdb01f4b32d685d",
+      "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f",
+      "c7340013abe0f16503a5ee510b7054f3eaf41797290163cf4cc3287ed80622cb",
+      "e3db94e08715795d3881c4ce74519e0cdfd39171b55d33aceec02f3e12bb17b4",
+      "f5be8733022f04b213b7561bff62363fbf923c4ae8d066941ed710c575a64c3a"
+    ],
+    "quarantinedRows": 29,
+    "policy": "Remove whole existing components for normalized exact or char3-5 cosine>=.80 match against original GoEmotions training text; no labels/performance involved",
+    "sourceSha256": "1c254a142be5c00e80d819b9ae1bbd36d94b2eeb8f4b1271846508d57e57d9c5",
+    "limitation": "Pretraining thread metadata and full semantic corpus audit unavailable; common short phrases can be conservatively removed."
+  }
+}

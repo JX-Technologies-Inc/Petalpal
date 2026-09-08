@@ -1,0 +1,14 @@
+{
+  "status": "ANNOTATION_ONLY_NOT_VALIDATED_DATASET",
+  "seed": 42,
+  "splitRule": "SHA256(source component), 20% Dev; no label-based selection",
+  "components": 174,
+  "rows": {
+    "train": 525,
+    "dev": 100
+  },
+  "all625Preserved": true,
+  "semanticPolicy": "Conservatively union all MiniLM cosine >=.85 and lexical >=.8 candidates; semantic equivalence not certified",
+  "benchmarkExclusion": "No benchmark content accessed. Independent source-only exclusion manifest still required before certification.",
+  "checkpointRestriction": "V2/V3/V3-B cannot be scored as unexposed baselines on this split; restart from original checkpoint after lineage audit."
+}

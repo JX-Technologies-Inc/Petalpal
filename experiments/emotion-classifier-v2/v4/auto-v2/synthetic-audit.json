@@ -1,0 +1,9 @@
+{
+  "originalRows": 2000,
+  "retainedRows": 2000,
+  "removedGroups": 0,
+  "lexicalFlagged": 0,
+  "semanticFlagged": 0,
+  "policy": "Remove whole sourceGroup for lexical >=.8 or MiniLM cosine >=.85 against Human Dev, without model predictions or error analysis",
+  "sha256": "4c51ced92816c424f59b65112adb624c14afbf14b040875430ad91485e7b7dea"
+}

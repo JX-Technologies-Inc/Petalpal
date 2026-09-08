@@ -1,0 +1,61 @@
+{
+  "status": "COMPLETE",
+  "bestEpoch": 20,
+  "threshold": 0.3,
+  "records": [
+    {
+      "epoch": 0,
+      "bce": 0.10238248854875565,
+      "macroF1": 0.36392069379490766,
+      "micro": {
+        "precision": 0.6461538461538462,
+        "recall": 0.6,
+        "f1": 0.6222222222222222
+      }
+    },
+    {
+      "epoch": 5,
+      "bce": 0.11475275456905365,
+      "macroF1": 0.37893865393865395,
+      "micro": {
+        "precision": 0.49,
+        "recall": 0.7,
+        "f1": 0.5764705882352941
+      }
+    },
+    {
+      "epoch": 10,
+      "bce": 0.1142096146941185,
+      "macroF1": 0.37203086920068057,
+      "micro": {
+        "precision": 0.49019607843137253,
+        "recall": 0.7142857142857143,
+        "f1": 0.5813953488372093
+      }
+    },
+    {
+      "epoch": 20,
+      "bce": 0.10984908044338226,
+      "macroF1": 0.3786503619836953,
+      "micro": {
+        "precision": 0.5212765957446809,
+        "recall": 0.7,
+        "f1": 0.5975609756097561
+      }
+    }
+  ],
+  "thresholdOnlyOOF": {
+    "macroF1": 0.34333364529442956,
+    "microPrecision": 0.5555555555555556
+  },
+  "elapsedSeconds": 71.16014981269836,
+  "externalEvaluated": false,
+  "humanLabeledValidationAvailable": false,
+  "checkpoint": {
+    "base": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-experiment/best-checkpoint",
+    "head": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/frozen-head-v1/best-head.pt",
+    "maxLength": 512,
+    "threshold": 0.3
+  },
+  "limitation": "64 AI-labeled calibration authors; four product labels absent; selected metrics optimistic; no human-gold target claim"
+}

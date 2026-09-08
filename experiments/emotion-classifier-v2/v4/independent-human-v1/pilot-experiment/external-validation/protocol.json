@@ -1,0 +1,44 @@
+{
+  "devSha256": "952394ce159c40c585ac70c65a2cff8374ddb4b6abd3a7eaa0158584c80a8f8b",
+  "checkpointHashes": {
+    "best-checkpoint/model.safetensors": "f57c934b8eb6cd7470b04c68f977bd0cf32d7e5269f063599065bd4ddad83cb0",
+    "best-checkpoint/tokenizer_config.json": "98395e9d8c4d1f0b1d5c3c497a9c8d9c92ece7f4ec0ad8c74d60b3ed0110a5d6",
+    "best-checkpoint/special_tokens_map.json": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+    "best-checkpoint/config.json": "cde641cc1d9a2248bdfdc13844c7a58526dec77da4f08fce2f6cea507eb65478",
+    "best-checkpoint/tokenizer.json": "fac96121c0f9c36533e15c1ed9ebd3fe6e37a869247617866ca6a8df40e48e43",
+    "best-checkpoint/merges.txt": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+    "best-checkpoint/vocab.json": "ed19656ea1707df69134c4af35c8ceda2cc9860bf2c3495026153a133670ab5e"
+  },
+  "bestEpoch": 2,
+  "spec": {
+    "checkpoints": [
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-experiment/best-checkpoint"
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ],
+    "maxLengths": [
+      128,
+      512
+    ],
+    "threshold": 0.35
+  },
+  "calibratedSpec": {
+    "checkpoints": [
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-experiment/best-checkpoint"
+    ],
+    "weights": [
+      0.5,
+      0.5
+    ],
+    "maxLengths": [
+      128,
+      512
+    ],
+    "threshold": 0.25
+  },
+  "selection": "calibration BCE, fixed weights/threshold; no external validation model selection"
+}

@@ -1,0 +1,21 @@
+{
+  "baseCheckpoint": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/independent-human-v1/pilot-experiment/best-checkpoint",
+  "dataHashes": {
+    "train": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "calibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7"
+  },
+  "shapes": {
+    "train": [
+      777,
+      1,
+      768
+    ],
+    "calibration": [
+      64,
+      1,
+      768
+    ]
+  },
+  "encoderFrozen": true,
+  "featureExtractionSeconds": 68.75728702545166
+}

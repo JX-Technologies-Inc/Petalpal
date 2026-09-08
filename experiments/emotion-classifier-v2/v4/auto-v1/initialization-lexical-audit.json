@@ -1,0 +1,70 @@
+{
+  "matches": [
+    {
+      "id": "PHQ-204",
+      "exactNormalized": true,
+      "lexicalCosine": 0.7130539962983594,
+      "component": "35f788791c1813efc5f40dca4cb0756500e6bc1e391a67ecba01c8d17545abbd"
+    },
+    {
+      "id": "PHQ-408",
+      "exactNormalized": true,
+      "lexicalCosine": 0.638313884501488,
+      "component": "f5be8733022f04b213b7561bff62363fbf923c4ae8d066941ed710c575a64c3a"
+    },
+    {
+      "id": "PHQ-455",
+      "exactNormalized": false,
+      "lexicalCosine": 0.9169396295408575,
+      "component": "c7340013abe0f16503a5ee510b7054f3eaf41797290163cf4cc3287ed80622cb"
+    },
+    {
+      "id": "PHQ-458",
+      "exactNormalized": true,
+      "lexicalCosine": 0.9123572113969465,
+      "component": "c7340013abe0f16503a5ee510b7054f3eaf41797290163cf4cc3287ed80622cb"
+    },
+    {
+      "id": "PHQ-604",
+      "exactNormalized": false,
+      "lexicalCosine": 0.8670998983367934,
+      "component": "e3db94e08715795d3881c4ce74519e0cdfd39171b55d33aceec02f3e12bb17b4"
+    },
+    {
+      "id": "PHQ-430",
+      "exactNormalized": true,
+      "lexicalCosine": 1.0000000000000002,
+      "component": "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f"
+    },
+    {
+      "id": "PHQ-461",
+      "exactNormalized": false,
+      "lexicalCosine": 0.8448082773096727,
+      "component": "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f"
+    },
+    {
+      "id": "PHQ-565",
+      "exactNormalized": false,
+      "lexicalCosine": 0.8147634443803418,
+      "component": "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f"
+    },
+    {
+      "id": "PHQ-574",
+      "exactNormalized": false,
+      "lexicalCosine": 0.9558528333379949,
+      "component": "486fa9d2e43e6d9b39d6b23d8156f646a3840977111e5d0e4fdb01f4b32d685d"
+    }
+  ],
+  "quarantinedComponents": [
+    "35f788791c1813efc5f40dca4cb0756500e6bc1e391a67ecba01c8d17545abbd",
+    "486fa9d2e43e6d9b39d6b23d8156f646a3840977111e5d0e4fdb01f4b32d685d",
+    "7daeb7e5c42f256dbab596fb513561ee482a11bfd765f6dca9a228165c2daa6f",
+    "c7340013abe0f16503a5ee510b7054f3eaf41797290163cf4cc3287ed80622cb",
+    "e3db94e08715795d3881c4ce74519e0cdfd39171b55d33aceec02f3e12bb17b4",
+    "f5be8733022f04b213b7561bff62363fbf923c4ae8d066941ed710c575a64c3a"
+  ],
+  "quarantinedRows": 29,
+  "policy": "Remove whole existing components for normalized exact or char3-5 cosine>=.80 match against original GoEmotions training text; no labels/performance involved",
+  "sourceSha256": "1c254a142be5c00e80d819b9ae1bbd36d94b2eeb8f4b1271846508d57e57d9c5",
+  "limitation": "Pretraining thread metadata and full semantic corpus audit unavailable; common short phrases can be conservatively removed."
+}

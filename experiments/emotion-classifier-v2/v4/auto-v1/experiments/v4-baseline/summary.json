@@ -1,0 +1,25 @@
+{
+  "config": {
+    "name": "v4-baseline",
+    "mode": "baseline",
+    "epochs": 3,
+    "lr": 1e-05,
+    "seed": 42
+  },
+  "device": "cpu",
+  "checkpointInitialization": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+  "trainRows": 489,
+  "humanTrainRows": 489,
+  "devRows": 136,
+  "dataHashes": {
+    "train": "cc9e4ec4eeaf457a6a7becea4729e3847815973d5e4207a0e54fbe781d8d49d1",
+    "dev": "a2b4f8b928f585a8829ae99582b58844156d5c4c17a340aeb32ef55524c94fae"
+  },
+  "annotationStatus": "LOCKED_AI_ANNOTATED_HUMAN_TEXT_PROXY",
+  "epochs": [],
+  "initialSelectedMacroF1": 0.4848166947431653,
+  "bestEpoch": 0,
+  "bestSelectedMacroF1": 0.4848166947431653,
+  "elapsedSeconds": 9.5367431640625e-07,
+  "status": "COMPLETE"
+}
