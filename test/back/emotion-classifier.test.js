@@ -78,6 +78,20 @@ test("Fast Llama failure preserves selected mood and never blocks Daily Grow", a
   assert.equal(result.confidence, null);
 });
 
+test("Cloudflare request timeout aborts and returns a controlled classifier error", async () => {
+  await assert.rejects(
+    classifyWithCloudflare("Private text", {
+      env: { ...env, AI_REQUEST_TIMEOUT_MS: "5" },
+      fetchImpl: async (_url, { signal }) => new Promise((resolve, reject) => {
+        signal.addEventListener("abort", () => {
+          reject(Object.assign(new Error("aborted"), { name: "AbortError" }));
+        }, { once: true });
+      })
+    }),
+    (error) => error.code === "WORKER_TIMEOUT" && !/Private text/.test(error.message)
+  );
+});
+
 test("invalid Fast Llama taxonomy falls back and Daily Grow still completes", async () => {
   const result = await resolveDailyFlowerEmotion({
     event: "A complicated day",

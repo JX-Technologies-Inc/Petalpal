@@ -1,6 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yaml";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createHash } from "crypto";
@@ -48,10 +51,14 @@ import {
   handleHttpError,
   requireJsonObject
 } from "./lib/http-errors.js";
+import { logServerError } from "./lib/security-log.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const openapiDocument = YAML.parse(
+  fs.readFileSync(path.join(__dirname, "docs", "openapi.yaml"), "utf8")
+);
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -125,7 +132,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("join-garden", (gardenOwnerId) => {
-      if (!gardenOwnerId) return;
+      if (!validId(gardenOwnerId)) return;
   
       if (socket.data.currentGarden) {
         socket.leave(`garden:${socket.data.currentGarden}`);
@@ -148,11 +155,9 @@ io.on("connection", (socket) => {
 
         const visitorId = String(socket.data.currentUserId);
       
-        if (
-          !gardenOwnerId ||
-          typeof x !== "number" ||
-          typeof y !== "number"
-        ) {
+        if (!validId(gardenOwnerId) ||
+            socket.data.currentGarden !== gardenOwnerId ||
+            !validCoordinate(x) || !validCoordinate(y)) {
           return;
         }
       
@@ -188,6 +193,7 @@ app.use(cors());
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiDocument));
 app.use("/auth", authRateLimit);
 
 app.use((req, res, next) => {
@@ -252,9 +258,44 @@ const FAIRY_STEP_ORDER = [
   "FLOWER_BLOOM",
   "GARDEN_UNLOCKED"
 ];
+const MAX_DISPLAY_NAME_LENGTH = 80;
+const MAX_AVATAR_LENGTH = 256;
+const MAX_SEARCH_LENGTH = 80;
+const MAX_MESSAGE_LENGTH = 1000;
+const MAX_REPORT_DETAILS_LENGTH = 2000;
+const MAX_ID_LENGTH = 128;
+const MAX_COORDINATE = 2000;
+
+function validId(value) {
+  return typeof value === "string" &&
+    value.length > 0 && value.length <= MAX_ID_LENGTH &&
+    /^[A-Za-z0-9_-]+$/.test(value);
+}
+
+function validOptionalString(value, maxLength) {
+  return value === undefined ||
+    (typeof value === "string" && value.trim().length <= maxLength);
+}
+
+function validCoordinate(value) {
+  return Number.isFinite(value) && Math.abs(value) <= MAX_COORDINATE;
+}
+
+function hasOnlyBooleans(body, fields) {
+  return fields.every((field) =>
+    body[field] === undefined || typeof body[field] === "boolean"
+  );
+}
+
+for (const parameter of ["userId", "id", "fairyId", "requestId", "flowerId"]) {
+  app.param(parameter, (req, res, next, value) => {
+    if (!validId(value)) return res.status(400).json({ error: `Invalid ${parameter}` });
+    return next();
+  });
+}
 function normalizeTimezone(value) {
   const timezone =
-    typeof value === "string" && value.trim()
+    typeof value === "string" && value.trim() && value.trim().length <= 64
       ? value.trim()
       : "UTC";
 
@@ -551,19 +592,27 @@ app.get("/users", async (req, res) => {
       orderBy: {
         createdAt: "asc",
       },
+      take: 100,
     });
 
     res.json(users);
   } catch (err) {
-    console.error("GET /users error:", err);
+    logServerError("GET /users error", err);
     res.status(500).json({ error: "Failed to get users" });
   }
 });
 
 app.get("/users/search", async (req, res) => {
     try {
-      const name = (req.query.name || "").trim();
-      const currentUserId = req.query.currentUserId;
+      if (typeof req.query.name !== "string") {
+        return res.status(400).json({ error: "Search name must be text" });
+      }
+      const name = req.query.name.trim();
+      const currentUserId = req.auth.userId;
+
+      if (name.length > MAX_SEARCH_LENGTH) {
+        return res.status(413).json({ error: `Search name must be ${MAX_SEARCH_LENGTH} characters or fewer` });
+      }
   
       if (!name) {
         return res.json([]);
@@ -589,14 +638,15 @@ app.get("/users/search", async (req, res) => {
   
         orderBy: {
           name: "asc"
-        }
+        },
+        take: 20
       });
   
       res.json(users);
   
     } catch (err) {
   
-      console.error("Search user error:", err);
+      logServerError("Search user error", err);
   
       res.status(500).json({
         error: "Failed to search users"
@@ -610,9 +660,9 @@ app.get("/users/:userId", async (req, res) => {
       where: {
         id: req.params.userId,
       },
-      include: {
-        friends: true,
-      },
+      ...(req.auth.userId === req.params.userId
+        ? { include: { friends: true } }
+        : { select: { id: true, name: true, avatar: true } }),
     });
 
     if (!user) {
@@ -623,16 +673,19 @@ app.get("/users/:userId", async (req, res) => {
       id: user.id,
       name: user.name,
       avatar: user.avatar,
-      friends: user.friends.map((friendship) => friendship.friendId),
+      ...(Array.isArray(user.friends)
+        ? { friends: user.friends.map((friendship) => friendship.friendId) }
+        : {}),
     });
   } catch (err) {
-    console.error("GET /users/:userId error:", err);
+    logServerError("GET /users/:userId error", err);
     res.status(500).json({ error: "Failed to get user" });
   }
 });
 
 app.get("/users/:userId/friends", async (req, res) => {
   try {
+    if (!requireOwnUser(req, res, req.params.userId)) return;
     const user = await prisma.user.findUnique({
       where: {
         id: req.params.userId,
@@ -656,11 +709,12 @@ app.get("/users/:userId/friends", async (req, res) => {
           },
         },
       },
+      take: 500,
     });
 
     res.json(friendships.map((item) => item.friend));
   } catch (err) {
-    console.error("GET /users/:userId/friends error:", err);
+    logServerError("GET /users/:userId/friends error", err);
     res.status(500).json({ error: "Failed to get friends" });
   }
 });
@@ -677,7 +731,7 @@ app.get("/users/:userId/garden", async (req, res) => {
 
     res.json(gardenResponse);
   } catch (err) {
-    console.error("GET /users/:userId/garden error:", err);
+    logServerError("GET /users/:userId/garden error", err);
     res.status(500).json({ error: "Failed to get garden" });
   }
 });
@@ -722,6 +776,12 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
         const requestedName = String(req.body?.name || identity.name || "").trim();
         if (!requestedName) {
           return res.status(400).json({ error: "Display name is required" });
+        }
+        if (requestedName.length > MAX_DISPLAY_NAME_LENGTH) {
+          return res.status(413).json({ error: `Display name must be ${MAX_DISPLAY_NAME_LENGTH} characters or fewer` });
+        }
+        if (!validOptionalString(req.body?.avatar, MAX_AVATAR_LENGTH)) {
+          return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
         }
         const now = Date.now();
         const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
@@ -777,7 +837,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
       fairyEvent
     });
   } catch (error) {
-    console.error("POST /auth/session error:", error);
+    logServerError("POST /auth/session error", error);
     return res.status(500).json({ error: "Unable to create PetalPal session" });
   }
 });
@@ -1107,19 +1167,23 @@ app.post("/legacy-register-disabled", async (req, res) => {
     try {
       const { avatar } = req.body;
       const userId = req.auth.userId;
+
+      if (typeof avatar !== "string" || !avatar.trim() || avatar.trim().length > MAX_AVATAR_LENGTH) {
+        return res.status(400).json({ error: `Avatar must be 1-${MAX_AVATAR_LENGTH} characters` });
+      }
   
       const user = await prisma.user.update({
         where: {
           id: userId
         },
         data: {
-          avatar
+          avatar: avatar.trim()
         }
       });
   
       res.json(user);
     } catch (err) {
-      console.error(err);
+      logServerError("PUT /users/avatar error", err);
   
       res.status(500).json({
         error: "Failed to update avatar"
@@ -1298,7 +1362,7 @@ app.put("/api/fairies/:fairyId/active", async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("PUT /api/fairies/:fairyId/active error:", error);
+    logServerError("PUT /api/fairies/:fairyId/active error", error);
     res.status(500).json({ error: "Unable to select active Fairy" });
   }
 });
@@ -1369,7 +1433,7 @@ app.get("/api/fairy/runtime", async (req, res) => {
     });
     res.json(result);
   } catch (error) {
-    console.error("GET /api/fairy/runtime error:", error);
+    logServerError("GET /api/fairy/runtime error", error);
     res.status(500).json({ error: "Unable to load Fairy runtime" });
   }
 });
@@ -1390,6 +1454,12 @@ app.put("/users/:userId/fairy-state", async (req, res) => {
 
   if (unlockedFeatures && !Array.isArray(unlockedFeatures)) {
     return res.status(400).json({ error: "unlockedFeatures must be an array" });
+  }
+  if (Array.isArray(unlockedFeatures) && (
+    unlockedFeatures.length > 50 ||
+    unlockedFeatures.some((item) => typeof item !== "string" || item.length > 64)
+  )) {
+    return res.status(400).json({ error: "unlockedFeatures must contain at most 50 short strings" });
   }
 
   const existing = await prisma.fairyState.findUnique({
@@ -1440,6 +1510,10 @@ app.get("/users/:userId/ai-consent", async (req, res) => {
 app.put("/users/:userId/ai-consent", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 
+  if (!hasOnlyBooleans(req.body, ["aiProcessing", "personalization", "memoryEnabled"])) {
+    return res.status(400).json({ error: "AI consent fields must be booleans" });
+  }
+
   const aiProcessing = Boolean(req.body.aiProcessing);
   const personalization = aiProcessing && Boolean(req.body.personalization);
   const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
@@ -1484,6 +1558,14 @@ app.get("/users/:userId/subscription", async (req, res) => {
 app.post("/reports", async (req, res) => {
   const { reportedUserId, messageId, category, details } = req.body;
 
+  if ((reportedUserId !== undefined && !validId(reportedUserId)) ||
+      (messageId !== undefined && !validId(messageId))) {
+    return res.status(400).json({ error: "Invalid reported resource identifier" });
+  }
+  if (!validOptionalString(details, MAX_REPORT_DETAILS_LENGTH)) {
+    return res.status(413).json({ error: `Report details must be ${MAX_REPORT_DETAILS_LENGTH} characters or fewer` });
+  }
+
   if (!REPORT_CATEGORIES.has(category)) {
     return res.status(400).json({ error: "Invalid report category" });
   }
@@ -1519,7 +1601,7 @@ app.post("/reports", async (req, res) => {
       category,
       details:
         typeof details === "string" && details.trim()
-          ? details.trim().slice(0, 2000)
+          ? details.trim()
           : null
     }
   });
@@ -1543,6 +1625,9 @@ app.post("/friends/request", async (req, res) => {
         return res.status(400).json({
           error: "Sender and receiver are required"
         });
+      }
+      if (!validId(receiverId)) {
+        return res.status(400).json({ error: "Invalid receiver" });
       }
   
       if (
@@ -1713,10 +1798,7 @@ app.post("/friends/request", async (req, res) => {
         request: friendRequest
       });
     } catch (err) {
-      console.error(
-        "POST /friends/request error:",
-        err
-      );
+      logServerError("POST /friends/request error", err);
   
       res.status(500).json({
         error: "Failed to send friend request"
@@ -1765,7 +1847,8 @@ app.post("/friends/request", async (req, res) => {
               },
               orderBy: {
                 createdAt: "desc"
-              }
+              },
+              take: 100
             }),
   
             prisma.friendRequest.findMany({
@@ -1784,7 +1867,8 @@ app.post("/friends/request", async (req, res) => {
               },
               orderBy: {
                 createdAt: "desc"
-              }
+              },
+              take: 100
             })
           ]);
   
@@ -1793,10 +1877,7 @@ app.post("/friends/request", async (req, res) => {
           outgoing
         });
       } catch (err) {
-        console.error(
-          "GET /friends/requests/:userId error:",
-          err
-        );
+        logServerError("GET /friends/requests/:userId error", err);
   
         res.status(500).json({
           error: "Failed to get friend requests"
@@ -1920,10 +2001,7 @@ app.post("/friends/request", async (req, res) => {
           message: "Friend request accepted"
         });
       } catch (err) {
-        console.error(
-          "POST /friends/requests/:requestId/accept error:",
-          err
-        );
+        logServerError("POST /friends/requests/:requestId/accept error", err);
   
         res.status(500).json({
           error:
@@ -1989,10 +2067,7 @@ app.post("/friends/request", async (req, res) => {
           message: "Friend request rejected"
         });
       } catch (err) {
-        console.error(
-          "POST /friends/requests/:requestId/reject error:",
-          err
-        );
+        logServerError("POST /friends/requests/:requestId/reject error", err);
   
         res.status(500).json({
           error:
@@ -2006,6 +2081,10 @@ app.post("/friends/remove", async (req, res) => {
   try {
     const { friendId } = req.body;
     const userId = req.auth.userId;
+
+    if (!validId(friendId)) {
+      return res.status(400).json({ error: "Invalid friend" });
+    }
 
     await prisma.friendship.deleteMany({
       where: {
@@ -2032,7 +2111,7 @@ app.post("/friends/remove", async (req, res) => {
       friendFriends: [],
     });
   } catch (err) {
-    console.error("POST /friends/remove error:", err);
+    logServerError("POST /friends/remove error", err);
     res.status(500).json({ error: "Failed to remove friend" });
   }
 });
@@ -2073,7 +2152,11 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
         classify: emotionClassifier
       });
     } catch (error) {
-      return res.status(error.status || 500).json({ error: error.message });
+      if ([400, 403, 413].includes(error?.status)) {
+        return res.status(error.status).json({ error: error.message });
+      }
+      logServerError("Daily Grow emotion resolution error", error);
+      return res.status(503).json({ error: "Emotion analysis is temporarily unavailable" });
     }
 
     const { event, mood, emotionSource, classification } = resolvedEmotion;
@@ -2132,6 +2215,9 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
       where: {
         gardenId: garden.id,
       },
+      select: { left: true, top: true },
+      orderBy: { createdAt: "desc" },
+      take: 1000
     });
 
     const recentFlowers = await prisma.flower.findMany({
@@ -2276,12 +2362,7 @@ const createdFlower = await prisma.$transaction(async (tx) => {
         );
       });
     } catch (progressError) {
-      console.error("POST /users/:userId/flowers Fairy progression error:", {
-        userId: user.id,
-        localDate,
-        code: progressError?.code,
-        message: progressError?.message
-      });
+      logServerError("POST /users/:userId/flowers Fairy progression error", progressError);
     }
 
     res.status(201).json({
@@ -2300,7 +2381,7 @@ const createdFlower = await prisma.$transaction(async (tx) => {
       fairyProgress
     });
   } catch (err) {
-    console.error("POST /users/:userId/flowers error:", err);
+    logServerError("POST /users/:userId/flowers error", err);
     if (err?.code === "P2002") {
       return res.status(409).json({
         error: "You have already completed today's check-in"
@@ -2319,6 +2400,12 @@ app.post(
         const { userId, flowerId } = req.params;
         const { visitorAvatar } = req.body;
         const visitorUserId = req.auth.userId;
+
+        if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
+          return res.status(413).json({
+            error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer`
+          });
+        }
   
 
         const flower = await prisma.flower.findFirst({
@@ -2412,10 +2499,9 @@ app.post(
   
         res.json(socialFlower);
       } catch (err) {
-        console.error(
-          "POST /users/:userId/flowers/:flowerId/support error:",
-          err
-        );
+        logServerError("POST /users/:userId/flowers/:flowerId/support error", err, {
+          latencyMs: Date.now() - startTime
+        });
   
         console.log(
           `support failed after ${Date.now() - startTime}ms`
@@ -2450,6 +2536,16 @@ app.post(
         if (!trimmedText) {
           return res.status(400).json({
             error: "Message cannot be empty"
+          });
+        }
+        if (trimmedText.length > MAX_MESSAGE_LENGTH) {
+          return res.status(413).json({
+            error: `Message must be ${MAX_MESSAGE_LENGTH} characters or fewer`
+          });
+        }
+        if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
+          return res.status(413).json({
+            error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer`
           });
         }
   
@@ -2522,7 +2618,7 @@ app.post(
                   visitorAvatar ||
                   visitor.avatar ||
                   "🦋",
-                action: `message:${trimmedText}`,
+                action: "message",
                 gardenId: flower.gardenId,
                 userId: visitor.id
               }
@@ -2544,10 +2640,9 @@ app.post(
         res.json(socialFlower);
   
       } catch (err) {
-        console.error(
-          "POST /users/:userId/flowers/:flowerId/message error:",
-          err
-        );
+        logServerError("POST /users/:userId/flowers/:flowerId/message error", err, {
+          latencyMs: Date.now() - startTime
+        });
   
         res.status(500).json({
           error: "Failed to add message"
@@ -2600,7 +2695,7 @@ app.delete("/users/:userId/flowers/:flowerId", async (req, res) => {
       deletedFlower: removedFlower,
     });
   } catch (err) {
-    console.error("DELETE /flowers error:", err);
+    logServerError("DELETE /flowers error", err);
     res.status(500).json({ error: "Failed to delete flower" });
   }
 });
@@ -2614,6 +2709,13 @@ app.post("/visit", async (req, res) => {
       y = 520,
     } = req.body;
     const visitorUserId = req.auth.userId;
+
+    if (!validId(hostUserId) || !validCoordinate(x) || !validCoordinate(y)) {
+      return res.status(400).json({ error: "Invalid visit input" });
+    }
+    if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
+      return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
+    }
 
     const host = await prisma.user.findUnique({
       where: {
@@ -2691,7 +2793,7 @@ app.post("/visit", async (req, res) => {
       visitRecords,
     });
   } catch (err) {
-    console.error("POST /visit error:", err);
+    logServerError("POST /visit error", err);
     res.status(500).json({ error: "Failed to visit garden" });
   }
 });
@@ -2701,8 +2803,11 @@ app.post("/visit/move", async (req, res) => {
     const { hostUserId, x, y, visitorAvatar } = req.body;
     const visitorUserId = req.auth.userId;
 
-    if (typeof x !== "number" || typeof y !== "number") {
-      return res.status(400).json({ error: "x and y must be numbers" });
+    if (!validId(hostUserId) || !validCoordinate(x) || !validCoordinate(y)) {
+      return res.status(400).json({ error: "Invalid movement input" });
+    }
+    if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
+      return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
     }
 
     const host = await prisma.user.findUnique({
@@ -2760,7 +2865,7 @@ res.json({
 });
 
   } catch (err) {
-    console.error("POST /visit/move error:", err);
+    logServerError("POST /visit/move error", err);
     res.status(500).json({ error: "Failed to move visitor" });
   }
 });
@@ -2772,6 +2877,12 @@ app.post("/leave", async (req, res) => {
         visitorAvatar
       } = req.body;
       const visitorUserId = req.auth.userId;
+      if (!validId(hostUserId)) {
+        return res.status(400).json({ error: "Invalid host user" });
+      }
+      if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
+        return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
+      }
   
       const [host, visitor] =
         await Promise.all([
@@ -2861,10 +2972,6 @@ app.post("/leave", async (req, res) => {
           payload
         );
   
-      console.log(
-        `${visitor.name} left ${host.name}'s garden`
-      );
-  
       res.json({
         success: true,
         activeVisitors:
@@ -2874,7 +2981,7 @@ app.post("/leave", async (req, res) => {
       });
   
     } catch (err) {
-      console.error(err);
+      logServerError("POST /leave error", err);
   
       res.status(500).json({
         error:
@@ -2890,6 +2997,9 @@ app.post("/analyze-mood", aiRateLimit, async (req, res) => {
     if (typeof text !== "string" || !text.trim()) {
       return res.status(400).json({ error: "Text is required" });
     }
+    if (text.trim().length > 2000) {
+      return res.status(413).json({ error: "Text must be 2000 characters or fewer" });
+    }
 
     const consent = await prisma.aiConsent.findUnique({
       where: { userId: req.auth.userId }
@@ -2901,7 +3011,7 @@ app.post("/analyze-mood", aiRateLimit, async (req, res) => {
       });
     }
 
-    const normalizedText = text.trim().slice(0, 2000);
+    const normalizedText = text.trim();
     const startedAt = Date.now();
     const mood = await predictMood(normalizedText);
 
@@ -2920,7 +3030,7 @@ app.post("/analyze-mood", aiRateLimit, async (req, res) => {
 
     res.json({ mood });
   } catch (err) {
-    console.error("Mood analysis error:", err);
+    logServerError("Mood analysis error", err);
     res.status(500).json({ error: "Failed to analyze mood" });
   }
 });
@@ -2973,9 +3083,9 @@ app.delete("/users/:id", async (req, res) => {
         message: "User deleted successfully"
       });
     } catch (err) {
-      console.error("DELETE /users/:id error:", err);
+      logServerError("DELETE /users/:id error", err);
       res.status(500).json({
-        error: err.message || "Failed to delete user"
+        error: "Failed to delete user"
       });
     }
   });
@@ -2987,7 +3097,7 @@ if (isDirectRun) {
       console.log("Mood model loaded.");
     })
     .catch((err) => {
-      console.error("Failed to load mood model:", err);
+      logServerError("Failed to load mood model", err);
     });
 }
   const clientDistPath = path.join(

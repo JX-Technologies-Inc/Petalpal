@@ -2,7 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const app = initializeApp({
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBs0pqyfM8eEMYdYS4qt1gwURtfohL6eEM",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ||
+    (import.meta.env.MODE === "test" ? "firebase-test-api-key" : undefined),
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "petalpal-b212c.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "petalpal-b212c",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "petalpal-b212c.firebasestorage.app",

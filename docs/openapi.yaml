@@ -1,0 +1,1373 @@
+openapi: 3.0.3
+info:
+  title: PetalPal API
+  version: 0.1.0
+  description: |
+    Month 1 REST API contract for the PetalPal backend.
+    This document reflects the currently implemented Express routes on main.
+    Socket.IO events are intentionally documented separately.
+
+servers:
+  - url: https://petalpal-v2.onrender.com
+    description: Production
+
+tags:
+  - name: Auth
+  - name: Session
+  - name: Users
+  - name: Garden
+  - name: Fairy
+  - name: AI
+  - name: Social
+  - name: Reports
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/session:
+    post:
+      tags: [Auth]
+      summary: Create or resume a PetalPal session from a verified Firebase identity
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deferProfileCreation:
+                  type: boolean
+                name:
+                  type: string
+                timezone:
+                  type: string
+                  example: America/Vancouver
+                preferredLocale:
+                  type: string
+                  example: en-CA
+                avatar:
+                  type: string
+                aiConsent:
+                  type: boolean
+      responses:
+        '200':
+          description: Session created or existing user resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: Firebase email is not verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /session:
+    get:
+      tags: [Session]
+      summary: Load the authenticated user's current PetalPal session state
+      responses:
+        '200':
+          description: Current user, onboarding/check-in state, and garden state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  fairyState:
+                    $ref: '#/components/schemas/FairyState'
+                  todayCheckIn:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/DailyCheckIn'
+                    nullable: true
+                  hasCheckedInToday:
+                    type: boolean
+                  dailyGrowLimitEnabled:
+                    type: boolean
+                  garden:
+                    $ref: '#/components/schemas/GardenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      responses:
+        '200':
+          description: Public user summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicUser'
+
+  /users/search:
+    get:
+      tags: [Users]
+      summary: Search users by display name
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching public user summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicUser'
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get a public user profile
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Public user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string }
+                  name: { type: string }
+                  avatar: { type: string, nullable: true }
+                  friends:
+                    type: array
+                    items: { type: string }
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Users]
+      summary: Permanently delete the authenticated user's PetalPal account data
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Account deletion completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /users/avatar:
+    put:
+      tags: [Users]
+      summary: Update the authenticated user's avatar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [avatar]
+              properties:
+                avatar:
+                  type: string
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseUser'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /users/{userId}/profile:
+    put:
+      tags: [Users]
+      summary: Update the authenticated user's profile preferences
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [preferredLocale]
+              properties:
+                preferredLocale:
+                  type: string
+                  example: en-CA
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /users/{userId}/friends:
+    get:
+      tags: [Social]
+      summary: Get a user's friend list
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Friends
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicUser'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/{userId}/garden:
+    get:
+      tags: [Garden]
+      summary: Get a user's garden
+      description: Private journal/emotion data is included only for the garden owner.
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Serialized garden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GardenResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/{userId}/check-ins:
+    get:
+      tags: [Garden]
+      summary: Get the authenticated user's recent Daily Grow check-ins
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Up to 366 check-ins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DailyCheckIn'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /users/{userId}/fairy-state:
+    get:
+      tags: [Fairy]
+      summary: Get onboarding fairy state
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Fairy onboarding state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FairyState'
+    put:
+      tags: [Fairy]
+      summary: Advance/update fairy onboarding state
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                onboardingStep:
+                  type: string
+                  enum:
+                    - EMPTY_GARDEN
+                    - FAIRY_APPEARS
+                    - MOOD_SELECTION
+                    - PLANT_FIRST_FLOWER
+                    - FLOWER_BLOOM
+                    - GARDEN_UNLOCKED
+                unlockedFeatures:
+                  type: array
+                  maxItems: 50
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Updated onboarding state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FairyState'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Invalid backwards transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/fairies:
+    get:
+      tags: [Fairy]
+      summary: List the authenticated user's unlocked fairies
+      responses:
+        '200':
+          description: Fairy collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fairies:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Fairy'
+                  activeFairyId:
+                    type: string
+                    nullable: true
+
+  /api/fairies/{fairyId}/active:
+    put:
+      tags: [Fairy]
+      summary: Set an owned fairy as active
+      parameters:
+        - in: path
+          name: fairyId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Active fairy updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveFairyResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/fairy/progress:
+    get:
+      tags: [Fairy]
+      summary: Get monthly fairy unlock progress
+      parameters:
+        - in: query
+          name: month
+          schema:
+            type: string
+            pattern: '^\d{4}-(0[1-9]|1[0-2])$'
+            example: '2026-09'
+      responses:
+        '200':
+          description: Monthly fairy progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FairyProgress'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/fairy/runtime:
+    get:
+      tags: [Fairy]
+      summary: Reconcile and return the active fairy runtime state
+      responses:
+        '200':
+          description: Current runtime state and optional transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FairyRuntime'
+        '409':
+          description: Fairy onboarding is not complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/{userId}/ai-consent:
+    get:
+      tags: [AI]
+      summary: Get AI consent preferences
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Current AI consent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiConsent'
+    put:
+      tags: [AI]
+      summary: Update AI consent preferences
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aiProcessing: { type: boolean }
+                personalization: { type: boolean }
+                memoryEnabled: { type: boolean }
+      responses:
+        '200':
+          description: Updated AI consent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiConsent'
+
+  /users/{userId}/subscription:
+    get:
+      tags: [Users]
+      summary: Get subscription entitlement
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Subscription entitlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionEntitlement'
+
+  /reports:
+    post:
+      tags: [Reports]
+      summary: Report a user or message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category]
+              properties:
+                reportedUserId:
+                  type: string
+                  nullable: true
+                messageId:
+                  type: string
+                  nullable: true
+                category:
+                  type: string
+                  enum:
+                    - HARASSMENT
+                    - HATE_SPEECH
+                    - SELF_HARM
+                    - SPAM
+                    - PRIVACY
+                    - OTHER
+                details:
+                  type: string
+                  maxLength: 2000
+      responses:
+        '201':
+          description: Report created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /friends/request:
+    post:
+      tags: [Social]
+      summary: Send a friend request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [receiverId]
+              properties:
+                receiverId:
+                  type: string
+      responses:
+        '201':
+          description: Friend request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendRequestCreatedResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Already friends or request already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /friends/requests/{userId}:
+    get:
+      tags: [Social]
+      summary: Get the authenticated user's incoming and outgoing friend requests
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Pending incoming and outgoing friend requests
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [incoming, outgoing]
+                properties:
+                  incoming:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IncomingFriendRequest'
+                  outgoing:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OutgoingFriendRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /friends/requests/{requestId}/accept:
+    post:
+      tags: [Social]
+      summary: Accept a friend request
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      responses:
+        '200':
+          description: Friend request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+
+  /friends/requests/{requestId}/reject:
+    post:
+      tags: [Social]
+      summary: Reject a friend request
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      responses:
+        '200':
+          description: Friend request rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+
+  /friends/remove:
+    post:
+      tags: [Social]
+      summary: Remove a friend relationship
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [friendId]
+              properties:
+                friendId:
+                  type: string
+      responses:
+        '200':
+          description: Friend removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+
+  /users/{userId}/flowers:
+    post:
+      tags: [Garden, AI]
+      summary: Complete Daily Grow and create today's flower
+      description: |
+        The selected Mood is the primary signal.
+        Optional journal/event text may trigger secondary-emotion analysis when AI processing is allowed.
+        The endpoint is protected by the AI-specific rate limiter.
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mood]
+              properties:
+                mood:
+                  type: string
+                  description: Canonical primary garden mood or accepted legacy mood value
+                event:
+                  type: string
+                  nullable: true
+                  description: Optional short journal/event text
+      responses:
+        '201':
+          description: Daily Grow result and persisted flower
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyGrowResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Duplicate Daily Grow or invalid workflow state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /users/{userId}/flowers/{flowerId}:
+    delete:
+      tags: [Garden]
+      summary: Delete an owned flower
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/FlowerId'
+      responses:
+        '200':
+          description: Flower deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+                  deletedFlower:
+                    $ref: '#/components/schemas/DatabaseFlower'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/{userId}/flowers/{flowerId}/support:
+    post:
+      tags: [Social]
+      summary: Support a flower
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/FlowerId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visitorAvatar:
+                  type: string
+      responses:
+        '200':
+          description: Support interaction recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialFlower'
+
+  /users/{userId}/flowers/{flowerId}/message:
+    post:
+      tags: [Social]
+      summary: Leave a message on a flower
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/FlowerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                visitorAvatar:
+                  type: string
+      responses:
+        '200':
+          description: Message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialFlower'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /visit:
+    post:
+      tags: [Garden, Social]
+      summary: Enter another user's garden
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hostUserId]
+              properties:
+                hostUserId: { type: string }
+                visitorAvatar: { type: string }
+                x: { type: number, default: 120 }
+                y: { type: number, default: 520 }
+      responses:
+        '200':
+          description: Visit started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /visit/move:
+    post:
+      tags: [Garden, Social]
+      summary: Update visitor position in a garden
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hostUserId, x, y]
+              properties:
+                hostUserId: { type: string }
+                x: { type: number }
+                y: { type: number }
+                visitorAvatar: { type: string }
+      responses:
+        '200':
+          description: Visitor position updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, activeVisitors]
+                properties:
+                  success: { type: boolean }
+                  activeVisitors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ActiveVisitor'
+
+  /leave:
+    post:
+      tags: [Garden, Social]
+      summary: Leave a visited garden
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hostUserId]
+              properties:
+                hostUserId: { type: string }
+                visitorAvatar: { type: string }
+      responses:
+        '200':
+          description: Visit ended
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, activeVisitors, record]
+                properties:
+                  success: { type: boolean }
+                  activeVisitors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ActiveVisitor'
+                  record:
+                    $ref: '#/components/schemas/VisitRecord'
+
+  /analyze-mood:
+    post:
+      tags: [AI]
+      summary: Analyze text with the current local mood classifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                  maxLength: 2000
+      responses:
+        '200':
+          description: Predicted mood
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mood:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: AI processing consent is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Firebase ID token
+
+  parameters:
+    UserId:
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
+    FlowerId:
+      in: path
+      name: flowerId
+      required: true
+      schema:
+        type: string
+    RequestId:
+      in: path
+      name: requestId
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    PublicUser:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        avatar: { type: string, nullable: true }
+
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        accountId: { type: string, nullable: true }
+        name: { type: string }
+        email: { type: string, format: email }
+        avatar: { type: string, nullable: true }
+        timezone: { type: string }
+        preferredLocale: { type: string }
+
+    DatabaseUser:
+      type: object
+      required: [id, name, avatar, timezone, preferredLocale, createdAt]
+      properties:
+        id: { type: string }
+        accountId: { type: string, nullable: true }
+        name: { type: string }
+        email: { type: string, format: email, nullable: true }
+        firebaseUid: { type: string, nullable: true }
+        emailVerifiedAt: { type: string, format: date-time, nullable: true }
+        avatar: { type: string }
+        timezone: { type: string }
+        preferredLocale: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    AuthSessionResponse:
+      type: object
+      required: [user, isNewUser]
+      properties:
+        user:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/User'
+          nullable: true
+        isNewUser: { type: boolean }
+        needsProfile: { type: boolean }
+        email: { type: string, format: email }
+        fairyEvent:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/FairyEvent'
+          nullable: true
+
+    FairyEvent:
+      type: object
+      required: [code, dialogueKey, actionKey]
+      properties:
+        code: { type: string }
+        dialogueKey: { type: string }
+        actionKey: { type: string }
+
+    FairyState:
+      type: object
+      required: [id, userId, onboardingStep, onboardingCompleted, unlockedFeatures, currentState, currentLocation, guideFairyType, guideFairy, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        onboardingStep: { type: string }
+        onboardingCompleted: { type: boolean }
+        lastEvent: { type: string, nullable: true }
+        unlockedFeatures:
+          type: array
+          items: { type: string }
+        currentState: { type: string }
+        currentLocation: { type: string }
+        stateStartedAt: { type: string, format: date-time, nullable: true }
+        nextTransitionAt: { type: string, format: date-time, nullable: true }
+        lastActiveAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        guideFairyType: { type: string }
+        guideFairy:
+          type: object
+          required: [type, name]
+          properties:
+            type: { type: string }
+            name: { type: string }
+
+    Fairy:
+      type: object
+      required: [id, type, name, unlockSource, unlockedAt, isActive, level, progression]
+      properties:
+        id: { type: string }
+        type: { type: string }
+        name: { type: string }
+        unlockSource: { type: string }
+        unlockMonth: { type: string, nullable: true }
+        unlockedAt: { type: string, format: date-time }
+        isActive: { type: boolean }
+        level: { type: integer }
+        progression: { type: integer }
+
+    ActiveFairyResponse:
+      type: object
+      required: [activeFairyId, fairy]
+      properties:
+        activeFairyId: { type: string }
+        fairy:
+          type: object
+          required: [id, type, name]
+          properties:
+            id: { type: string }
+            type: { type: string }
+            name: { type: string }
+
+    FairyProgress:
+      type: object
+      required: [month, activeDays, requiredDays, progress, unlockedThisMonth]
+      properties:
+        month: { type: string, pattern: '^\d{4}-(0[1-9]|1[0-2])$' }
+        activeDays: { type: integer }
+        requiredDays: { type: integer }
+        progress: { type: number, minimum: 0, maximum: 1 }
+        unlockedThisMonth: { type: boolean }
+
+    FairyRuntime:
+      type: object
+      required: [fairy, currentState, currentLocation, stateStartedAt, nextTransitionAt, lastActiveAt, shouldAnimate, runtimeVersion]
+      properties:
+        fairy:
+          type: object
+          required: [id, type, name, level, progression]
+          properties:
+            id: { type: string }
+            type: { type: string }
+            name: { type: string }
+            level: { type: integer }
+            progression: { type: integer }
+        currentState: { type: string }
+        currentLocation: { type: string }
+        previousState: { type: string, nullable: true }
+        previousLocation: { type: string, nullable: true }
+        stateStartedAt: { type: string, format: date-time }
+        nextTransitionAt: { type: string, format: date-time }
+        lastActiveAt: { type: string, format: date-time }
+        shouldAnimate: { type: boolean }
+        transitionId: { type: string, nullable: true }
+        runtimeVersion: { type: integer }
+
+    DailyCheckIn:
+      type: object
+      required: [id, userId, localDate, timezone, dailyLimitEnforced, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        localDate: { type: string, format: date }
+        timezone: { type: string }
+        dailyLimitEnforced: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        journal:
+          type: object
+          nullable: true
+        emotionResult:
+          type: object
+          nullable: true
+        flower:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/DatabaseFlower'
+          nullable: true
+
+    GardenResponse:
+      type: object
+      required: [owner, flowers, visitRecords, activeVisitors]
+      properties:
+        owner:
+          $ref: '#/components/schemas/PublicUser'
+        flowers:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/DatabaseFlower'
+              - $ref: '#/components/schemas/SocialFlower'
+        visitRecords:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisitRecord'
+        activeVisitors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActiveVisitor'
+
+    DatabaseFlower:
+      type: object
+      required: [id, mood, event, name, meaning, img, left, top, scale, rotation, layer, layoutVersion, supportCount, variant, rarity, growthState, createdAt, userId, gardenId]
+      properties:
+        id: { type: string }
+        mood: { type: string }
+        speciesCode: { type: string, nullable: true }
+        colorAccent: { type: string, nullable: true }
+        event: { type: string }
+        name: { type: string }
+        meaning: { type: string }
+        img: { type: string }
+        left: { type: number }
+        top: { type: number }
+        regionId: { type: string, nullable: true }
+        slotId: { type: string, nullable: true }
+        scale: { type: number }
+        rotation: { type: number }
+        layer: { type: integer }
+        layoutVersion: { type: integer }
+        supportCount: { type: integer }
+        variant: { type: string }
+        rarity: { type: string }
+        growthState: { type: string }
+        visualEffect: { type: string, nullable: true }
+        season: { type: string, nullable: true }
+        generationSeed: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        userId: { type: string }
+        gardenId: { type: string }
+        dailyCheckInId: { type: string, nullable: true }
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialMessage'
+
+    SocialFlower:
+      type: object
+      required: [id, mood, name, meaning, img, left, top, scale, rotation, layer, layoutVersion, supportCount, variant, rarity, growthState, createdAt, messages]
+      properties:
+        id: { type: string }
+        mood: { type: string }
+        speciesCode: { type: string, nullable: true }
+        colorAccent: { type: string, nullable: true }
+        name: { type: string }
+        meaning: { type: string }
+        img: { type: string }
+        left: { type: number }
+        top: { type: number }
+        regionId: { type: string, nullable: true }
+        slotId: { type: string, nullable: true }
+        scale: { type: number }
+        rotation: { type: number }
+        layer: { type: integer }
+        layoutVersion: { type: integer }
+        supportCount: { type: integer }
+        variant: { type: string }
+        rarity: { type: string }
+        growthState: { type: string }
+        visualEffect: { type: string, nullable: true }
+        season: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialMessage'
+
+    DailyGrowResponse:
+      allOf:
+        - $ref: '#/components/schemas/DatabaseFlower'
+        - type: object
+          required: [primaryGardenMood, secondaryEmotions, flower]
+          properties:
+            primaryGardenMood: { type: string }
+            secondaryEmotions:
+              type: array
+              maxItems: 2
+              items: { type: string }
+            flower:
+              type: object
+              required: [species, variant, speciesPoolSource]
+              properties:
+                species: { type: string, nullable: true }
+                variant:
+                  type: object
+                  required: [colorAccent, effect]
+                  properties:
+                    colorAccent: { type: string, nullable: true }
+                    effect: { type: string, nullable: true }
+                speciesPoolSource: { type: string }
+            fairyEvent:
+              type: object
+              allOf:
+                - $ref: '#/components/schemas/FairyEvent'
+              nullable: true
+            fairyProgress:
+              type: object
+              allOf:
+                - $ref: '#/components/schemas/FairyProgress'
+              nullable: true
+
+    SocialMessage:
+      type: object
+      required: [id, author, text, createdAt]
+      properties:
+        id: { type: string }
+        author: { type: string }
+        text: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    ActiveVisitor:
+      type: object
+      required: [visitorId, name, avatar, x, y]
+      properties:
+        visitorId: { type: string }
+        name: { type: string }
+        avatar: { type: string, nullable: true }
+        x: { type: number }
+        y: { type: number }
+
+    VisitRecord:
+      type: object
+      required: [id, visitorId, visitorName, visitorAvatar, action, createdAt, gardenId]
+      properties:
+        id: { type: string }
+        visitorId: { type: string }
+        visitorName: { type: string }
+        visitorAvatar: { type: string }
+        action: { type: string }
+        createdAt: { type: string, format: date-time }
+        gardenId: { type: string }
+        userId: { type: string, nullable: true }
+
+    VisitResponse:
+      type: object
+      required: [success, activeVisitors, visitRecords]
+      properties:
+        success: { type: boolean }
+        activeVisitors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActiveVisitor'
+        visitRecords:
+          type: array
+          items:
+            $ref: '#/components/schemas/VisitRecord'
+
+    FriendRequest:
+      type: object
+      required: [id, senderId, receiverId, status, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        senderId: { type: string }
+        receiverId: { type: string }
+        status: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    IncomingFriendRequest:
+      allOf:
+        - $ref: '#/components/schemas/FriendRequest'
+        - type: object
+          properties:
+            sender:
+              $ref: '#/components/schemas/PublicUser'
+
+    OutgoingFriendRequest:
+      allOf:
+        - $ref: '#/components/schemas/FriendRequest'
+        - type: object
+          properties:
+            receiver:
+              $ref: '#/components/schemas/PublicUser'
+
+    FriendRequestCreatedResponse:
+      type: object
+      required: [success, message, request]
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        request:
+          allOf:
+            - $ref: '#/components/schemas/FriendRequest'
+            - type: object
+              properties:
+                sender: { $ref: '#/components/schemas/PublicUser' }
+                receiver: { $ref: '#/components/schemas/PublicUser' }
+
+    SuccessMessage:
+      type: object
+      required: [success, message]
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+
+    Report:
+      type: object
+      required: [id, reporterId, category, status, createdAt]
+      properties:
+        id: { type: string }
+        reporterId: { type: string }
+        reportedUserId: { type: string, nullable: true }
+        messageId: { type: string, nullable: true }
+        category: { type: string }
+        details: { type: string, nullable: true }
+        status: { type: string }
+        resolutionNote: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        reviewedAt: { type: string, format: date-time, nullable: true }
+
+    SubscriptionEntitlement:
+      type: object
+      required: [id, userId, tier, status, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        tier: { type: string }
+        status: { type: string }
+        source: { type: string, nullable: true }
+        externalCustomerId: { type: string, nullable: true }
+        externalSubscriptionId: { type: string, nullable: true }
+        currentPeriodEnd: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    AiConsent:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        termsVersion: { type: string }
+        aiProcessing: { type: boolean }
+        personalization: { type: boolean }
+        memoryEnabled: { type: boolean }
+        grantedAt:
+          type: string
+          format: date-time
+          nullable: true
+        revokedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication required or no longer valid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Authenticated user is not allowed to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
