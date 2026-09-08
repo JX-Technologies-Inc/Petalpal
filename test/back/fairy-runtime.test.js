@@ -48,6 +48,39 @@ test("fairy advances and requests animation only near the transition", () => {
   assert.equal(result.transition.shouldAnimate, true);
 });
 
+test("retry within the animation window returns the same transition instruction", () => {
+  const first = reconcileFairyRuntime(record(), {
+    now: new Date("2026-08-26T11:00:05.000Z")
+  });
+  const retry = reconcileFairyRuntime({
+    ...record(),
+    ...first.update
+  }, {
+    now: new Date("2026-08-26T11:00:10.000Z")
+  });
+
+  assert.equal(retry.transition.transitionsReconciled, 0);
+  assert.equal(retry.transition.shouldAnimate, true);
+  assert.equal(retry.update.previousState, first.update.previousState);
+  assert.equal(retry.update.currentState, first.update.currentState);
+  assert.equal(retry.update.transitionId, first.update.transitionId);
+});
+
+test("retry after the animation window does not request replay", () => {
+  const first = reconcileFairyRuntime(record(), {
+    now: new Date("2026-08-26T11:00:05.000Z")
+  });
+  const retry = reconcileFairyRuntime({
+    ...record(),
+    ...first.update
+  }, {
+    now: new Date("2026-08-26T11:00:21.000Z")
+  });
+
+  assert.equal(retry.transition.shouldAnimate, false);
+  assert.equal(retry.update.transitionId, first.update.transitionId);
+});
+
 test("late resume reconciles all elapsed transitions without replaying animations", () => {
   const now = new Date("2026-08-27T03:00:00.000Z");
   const result = reconcileFairyRuntime(record(), {
@@ -55,6 +88,7 @@ test("late resume reconciles all elapsed transitions without replaying animation
   });
   assert.ok(result.transition.transitionsReconciled > 1);
   assert.equal(result.transition.shouldAnimate, false);
+  assert.equal(result.update.transitionId, null);
   assert.ok(result.update.nextTransitionAt > now);
 });
 
