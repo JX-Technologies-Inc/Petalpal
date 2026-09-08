@@ -1023,7 +1023,8 @@ components:
 
     FairyRuntime:
       type: object
-      required: [fairy, currentState, currentLocation, stateStartedAt, nextTransitionAt, lastActiveAt, shouldAnimate, runtimeVersion]
+      description: TRANSITIONING is a response phase; currentState always remains a persisted stable state.
+      required: [fairy, currentState, currentLocation, phase, allowedActions, stateStartedAt, nextTransitionAt, lastActiveAt, shouldAnimate, runtimeVersion]
       properties:
         fairy:
           type: object
@@ -1034,10 +1035,29 @@ components:
             name: { type: string }
             level: { type: integer }
             progression: { type: integer }
-        currentState: { type: string }
-        currentLocation: { type: string }
-        previousState: { type: string, nullable: true }
-        previousLocation: { type: string, nullable: true }
+        currentState:
+          type: string
+          enum: [SLEEPING, TEA_TIME, SWINGING, AT_MAILBOX, IDLE, IN_TREEHOUSE]
+        currentLocation:
+          type: string
+          enum: [MOON_BED, TEA_CHAIR, SWING, MAILBOX, DEFAULT_AREA, TREEHOUSE]
+        phase:
+          type: string
+          enum: [STABLE, TRANSITIONING]
+        allowedActions:
+          type: array
+          description: Empty while phase is TRANSITIONING.
+          items:
+            type: string
+            enum: [CHAT, STUDY_WITH_ME, ENTER_TREEHOUSE, OPEN_DIY_JOURNAL]
+        previousState:
+          type: string
+          enum: [SLEEPING, TEA_TIME, SWINGING, AT_MAILBOX, IDLE, IN_TREEHOUSE]
+          nullable: true
+        previousLocation:
+          type: string
+          enum: [MOON_BED, TEA_CHAIR, SWING, MAILBOX, DEFAULT_AREA, TREEHOUSE]
+          nullable: true
         stateStartedAt: { type: string, format: date-time }
         nextTransitionAt: { type: string, format: date-time }
         lastActiveAt: { type: string, format: date-time }

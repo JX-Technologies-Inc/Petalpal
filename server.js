@@ -1399,10 +1399,6 @@ app.get("/api/fairy/runtime", async (req, res) => {
     }
 
     await ensureStarterFairy(req.auth.userId);
-    const user = await prisma.user.findUnique({
-      where: { id: req.auth.userId },
-      select: { timezone: true }
-    });
     const result = await prisma.$transaction(async (tx) => {
       let activeFairy = await tx.userFairy.findFirst({
         where: { userId: req.auth.userId, isActive: true },
@@ -1418,8 +1414,7 @@ app.get("/api/fairy/runtime", async (req, res) => {
         data: { userFairyId: activeFairy.id }
       });
       const reconciled = reconcileFairyRuntime(runtime, {
-        now: new Date(),
-        timezone: normalizeTimezone(user?.timezone) || "UTC"
+        now: new Date()
       });
       const persisted = await tx.fairyRuntime.update({
         where: { userFairyId: activeFairy.id },

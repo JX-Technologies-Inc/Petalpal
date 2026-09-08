@@ -29,13 +29,14 @@ Current phase: Month 1 — P0 implementation complete/frozen; remaining P1 in pr
 - `/session` exposes the non-secret Daily Grow limit state so the web test client keeps its form available when the limit is disabled.
 - Owner Flower details expose stored secondary-emotion validation metadata; social Garden responses continue to exclude Journal and ML fields.
 - ML validation data retrieval: `Journal` + `EmotionResult` + `DailyCheckIn` + `Flower` are linked through the existing Daily Grow relations and can later be joined/exported as journal text, Primary Bloom, secondary emotions, intensity, confidence, timestamp, and flower/result IDs. Purpose: private in-domain ML evaluation/error analysis only; not automatic training data.
-- Backend suite: 74/74 passing, including database-restart persistence and Month 1 security regressions.
+- Backend suite: 78/78 passing, including database-restart persistence, Month 1 security regressions, and Fairy contextual interaction/runtime coverage.
 - OpenAPI covers all 34 production REST operations; `/api-docs/` Swagger UI is integrated and verified.
+- Fairy Contextual Interaction is complete: runtime responses expose stable/transition phases and state-specific allowed actions without embedding dialogue content or frontend animation behavior.
 
 ## IN PROGRESS
 
 - Month 1 overall remains in progress while the remaining P1 work is completed.
-- Remaining implementation-independent P1: full i18n/localization support and Fairy contextual interaction behavior.
+- Remaining implementation-independent P1: full i18n/localization support.
 - AI Fairy Response, Personalized Fairy Reflection, and the associated Prompt Engineering scope remain Month 1 P1. Their implementation will resume after the current ML/Gemini/evaluation track establishes the updated AI architecture.
 - The ML/Gemini evaluation track continues independently and does not reopen the completed P0 implementation scope.
 - Multi-instance rate-limit storage and broader production security infrastructure remain explicitly deferred.
@@ -43,7 +44,7 @@ Current phase: Month 1 — P0 implementation complete/frozen; remaining P1 in pr
 ## NEXT
 
 - Keep Month 1 P0 implementation frozen unless a regression or acceptance-critical defect is found.
-- Complete i18n/localization and define/implement Fairy contextual interactions.
+- Complete i18n/localization.
 - After the ML/Gemini/evaluation direction is settled, redefine and complete AI Fairy Response, Personalized Fairy Reflection, and Prompt Engineering against the new AI architecture.
 
 ## BLOCKED
@@ -54,8 +55,8 @@ Current phase: Month 1 — P0 implementation complete/frozen; remaining P1 in pr
 
 - Month 1 P0: 28/28 DONE. P0 implementation is temporarily closed/frozen.
 - Month 1 overall: IN PROGRESS until the remaining applicable P1 work is complete.
-- P1 DONE: OpenAPI; Fairy Runtime State Machine; Time-based State Transitions; Fairy State Persistence; Garden Region & Historical Traceability.
-- P1 remaining: i18n / Localization; Fairy Contextual Interaction; AI Fairy Response; Personalized Fairy Reflection; redefined Prompt Engineering.
+- P1 DONE: OpenAPI; Fairy Runtime State Machine; Time-based State Transitions; Fairy State Persistence; Fairy Contextual Interaction; Garden Region & Historical Traceability.
+- P1 remaining: i18n / Localization; AI Fairy Response; Personalized Fairy Reflection; redefined Prompt Engineering.
 - P1 superseded implementation detail: the original Fast / Low-cost LLM proposal. Do not add a separate low-cost LLM solely to reproduce the old roadmap; any future model choice should follow the updated AI architecture.
 
 ## Important Architecture Decisions
@@ -68,7 +69,7 @@ Current phase: Month 1 — P0 implementation complete/frozen; remaining P1 in pr
 
 ## Last Audit Summary
 
-- Final validation: `npm run check` passed (Backend 74/74, Frontend 30/30, lint, production build, Prisma validation, and syntax checks); the post-dependency-update focused security suite passed 5/5.
+- Final validation: `npm run check` passed (Backend 78/78, Frontend 30/30, lint, production build, Prisma validation, and syntax checks); the post-dependency-update focused security suite passed 5/5.
 - Dependency audit: non-breaking remediation upgraded `qs` to 6.16.0; 10 transitive advisories remain (4 high, 6 moderate) in Prisma CLI/Firebase Admin dependency trees, with npm offering only breaking forced downgrades. No `--force` change was applied.
 - Git secret scan: no live-looking secret in the current tracked tree; `.env` is untracked and ignored. Historical findings are the Firebase Web public key and an already-rotated/revoked database URL documented below.
 - Knowledge graph: `graphify update .` completed; graph rebuilt to 1,419 nodes and 1,956 edges.
