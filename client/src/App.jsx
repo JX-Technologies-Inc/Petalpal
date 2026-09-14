@@ -9,6 +9,7 @@ import {
   
   import { io } from "socket.io-client";
   import { apiRequest } from "./api";
+  import { firebaseAuth } from "./firebase";
   import { logoutFirebase } from "./Auth/firebaseSession";
   
   import AuthFlow from "./Auth/AuthFlow";
@@ -367,10 +368,12 @@ import {
       const socket = io(getSocketUrl(), {
         transports: ["websocket", "polling"],
         reconnection: true,
-        auth: {
-          token: localStorage.getItem(
-            "petalPalAccessToken"
-          )
+        auth: async (callback) => {
+          await firebaseAuth.authStateReady();
+          const token = firebaseAuth.currentUser
+            ? await firebaseAuth.currentUser.getIdToken()
+            : null;
+          callback({ token });
         }
       });
 
@@ -606,9 +609,6 @@ import {
   
       localStorage.removeItem(
         "petalPalCurrentUser"
-      );
-      localStorage.removeItem(
-        "petalPalAccessToken"
       );
     }
 

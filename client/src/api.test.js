@@ -1,13 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const { firebaseAuth } = vi.hoisted(() => ({
+  firebaseAuth: {
+    authStateReady: vi.fn(),
+    currentUser: { getIdToken: vi.fn() }
+  }
+}));
+
+vi.mock("./firebase", () => ({ firebaseAuth }));
+
 import { apiRequest } from "./api";
 
 describe("apiRequest", () => {
   beforeEach(() => {
     globalThis.fetch = vi.fn();
+    firebaseAuth.currentUser.getIdToken.mockResolvedValue("signed-token");
   });
 
-  it("adds JSON and bearer token headers", async () => {
-    localStorage.setItem("petalPalAccessToken", "signed-token");
+  it("adds JSON and Firebase bearer token headers", async () => {
     fetch.mockResolvedValue({
       ok: true,
       json: async () => ({ success: true })
@@ -24,6 +34,7 @@ describe("apiRequest", () => {
         Authorization: "Bearer signed-token"
       }
     });
+    expect(localStorage.getItem("petalPalAccessToken")).toBeNull();
   });
 
   it("uses the backend error message", async () => {

@@ -85,6 +85,16 @@ test("Month 1 HTTP security boundary protects private resources and rejects unsa
     body: { error: "Invalid JSON body" }
   });
 
+  const complexBody = await request(baseUrl, "/users/owner-1/flowers", {
+    token: "owner-token",
+    method: "POST",
+    body: Object.fromEntries(Array.from({ length: 1001 }, (_, index) => [`field${index}`, true]))
+  });
+  assert.deepEqual(complexBody, {
+    status: 413,
+    body: { error: "JSON body is too complex" }
+  });
+
   prisma.$transaction = async () => {
     throw new Error("SQL password=secret at /private/internal/path stack trace");
   };

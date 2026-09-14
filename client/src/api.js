@@ -1,3 +1,5 @@
+import { firebaseAuth } from "./firebase";
+
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "";
 
@@ -5,7 +7,7 @@ export async function apiRequest(path, options = {}) {
   await firebaseAuth.authStateReady();
   const token = firebaseAuth.currentUser
     ? await firebaseAuth.currentUser.getIdToken()
-    : localStorage.getItem("petalPalAccessToken");
+    : null;
 
   const response = await fetch(
     `${API_BASE_URL}${path}`,
@@ -34,7 +36,6 @@ export async function apiRequest(path, options = {}) {
     error.status = response.status;
 
     if (response.status === 401) {
-      localStorage.removeItem("petalPalAccessToken");
       localStorage.removeItem("petalPalCurrentUser");
       window.dispatchEvent(new Event("petalpal:unauthorized"));
     }
@@ -44,4 +45,3 @@ export async function apiRequest(path, options = {}) {
 
   return data;
 }
-import { firebaseAuth } from "./firebase";

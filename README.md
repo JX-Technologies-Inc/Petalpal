@@ -156,6 +156,15 @@ The browser/mobile app uses the Firebase Web SDK to create users and obtain ID t
 
 As an alternative on Render, configure both `FIREBASE_CLIENT_EMAIL` and `FIREBASE_PRIVATE_KEY`. Keep `\n` sequences in the private key; the backend normalizes them at startup. Never commit the service-account JSON or private key.
 
+### HTTP boundary configuration
+
+The API rejects browser requests with an unconfigured `Origin`. Set
+`CORS_ALLOWED_ORIGINS` to a comma-separated list only when the frontend is
+hosted on a separate origin. `TRUST_PROXY` defaults to `false`; configure it
+only with a verified Render/Cloudflare proxy hop count or trusted address
+list so client-supplied `X-Forwarded-For` values cannot choose the rate-limit
+identity.
+
 ### Cloudflare Workers AI emotion classification
 
 PetalPal sends journal text to Workers AI only when the user has enabled AI processing and has not manually selected a mood. The Render backend remains the trusted caller; browsers never receive the shared Worker secret.

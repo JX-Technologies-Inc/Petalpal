@@ -27,7 +27,6 @@ async function syncUser(user, profile = {}, refreshedIdToken) {
   const data = await response.json().catch(() => null);
   if (!response.ok) throw new Error(data?.error || "Unable to start PetalPal session");
 
-  localStorage.setItem("petalPalAccessToken", idToken);
   localStorage.setItem("petalPalCurrentUser", JSON.stringify(data.user));
   return data;
 }
