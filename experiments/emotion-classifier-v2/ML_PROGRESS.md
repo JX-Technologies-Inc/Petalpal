@@ -298,3 +298,300 @@ The user explicitly authorized automated labeling/adjudication and requested no 
 - Runtime71.16 seconds, process exited0. Head serialization/full-model compatibility verified on one internal row: maximum probability difference1.1920929e-7 (<1e-5). Saved config, weights, diagnostics, features, per-epoch probabilities/metrics, selected head, calibration, summary, verification and decision. No production changes; no Graphify needed.
 - New source research (not repetition): acquired EduAffect version2 once. Human single-dominant labels, not exhaustive multilabel; no author fields, English/Twi preprocessing. Actual CSV2422 rows; paper2423. Release license differs from paper. Quarantined ZIP and source/acceptance decision saved in `human-validation-research/DECISION.md`; no admission, relabeling, inference or score-based filtering.
 - Next priority is the missing independent human multilabel reference under existing18-product-label/0–2-output semantics and author/source isolation. Do not silently replace it with AI annotations, single-label evaluation or fewer labels. Further threshold searching on64 labels is not a substitute. No annotation job purchased or messages sent.
+
+### Gemini evaluation lock, fixed baseline, and bounded ASL round (2026-09-09)
+
+- Locked a new 300-author CoSoWELL cohort before candidate inference. Gemini A/B each completed 300 schema-valid annotations; exact label-set agreement was 219/300 and 81 disagreements were independently adjudicated with `gemini-3.6-flash`. All 81 adjudications succeeded; 300 rows included, 0 excluded. Hash/source-group/exact/normalized leakage audit passed and `v4/gemini-eval-v1/lock.json` is `LOCKED`. This is human-written, Gemini-annotated/adjudicated evaluation, not human-gold.
+- One-time fixed `v4f-fixed-blend` inference used the pre-existing 50/50 ensemble, threshold .35, and unchanged product selector. Selected18 Macro P/R/F1=.560326/.311135/**.341139**; Micro P/R/F1=.698225/.348083/.464567. The dominant failure is low recall, with zero F1 for anger/remorse. No weight, threshold, checkpoint, selector, or label choice used this opened evaluation.
+- Bounded internal round `v4/gemini-improvement-v1` tested one prespecified asymmetric-loss hypothesis without loading the Gemini evaluation. Existing locked pilot Train777+calibration64 were repartitioned by source group into661 Train/180 Dev using label coverage only; all18 Dev labels have >=2 positives and normalized/source-group isolation passed.
+- Fixed ASL configuration: original checkpoint, max512, lr5e-6,2epochs, gammaPositive0/gammaNegative2, probability clip.05, threshold.35, unchanged max-two selector, Micro precision>=.50 selection guard. Epoch0 Dev Macro-F1=.459329. Epoch1=.491064 with Micro-P=.449495; epoch2=.508348 with Micro-P=.454106. Both trained epochs failed the guard; epoch0 retained and ASL **REJECTED**. No external/retired/Frozen holdout was loaded.
+- Evidence now repeats the same pattern across pos-weighting, selector relaxation, low-threshold settings, and ASL: recall can be raised, but precision falls below the fixed guard. Further loss/threshold searching on the current same-assistant labels has low information value.
+- Next hypothesis: supervision/reference alignment and rare-label coverage, rather than another loss variant, is the main bottleneck. The clean next development input is independently Gemini-annotated/adjudicated human-written Train/Dev data that remains separate from the opened300 evaluation and from any future untouched final holdout. Creating it requires additional paid Gemini API usage, so work pauses for explicit budget authorization. Do not train on or tune against the opened300 reference.
+
+### Zero-cost post-ASL diagnosis and bounded checks (2026-09-09)
+
+- Threshold-free diagnosis on the new legal180-row internal Dev: original epoch0 macro average precision `.621371` and per-label oracle-threshold Macro-F1 diagnostic `.663175`, versus actual selected Macro-F1 `.459329`. ASL epoch1/2 reduced macro AP to `.603287/.605210` and oracle diagnostics to `.640968/.646691`; it did not improve ranking. This diagnostic is not a candidate score or permission to use oracle thresholds.
+- One prespecified5-fold OOF label-wise calibration used only the180-row Dev, fixed threshold grid and per-label precision>=.50 rule. It reduced Macro-F1 `.459329 -> .440367`, while Micro-P remained `.642105`; **REJECTED**. Rare-label support is too small for stable per-label calibration.
+- Saved Hybrid V2 Clean checkpoint lineage audit against the new Dev passed for IDs, source groups, exact and normalized text. Its historical fixed threshold `.50` produced Macro-F1 `.409435`, Micro-P `.495575`; **REJECTED**. A general-human backbone does not solve this domain/task gap.
+- One fixed50/50 original+ASL-epoch2 probability blend at unchanged threshold `.35` produced Macro-F1 `.477911`, Micro-P/R `.540000/.522581`, versus original `.459329`; it passes the internal guard and is retained only as a **further-development candidate**. No external evaluation was run, and no blend-weight/threshold sweep occurred.
+- Combined evidence: original ranking contains signal, but small-support label-wise calibration does not generalize OOF; objectives that raise recall degrade precision; the alternate backbone is worse. A fixed blend recovers only +1.86pp internally, far short of a credible path to `.60`. More local loss/threshold/selector searching now has low expected value.
+- Proposed paid next stage (not started): independently Gemini A/B annotate and adjudicate all841 existing human-written development rows plus149 reserved, author-disjoint CoSoWELL rows. Keep the existing841 as Train after a fresh lineage audit; use the149 pre-reserved authors as a fixed Dev, selected before labels and never part of the opened Gemini300. Expected standard-API volume:248 A/B batch requests plus about45 adjudication requests if disagreement remains near27%, roughly293 calls. Conservative estimated cost `$2–$8 USD`, depending mainly on thinking/output tokens; official 2026-09 pricing is $0.75/M input + $3.75/M output for Gemini3.6 Flash and $1.50/M input + $9/M output for Gemini3.5 Flash. Await explicit authorization before any call.
+- Success would show that supervision/reference semantic alignment plus broader independent annotation materially improves a candidate on the untouched149-row Dev while retaining precision. Failure would strongly indicate that architecture/domain coverage—not merely annotation mismatch—is limiting performance, justifying a different encoder or genuinely new human-written training source rather than more relabeling.
+
+### Aligned-supervision-v1 COMPLETE (2026-09-10)
+
+- Resumed strictly from persisted outputs: Pass A 672/990 and Pass B 192/990. Completed IDs were not reprocessed. Transient DNS/timeout handling was fixed; the output cap was raised after repeated truncated JSON, without changing labels, split, selection, or evaluation rules.
+- Pass A/B completed 990/990 each. Exact agreement 773; all 217 disagreements received independent Gemini3.6 adjudication; invalid exclusions 0. Final labels are locked at 841 Train / 149 author-disjoint Dev. Gemini usage: 291 recorded calls, estimated actual cost `$4.47387525`, below the `$8` hard stop.
+- Prespecified aligned-supervision full fine-tune completed from Candidate C (2 epochs, standard BCE, threshold .35, unchanged max-two selector). On the legal149-row Dev, selected18 Macro-F1: epoch0 `.232600`, epoch1 `.286660`, epoch2 `.308555`; epoch2 Micro P/R/F1 `.553957/.466667/.506579`, satisfying the precision>=.50 guard.
+- The one allowed fixed50/50 baseline+selected-epoch blend scored Macro-F1 `.265443`, so it was not selected. Final development candidate is epoch2; decision `PROMOTE` relative to the epoch0 baseline. This is development evidence on human-written, Gemini-labeled data, not human-gold or final external evidence.
+- Opened Gemini300, CoSoWELL367, retired125, Frozen sets, old Human Test, and production were not loaded or modified. Evidence: `v4/aligned-supervision-v1/annotation-lock.json` and `experiment/summary.json`. No commit/push.
+
+### Aligned-supervision bounded follow-ups (2026-09-10)
+
+- Diagnosis on the saved legal149 Dev: aligned epoch2 still had zero F1 on admiration, anger, confusion, curiosity, disgust and remorse; common-label performance and Micro precision were materially stronger. The primary issue is rare-label coverage/ranking, not a globally permissive selector.
+- `class-balanced-v1` tested exactly one Train-derived sqrt positive-weight configuration, clipped `[1,4]`, for2 continuation epochs from aligned epoch2. Macro-F1 `.312237/.303352`, but Micro precision `.461538/.435407` failed the existing `.50` guard. **REJECTED**; weighting repeated the known recall-for-precision failure.
+- `standard-continuation-v1` tested exactly2 lower-LR standard-BCE continuation epochs from aligned epoch2. Macro-F1 improved `.308555 -> .323107 -> .331812`; selected epoch2 Micro P/R/F1 `.577778/.472727/.520000`. The one fixed50/50 blend scored `.312216`. **PROMOTED** development candidate: unblended continuation epoch2.
+- One final preregistered `standard-continuation-v2` checked whether the monotonic trajectory persisted. It reversed to Macro-F1 `.316664/.314602`; prior `.331812` retained and the continuation **REJECTED**. Stop further epoch continuation and local loss/weight searching: the peak has passed and repeated selection on149 Dev would add selection bias.
+- Current best legal-Dev selected18 Macro-F1 is **`.3318122835`**, still far below `.60`. The next defensible hypothesis requires a materially different pretrained backbone or genuinely new leakage-safe aligned Train signal, with a fresh bounded protocol; it should not be another threshold/selector/loss/epoch sweep. No forbidden evaluation, production change, commit, or push occurred.
+
+### Materially different backbone round (2026-09-10)
+
+- `deberta-v3-small-v1` was locked before download/training: generic `microsoft/deberta-v3-small`, new21-label head, aligned Train only, standard BCE,3epochs, fixed `.35`/max-two evaluation and unchanged legal149 Dev selection. All three epochs produced all-negative outputs at the fixed threshold: selected18 Macro-F1 and Micro P/R/F1 all `0`. **REJECTED**.
+- Based on that collapse, `nli-deberta-v3-small-v1` tested one bounded task-pretrained alternative, `cross-encoder/nli-deberta-v3-small`, with the same fixed training/evaluation contract. Epoch1 Macro-F1 `.030722`, Micro P/R/F1 `.244565/.272727/.257880`; epochs2/3 again produced all-negative outputs. No epoch met the `.50` precision guard. **REJECTED**; fixed blend was therefore not run.
+- Current best remains RoBERTa standard-continuation-v1 epoch2: Macro-F1 `.3318122835`, Micro P/R/F1 `.577778/.472727/.520000`. Two materially different DeBERTa initializations did not approach it, so another backbone trial on the same small Train/Dev would now add model-selection bias with weak expected value.
+- Next evidence-based direction is new leakage-safe aligned Train signal, preferably a Train-only, label-balanced synthetic augmentation protocol derived from taxonomy definitions and Train counts (never Dev text/errors), followed by one fixed training run. This requires new paid API generation and explicit budget authorization before starting. No forbidden evaluation, production change, commit, or push occurred.
+
+### Recent experiment record consolidation (2026-09-10)
+
+- **aligned-supervision-v1** — Replaced existing Train targets with fixed Gemini-aligned labels after independent Pass A/B plus disagreement adjudication; trained the prespecified 2-epoch RoBERTa configuration. Legal149 Dev selected18 Macro-F1 improved `.232600 -> .308555`; epoch2 Micro P/R/F1=`.553957/.466667/.506579`. **PROMOTE** as development candidate. Key conclusion: supervision alignment helped, but rare-label recall remained the bottleneck.
+- **class-balanced-v1** — Continued from aligned epoch2 with Train-only sqrt positive weights clipped to `[1,4]` for2 epochs, testing whether rare-label recall could improve without changing evaluation. Macro-F1=`.312237/.303352`, but Micro precision=`.461538/.435407`, below the fixed `.50` guard. **REJECT**. Weighting reproduced the recall-for-precision tradeoff.
+- **standard-continuation-v1** — Continued aligned epoch2 with standard BCE, lower LR, and fixed2-epoch budget because the prior standard-BCE trajectory was still rising. Macro-F1 `.308555 -> .323107 -> .331812`; best epoch2 Micro P/R/F1=`.577778/.472727/.520000`. Fixed blend scored `.312216`. **PROMOTE**. This is the historical legal-Dev best: **`.3318122835`**.
+- **Generic DeBERTa-v3-small** — Trained a materially different `microsoft/deberta-v3-small` backbone with a new 21-label head, aligned Train only, fixed3 epochs. Epochs1/2/3 all produced all-abstain outputs: Macro-F1=`0`, Micro P/R/F1=`0/0/0`. **REJECT**. Generic backbone plus new multilabel head collapsed under the task’s label imbalance.
+- **NLI-DeBERTa-small** — Repeated the materially different backbone test using `cross-encoder/nli-deberta-v3-small` NLI-pretrained weights and the same fixed aligned-Train contract. Epoch1 Macro-F1=`.030722`, Micro P/R/F1=`.244565/.272727/.257880`; epochs2/3 Macro-F1=`0`. No epoch passed the precision guard. **REJECT**. NLI initialization did not prevent collapse.
+- **public-human augmentation v1** — Acquired the official Facebook Research/Meta EmpatheticDialogues archive (CC BY-NC 4.0; acquired 2026-09-10), used only its publisher `train.csv`, and deterministically selected 444 human-written situation prompts from 444 distinct source authors. Normalized-text overlap with existing Train, legal Dev, and within augmentation was `0/0/0`; selection used no Dev content or labels. Continued the current-best RoBERTa checkpoint with the 444 added Train rows for2 epochs: epoch1 Macro-F1=`.323889`, epoch2=`.312497`; Micro P/R/F1 epoch1=`.580882/.478788/.524917`, epoch2=`.577778/.472727/.520000`. Per-label gains included fear `.353 -> .636` and caring `.273 -> .400`, but excitement `.545 -> .308`, sadness `.692 -> .609`, and love `.167 -> .000` regressed. **REJECT**; current best remains `.3318122835`.
+
+### Public human-written source shortlist (research only; 2026-09-10)
+
+- No training, download/admission, model selection, or evaluation was run. Research used only current Train counts: curiosity8, anger14, confusion15, admiration18, disgust24, excitement24, remorse24, surprise29, caring34, love36, fear39.
+- **Top candidate: GoEmotions.** Official Google Research corpus: 58,009 human-written Reddit comments; agreement-filtered train split 43,410; direct human labels include all seven priority rare labels except none are missing from the 27-label taxonomy; author/comment/subreddit metadata supports leakage audits. Recommend qualifying a conservative **1,000–5,000-row** tranche only after exact/normalized/near-duplicate and author/source audit against current Train and sealed legal Dev. Reddit overlap with existing PHQ-family Train is the main risk.
+- **Second candidate: ISEAR.** Approximately 7,666 human-written first-person emotion episodes with human labels; strong personal-experience fit and direct anger/disgust/fear/joy/sadness coverage. Guilt/shame→remorse is not a reliable automatic mapping; curiosity/confusion/admiration/excitement are absent. Canonical rights and persistent author linkage remain unresolved, so do not admit yet.
+- **Conditional: DailyDialog.** Approximately 11,118 train dialogues, manually labelled with seven coarse emotions; can add anger/disgust/fear/joy/sadness/surprise but is dialogue rather than journaling and does not solve rare-label boundaries. Keep lower priority pending rights/provenance review.
+- **Do not use now:** EmotionLines/MELD (scripted/contextual conversational source, weak PetalPal fit) and another EmpatheticDialogues tranche (the prior audited 444-row augmentation was rejected: `.331812 -> .323889/.312497`).
+- Full source table, official links, license/author caveats, expected yields, mappings, and leakage prerequisites: `v4/aligned-supervision-v1/public-source-shortlist-20260910.md`. Training remains paused pending user direction.
+
+### Public-data lineage inventory and high-quality candidate pool (2026-09-10)
+
+- Historical source inventory was reconstructed from local artifacts without rereading the full progress file: current aligned Train contains 468 PHQ/public-journaling rows, 319 CoSoWELL rows, and 54 consented rows; current legal Dev contains 149 CoSoWELL rows. Older hybrid artifacts used GoEmotions and EmpatheticDialogues repeatedly, but those counts are per artifact and overlap; they are not new current aligned Train.
+- Historical GoEmotions/EmpatheticDialogues Train/Dev/Test artifacts, current aligned Train/Dev, Gemini cohort files, Frozen/evaluation files, auto-v1–v4 files, and independent-human files were indexed by dataset, path, split, source-group/row ID, author field when present, and normalized text SHA-256. Dev/holdout text was used only inside the hash comparison and never emitted or used for data design. Reference: `v4/aligned-supervision-v1/public-source-shortlist-20260910/lineage-reference.jsonl`.
+- Built a machine-readable **GoEmotions candidate pool** from the official agreement-filtered `train.tsv` only. It retains direct current-taxonomy labels, at least one priority rare label, 4–40 word rows, and excludes all indexed historical GoEmotions IDs and normalized-text overlaps. Result: **1,605** candidate rows; rare-label membership: admiration250, anger250, confusion250, curiosity250, disgust250, excitement250, remorse141. No legal Dev/Gemini content was used for selection; no author IDs are present in the local filtered TSV, so author/source audit remains a prerequisite.
+- Candidate pool is **not yet admitted to Train** and no model was trained. Final machine-readable pool (text, original labels, mapped labels, row ID, source, official split, author field when available, provenance, license note, selection reason): `v4/aligned-supervision-v1/public-source-shortlist-20260910/goemotions-candidate-pool-final.jsonl`. Summary: `candidate-pool-summary.json`; historical inventory: `historical-data-source-inventory.json`.
+- Recommendation for any future data review: first obtain/verify official GoEmotions raw metadata and usage terms, then audit author/subreddit/source isolation and inspect a small quality sample. Use a conservative rare-label tranche only if that audit passes; do not repeat EmpatheticDialogues augmentation.
+
+### Targeted GoEmotions augmentation v1 (2026-09-10)
+
+- Completed official-metadata provenance audit for the 1,605-row candidate pool. All 1,605 IDs resolved against the three official raw CSVs; 1,566 unique authors, 449 subreddits, 16 `example_very_unclear` rows, 0 within-pool normalized-text duplicates, and 0 normalized-text overlaps against the 45,345-row hash-only lineage index. Recoverable historical GoEmotions-author overlap was 39; author overlap with historical Go IDs was excluded from the tranche. Residual risk: transformed historical artifacts lack complete author metadata, PHQ/other sources lack cross-source author identity, and subreddit overlap is inherent to the source. Official README/model card were recorded, but no dataset license file was found; usage/redistribution remains `REVIEW_REQUIRED` for production.
+- Designed a conservative, fixed tranche without reading Dev/Gemini text or using them for selection: 204 rows, 204 unique authors, max two rows per subreddit, no unclear or >2-label source examples, and exactly 30 membership rows for each target label (admiration, anger, confusion, curiosity, disgust, excitement, remorse). Base aligned Train 841 rows became 1,045 rows. Target support changed: admiration 18→48, anger 14→44, confusion 15→45, curiosity 8→38, disgust 24→54, excitement 24→54, remorse 24→54. Tranche audit: `goemotions-tranche-audit.json`; locked protocol: `goemotions-targeted-v1/protocol.json`.
+- Ran one fixed continuation configuration from the promoted standard-continuation-v1 epoch-2 checkpoint (standard BCE, lr `2e-6`, batch2/accum8, seed44, fixed threshold `.35`, two epochs, no sweep). Legal149 Dev: epoch1 Macro-F1 `.345179`, Micro P/R/F1=`.579710/.484848/.528053`; epoch2 `.343674`, Micro=`.576642/.478788/.523179`. Epoch1 was selected under the existing precision guard and **PROMOTED**, improving the historical best `.331812` by `+.013366` (`+1.34`pp). New checkpoint: `goemotions-targeted-v1/experiment/epoch-1-checkpoint`.
+- Selected epoch1 final per-label support/F1: admiration `2/.000`, amusement `7/.250`, anger `0/.000`, annoyance `21/.345`, caring `15/.348`, confusion `1/.000`, curiosity `2/.000`, disappointment `4/.857`, disgust `2/.000`, excitement `8/.500`, fear `10/.444`, gratitude `12/.700`, joy `42/.680`, love `9/.167`, optimism `12/.480`, remorse `2/.000`, sadness `11/.692`, surprise `5/.750`. The gain came mainly from caring, fear, gratitude and optimism; the targeted zero-F1 rare labels remained unresolved and excitement regressed slightly, so this is a modest improvement rather than evidence for `.60`.
+- Conclusion: targeted high-quality GoEmotions signal is useful but domain/label-boundary mismatch remains material. Do not stack more GoEmotions immediately; use the promoted checkpoint only as the new development best and require a materially different bounded hypothesis for the next round.
+
+### Train-side weak-label diagnosis and domain-restoration-v1 (2026-09-10)
+
+- Diagnosis used only the 1,045-row Train (841 aligned PetalPal + 204 audited GoEmotions rows), taxonomy labels, saved losses and checkpoint head parameters. The six zero-Dev-F1 labels are not globally probability-collapsed: on Train, positive/negative probability separation was substantial (positive median vs negative p95: admiration `.640/.112`, anger `.560/.092`, confusion `.646/.087`, curiosity `.478/.067`, disgust `.749/.066`, remorse `.598/.060`); each had many positive Train rows above fixed `.35`. Train BCE was low for these labels (`.056–.085`).
+- The source-shift signal was stronger than a threshold explanation: GoEmotions positive means exceeded original PetalPal positives for admiration (`.644 vs .397`), anger (`.539 vs .340`), remorse (`.705 vs .278`) and excitement (`.434 vs .281`), while negative distributions stayed low. The continuation classifier head changed only about `0.0002–0.0008` in target-row weight norm, so the augmented examples were learnable in-sample but the low-LR continuation barely adapted the boundary. Evidence supports source/domain mismatch plus weak adaptation; it does not support overall threshold mismatch or head collapse.
+- One bounded repair was locked: `domain-restoration-v1`, no new data, one epoch of standard BCE (`lr=2e-6`, seed44) on the original 841 aligned Train only, starting from the promoted GoEmotions epoch-1 checkpoint. No Dev text/errors, opened Gemini-300, Frozen/holdout or production data were used for design. Legal149 Dev was evaluated once at the unchanged `.35` threshold.
+- Result: Macro-F1 `.345179 -> .332792`; Micro P/R/F1=`.591241/.490909/.536424`. Admiration, anger, confusion, curiosity, disgust and remorse remained F1 `0`; excitement became `.400` (from `.500`). **REJECTED**. The promoted targeted GoEmotions epoch-1 checkpoint remains the best at `.345179`; do not overwrite it. This rules out simple one-epoch domain restoration as the next fix and leaves label-boundary/source mismatch or supervision quality as the leading unresolved bottleneck.
+
+### Public journaling-domain source research and candidate pool v1 (2026-09-10)
+
+- Training remains paused. Historical source inventory was rechecked locally from keyword snippets and the existing machine-readable inventory. GoEmotions and EmpatheticDialogues are historical/used sources; EmpatheticDialogues is rejected for another tranche after the audited 444-row augmentation regressed the legal Dev. ISEAR was previously only a research shortlist; the new enISEAR release below is distinct and was lineage-audited.
+- **Lemotif** is the strongest domain match found: official authors collected 1,473 cleaned text samples from 500 anonymous Amazon Mechanical Turk respondents answering a daily-journal prompt about salient aspects of yesterday and feelings, with respondent-selected multi-emotion labels. A targeted exact-mapping subset contributes 323 candidate rows covering anger 28, confusion 28, disgust 22 and excitement 251 (no fuzzy proud→admiration or shame/guilt→remorse mapping). The flat CSV has no respondent ID; dataset-specific licensing is not stated separately from the MIT code repository, so redistribution/production use remains rights-review gated.
+- **enISEAR** is a new, official 1,001-row English first-person event corpus created by crowdsourcing with Phase-2 validation and ODC-By 1.0. The pool retains 592 rows with direct Anger/Disgust/Fear/Joy/Sadness labels and validation score ≥3/5; guilt and shame are explicitly excluded rather than mapped to remorse. Worker IDs are preserved (63 unique workers in the retained rows); source-local author isolation is auditable, but cross-source identity cannot be proven for historical artifacts.
+- Built a new independent, machine-readable pool with **915 rows**: Lemotif 323 + enISEAR 592. Exact direct mapped-label membership: anger 140, confusion 28, disgust 106, excitement 251, fear 127, joy 316, sadness 142, surprise 21. Priority-label coverage: admiration 0, anger 140, confusion 28, curiosity 0, disgust 106, excitement 251, remorse 0. Two normalized duplicates between the new sources were removed; original-row-ID overlap=0, normalized-text overlap against the 45,345-row historical hash lineage=0, source-dataset overlap=0, and enISEAR worker-ID overlap with historical author IDs=0. Dev/Gemini/Frozen text was not read; only existing hash/source lineage metadata was compared.
+- Other sources were evaluated but not admitted: crowd-enVENT (high-quality prompted event descriptions, but no additional priority-label coverage beyond anger/disgust and unclear dataset licensing), MEMO4000 (CC BY 4.0 and admiration/anger/disgust coverage, but social-network status domain and weak provenance), and Facebook Curiosity Dialog (conversation/QA without reliable emotion labels). Full artifacts: `v4/aligned-supervision-v1/public-domain-data-v1-20260910/petalpal-domain-candidate-pool.jsonl`, `source-summary.json`, `lineage-audit.json`, `historical-source-inventory-v2.json`, and `retrieval-manifest.json`.
+- Recommendation for the next data review: prioritize a small Lemotif tranche first for direct journaling-domain supervision, optionally paired with a bounded validated enISEAR anger/disgust supplement. The new pool does not solve admiration/curiosity/remorse; public human-written sources with reliable direct labels for those three remain the main gap. No training, model selection, threshold change, taxonomy change, production change, commit, or push was performed.
+
+### Lemotif/enISEAR bounded pilot v1 (2026-09-10)
+
+- Completed a strict Train-side lineage audit before selection. The 915-row candidate pool had zero normalized-text overlap and zero row-ID overlap with canonical aligned Train and the prior 204-row GoEmotions tranche. No legal Dev, opened Gemini-300, Frozen, or holdout text was read for selection. Audit status: `PASS_WITH_RESIDUAL_RISK`; Lemotif has no respondent IDs in the released flat file, and source/license completeness remains a documented residual risk.
+- Ran exactly one locked pilot using 150 new rows: Lemotif `120` and enISEAR `30`. Selection was deterministic and Train-side only: direct taxonomy mappings, support targeting, provenance, and enISEAR validation/worker isolation. Added label membership: anger `43`, sadness `12`, confusion `28`, surprise `8`, disgust `37`, excitement `48`, joy `38`, fear `3`. Existing 1,045 rows became 1,195; no canonical Train/Dev/holdout files were modified.
+- Used the verified standard continuation configuration for one epoch only (standard BCE, lr `2e-6`, seed `44`, fixed threshold `.35`, unchanged selector/evaluation rules), starting from the promoted GoEmotions epoch-1 checkpoint. Legal149 Dev was evaluated once. Macro-F1 changed `.345179 -> .328226` (delta `-.016953`); Micro P/R/F1=`.562044/.466667/.509934`. Key final F1: excitement `.428571`; admiration, anger, confusion, curiosity, disgust and remorse remained `0`.
+- **REJECTED.** The domain-matched 150-row tranche did not improve the current candidate; the prior GoEmotions targeted epoch-1 checkpoint remains the best at Macro-F1 `.345179` and was not overwritten. Per the bounded protocol, stop this direction and do not add more rows, retune, or retrain automatically.
+
+### Uncertain-negative mask v1 (2026-09-10)
+
+- Root-cause review used only aggregate metrics, Train-side probabilities, locked label definitions/sets, source metadata, and Pass A/B label decisions; no Dev text, individual Dev predictions/logits/errors, Gemini-300, Frozen, or other holdout content was read. The six reported weak labels are not six equally established failures: legal Dev support is admiration2, anger0, confusion1, curiosity2, disgust2, remorse2. Their Train probabilities separate positives from negatives, so head collapse and a simple threshold explanation remain unsupported. Source-conditioned positive scores, failed domain restoration, and failed journal-like augmentation support taxonomy/supervision-boundary shift as the leading cause. The annotation protocol permits only0–2 labels, while standard BCE treats every omitted label as a certain negative; 193/841 aligned Train rows use both label slots. Pass A/B also supplied direct uncertainty evidence: 111 Train rows contained116 labels selected by an independent pass but omitted from the locked final set, including admiration4, anger2, confusion2, disgust1 and remorse5 (curiosity0).
+- Locked one materially different experiment before training/evaluation: unchanged best initialization, unchanged841 aligned rows + unchanged204-row audited GoEmotions tranche, one epoch, lr`2e-6`, seed44, standard sampling, threshold`.35`, and unchanged max-two selector. The only change was masking negative BCE for those116 pass-supported but final-omitted labels on aligned Train; final positives, all reliable negatives and all GoEmotions targets remained unchanged. One predetermined legal149 Dev evaluation was run.
+- Result: selected18 Macro-F1 `.345179 -> .340457`; Micro P/R/F1=`.566434/.490909/.525974`. Per-label F1: admiration`.000`, amusement`.250`, anger`.000`, annoyance`.344828`, caring`.347826`, confusion`.000`, curiosity`.000`, disappointment`.666667`, disgust`.000`, excitement`.545455`, fear`.444444`, gratitude`.631579`, joy`.693069`, love`.307692`, optimism`.480000`, remorse`.000`, sadness`.666667`, surprise`.750000`. None of the six weak labels was rescued. **REJECT.** The promoted GoEmotions epoch-1 checkpoint remains best and was not overwritten.
+- Interpretation: explicitly observed Pass A/B negative-label uncertainty is too sparse to explain the transfer failure by itself. Together with the source-conditioned Train separation and the two failed domain interventions, the remaining evidence favors unstable/narrow cross-source label semantics plus extremely weak legal-Dev support, rather than a repairable local BCE-negative bug. Stop automatic experimentation on legal149 now: after repeated checkpoint/backbone/data/objective comparisons, another Dev-selected run would materially increase model-selection bias. The next defensible step requires user authorization for either new independent annotation or a new sealed evaluation protocol/holdout; do not tune another variant on this Dev.
+
+### Sealed Blog Evaluation v1 preparation (2026-09-10)
+
+- Locked a new evaluation protocol before candidate extraction or any model inference. Source is the human-written Blog Authorship Corpus (personal blogs;19,320 author IDs), source-disjoint from the known PHQ/Reddit, CoSoWELL, GoEmotions, EmpatheticDialogues, Lemotif and enISEAR histories. Planned fixed asset is360 rows from360 unique authors:270 taxonomy-cue strata rows fixed at15 per label plus90 deterministic natural-domain rows. Hard cases/abstentions may never be removed; all18 labels remain in scope; seal requires final support>=15 per label (target20).
+- Retrieved source archive SHA-256 `1dfa6996663515a4baf8c1b71713ce8fe9a314b13778701447e4663bbc64c983`. Scripted candidate audit against the existing45,345-row historical lineage index found normalized-hash overlap0, recoverable author overlap0, recoverable source-group overlap0, internal hash duplicates0 and internal author duplicates0. Candidate manifest SHA-256 is `376d2ba645af8a90f5a8b34dd3281f59a31c1e6cb8bd8d190172704aa6c45544`. No protected holdout semantics or candidate checkpoint outputs were used.
+- Locked annotation as independent Gemini Pass A + reverse-order Pass B + fresh disagreement adjudication, with estimated full cost US$1.63 and hard stop US$2. The first request could not execute: configured Gemini project returned HTTP403 `PERMISSION_DENIED` due billing/dunning denial. No response was produced and actual API cost is US$0.
+- Status: **NOT_SEALED / BLOCKED_BEFORE_ANNOTATION**. Label support is unknown; cue strata are not treated as reference labels. No model evaluation or training is permitted. Resume unchanged only after an authorized Gemini billing project is available; seal only after all annotations/adjudications, support>=15 for every label, final hashes, and research-use rights approval. Do not replace rows if support fails.
+
+### Sealed Blog Evaluation v1 annotation outcome (2026-09-10)
+
+- Resumed from persisted IDs/usage. Pass A and reverse-order Pass B completed `360/360` over unchanged candidate SHA-256 `376d2ba645af8a90f5a8b34dd3281f59a31c1e6cb8bd8d190172704aa6c45544`. Exact agreement=`228`; only all `132` disagreements were adjudicated. Actual Gemini cost=`US$1.88420325`, within the `US$2` cap. No classifier inference/training or other holdout access occurred.
+- Final support: admiration25, amusement49, anger14, annoyance58, caring7, confusion22, curiosity11, disappointment28, disgust13, excitement47, fear18, gratitude17, joy40, love17, optimism19, remorse10, sadness43, surprise9. Minimum15 failed for anger, caring, curiosity, disgust, remorse and surprise.
+- All other integrity checks passed; final manifest SHA-256=`1482f372360c6fd726cf30ba045b0921397da7a9f664e482dc6d7b5ec35a4bc7`. Decision: **NOT_SEALED**. No row was replaced, removed or relabeled; model evaluation/tuning is forbidden.
+
+### group-oof-transformer-v1 (2026-09-10)
+
+- **Experiment:** `group-oof-transformer-v1`. **Purpose:** diagnostic test of source-disjoint Transformer generalization.
+- **Initialization:** `candidate-c/artifacts/checkpoint`. This candidate-c checkpoint predates the aligned 841-row Train; it was not initialized from any checkpoint fine-tuned on the complete aligned Train. Each fold independently initialized from the same candidate-c weights and trained only on the other four folds.
+- Ran strict 5-fold sourceGroup OOF using the fixed assignment from `group-oof-tfidf-v1`: fold sizes `169 / 168 / 168 / 168 / 168`; sourceGroup overlap across folds `0`; every row assigned to exactly one validation fold.
+- Evaluation remained fixed to the existing 18-label product set, threshold `0.35`, maximum outputs `2`. Complete OOF predictions are `841 × 21`; the three non-product checkpoint outputs were excluded from the fixed 18-label report. No threshold, hyperparameter, fold, or checkpoint selection was performed.
+- Per-fold Macro/Micro-F1: fold0 `0.487964 / 0.569620`; fold1 `0.501839 / 0.579618`; fold2 `0.420455 / 0.542587`; fold3 `0.451609 / 0.569579`; fold4 `0.490403 / 0.592145`.
+- Aggregate OOF Macro-F1=`0.492306`; Micro-F1=`0.570888`. For comparison, the strict sourceGroup TF-IDF OOF baseline reached Macro-F1=`0.203350`.
+- **Decision: DIAGNOSTIC ONLY.** Do not mark this checkpoint as the new promoted production/development candidate, do not replace the legal149 development score of `0.345179`, and do not present `0.492306` as a final or product score.
+- Interpretation: the result provides evidence that the Transformer learns source-disjoint signal within the current aligned supervision and weakens the hypothesis that lexical memorization or representation failure is the primary bottleneck. It does not establish external-domain or human-gold generalization. Artifacts: `v4/group-oof-transformer-v1/oof-probabilities.npy`, `metrics.json`, `summary.json`, and `run.log`. No production change, commit, or push.
+
+## 2026-09-08 to 2026-09-12 — Supervision / Human Diagnostic Phase
+
+### Locked evaluation
+
+- `v4/gemini-eval-v1` completed the locked 300-row human-written, Gemini-annotated / Gemini-adjudicated reference. Pass A and B each completed 300/300; exact agreement was `219/300`; all `81/81` disagreements were adjudicated successfully; `0` rows were excluded. Leakage audit passed. This is not human gold and not a human-labeled product evaluation. The locked artifact records `candidateInferencePerformed: false` and forbids post-inference relabeling.
+- The one-time fixed `v4f-fixed-blend` score on that opened reference was selected18 Macro-F1 `.341139` and Micro P/R/F1 `.698225/.348083/.464567`. It was diagnostic only; it did not select a checkpoint, threshold, selector, or label policy.
+
+### Canonical 841 and supervision disagreement
+
+- `v4/aligned-supervision-v1` is the current canonical aligned dataset: `841` Train rows and `149` author-disjoint Dev rows, locked by hashes in `annotation-lock.json`. Train composition is `468` PHQ/public-journaling rows, `319` CoSoWELL rows, and `54` HUMAN_CONSENTED rows. The labels are Gemini-annotated/adjudicated supervision, not human gold.
+- `v4/petalpal-train-ab-boundary-audit-v1-r1` is a diagnostic of the two Gemini supervision passes on all `841` Train rows: `662` A=B rows, `137` strict-subset rows, and `42` replacement rows. The replacement family is concentrated in `CROSS_FAMILY_OTHER` (`27/42` weighted rows); this is evidence of supervision-boundary disagreement, not a relabeling authorization.
+
+### Strict sourceGroup OOF and recent diagnostics
+
+- Strict 5-fold sourceGroup OOF Transformer used fold sizes `169/168/168/168/168`, zero sourceGroup overlap, fixed threshold `.35`, and maximum two outputs. Aggregate OOF Macro/Micro-F1 were `.492306/.570888`. This is diagnostic only and does not replace the fixed legal-Dev result or establish external-domain or human-gold generalization.
+- The matched strict sourceGroup TF-IDF OOF baseline scored Macro/Micro-F1 `.203350/.356093`; its artifact is `v4/group-oof-tfidf-v1/summary.json`. The Transformer result therefore supports learned source-disjoint signal relative to the lexical baseline, while leaving supervision and domain shift unresolved.
+- The bounded ASL round (`v4/gemini-improvement-v1`) reached internal Dev Macro-F1 `.459329/.491064/.508348` at epochs `0/1/2`, but trained epochs had Micro precision `.449495/.454106`, below the fixed `.50` guard; ASL was rejected. Zero-cost OOF calibration reduced Macro-F1 `.459329 -> .440367`; saved Hybrid V2 Clean gave `.409435`; a fixed original+ASL 50/50 blend gave `.477911` with Micro precision `.540000`. These are internal diagnostics, not final product scores.
+- Macro AP diagnostics were `.621371` for the original internal ranking and `.663175` for its oracle-threshold diagnostic; oracle values are not deployable scores and were not used as thresholds. No new experiment is authorized by these diagnostics.
+
+### 221-row human review diagnostic
+
+- `petalpal-train-decomposed-inclusion-policy-v1-r1` is preparation-only and remains `HUMAN RATINGS REQUIRED`. The locked sample is `179` disagreement rows plus `42` controls (`14` each at cardinality 0, 1, and 2), for `221` rows and `3,978` label opportunities per reviewer. The protocol requires applicability (`NO/PLAUSIBLE/CLEAR`) followed by writer-owned evidence (`NONE/WEAK/SUFFICIENT`), with eligibility `CLEAR AND SUFFICIENT`.
+- Both reviewer packages are blind local UIs with no model predictions, original labels, or gold fields. Their rating fields are blank in the distributed CSVs. This is a supervision/root-cause diagnostic, not a product final evaluation and not permission to change Train labels.
+- A separate text-integrity audit found the two CSV parsers remove ASCII double-quote characters from `13` rows. This is not tokenizer truncation, but it can affect quotation boundaries and writer-ownership judgments. It must remain an unresolved review-integrity issue until checked against the raw text.
+
+### Input and text-length audit
+
+- Current RoBERTa training and inference code explicitly uses `MAXLEN=512`, `truncation=True`, right-side truncation, and dynamic batch padding (`v4/aligned-supervision-v1/train_aligned.py`, `standard-continuation-v1/train.py`, and `group-oof-transformer-v1/run.py`). The tokenizer/backbone supports a 512-token sequence; there is no 60-word or 60-token input cap in the current pipeline. The older C-Lite Render benchmark separately uses 128 tokens and is not the current aligned Transformer pipeline.
+- On the `221` review texts, Python `text.split()` word counts were median `31`, P75 `135`, P90 `220`, P95 `268`, max `397`. The current 512-token encoding truncated `0/221`; at hypothetical caps 60, 128, and 256 tokens, `100/221`, `74/221`, and `24/221` would truncate. No evidence span was recorded, so evidence loss cannot be inferred from length alone.
+- On canonical aligned Train, word counts were median `21`, P75 `100`, P90 `188`, P95 `253`, max `398`; all `841` rows fit under the current 512-token model limit. CoSoWELL is the source of the long tail; its rows have median `124`, P90 `273`, P95 `304`, max `398`, versus Reddit-derived rows max `45` and consented rows max `266`.
+
+### Current blockers and safeguards
+
+- No production-promoted emotion model exists. Current development data and checkpoints remain experimental; the strongest recent scores are diagnostics under narrow, source-specific supervision and must not be presented as final product quality.
+- The immediate blocker is independent human review of supervision boundaries and writer-owned evidence, together with adequate rare-label support. The 221-row package is still awaiting human ratings; its results cannot be treated as human gold or directly used to rewrite Train labels.
+- Opened Gemini evaluation data, Frozen/Frozen-2, Hybrid Test, sealed Blog evaluation, and other protected final-holdout artifacts remain prohibited from training, tuning, threshold selection, calibration, or candidate selection. No row-level protected holdout content was read in this phase.
+- No new training experiment is authorized. Existing artifacts, labels, protocols, hashes, and historical results remain unchanged. Production routing and the user-selected Primary Mood policy remain unchanged.
+
+## CURRENT TRUE STATUS — 2026-09-12
+
+- **Production-promoted emotion model:** None.
+- **Current canonical Train:** `841` locked aligned rows: `468` PHQ/public-journaling, `319` CoSoWELL, and `54` consented rows; labels are Gemini-annotated/adjudicated supervision, not human gold.
+- **Most important diagnostic:** the `221`-row disagreement/control human-review package for semantic applicability and writer-owned evidence, alongside the A/B supervision-boundary audit.
+- **Waiting for:** completion of independent human ratings and evidence-based adjudication under the locked review protocol.
+- **Main blocker:** supervision alignment and rare-label coverage are not independently human-validated; current development/Dev support is too narrow for a product claim.
+- **Protected/opened evaluations:** Gemini 300, Frozen/Frozen-2, Hybrid Test, sealed Blog evaluation, and other locked holdouts must not be used for selection, tuning, calibration, or relabeling.
+- **New training authorization:** none.
+
+Product ML scope is currently being redefined around Event → emotion → flower; no Event-only dataset restructuring has been authorized yet.
+
+
+
+
+## Human Review 221 — Stage 1 Core/Auxiliary Audit
+
+Date: 2026-09-14. Artifact: `v4/stage1-human-review-core-v1/`.
+
+### Protocol
+
+- Human Review is now formally **Stage 1 only**, using applicability NO / PLAUSIBLE / CLEAR. Stage 2 deprecated. Stage 3 deprecated. `evidence / rank_order / tie_group` are legacy unused fields and are not missing work. This current protocol supersedes earlier log entries and bundle metadata describing later stages.
+
+### Reviewer hierarchy
+
+- Core anchor reviewers: Reviewer 1 and Reviewer 2 only. Auxiliary: AUX-R01 through AUX-R08, each a distinct human reviewer. No equal-status ten-reviewer pool or reviewer weighting.
+
+### Core validity
+
+- Reviewer 1: 221 samples, 3,978 potential judgments, four missing: R3-087/fear; R3-163/surprise; R3-168/admiration; R3-168/amusement. All four remain missing.
+- Reviewer 2: valid only R3-001..R3-183, 3,294 valid judgments. R3-184..R3-221 permanently excluded: all 684 invalid export-placeholder judgments are barred from every judgment statistic, QC distribution, comparison and downstream reference construction regardless of blankness.
+- Both supplied desktop clean Core CSVs passed schema, keys, label-set, legal-value and cross-Core exact-text/definition checks. Actual nonblank Core overlap = 3290; derived from the files, not an assumed denominator. No raw exports or historical reviewer files were substituted.
+
+### Core agreement
+
+- Exact/raw agreement: 2160/3290 = 0.656534954 (65.6535%). Unweighted three-class Cohen's kappa = 0.233754933. Total disagreement 1130; severe NO/CLEAR 337; adjacent 793. PLAUSIBLE remains a third category.
+- Highest label disagreement rates: optimism 113/183 (61.75%), excitement 112/183 (61.20%), surprise 94/182 (51.65%), joy 91/183 (49.73%), gratitude 79/183 (43.17%).
+- Highest-disagreement samples (rate then count): R3-022 12/18, R3-093 12/18, R3-127 12/18, R3-016 11/18, R3-100 11/18, R3-124 11/18, R3-063 10/18, R3-076 10/18, R3-081 10/18, R3-085 10/18. Diagnostic only; no examples removed or adjudicated.
+
+### Auxiliary QC
+
+| Reviewer | Valid coverage | Missing | NO | PLAUSIBLE | CLEAR | QC flag |
+|---|---:|---:|---:|---:|---:|---|
+| AUX-R01 | 3978/3978 | 0 | 3726 | 69 | 183 | NONE |
+| AUX-R02 | 3978/3978 | 0 | 3474 | 154 | 350 | NONE |
+| AUX-R03 | 3978/3978 | 0 | 3731 | 44 | 203 | NONE |
+| AUX-R04 | 3978/3978 | 0 | 3383 | 207 | 388 | NONE |
+| AUX-R05 | 3978/3978 | 0 | 3345 | 379 | 254 | NONE |
+| AUX-R06 | 3942/3978 | 36 | 2946 | 521 | 475 | INCOMPLETE_COVERAGE |
+| AUX-R07 | 3978/3978 | 0 | 3477 | 257 | 244 | NONE |
+| AUX-R08 | 3978/3978 | 0 | 1 | 1719 | 2258 | EXTREME_DISTRIBUTION |
+
+- Table order: reviewer | valid/3978 | missing | NO | PLAUSIBLE | CLEAR | flag. These counts were recomputed from the eight individual CSVs. All eight are retained for descriptive comparisons and support counts. Missing ratings stay missing. Flags are not exclusion/downweighting decisions.
+- AUX-R06: INCOMPLETE_COVERAGE; 36 missing. AUX-R08: EXTREME_DISTRIBUTION; distribution reported explicitly above, including its separately computed Core comparisons in the artifact.
+- All Auxiliary comparisons with Reviewer 2 apply the same permanent 183-sample boundary. Per-Core-disagreement Auxiliary counts do not select a final category. Bundle suggestions to exclude AUX-R08 by default or later complete deprecated stages were not followed because the latest user protocol overrides them.
+
+### Methodology boundary
+
+- **NO GOLD LABELS CREATED**
+- **NO MAJORITY-VOTE ADJUDICATION**
+- **NO AUTOMATIC CORE OVERRIDE**
+- **STAGE 2 / STAGE 3 DEPRECATED**
+- **ADJUDICATION NOT PERFORMED IN THIS TASK**
+- Point estimates describe the observed valid overlap; kappa depends on class prevalence. Partial Core coverage and the enriched sample preclude full-Train population reliability or model-quality claims. Clean-export text consistency does not independently resolve the historical UI quote-rendering concern. No legal149, Blog360, protected holdout, training, model inference, taxonomy modification, commit or push.
+- Next: ML Lead / Sol decides Stage 1 adjudication methodology from these artifacts. No follow-up experiment or adjudication is automatically started.
+
+
+## Human Review 221 — Stage 1 Methodology Decision
+
+Date: 2026-09-14. Decision artifacts: `v4/stage1-human-review-decision-v1/`.
+
+### Astra audit
+
+- **PASS** for the stated descriptive Stage 1 Core/Auxiliary audit. Effective Core overlap, Reviewer-2 validity masking, Reviewer-1 missing preservation, three-category agreement, unweighted Cohen's kappa, severe-disagreement definition, and Auxiliary/Core hierarchy were implemented correctly.
+- No majority vote, automatic Core override, gold/final label creation, adjudication, Stage 2/3 use, training, or protected evaluation access occurred.
+
+### Core results and interpretation
+
+- Effective overlap = `3290`; exact agreement = `2160/3290 = 65.6535%`; unweighted Cohen's κ = `0.233755`; total disagreement = `1130`; severe NO↔CLEAR disagreement = `337`.
+- Top disagreement labels: optimism `61.75%`, excitement `61.20%`, surprise `51.65%`, joy `49.73%`, gratitude `43.17%`.
+- Raw agreement is dominated by NO↔NO: `1945/2160 = 90.05%` of agreements and `1945/3290 = 59.12%` of all comparable cells. Marginals are strongly mismatched: Reviewer 1 uses NO/PLAUSIBLE/CLEAR `2842/300/148`, while Reviewer 2 uses `1995/729/566`. Marginal-expected agreement is already `55.18%`, explaining why `65.65%` raw agreement corresponds to κ≈`.234`.
+- Direction is systematic: Reviewer-1-NO/Reviewer-2-PLAUSIBLE `573` versus reverse `37`; Reviewer-1-NO/Reviewer-2-CLEAR `324` versus reverse `13`; Reviewer-1-PLAUSIBLE/Reviewer-2-CLEAR `145` versus reverse `38`. Current disagreement therefore reflects substantial general inclusion/evidence-threshold and CLEAR-threshold calibration mismatch, plus label-specific semantic overlap.
+- **Do not directly adjudicate the 1,130 disagreements under the current guide.** Definitions/applicability anchors must be revised and human-frozen first; otherwise adjudication would impose another private threshold rather than a stable rule.
+
+### Protocol state
+
+- Human review: `STAGE1_ONLY` using applicability `NO / PLAUSIBLE / CLEAR`.
+- Stage 2: `DEPRECATED`.
+- Stage 3: `DEPRECATED`.
+- Legacy unused fields: `evidence`, `rank_order`, `tie_group`; do not fill, analyze, infer, or treat as pending.
+
+### Reviewer hierarchy and validity
+
+- Core anchors: Reviewer 1 and Reviewer 2.
+- Auxiliary supporting reviewers: AUX-R01 through AUX-R08. Auxiliary evidence never becomes an equal-status vote or automatic Core override.
+- Reviewer 2 is valid only for `R3-001..R3-183`. `R3-184..R3-221` contains `684` export-placeholder judgments that remain permanently `INVALID / EXCLUDED`; they must never be restored or used in any statistic or reference construction.
+- After the revised Stage 1 guide is human-frozen, Reviewer 2 must supply real judgments for all 38 tail samples. Because the guide changes, Reviewer 1 will independently refresh the same 38×18 cells under the identical guide.
+- Reviewer 1's genuine missing cells remain: `R3-087/fear`, `R3-163/surprise`, `R3-168/admiration`, `R3-168/amusement`. Do not impute. Reviewer 1 completes them after guide freeze; Reviewer 2 refreshes the paired cells because all four labels receive HIGH/MEDIUM clarification.
+
+### Auxiliary policy
+
+- AUX-R01..R05 and AUX-R07: supporting evidence only. Strong support may trigger review or inform a later independent adjudicator; it never creates a final category.
+- AUX-R06: retain normally on valid overlap using pairwise-complete denominators. Its 36 blanks remain missing; `99.095%` coverage does not justify global downweighting.
+- AUX-R08: retain raw judgments but exclude from consensus/strong-support counts and vote-like adjudication summaries. Distribution is NO/PLAUSIBLE/CLEAR `1/1719/2258`; exact agreement/kappa are `5.66%/-0.005` with Reviewer 1 and `22.53%/.040` with Reviewer 2. Report separately as sensitivity evidence; do not delete or rewrite.
+- Future strong Auxiliary support means at least `80%` of at least five valid judgments among AUX-R01..R07 select the same category. This remains supporting evidence only.
+
+### Label revision and targeted re-review
+
+- **Revise definitions/applicability guide first: YES.** Final wording requires human confirmation and version freeze; model-written suggestions are not frozen definitions.
+- HIGH priority: optimism, excitement, surprise, joy, gratitude, amusement, disappointment, love. Love (`20` severe), disappointment (`18`), and amusement (`17`) are HIGH despite not all being top-five by total disagreement.
+- MEDIUM priority: admiration, anger, annoyance, caring, confusion, curiosity, disgust, fear, sadness.
+- LOW priority: remorse.
+- Targeted re-review: **YES**. Both Core reviewers re-review every HIGH-label Core-disagreement cell, every MEDIUM-label severe cell, and masked exact-agreement controls under the frozen guide. Reviewers remain blind to old Core values, Auxiliary values, disagreement status, and model output.
+- Full 3290-cell re-review: **NO**. Stable cells are retained provisionally and sampled as drift controls; no automatic widening is authorized.
+
+### Adjudication and reference status
+
+- Adjudication protocol status: `DRAFT`. It covers Core exact agreement, both adjacent disagreement types, severe disagreement, one-Core missing, Reviewer-2 invalid tail, strong/mixed Auxiliary support, AUX-R06 pairwise coverage, AUX-R08 exclusion from consensus counts, and versioning after definition revision.
+- Core exact agreement is provisionally retained after guide/calibration gates pass; only strong Auxiliary support at the opposite extreme triggers manual reopening. Adjacent disagreements receive targeted re-review when affected, then adjudication if persistent. Every severe disagreement receives dual-Core re-review and independent human adjudication if it persists.
+- Final Stage 1 reference set allowed now: **NO**. Stable definitions, calibrated Core semantics, frozen adjudication rules, and resolved invalid/missing coverage are not yet all present.
+
+### ML implication and one sequence
+
+- Current verdict: Human Review **partially supports and materially strengthens** supervision semantics / label-boundary consistency as a principal current bottleneck rather than model architecture alone. Systematic Core threshold mismatch and `337` severe disagreements align with the strict sourceGroup Transformer OOF evidence that representation can learn within current supervision. This is not proof that architecture is irrelevant because the 221-sample package is disagreement-enriched and is not an independent model evaluation.
+- Required order: build blinded boundary-calibration packet → human-revise and freeze Stage 1 guide → fixed calibration check → targeted dual-Core re-review → post-freeze Reviewer-2 tail completion and Reviewer-1 missing completion → remeasure agreement → freeze adjudication protocol only if gates pass → independently adjudicate remaining queue → freeze final Stage 1 reference → create versioned supervision-delta and rare-label support/diversity audit → only then consider one bounded ML experiment with an eligible new evaluation protocol.
+- No training, legal149 reuse, Blog360 evaluation, protected-holdout access, label overwrite, hard-example deletion, taxonomy reduction, commit, push, or automatic follow-up was performed.
+
+`NO FINAL GOLD LABELS CREATED IN THIS TASK`
