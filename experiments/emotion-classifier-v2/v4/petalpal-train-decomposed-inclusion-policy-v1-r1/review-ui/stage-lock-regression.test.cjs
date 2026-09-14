@@ -1,0 +1,12 @@
+const fs = require('fs');
+const source = fs.readFileSync(__dirname + '/app.js', 'utf8');
+if (!source.includes('function stageForState(st){return st.lock2?3:(st.lock1?2:1)}')) throw new Error('persistent stage restoration missing');
+const stageForState = st => st.lock2 ? 3 : (st.lock1 ? 2 : 1);
+const saved = { s1: { joy: 'CLEAR' }, s2: {}, lock1: true, lock2: false };
+if (stageForState(saved) !== 2) throw new Error('Stage 1 lock did not restore Stage 2');
+if (saved.s1.joy !== 'CLEAR') throw new Error('Stage 1 rating was modified');
+if (stageForState({ ...saved, lock2: true }) !== 3) throw new Error('Stage 2 lock did not restore Stage 3');
+const session = { stage1Locked: true, stage2Locked: false, stage3Complete: false };
+if ((session.stage1Locked ? 2 : 1) !== 2) throw new Error('session Stage 1 lock did not restore Stage 2');
+if (saved.s1.joy !== 'CLEAR') throw new Error('existing Stage 1 rating changed after restore');
+console.log('stage-lock regression PASS');

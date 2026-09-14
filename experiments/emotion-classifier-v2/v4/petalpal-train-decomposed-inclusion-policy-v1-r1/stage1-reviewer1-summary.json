@@ -1,0 +1,163 @@
+{
+  "status": "incomplete_preserved",
+  "reviewer_scope": "reviewer_1_only",
+  "sample_count": 221,
+  "expected_ratings": 3978,
+  "observed_ratings": 3974,
+  "missing_ratings": 4,
+  "missing_items": [
+    {
+      "sample_id": "PP-R087",
+      "label": "fear"
+    },
+    {
+      "sample_id": "PP-R163",
+      "label": "surprise"
+    },
+    {
+      "sample_id": "PP-R168",
+      "label": "admiration"
+    },
+    {
+      "sample_id": "PP-R168",
+      "label": "amusement"
+    }
+  ],
+  "taxonomy_labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "raw_rating_counts": {
+    "NO": 3464,
+    "PLAUSIBLE": 339,
+    "CLEAR": 171
+  },
+  "encoding": {
+    "NO": 0.0,
+    "PLAUSIBLE": 0.5,
+    "CLEAR": 1.0,
+    "missing": "blank/NaN mask; never negative"
+  },
+  "source_files": [
+    "external-input: INCOMPLETE_BACKUP-reviewer-1 (1).csv (local source; not committed)",
+    "experiments/emotion-classifier-v2/v4/petalpal-train-decomposed-inclusion-policy-v1-r1/reviewer-1.csv"
+  ],
+  "output_file_hashes": {
+    "stage1-reviewer1-raw-long.csv": "a8c86222c1a7f6b260767c8ec42ce3228a7bccab212a4206f2d8b5fb6b9344a7",
+    "stage1-reviewer1-wide.csv": "18e10ddafb56bfb7ad111c286518504a5b4292615d37a953631e565f08ad563d",
+    "stage1-reviewer1-ml-soft-targets.csv": "8beafe11672008627172b832ffa81f70f6f529c798cdf6ccb9dbb7f1d251abfe"
+  },
+  "per_label_distribution": {
+    "admiration": {
+      "NO": 200,
+      "PLAUSIBLE": 17,
+      "CLEAR": 3
+    },
+    "amusement": {
+      "NO": 169,
+      "PLAUSIBLE": 41,
+      "CLEAR": 10
+    },
+    "anger": {
+      "NO": 209,
+      "PLAUSIBLE": 7,
+      "CLEAR": 5
+    },
+    "annoyance": {
+      "NO": 180,
+      "PLAUSIBLE": 30,
+      "CLEAR": 11
+    },
+    "caring": {
+      "NO": 188,
+      "PLAUSIBLE": 13,
+      "CLEAR": 20
+    },
+    "confusion": {
+      "NO": 212,
+      "PLAUSIBLE": 7,
+      "CLEAR": 2
+    },
+    "curiosity": {
+      "NO": 215,
+      "PLAUSIBLE": 4,
+      "CLEAR": 2
+    },
+    "disappointment": {
+      "NO": 194,
+      "PLAUSIBLE": 21,
+      "CLEAR": 6
+    },
+    "disgust": {
+      "NO": 216,
+      "PLAUSIBLE": 1,
+      "CLEAR": 4
+    },
+    "excitement": {
+      "NO": 190,
+      "PLAUSIBLE": 26,
+      "CLEAR": 5
+    },
+    "fear": {
+      "NO": 205,
+      "PLAUSIBLE": 10,
+      "CLEAR": 5
+    },
+    "gratitude": {
+      "NO": 193,
+      "PLAUSIBLE": 19,
+      "CLEAR": 9
+    },
+    "joy": {
+      "NO": 126,
+      "PLAUSIBLE": 63,
+      "CLEAR": 32
+    },
+    "love": {
+      "NO": 182,
+      "PLAUSIBLE": 23,
+      "CLEAR": 16
+    },
+    "optimism": {
+      "NO": 191,
+      "PLAUSIBLE": 24,
+      "CLEAR": 6
+    },
+    "remorse": {
+      "NO": 212,
+      "PLAUSIBLE": 6,
+      "CLEAR": 3
+    },
+    "sadness": {
+      "NO": 186,
+      "PLAUSIBLE": 19,
+      "CLEAR": 16
+    },
+    "surprise": {
+      "NO": 196,
+      "PLAUSIBLE": 8,
+      "CLEAR": 16
+    }
+  },
+  "disagreement_rate": {
+    "overall": null,
+    "by_label": null,
+    "reason": "single reviewer only; inter-reviewer disagreement is not estimable"
+  }
+}

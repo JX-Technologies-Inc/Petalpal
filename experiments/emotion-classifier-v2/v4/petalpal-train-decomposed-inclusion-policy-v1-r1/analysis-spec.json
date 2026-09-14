@@ -1,0 +1,36 @@
+{
+  "status": "RETIRED_FOR_CURRENT_ROUND; STAGE_1_ONLY",
+  "protocol_change_date": "2026-09-13",
+  "semantic": {
+    "levels": [
+      "NO",
+      "PLAUSIBLE",
+      "CLEAR"
+    ],
+    "gate": "disagreement >= 0.30 and sourceGroup-bootstrap CI lower > 0.15"
+  },
+  "evidence": {
+    "levels": [
+      "NONE",
+      "WEAK",
+      "SUFFICIENT"
+    ],
+    "eligibility": "semantic CLEAR AND evidence SUFFICIENT",
+    "gate": "disagreement >= 0.30 and CI lower > 0.15"
+  },
+  "second_label": {
+    "eligible_count_each_leq_2": "top-1 same; row non-empty",
+    "gate": "disagreement >= 0.25 and CI lower > 0.10"
+  },
+  "hard_cap": {
+    "cap_linked": "both eligible intersection >=3; shared disputed label eligible; excluded from at least one mechanical top-2",
+    "gate": "rows >= 0.15 and CI lower > 0.05"
+  },
+  "bootstrap": {
+    "replicates": 10000,
+    "seed": 44,
+    "unit": "complete sourceGroup",
+    "zero_denominator": "invalid; never zero-impute"
+  },
+  "controls": "0/1/2 cardinality separately; weight Nc/14; not gold"
+}

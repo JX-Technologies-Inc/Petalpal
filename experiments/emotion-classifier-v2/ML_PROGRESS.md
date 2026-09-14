@@ -1,5 +1,14 @@
 # ML Progress
 
+## Canonical Human Review Protocol Change — 2026-09-13
+
+- The original Stage 1 / Stage 2 / Stage 3 human-review plan is stopped. This round formally retains **Stage 1 semantic applicability review only**, with ratings `NO`, `PLAUSIBLE`, and `CLEAR`.
+- Stage 2 and Stage 3 are retired: do not collect them and do not use them for analysis, gold generation, or training targets. The old rule `CLEAR + SUFFICIENT → eligible` is deprecated and must not be used.
+- Stage 1 `PLAUSIBLE` must not be automatically treated as positive or negative; target policy requires a separate ML Lead decision.
+- Reviewer 1 is `reviewer_1_only / interim`, not multi-reviewer consensus gold: 221 samples, 3,978 possible ratings, 3,974 observed, 4 missing. Missing values remain masked and must not be auto-filled or treated as negative.
+- Wait for Reviewer 2 Stage 1 completion before agreement, disagreement, or target-policy analysis. Do not train models or modify LOCKED/frozen evaluation.
+- Canonical artifact: `experiments/emotion-classifier-v2/v4/petalpal-train-decomposed-inclusion-policy-v1-r1/STATUS.md`.
+
 ## Current Direction
 
 - 2026-09-07 follow-up: **old 125 Human Dev retired from further model selection** by user instruction; retain 56.06% unchanged. Active work is public authentic narrative acquisition in `v4/independent-human-v1/`. No Frozen-3; no new score yet.

@@ -1,0 +1,48 @@
+{
+  "protocol_id": "petalpal-train-decomposed-inclusion-policy-v1-r1",
+  "status": "STAGE_1_ONLY; STAGES_2_AND_3_RETIRED; REVIEWER_2_REQUIRED",
+  "protocol_change_date": "2026-09-13",
+  "stage_policy": {
+    "active": "Stage 1 semantic applicability only",
+    "ratings": ["NO", "PLAUSIBLE", "CLEAR"],
+    "stage2": "RETIRED; do not collect or use",
+    "stage3": "RETIRED; do not collect or use",
+    "deprecated_eligibility_rule": "CLEAR + SUFFICIENT -> eligible; do not use"
+  },
+  "mode": "PREPARATION ONLY",
+  "population": "canonical Train 841",
+  "sample": "179 disagreement + 14 controls each at cardinality 0,1,2",
+  "seed": 44,
+  "bootstrap": {
+    "replicates": 10000,
+    "unit": "sourceGroup",
+    "percentile_ci": true
+  },
+  "labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "hashes": {
+    "annotation-lock.json": "ac28b11a77beb84721ce0ae023d5a9225a2e46451c049bdab114d2a8670fb0f3",
+    "train.jsonl": "daaf3ed65a72ece0e0421225b1fde863b4d8c686507a07da16167702526e013a",
+    "pass-a.jsonl": "0390a06d6762d47b1e067ea909ada92ffec44e526a3c6af0d57fa7974b460d54",
+    "pass-b.jsonl": "d9cdc42ae2a011f65549bda34c4ca8f846e00be25363aea7a482f25d8da07485"
+  },
+  "ratings_allowed": false
+}
