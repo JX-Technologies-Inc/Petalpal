@@ -70,3 +70,31 @@ experiments/emotion-classifier-v2/candidate-c-lite/fine-tuned-*/best-checkpoint/
 
 # Keep held-out test local
 experiments/emotion-classifier-v2/hybrid-test-v2/test.jsonl
+
+# V4 ML run artifacts and downloaded source data
+experiments/emotion-classifier-v2/v4/**/experiment/
+experiments/emotion-classifier-v2/v4/**/*.model
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/**/*.jsonl
+experiments/emotion-classifier-v2/v4/gemini-eval-v1/**/*.jsonl
+experiments/emotion-classifier-v2/v4/gemini-improvement-v1/**/*.jsonl
+experiments/emotion-classifier-v2/v4/sealed-blog-eval-v1/**/*.jsonl
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-source-shortlist-20260910/goemotions-raw/*.csv
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/crowd-envent-raw/corpus/*.tsv
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/crowd-envent-raw/corpus/masked.txt
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/crowd-envent-raw/predictions/
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/crowd-envent-raw/*.pdf
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/crowd-envent-raw/questionnaires/
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/enisear/raw/deISEARenISEAR/*.tsv
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-domain-data-v1-20260910/lemotif/*.csv
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-human-augmentation-v1/raw/*.tar.gz
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/public-human-augmentation-v1/raw/empatheticdialogues/
+
+# Human-review inputs, labels, and model-adjudication payloads stay local
+experiments/emotion-classifier-v2/v4/petalpal-train-decomposed-inclusion-policy-v1-r1/*.csv
+experiments/emotion-classifier-v2/v4/petalpal-train-decomposed-inclusion-policy-v1-r1/reviewer-2-package/*.csv
+experiments/emotion-classifier-v2/v4/petalpal-train-ab-boundary-audit-v1-r1/*.csv
+experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/*.csv
+experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/**/*.csv
+experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/*.csv
+experiments/emotion-classifier-v2/v4/stage1-model-adjudication-v1/*.csv
+experiments/emotion-classifier-v2/v4/stage1-model-adjudication-v1/astra-work/groups.json
