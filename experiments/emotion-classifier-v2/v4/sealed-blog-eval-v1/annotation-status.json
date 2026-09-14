@@ -1,0 +1,13 @@
+{
+  "status": "COMPLETE",
+  "plannedRows": 360,
+  "passACompleted": 360,
+  "passBCompleted": 360,
+  "exactAgreement": 228,
+  "disagreements": 132,
+  "adjudicationsCompleted": 132,
+  "actualApiCostUsd": 1.88420325,
+  "estimatedFullCostUsd": 1.63,
+  "budgetHardStopUsd": 2.0,
+  "modelInferencePerformed": false
+}

@@ -1,0 +1,10 @@
+{
+  "status": "CREATED_BUT_NOT_SEALED",
+  "rows": 360,
+  "lockedCandidateManifest": "evaluation-manifest.unannotated.jsonl",
+  "lockedCandidateManifestSha256": "376d2ba645af8a90f5a8b34dd3281f59a31c1e6cb8bd8d190172704aa6c45544",
+  "labeledManifest": "final-evaluation-manifest.jsonl",
+  "labeledManifestSha256": "1482f372360c6fd726cf30ba045b0921397da7a9f664e482dc6d7b5ec35a4bc7",
+  "reason": "Final label support is below the preregistered minimum for six labels.",
+  "modelUseAllowed": false
+}

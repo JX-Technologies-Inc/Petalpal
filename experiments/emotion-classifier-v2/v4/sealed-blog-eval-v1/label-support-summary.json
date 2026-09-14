@@ -1,0 +1,14 @@
+{
+  "status": "FAIL_MINIMUM_SUPPORT",
+  "minimumRequiredForSealPerLabel": 15,
+  "targetPerLabel": 20,
+  "finalSupport": {
+    "admiration": 25, "amusement": 49, "anger": 14, "annoyance": 58,
+    "caring": 7, "confusion": 22, "curiosity": 11, "disappointment": 28,
+    "disgust": 13, "excitement": 47, "fear": 18, "gratitude": 17,
+    "joy": 40, "love": 17, "optimism": 19, "remorse": 10,
+    "sadness": 43, "surprise": 9
+  },
+  "belowMinimum": ["anger", "caring", "curiosity", "disgust", "remorse", "surprise"],
+  "warning": "Rows may not be replaced, removed, resampled, or relabeled to repair support."
+}

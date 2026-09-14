@@ -1,0 +1,17 @@
+{
+  "sealStatus": "NOT_SEALED",
+  "reason": "Final support is below 15 for anger, caring, curiosity, disgust, remorse, and surprise.",
+  "protocolLocked": true,
+  "candidateManifestLocked": true,
+  "candidateManifest": "evaluation-manifest.unannotated.jsonl",
+  "candidateManifestSha256": "376d2ba645af8a90f5a8b34dd3281f59a31c1e6cb8bd8d190172704aa6c45544",
+  "sourceArtifactSha256": "1dfa6996663515a4baf8c1b71713ce8fe9a314b13778701447e4663bbc64c983",
+  "lineageAudit": "PASS_CANDIDATE_EXTRACTION",
+  "rows": 360,
+  "uniqueAuthors": 360,
+  "finalManifest": "final-evaluation-manifest.jsonl",
+  "finalManifestSha256": "1482f372360c6fd726cf30ba045b0921397da7a9f664e482dc6d7b5ec35a4bc7",
+  "annotationComplete": true,
+  "supportGatePassed": false,
+  "modelEvaluationAllowed": false
+}

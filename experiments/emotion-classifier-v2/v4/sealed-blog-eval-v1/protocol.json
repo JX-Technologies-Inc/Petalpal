@@ -1,0 +1,56 @@
+{
+  "protocolId": "petalpal-sealed-blog-eval-v1-20260910",
+  "status": "LOCKED_BEFORE_CANDIDATE_EXTRACTION_ANNOTATION_OR_MODEL_INFERENCE",
+  "source": {
+    "dataset": "Blog Authorship Corpus",
+    "publisherMirror": "barilan/blog_authorship_corpus on Hugging Face",
+    "originalHomepage": "https://u.cs.biu.ac.il/~koppel/BlogCorpus.htm",
+    "artifact": "raw/blogs.zip",
+    "sha256": "1dfa6996663515a4baf8c1b71713ce8fe9a314b13778701447e4663bbc64c983",
+    "humanWritten": true,
+    "authorIdAvailable": true,
+    "license": "NO_DATASET_LICENSE_DECLARED_IN_SOURCE_CARD; research evaluation only pending rights review"
+  },
+  "sample": {
+    "finalRows": 360,
+    "uniqueAuthors": 360,
+    "composition": "270 taxonomy-cue-stratified rows (15 preassigned rows per label) plus 90 deterministic natural-domain rows",
+    "candidateSelection": "Deterministic SHA-256 ranking after fixed text-quality, one-row-per-author, lineage, and exact cue rules; no model or prior evaluation output",
+    "targetFinalSupport": 20,
+    "minimumSealSupportPerLabel": 15,
+    "hardCases": "Never remove a selected row for ambiguity, difficulty, abstention, or annotation outcome"
+  },
+  "taxonomy": {
+    "labels": ["admiration","amusement","anger","annoyance","caring","confusion","curiosity","disappointment","disgust","excitement","fear","gratitude","joy","love","optimism","remorse","sadness","surprise"],
+    "cardinality": "0-2; prefer one; zero for neutral, factual, ambiguous, or insufficient evidence",
+    "semantics": "Exactly the locked petalpal-gemini-blind-v1 definitions; writer emotion only; distinct useful secondary emotions"
+  },
+  "annotation": {
+    "passA": {"model": "gemini-3.6-flash", "temperature": 0, "labelOrder": "canonical", "independentContext": true},
+    "passB": {"model": "gemini-3.5-flash", "temperature": 0, "labelOrder": "reverse", "independentContext": true},
+    "agreement": "exact validated set equality",
+    "adjudication": "Every disagreement receives a new independent gemini-3.6-flash request using text, fixed rules, and both rationales; final may equal neither",
+    "budgetHardStopUsd": 2.0,
+    "estimatedCostUsd": 1.63,
+    "postAnnotationRelabeling": "forbidden"
+  },
+  "exclusions": [
+    "Any normalized-text SHA-256 in the existing 45,345-row historical lineage reference",
+    "Any recoverable author ID or source-group ID in historical lineage",
+    "Duplicate normalized text or duplicate author within this evaluation",
+    "Non-English-like, URL-dominated, fewer than 40 or more than 220 words, or lacking first-person markers",
+    "Current model predictions, embeddings, scores, errors, logits, old Dev error cases, and all holdout semantics"
+  ],
+  "metrics": {
+    "primary": "18-label selected-output Macro-F1, all labels retained, zero_division=0, fixed threshold 0.35 and unchanged max-two selector",
+    "secondary": ["Micro precision", "Micro recall", "Micro F1", "per-label precision/recall/F1/support", "exact set match", "abstention rates where defined"],
+    "uncertainty": "Report author-level bootstrap intervals; labels below 15 support invalidate sealing rather than being removed"
+  },
+  "usage": {
+    "designModelAccess": "forbidden",
+    "firstPermittedEvaluation": "Exactly one preregistered candidate chosen without this asset after the asset is SEALED",
+    "promotion": "Candidate must exceed the preregistered baseline Macro-F1 and retain Micro precision >=0.50; this asset may choose at most one candidate per declared development cycle",
+    "repeatedTuning": "forbidden; after one candidate comparison, retire this asset from model selection and reserve it for reporting/audit"
+  },
+  "seal": "SEALED only after all 360 final annotations, lineage PASS, unique-author PASS, source manifest hashes, support>=15 for every label, and lock metadata are complete; otherwise NOT_SEALED and no model may evaluate it"
+}

@@ -1,0 +1,42 @@
+{
+  "status": "PASS_CANDIDATE_EXTRACTION",
+  "sourceRowsEligible": 267697,
+  "selectedRows": 360,
+  "uniqueAuthors": 360,
+  "historicalLineageRows": 45345,
+  "normalizedHashOverlap": 0,
+  "recoverableAuthorOverlap": 0,
+  "recoverableSourceGroupOverlap": 0,
+  "withinManifestHashDuplicates": 0,
+  "withinManifestAuthorDuplicates": 0,
+  "cueRows": 270,
+  "naturalRows": 90,
+  "cueRowsPerLabel": {
+    "admiration": 15,
+    "amusement": 15,
+    "anger": 15,
+    "annoyance": 15,
+    "caring": 15,
+    "confusion": 15,
+    "curiosity": 15,
+    "disappointment": 15,
+    "disgust": 15,
+    "excitement": 15,
+    "fear": 15,
+    "gratitude": 15,
+    "joy": 15,
+    "love": 15,
+    "optimism": 15,
+    "remorse": 15,
+    "sadness": 15,
+    "surprise": 15
+  },
+  "exclusionCounts": {
+    "length": 377768,
+    "not_first_person": 31169,
+    "url": 4654
+  },
+  "manifestSha256": "376d2ba645af8a90f5a8b34dd3281f59a31c1e6cb8bd8d190172704aa6c45544",
+  "sourceZipSha256": "1dfa6996663515a4baf8c1b71713ce8fe9a314b13778701447e4663bbc64c983",
+  "semanticHoldoutInspection": false
+}
