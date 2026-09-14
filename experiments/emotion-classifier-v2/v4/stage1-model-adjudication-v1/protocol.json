@@ -1,0 +1,159 @@
+{
+  "protocol_id": "stage1-model-adjudication-v1",
+  "created_utc": "2026-09-14T19:25:49.756672+00:00",
+  "status": "BLIND_INPUT_READY_ASTRA_PENDING",
+  "human_review_frozen": true,
+  "no_further_human_review": true,
+  "previous_targeted_human_rereview_plan": "SUPERSEDED_BY_2026_09_14_USER_INSTRUCTION",
+  "human_status": "FROZEN HUMAN OBSERVATIONAL EVIDENCE",
+  "stage1_values": [
+    "NO",
+    "PLAUSIBLE",
+    "CLEAR"
+  ],
+  "stage2_status": "DEPRECATED",
+  "stage3_status": "DEPRECATED",
+  "legacy_unused_fields": [
+    "evidence",
+    "rank_order",
+    "tie_group"
+  ],
+  "core_reviewers": [
+    "reviewer-1",
+    "reviewer-2"
+  ],
+  "auxiliary_reviewers": [
+    "AUX-R01",
+    "AUX-R02",
+    "AUX-R03",
+    "AUX-R04",
+    "AUX-R05",
+    "AUX-R06",
+    "AUX-R07",
+    "AUX-R08"
+  ],
+  "core_role": "frozen anchor evidence",
+  "auxiliary_role": "frozen supporting evidence; post-blind use only",
+  "core1_missing_keys": [
+    [
+      "R3-087",
+      "fear"
+    ],
+    [
+      "R3-163",
+      "surprise"
+    ],
+    [
+      "R3-168",
+      "admiration"
+    ],
+    [
+      "R3-168",
+      "amusement"
+    ]
+  ],
+  "core1_missing_status": "CORE1_HUMAN_MISSING",
+  "core2_valid_range": "R3-001..R3-183",
+  "core2_invalid_range": "R3-184..R3-221",
+  "core2_invalid_status": "CORE2_INVALID_PLACEHOLDER",
+  "core2_placeholder_values_used": false,
+  "core_agreement_status": "CORE_HUMAN_AGREEMENT",
+  "automatic_core_override_allowed": false,
+  "normal_auxiliary_reviewers": [
+    "AUX-R01",
+    "AUX-R02",
+    "AUX-R03",
+    "AUX-R04",
+    "AUX-R05",
+    "AUX-R06",
+    "AUX-R07"
+  ],
+  "aux_r06_policy": {
+    "qc_status": "INCOMPLETE_COVERAGE",
+    "coverage": 0.9909502262,
+    "missing": 36,
+    "decision": "RETAIN_NORMALLY_ON_VALID_OVERLAP",
+    "method": "Pairwise-complete analysis per cell and explicit valid denominator. Missing values stay missing; no imputation and no global downweight.",
+    "reason": "The small coverage gap is not evidence of poor judgment quality."
+  },
+  "aux_r08_policy": {
+    "qc_status": "EXTREME_DISTRIBUTION",
+    "distribution": {
+      "NO": 1,
+      "PLAUSIBLE": 1719,
+      "CLEAR": 2258
+    },
+    "core_comparison": {
+      "reviewer1_exact_agreement": 0.0566180171,
+      "reviewer1_kappa": -0.0052055231,
+      "reviewer2_exact_agreement": 0.2252580449,
+      "reviewer2_kappa": 0.0395093645
+    },
+    "decision": "RETAIN_BUT_EXCLUDE_FROM_CONSENSUS_COUNTS",
+    "allowed_use": "Preserve unchanged and report as a separately labeled sensitivity perspective.",
+    "prohibited_use": "Do not include in strong-support thresholds, consensus counts, majority summaries, Core overrides, or automatic adjudication.",
+    "reason": "Near-total avoidance of NO makes the scale non-comparable with both Core anchors and the other Auxiliary reviewers; its inclusion would mechanically bias support toward PLAUSIBLE/CLEAR."
+  },
+  "aux_consensus": "unique strict majority (>50%) among valid AUX-R01..R07; otherwise MIXED; descriptive supporting evidence only",
+  "strong_auxiliary_support": {
+    "minimum_valid_n": 5,
+    "minimum_fraction": 0.8,
+    "automatic_final_label": false
+  },
+  "blind_fields": [
+    "adjudication_id",
+    "sample_id",
+    "text",
+    "label",
+    "label_definition",
+    "semantic_guidance_if_any"
+  ],
+  "model_guidance_version": "model-stage1-guidance-v1",
+  "model_guidance_human_approved": false,
+  "original_definitions_changed": false,
+  "astra_model": "gpt-6-astra",
+  "astra_execution": "isolated fresh-context model judge; no parent conversation or human evidence",
+  "reason_codes": {
+    "EXPLICIT": "Emotion or defining feature is explicitly expressed.",
+    "CONTEXT_ENTAILED": "Defining feature is strongly supported by context.",
+    "BORDERLINE": "Reasonable reading with incomplete or ambiguous defining support.",
+    "INTENSITY": "Intensity is insufficient or borderline for the target definition.",
+    "FEATURE_ABSENT": "The defining feature is unsupported.",
+    "EVENT_ONLY": "An event is described without support for this emotion.",
+    "OTHER_EMOTION": "The text supports a different emotion, not this defining feature.",
+    "NEGATED": "The target emotion is negated or contradicted.",
+    "ATTRIBUTION": "Only another person or a hypothetical voice expresses it."
+  },
+  "confidence": [
+    "LOW",
+    "MEDIUM",
+    "HIGH"
+  ],
+  "short_rationale_max_words": 20,
+  "short_rationale_max_chars": 180,
+  "model_vote_provenance": "ASTRA_INDEPENDENT_BLIND_MODEL_JUDGMENT",
+  "reserved_future_provenance": [
+    "CORE_HUMAN_AGREEMENT",
+    "MODEL_ADJUDICATED_CORE_DISAGREEMENT",
+    "MODEL_ADJUDICATED_CORE1_MISSING",
+    "MODEL_ADJUDICATED_NO_VALID_CORE2"
+  ],
+  "reserved_model_adjudicated_categories_assigned_now": false,
+  "human_reveal_gate": "all Astra cells validated and sealed before comparison generation; never reveal to Luna input",
+  "luna_input": "byte-identical semantic CSV; same guidance and output vocabulary",
+  "luna_execution_started": false,
+  "final_labels_created": false,
+  "final_reference_set_allowed": false,
+  "remaining_gates": [
+    "Luna independent judgment",
+    "model-panel comparison",
+    "Sol final adjudication",
+    "provenance freeze"
+  ],
+  "training_authorized": false,
+  "paid_api_called": false,
+  "protected_row_level_content_accessed": false,
+  "desktop_raw_csv_reread": false,
+  "snapshot_use": "Existing audit snapshots only, hash-checked; necessary for text/definitions and missing/tail metadata absent from disagreement tables",
+  "text_integrity_limitation": "Uses frozen audited text snapshots unchanged; historical UI quote-rendering concern is not independently resolved here."
+}

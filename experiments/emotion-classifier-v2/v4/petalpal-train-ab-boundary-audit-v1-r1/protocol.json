@@ -1,0 +1,33 @@
+{
+  "protocolId": "petalpal-aligned-supervision-v1-20260909",
+  "status": "LOCKED_BEFORE_GEMINI_LABELS_AND_MODEL_PREDICTIONS",
+  "objective": "Test whether independently Gemini-aligned supervision improves 18-label Macro-F1 on a fixed author-disjoint human-written Dev.",
+  "split": {
+    "train": "All existing locked pilot Train777 plus calibration64, exactly841 rows",
+    "dev": "The149 pre-reserved CoSoWELL authors excluded from the opened Gemini300 and all pilot-selected authors",
+    "selection": "Existing deterministic author-hash assignments only; never adjusted using Gemini labels or model predictions"
+  },
+  "annotationProtocol": {
+    "inherits": "../gemini-eval-v1/protocol.json",
+    "passA": {"model": "gemini-3.6-flash", "temperature": 0, "labelOrder": "canonical", "independentContext": true},
+    "passB": {"model": "gemini-3.5-flash", "temperature": 0, "labelOrder": "reverse", "independentContext": true},
+    "agreement": "Exact validated label-set equality",
+    "adjudication": {"model": "gemini-3.6-flash", "temperature": 0, "newIndependentRequest": true},
+    "invalidAfterFormatRetry": "Exclude before model inference; never infer a reference label locally"
+  },
+  "budget": {
+    "maximumUsd": 8.0,
+    "pricesPerMillionTokensUsd": {
+      "gemini-3.6-flash": {"input": 0.75, "outputIncludingThinking": 3.75},
+      "gemini-3.5-flash": {"input": 1.5, "outputIncludingThinking": 9.0}
+    },
+    "stopBeforeProjectedOrActualExceedsMaximum": true
+  },
+  "modelExperiment": {
+    "initialization": "candidate-c/artifacts/checkpoint",
+    "trainOnlyOnFinalAlignedTrain": true,
+    "selectionOnlyOnFinalAlignedDev": true,
+    "externalOpenedEvaluationsForbidden": true,
+    "bounds": "One baseline plus one prespecified aligned-supervision training configuration; further free experiment only if evidence justifies it"
+  }
+}

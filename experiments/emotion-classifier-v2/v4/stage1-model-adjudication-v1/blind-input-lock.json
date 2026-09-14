@@ -1,0 +1,8 @@
+{
+  "created_utc": "2026-09-14T19:25:49.757528+00:00",
+  "sha256": {
+    "model-judge-blind-input.csv": "dc251f90f5cc1be7072f2aeb4895b87cc9034089a6b45b9e494560aef9a5663e",
+    "luna-judge-input.csv": "dc251f90f5cc1be7072f2aeb4895b87cc9034089a6b45b9e494560aef9a5663e",
+    "model-stage1-guidance-v1.md": "e3fb6a2c9658645fc31fa9d8e86bcf7546bca54ee6708e1955a861b371dcd145"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "plan_id": "stage1-targeted-core-rereview-v1",
+  "status": "PLANNED_NOT_STARTED",
+  "targeted_rereview": true,
+  "full_rereview": false,
+  "guide_dependency": "Do not start until the revised Stage 1 applicability guide is human-confirmed and version-frozen.",
+  "targeted_labels": {
+    "HIGH": ["optimism", "excitement", "surprise", "joy", "gratitude", "amusement", "disappointment", "love"],
+    "MEDIUM": ["admiration", "anger", "annoyance", "caring", "confusion", "curiosity", "disgust", "fear", "sadness"],
+    "LOW": ["remorse"]
+  },
+  "targeted_cells": {
+    "HIGH": "Both Core reviewers re-review every currently valid Core-disagreement cell for every HIGH label: 684 cells before any overlap with later completion work.",
+    "HIGH_controls": "For each HIGH label, add 10 deterministic exact-agreement controls where available: balanced across NO, PLAUSIBLE, CLEAR and source, selected by SHA-256 rank; controls are mixed into the packet without revealing status.",
+    "MEDIUM": "Both Core reviewers re-review every current NO-CLEAR severe disagreement for MEDIUM labels: 91 cells before completion-work overlap.",
+    "MEDIUM_controls": "For each MEDIUM label, add 5 deterministic exact-agreement controls where available, source-balanced and masked.",
+    "LOW": "No default re-review. Any persistent severe LOW-label case goes to the later adjudication queue under the frozen guide."
+  },
+  "core_reviewer_policy": {
+    "reviewers": ["reviewer-1", "reviewer-2"],
+    "independent": true,
+    "blind_to": ["own prior judgment", "other Core judgment", "Auxiliary judgments", "disagreement status", "model output"],
+    "randomization": "Mix disagreement cells and controls using deterministic seed 44.",
+    "values": ["NO", "PLAUSIBLE", "CLEAR"],
+    "legacy_fields": "Do not display, fill, or analyze evidence, rank_order, or tie_group."
+  },
+  "reviewer2_tail": {
+    "samples": "R3-184..R3-221",
+    "old_placeholder_judgments": 684,
+    "old_placeholder_status": "PERMANENTLY_INVALID_EXCLUDED",
+    "decision": "SUPPLEMENT",
+    "timing": "After revised guide freeze, before post-review agreement measurement.",
+    "procedure": "Reviewer 2 completes all 38 samples by 18 labels as new real judgments. Reviewer 1 independently refreshes the same 684 cells under the same guide; neither sees any placeholder or prior value."
+  },
+  "reviewer1_missing": {
+    "cells": [
+      ["R3-087", "fear"],
+      ["R3-163", "surprise"],
+      ["R3-168", "admiration"],
+      ["R3-168", "amusement"]
+    ],
+    "decision": "COMPLETE_AFTER_GUIDE_FREEZE",
+    "imputation": false,
+    "paired_policy": "Reviewer 2 also blindly refreshes these four cells because all four labels receive HIGH or MEDIUM guide clarification."
+  },
+  "versioning": {
+    "preserve_original_ratings": true,
+    "new_columns_or_artifact": "Store re-review values in a separate versioned artifact with guide_version, reviewer_id, sample_id, label, applicability, and timestamp.",
+    "no_gold_creation": true
+  },
+  "post_rereview_statistics": [
+    "exact agreement",
+    "unweighted and linear-weighted Cohen kappa",
+    "three-by-three confusion matrix",
+    "NO-CLEAR severe disagreement",
+    "per-label agreement",
+    "directional marginal distributions",
+    "agreement-control drift"
+  ],
+  "stop_rule": "After post-re-review statistics are produced, stop. Freeze adjudication only if its predetermined gates pass; do not automatically widen to full re-review or begin adjudication."
+}

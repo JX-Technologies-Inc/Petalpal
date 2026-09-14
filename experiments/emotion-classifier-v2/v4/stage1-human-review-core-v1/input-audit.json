@@ -1,0 +1,139 @@
+{
+  "validation": "PASS",
+  "inputs": [
+    {
+      "original_path": "/Users/xingranma/Desktop/reviewer-1-stage1-clean-standard.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/core/reviewer-1-stage1-clean-standard.csv",
+      "sha256": "6b1ae90224c8e9b4cf65a96473f0fb837d05194b1afa22a4e54b3b3ffc75a5ac",
+      "size_bytes": 1998622
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/reviewer-2-stage1-clean-standard.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/core/reviewer-2-stage1-clean-standard.csv",
+      "sha256": "31c3a835c03e4b96a3f6de9a6f21dc29d9a3975fcc753db0f3775497f19725da",
+      "size_bytes": 2001180
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r01.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r01.csv",
+      "sha256": "55a14b08c57f42996eb77c37266322c6a7a8b1b0c15b73a1d68eee8f5858b9c0",
+      "size_bytes": 1996776
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r02.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r02.csv",
+      "sha256": "60f235b13af4041f3bbbc286229e8179312f37b0bb13a57c40f24352b82828a5",
+      "size_bytes": 1997872
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r03.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r03.csv",
+      "sha256": "5e3fde042342c091ac43084e8a0881ca897dd5c78879ebdb91635b036a6d637b",
+      "size_bytes": 1996661
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r04.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r04.csv",
+      "sha256": "ce1c5c26eefeef81e3a11e7b148576140f0339499b0b4f775dcdeb44538f2767",
+      "size_bytes": 1998357
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r05.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r05.csv",
+      "sha256": "72e20205d08931551d06d51ebc763e3c56a02a6c7d331f7542744957b66ada8b",
+      "size_bytes": 1999159
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r06.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r06.csv",
+      "sha256": "2c144296d08afbf1a8fd9d64002fe9992c05b75e5a9f4b6e30062cb3ed72aaff",
+      "size_bytes": 2000744
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r07.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r07.csv",
+      "sha256": "b2d32394cfbd6f62a7894de8453110161e385c9d73006d94853770c7d3b30134",
+      "size_bytes": 1998275
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/aux-r08.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r08.csv",
+      "sha256": "645f12d9532b73be484f7e76840282857408a7c18d4ec63929a7ac7fd052256a",
+      "size_bytes": 2014551
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/README.md",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/README.md",
+      "sha256": "abd3c391bd43b280fe4bc35354fabec37c5fd51221c165476c70040c7dd2b05f",
+      "size_bytes": 1310
+    },
+    {
+      "original_path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle/auxiliary_reviewer_manifest.csv",
+      "snapshot_path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/auxiliary_reviewer_manifest.csv",
+      "sha256": "01986fdd2240b40fa18fd8b89d62256c998e050181f75e191e2d8e849d18f0b3",
+      "size_bytes": 1925
+    }
+  ],
+  "bundle_directory": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle",
+  "combined_long_csv_used": false,
+  "original_inputs_modified": false,
+  "previous_access_issue_resolved": true,
+  "cross_reviewer_metadata": {
+    "reviewer-2": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R01": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R02": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R03": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R04": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R05": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R06": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R07": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    },
+    "AUX-R08": {
+      "reference": "reviewer-1",
+      "shared_keys_n": 3978,
+      "text_mismatched_keys": [],
+      "definition_mismatched_keys": []
+    }
+  },
+  "errors": {},
+  "original_and_snapshot_hashes_reverified": true
+}

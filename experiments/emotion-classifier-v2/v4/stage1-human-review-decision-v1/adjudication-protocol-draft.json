@@ -1,0 +1,100 @@
+{
+  "protocol_id": "stage1-human-review-adjudication-v1-draft",
+  "status": "DRAFT",
+  "human_review_scope": "STAGE1_ONLY",
+  "allowed_values": ["NO", "PLAUSIBLE", "CLEAR"],
+  "legacy_unused_fields": ["evidence", "rank_order", "tie_group"],
+  "prerequisites": {
+    "revised_stage1_guide_human_frozen": true,
+    "targeted_core_rereview_complete": true,
+    "reviewer2_tail_completed_with_real_judgments": true,
+    "reviewer1_missing_completed": true,
+    "post_rereview_agreement_remeasured": true,
+    "calibration_gates_passed": true
+  },
+  "strong_auxiliary_support": {
+    "eligible_reviewers": ["AUX-R01", "AUX-R02", "AUX-R03", "AUX-R04", "AUX-R05", "AUX-R06", "AUX-R07"],
+    "minimum_valid_reviewers": 5,
+    "minimum_same_category_fraction": 0.8,
+    "rule": "At least 80% of at least five valid eligible Auxiliary judgments select the same Stage 1 category.",
+    "effect": "Supporting evidence or review trigger only; never an automatic final category or Core override."
+  },
+  "cases": {
+    "core_exact_agreement": {
+      "default": "Retain the Core agreement as provisional reference after the revised guide and calibration gates pass.",
+      "auxiliary_rule": "An adjacent Auxiliary difference creates a warning only. Strong Auxiliary support for the opposite extreme, NO versus CLEAR, reopens the cell for independent adjudicator review.",
+      "automatic_override": false
+    },
+    "core_NO_vs_PLAUSIBLE": {
+      "class": "ADJACENT",
+      "action": "For HIGH labels, or any cell affected by revised wording, both Core reviewers first re-review blind. Remaining disagreement enters the adjudication queue. For unchanged LOW labels, the cell may enter the queue directly after guide freeze.",
+      "auxiliary_rule": "Strong support is shown to the adjudicator only after the adjudicator records an initial blind applicability judgment.",
+      "automatic_final": false
+    },
+    "core_PLAUSIBLE_vs_CLEAR": {
+      "class": "ADJACENT",
+      "interpretation": "Primarily a threshold/intensity calibration candidate, but semantic overlap remains possible.",
+      "action": "Apply the same blind Core re-review rule as NO versus PLAUSIBLE, then adjudicate only if disagreement remains.",
+      "automatic_final": false
+    },
+    "core_NO_vs_CLEAR": {
+      "class": "SEVERE",
+      "action": "Mandatory blind re-review by both Core reviewers under the frozen guide. If the severe disagreement persists, mandatory independent human adjudication with a written rule-based rationale.",
+      "auxiliary_rule": "Auxiliary support may inform the adjudicator but may never decide the cell.",
+      "automatic_final": false
+    },
+    "one_core_genuine_missing": {
+      "action": "The same missing Core reviewer completes the cell after guide freeze. If the label definition changed, the other Core reviewer also refreshes the paired judgment. No imputation is permitted.",
+      "failure_to_complete": "Keep unresolved and exclude from the final reference set unless a separately authorized protocol designates an independent replacement anchor.",
+      "automatic_final": false
+    },
+    "reviewer2_R3_184_through_R3_221": {
+      "status": "NO_VALID_CORE2_JUDGMENT",
+      "placeholder_policy": "All 684 placeholder values remain permanently INVALID/EXCLUDED and are never restored.",
+      "action": "After the revised guide is human-frozen, Reviewer 2 supplies 684 new real judgments. Reviewer 1 independently refreshes the same 38 by 18 cells under the identical guide so the pair is version-comparable.",
+      "automatic_final": false
+    },
+    "auxiliary_strong_consensus": {
+      "action": "Supporting evidence or a manual-review trigger only. It never produces a final category and never overrides Core agreement automatically."
+    },
+    "auxiliary_mixed_support": {
+      "action": "Record as uncertainty context. Do not vote, average, or infer a final category."
+    },
+    "AUX_R06_missing": {
+      "action": "Use AUX-R06 normally on valid overlap with pairwise-complete denominators. The 36 blanks remain missing; do not impute or globally downweight."
+    },
+    "AUX_R08_extreme_distribution": {
+      "action": "Preserve all raw judgments and report separately. Exclude AUX-R08 from consensus counts, strong-support calculations, and vote-like adjudication summaries. It may be displayed only as a separately labeled sensitivity perspective."
+    }
+  },
+  "adjudicator_method": {
+    "reviewer": "One independent human who did not supply either Core judgment for the cell.",
+    "step_1": "Review text, label, frozen definition, and Stage 1 anchors blind to all prior judgments; record NO, PLAUSIBLE, or CLEAR with a concise rule-based rationale.",
+    "step_2": "Then view de-identified Core judgments and eligible Auxiliary distribution, with AUX-R08 separate, and either retain or revise the initial judgment with a documented reason.",
+    "prohibited": [
+      "majority vote",
+      "automatic Auxiliary override",
+      "model predictions or probabilities",
+      "gold-label editing",
+      "Stage 2 or Stage 3 fields"
+    ]
+  },
+  "old_judgment_versioning": {
+    "rule": "Original judgments are immutable. New re-review judgments are stored as a separate version with guide version and timestamp.",
+    "affected_cells": "For materially revised HIGH definitions, current disagreement cells are superseded for reference construction only after both Core reviewers re-review. Exact-agreement controls test drift; they are not automatically rewritten.",
+    "unaffected_cells": "May remain provisional only if the definition is unchanged and calibration/control gates pass."
+  },
+  "freeze_gate": {
+    "status_now": "NOT_MET",
+    "required": [
+      "Human-frozen Stage 1 guide",
+      "Targeted Core re-review and completion work finished",
+      "Post-re-review exact agreement, confusion matrix, severe rate, and per-label statistics reported",
+      "Calibration exact agreement at least 0.75",
+      "Calibration NO-CLEAR rate at most 0.10",
+      "No HIGH label below 0.60 exact agreement on its available calibration cells",
+      "No unresolved validity or placeholder contamination"
+    ]
+  },
+  "final_labels_created": false
+}

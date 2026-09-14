@@ -1,0 +1,17 @@
+{
+  "validation": "NOT_RUN",
+  "reason": "BLOCKED_INPUT_ACCESS",
+  "schema_verified": false,
+  "missing_judgments_verified": false,
+  "text_consistency_verified": false,
+  "label_definition_consistency_verified": false,
+  "measured_core_overlap_n": null,
+  "expected_missing_from_user_not_yet_verified": [
+    {"sample_id": "R3-087", "label": "fear"},
+    {"sample_id": "R3-163", "label": "surprise"},
+    {"sample_id": "R3-168", "label": "admiration"},
+    {"sample_id": "R3-168", "label": "amusement"}
+  ],
+  "ratings_imputed": false,
+  "statistics_computed": false
+}

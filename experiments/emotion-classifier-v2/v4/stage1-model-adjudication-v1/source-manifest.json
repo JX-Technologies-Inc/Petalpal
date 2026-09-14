@@ -1,0 +1,27 @@
+{
+  "sha256": {
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/protocol.json": "7c0550fa8a245eaa3d3c3109146028f428890f75a9ad2c49272db259905567b2",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/core-agreement-summary.json": "1bd9e745dfcbc5f13166226584d1d65117f25576c5fe9696871f6c655941f673",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/validation.json": "fefc7703b04999b8f2eb24c0d734b2ad7fc2a9f0087b9e511f1219faf51b27c7",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input-audit.json": "ae6c4024bb6873dbbc0799eb44dc3ebe83ae765ca3cf6442b44623f6883aaf7a",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/auxiliary-policy.json": "0055aa73747f5942031f8c498075666b4bd0cf804a9c83ad167f6d43c4a412fa",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/label-review-priorities.csv": "e197b251268e79837def214cd41d83f6183f5053261a39391b2fb85d1c1be79f",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/decision.md": "9249f3928fb04d4274c3c0fc0a4b676c772a3a6e70fe25a1290964aeda3bb3b1",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/adjudication-protocol-draft.json": "b33de459488b35dda8ad0504ad075b390fd18283ea2b528e7170fbc28471a566",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/next-step.json": "4e7459d83c8849b415035b265e65d0937e7d79b5a62c4b15b8d39cf2d044aa32",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/stage1-definition-revision-plan.md": "14b6b590273fa948a9529416177757e48f612f6e862c4a621d9f221f33d14025",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/core-disagreements.csv": "6c3648205f35eb55330e0e445fe3d1b31ae4d0a282dfd62071dbe10711ee8966",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/core-disagreement-aux-support.csv": "f21d79c1e1c744a40fba9fdb52c4560202627453f609f65fee3e1cd737ce4b35",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/core/reviewer-1-stage1-clean-standard.csv": "6b1ae90224c8e9b4cf65a96473f0fb837d05194b1afa22a4e54b3b3ffc75a5ac",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/core/reviewer-2-stage1-clean-standard.csv": "31c3a835c03e4b96a3f6de9a6f21dc29d9a3975fcc753db0f3775497f19725da",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r01.csv": "55a14b08c57f42996eb77c37266322c6a7a8b1b0c15b73a1d68eee8f5858b9c0",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r02.csv": "60f235b13af4041f3bbbc286229e8179312f37b0bb13a57c40f24352b82828a5",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r03.csv": "5e3fde042342c091ac43084e8a0881ca897dd5c78879ebdb91635b036a6d637b",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r04.csv": "ce1c5c26eefeef81e3a11e7b148576140f0339499b0b4f775dcdeb44538f2767",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r05.csv": "72e20205d08931551d06d51ebc763e3c56a02a6c7d331f7542744957b66ada8b",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r06.csv": "2c144296d08afbf1a8fd9d64002fe9992c05b75e5a9f4b6e30062cb3ed72aaff",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r07.csv": "b2d32394cfbd6f62a7894de8453110161e385c9d73006d94853770c7d3b30134",
+    "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/auxiliary/aux-r08.csv": "645f12d9532b73be484f7e76840282857408a7c18d4ec63929a7ac7fd052256a"
+  },
+  "source_inputs_immutable": true
+}

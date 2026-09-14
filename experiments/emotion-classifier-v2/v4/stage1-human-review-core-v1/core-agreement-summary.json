@@ -1,0 +1,302 @@
+{
+  "valid_overlap_n": 3290,
+  "exact_agreement_n": 2160,
+  "exact_agreement_rate": 0.6565349544072948,
+  "disagreement_n": 1130,
+  "disagreement_rate": 0.3434650455927052,
+  "severe_disagreement_n": 337,
+  "severe_disagreement_rate": 0.10243161094224924,
+  "adjacent_disagreement_n": 793,
+  "NO_vs_PLAUSIBLE_n": 610,
+  "PLAUSIBLE_vs_CLEAR_n": 183,
+  "NO_vs_CLEAR_n": 337,
+  "cohens_kappa": 0.2337549326626877,
+  "kappa_status": "DEFINED",
+  "expected_agreement_rate": 0.5517556194048466,
+  "left_marginal_counts": {
+    "NO": 2842,
+    "PLAUSIBLE": 300,
+    "CLEAR": 148
+  },
+  "right_marginal_counts": {
+    "NO": 1995,
+    "PLAUSIBLE": 729,
+    "CLEAR": 566
+  },
+  "confusion_matrix": [
+    [
+      1945,
+      573,
+      324
+    ],
+    [
+      37,
+      118,
+      145
+    ],
+    [
+      13,
+      38,
+      97
+    ]
+  ],
+  "primary_categories": [
+    "NO",
+    "PLAUSIBLE",
+    "CLEAR"
+  ],
+  "kappa_weighting": "none",
+  "reviewer2_invalid_judgments_excluded": 684,
+  "missing_reviewer1_judgments_preserved": 4,
+  "comparable_sample_n": 183,
+  "core_population": "Actual nonblank overlap within R3-001..183 only",
+  "labels_are_human_ratings_not_gold": true,
+  "top_disagreement_labels": [
+    {
+      "label": "optimism",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 70,
+      "exact_agreement_rate": 0.3825136612021858,
+      "disagreement_n": 113,
+      "disagreement_rate": 0.6174863387978142,
+      "severe_disagreement_n": 64,
+      "severe_disagreement_rate": 0.34972677595628415,
+      "adjacent_disagreement_n": 49,
+      "NO_vs_PLAUSIBLE_n": 37,
+      "PLAUSIBLE_vs_CLEAR_n": 12,
+      "NO_vs_CLEAR_n": 64,
+      "cohens_kappa": 0.07909151636606547,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "excitement",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 71,
+      "exact_agreement_rate": 0.3879781420765027,
+      "disagreement_n": 112,
+      "disagreement_rate": 0.6120218579234973,
+      "severe_disagreement_n": 52,
+      "severe_disagreement_rate": 0.28415300546448086,
+      "adjacent_disagreement_n": 60,
+      "NO_vs_PLAUSIBLE_n": 39,
+      "PLAUSIBLE_vs_CLEAR_n": 21,
+      "NO_vs_CLEAR_n": 52,
+      "cohens_kappa": 0.09060253793593043,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "surprise",
+      "valid_overlap_n": 182,
+      "exact_agreement_n": 88,
+      "exact_agreement_rate": 0.4835164835164835,
+      "disagreement_n": 94,
+      "disagreement_rate": 0.5164835164835165,
+      "severe_disagreement_n": 40,
+      "severe_disagreement_rate": 0.21978021978021978,
+      "adjacent_disagreement_n": 54,
+      "NO_vs_PLAUSIBLE_n": 49,
+      "PLAUSIBLE_vs_CLEAR_n": 5,
+      "NO_vs_CLEAR_n": 40,
+      "cohens_kappa": 0.13778852938211875,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "joy",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 92,
+      "exact_agreement_rate": 0.5027322404371585,
+      "disagreement_n": 91,
+      "disagreement_rate": 0.4972677595628415,
+      "severe_disagreement_n": 22,
+      "severe_disagreement_rate": 0.12021857923497267,
+      "adjacent_disagreement_n": 69,
+      "NO_vs_PLAUSIBLE_n": 21,
+      "PLAUSIBLE_vs_CLEAR_n": 48,
+      "NO_vs_CLEAR_n": 22,
+      "cohens_kappa": 0.27846620450606585,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "gratitude",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 104,
+      "exact_agreement_rate": 0.5683060109289617,
+      "disagreement_n": 79,
+      "disagreement_rate": 0.43169398907103823,
+      "severe_disagreement_n": 9,
+      "severe_disagreement_rate": 0.04918032786885246,
+      "adjacent_disagreement_n": 70,
+      "NO_vs_PLAUSIBLE_n": 63,
+      "PLAUSIBLE_vs_CLEAR_n": 7,
+      "NO_vs_CLEAR_n": 9,
+      "cohens_kappa": 0.17979121751957336,
+      "kappa_status": "DEFINED"
+    }
+  ],
+  "top_severe_labels": [
+    {
+      "label": "optimism",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 70,
+      "exact_agreement_rate": 0.3825136612021858,
+      "disagreement_n": 113,
+      "disagreement_rate": 0.6174863387978142,
+      "severe_disagreement_n": 64,
+      "severe_disagreement_rate": 0.34972677595628415,
+      "adjacent_disagreement_n": 49,
+      "NO_vs_PLAUSIBLE_n": 37,
+      "PLAUSIBLE_vs_CLEAR_n": 12,
+      "NO_vs_CLEAR_n": 64,
+      "cohens_kappa": 0.07909151636606547,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "excitement",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 71,
+      "exact_agreement_rate": 0.3879781420765027,
+      "disagreement_n": 112,
+      "disagreement_rate": 0.6120218579234973,
+      "severe_disagreement_n": 52,
+      "severe_disagreement_rate": 0.28415300546448086,
+      "adjacent_disagreement_n": 60,
+      "NO_vs_PLAUSIBLE_n": 39,
+      "PLAUSIBLE_vs_CLEAR_n": 21,
+      "NO_vs_CLEAR_n": 52,
+      "cohens_kappa": 0.09060253793593043,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "surprise",
+      "valid_overlap_n": 182,
+      "exact_agreement_n": 88,
+      "exact_agreement_rate": 0.4835164835164835,
+      "disagreement_n": 94,
+      "disagreement_rate": 0.5164835164835165,
+      "severe_disagreement_n": 40,
+      "severe_disagreement_rate": 0.21978021978021978,
+      "adjacent_disagreement_n": 54,
+      "NO_vs_PLAUSIBLE_n": 49,
+      "PLAUSIBLE_vs_CLEAR_n": 5,
+      "NO_vs_CLEAR_n": 40,
+      "cohens_kappa": 0.13778852938211875,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "joy",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 92,
+      "exact_agreement_rate": 0.5027322404371585,
+      "disagreement_n": 91,
+      "disagreement_rate": 0.4972677595628415,
+      "severe_disagreement_n": 22,
+      "severe_disagreement_rate": 0.12021857923497267,
+      "adjacent_disagreement_n": 69,
+      "NO_vs_PLAUSIBLE_n": 21,
+      "PLAUSIBLE_vs_CLEAR_n": 48,
+      "NO_vs_CLEAR_n": 22,
+      "cohens_kappa": 0.27846620450606585,
+      "kappa_status": "DEFINED"
+    },
+    {
+      "label": "love",
+      "valid_overlap_n": 183,
+      "exact_agreement_n": 115,
+      "exact_agreement_rate": 0.6284153005464481,
+      "disagreement_n": 68,
+      "disagreement_rate": 0.37158469945355194,
+      "severe_disagreement_n": 20,
+      "severe_disagreement_rate": 0.1092896174863388,
+      "adjacent_disagreement_n": 48,
+      "NO_vs_PLAUSIBLE_n": 38,
+      "PLAUSIBLE_vs_CLEAR_n": 10,
+      "NO_vs_CLEAR_n": 20,
+      "cohens_kappa": 0.24827836172526277,
+      "kappa_status": "DEFINED"
+    }
+  ],
+  "highest_disagreement_samples": [
+    {
+      "sample_id": "R3-022",
+      "comparable_label_n": 18,
+      "disagreement_n": 12,
+      "severe_disagreement_n": 4,
+      "disagreement_rate": 0.6666666666666666
+    },
+    {
+      "sample_id": "R3-093",
+      "comparable_label_n": 18,
+      "disagreement_n": 12,
+      "severe_disagreement_n": 1,
+      "disagreement_rate": 0.6666666666666666
+    },
+    {
+      "sample_id": "R3-127",
+      "comparable_label_n": 18,
+      "disagreement_n": 12,
+      "severe_disagreement_n": 2,
+      "disagreement_rate": 0.6666666666666666
+    },
+    {
+      "sample_id": "R3-016",
+      "comparable_label_n": 18,
+      "disagreement_n": 11,
+      "severe_disagreement_n": 0,
+      "disagreement_rate": 0.6111111111111112
+    },
+    {
+      "sample_id": "R3-100",
+      "comparable_label_n": 18,
+      "disagreement_n": 11,
+      "severe_disagreement_n": 1,
+      "disagreement_rate": 0.6111111111111112
+    },
+    {
+      "sample_id": "R3-124",
+      "comparable_label_n": 18,
+      "disagreement_n": 11,
+      "severe_disagreement_n": 2,
+      "disagreement_rate": 0.6111111111111112
+    },
+    {
+      "sample_id": "R3-063",
+      "comparable_label_n": 18,
+      "disagreement_n": 10,
+      "severe_disagreement_n": 0,
+      "disagreement_rate": 0.5555555555555556
+    },
+    {
+      "sample_id": "R3-076",
+      "comparable_label_n": 18,
+      "disagreement_n": 10,
+      "severe_disagreement_n": 4,
+      "disagreement_rate": 0.5555555555555556
+    },
+    {
+      "sample_id": "R3-081",
+      "comparable_label_n": 18,
+      "disagreement_n": 10,
+      "severe_disagreement_n": 2,
+      "disagreement_rate": 0.5555555555555556
+    },
+    {
+      "sample_id": "R3-085",
+      "comparable_label_n": 18,
+      "disagreement_n": 10,
+      "severe_disagreement_n": 7,
+      "disagreement_rate": 0.5555555555555556
+    }
+  ],
+  "core_valid_marginal_distributions": {
+    "reviewer-1": {
+      "NO": 3464,
+      "PLAUSIBLE": 339,
+      "CLEAR": 171
+    },
+    "reviewer-2": {
+      "NO": 1998,
+      "PLAUSIBLE": 729,
+      "CLEAR": 567
+    }
+  }
+}

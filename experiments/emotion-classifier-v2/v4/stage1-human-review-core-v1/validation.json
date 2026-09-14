@@ -1,0 +1,34 @@
+{
+  "validation": "PASS",
+  "checks": {
+    "required_artifacts_present": true,
+    "source_and_snapshot_sha256_equal": true,
+    "core_actual_overlap_3290": true,
+    "r2_684_invalid_positions_excluded_from_all_judgment_statistics": true,
+    "r1_four_exact_missing_keys_preserved": true,
+    "core_metrics_independently_verified_with_fraction_kappa": true,
+    "label_and_sample_denominators_reconcile": true,
+    "all_16_auxiliary_core_comparisons_independently_verified": true,
+    "all_auxiliary_support_counts_match_individual_nonblank_ratings": true,
+    "aux_r06_r08_flagged_and_retained": true,
+    "stage2_stage3_unused_and_deprecated": true,
+    "no_gold_consensus_adjudication_or_weighting": true,
+    "ml_progress_append_only_verified": true
+  },
+  "core": {
+    "valid_overlap_n": 3290,
+    "exact_agreement_n": 2160,
+    "exact_agreement_rate": 0.6565349544072948,
+    "disagreement_n": 1130,
+    "disagreement_rate": 0.3434650455927052,
+    "severe_disagreement_n": 337,
+    "severe_disagreement_rate": 0.10243161094224924,
+    "adjacent_disagreement_n": 793,
+    "NO_vs_PLAUSIBLE_n": 610,
+    "PLAUSIBLE_vs_CLEAR_n": 183,
+    "NO_vs_CLEAR_n": 337,
+    "cohens_kappa": 0.2337549326626877
+  },
+  "other_flagged_auxiliary": [],
+  "ml_progress_updated": true
+}

@@ -1,0 +1,828 @@
+{
+  "protocol_id": "petalpal-train-ab-boundary-audit-v1-r1",
+  "diagnostic_only": true,
+  "n_train": 841,
+  "cardinality_matrix": {
+    "A=B": 662,
+    "strict_subset": 137,
+    "replacement": 42
+  },
+  "two_label": {
+    "A": 196,
+    "B": 162
+  },
+  "per_label": {
+    "both": {
+      "admiration": 15,
+      "amusement": 35,
+      "anger": 13,
+      "annoyance": 66,
+      "caring": 25,
+      "confusion": 12,
+      "curiosity": 7,
+      "disappointment": 39,
+      "disgust": 24,
+      "excitement": 18,
+      "fear": 35,
+      "gratitude": 62,
+      "joy": 198,
+      "love": 31,
+      "optimism": 42,
+      "remorse": 22,
+      "sadness": 58,
+      "surprise": 24
+    },
+    "xor": {
+      "admiration": 7,
+      "amusement": 16,
+      "anger": 3,
+      "annoyance": 22,
+      "caring": 11,
+      "confusion": 5,
+      "curiosity": 1,
+      "disappointment": 11,
+      "disgust": 1,
+      "excitement": 10,
+      "fear": 12,
+      "gratitude": 16,
+      "joy": 48,
+      "love": 18,
+      "optimism": 12,
+      "remorse": 7,
+      "sadness": 19,
+      "surprise": 9
+    },
+    "union": {
+      "admiration": 22,
+      "amusement": 51,
+      "anger": 16,
+      "annoyance": 88,
+      "caring": 36,
+      "confusion": 17,
+      "curiosity": 8,
+      "disappointment": 50,
+      "disgust": 25,
+      "excitement": 28,
+      "fear": 47,
+      "gratitude": 78,
+      "joy": 246,
+      "love": 49,
+      "optimism": 54,
+      "remorse": 29,
+      "sadness": 77,
+      "surprise": 33
+    },
+    "xor_div_union": {
+      "admiration": 0.3181818181818182,
+      "amusement": 0.3137254901960784,
+      "anger": 0.1875,
+      "annoyance": 0.25,
+      "caring": 0.3055555555555556,
+      "confusion": 0.29411764705882354,
+      "curiosity": 0.125,
+      "disappointment": 0.22,
+      "disgust": 0.04,
+      "excitement": 0.35714285714285715,
+      "fear": 0.2553191489361702,
+      "gratitude": 0.20512820512820512,
+      "joy": 0.1951219512195122,
+      "love": 0.3673469387755102,
+      "optimism": 0.2222222222222222,
+      "remorse": 0.2413793103448276,
+      "sadness": 0.24675324675324675,
+      "surprise": 0.2727272727272727
+    }
+  },
+  "replacement": {
+    "weighted_count": 42.0,
+    "family_weighted_count": {
+      "EPISTEMIC": 1.0,
+      "POSITIVE_ENERGY": 5.0,
+      "CROSS_FAMILY_OTHER": 27.0,
+      "AFFILIATION": 7.0,
+      "INTENSITY": 1.0,
+      "NEGATIVE_OUTCOME": 1.0
+    },
+    "family_share": {
+      "AFFILIATION": 0.16666666666666666,
+      "CROSS_FAMILY_OTHER": 0.6428571428571429,
+      "EPISTEMIC": 0.023809523809523808,
+      "INTENSITY": 0.023809523809523808,
+      "NEGATIVE_OUTCOME": 0.023809523809523808,
+      "POSITIVE_ENERGY": 0.11904761904761904
+    },
+    "family_row_count": {
+      "EPISTEMIC": 1,
+      "POSITIVE_ENERGY": 6,
+      "CROSS_FAMILY_OTHER": 31,
+      "AFFILIATION": 7,
+      "INTENSITY": 1,
+      "NEGATIVE_OUTCOME": 1
+    },
+    "top_three_concentration": 0.9285714285714286
+  },
+  "permutation": {
+    "n": 10000,
+    "seed": 44,
+    "families": {
+      "AFFILIATION": {
+        "observed_share": 0.16666666666666666,
+        "permutation_expected_share": 0.16666666666666666,
+        "observed_minus_expected": 0.0,
+        "observed_over_expected": 1.0
+      },
+      "CROSS_FAMILY_OTHER": {
+        "observed_share": 0.6428571428571429,
+        "permutation_expected_share": 0.6428571428571429,
+        "observed_minus_expected": 0.0,
+        "observed_over_expected": 1.0
+      },
+      "EPISTEMIC": {
+        "observed_share": 0.023809523809523808,
+        "permutation_expected_share": 0.023809523809523808,
+        "observed_minus_expected": 0.0,
+        "observed_over_expected": 1.0
+      },
+      "INTENSITY": {
+        "observed_share": 0.023809523809523808,
+        "permutation_expected_share": 0.023809523809523808,
+        "observed_minus_expected": 0.0,
+        "observed_over_expected": 1.0
+      },
+      "NEGATIVE_OUTCOME": {
+        "observed_share": 0.023809523809523808,
+        "permutation_expected_share": 0.023809523809523808,
+        "observed_minus_expected": 0.0,
+        "observed_over_expected": 1.0
+      },
+      "POSITIVE_ENERGY": {
+        "observed_share": 0.11904761904761904,
+        "permutation_expected_share": 0.11904761904761904,
+        "observed_minus_expected": 0.0,
+        "observed_over_expected": 1.0
+      }
+    },
+    "observed_top_three_concentration": 0.9285714285714286,
+    "top_three_mean": 0.9285714285714286,
+    "top_three_p95": 0.9285714285714286,
+    "top_three_distribution_2_5": 0.9285714285714286,
+    "top_three_distribution_97_5": 0.9285714285714286
+  },
+  "source_analysis": {
+    "raw_difference": -0.06219247783155338,
+    "sources": {
+      "Reddit": {
+        "rows": 467,
+        "sourceGroups": 134,
+        "disagreement_rate": 0.19486081370449682
+      },
+      "CoSoWELL": {
+        "rows": 319,
+        "sourceGroups": 319,
+        "disagreement_rate": 0.25705329153605017
+      }
+    },
+    "A_reference": {
+      "standardized_difference": -0.011875827243965268,
+      "common_support_coverage": 0.9071246819338422,
+      "strata_row_counts": {
+        "()": {
+          "Reddit": 100,
+          "Other": 5,
+          "CoSoWELL": 64
+        },
+        "('joy',)": {
+          "Reddit": 64,
+          "Other": 12,
+          "CoSoWELL": 46
+        },
+        "('gratitude', 'joy')": {
+          "Reddit": 14,
+          "Other": 1,
+          "CoSoWELL": 8
+        },
+        "('gratitude',)": {
+          "Reddit": 29,
+          "Other": 1,
+          "CoSoWELL": 5
+        },
+        "('joy', 'love')": {
+          "Reddit": 10,
+          "CoSoWELL": 8
+        },
+        "('disappointment',)": {
+          "Reddit": 22,
+          "CoSoWELL": 9
+        },
+        "('remorse',)": {
+          "Reddit": 17,
+          "CoSoWELL": 3
+        },
+        "('sadness',)": {
+          "Reddit": 18,
+          "CoSoWELL": 12
+        },
+        "('annoyance',)": {
+          "Reddit": 29,
+          "Other": 6,
+          "CoSoWELL": 23
+        },
+        "('excitement',)": {
+          "Reddit": 4,
+          "Other": 2,
+          "CoSoWELL": 5
+        },
+        "('caring', 'joy')": {
+          "Reddit": 2,
+          "CoSoWELL": 6
+        },
+        "('amusement',)": {
+          "Reddit": 30,
+          "Other": 1,
+          "CoSoWELL": 8
+        },
+        "('love',)": {
+          "Reddit": 10,
+          "CoSoWELL": 2
+        },
+        "('fear',)": {
+          "Reddit": 8,
+          "Other": 3,
+          "CoSoWELL": 10
+        },
+        "('surprise',)": {
+          "Reddit": 8,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('anger',)": {
+          "Reddit": 3,
+          "Other": 1,
+          "CoSoWELL": 3
+        },
+        "('joy', 'surprise')": {
+          "Reddit": 6,
+          "Other": 3,
+          "CoSoWELL": 2
+        },
+        "('disgust',)": {
+          "Reddit": 18,
+          "CoSoWELL": 1
+        },
+        "('optimism',)": {
+          "Reddit": 11,
+          "Other": 1,
+          "CoSoWELL": 12
+        },
+        "('excitement', 'joy')": {
+          "Reddit": 5,
+          "Other": 1,
+          "CoSoWELL": 3
+        },
+        "('admiration',)": {
+          "Reddit": 7,
+          "Other": 2,
+          "CoSoWELL": 2
+        },
+        "('disappointment', 'joy')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('annoyance', 'joy')": {
+          "Reddit": 1,
+          "CoSoWELL": 2
+        },
+        "('annoyance', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 2
+        },
+        "('admiration', 'joy')": {
+          "Reddit": 3,
+          "CoSoWELL": 3
+        },
+        "('amusement', 'joy')": {
+          "Reddit": 4,
+          "CoSoWELL": 3
+        },
+        "('caring',)": {
+          "Reddit": 5,
+          "CoSoWELL": 7
+        },
+        "('excitement', 'optimism')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('joy', 'sadness')": {
+          "Reddit": 2,
+          "Other": 1,
+          "CoSoWELL": 6
+        },
+        "('annoyance', 'confusion')": {
+          "Reddit": 1,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('curiosity',)": {
+          "Reddit": 1,
+          "Other": 2,
+          "CoSoWELL": 1
+        },
+        "('gratitude', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 3
+        },
+        "('anger', 'annoyance')": {
+          "Reddit": 1,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('joy', 'optimism')": {
+          "Reddit": 1,
+          "Other": 2,
+          "CoSoWELL": 8
+        }
+      },
+      "strata_sourceGroup_counts": {
+        "()": {
+          "Reddit": 64,
+          "Other": 4,
+          "CoSoWELL": 64
+        },
+        "('joy',)": {
+          "Reddit": 45,
+          "Other": 7,
+          "CoSoWELL": 46
+        },
+        "('gratitude', 'joy')": {
+          "Reddit": 10,
+          "Other": 1,
+          "CoSoWELL": 8
+        },
+        "('gratitude',)": {
+          "Reddit": 19,
+          "Other": 1,
+          "CoSoWELL": 5
+        },
+        "('joy', 'love')": {
+          "Reddit": 10,
+          "CoSoWELL": 8
+        },
+        "('disappointment',)": {
+          "Reddit": 18,
+          "CoSoWELL": 9
+        },
+        "('remorse',)": {
+          "Reddit": 15,
+          "CoSoWELL": 3
+        },
+        "('sadness',)": {
+          "Reddit": 15,
+          "CoSoWELL": 12
+        },
+        "('annoyance',)": {
+          "Reddit": 19,
+          "Other": 5,
+          "CoSoWELL": 23
+        },
+        "('excitement',)": {
+          "Reddit": 4,
+          "Other": 2,
+          "CoSoWELL": 5
+        },
+        "('caring', 'joy')": {
+          "Reddit": 2,
+          "CoSoWELL": 6
+        },
+        "('amusement',)": {
+          "Reddit": 25,
+          "Other": 1,
+          "CoSoWELL": 8
+        },
+        "('love',)": {
+          "Reddit": 9,
+          "CoSoWELL": 2
+        },
+        "('fear',)": {
+          "Reddit": 7,
+          "Other": 3,
+          "CoSoWELL": 10
+        },
+        "('surprise',)": {
+          "Reddit": 5,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('anger',)": {
+          "Reddit": 3,
+          "Other": 1,
+          "CoSoWELL": 3
+        },
+        "('joy', 'surprise')": {
+          "Reddit": 6,
+          "Other": 3,
+          "CoSoWELL": 2
+        },
+        "('disgust',)": {
+          "Reddit": 9,
+          "CoSoWELL": 1
+        },
+        "('optimism',)": {
+          "Reddit": 11,
+          "Other": 1,
+          "CoSoWELL": 12
+        },
+        "('excitement', 'joy')": {
+          "Reddit": 4,
+          "Other": 1,
+          "CoSoWELL": 3
+        },
+        "('admiration',)": {
+          "Reddit": 7,
+          "Other": 2,
+          "CoSoWELL": 2
+        },
+        "('disappointment', 'joy')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('annoyance', 'joy')": {
+          "Reddit": 1,
+          "CoSoWELL": 2
+        },
+        "('annoyance', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 2
+        },
+        "('admiration', 'joy')": {
+          "Reddit": 2,
+          "CoSoWELL": 3
+        },
+        "('amusement', 'joy')": {
+          "Reddit": 4,
+          "CoSoWELL": 3
+        },
+        "('caring',)": {
+          "Reddit": 4,
+          "CoSoWELL": 7
+        },
+        "('excitement', 'optimism')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('joy', 'sadness')": {
+          "Reddit": 2,
+          "Other": 1,
+          "CoSoWELL": 6
+        },
+        "('annoyance', 'confusion')": {
+          "Reddit": 1,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('curiosity',)": {
+          "Reddit": 1,
+          "Other": 2,
+          "CoSoWELL": 1
+        },
+        "('gratitude', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 3
+        },
+        "('anger', 'annoyance')": {
+          "Reddit": 1,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('joy', 'optimism')": {
+          "Reddit": 1,
+          "Other": 2,
+          "CoSoWELL": 8
+        }
+      }
+    },
+    "B_reference": {
+      "standardized_difference": 0.004876656305312118,
+      "common_support_coverage": 0.9020356234096693,
+      "strata_row_counts": {
+        "()": {
+          "Reddit": 126,
+          "Other": 7,
+          "CoSoWELL": 58
+        },
+        "('joy',)": {
+          "Reddit": 64,
+          "Other": 13,
+          "CoSoWELL": 54
+        },
+        "('gratitude',)": {
+          "Reddit": 30,
+          "CoSoWELL": 7
+        },
+        "('joy', 'love')": {
+          "Reddit": 10,
+          "CoSoWELL": 7
+        },
+        "('sadness',)": {
+          "Reddit": 23,
+          "CoSoWELL": 16
+        },
+        "('disappointment',)": {
+          "Reddit": 21,
+          "CoSoWELL": 6
+        },
+        "('remorse',)": {
+          "Reddit": 17,
+          "CoSoWELL": 3
+        },
+        "('annoyance',)": {
+          "Reddit": 27,
+          "Other": 5,
+          "CoSoWELL": 17
+        },
+        "('excitement',)": {
+          "Reddit": 7,
+          "Other": 2,
+          "CoSoWELL": 3
+        },
+        "('amusement',)": {
+          "Reddit": 23,
+          "Other": 1,
+          "CoSoWELL": 7
+        },
+        "('love',)": {
+          "Reddit": 12,
+          "CoSoWELL": 3
+        },
+        "('fear',)": {
+          "Reddit": 9,
+          "Other": 3,
+          "CoSoWELL": 11
+        },
+        "('anger',)": {
+          "Reddit": 2,
+          "Other": 1,
+          "CoSoWELL": 6
+        },
+        "('surprise',)": {
+          "Reddit": 7,
+          "CoSoWELL": 2
+        },
+        "('curiosity',)": {
+          "Reddit": 1,
+          "Other": 2,
+          "CoSoWELL": 1
+        },
+        "('disgust',)": {
+          "Reddit": 19,
+          "CoSoWELL": 1
+        },
+        "('admiration',)": {
+          "Reddit": 7,
+          "Other": 2,
+          "CoSoWELL": 3
+        },
+        "('annoyance', 'joy')": {
+          "Reddit": 3,
+          "CoSoWELL": 2
+        },
+        "('caring',)": {
+          "Reddit": 7,
+          "CoSoWELL": 9
+        },
+        "('fear', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 5
+        },
+        "('optimism',)": {
+          "Reddit": 12,
+          "Other": 1,
+          "CoSoWELL": 14
+        },
+        "('gratitude', 'love')": {
+          "Reddit": 2,
+          "CoSoWELL": 1
+        },
+        "('gratitude', 'joy')": {
+          "Reddit": 7,
+          "Other": 1,
+          "CoSoWELL": 6
+        },
+        "('admiration', 'joy')": {
+          "Reddit": 2,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('amusement', 'joy')": {
+          "Reddit": 2,
+          "CoSoWELL": 2
+        },
+        "('annoyance', 'love')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('joy', 'surprise')": {
+          "Reddit": 2,
+          "Other": 3,
+          "CoSoWELL": 2
+        },
+        "('joy', 'sadness')": {
+          "Reddit": 2,
+          "CoSoWELL": 5
+        },
+        "('annoyance', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 2
+        },
+        "('gratitude', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('disgust', 'fear')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('anger', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        }
+      },
+      "strata_sourceGroup_counts": {
+        "()": {
+          "Reddit": 68,
+          "Other": 3,
+          "CoSoWELL": 58
+        },
+        "('joy',)": {
+          "Reddit": 45,
+          "Other": 8,
+          "CoSoWELL": 54
+        },
+        "('gratitude',)": {
+          "Reddit": 19,
+          "CoSoWELL": 7
+        },
+        "('joy', 'love')": {
+          "Reddit": 10,
+          "CoSoWELL": 7
+        },
+        "('sadness',)": {
+          "Reddit": 20,
+          "CoSoWELL": 16
+        },
+        "('disappointment',)": {
+          "Reddit": 18,
+          "CoSoWELL": 6
+        },
+        "('remorse',)": {
+          "Reddit": 15,
+          "CoSoWELL": 3
+        },
+        "('annoyance',)": {
+          "Reddit": 16,
+          "Other": 5,
+          "CoSoWELL": 17
+        },
+        "('excitement',)": {
+          "Reddit": 7,
+          "Other": 2,
+          "CoSoWELL": 3
+        },
+        "('amusement',)": {
+          "Reddit": 19,
+          "Other": 1,
+          "CoSoWELL": 7
+        },
+        "('love',)": {
+          "Reddit": 12,
+          "CoSoWELL": 3
+        },
+        "('fear',)": {
+          "Reddit": 8,
+          "Other": 3,
+          "CoSoWELL": 11
+        },
+        "('anger',)": {
+          "Reddit": 2,
+          "Other": 1,
+          "CoSoWELL": 6
+        },
+        "('surprise',)": {
+          "Reddit": 6,
+          "CoSoWELL": 2
+        },
+        "('curiosity',)": {
+          "Reddit": 1,
+          "Other": 2,
+          "CoSoWELL": 1
+        },
+        "('disgust',)": {
+          "Reddit": 9,
+          "CoSoWELL": 1
+        },
+        "('admiration',)": {
+          "Reddit": 7,
+          "Other": 2,
+          "CoSoWELL": 3
+        },
+        "('annoyance', 'joy')": {
+          "Reddit": 3,
+          "CoSoWELL": 2
+        },
+        "('caring',)": {
+          "Reddit": 5,
+          "CoSoWELL": 9
+        },
+        "('fear', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 5
+        },
+        "('optimism',)": {
+          "Reddit": 11,
+          "Other": 1,
+          "CoSoWELL": 14
+        },
+        "('gratitude', 'love')": {
+          "Reddit": 2,
+          "CoSoWELL": 1
+        },
+        "('gratitude', 'joy')": {
+          "Reddit": 7,
+          "Other": 1,
+          "CoSoWELL": 6
+        },
+        "('admiration', 'joy')": {
+          "Reddit": 2,
+          "Other": 1,
+          "CoSoWELL": 2
+        },
+        "('amusement', 'joy')": {
+          "Reddit": 2,
+          "CoSoWELL": 2
+        },
+        "('annoyance', 'love')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('joy', 'surprise')": {
+          "Reddit": 2,
+          "Other": 3,
+          "CoSoWELL": 2
+        },
+        "('joy', 'sadness')": {
+          "Reddit": 2,
+          "CoSoWELL": 5
+        },
+        "('annoyance', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 2
+        },
+        "('gratitude', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('disgust', 'fear')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        },
+        "('anger', 'sadness')": {
+          "Reddit": 1,
+          "CoSoWELL": 1
+        }
+      }
+    },
+    "bootstrap": {
+      "requested_replicates": 10000,
+      "seed": 44,
+      "valid_replicate_proportion": 1.0,
+      "valid_replicate_percentage": 100.0,
+      "raw_ci": [
+        -0.12687709890052115,
+        0.004346832840480763
+      ],
+      "erroneous_raw_ci_removed": [-0.049518, -0.049518],
+      "erroneous_raw_ci_status": "implementation/reporting error; deprecated and must not be cited",
+      "A_reference_ci": [
+        -0.04951785665347482,
+        -0.04951785665347482
+      ],
+      "B_reference_ci": [
+        -0.05417954740014767,
+        0.030199674217750452
+      ],
+      "sourceGroup_clustered": true
+    }
+  },
+  "gates": {
+    "G1_prime": "PASS — inclusion-form dominant",
+    "G2_prime": "FAIL",
+    "G3_prime": "FAIL — raw source-association gate not supported"
+  },
+  "final_verdict": "DIAGNOSTIC COMPLETE FOR DECISION GATES",
+  "implementation_note": "Composition-controlled sensitivity analysis remains partially unverifiable, but cannot change the failed raw prerequisite for G3′.",
+  "decision_gate_execution_gaps": "NONE",
+  "non_decision_sensitivity_analysis_gaps": [
+    "A-reference existing CI is invalid/not trustworthy.",
+    "A-reference strata artifact incorrectly includes Other.",
+    "A/B composition-controlled bootstrap diagnostics were not independently verified."
+  ]
+}

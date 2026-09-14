@@ -1,0 +1,49 @@
+{
+  "policy_id": "stage1-auxiliary-use-v1",
+  "status": "APPROVED_FOR_FUTURE_STAGE1_METHOD",
+  "hierarchy": {
+    "core": ["reviewer-1", "reviewer-2"],
+    "auxiliary": ["AUX-R01", "AUX-R02", "AUX-R03", "AUX-R04", "AUX-R05", "AUX-R06", "AUX-R07", "AUX-R08"],
+    "rule": "Core reviewers are anchors. Auxiliary judgments are independent supporting evidence and never equal-status votes."
+  },
+  "normal_auxiliary_policy": {
+    "eligible_for_support_counts": ["AUX-R01", "AUX-R02", "AUX-R03", "AUX-R04", "AUX-R05", "AUX-R06", "AUX-R07"],
+    "strong_support_definition": "At least 80% of at least five valid eligible Auxiliary judgments select the same category.",
+    "automatic_gold_or_override": false
+  },
+  "case_policy": {
+    "core_exact_agreement": "Keep provisionally. Auxiliary disagreement creates a warning; reopen only when strong eligible Auxiliary support is at the opposite extreme, NO versus CLEAR. Never auto-override.",
+    "core_NO_vs_PLAUSIBLE": "Auxiliary support may prioritize targeted re-review or later inform the adjudicator. It cannot determine the category.",
+    "core_PLAUSIBLE_vs_CLEAR": "Treat as a calibration/intensity candidate. Auxiliary support is context only and cannot determine the category.",
+    "core_NO_vs_CLEAR": "Always manual targeted re-review and, if persistent, independent adjudication. Auxiliary majority is never sufficient.",
+    "one_core_missing": "Do not substitute Auxiliary for the missing Core. Complete the missing Core judgment after guide freeze or keep unresolved.",
+    "reviewer2_invalid_tail": "Do not treat Auxiliary as Core-2 replacement. Obtain real Reviewer-2 judgments after guide freeze."
+  },
+  "AUX_R06": {
+    "qc_status": "INCOMPLETE_COVERAGE",
+    "coverage": 0.9909502262,
+    "missing": 36,
+    "decision": "RETAIN_NORMALLY_ON_VALID_OVERLAP",
+    "method": "Pairwise-complete analysis per cell and explicit valid denominator. Missing values stay missing; no imputation and no global downweight.",
+    "reason": "The small coverage gap is not evidence of poor judgment quality."
+  },
+  "AUX_R08": {
+    "qc_status": "EXTREME_DISTRIBUTION",
+    "distribution": {"NO": 1, "PLAUSIBLE": 1719, "CLEAR": 2258},
+    "core_comparison": {
+      "reviewer1_exact_agreement": 0.0566180171,
+      "reviewer1_kappa": -0.0052055231,
+      "reviewer2_exact_agreement": 0.2252580449,
+      "reviewer2_kappa": 0.0395093645
+    },
+    "decision": "RETAIN_BUT_EXCLUDE_FROM_CONSENSUS_COUNTS",
+    "allowed_use": "Preserve unchanged and report as a separately labeled sensitivity perspective.",
+    "prohibited_use": "Do not include in strong-support thresholds, consensus counts, majority summaries, Core overrides, or automatic adjudication.",
+    "reason": "Near-total avoidance of NO makes the scale non-comparable with both Core anchors and the other Auxiliary reviewers; its inclusion would mechanically bias support toward PLAUSIBLE/CLEAR."
+  },
+  "data_integrity": {
+    "delete_or_modify_original_judgments": false,
+    "majority_vote": false,
+    "automatic_final_label": false
+  }
+}

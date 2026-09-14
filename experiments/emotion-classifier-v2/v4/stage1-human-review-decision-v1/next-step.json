@@ -1,0 +1,23 @@
+{
+  "decision_id": "stage1-human-review-next-sequence-v1",
+  "status": "APPROVED_SEQUENCE_NOT_STARTED",
+  "single_primary_sequence": [
+    "Prepare a blinded boundary-calibration packet for HIGH labels plus representative MEDIUM severe cases; do not modify ratings.",
+    "Reviewer 1, Reviewer 2, and the ML Lead revise the global Stage 1 applicability anchors and label-specific boundary notes, then human-confirm and version-freeze the guide.",
+    "Run the fixed masked calibration check. If its gates fail, stop for methodology revision; do not automatically widen the review.",
+    "Both Core reviewers perform the targeted re-review of HIGH disagreements, MEDIUM severe disagreements, and masked agreement controls.",
+    "Under the same frozen guide, Reviewer 2 supplies real judgments for R3-184..R3-221 while Reviewer 1 refreshes those cells; Reviewer 1 completes its four missing cells and Reviewer 2 refreshes their pairs.",
+    "Remeasure Core agreement, marginal calibration, severe disagreement, per-label agreement, and control drift.",
+    "Freeze the adjudication protocol only if all predetermined methodology gates pass.",
+    "An independent human adjudicator resolves only the remaining queued disagreements; Auxiliary information remains supporting evidence.",
+    "Freeze a final Stage 1 reference set only after definitions, Core coverage, adjudication, and validity checks are complete.",
+    "Create a versioned supervision-delta plus rare-label support and linguistic/contextual-diversity audit; never overwrite historical labels.",
+    "Only after that data audit, design one bounded future ML experiment using an eligible new evaluation protocol, not legal149, Blog360, or protected holdouts."
+  ],
+  "next_exact_human_review_action": "Prepare the fixed blinded calibration packet and hold the human definition-revision session; do not adjudicate current cells yet.",
+  "next_exact_ml_data_action": "After the final Stage 1 reference is frozen, construct a versioned supervision-delta and quantify rare-label support versus contextual diversity before authorizing any training.",
+  "training_authorized": false,
+  "automatic_followup": false,
+  "final_reference_set_allowed_now": false,
+  "final_gold_labels_created": false
+}

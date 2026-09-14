@@ -1,0 +1,14 @@
+{
+  "queue_counts": {
+    "CORE_DISAGREEMENT": 1130,
+    "CORE1_MISSING": 4,
+    "NO_VALID_CORE2": 684
+  },
+  "total_queue_n": 1818,
+  "queue_sample_n": 220,
+  "excluded_core_agreement_n": 2160,
+  "queue_derivation": "union of saved disagreement keys, frozen missing keys, and protocol tail-sample x label keys",
+  "old_metrics_recomputed": false,
+  "human_review_frozen": true,
+  "final_reference_set_allowed": false
+}

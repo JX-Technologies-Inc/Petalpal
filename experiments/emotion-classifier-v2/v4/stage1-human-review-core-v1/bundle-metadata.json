@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "filename": "README.md",
+      "read_as": "UTF-8 text; not used as ratings or exclusion authority",
+      "text": "# PetalPal 221 Human Review — Auxiliary Reviewers (Stage 1 Final)\n\n- Core reviewers remain separate: Xingran + partner.\n- These 8 source files are 8 different human auxiliary reviewers.\n- ALL 8 auxiliary reviewers have completed **Stage 1 only**.\n- Every per-reviewer CSV uses the same 8-column schema as the core files:\n  `sample_id, text, label, label_definition, applicability, evidence, rank_order, tie_group`\n- Because only Stage 1 is complete, `evidence`, `rank_order`, and `tie_group` are intentionally blank in every normalized auxiliary file.\n- AUX-R06 has 36 missing applicability judgments; use only its nonblank Stage 1 rows.\n- AUX-R08 has an anomalous Stage 1 distribution (3977/3978 are CLEAR or PLAUSIBLE); preserve it for audit, but exclude it from default agreement/adjudication unless manually validated.\n\nRecommended use now:\n1. Keep Xingran + partner as the two CORE reviewers.\n2. Compare core Stage 1 applicability first.\n3. Use AUX-R01–R07 as independent Stage 1 support (R06 only where nonblank).\n4. Do not let auxiliary majority automatically override the core.\n5. Keep AUX-R08 quarantined unless its reviewer confirms the instructions were understood.\n6. When Stage 2/3 is actually completed later, fill the existing blank columns rather than treating current values as completed.\n"
+    },
+    {
+      "filename": "auxiliary_reviewer_manifest.csv",
+      "read_as": "UTF-8 text; not used as ratings or exclusion authority",
+      "text": "reviewer_id,role,source_file,status,review_stage,normalized_file,rows,missing_applicability,NO,PLAUSIBLE,CLEAR,default_analysis_use,note\r\nAUX-R01,auxiliary,reviewer-3-completed.csv,ACTIVE_STAGE1,STAGE1_ONLY,aux-r01.csv,3978,0,3726,69,183,yes_stage1,Stage 1 only; use applicability as auxiliary evidence. Later-stage columns are intentionally blank.\r\nAUX-R02,auxiliary,reviewer-3-completed(1).csv,ACTIVE_STAGE1,STAGE1_ONLY,aux-r02.csv,3978,0,3474,154,350,yes_stage1,Stage 1 only; use applicability as auxiliary evidence. Later-stage columns are intentionally blank.\r\nAUX-R03,auxiliary,原始数据.csv,ACTIVE_STAGE1,STAGE1_ONLY,aux-r03.csv,3978,0,3731,44,203,yes_stage1,Stage 1 only; use applicability as auxiliary evidence. Later-stage columns are intentionally blank.\r\nAUX-R04,auxiliary,R3_Stage1_applicability_long_final.csv,ACTIVE_STAGE1,STAGE1_ONLY,aux-r04.csv,3978,0,3383,207,388,yes_stage1,Stage 1 only; use applicability as auxiliary evidence. Later-stage columns are intentionally blank.\r\nAUX-R05,auxiliary,R3-001至R3-221 Stage 1.xlsx,ACTIVE_STAGE1,STAGE1_ONLY,aux-r05.csv,3978,0,3345,379,254,yes_stage1,Stage 1 only; use applicability as auxiliary evidence. Later-stage columns are intentionally blank.\r\nAUX-R06,auxiliary,reviewer-3-stage1.csv,ACTIVE_STAGE1_INCOMPLETE,STAGE1_ONLY,aux-r06.csv,3978,36,2946,521,475,partial_stage1,Stage 1 only with 36 missing applicability judgments; use only nonblank judgments.\r\nAUX-R07,auxiliary,reviewer-3-stage1-results(1).csv,ACTIVE_STAGE1,STAGE1_ONLY,aux-r07.csv,3978,0,3477,257,244,yes_stage1,Stage 1 only; use applicability as auxiliary evidence. Later-stage columns are intentionally blank.\r\nAUX-R08,auxiliary,评审结果_R3.xlsx,QUARANTINE_ANOMALOUS,STAGE1_ONLY,aux-r08.csv,3978,0,1,1719,2258,no,Stage 1 only. Anomalous distribution: almost every label is CLEAR/PLAUSIBLE; preserve for audit and exclude from default agreement/adjudication unless manually validated.\r\n"
+    }
+  ],
+  "superseded_rules": [
+    "README/manifest AUX-R08 default exclusion",
+    "README future Stage 2/3 completion"
+  ]
+}

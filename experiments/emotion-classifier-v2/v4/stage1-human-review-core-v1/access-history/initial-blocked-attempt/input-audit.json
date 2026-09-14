@@ -1,0 +1,42 @@
+{
+  "audit_date_local": "2026-09-14",
+  "validation": "FAIL",
+  "status": "BLOCKED_INPUT_ACCESS",
+  "input_contents_loaded": false,
+  "original_inputs_modified": false,
+  "inputs": [
+    {
+      "role": "CORE",
+      "reviewer_id": "reviewer-1",
+      "path": "/Users/xingranma/Desktop/reviewer-1-stage1-clean-standard.csv",
+      "exists_by_stat": true,
+      "bytes_by_stat": 1998622,
+      "read_attempt": "PermissionError: [Errno 1] Operation not permitted",
+      "sha256": null
+    },
+    {
+      "role": "CORE",
+      "reviewer_id": "reviewer-2",
+      "path": "/Users/xingranma/Desktop/reviewer-2-stage1-clean-standard.csv",
+      "exists_by_stat": true,
+      "bytes_by_stat": 2001180,
+      "read_attempt": "NOT_ATTEMPTED_AFTER_REVIEWER_1_READ_DENIED",
+      "sha256": null
+    },
+    {
+      "role": "AUXILIARY_BUNDLE",
+      "path": "/Users/xingranma/Desktop/auxiliary_reviewers_stage1_final_bundle.zip",
+      "exists_by_stat": false,
+      "read_attempt": "NOT_ATTEMPTED_PATH_NOT_FOUND",
+      "sha256": null
+    }
+  ],
+  "desktop_directory_listing": "PermissionError: [Errno 1] Operation not permitted",
+  "blocking_issues": [
+    "Core input access: reading Reviewer 1 was denied by the operating system; Reviewer 2 contents have not been read.",
+    "The Auxiliary ZIP is not present at the supplied path."
+  ],
+  "core_effective_overlap_n": null,
+  "auxiliary_qc_verified": false,
+  "ml_progress_updated": false
+}
