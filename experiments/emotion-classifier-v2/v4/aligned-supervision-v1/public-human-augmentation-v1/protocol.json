@@ -1,0 +1,21 @@
+{
+  "protocolId": "petalpal-public-human-augmentation-v1-20260910",
+  "status": "LOCKED_BEFORE_TRAINING",
+  "hypothesis": "Conservative human-written emotional situations from a distinct public source can improve rare-label representations without the precision collapse caused by loss weighting.",
+  "initialization": "../standard-continuation-v1/experiment/epoch-2-checkpoint",
+  "baseTrainRows": 841,
+  "augmentationRows": 444,
+  "augmentation": "EmpatheticDialogues official train split; one situation per source author; deterministic Train-frequency targeting; fixed direct label mapping; no Dev-based selection",
+  "loss": "standard BCEWithLogitsLoss",
+  "epochs": 2,
+  "learningRate": 0.000002,
+  "weightDecay": 0.01,
+  "maxLength": 512,
+  "batchSize": 2,
+  "gradientAccumulation": 8,
+  "seed": 44,
+  "evaluation": "Unchanged legal149 Dev, all18 labels, threshold0.35, unchanged max-two selector",
+  "selection": "Highest selected18 Macro-F1 among saved current best and epochs1/2 with Micro precision>=0.50; tie earlier",
+  "secondaryCandidate": "Exactly one fixed50/50 saved-current-best plus selected augmentation epoch blend if augmentation wins; no sweep",
+  "forbidden": ["opened Gemini300", "opened CoSoWELL367", "retired125", "Frozen sets", "old Human Test", "production"]
+}

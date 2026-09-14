@@ -1,0 +1,33 @@
+{
+  "experiment": "domain-restoration-v1",
+  "status": "LOCKED",
+  "hypothesis": "The targeted GoEmotions rows are learnable in-sample but source-shifted; one fixed continuation on the original aligned PetalPal Train may restore the journaling-domain decision boundary without adding data or changing labels.",
+  "train": {
+    "path": "../train.jsonl",
+    "rows": 841,
+    "augmentation": "none",
+    "labels": "fixed 18-label canonical aligned taxonomy"
+  },
+  "training": {
+    "initCheckpoint": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "epochs": 1,
+    "learningRate": 0.000002,
+    "weightDecay": 0.01,
+    "batchSize": 2,
+    "gradientAccumulation": 8,
+    "maxLength": 512,
+    "seed": 44,
+    "loss": "standard BCE with logits",
+    "threshold": 0.35,
+    "selection": "single fixed legal-149 Dev evaluation; existing precision guard >=0.5; no threshold/loss/epoch sweep"
+  },
+  "diagnosticEvidence": "goemotions-targeted-v1/train-side-diagnostics.json",
+  "isolation": {
+    "devTextUsedForDesign": false,
+    "openedGemini300": false,
+    "frozenOrHoldout": false,
+    "canonicalTrainOrDevModified": false,
+    "productionModified": false,
+    "commitOrPush": false
+  }
+}

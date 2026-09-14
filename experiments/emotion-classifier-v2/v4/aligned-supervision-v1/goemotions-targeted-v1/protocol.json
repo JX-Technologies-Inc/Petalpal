@@ -1,0 +1,46 @@
+{
+  "experiment": "goemotions-targeted-v1",
+  "status": "LOCKED",
+  "purpose": "Single bounded targeted Train augmentation using the audited GoEmotions tranche.",
+  "baseTrain": {
+    "path": "../train.jsonl",
+    "rows": 841,
+    "labels": "fixed 18-label canonical aligned taxonomy"
+  },
+  "augmentation": {
+    "path": "../public-source-shortlist-20260910/goemotions-targeted-tranche.jsonl",
+    "rows": 204,
+    "source": "official GoEmotions agreement-filtered human-labeled Reddit comments",
+    "targetLabels": ["curiosity", "confusion", "anger", "admiration", "disgust", "remorse", "excitement"],
+    "targetCapPerLabel": 30,
+    "selection": "unique authors within tranche; recoverable historical GoEmotions-author overlap excluded; max two rows per subreddit; unclear examples and >2-source-label rows excluded; normalized-text overlap audit passed",
+    "openedGemini300": false,
+    "legalDevUsedForDesign": false
+  },
+  "training": {
+    "initCheckpoint": "standard-continuation-v1/experiment/epoch-2-checkpoint",
+    "model": "existing RoBERTa-compatible continuation checkpoint",
+    "epochs": 2,
+    "learningRate": 0.000002,
+    "weightDecay": 0.01,
+    "batchSize": 2,
+    "gradientAccumulation": 8,
+    "maxLength": 512,
+    "seed": 44,
+    "loss": "standard BCE with logits",
+    "threshold": 0.35,
+    "selection": "fixed legal-149 Dev protocol; precision guard >=0.5; no threshold/loss/epoch sweep"
+  },
+  "isolation": {
+    "candidateSelection": "legal 149-row Dev only under existing protocol",
+    "openedGemini300": "forbidden",
+    "evaluationRulesChanged": false,
+    "productionChanged": false,
+    "commitOrPush": false
+  },
+  "audit": {
+    "provenanceAudit": "goemotions-provenance-audit.json",
+    "trancheAudit": "goemotions-tranche-audit.json",
+    "licenseStatus": "REVIEW_REQUIRED before production or redistribution; research-only local experiment"
+  }
+}

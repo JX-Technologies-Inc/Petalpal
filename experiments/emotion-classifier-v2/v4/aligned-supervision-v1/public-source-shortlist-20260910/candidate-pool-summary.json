@@ -1,0 +1,15 @@
+{
+  "status": "READY_FOR_REVIEW_NOT_TRAINED",
+  "pool": "goemotions-candidate-pool-final.jsonl",
+  "source": "GoEmotions official agreement-filtered train split",
+  "candidateRows": 1605,
+  "quality": "direct human multi-label agreement-filtered labels; all retained labels are direct members of the current 18-label product taxonomy; priority rare-label membership capped at 250 per label",
+  "labelCounts": {"admiration":250,"anger":250,"confusion":250,"curiosity":250,"disgust":250,"excitement":250,"remorse":141,"surprise":15,"caring":4,"love":18,"joy":29,"optimism":33,"annoyance":74,"sadness":27,"gratitude":38,"disappointment":13,"amusement":16},
+  "weakLabelCoverage": {"curiosity":250,"confusion":250,"anger":250,"admiration":250,"disgust":250,"excitement":250,"remorse":141},
+  "sourceSplit": "official train only",
+  "authorId": "unavailable in local filtered train.tsv; raw official metadata must be obtained for author-level audit before admission",
+  "leakageAudit": {"indexedHistoricalRows":45345,"historicallyUsedGoIdsExcluded":3239,"normalizedOverlapExcluded":1738,"remainingCandidateOverlap":0,"legalDevOrGeminiContentUsedForSelection":false},
+  "poolSha256": "f5bd945928cf117cf7a52190c3d41d4397513604853096048b455f631d3c0713",
+  "recommendedNextUse": "Review/audit this pool's raw official metadata and license terms; if author/source audit passes, use a conservative rare-label-focused tranche rather than all 1605 rows.",
+  "trainingStarted": false
+}

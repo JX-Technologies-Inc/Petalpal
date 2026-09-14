@@ -1,0 +1,31 @@
+{
+  "retrieved": "2026-09-10",
+  "sources": [
+    {
+      "dataset": "Lemotif",
+      "officialRepository": "https://github.com/xaliceli/lemotif",
+      "dataUrl": "https://raw.githubusercontent.com/xaliceli/lemotif/master/assets/data/lemotif-data-cleaned-flat.csv",
+      "paper": "https://arxiv.org/abs/1903.07766",
+      "zenodo": "https://doi.org/10.5281/zenodo.3269893",
+      "localFile": "lemotif/lemotif-data-cleaned-flat.csv",
+      "sha256": "f7b142c8b01d3b031c683ed90585f2fba18b4239da9816b1340a46ac29fee168",
+      "humanWritten": true,
+      "labelType": "respondent self-selected checkbox labels",
+      "licenseStatus": "dataset-specific license not stated; repository MIT is code-only; rights review required"
+    },
+    {
+      "dataset": "enISEAR",
+      "officialSource": "https://www.ims.uni-stuttgart.de/forschung/ressourcen/korpora/deisear/",
+      "dataUrl": "https://www.romanklinger.de/data-sets/deISEARenISEAR.zip",
+      "paper": "https://aclanthology.org/N19-1063/",
+      "localFile": "enisear/deISEARenISEAR.zip",
+      "sha256": "38aa785caaf668652d9278f583990802d7eccf7569d0a206cabb49f9bbb89861",
+      "humanWritten": true,
+      "labelType": "crowdsourced event descriptions with predefined emotion prompt and Phase-2 validation",
+      "licenseStatus": "ODC-By 1.0; attribution required; contents/privacy rights review required"
+    }
+  ],
+  "trainingStarted": false,
+  "devOrHoldoutTextRead": false,
+  "openedGemini300Read": false
+}

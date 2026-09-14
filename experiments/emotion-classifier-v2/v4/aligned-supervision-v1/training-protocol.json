@@ -1,0 +1,19 @@
+{
+  "protocolId": "petalpal-aligned-full-finetune-v1-20260909",
+  "status": "LOCKED_BEFORE_FINAL_LABELS_AND_MODEL_INFERENCE",
+  "hypothesis": "Replacing mismatched same-assistant targets with independently Gemini-aligned targets will improve cross-author semantic classification without recall-only loss reweighting.",
+  "initialization": "candidate-c/artifacts/checkpoint",
+  "loss": "standard 21-label BCEWithLogitsLoss",
+  "maxLength": 512,
+  "epochs": 2,
+  "learningRate": 0.000005,
+  "weightDecay": 0.01,
+  "batchSize": 2,
+  "gradientAccumulation": 8,
+  "seed": 42,
+  "checkpointSelection": "Highest149-row Dev selected18 Macro-F1 at fixed threshold0.35 among epochs0/1/2 subject to Micro precision>=0.50; tie earlier epoch",
+  "selector": "unchanged max-two product selector",
+  "secondaryCandidate": "If a trained epoch is eligible, test exactly one fixed50/50 original+selected-epoch probability blend at threshold0.35; no weight or threshold sweep",
+  "externalEvaluationForbidden": "Gemini300, opened CoSoWELL367, retired125, Frozen sets and old Human Test",
+  "promotion": "Promote development candidate only if it exceeds epoch0 Dev Macro-F1 with Micro precision>=0.50; this is not a final claim"
+}

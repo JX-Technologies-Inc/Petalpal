@@ -1,0 +1,20 @@
+{
+  "protocolId": "petalpal-aligned-deberta-v3-small-v1-20260910",
+  "status": "LOCKED_BEFORE_MODEL_DOWNLOAD_AND_TRAINING",
+  "hypothesis": "A materially different DeBERTa-v3 encoder may improve semantic ranking and rare-label transfer beyond the saturated RoBERTa continuation.",
+  "pretrainedBackbone": "microsoft/deberta-v3-small",
+  "classifierHead": "new 21-label linear head",
+  "data": {"train": "../train.jsonl", "dev": "../dev.jsonl"},
+  "loss": "standard BCEWithLogitsLoss",
+  "maxLength": 512,
+  "epochs": 3,
+  "learningRate": 0.00002,
+  "weightDecay": 0.01,
+  "batchSize": 2,
+  "gradientAccumulation": 8,
+  "seed": 45,
+  "evaluation": "Unchanged legal149 Dev, all18 labels, threshold0.35, unchanged max-two selector",
+  "selection": "Highest selected18 Macro-F1 among epochs1/2/3 with Micro precision>=0.50; compare against saved current-best .3318122835; tie earlier",
+  "secondaryCandidate": "Exactly one fixed50/50 current-best RoBERTa plus selected DeBERTa probability blend if a DeBERTa epoch is eligible; no sweep",
+  "forbidden": ["opened Gemini300", "opened CoSoWELL367", "retired125", "Frozen sets", "old Human Test", "production"]
+}

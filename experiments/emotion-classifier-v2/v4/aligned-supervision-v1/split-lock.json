@@ -1,0 +1,16 @@
+{
+  "status": "LOCKED_BEFORE_LABELS",
+  "rows": {
+    "train": 841,
+    "dev": 149
+  },
+  "hashes": {
+    "protocol": "789f4185fbd77a641fae74d561709acf09dcaae4a7e3450a6a4f1471b099544c",
+    "blindTrain": "c38d313e2a4fd4c4735c13c7473f44580d58d657f4e440e479ffeafcd8e58ba5",
+    "blindDev": "056099e2347d4e2771239ca1f2b5ecb998b11c8de8f2088fdb08a032839f2cff",
+    "lineageAudit": "8f647e1371af67abf7e88798ad3f323159035f073f992cf3ced3de475dcb19af"
+  },
+  "splitUsesGeminiLabels": false,
+  "splitUsesPredictions": false,
+  "lineageAudit": "PASS"
+}

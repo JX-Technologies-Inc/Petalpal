@@ -1,0 +1,91 @@
+{
+  "status": "PASS",
+  "sourceTypeCounts": {
+    "train": {
+      "PUBLIC_HUMAN": 787,
+      "HUMAN_CONSENTED": 54
+    },
+    "dev": {
+      "PUBLIC_HUMAN": 149
+    }
+  },
+  "checks": {
+    "trainDevDisjoint": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "trainUniqueIds": true,
+    "devUniqueIds": true,
+    "devUniqueAuthors": true
+  },
+  "protectedOverlapCounts": {
+    "gemini300": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "gemini300AgainstTrain": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "openedCoSoWELL367": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "openedCoSoWELL367AgainstTrain": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "retired125": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "retired125AgainstTrain": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "oldHumanTest": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "oldHumanTestAgainstTrain": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "frozen2": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "frozen2AgainstTrain": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    }
+  },
+  "inputHashes": {
+    "pilotTrain": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "pilotCalibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7",
+    "candidateTrain": "2dbf073775941f965a68b8cd34f88ee43b4836b287c6777d63c1e3e62f43030d",
+    "pilotBlind": "f46871e0967b92cb6d034822fabf5a4848db1c8e4cc2b4f7ee88189438c5738f"
+  }
+}

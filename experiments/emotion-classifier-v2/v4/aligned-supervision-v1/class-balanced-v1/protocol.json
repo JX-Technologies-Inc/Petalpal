@@ -1,0 +1,19 @@
+{
+  "protocolId": "petalpal-aligned-class-balanced-v1-20260910",
+  "status": "LOCKED_BEFORE_TRAINING",
+  "hypothesis": "After aligned supervision establishes useful common-label performance, a bounded Train-derived sqrt positive weighting continuation may recover rare-label recall without violating the fixed precision guard.",
+  "initialization": "../experiment/epoch-2-checkpoint",
+  "data": {"train": "../train.jsonl", "dev": "../dev.jsonl"},
+  "loss": "BCEWithLogitsLoss with per-label pos_weight=sqrt((N-positive)/positive), clipped to [1,4], computed from Train only",
+  "maxLength": 512,
+  "epochs": 2,
+  "learningRate": 0.000002,
+  "weightDecay": 0.01,
+  "batchSize": 2,
+  "gradientAccumulation": 8,
+  "seed": 43,
+  "evaluation": "Unchanged 18-label metric, threshold0.35 and max-two product selector on the fixed legal149 Dev",
+  "selection": "Highest Dev selected18 Macro-F1 among baseline/epochs1/2 with Micro precision>=0.50; tie earlier",
+  "secondaryCandidate": "Exactly one fixed50/50 baseline+selected-weighted probability blend if a weighted epoch is selected; no sweep",
+  "forbidden": ["opened Gemini300", "opened CoSoWELL367", "retired125", "Frozen sets", "old Human Test", "production"]
+}

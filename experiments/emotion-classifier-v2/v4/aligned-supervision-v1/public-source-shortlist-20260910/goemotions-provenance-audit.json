@@ -1,0 +1,53 @@
+{
+  "status": "PASS_WITH_RESIDUAL_RISK",
+  "candidateRows": 1605,
+  "rawRowsAudited": 211225,
+  "candidateIdsResolved": 1605,
+  "candidateUniqueAuthors": 1566,
+  "candidateUniqueSubreddits": 449,
+  "unclearFlagCounts": {
+    "False": 1589,
+    "True": 16
+  },
+  "candidateHistoricalGoAuthorOverlap": 39,
+  "candidateHistoricalGoSubredditOverlap": 448,
+  "candidateDuplicateAuthors": 10,
+  "candidateTextHashOverlapWithinPool": 0,
+  "candidateTextHashOverlapAgainstIndexedLineage": 0,
+  "authorMetadataAvailable": true,
+  "sourceMetadataFields": [
+    "id",
+    "author",
+    "subreddit",
+    "link_id",
+    "parent_id",
+    "created_utc",
+    "rater_id",
+    "example_very_unclear"
+  ],
+  "rawSha256": {
+    "goemotions_1.csv": "cac049036bad5d68d1081f72b65f2cc51e4df82af05e3e22cfa747051cac1af3",
+    "goemotions_2.csv": "f699ecc5aa425c1720c1d02475f1e41815244b680bd75b282eb770d2c76cd84d",
+    "goemotions_3.csv": "467f1e7191af00f2e76cc7f425885c2dc304bea8aff284b10e8c460d22f2e1af"
+  },
+  "licenseAudit": {
+    "officialRepository": "https://github.com/google-research/google-research/tree/master/goemotions",
+    "officialDataUrls": [
+      "https://storage.googleapis.com/gresearch/goemotions/data/full_dataset/goemotions_1.csv",
+      "https://storage.googleapis.com/gresearch/goemotions/data/full_dataset/goemotions_2.csv",
+      "https://storage.googleapis.com/gresearch/goemotions/data/full_dataset/goemotions_3.csv"
+    ],
+    "paper": "https://arxiv.org/abs/2005.00547",
+    "officialReadme": "https://github.com/google-research/google-research/blob/master/goemotions/README.md",
+    "officialModelCard": "https://github.com/google-research/google-research/blob/master/goemotions/goemotions_model_card.pdf",
+    "repositoryLicenseFileFound": false,
+    "retrieved": "2026-09-10",
+    "status": "REVIEW_REQUIRED",
+    "terms": "Official README/model card provide dataset guidance but the repository has no dataset license file; raw Reddit content and any redistribution/commercial use require separate terms review; no unrestricted-license assumption."
+  },
+  "residualRisk": [
+    "Historical GoEmotions artifacts lack complete raw author metadata in their transformed JSONL; author overlap is audited for recoverable historical Go IDs only.",
+    "Candidate and historical rows share Reddit subreddits by design; source-level domain overlap is not itself text leakage, but future tranche selection should cap repeated authors/subreddits.",
+    "Official data usage/redistribution terms require legal/product review before production use."
+  ]
+}

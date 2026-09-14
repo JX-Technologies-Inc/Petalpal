@@ -1,0 +1,56 @@
+{
+  "status": "PASS_WITH_RESIDUAL_RISK",
+  "retrieved": "2026-09-10",
+  "inputRows": {
+    "Lemotif": 1473,
+    "enISEAR": 1001
+  },
+  "eligibleBeforeLineage": {
+    "Lemotif": 323,
+    "enISEAR": 594
+  },
+  "acceptedRows": 915,
+  "acceptedBySource": {
+    "Lemotif": 323,
+    "enISEAR": 592
+  },
+  "acceptedByLabel": {
+    "anger": 140,
+    "sadness": 142,
+    "excitement": 251,
+    "joy": 316,
+    "confusion": 28,
+    "surprise": 21,
+    "disgust": 106,
+    "fear": 127
+  },
+  "excluded": {
+    "normalized_text_duplicate_within_new_pool": 2
+  },
+  "historicalLineageRowsIndexed": 45345,
+  "historicalLineageHashesCompared": 14060,
+  "knownOriginalRowIdOverlapWithHistoricalLineage": 0,
+  "normalizedTextOverlapWithHistoricalLineage": 0,
+  "sourceDatasetOverlapWithHistoricalLineage": 0,
+  "enISEARWorkerIdOverlapWithHistoricalAuthorIds": 0,
+  "withinNewPoolNormalizedDuplicates": 2,
+  "sourceAuthorAudit": {
+    "Lemotif": {
+      "authorMetadataAvailable": false,
+      "residualRisk": "flat CSV has no respondent ID; 1,473 rows originate from up to 500 MTurk respondents"
+    },
+    "enISEAR": {
+      "authorMetadataAvailable": true,
+      "uniqueWorkers": 63,
+      "residualRisk": "worker IDs are source-local and historical artifacts lack cross-source author identity"
+    }
+  },
+  "selectionUsesDevTextOrLabels": false,
+  "selectionUsesOpenedGemini300": false,
+  "holdoutTextRead": false,
+  "licenseResidualRisk": {
+    "Lemotif": "dataset-specific license not stated; repository MIT is code-only; do not redistribute without review",
+    "enISEAR": "ODC-By 1.0 with attribution; contents/privacy rights still require review"
+  },
+  "poolSha256": "def9ef7e277bf2ff08cf76ce5ba0dcb7f00ad099ac564a40fd6fd6f2f620e8c3"
+}

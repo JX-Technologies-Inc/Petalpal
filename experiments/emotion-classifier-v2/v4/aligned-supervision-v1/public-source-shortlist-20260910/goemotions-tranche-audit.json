@@ -1,0 +1,91 @@
+{
+  "status": "PASS_WITH_RESIDUAL_RISK",
+  "baseTrainRows": 841,
+  "trancheRows": 204,
+  "targetLabels": [
+    "curiosity",
+    "confusion",
+    "anger",
+    "admiration",
+    "disgust",
+    "remorse",
+    "excitement"
+  ],
+  "perLabelCap": 30,
+  "trancheLabelCounts": {
+    "anger": 30,
+    "excitement": 30,
+    "love": 4,
+    "disgust": 30,
+    "gratitude": 4,
+    "remorse": 30,
+    "admiration": 30,
+    "optimism": 3,
+    "curiosity": 30,
+    "joy": 6,
+    "confusion": 30,
+    "annoyance": 8,
+    "amusement": 1,
+    "sadness": 1,
+    "surprise": 1,
+    "disappointment": 2
+  },
+  "baseTrainSupport": {
+    "joy": 224,
+    "gratitude": 71,
+    "love": 36,
+    "optimism": 49,
+    "sadness": 64,
+    "disappointment": 45,
+    "remorse": 24,
+    "annoyance": 77,
+    "excitement": 24,
+    "caring": 34,
+    "amusement": 43,
+    "fear": 39,
+    "surprise": 29,
+    "anger": 14,
+    "curiosity": 8,
+    "disgust": 24,
+    "admiration": 18,
+    "confusion": 15
+  },
+  "currentBestPerLabelF1": {
+    "admiration": 0.0,
+    "amusement": 0.25,
+    "anger": 0.0,
+    "annoyance": 0.3448275862068966,
+    "caring": 0.2727272727272727,
+    "confusion": 0.0,
+    "curiosity": 0.0,
+    "disappointment": 0.8571428571428571,
+    "disgust": 0.0,
+    "excitement": 0.5454545454545454,
+    "fear": 0.35294117647058826,
+    "gratitude": 0.631578947368421,
+    "joy": 0.6923076923076923,
+    "love": 0.16666666666666666,
+    "optimism": 0.4166666666666667,
+    "remorse": 0.0,
+    "sadness": 0.6923076923076923,
+    "surprise": 0.75
+  },
+  "uniqueAuthors": 204,
+  "uniqueSubreddits": 165,
+  "maxRowsPerSubreddit": 2,
+  "excludedDuringDesign": {
+    "historical_author_overlap": 70,
+    "more_than_two_source_labels": 9,
+    "unclear": 16
+  },
+  "selectionUsesDevTextOrLabels": false,
+  "selectionUsesOpenedGemini300": false,
+  "sourceDomain": "Reddit/GoEmotions",
+  "remainingRisk": [
+    "No complete cross-source author identity is available for PHQ rows whose provenance lacks author IDs.",
+    "Official GoEmotions usage/redistribution terms remain REVIEW_REQUIRED."
+  ],
+  "hashes": {
+    "tranche": "02b6b5e42e60fa7e96d2421da9c797f50f009c5bec8fffae25439201279c8292"
+  }
+}

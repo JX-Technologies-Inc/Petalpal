@@ -1,0 +1,42 @@
+{
+  "status": "PASS_WITH_RESIDUAL_RISK",
+  "selectionUsesDevTextOrLabels": false,
+  "selectionUsesOpenedGemini300": false,
+  "holdoutTextRead": false,
+  "candidatePoolAuditStatus": "PASS_WITH_RESIDUAL_RISK",
+  "candidatePoolRows": 915,
+  "baseTrainRows": 841,
+  "existingGoRows": 204,
+  "pilotRows": 150,
+  "resultingTrainRows": 1195,
+  "pilotBySource": {
+    "Lemotif": 120,
+    "enISEAR": 30
+  },
+  "pilotByLabel": {
+    "anger": 43,
+    "sadness": 12,
+    "confusion": 28,
+    "surprise": 8,
+    "disgust": 37,
+    "excitement": 48,
+    "joy": 38,
+    "fear": 3
+  },
+  "lemotifRows": 120,
+  "enISEARRows": 30,
+  "enISEARUniqueWorkers": 30,
+  "normalizedOverlapWithCanonicalTrain": 0,
+  "normalizedOverlapWithExistingGoTranche": 0,
+  "rowIdOverlapWithCanonicalTrain": 0,
+  "rowIdOverlapWithExistingGoTranche": 0,
+  "sourceAuthorResidualRisk": {
+    "Lemotif": "flat CSV has no respondent IDs",
+    "enISEAR": "one selected row per source-local worker; cross-source identity cannot be proven"
+  },
+  "licenseResidualRisk": {
+    "Lemotif": "dataset-specific license not stated",
+    "enISEAR": "ODC-By 1.0 with attribution and contents/privacy review"
+  },
+  "selectionRationale": "Use all available direct Lemotif anger/confusion/disgust rows, cap Lemotif excitement to a balanced 120-row source tranche, and add 15 validated unique-worker enISEAR anger plus 15 disgust rows."
+}

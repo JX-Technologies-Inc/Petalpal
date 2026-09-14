@@ -1,0 +1,22 @@
+{
+  "experiment": "uncertain-negative-mask-v1",
+  "status": "LOCKED_BEFORE_TRAINING_AND_DEV_EVALUATION",
+  "hypothesis": "The fixed 0-2 annotation boundary creates false-negative supervision: a label selected by either independent annotator but omitted from the adjudicated final set is uncertain rather than a reliable negative. Masking only those negative BCE terms should improve transfer without changing positives, data, sampling, model, threshold, selector, or evaluation.",
+  "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "trainingData": "The unchanged 841 aligned Train rows plus the unchanged audited 204-row GoEmotions targeted tranche",
+  "onlyChange": "For the 841 aligned rows only, mask a negative label loss when that label was selected by Pass A or Pass B but is absent from the locked final label set. All locked final positives and all other negatives remain standard BCE; all GoEmotions rows remain hard-label standard BCE.",
+  "training": {
+    "epochs": 1,
+    "learningRate": 0.000002,
+    "weightDecay": 0.01,
+    "batchSize": 2,
+    "gradientAccumulation": 8,
+    "maxLength": 512,
+    "seed": 44,
+    "threshold": 0.35,
+    "selector": "unchanged max-two product selector"
+  },
+  "selection": "One predetermined legal-149 Dev evaluation after the single epoch; PROMOTE only if Macro-F1 exceeds 0.34517932280540936 and Micro precision is at least 0.50.",
+  "forbidden": ["Dev text/error/logit inspection for design", "threshold/loss/epoch/selector sweep", "opened Gemini-300", "Frozen or other holdout", "production changes"],
+  "lockedAt": "2026-09-10T00:00:00-07:00"
+}

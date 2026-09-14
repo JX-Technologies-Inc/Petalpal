@@ -1,0 +1,66 @@
+{
+  "retrieved": "2026-09-10",
+  "candidateRows": 915,
+  "sourceRows": {
+    "Lemotif": {
+      "inputRows": 1473,
+      "excludedNoPriorityDirectLabel": 1150,
+      "eligibleBeforeLineage": 323
+    },
+    "enISEAR": {
+      "inputRows": 1001,
+      "excludedNonDirectOrValidationBelow3": 407,
+      "eligibleBeforeLineage": 594
+    }
+  },
+  "mappedLabelMembership": {
+    "anger": 140,
+    "confusion": 28,
+    "disgust": 106,
+    "excitement": 251,
+    "fear": 127,
+    "joy": 316,
+    "sadness": 142,
+    "surprise": 21
+  },
+  "priorityCoverage": {
+    "admiration": 0,
+    "anger": 140,
+    "confusion": 28,
+    "curiosity": 0,
+    "disgust": 106,
+    "excitement": 251,
+    "remorse": 0
+  },
+  "sourceUrls": {
+    "Lemotif": "https://github.com/xaliceli/lemotif",
+    "enISEAR": "https://www.ims.uni-stuttgart.de/forschung/ressourcen/korpora/deisear/"
+  },
+  "recommendation": "Prioritize a small Lemotif tranche first for direct journaling-domain coverage; use enISEAR as a validated event-description supplement for anger/disgust and direct neighboring labels. Do not auto-map guilt/shame to remorse.",
+  "evaluatedNotAdmitted": [
+    {
+      "dataset": "crowd-enVENT",
+      "officialLink": "https://www.romanklinger.de/data-sets/",
+      "size": "6,600 generation + 6,000 validation rows",
+      "humanWritten": true,
+      "labels": "prompted event descriptions; direct anger/disgust among current targets, but no admiration/confusion/curiosity/excitement/remorse",
+      "reason": "High-quality Prolific event descriptions, but prompt-conditioned labels duplicate enISEAR coverage and the release has no clear dataset license in the downloaded archive; keep as conditional backup, not main pool."
+    },
+    {
+      "dataset": "MEMO4000.2019",
+      "officialLink": "https://data.mendeley.com/datasets/3j7cw552v6/1",
+      "size": "about 4,000 social-network status texts",
+      "humanWritten": true,
+      "labels": "includes admiration, anger and disgust; CC BY 4.0",
+      "reason": "Potential rare-label coverage, but source/domain is social-network status rather than journaling and author/source provenance is not exposed; not admitted without a stronger provenance audit."
+    },
+    {
+      "dataset": "Facebook Curiosity Dialog",
+      "officialLink": "https://github.com/facebookresearch/curiosity",
+      "size": "dialogue corpus",
+      "humanWritten": true,
+      "labels": "curiosity-seeking dialogue, not emotion annotations",
+      "reason": "Does not provide reliable emotion labels and is conversational Wikipedia QA rather than personal reflection; excluded."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "asOf": "2026-09-10",
+  "currentBestLegalDevMacroF1": 0.3318122835,
+  "sources": [
+    {
+      "dataset": "PHQ / public journaling corpus",
+      "enteredCurrentAlignedTrain": true,
+      "rowsInCurrentAlignedTrain": 468,
+      "artifacts": ["v4/aligned-supervision-v1/train.jsonl"],
+      "results": "Part of aligned-supervision-v1; not separable as a standalone model result.",
+      "decision": "PROMOTE as part of current aligned Train",
+      "knownIssues": "Public Reddit/journaling provenance; source-level overlap must be checked before adding other Reddit corpora."
+    },
+    {
+      "dataset": "CoSoWELL v1",
+      "enteredCurrentAlignedTrain": true,
+      "rowsInCurrentAlignedTrain": 319,
+      "rowsInLegalDev": 149,
+      "artifacts": ["v4/aligned-supervision-v1/train.jsonl", "v4/aligned-supervision-v1/dev.jsonl", "v4/independent-human-v1/pilot-data/train.jsonl"],
+      "results": "Aligned-supervision-v1 development result; legal Dev is the fixed 149-row author-disjoint cohort.",
+      "decision": "PROMOTE only within locked current experiment",
+      "knownIssues": "Human-written but Gemini-labeled/adjudicated for aligned-v1; not independent human gold. Do not reuse legal Dev for training."
+    },
+    {
+      "dataset": "HUMAN_CONSENTED journal rows",
+      "enteredCurrentAlignedTrain": true,
+      "rowsInCurrentAlignedTrain": 54,
+      "artifacts": ["v4/aligned-supervision-v1/train.jsonl", "v4/auto-v3/extra-human-train.jsonl"],
+      "results": "Included in aligned Train after fixed annotation protocol.",
+      "decision": "PROMOTE with provenance restrictions",
+      "knownIssues": "Prior extraction audit found pasted annotation instructions in some historical rows; keep only repaired, provenance-audited records."
+    },
+    {
+      "dataset": "GoEmotions",
+      "enteredCurrentAlignedTrain": false,
+      "historicalArtifactRows": {"hybrid-data-v2": {"train": 531, "dev": 106}, "hybrid-v3": {"train": 1648, "dev": 332}, "petalpal-domain-v1": {"train": 1105, "dev": 221}, "conditional-v1": {"train": 1695, "dev": 344}},
+      "artifacts": ["hybrid-data-v2/train.jsonl", "hybrid-v3/train.jsonl", "petalpal-domain-v1/train.jsonl", "conditional-v1/train.jsonl"],
+      "results": "Historical hybrid V2 Clean and related experiments performed strongly on their own proxy/test artifacts, but the ML_PROGRESS conclusion says public ED/GoEmotions data did not solve the PetalPal-specific domain gap; those old holdouts are not current legal Dev evidence.",
+      "decision": "Candidate source only after fresh ID/text/source audit",
+      "knownIssues": "Reddit source; historical use is partial and overlapping across artifacts. Local official train.tsv lacks author/subreddit metadata, so author-level audit is still required."
+    },
+    {
+      "dataset": "EmpatheticDialogues",
+      "enteredCurrentAlignedTrain": false,
+      "historicalArtifactRows": {"hybrid-data-v2": {"train": 1379, "dev": 276}, "hybrid-v3": {"train": 352, "dev": 68}, "petalpal-domain-v1": {"train": 895, "dev": 179}, "public-human-augmentation-v1": {"candidate": 444}},
+      "artifacts": ["hybrid-data-v2/train.jsonl", "hybrid-v3/train.jsonl", "petalpal-domain-v1/train.jsonl", "v4/aligned-supervision-v1/public-human-augmentation-v1/augmentation.jsonl"],
+      "results": "The fresh 444-row audited augmentation reduced legal-Dev Macro-F1 from .331812 to .323889/.312497 and was rejected.",
+      "decision": "REJECT for another augmentation",
+      "knownIssues": "Single context-emotion labels require remapping to the 0–2 taxonomy; dialogue/situation distribution differs from journaling."
+    },
+    {
+      "dataset": "EduAffect",
+      "enteredCurrentAlignedTrain": false,
+      "artifacts": ["v4/independent-human-v1/human-validation-research/DECISION.md"],
+      "results": "Not trained or evaluated.",
+      "decision": "QUARANTINED",
+      "knownIssues": "Single-dominant labels, no author linkage, preprocessing/translation, and license discrepancy between paper and release."
+    },
+    {
+      "dataset": "ISEAR",
+      "enteredCurrentAlignedTrain": false,
+      "artifacts": ["v4/aligned-supervision-v1/public-source-shortlist-20260910.md"],
+      "results": "Research-only shortlist; not acquired or trained.",
+      "decision": "PENDING rights/author audit",
+      "knownIssues": "Guilt/shame are not automatically remorse; canonical license and persistent author IDs unresolved."
+    }
+  ],
+  "note": "Historical artifact row counts are per artifact and are not unique-row totals; the lineage reference performs ID/hash exclusions before candidate selection."
+}

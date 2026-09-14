@@ -1,0 +1,18 @@
+{
+  "protocolId": "petalpal-aligned-standard-continuation-v1-20260910",
+  "status": "LOCKED_BEFORE_TRAINING",
+  "evidence": "Standard BCE improved legal-Dev Macro-F1 monotonically from .232600 to .286660 to .308555 while precision recovered above .50; class weighting raised recall but failed the precision guard.",
+  "initialization": "../experiment/epoch-2-checkpoint",
+  "loss": "standard BCEWithLogitsLoss",
+  "epochs": 2,
+  "learningRate": 0.000002,
+  "weightDecay": 0.01,
+  "maxLength": 512,
+  "batchSize": 2,
+  "gradientAccumulation": 8,
+  "seed": 44,
+  "evaluation": "Unchanged legal149 Dev, all18 labels, threshold0.35, unchanged max-two selector",
+  "selection": "Highest selected18 Macro-F1 among existing epoch2 baseline and two continuation epochs with Micro precision>=0.50; tie earlier",
+  "secondaryCandidate": "Exactly one fixed50/50 existing-epoch2 plus selected-continuation blend if continuation wins; no sweep",
+  "forbidden": ["opened Gemini300", "opened CoSoWELL367", "retired125", "Frozen sets", "old Human Test", "production"]
+}
