@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "checks": {
+    "rowCount300": true,
+    "uniqueIds": true,
+    "uniqueSourceGroups": true,
+    "uniqueExactTexts": true,
+    "uniqueNormalizedTexts": true,
+    "rawTextHashesMatch": true,
+    "disjointFromPilotTrain": true,
+    "disjointFromPilotCalibration": true,
+    "disjointFromPriorExternalDev": true
+  },
+  "overlapCounts": {
+    "pilotTrain": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "pilotCalibration": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    },
+    "priorExternalDev": {
+      "id": 0,
+      "sourceGroup": 0,
+      "exactText": 0,
+      "normalizedText": 0
+    }
+  },
+  "comparisonFileHashes": {
+    "pilotTrain": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "pilotCalibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7",
+    "priorExternalDev": "952394ce159c40c585ac70c65a2cff8374ddb4b6abd3a7eaa0158584c80a8f8b"
+  },
+  "limitations": "Hash/source-group/exact/normalized isolation audit; no semantic-nearest-neighbor rerun."
+}

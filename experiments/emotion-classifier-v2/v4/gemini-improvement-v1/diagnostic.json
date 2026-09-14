@@ -1,0 +1,520 @@
+{
+  "status": "DIAGNOSTIC_ONLY_NOT_MODEL_SELECTION",
+  "devRows": 180,
+  "externalEvaluationLoaded": false,
+  "epochs": {
+    "0": {
+      "rawMacroF1At035": 0.45882109901717744,
+      "selectedMacroF1At035": 0.45932857764965607,
+      "microPrecisionAt035": 0.6559139784946236,
+      "macroAveragePrecision": 0.621370632491317,
+      "macroOracleF1Diagnostic": 0.6631748240674968,
+      "perLabel": {
+        "admiration": {
+          "support": 3,
+          "averagePrecision": 0.6222222222222222,
+          "positiveMedian": 0.7744330167770386,
+          "negativeP95": 0.25887399911880493,
+          "predictedPositiveAt035": 9,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.7744330167770386
+        },
+        "amusement": {
+          "support": 10,
+          "averagePrecision": 0.908133971291866,
+          "positiveMedian": 0.6657897233963013,
+          "negativeP95": 0.03023991547524929,
+          "predictedPositiveAt035": 6,
+          "oracleF1Diagnostic": 0.8888888888888888,
+          "oracleThresholdDiagnostic": 0.2501780092716217
+        },
+        "anger": {
+          "support": 6,
+          "averagePrecision": 0.7179144385026738,
+          "positiveMedian": 0.10873407125473022,
+          "negativeP95": 0.013428108766674995,
+          "predictedPositiveAt035": 1,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.1797071248292923
+        },
+        "annoyance": {
+          "support": 10,
+          "averagePrecision": 0.6025885225885225,
+          "positiveMedian": 0.24647612869739532,
+          "negativeP95": 0.17284522950649261,
+          "predictedPositiveAt035": 3,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.3023744821548462
+        },
+        "caring": {
+          "support": 8,
+          "averagePrecision": 0.12075384015261922,
+          "positiveMedian": 0.011524053290486336,
+          "negativeP95": 0.06395242363214493,
+          "predictedPositiveAt035": 2,
+          "oracleF1Diagnostic": 0.24,
+          "oracleThresholdDiagnostic": 0.02359832637012005
+        },
+        "confusion": {
+          "support": 6,
+          "averagePrecision": 0.843859649122807,
+          "positiveMedian": 0.5722122192382812,
+          "negativeP95": 0.024644287303090096,
+          "predictedPositiveAt035": 4,
+          "oracleF1Diagnostic": 0.9090909090909091,
+          "oracleThresholdDiagnostic": 0.22797271609306335
+        },
+        "curiosity": {
+          "support": 2,
+          "averagePrecision": 0.52,
+          "positiveMedian": 0.3070817291736603,
+          "negativeP95": 0.02503766492009163,
+          "predictedPositiveAt035": 3,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.6100049018859863
+        },
+        "disappointment": {
+          "support": 9,
+          "averagePrecision": 0.695420607489573,
+          "positiveMedian": 0.5471363663673401,
+          "negativeP95": 0.2673684060573578,
+          "predictedPositiveAt035": 13,
+          "oracleF1Diagnostic": 0.7058823529411765,
+          "oracleThresholdDiagnostic": 0.45017850399017334
+        },
+        "disgust": {
+          "support": 4,
+          "averagePrecision": 0.7107558139534884,
+          "positiveMedian": 0.4339439272880554,
+          "negativeP95": 0.020448435097932816,
+          "predictedPositiveAt035": 2,
+          "oracleF1Diagnostic": 0.75,
+          "oracleThresholdDiagnostic": 0.05958075448870659
+        },
+        "excitement": {
+          "support": 3,
+          "averagePrecision": 0.696078431372549,
+          "positiveMedian": 0.5660455822944641,
+          "negativeP95": 0.09731121361255646,
+          "predictedPositiveAt035": 3,
+          "oracleF1Diagnostic": 0.8,
+          "oracleThresholdDiagnostic": 0.5660455822944641
+        },
+        "fear": {
+          "support": 5,
+          "averagePrecision": 0.4382034632034632,
+          "positiveMedian": 0.12027565389871597,
+          "negativeP95": 0.027504485100507736,
+          "predictedPositiveAt035": 3,
+          "oracleF1Diagnostic": 0.5,
+          "oracleThresholdDiagnostic": 0.039375271648168564
+        },
+        "gratitude": {
+          "support": 10,
+          "averagePrecision": 0.5768144692967665,
+          "positiveMedian": 0.04207509011030197,
+          "negativeP95": 0.012823381461203098,
+          "predictedPositiveAt035": 2,
+          "oracleF1Diagnostic": 0.7058823529411765,
+          "oracleThresholdDiagnostic": 0.0347779281437397
+        },
+        "joy": {
+          "support": 41,
+          "averagePrecision": 0.7675181727189816,
+          "positiveMedian": 0.30164825916290283,
+          "negativeP95": 0.30127307772636414,
+          "predictedPositiveAt035": 24,
+          "oracleF1Diagnostic": 0.6862745098039216,
+          "oracleThresholdDiagnostic": 0.06398126482963562
+        },
+        "love": {
+          "support": 9,
+          "averagePrecision": 0.4733053765963462,
+          "positiveMedian": 0.10321052372455597,
+          "negativeP95": 0.04689507558941841,
+          "predictedPositiveAt035": 6,
+          "oracleF1Diagnostic": 0.47619047619047616,
+          "oracleThresholdDiagnostic": 0.10321052372455597
+        },
+        "optimism": {
+          "support": 8,
+          "averagePrecision": 0.4580928640158291,
+          "positiveMedian": 0.08137860894203186,
+          "negativeP95": 0.042328376322984695,
+          "predictedPositiveAt035": 1,
+          "oracleF1Diagnostic": 0.5714285714285714,
+          "oracleThresholdDiagnostic": 0.13066981732845306
+        },
+        "remorse": {
+          "support": 2,
+          "averagePrecision": 0.8333333333333333,
+          "positiveMedian": 0.47368764877319336,
+          "negativeP95": 0.012748592533171177,
+          "predictedPositiveAt035": 1,
+          "oracleF1Diagnostic": 0.8,
+          "oracleThresholdDiagnostic": 0.1371922641992569
+        },
+        "sadness": {
+          "support": 11,
+          "averagePrecision": 0.44914861158006725,
+          "positiveMedian": 0.2042953222990036,
+          "negativeP95": 0.23204784095287323,
+          "predictedPositiveAt035": 6,
+          "oracleF1Diagnostic": 0.5,
+          "oracleThresholdDiagnostic": 0.1719355434179306
+        },
+        "surprise": {
+          "support": 8,
+          "averagePrecision": 0.7505275974025973,
+          "positiveMedian": 0.33330240845680237,
+          "negativeP95": 0.017712965607643127,
+          "predictedPositiveAt035": 5,
+          "oracleF1Diagnostic": 0.7368421052631579,
+          "oracleThresholdDiagnostic": 0.04243756830692291
+        }
+      }
+    },
+    "1": {
+      "rawMacroF1At035": 0.4812857058471094,
+      "selectedMacroF1At035": 0.49106385757900906,
+      "microPrecisionAt035": 0.4494949494949495,
+      "macroAveragePrecision": 0.6032872662566204,
+      "macroOracleF1Diagnostic": 0.6409676147980242,
+      "perLabel": {
+        "admiration": {
+          "support": 3,
+          "averagePrecision": 0.6055555555555555,
+          "positiveMedian": 0.633014440536499,
+          "negativeP95": 0.28027310967445374,
+          "predictedPositiveAt035": 8,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.633014440536499
+        },
+        "amusement": {
+          "support": 10,
+          "averagePrecision": 0.8977340977340976,
+          "positiveMedian": 0.8190019130706787,
+          "negativeP95": 0.08078502118587494,
+          "predictedPositiveAt035": 8,
+          "oracleF1Diagnostic": 0.8571428571428571,
+          "oracleThresholdDiagnostic": 0.23310156166553497
+        },
+        "anger": {
+          "support": 6,
+          "averagePrecision": 0.8374999999999999,
+          "positiveMedian": 0.26379022002220154,
+          "negativeP95": 0.036337804049253464,
+          "predictedPositiveAt035": 2,
+          "oracleF1Diagnostic": 0.75,
+          "oracleThresholdDiagnostic": 0.10952471196651459
+        },
+        "annoyance": {
+          "support": 10,
+          "averagePrecision": 0.5330475608768137,
+          "positiveMedian": 0.3161020278930664,
+          "negativeP95": 0.25264954566955566,
+          "predictedPositiveAt035": 9,
+          "oracleF1Diagnostic": 0.5263157894736842,
+          "oracleThresholdDiagnostic": 0.38303154706954956
+        },
+        "caring": {
+          "support": 8,
+          "averagePrecision": 0.16972928222462846,
+          "positiveMedian": 0.1028682142496109,
+          "negativeP95": 0.1838289201259613,
+          "predictedPositiveAt035": 4,
+          "oracleF1Diagnostic": 0.3333333333333333,
+          "oracleThresholdDiagnostic": 0.12996602058410645
+        },
+        "confusion": {
+          "support": 6,
+          "averagePrecision": 0.8450980392156862,
+          "positiveMedian": 0.756511390209198,
+          "negativeP95": 0.04760576784610748,
+          "predictedPositiveAt035": 5,
+          "oracleF1Diagnostic": 0.9090909090909091,
+          "oracleThresholdDiagnostic": 0.6874133348464966
+        },
+        "curiosity": {
+          "support": 2,
+          "averagePrecision": 0.5147058823529411,
+          "positiveMedian": 0.39880096912384033,
+          "negativeP95": 0.04414987191557884,
+          "predictedPositiveAt035": 3,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.7915746569633484
+        },
+        "disappointment": {
+          "support": 9,
+          "averagePrecision": 0.7079365079365079,
+          "positiveMedian": 0.7183799147605896,
+          "negativeP95": 0.36998605728149414,
+          "predictedPositiveAt035": 18,
+          "oracleF1Diagnostic": 0.75,
+          "oracleThresholdDiagnostic": 0.7037490010261536
+        },
+        "disgust": {
+          "support": 4,
+          "averagePrecision": 0.719758064516129,
+          "positiveMedian": 0.4720905125141144,
+          "negativeP95": 0.04085811972618103,
+          "predictedPositiveAt035": 2,
+          "oracleF1Diagnostic": 0.75,
+          "oracleThresholdDiagnostic": 0.07197428494691849
+        },
+        "excitement": {
+          "support": 3,
+          "averagePrecision": 0.55,
+          "positiveMedian": 0.7277982831001282,
+          "negativeP95": 0.40786150097846985,
+          "predictedPositiveAt035": 19,
+          "oracleF1Diagnostic": 0.5714285714285714,
+          "oracleThresholdDiagnostic": 0.7277982831001282
+        },
+        "fear": {
+          "support": 5,
+          "averagePrecision": 0.47761437908496734,
+          "positiveMedian": 0.4472803473472595,
+          "negativeP95": 0.2591918706893921,
+          "predictedPositiveAt035": 10,
+          "oracleF1Diagnostic": 0.46153846153846156,
+          "oracleThresholdDiagnostic": 0.4472803473472595
+        },
+        "gratitude": {
+          "support": 10,
+          "averagePrecision": 0.5003025286242304,
+          "positiveMedian": 0.1470765769481659,
+          "negativeP95": 0.0871635153889656,
+          "predictedPositiveAt035": 4,
+          "oracleF1Diagnostic": 0.631578947368421,
+          "oracleThresholdDiagnostic": 0.14100281894207
+        },
+        "joy": {
+          "support": 41,
+          "averagePrecision": 0.7099649013223716,
+          "positiveMedian": 0.8852383494377136,
+          "negativeP95": 0.8893927335739136,
+          "predictedPositiveAt035": 92,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.7570464611053467
+        },
+        "love": {
+          "support": 9,
+          "averagePrecision": 0.44198762603935016,
+          "positiveMedian": 0.42258864641189575,
+          "negativeP95": 0.3103788495063782,
+          "predictedPositiveAt035": 13,
+          "oracleF1Diagnostic": 0.46153846153846156,
+          "oracleThresholdDiagnostic": 0.7683972120285034
+        },
+        "optimism": {
+          "support": 8,
+          "averagePrecision": 0.396838877102035,
+          "positiveMedian": 0.1554163098335266,
+          "negativeP95": 0.14266522228717804,
+          "predictedPositiveAt035": 7,
+          "oracleF1Diagnostic": 0.47619047619047616,
+          "oracleThresholdDiagnostic": 0.15172353386878967
+        },
+        "remorse": {
+          "support": 2,
+          "averagePrecision": 0.8333333333333333,
+          "positiveMedian": 0.6428033113479614,
+          "negativeP95": 0.04772068187594414,
+          "predictedPositiveAt035": 4,
+          "oracleF1Diagnostic": 0.8,
+          "oracleThresholdDiagnostic": 0.4100190997123718
+        },
+        "sadness": {
+          "support": 11,
+          "averagePrecision": 0.42329919943556316,
+          "positiveMedian": 0.45627665519714355,
+          "negativeP95": 0.41601336002349854,
+          "predictedPositiveAt035": 24,
+          "oracleF1Diagnostic": 0.5925925925925926,
+          "oracleThresholdDiagnostic": 0.42702922224998474
+        },
+        "surprise": {
+          "support": 8,
+          "averagePrecision": 0.6947649572649572,
+          "positiveMedian": 0.5011957883834839,
+          "negativeP95": 0.11913581192493439,
+          "predictedPositiveAt035": 8,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.2055024355649948
+        }
+      }
+    },
+    "2": {
+      "rawMacroF1At035": 0.5009675203120534,
+      "selectedMacroF1At035": 0.5083480082640258,
+      "microPrecisionAt035": 0.45410628019323673,
+      "macroAveragePrecision": 0.6052102372792428,
+      "macroOracleF1Diagnostic": 0.6466907648534618,
+      "perLabel": {
+        "admiration": {
+          "support": 3,
+          "averagePrecision": 0.6081871345029239,
+          "positiveMedian": 0.6438620090484619,
+          "negativeP95": 0.25806644558906555,
+          "predictedPositiveAt035": 6,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.6438620090484619
+        },
+        "amusement": {
+          "support": 10,
+          "averagePrecision": 0.8903896103896104,
+          "positiveMedian": 0.8513085842132568,
+          "negativeP95": 0.08715316653251648,
+          "predictedPositiveAt035": 9,
+          "oracleF1Diagnostic": 0.8571428571428571,
+          "oracleThresholdDiagnostic": 0.3148420453071594
+        },
+        "anger": {
+          "support": 6,
+          "averagePrecision": 0.8722222222222222,
+          "positiveMedian": 0.36562448740005493,
+          "negativeP95": 0.06080881133675575,
+          "predictedPositiveAt035": 4,
+          "oracleF1Diagnostic": 0.8333333333333334,
+          "oracleThresholdDiagnostic": 0.22934938967227936
+        },
+        "annoyance": {
+          "support": 10,
+          "averagePrecision": 0.538843868530017,
+          "positiveMedian": 0.41639596223831177,
+          "negativeP95": 0.321236252784729,
+          "predictedPositiveAt035": 13,
+          "oracleF1Diagnostic": 0.5333333333333333,
+          "oracleThresholdDiagnostic": 0.635735273361206
+        },
+        "caring": {
+          "support": 8,
+          "averagePrecision": 0.15864037824317717,
+          "positiveMedian": 0.16562269628047943,
+          "negativeP95": 0.26247578859329224,
+          "predictedPositiveAt035": 8,
+          "oracleF1Diagnostic": 0.3333333333333333,
+          "oracleThresholdDiagnostic": 0.2134484499692917
+        },
+        "confusion": {
+          "support": 6,
+          "averagePrecision": 0.8480392156862745,
+          "positiveMedian": 0.8053158521652222,
+          "negativeP95": 0.06924091279506683,
+          "predictedPositiveAt035": 7,
+          "oracleF1Diagnostic": 0.9090909090909091,
+          "oracleThresholdDiagnostic": 0.7519317269325256
+        },
+        "curiosity": {
+          "support": 2,
+          "averagePrecision": 0.5142857142857142,
+          "positiveMedian": 0.42647823691368103,
+          "negativeP95": 0.054607655853033066,
+          "predictedPositiveAt035": 3,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.8459875583648682
+        },
+        "disappointment": {
+          "support": 9,
+          "averagePrecision": 0.7840302668259658,
+          "positiveMedian": 0.7543495893478394,
+          "negativeP95": 0.4164966940879822,
+          "predictedPositiveAt035": 22,
+          "oracleF1Diagnostic": 0.8,
+          "oracleThresholdDiagnostic": 0.7483149170875549
+        },
+        "disgust": {
+          "support": 4,
+          "averagePrecision": 0.7275,
+          "positiveMedian": 0.49173152446746826,
+          "negativeP95": 0.05400736629962921,
+          "predictedPositiveAt035": 2,
+          "oracleF1Diagnostic": 0.75,
+          "oracleThresholdDiagnostic": 0.09715798497200012
+        },
+        "excitement": {
+          "support": 3,
+          "averagePrecision": 0.55,
+          "positiveMedian": 0.7877770662307739,
+          "negativeP95": 0.4733941853046417,
+          "predictedPositiveAt035": 17,
+          "oracleF1Diagnostic": 0.5714285714285714,
+          "oracleThresholdDiagnostic": 0.7877770662307739
+        },
+        "fear": {
+          "support": 5,
+          "averagePrecision": 0.5121568627450981,
+          "positiveMedian": 0.578759491443634,
+          "negativeP95": 0.5002036094665527,
+          "predictedPositiveAt035": 15,
+          "oracleF1Diagnostic": 0.5,
+          "oracleThresholdDiagnostic": 0.8693513870239258
+        },
+        "gratitude": {
+          "support": 10,
+          "averagePrecision": 0.4817603288184683,
+          "positiveMedian": 0.21474117040634155,
+          "negativeP95": 0.1473369151353836,
+          "predictedPositiveAt035": 5,
+          "oracleF1Diagnostic": 0.6,
+          "oracleThresholdDiagnostic": 0.18731635808944702
+        },
+        "joy": {
+          "support": 41,
+          "averagePrecision": 0.7347067979315903,
+          "positiveMedian": 0.8795323967933655,
+          "negativeP95": 0.8534529805183411,
+          "predictedPositiveAt035": 82,
+          "oracleF1Diagnostic": 0.6804123711340206,
+          "oracleThresholdDiagnostic": 0.5773380994796753
+        },
+        "love": {
+          "support": 9,
+          "averagePrecision": 0.43796338766182613,
+          "positiveMedian": 0.4606640338897705,
+          "negativeP95": 0.3527347445487976,
+          "predictedPositiveAt035": 14,
+          "oracleF1Diagnostic": 0.47619047619047616,
+          "oracleThresholdDiagnostic": 0.4606640338897705
+        },
+        "optimism": {
+          "support": 8,
+          "averagePrecision": 0.2961163632119515,
+          "positiveMedian": 0.20367872714996338,
+          "negativeP95": 0.19319330155849457,
+          "predictedPositiveAt035": 7,
+          "oracleF1Diagnostic": 0.4444444444444444,
+          "oracleThresholdDiagnostic": 0.24949200451374054
+        },
+        "remorse": {
+          "support": 2,
+          "averagePrecision": 0.8333333333333333,
+          "positiveMedian": 0.690076470375061,
+          "negativeP95": 0.06959959119558334,
+          "predictedPositiveAt035": 4,
+          "oracleF1Diagnostic": 0.8,
+          "oracleThresholdDiagnostic": 0.4872608184814453
+        },
+        "sadness": {
+          "support": 11,
+          "averagePrecision": 0.40552331655272833,
+          "positiveMedian": 0.5115435719490051,
+          "negativeP95": 0.48631906509399414,
+          "predictedPositiveAt035": 27,
+          "oracleF1Diagnostic": 0.5517241379310345,
+          "oracleThresholdDiagnostic": 0.4688369035720825
+        },
+        "surprise": {
+          "support": 8,
+          "averagePrecision": 0.7000854700854701,
+          "positiveMedian": 0.6150571703910828,
+          "negativeP95": 0.18070176243782043,
+          "predictedPositiveAt035": 9,
+          "oracleF1Diagnostic": 0.6666666666666666,
+          "oracleThresholdDiagnostic": 0.3423057198524475
+        }
+      }
+    }
+  }
+}

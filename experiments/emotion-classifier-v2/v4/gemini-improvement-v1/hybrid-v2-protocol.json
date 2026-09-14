@@ -1,0 +1,13 @@
+{
+  "protocolId": "petalpal-saved-hybrid-v2-backbone-check-20260909",
+  "status": "LOCKED_BEFORE_INFERENCE",
+  "hypothesis": "The saved Hybrid V2 Clean general-human backbone may rank rare emotions better than the original synthetic-initialized checkpoint on the new legal internal Dev.",
+  "candidate": "candidate-c-lite/fine-tuned-hybrid-v2-clean/best-checkpoint",
+  "threshold": 0.5,
+  "maxLength": 128,
+  "selector": "unchanged max-two product selector",
+  "selection": "Historical fixed checkpoint and threshold; no grid or retraining",
+  "requiredAudit": "No id, sourceGroupId, exact-text, or normalized-text overlap between its Hybrid V2 Clean Train/Dev lineage and gemini-improvement-v1 Dev",
+  "success": "18-label Macro-F1 exceeds original epoch0 at its prespecified 0.35 while Micro precision remains >=0.50",
+  "bounds": "One saved checkpoint, one threshold, no external evaluation"
+}

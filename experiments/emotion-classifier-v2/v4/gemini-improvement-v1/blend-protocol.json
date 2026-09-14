@@ -1,0 +1,11 @@
+{
+  "protocolId": "petalpal-original-asl-fixed-blend-20260909",
+  "status": "LOCKED_BEFORE_EXECUTION",
+  "hypothesis": "A fixed equal-probability blend can retain the original model's precision/ranking while recovering part of ASL's recall gain.",
+  "branches": ["epoch-0 original checkpoint", "epoch-2 fixed ASL candidate"],
+  "weights": [0.5, 0.5],
+  "threshold": 0.35,
+  "selector": "unchanged max-two product selector",
+  "success": "Internal Dev Macro-F1 exceeds epoch0 and Micro precision >=0.50",
+  "bounds": "One fixed weight, one fixed threshold, no external evaluation"
+}

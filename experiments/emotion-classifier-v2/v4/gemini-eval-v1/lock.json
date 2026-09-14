@@ -1,0 +1,29 @@
+{
+  "status": "LOCKED",
+  "lockedAt": "2026-09-09T22:25:01.370648+00:00",
+  "protocolId": "petalpal-gemini-blind-v1-20260908",
+  "referenceNameRequired": "human-written, Gemini-annotated / Gemini-adjudicated evaluation",
+  "counts": {
+    "cohort": 300,
+    "agreement": 219,
+    "disagreement": 81,
+    "adjudicationSucceeded": 81,
+    "adjudicationFailed": 0,
+    "finalIncluded": 300,
+    "excluded": 0
+  },
+  "leakageAudit": "PASS",
+  "candidateInferencePerformed": false,
+  "postInferenceRelabeling": "FORBIDDEN",
+  "hashes": {
+    "protocol.json": "47a3173a7193e537ad7c1fad2a21a45adf386fa83d1fa6b661358f0ec1e3f7ea",
+    "cohort-manifest.json": "8a59b9489b2eb9b7fdbfbc4a543636e4a3fa6d417226d9fca8f7b16c4585a623",
+    "blind-cohort.jsonl": "ccb7bb53c74327aba6299a13c47acd105992f0c01181b75be995ca99874b27d9",
+    "pass-a.jsonl": "641dbfd7ba143f74bb47fbb0edaeafeb70bd4262b978377e5d99280c3d420a90",
+    "pass-b.jsonl": "8657f6019b91ecf7e1d53bdee6b2b5c037d04745dcd4ddeb45ff0ffe6e551865",
+    "adjudications.jsonl": "10b08abca54b0cac1cd2c807f381161cb5f87a8c74c8a5dc146f0c568b057577",
+    "final-labels.jsonl": "764c4603837a82037956782ac614d25d89196027d213132aa485e8ddc391249f",
+    "invalid-exclusions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "leakage-audit.json": "055690614758bb4ffec2fb598d231459f1cb62f68920f8205ddf4dfe53d8607a"
+  }
+}

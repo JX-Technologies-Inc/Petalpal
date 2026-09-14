@@ -1,0 +1,149 @@
+{
+  "status": "COMPLETE",
+  "threshold": 0.35,
+  "maxLabels": 2,
+  "rows": 841,
+  "productLabels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "foldSizes": [
+    169,
+    168,
+    168,
+    168,
+    168
+  ],
+  "foldSourceGroups": [
+    91,
+    92,
+    95,
+    93,
+    94
+  ],
+  "sourceGroupCrossFoldCount": 0,
+  "uniqueAssignedRows": 841,
+  "metrics": {
+    "macroF1": 0.49230616419885426,
+    "microF1": 0.5708884688090737,
+    "perLabel": {
+      "admiration": {
+        "f1": 0.2926829268292683,
+        "support": 18
+      },
+      "amusement": {
+        "f1": 0.6756756756756757,
+        "support": 43
+      },
+      "anger": {
+        "f1": 0.2608695652173913,
+        "support": 14
+      },
+      "annoyance": {
+        "f1": 0.4297520661157025,
+        "support": 77
+      },
+      "caring": {
+        "f1": 0.2553191489361702,
+        "support": 34
+      },
+      "confusion": {
+        "f1": 0.625,
+        "support": 15
+      },
+      "curiosity": {
+        "f1": 0.5882352941176471,
+        "support": 8
+      },
+      "disappointment": {
+        "f1": 0.5789473684210527,
+        "support": 45
+      },
+      "disgust": {
+        "f1": 0.6842105263157895,
+        "support": 24
+      },
+      "excitement": {
+        "f1": 0.2916666666666667,
+        "support": 24
+      },
+      "fear": {
+        "f1": 0.42424242424242425,
+        "support": 39
+      },
+      "gratitude": {
+        "f1": 0.6333333333333333,
+        "support": 71
+      },
+      "joy": {
+        "f1": 0.7198443579766537,
+        "support": 224
+      },
+      "love": {
+        "f1": 0.5151515151515151,
+        "support": 36
+      },
+      "optimism": {
+        "f1": 0.4666666666666667,
+        "support": 49
+      },
+      "remorse": {
+        "f1": 0.30303030303030304,
+        "support": 24
+      },
+      "sadness": {
+        "f1": 0.5454545454545454,
+        "support": 64
+      },
+      "surprise": {
+        "f1": 0.5714285714285714,
+        "support": 29
+      }
+    },
+    "byFold": [
+      {
+        "fold": 0,
+        "macroF1": 0.48796425857276293,
+        "microF1": 0.569620253164557
+      },
+      {
+        "fold": 1,
+        "macroF1": 0.5018388348098494,
+        "microF1": 0.5796178343949044
+      },
+      {
+        "fold": 2,
+        "macroF1": 0.42045516212182876,
+        "microF1": 0.5425867507886435
+      },
+      {
+        "fold": 3,
+        "macroF1": 0.45160865262740796,
+        "microF1": 0.56957928802589
+      },
+      {
+        "fold": 4,
+        "macroF1": 0.49040269862108943,
+        "microF1": 0.5921450151057401
+      }
+    ]
+  },
+  "selection": "Fixed existing product rule only; no threshold, hyperparameter, or fold scan",
+  "externalEvaluationLoaded": false
+}

@@ -1,0 +1,12 @@
+{
+  "experiment": "group-oof-tfidf-v1",
+  "status": "LOCKED_BEFORE_FOLD_ASSIGNMENT_OR_TRAINING",
+  "purpose": "Create a source-group-disjoint Train-only OOF baseline and test whether lexical features offer a robust complementary signal.",
+  "data": "841 aligned-supervision-v1 Train rows only",
+  "folds": "5 deterministic greedy multilabel-balanced folds; sourceGroupId is indivisible; seed/hash tie breaking fixed",
+  "features": "word TF-IDF (1-2 grams, min_df=2, sublinear_tf) plus character TF-IDF (3-5 grams, min_df=2, sublinear_tf), max 60000 each",
+  "classifier": "18 independent LogisticRegression classifiers, C=2, class_weight=balanced, max_iter=2000",
+  "decision": "fixed probability >=0.5, retain at most two highest probabilities",
+  "selection": "No hyperparameter/threshold/fold sweep. Continue only if OOF Macro-F1 >=0.35 and all 18 labels have nonzero F1.",
+  "forbidden": ["legal Dev", "final/frozen/locked holdouts", "sealed-blog labels", "paid API", "production changes"]
+}

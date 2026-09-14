@@ -1,0 +1,24 @@
+{
+  "status": "COMPLETE",
+  "rows": 841,
+  "folds": 5,
+  "foldSizes": [
+    169,
+    168,
+    168,
+    168,
+    168
+  ],
+  "config": {
+    "checkpoint": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+    "maxLength": 512,
+    "batchSize": 2,
+    "accumulation": 8,
+    "epochs": 2,
+    "learningRate": 5e-06,
+    "weightDecay": 0.01,
+    "seed": 42
+  },
+  "thresholdEvaluation": "not performed",
+  "externalEvaluationLoaded": false
+}

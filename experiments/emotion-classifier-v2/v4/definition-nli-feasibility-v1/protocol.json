@@ -1,0 +1,14 @@
+{
+  "experiment": "definition-nli-feasibility-v1",
+  "status": "LOCKED_BEFORE_INFERENCE",
+  "purpose": "Test whether preserving a pretrained NLI entailment head and conditioning predictions on the fixed label definitions is a viable source-invariant alternative to a closed 21-label BCE head.",
+  "data": "aligned-supervision-v1/train.jsonl only (841 legal development-Train rows); no legal Dev, final, frozen, locked, opened Gemini-300, or sealed-blog gold",
+  "model": "cross-encoder/nli-deberta-v3-small, unchanged pretrained 3-way NLI head; local cached snapshot",
+  "training": "none",
+  "hypothesisTemplate": "The writer feels {label}: {locked definition}.",
+  "score": "softmax over contradiction and entailment logits only; entailment probability",
+  "decisionRule": "fixed score >=0.5; retain at most the two highest-scoring labels; no threshold or prompt sweep",
+  "metric": "18-label Macro-F1 primary; Micro P/R/F1 and per-label F1 supplementary",
+  "interpretation": "Train-only zero-shot feasibility, not an untouched generalization estimate. Continue to grouped out-of-fold development only if Macro-F1 materially exceeds a trivial lexical baseline and multiple rare labels are nonzero.",
+  "forbidden": ["model training", "legal Dev evaluation", "any final/frozen/locked holdout access", "threshold/prompt/model sweep", "production change"]
+}

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "overlapCounts": {
+    "id": 0,
+    "sourceGroupId": 0,
+    "exactText": 0,
+    "normalizedText": 0
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "status": "LOCKED",
+  "trial": 1128,
+  "rows": {
+    "train": 661,
+    "dev": 180
+  },
+  "support": {
+    "train": {
+      "gratitude": 49,
+      "love": 33,
+      "joy": 162,
+      "sadness": 35,
+      "optimism": 29,
+      "disappointment": 28,
+      "annoyance": 47,
+      "excitement": 19,
+      "amusement": 22,
+      "fear": 27,
+      "surprise": 32,
+      "anger": 15,
+      "remorse": 7,
+      "disgust": 16,
+      "admiration": 11,
+      "confusion": 18,
+      "caring": 29,
+      "curiosity": 4
+    },
+    "dev": {
+      "anger": 6,
+      "sadness": 11,
+      "remorse": 2,
+      "excitement": 3,
+      "joy": 41,
+      "caring": 8,
+      "admiration": 3,
+      "annoyance": 10,
+      "disappointment": 9,
+      "fear": 5,
+      "confusion": 6,
+      "optimism": 8,
+      "love": 9,
+      "curiosity": 2,
+      "surprise": 8,
+      "gratitude": 10,
+      "disgust": 4,
+      "amusement": 10
+    }
+  },
+  "hashes": {
+    "protocol": "896734c572e793232f2f50367c00151fa04ef53f36fe27991eab03a1d99e652e",
+    "sourceTrain": "ceb9fd27ae41ddb37952d7b12ef4eeddd3a041c3c1d9e4c39d5146ce7ee83681",
+    "sourceCalibration": "2b93bd05d1a2fc97b443594480a262c59068b438c8fe86153eed225bd5a32ef7",
+    "train": "150ba1f39c1757c3d1dfd6a35242f9cb74be1d655165760d874593df5889b13d",
+    "dev": "1877ff7146b425f54af009c4648151de20495d7dba9591948112f88b4353da85"
+  },
+  "checks": {
+    "sourceGroupDisjoint": true,
+    "idDisjoint": true,
+    "normalizedTextDisjoint": true,
+    "allObservedLabelsDevSupportAtLeast2": true
+  },
+  "externalEvaluationLoaded": false
+}

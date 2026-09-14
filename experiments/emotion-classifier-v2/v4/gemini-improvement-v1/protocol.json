@@ -1,0 +1,41 @@
+{
+  "protocolId": "petalpal-asymmetric-loss-v1-20260909",
+  "status": "LOCKED_BEFORE_SPLIT_AND_MODEL_INFERENCE",
+  "hypothesis": "The current fixed candidate is precision-heavy and recall-poor. A fixed asymmetric loss that downweights easy negative labels will improve 18-label development Macro-F1 without per-label threshold tuning.",
+  "inputs": {
+    "source": "Existing locked pilot Train 777 plus calibration 64 only",
+    "externalEvaluationForbidden": "Gemini evaluation, prior 367 Dev, retired 125 Dev, Frozen-100, Frozen-2, and old Human Test are forbidden for training and candidate selection"
+  },
+  "split": {
+    "unit": "sourceGroupId",
+    "devRowsTarget": 180,
+    "seed": 20260909,
+    "selection": "Label-aware deterministic group split for development coverage only; no model predictions",
+    "minimumDevSupportPerObservedProductLabel": 2
+  },
+  "candidate": {
+    "initialization": "candidate-c/artifacts/checkpoint",
+    "maxLength": 512,
+    "epochs": 2,
+    "learningRate": 0.000005,
+    "weightDecay": 0.01,
+    "batchSize": 2,
+    "gradientAccumulation": 8,
+    "seed": 42,
+    "loss": {
+      "name": "asymmetric_focal_bce",
+      "gammaPositive": 0,
+      "gammaNegative": 2,
+      "probabilityClip": 0.05
+    }
+  },
+  "selection": {
+    "threshold": 0.35,
+    "selector": "existing max-two product selector",
+    "metric": "18-label Macro-F1 with zero_division=0",
+    "precisionGuard": "Micro precision >= 0.50",
+    "eligibleEpochs": [0, 1, 2],
+    "tieBreak": "earlier epoch"
+  },
+  "bounds": "One loss configuration, one split, two epochs, no threshold sweep, no external evaluation in this round"
+}

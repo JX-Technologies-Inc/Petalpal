@@ -1,0 +1,29 @@
+{
+  "status": "FIXED_CANDIDATE_ONE_TIME_EVALUATION",
+  "selection": "V4f fixed before Gemini cohort inference; no score-based weight, threshold, checkpoint, or selector choice",
+  "referenceLockSha256": "90e515be6fc2b655e64310f64d741f6a88aa38054703d01ff41fba9b504ad23d",
+  "finalLabelsSha256": "764c4603837a82037956782ac614d25d89196027d213132aa485e8ddc391249f",
+  "candidateSpecSha256": "909ac0268f30e53a92e3640db64948e006d7b8a3b9ff1fce8e1c9057ce39f230",
+  "candidateSpec": {
+    "type": "equal_probability_average",
+    "weights": [
+      0.5,
+      0.5
+    ],
+    "checkpoints": [
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/candidate-c/artifacts/checkpoint",
+      "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/auto-v4/experiments/v4d-extra-human/best-checkpoint"
+    ],
+    "devSha256": "0748d222ccc41e007db1f4ae221ec8e8099f49cbd5204d3778bf523145002f0b",
+    "note": "Fixed alpha, no labelwise mixing. Requires two model inferences; not deployed or latency validated.",
+    "maxLengths": [
+      128,
+      384
+    ],
+    "threshold": 0.35,
+    "selector": "existing production cluster policy",
+    "status": "EXPERIMENTAL_AI_ANNOTATED_HUMAN_DEV_ONLY"
+  },
+  "metric": "Macro-F1 over all 18 product labels; zero_division=0",
+  "referenceType": "human-written, Gemini-annotated / Gemini-adjudicated evaluation"
+}
