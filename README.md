@@ -378,13 +378,6 @@ The next phase focuses on evaluating embedding models using retrieval quality, m
 
 Production RAG is not currently claimed as complete.
 
----
-
-# 👥 JX Technologies Inc.
-
-PetalPal is developed by **JX Technologies Inc.**, an AI-first startup building consumer applications around personal reflection, intelligent experiences, and meaningful social connection.
-
----
 
 ## 👩🏻‍💻 Jinyin Cao — Co-Founder & Product / Frontend Lead
 
