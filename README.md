@@ -12,11 +12,11 @@ Users can record their day, grow mood-inspired flowers, explore evolving scenes,
 
 ## 🌱 Product
 
-PetalPal combines **reflection, virtual-world interaction, social connection, and AI** in one experience.
+PetalPal combines **reflection, virtual-world interaction, social connection, and AI** in one personalized experience.
 
 ### 🌸 Mood-to-Garden Experience
 
-Daily check-ins become part of the user's virtual garden.
+Daily check-ins gradually shape the user's virtual world.
 
 Mood and activity can influence:
 
@@ -26,19 +26,19 @@ Mood and activity can influence:
 - Fairy interactions
 - Reflection history
 
-The goal is to make personal reflection feel more visual and rewarding than a traditional journal.
+The goal is to make personal reflection feel more visual, interactive, and rewarding than a traditional journal.
 
 ### 🎨 Dynamic Environments
 
-PetalPal includes dynamic garden and Fairy scenes rather than a static interface.
+PetalPal uses dynamic garden and Fairy scenes rather than a static interface.
 
-Custom visual assets are created in **Adobe Photoshop** and integrated with frontend state and interaction logic to support:
+Custom assets are created with **Adobe Photoshop** and integrated with frontend state and interaction logic to support:
 
 - Changing garden scenes
-- Flower growth
+- Flower growth and progression
 - Fairy states and movement
-- Progression-based visual changes
 - Activity-driven environments
+- Progression-based visual changes
 - Interactive social spaces
 
 ### 👥 Social Garden
@@ -56,7 +56,7 @@ Social features include:
 
 ### 🧠 Long-Term Reflection
 
-PetalPal distinguishes between private **Journal** entries and explicit **Events** used for long-term reflection.
+PetalPal separates private **Journal** entries from explicit **Events** used for long-term AI reflection.
 
 ```text
 Journal
@@ -69,7 +69,7 @@ Event
 → Yearly Journey
 ```
 
-This lets PetalPal build long-term experiences without treating every private journal entry as AI data.
+This allows PetalPal to build personalized long-term experiences without treating every private journal entry as AI data.
 
 ---
 
@@ -91,9 +91,7 @@ This lets PetalPal build long-term experiences without treating every private jo
 
 ---
 
-# ⚡ Technology
-
-PetalPal combines cross-platform frontend development, backend systems, real-time infrastructure, machine learning, and AI application engineering.
+# ⚡ Core Technologies
 
 | Area | Technologies |
 |---|---|
@@ -117,7 +115,7 @@ PetalPal combines cross-platform frontend development, backend systems, real-tim
 ## 🏗️ System Architecture
 
 ```text
-          React / React Native + Expo
+         React / React Native + Expo
                      │
             Firebase Authentication
                      │
@@ -144,36 +142,36 @@ PetalPal combines cross-platform frontend development, backend systems, real-tim
               PostgreSQL + Prisma
 ```
 
-The backend acts as the trusted security boundary.
+The backend acts as PetalPal's trusted security boundary.
 
-Authentication and private-resource ownership are verified server-side rather than trusting user identifiers sent by the client.
+Authentication and private-resource ownership are verified server-side rather than trusting user identifiers supplied by the client.
 
 ---
 
 # 🎨 Frontend & Interactive Experience
 
-PetalPal's frontend is designed around interactive scenes rather than traditional form-based screens.
+PetalPal's frontend is built around interactive environments rather than traditional form-based screens.
 
-The product uses:
+The product combines:
 
 - **React** for the web experience
-- **React Native + Expo** for cross-platform mobile development
+- **React Native + Expo** for mobile development
 - **Adobe Photoshop** for custom visual assets
 - State-driven rendering for changing environments
-- Animation and interaction logic for garden and Fairy experiences
-- Socket.IO for real-time social updates
-
-Visual design and frontend engineering work together so product progression can be reflected directly in the user's environment.
+- Dynamic Garden and Fairy scenes
+- Real-time social interactions with Socket.IO
 
 ```text
 User Activity
-     ↓
+      ↓
 Application State
-     ↓
+      ↓
 Garden / Flower / Fairy Changes
-     ↓
+      ↓
 Updated Interactive Scene
 ```
+
+Visual design and frontend engineering work together so user activity and progression are reflected directly in the virtual environment.
 
 ---
 
@@ -181,7 +179,7 @@ Updated Interactive Scene
 
 PetalPal's backend is built with **Node.js, Express, PostgreSQL, and Prisma**.
 
-The backend supports:
+It supports:
 
 - Authentication and authorization
 - Daily check-ins
@@ -206,13 +204,13 @@ Reliability features include:
 - Failure recovery
 - Owner-scoped private resources
 
-This allows user-facing flows to remain reliable even when external AI services or background processing fail.
+This keeps core user flows reliable even when external AI services or background processing fail.
 
 ---
 
 # 🧠 AI Architecture
 
-PetalPal uses AI as a supporting product layer rather than giving an LLM unrestricted access to user data.
+PetalPal uses AI as a supporting product layer rather than giving an LLM unrestricted access to private user content.
 
 ## Privacy Boundary
 
@@ -255,28 +253,28 @@ The current architecture includes:
 
 - Private EventMemory
 - Event evidence provenance
-- Durable background AI jobs
+- Durable background AI processing
 - Weekly and Monthly reflection foundations
 - Yearly reflection architecture
 - Trend-analysis infrastructure
 - Owner isolation
 - Retrieval evaluation interfaces
 
-PetalPal follows a simple principle:
+PetalPal follows one key principle:
 
 > **Backend systems calculate factual trends. AI explains them.**
 
 ```text
 Verified Data
-    +
+     +
 Relevant Events
-    +
+     +
 AI Explanation
-    ↓
+     ↓
 Grounded Reflection
 ```
 
-Semantic retrieval and full production RAG are future phases rather than features currently claimed as complete.
+Production semantic retrieval and full RAG generation are future phases rather than features currently claimed as complete.
 
 ---
 
@@ -284,14 +282,14 @@ Semantic retrieval and full production RAG are future phases rather than feature
 
 PetalPal also includes an independent **multi-label emotion classification** pipeline.
 
-The ML system is developed separately from long-term AI memory so each can be evaluated and improved independently.
+The ML system is developed separately from long-term AI memory so both systems can be evaluated and improved independently.
 
-Technologies and work include:
+Current work includes:
 
 - Python
 - PyTorch
 - ONNX
-- Multi-label classification
+- Multi-label emotion classification
 - Dataset evaluation
 - Leakage-resistant evaluation
 - Human review
@@ -310,32 +308,11 @@ Product Experience
 
 ---
 
-# 🔐 Security & Reliability
-
-Privacy is enforced through backend and database boundaries.
-
-PetalPal includes:
-
-- Firebase ID-token verification
-- Server-side authorization
-- Owner-scoped private data
-- Database-level tenant isolation
-- Rate limiting
-- Input validation
-- Transactional writes
-- Idempotency controls
-- Background job recovery
-- Protected AI-data lifecycle
-
-Future semantic retrieval is designed to filter by the authenticated owner before similarity search.
-
----
-
 # ⭐ Engineering Highlights
 
 - Built a cross-platform product with **React, React Native, and Expo**
 - Integrated **Photoshop-designed assets** into dynamic garden and Fairy environments
-- Built real-time social interactions with **Socket.IO**
+- Built real-time social interactions using **Socket.IO**
 - Designed a **Node.js + Express + PostgreSQL + Prisma** backend
 - Implemented **Firebase-authenticated private-resource ownership**
 - Added transaction-safe and idempotent backend workflows
@@ -344,43 +321,67 @@ Future semantic retrieval is designed to filter by the authenticated owner befor
 - Built **EventMemory** and evidence-based long-term AI foundations
 - Developed a **PyTorch multi-label emotion classification** pipeline
 - Explored **ONNX** for efficient model inference
-- Containerized backend services with **Docker**
+- Containerized backend services using **Docker**
 - Deployed backend infrastructure using **Render**
+
+---
+
+# 🚧 Project Status
+
+## ✅ Implemented
+
+- React web frontend
+- React Native + Expo mobile foundation
+- Dynamic garden and Fairy experiences
+- Custom Photoshop-designed visual assets
+- Node.js + Express backend
+- PostgreSQL + Prisma data layer
+- Firebase authentication and authorization
+- Real-time social interactions with Socket.IO
+- Garden, flower, Journal, Event, and Fairy systems
+- Durable background AI processing
+- Private EventMemory foundation
+- Multi-label emotion classification pipeline
+- Dockerized backend deployment on Render
+
+## 🔨 In Progress
+
+- Continued React Native / Expo mobile development
+- Expanded dynamic garden and Fairy scenes
+- Embedding model evaluation
+- PostgreSQL + pgvector semantic retrieval
+- Grounded Weekly and Monthly AI reflections
+- Interactive Yearly Journey
+- Continued ML evaluation and data-quality improvement
+- Beta testing and product iteration
 
 ---
 
 # 🔮 Roadmap
 
 ```text
-Product Foundation
-        ↓
+Current Product
+      ↓
 Long-Term AI Foundation
-        ↓
+      ↓
 Embedding Evaluation
-        ↓
-PostgreSQL + pgvector Retrieval
-        ↓
-Owner-Scoped Semantic Search
-        ↓
+      ↓
+Owner-Scoped Semantic Retrieval
+      ↓
 Grounded Weekly / Monthly Reflection
-        ↓
+      ↓
 Interactive Yearly Journey
 ```
 
-Future development focuses on:
-
-- Semantic Event retrieval
-- Grounded long-term AI reflection
-- Expanded dynamic environments
-- Mobile experience refinement
-- Social and Fairy interactions
-- Beta testing and product iteration
+Upcoming development focuses on improving the mobile experience, expanding dynamic environments, and building evidence-grounded long-term AI reflection.
 
 ---
 
 # 👥 Team
 
 PetalPal is developed by **JX Technologies Inc.**
+
+---
 
 ## 👩🏻‍💻 Jinyin Cao
 ### Co-Founder & Product / Frontend Lead
@@ -390,7 +391,7 @@ Jinyin leads PetalPal's product strategy, frontend experience, visual design, an
 ### 🎯 Product Strategy & UX
 
 - Define product vision, roadmap, and user journeys
-- Design Daily Grow, Journal, Event, garden, Fairy, and social experiences
+- Design Daily Grow, Journal, Event, Garden, Fairy, and social experiences
 - Conduct usability testing and product iteration
 - Design engagement and retention systems
 
@@ -406,7 +407,7 @@ Jinyin leads PetalPal's product strategy, frontend experience, visual design, an
 - Create custom assets and scenes using Adobe Photoshop
 - Design flowers, gardens, Fairy environments, and interface elements
 - Build progression-driven visual experiences
-- Translate product concepts into production-ready interfaces
+- Translate visual concepts into production-ready interfaces
 
 ### 🚀 Product Growth & Delivery
 
@@ -425,7 +426,7 @@ Xingran leads PetalPal's backend architecture, AI systems, machine learning, sec
 ### ⚙️ Backend Engineering
 
 - Design Express REST APIs and PostgreSQL schemas
-- Build authentication and server-side authorization
+- Build Firebase authentication and server-side authorization
 - Implement transactional and idempotent workflows
 - Develop backend infrastructure for Events, gardens, social features, and AI
 
@@ -454,16 +455,30 @@ Xingran leads PetalPal's backend architecture, AI systems, machine learning, sec
 
 # 🚀 Getting Started
 
+Clone the repository:
+
 ```bash
 git clone https://github.com/JX-Technologies-Inc/Petalpal.git
 cd Petalpal
+```
 
+Install backend dependencies:
+
+```bash
 npm install
+```
 
+Install frontend dependencies:
+
+```bash
 cd client
 npm install
 cd ..
+```
 
+Generate Prisma Client and apply migrations:
+
+```bash
 npx prisma generate
 npx prisma migrate deploy
 ```
@@ -491,7 +506,7 @@ npm run start:ai-worker
 
 # 📚 Technical Documentation
 
-Detailed engineering documentation is maintained separately:
+More detailed technical work is maintained separately:
 
 ```text
 experiments/emotion-classifier-v2/ML_PROGRESS.md
@@ -508,9 +523,9 @@ LONG_TERM_AI.md
 
 # 🌸 JX Technologies Inc.
 
-**JX Technologies Inc.** builds AI-native consumer products that combine interactive product design, software engineering, and personalized intelligent experiences.
+**JX Technologies Inc.** builds AI-native consumer products that combine interactive design, software engineering, and personalized intelligent experiences.
 
-PetalPal is designed to turn meaningful moments into a living digital world users can grow, revisit, and share.
+PetalPal is designed to help people preserve meaningful moments, understand patterns over time, and watch their experiences grow into a living digital world.
 
 ---
 
