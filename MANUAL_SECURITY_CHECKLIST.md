@@ -30,7 +30,7 @@ tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 - [x] Verify `/api-docs/` is not explicitly enabled in production unless intentional. Evidence: `API_DOCS_ENABLED=true` absent from production environment. Status: `PASS`
 - [x] Review members and permissions. Evidence: no unexpected workspace team member found. Status: `PASS`
 - [x] Verify production/development separation. Evidence: current production configuration reviewed; no additional workspace finding recorded. Status: `PASS`
-- [ ] Configure relevant logging, alerting, and retention where available. Evidence: non-secret configuration summary. Status: `ACTION REQUIRED`
+- [ ] Configure relevant Render monitoring, alerting, and retention where available. Evidence: non-secret configuration summary. Status: `PARTIAL / PLAN-LIMITED`
 
 ## 4. Cloudflare
 
@@ -38,7 +38,7 @@ tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 - [x] Verify Render backend and Worker use the synchronized current secret. Evidence: deployment configuration and runtime contract confirmed without values. Status: `PASS`
 - [ ] Rotate the Worker shared secret if uncertain. Evidence: rotation timestamp and deployment confirmation. Status: `NOT CHECKED`
 - [x] Review account members and MFA. Evidence: one intended human member; 2FA active. Status: `PASS`
-- [ ] Review Worker logs, errors, timeouts, and AI usage monitoring. Evidence: non-secret dashboard/alert configuration summary. Status: `ACTION REQUIRED`
+- [x] Review Worker logs, errors, timeouts, and AI usage monitoring. Evidence: Workers Logs, invocation logs, and persistence enabled; live invocation observed; traces intentionally disabled. Status: `PASS`
 - [x] Review production/development separation. Evidence: Worker identity and account configuration reviewed. Status: `PASS`
 
 ## 5. Firebase / Google
@@ -53,8 +53,8 @@ tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 ## 6. Backup / Restore
 
 - [x] Verify database backups exist. Evidence: automated backup status `COMPLETED`. Status: `PASS`
-- [ ] Verify encryption and retention where supported. Evidence: non-secret provider settings. Status: `NOT CHECKED`
-- [ ] Verify backup credentials and access are appropriately restricted. Evidence: non-secret access review. Status: `NOT CHECKED`
+- [ ] Verify encryption and retention where supported. Evidence: non-secret provider settings. Status: `PARTIAL / NOT FULLY VERIFIED`
+- [ ] Verify backup credentials and access are appropriately restricted. Evidence: non-secret access review. Status: `PARTIAL / NOT FULLY VERIFIED`
 - [x] Perform an isolated restore drill before launch. Evidence: restored to new isolated database; production was not overwritten; schema/data verified; temporary database deleted. Status: `PASS`
 - [x] Record only non-secret evidence. Evidence: checklist review contains no credentials or secret values. Status: `PASS`
 
@@ -81,3 +81,13 @@ Optional/compliance hardening:
 - Exact Workers AI inference retention duration remains unspecified.
 - Regional/data-residency requirements remain optional unless PetalPal later requires them.
 - Plan-limited provider controls remain `PARTIAL / PROVIDER-LIMITED`; no plan upgrade is a P0 requirement.
+
+## 9. Final global checkpoint
+
+- Repository P0 code status: `PASS`; true remaining repo P0 blockers: `NONE`.
+- GitHub: `PASS`; Render: `PARTIAL / PLAN-LIMITED`; Cloudflare: `PASS`; Firebase/Google: `PASS`.
+- Backup/restore: `PARTIAL` (backup existence and isolated restore drill PASS; provider retention/encryption/access metadata not fully verified).
+- Workers AI data handling/DPA: `PASS`; inference retention: `PARTIAL / EXACT INFERENCE RETENTION NOT SPECIFIED`; data residency: `NOT VERIFIED / OPTIONAL HARDENING`.
+- AuditEvent Level 1: `PASS`; Level 2: `PROVIDER-LIMITED / NOT VERIFIED`.
+- Historical `DATABASE_URL`: `ACTION REQUIRED / UNCERTAIN`.
+- Final Security P0 classification: `P0 CLOSED WITH DOCUMENTED LIMITATIONS`.
