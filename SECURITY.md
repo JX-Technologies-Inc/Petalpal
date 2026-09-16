@@ -2,7 +2,7 @@
 
 ## Security Status
 
-Last updated: 2026-09-14
+Last updated: 2026-09-16
 
 This file is the canonical implementation record for **PetalPal Security
 Threat Model & Remediation Backlog — v2**. Every P0/P1/P2 item is retained as
@@ -72,7 +72,7 @@ entitlement, and model fields are not trusted.
 | GET/POST social flower support/message | A + S; target owner + resource are queried | `server.js:2389-2647` |
 | DELETE flower/account | A + O; owned resources only | `server.js:2650-2696`, `3033-3086` |
 | POST visit/move/leave | A; visitor identity is token-derived | `server.js:2698-2986` |
-| Socket handshake/user/garden/movement | Token auth; user room is token-derived; garden is currently social | `server.js:79-188` |
+| Socket handshake/user/garden/movement | Token auth; user room and movement actor are token-derived; garden is intentionally social | `server.js:79-188`, `test/back/security-p0-socket.test.js` |
 
 Legacy authentication endpoints return `410`: `/register`, `/login`,
 `/auth/email-code/request`, `/auth/email-code/verify`,
@@ -85,33 +85,33 @@ what was inspected or tested; “manual” means platform/account action remains
 
 | Canonical item | Status | Evidence / finding / next action |
 | --- | --- | --- |
-| Secrets Management & Leakage Prevention | 🟡 PARTIAL | `.gitignore` excludes `.env`; no current tracked live-looking credential was found. History contains a public Firebase web config and a database URL finding documented as rotated/revoked in `PROJECT_PROGRESS.md`, not independently verified here. Run GitHub Secret Scanning/history scan; inventory and rotate platform secrets manually. |
+| Secrets Management & Leakage Prevention | 🟡 PARTIAL | Current tracked live-secret findings: 0. Historical Firebase Web config is public client configuration; a historical `DATABASE_URL` exists in Git history, while current source no longer references that credential. `.env` is ignored and `.env.example` contains safe placeholders/public configuration only. Current provider-side configuration was reviewed, but revocation of the historical database credential is not independently verified; repository evidence therefore remains partial. |
 | Production Control-Plane Account Security | 🔒 BLOCKED / MANUAL ACTION REQUIRED | Enable passkeys/strong MFA, least privilege, member cleanup, and no shared accounts for GitHub, Render, Cloudflare, Firebase, and Google. |
-| API Authorization / IDOR / BOLA | 🟡 PARTIAL | Firebase UID mapping, `requireOwnUser`, owner-scoped private queries, and social serialization exist. Evidence: `lib/auth.js`, `test/back/auth.test.js`, `security-baseline.test.js`, `garden-response.test.js`, `flower-social-mutations.test.js`. Complete the full User A→User B negative matrix. |
-| Privilege Escalation / Mass Assignment | 🟡 PARTIAL | Mutators select explicit fields and derive owner/entitlement/AI state server-side; `lastEvent` tampering is tested. Add all-endpoint rejection/ignore tests for role/admin/isAdmin/vip/premium/owner/ownerId/userId. |
+| API Authorization / IDOR / BOLA | 🟡 PARTIAL | HTTP mutation inventory is complete at 21 authenticated routes with explicit source/test disposition in `test/back/security-p0-http-coverage.test.js`; prior runtime User A→B coverage includes profile, AI consent, Fairy state, friends/requests, subscription, reports, flowers, and garden privacy. Socket.IO authorization matrix remains incomplete, so the canonical item stays partial. |
+| Privilege Escalation / Mass Assignment | 🟡 PARTIAL | HTTP mutation inventory and server-controlled identity/entitlement source guards cover all 21 authenticated mutating routes; runtime forged-field tests cover profile/Fairy/AI consent, friends/requests, subscription, reports, and flowers. Socket.IO and broader field-by-field runtime mutation coverage remain outside this batch; status stays partial. |
 | Client Token Storage & Leakage Prevention | ✅ TESTED | ID tokens are no longer persisted in localStorage; API/Socket use current Firebase session tokens. `client/src/api.js`, `client/src/App.jsx`, `client/src/Auth/firebaseSession.js`, and client tests are evidence. Native secure storage/crash-report behavior remains deployment-specific. |
 | Service-to-Service Authentication | ✅ TESTED | Backend sends Worker bearer from environment only; Worker rejects callers before AI and validates input/output. Evidence: `lib/emotion-classifier.js`, `cloudflare-worker/src/index.js`, `test/back/cloudflare-emotion-worker.test.js`. Rotate and verify production secret manually; consider short-lived credentials. |
-| AI Cost & Resource Abuse Protection | 🟡 PARTIAL | Authenticated-user AI limiter, Daily Grow uniqueness, 2,000-char input bound, timeout, and deterministic fallback exist. Durable daily/action quotas, global budget, provider ceiling, and multi-instance shutdown are absent. |
+| AI Cost & Resource Abuse Protection | 🟡 PARTIAL | Authenticated-user AI limiter, Daily Grow uniqueness, 2,000-char input bound, timeout, and deterministic fallback exist. Sequential replay and a true 20-concurrent-request Daily Grow runtime test pass in the local test harness; durable daily/action quotas, global budget, provider ceiling, and multi-instance shutdown are absent. |
 | Multi-Dimensional Abuse Prevention | 🟡 PARTIAL | Current controls combine user-keyed AI/general limits and IP-keyed auth limits. No durable account+IP+action+global signal or registration anomaly detection. |
 | Trusted Proxy / Client IP Configuration | ✅ TESTED | Express `trust proxy` defaults false; explicit hop/address configuration is validated in `lib/security-config.js` and `test/back/security-config.test.js`. Verify the Render/Cloudflare chain manually before enabling a value. |
 | Request Size / JSON Body Bomb | ✅ TESTED | 32 KB Express JSON limit, bounded fields, 20-level depth, 1,000 object keys, and 1,000-item arrays. Evidence: `lib/http-errors.js`, `lib/daily-flower-input.js`, `test/back/security-baseline.test.js`. |
-| Sensitive Logging & Observability Security | 🟡 PARTIAL | `logServerError` and Worker logs omit exception text, stacks, bearer-like values, and journal text; tests prove it. Remaining raw timing/socket logs, retention, and third-party telemetry need production audit. |
-| Debug / Admin / Internal Endpoint Exposure | 🟡 PARTIAL | No debug/admin/metrics route found; legacy auth is 410. `/api-docs/` is mounted before auth and is public; approve it or gate/disable it in production. |
+| Sensitive Logging & Observability Security | 🟡 PARTIAL | `logServerError` and structured security events omit exception text, stacks, bearer-like values, and journal text; tests prove it. Workers Logs are enabled with invocation logs and persistence; Free-plan log retention is documented as 3 days. Remaining raw timing/socket logs, retention scope, and third-party telemetry need production audit. |
+| Debug / Admin / Internal Endpoint Exposure | 🟡 PARTIAL | No debug/admin/metrics route found; legacy auth is 410. `/api-docs/` is mounted before auth and is public in development; added `apiDocsEnabled()` production fail-closed gate (`API_DOCS_ENABLED=true` is required to expose it), with unit evidence in `test/back/security-p0-matrix.test.js`. Production deployment configuration still requires verification. |
 | Software Supply-Chain Security | 🟡 PARTIAL | Root/client lockfiles exist. `npm audit --omit=dev` on 2026-09-14 reported 10 transitive advisories: 4 high, 6 moderate, 0 critical. Add Dependabot/Renovate, SBOM, lifecycle review, and remediation SLA. |
 | CI/CD & Release Security | 🟡 PARTIAL | No GitHub Actions workflow was found, so no CI permission/deploy evidence exists. Add least privilege, pinned trusted actions, protected main, review/status gates, and protected credentials; branch/deploy settings are manual. |
 | Production / Development Environment Isolation | 🟡 PARTIAL | Public Vite config and server-only Admin/Worker values are separated in `.env.example`; separate production/dev projects, DBs, storage, Worker secrets, and AI keys are not proved. Verify manually. |
-| Database Network Isolation & Least Privilege | 🔒 BLOCKED / MANUAL ACTION REQUIRED | Prisma uses `DATABASE_URL`; repo cannot prove TLS/network exposure, runtime DB role, or migration/admin separation. Restrict network and use separate least-privilege roles. |
+| Database Network Isolation & Least Privilege | 🟡 PARTIAL | Prisma uses `DATABASE_URL`; no separate migration credential is configured, so runtime/migration currently share the credential. `AuditEvent` Level 1 application-side create-only implementation and real local PostgreSQL validation are PASS. Level 2 is **PROVIDER-LIMITED / NOT VERIFIED**: current environment cannot verify production PostgreSQL role/grant capabilities, and Prisma pooled/direct URLs from one credential pair do not create role separation by themselves. This is not a repo P0 blocker; verify provider role/grant support and configure separate roles manually. |
 | Backup, Restore & Ransomware Resilience | 🔒 BLOCKED / MANUAL ACTION REQUIRED | No real encrypted backup/restore-drill artifact was found. Configure retention, encryption, isolated credentials, and restore to isolated test storage; record non-secret evidence. |
-| Security Monitoring & Anomaly Detection | ⬜ TODO | Responses/logging cover basic 401/403/429/5xx behavior, but no durable alerts for auth failures, read volume, AI spend, or DB failures were found. |
-| Tamper-Resistant Security Audit Logging | ⬜ TODO | No append-only/access-separated trail for auth failures, admin/deploy/config changes, authorization failures, or sensitive mutations was found. |
+| Security Monitoring & Anomaly Detection | 🟡 PARTIAL | Server-generated `X-Request-ID` correlation and allowlisted structured events cover authentication failures, owner authorization denials, rate-limit violations, and audit-write fallback signals; durable cross-instance aggregation, alert thresholds/routing, private-read/AI-spend/Worker/DB signals, and provider configuration remain. |
+| Tamper-Resistant Security Audit Logging | 🟡 PARTIAL | `LEVEL_1`: durable selected `AuditEvent` persistence and application create-only repository are implemented and real local PostgreSQL validation is PASS. `LEVEL_2` is **PROVIDER-LIMITED / NOT VERIFIED**: DB-enforced runtime/migration role separation and INSERT-only grants remain unverified; do not claim INSERT-only grants or ALTER/DROP protection were verified. |
 | Incident Response Runbook | ✅ IMPLEMENTED | Runbook is below and covers containment, disable/revoke, rotate, investigate, recover, verify, notify, and each named compromise scenario. No timed exercise was performed. |
 | Systematic Threat Modeling | ✅ IMPLEMENTED | Trust-boundary/data-flow model and matrix are above. Formal review/sign-off remains outstanding. |
-| Security Regression & Business Logic Test Suite | 🟡 PARTIAL | Existing tests cover missing token, owner checks, malformed/oversized input, rate limits, Worker auth/output, logging, and fallbacks. Replay, expired-token integration, complete mass assignment, forged-owner, and true 20-request race tests remain. |
-| LLM Trust Boundary & Prompt Injection Defense | 🟡 PARTIAL | Journal is user content; Worker has inference-only capability; model output is schema-validated and cannot directly authorize/set owner/VIP. Add explicit prompt-injection tests and reauthorize future tools server-side. |
-| LLM Secret Leakage Prevention | ✅ TESTED | Credentials remain in Worker/backend environment and are not model messages; Worker tests prove secret/provider/input details are not logged or returned. Production/provider retention needs manual review. |
-| AI Memory / RAG Tenant Isolation | ⚪ NOT APPLICABLE | No production memory, embedding, or RAG retrieval path exists. Trigger: adding memory/Vectorize/retrieval; then bind every record to owner and add User A→User B tests. |
+| Security Regression & Business Logic Test Suite | 🟡 PARTIAL | Existing tests cover missing token, owner checks, malformed/oversized input, rate limits, Worker auth/output, logging, and fallbacks. Structured-event redaction, bounds, correlation, and failure isolation are covered by `test/back/security-events.test.js`; HTTP/Socket authorization and Daily Grow race evidence remain covered by their dedicated tests. Production alerting, durable audit persistence, real Firebase E2E, and production concurrency verification remain. |
+| LLM Trust Boundary & Prompt Injection Defense | 🟡 PARTIAL | Current inference-only boundary is tested with malicious user inputs and malicious model outputs: Worker schema validation rejects unsupported labels, extra fields, nested control objects, and out-of-range values; backend sends only text and does not expose authorization/ownership fields. Future AI tools/RAG remain feature-triggered and would require server-side reauthorization. |
+| LLM Secret Leakage Prevention | ✅ TESTED | Credentials remain in Worker/backend environment and are not model messages; Worker tests prove secret/provider/input details are not logged or returned. Cloudflare Workers AI Customer Content handling documents no model training or service improvement without explicit consent; applicable DPA terms are documented. Exact ordinary inference retention remains unspecified. |
+| AI Memory / RAG Tenant Isolation | 🟡 PARTIAL | Daily Grow Journal text never enters emotion or long-term AI; the authenticated Event API derives owner from verified Firebase identity. Composite owner FKs protect EventMemory, evidence, reports, and Event jobs; owner-scoped route/DB negatives pass. `AiEvidence` is canonical, Event deletion removes citing reports, and report regeneration replaces evidence atomically. DB-backed jobs have versioned idempotency, guarded transitions, lease recovery, and `SKIP LOCKED` claim tests. Production embeddings/vector retrieval and external-vector deletion do not exist; PostgreSQL-specific trigger/concurrency behavior still requires validation on the production PostgreSQL version. |
 | Sensitive Data Classification & Minimization | ✅ IMPLEMENTED | Classification policy is below; cross-system retention/deletion is not yet verified. |
-| AI Provider Data Exposure | 🟡 PARTIAL | Worker receives only required text; API does not send UID/email/Authorization/DB credentials/unrelated profile data. Provider retention/training/DPA settings require manual confirmation. |
+| AI Provider Data Exposure | 🟡 PARTIAL | Worker receives only required text; API does not send UID/email/Authorization/DB credentials/unrelated profile data. Workers AI Customer Content includes inputs/prompts, outputs, embeddings, and training data; Cloudflare states it is not used to train Workers AI models or improve Cloudflare/third-party services without explicit consent: PASS. Customer DPA v6.4 (effective 2026-04-03) applies where Cloudflare acts as processor/subprocessor and limits processing to service provision without marketing/advertising use: PASS. Official documentation does not specify a general retention period for ordinary inference prompts/outputs; storage may occur when R2, KV, Durable Objects, or Vectorize is specifically used: PARTIAL / EXACT INFERENCE RETENTION NOT SPECIFIED. Published subprocessors include US and England operations; Canada-only or single-region processing is not configured or verified: NOT VERIFIED / OPTIONAL HARDENING. |
 
 ## 🟠 P1 — High Priority
 
@@ -123,7 +123,7 @@ what was inspected or tested; “manual” means platform/account action remains
 | SQL / ORM Logic Injection | ✅ TESTED | Structured Prisma filters and one parameterized tagged advisory-lock query; no unsafe raw SQL helper found. Add dedicated filter-injection negatives. |
 | API Flood / DoS | 🟡 PARTIAL | In-process general/AI limits and body bounds exist; route-specific concurrency, universal timeouts, and shared enforcement are missing. |
 | Database Connection Exhaustion | 🟡 PARTIAL | Prisma PostgreSQL pool exists; query timeouts, concurrency controls, and pool monitoring are not evidenced. |
-| Race Conditions | 🟡 PARTIAL | Daily uniqueness and transactions/advisory locks exist; required 20-concurrent-request test was not run. |
+| Race Conditions | 🟡 PARTIAL | Daily uniqueness and transaction conflict handling exist. Sequential replay and a true 20-concurrent-request Daily Grow runtime test pass in the local test harness with one success, 19 expected conflicts, one final flower/check-in, and no orphaned records; production database/version and multi-instance concurrency verification remain. |
 | XSS / HTML / URL Injection | 🟡 PARTIAL | React escapes text and no raw HTML feature was found; no explicit sanitizer or URL-scheme allowlist for future WebView/link rendering. |
 | CORS Misconfiguration | ✅ TESTED | Explicit `CORS_ALLOWED_ORIGINS` allowlist protects HTTP and Socket.IO; evidence: `lib/security-config.js`, `server.js`, `test/back/security-config.test.js`. Production origin list requires review. |
 | Cache / CDN Cross-User Leakage | 🟡 PARTIAL | Worker uses no-store; private API/CDN end-to-end `Cache-Control` audit and replay test remain. |
@@ -157,7 +157,7 @@ what was inspected or tested; “manual” means platform/account action remains
 | Root / Jailbroken Device Risk | 🟡 PARTIAL | Firebase owns token lifecycle and web client no longer uses localStorage for ID tokens; native secure storage/risk signals are future work. |
 | Payment / Subscription Forgery | ⚪ NOT APPLICABLE | No payment/receipt/webhook activation; current entitlement is read-only. |
 | Deep Link / Firebase Action-Link Hijacking | 🟡 PARTIAL | Passwordless callback uses current origin `/finish-sign-in`; approved-domain/universal-link and hostile-redirect tests remain. |
-| WebSocket / Socket.IO Authorization | 🟡 PARTIAL | Handshake/user-room auth exists; garden rooms are social/public. Private rooms require ownership/message limits. |
+| WebSocket / Socket.IO Authorization | 🟡 PARTIAL | Four authenticated handlers are inventoried: `join-user`, `leave-user`, `join-garden`, and `move-avatar`. Runtime tests cover valid, missing, empty, invalid, and expired verifier-result handshakes; token-derived user room/actor identity, garden-room social semantics, and payload-injection guards are covered in `test/back/security-p0-socket.test.js`. Real Firebase expired-token E2E and production verification remain. |
 | Webhook Forgery / Replay | ⚪ NOT APPLICABLE | No external webhook. Trigger: payment/store webhook. |
 | Attack Surface Monitoring | ⬜ TODO | No scheduled domain/service/port/public-endpoint inventory found. |
 | Honeytokens / Canary Secrets | ⬜ TODO | No canary or alert sink found; design only after alerting exists. |
@@ -250,3 +250,23 @@ do not replace or merge any P0/P1/P2 item.
 No new risk is inserted into the canonical backlog by this audit. The public
 `/api-docs/` observation is recorded under the existing canonical
 **Debug / Admin / Internal Endpoint Exposure** item rather than duplicated.
+
+## Final Security P0 Closure Summary
+
+Repo Security P0 code work is **COMPLETE**. There is no remaining repo-level
+P0 blocker. Unresolved items are provider/manual or optional compliance
+hardening and do not change repo-complete status.
+
+Provider/manual unresolved items:
+
+- Historical `DATABASE_URL` revocation proof remains **ACTION REQUIRED / UNCERTAIN** because the old endpoint was unreachable; neither revoked nor still-valid is claimed.
+- Database runtime/migration role separation and grants remain **PROVIDER-LIMITED / NOT VERIFIED**. AuditEvent Level 2 is not a repo P0 blocker.
+
+Optional/compliance hardening:
+
+- Clarify exact Workers AI inference retention duration.
+- Define regional/data-residency requirements if PetalPal later needs them.
+- Retain plan-limited provider controls as **PARTIAL / PROVIDER-LIMITED**; no plan upgrade is a P0 requirement.
+
+Security P0 may be treated as repo-complete while the unresolved provider items
+remain documented.
