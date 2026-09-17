@@ -30,10 +30,25 @@ import {
 } from "./lib/fairy-config.js";
 import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
 import { resolveDailyFlowerEmotion } from "./lib/daily-flower-input.js";
-import { createEventAndEnqueueMemoryJob } from "./lib/ai-jobs.js";
+import {
+  AI_JOB_TYPES,
+  PrismaAiJobRepository,
+  createEventAndEnqueueMemoryJob
+} from "./lib/ai-jobs.js";
+import {
+  localDateForInstant,
+  previousWeeklyPeriod,
+  reportPeriodStatus,
+  weeklyPeriodForLocalDate
+} from "./lib/ai-periods.js";
+import { createProductionAiWorker } from "./lib/ai-worker.js";
 import { PrivateEventRepository } from "./lib/ai-events.js";
 import { PrismaMemoryRepository } from "./lib/event-memory.js";
 import { PrivateReportRepository } from "./lib/report-foundation.js";
+import {
+  REPORT_NARRATIVE_GENERATION_VERSION,
+  configuredCloudflareReportNarrativeProvider
+} from "./lib/report-narrative.js";
 import { resolveFairyEvent } from "./lib/fairy-events.js";
 import {
   serializeGardenResponse,
@@ -81,6 +96,11 @@ app.use((req, res, next) => {
 app.set("trust proxy", trustProxySetting());
 let emotionClassifier = classifyEmotion;
 let firebaseUserDeleter = deleteFirebaseUser;
+const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
+  prisma,
+  reportNarrativeProvider: configuredCloudflareReportNarrativeProvider()
+});
+let weeklyReportWorkerFactory = createDefaultWeeklyReportWorker;
 
 function isDailyGrowLimitEnabled() {
   return process.env.DAILY_GROW_LIMIT_ENABLED !== "false";
@@ -92,6 +112,10 @@ export function setEmotionClassifierForTests(classifier) {
 
 export function setFirebaseUserDeleterForTests(deleter) {
   firebaseUserDeleter = deleter || deleteFirebaseUser;
+}
+
+export function setWeeklyReportWorkerFactoryForTests(factory) {
+  weeklyReportWorkerFactory = factory || createDefaultWeeklyReportWorker;
 }
 
 const io = new Server(server, {
@@ -1663,6 +1687,74 @@ app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
   const report = await read();
   if (!report) return res.status(404).json({ error: "AI report not found" });
   return res.json(report);
+});
+
+app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
+  const allowedBodyFields = new Set(["localDate"]);
+  if (Object.keys(req.body).some((field) => !allowedBodyFields.has(field)) || Object.keys(req.query).length > 0) {
+    return res.status(400).json({ error: "Weekly report ownership and job type are fixed by this endpoint" });
+  }
+
+  try {
+    const ownerId = req.auth.userId;
+    const owner = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: { timezone: true }
+    });
+    if (!owner) return res.status(403).json({ error: "Authenticated PetalPal owner was not found" });
+
+    const now = new Date();
+    let period;
+    try {
+      period = req.body.localDate === undefined
+        ? previousWeeklyPeriod(weeklyPeriodForLocalDate(localDateForInstant(now, owner.timezone), owner.timezone))
+        : weeklyPeriodForLocalDate(req.body.localDate, owner.timezone);
+      reportPeriodStatus(period.periodEndUtc, now);
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    const repository = new PrismaAiJobRepository(prisma);
+    const job = await repository.enqueue({
+      identity: req.auth,
+      jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+      resourceId: period.periodKey,
+      processingVersion: REPORT_NARRATIVE_GENERATION_VERSION,
+      maxAttempts: 1
+    });
+    const execution = await weeklyReportWorkerFactory().runJob({
+      jobId: job.id,
+      ownerId,
+      jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+      now
+    });
+    const storedJob = await prisma.aiJob.findFirst({
+      where: { id: job.id, ownerId, jobType: AI_JOB_TYPES.WEEKLY_REPORT },
+      select: { id: true, status: true, attemptCount: true, completedAt: true }
+    });
+    const report = await prisma.weeklyReport.findUnique({
+      where: { ownerId_periodKey: { ownerId, periodKey: period.periodKey } },
+      select: { id: true, periodKey: true, narrativeStatus: true, generationVersion: true }
+    });
+    const payload = {
+      periodKey: period.periodKey,
+      job: storedJob,
+      report,
+      execution: execution.claimed
+        ? (execution.succeeded ? "COMPLETED" : "FAILED")
+        : "ALREADY_RUNNING_OR_FINALIZED"
+    };
+    if (execution.claimed && !execution.succeeded) {
+      return res.status(502).json({ ...payload, errorCode: execution.error?.code || "WEEKLY_REPORT_JOB_FAILED" });
+    }
+    if (storedJob?.status === "FAILED") {
+      return res.status(502).json({ ...payload, errorCode: "WEEKLY_REPORT_JOB_FAILED" });
+    }
+    return res.status(storedJob?.status === "SUCCEEDED" ? 200 : 202).json(payload);
+  } catch (error) {
+    logServerError("POST /ai/reports/weekly/trigger error", error);
+    return res.status(500).json({ error: "Failed to trigger Weekly report" });
+  }
 });
 
 app.get("/users/:userId/subscription", async (req, res) => {

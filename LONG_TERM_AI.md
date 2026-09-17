@@ -544,6 +544,31 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   No schema, retrieval, evidence-selection, scheduler, Yearly, multilingual,
   emotion-classifier, Fairy, or UI changes were made.
 
+### Authenticated Weekly report trigger checkpoint — 2026-09-17
+
+- Added authenticated `POST /ai/reports/weekly/trigger` for the existing Render
+  Web Service. The route derives the owner only from the verified session,
+  accepts only an optional `localDate`, canonicalizes a closed Weekly period in
+  the owner's timezone, and cannot select another owner or another AI job type.
+- The route reuses `PrismaAiJobRepository` idempotency and the production
+  `AiJobWorker` Weekly handler. A targeted claim is constrained by job id,
+  owner id, and `WEEKLY_REPORT`, so an HTTP request cannot claim an unrelated
+  queued job. Duplicate/concurrent triggers reuse the same job, and finalized
+  reports remain protected by the existing worker replay rules.
+- Trigger-created jobs use one bounded attempt for the controlled production
+  smoke. The response exposes only bounded job/report status fields. No report
+  generation logic, retrieval, evidence selection, provider, persistence,
+  scheduler, queue, or schema was duplicated or changed.
+- Verification: route/worker/PGlite focused tests passed 18 / 18, including
+  unauthenticated rejection, forged-owner/job-type rejection, idempotent replay,
+  finalized-report protection, exact owner/type claims, and concurrent
+  single-claim behavior. The full backend run passed 169 tests and skipped 11
+  real-PostgreSQL tests without a configured test URL; only the known unrelated
+  Daily Grow local-date assertion remained (reported as its child assertion and
+  parent suite).
+- Status: PASS for implementation. No real LLM inference was made. Deploy this
+  checkpoint before issuing the single authenticated production Weekly smoke.
+
 ## 13. Decisions / ADR-style Log
 
 ### 2026-09-14 — Journal removed from long-term AI workflows
@@ -597,9 +622,9 @@ ANN, backfill, multilingual data, and held-out data remain unused.
 
 ### NEXT
 
-- Deploy/provision the configured Cloudflare report provider credentials and
-  run one controlled grounded Weekly report smoke test through the existing
-  worker and atomic persistence path.
+- Deploy the authenticated Weekly trigger, then call it once for a closed
+  owner period and verify the real Workers AI inference, grounding, provenance,
+  atomic persistence, and unchanged free-tier usage boundary.
 
 ### LATER
 

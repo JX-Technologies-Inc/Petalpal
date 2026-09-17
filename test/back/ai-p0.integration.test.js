@@ -8,7 +8,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite/vector";
 
 import { PrivateEventRepository } from "../../lib/ai-events.js";
-import { PrismaAiJobRepository } from "../../lib/ai-jobs.js";
+import { AI_JOB_TYPES, PrismaAiJobRepository } from "../../lib/ai-jobs.js";
 import {
   localDateForInstant,
   monthlyPeriodFor,
@@ -321,6 +321,57 @@ test("25 concurrent workers claim one job once and an expired lease is recoverab
       SET "status" = 'PENDING', "completedAt" = NULL, "updatedAt" = CURRENT_TIMESTAMP
       WHERE "id" = 'job-1'
     `), /invalid AIJob status transition|constraint/i);
+  } finally {
+    await database.close();
+  }
+});
+
+test("targeted job claim is exact, owner-scoped, type-scoped, and single-claim", async () => {
+  const database = await migratedDatabase();
+  try {
+    await database.exec(`
+      INSERT INTO "User" ("id", "name") VALUES ('alice', 'Alice'), ('bob', 'Bob');
+      INSERT INTO "AIJob"
+        ("id", "ownerId", "jobType", "resourceId", "idempotencyKey", "maxAttempts", "nextAttemptAt", "updatedAt")
+      VALUES
+        ('weekly-alice', 'alice', 'WEEKLY_REPORT', '2026-09-07', 'WEEKLY_REPORT:2026-09-07:v1', 1, '2026-09-15T00:00:00Z', CURRENT_TIMESTAMP),
+        ('weekly-bob', 'bob', 'WEEKLY_REPORT', '2026-09-07', 'WEEKLY_REPORT:2026-09-07:v1', 1, '2026-09-15T00:00:00Z', CURRENT_TIMESTAMP);
+    `);
+    const repository = new PrismaAiJobRepository(pgliteJobAdapter(database));
+    const now = new Date("2026-09-16T00:00:00Z");
+    assert.equal(await repository.claimById({
+      jobId: "weekly-alice",
+      ownerId: "bob",
+      jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+      workerId: "wrong-owner",
+      now
+    }), null);
+    assert.equal(await repository.claimById({
+      jobId: "weekly-alice",
+      ownerId: "alice",
+      jobType: AI_JOB_TYPES.MONTHLY_REPORT,
+      workerId: "wrong-type",
+      now
+    }), null);
+
+    const claims = await Promise.all(["target-1", "target-2"].map((workerId) => repository.claimById({
+      jobId: "weekly-alice",
+      ownerId: "alice",
+      jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+      workerId,
+      now
+    })));
+    assert.equal(claims.filter(Boolean).length, 1);
+    assert.equal(claims.find(Boolean).ownerId, "alice");
+    assert.equal(claims.find(Boolean).jobType, AI_JOB_TYPES.WEEKLY_REPORT);
+
+    const statuses = (await database.query(`
+      SELECT "id", "status" FROM "AIJob" ORDER BY "id"
+    `)).rows;
+    assert.deepEqual(statuses, [
+      { id: "weekly-alice", status: "RUNNING" },
+      { id: "weekly-bob", status: "PENDING" }
+    ]);
   } finally {
     await database.close();
   }

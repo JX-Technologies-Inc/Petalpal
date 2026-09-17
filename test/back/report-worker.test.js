@@ -188,6 +188,19 @@ function jobRepository(job) {
       job.attemptCount += 1;
       return { ...job };
     },
+    async claimById({ jobId, ownerId: claimedOwnerId, jobType, workerId, now }) {
+      if (
+        job.status !== "PENDING" ||
+        job.id !== jobId ||
+        job.ownerId !== claimedOwnerId ||
+        job.jobType !== jobType
+      ) return null;
+      job.status = "RUNNING";
+      job.lockedBy = workerId;
+      job.lockedAt = now;
+      job.attemptCount += 1;
+      return { ...job };
+    },
     async markSucceeded() {
       job.status = "SUCCEEDED";
       job.lockedBy = null;
@@ -272,6 +285,47 @@ test("Weekly report worker generates and atomically persists grounded narrative 
   assert.equal(prisma.state.weeklyReports[0].narrativeSections.length, 1);
   assert.equal(prisma.state.evidence.length, 3);
   assert.equal(prisma.state.evidence.filter((item) => item.claimType === "NARRATIVE_CITED").length, 1);
+});
+
+test("targeted Weekly execution cannot claim another owner or arbitrary job type", async () => {
+  const prisma = createReportPrisma();
+  let providerCalls = 0;
+  const job = reportJob(AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14");
+  const worker = reportWorker({
+    prisma,
+    job,
+    provider: {
+      async generateNarrative(input) {
+        providerCalls += 1;
+        return validProviderOutput(input.report.reportType);
+      }
+    }
+  });
+  const now = new Date("2026-09-22T00:00:00Z");
+
+  assert.deepEqual(await worker.runJob({
+    jobId: job.id,
+    ownerId: otherOwnerId,
+    jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+    now
+  }), { claimed: false });
+  assert.deepEqual(await worker.runJob({
+    jobId: job.id,
+    ownerId,
+    jobType: AI_JOB_TYPES.MONTHLY_REPORT,
+    now
+  }), { claimed: false });
+  assert.equal(providerCalls, 0);
+
+  const result = await worker.runJob({
+    jobId: job.id,
+    ownerId,
+    jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+    now
+  });
+  assert.equal(result.succeeded, true);
+  assert.equal(providerCalls, 1);
+  assert.equal(job.status, "SUCCEEDED");
 });
 
 test("Monthly report worker generates and atomically persists grounded narrative evidence", async () => {

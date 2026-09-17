@@ -499,7 +499,12 @@ realTest("real PostgreSQL report worker persists grounded narrative and provenan
         },
         logger: { error() {} }
       });
-      const run = await worker.runOnce({ now: new Date("2026-09-22T00:00:00Z") });
+      const run = await worker.runJob({
+        jobId: job.id,
+        ownerId,
+        jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+        now: new Date("2026-09-22T00:00:00Z")
+      });
       assert.equal(run.succeeded, true);
       assert.equal(run.result.status, "GENERATED");
 
