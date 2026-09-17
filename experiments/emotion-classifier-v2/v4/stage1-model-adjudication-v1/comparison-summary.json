@@ -1,0 +1,47 @@
+{
+  "created_utc": "2026-09-15T21:37:23.762985+00:00",
+  "astra_sealed_utc": "2026-09-15T21:27:46.036378+00:00",
+  "scope": "Descriptive comparison of this selected queue only; no accuracy, final evaluation, gold, or human consensus claim",
+  "comparisons": {
+    "core1": {
+      "comparable_n": 1814,
+      "match_n": 1321,
+      "unavailable_n": 4
+    },
+    "valid_core2": {
+      "comparable_n": 1134,
+      "match_n": 210,
+      "unavailable_n": 684
+    },
+    "normal_aux_consensus": {
+      "comparable_n": 1686,
+      "match_n": 1262,
+      "unavailable_n": 132
+    },
+    "aux_r08_sensitivity": {
+      "comparable_n": 1818,
+      "match_n": 249
+    }
+  },
+  "normal_auxiliary_consensus_rule": "Unique strict majority (>50%) of valid AUX-R01..R05/R07; otherwise MIXED. Supporting evidence only. R06/R08 sensitivity separately.",
+  "normal_auxiliary_columns_scope": "LEGACY_R01_THROUGH_R07_INCLUDING_R06_SENSITIVITY_ONLY; current primary excludes R06 and R08",
+  "normal_auxiliary_consensus_is_final_label": false,
+  "aux_r08_in_normal_counts": false,
+  "post_blind_astra_changes": false,
+  "final_reference_set_allowed": false,
+  "primary_auxiliary_reviewers": [
+    "AUX-R01",
+    "AUX-R02",
+    "AUX-R03",
+    "AUX-R04",
+    "AUX-R05",
+    "AUX-R07"
+  ],
+  "separate_sensitivity_reviewers": [
+    "AUX-R06",
+    "AUX-R08"
+  ],
+  "pairwise_summary_file": "model-human-pairwise-summary.csv",
+  "panel_summary_file": "model-panel-summary.json",
+  "legacy_comparisons_scope": "Original R01..R07 counts remain for sensitivity only; current primary excludes R06/R08"
+}

@@ -1,0 +1,25 @@
+{
+  "status": "AUTHORITATIVE_PROVENANCE_CORRECTION",
+  "recorded_utc": "2026-09-15T21:27:46.036378+00:00",
+  "judge_identity": "Astra",
+  "reasoning_configuration": "Extremely High",
+  "reasoning_effort": "xhigh",
+  "configuration_scope": "ENTIRE_ASTRA_RUN",
+  "authority": "Latest explicit user confirmation; prior transition wording identified by user as provenance metadata error",
+  "configuration_transition_at_667": false,
+  "checkpoint_667_role": "HISTORICAL_INTERRUPTION_RESUME_CHECKPOINT_ONLY",
+  "judgments_recomputed_for_correction": false,
+  "supersedes_transition_claims_in": [
+    "astra-configuration-transition.json",
+    "resume-state.json",
+    "account-continuation-checkpoint.json",
+    "unexecuted comparison-script draft wording"
+  ],
+  "exact_model_identifier": "gpt-6-astra",
+  "exact_model_identifier_evidence": "This agent was dispatched with model gpt-6-astra; no identity inferred from judgment contents.",
+  "independent_model_judges": [
+    "Astra",
+    "Luna"
+  ],
+  "account_change_operational_only": true
+}

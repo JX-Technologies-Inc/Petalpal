@@ -23,6 +23,7 @@ async function request(baseUrl, path, { token, method = "GET", body, rawBody } =
 test("Month 1 HTTP security boundary protects private resources and rejects unsafe input", async (t) => {
   const originals = {
     userFindUnique: prisma.user.findUnique,
+    auditCreate: prisma.auditEvent.create,
     transaction: prisma.$transaction
   };
   prisma.user.findUnique = async ({ where }) => {
@@ -39,6 +40,7 @@ test("Month 1 HTTP security boundary protects private resources and rejects unsa
     }
     return null;
   };
+  prisma.auditEvent.create = async () => ({ id: "audit-test" });
   setFirebaseTokenVerifierForTests(async (token) => ({
     uid: token === "owner-token" ? "firebase-owner" : "firebase-other",
     email_verified: true
@@ -49,6 +51,7 @@ test("Month 1 HTTP security boundary protects private resources and rejects unsa
   const baseUrl = `http://127.0.0.1:${server.address().port}`;
   t.after(async () => {
     prisma.user.findUnique = originals.userFindUnique;
+    prisma.auditEvent.create = originals.auditCreate;
     prisma.$transaction = originals.transaction;
     setFirebaseTokenVerifierForTests();
     await new Promise((resolve) => server.close(resolve));

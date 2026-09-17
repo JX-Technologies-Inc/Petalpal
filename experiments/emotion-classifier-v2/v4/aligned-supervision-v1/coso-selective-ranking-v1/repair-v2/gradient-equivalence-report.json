@@ -1,0 +1,10 @@
+{
+  "tests": {
+    "fullWindow": 0.0,
+    "partialWindow": 5.204170427930421e-18,
+    "heterogeneous": 0.0
+  },
+  "atol": 1e-10,
+  "rtol": 1e-10,
+  "PASS": true
+}

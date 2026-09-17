@@ -1,0 +1,17 @@
+{
+  "validation": "PASS",
+  "checks": {
+    "universe_1818": true,
+    "unique_ids": true,
+    "bucket_counts_exact": true,
+    "hard_reference_1256": true,
+    "unresolved_562": true,
+    "C_sol_exact_match": true,
+    "allowed_values_only": true,
+    "unresolved_absent_hard_reference": true,
+    "provenance_complete": true,
+    "inputs_hash_checked": true,
+    "no_judgment_mutation": true,
+    "final_reference_set_designation_valid": true
+  }
+}

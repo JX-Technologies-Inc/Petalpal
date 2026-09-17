@@ -1,0 +1,29 @@
+{
+  "classification":"SOURCE / LINEAGE UNRESOLVED",
+  "dataset":"PHQ / Reddit-derived canonical public-human rows",
+  "rowCount":468,
+  "sourceType":"PUBLIC_HUMAN",
+  "sourceGroupPattern":"reddit:<Reddit submission id>",
+  "sourceGroups":135,
+  "upstreamSourceName":"UPSTREAM SOURCE UNRESOLVED; no dataset/corpus name is recorded",
+  "sourceOrganization":"Individual Reddit authors; collection/curation organization UNVERIFIED",
+  "recordedSourceEvidence":[{"type":"OFFICIAL SOURCE IDENTIFIED","value":"Reddit post URLs are preserved in row provenance (example domain reddit.com/r/Journaling/...)"},{"type":"NO RIGHTS EVIDENCE","value":"No dataset license, corpus release, repository, dataset card, or paper identifier is recorded for these 468 rows."}],
+  "lineage":[
+    {"artifact":"v4/auto-v3/REPORT.md","rows":468,"transformation":"Final core public Train component after deterministic exclusions; labels/source metadata retained","textChanged":"not established from report; no rewrite claimed","labelsChanged":"not recoverable from this evidence","sourceIds":"PHQ-* and sourceGroupIds retained"},
+    {"artifact":"v4/aligned-supervision-v1/train.jsonl","rows":468,"transformation":"Included in locked canonical 841 as PUBLIC_HUMAN; Gemini annotation/adjudication added modelLabels","textChanged":"no transformation record beyond copied journal field","labelsChanged":"Gemini supervision added; not human gold","sourceIds":"preserved"},
+    {"artifact":"v4/aligned-supervision-v1/annotation-lock.json","rows":841,"transformation":"Locks combined dataset; does not grant component rights","textChanged":"not applicable","labelsChanged":"not applicable","sourceIds":"component count recoverable"}
+  ],
+  "license":"UNVERIFIED",
+  "researchAllowed":"unverified",
+  "mlTrainingAllowed":"unverified",
+  "fineTuningAllowed":"unverified",
+  "productDevelopmentAllowed":"unverified",
+  "commercialUseAllowed":"unverified",
+  "attribution":"UNVERIFIED",
+  "redistributionRestriction":"UNVERIFIED; Reddit platform Terms are not treated as a dataset license",
+  "canonicalIntegrity":{"exactRows":468,"sourceTypeOnlyPublicHuman":true,"humanConsentedMixed":false,"cosowellMixed":false,"sourceGroupsPreserved":true,"exactLineageRecoverable":true},
+  "currentSeverity":"BLOCKER",
+  "canRemoveBlocker":false,
+  "missingEvidence":["exact upstream corpus/dataset name","curator/collection organization","version/snapshot identifier","official dataset license or terms","ML/product/commercial permission","attribution and redistribution terms"],
+  "constraints":{"noTraining":true,"noDataModification":true,"noProtectedContentOpened":true}
+}

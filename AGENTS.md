@@ -11,6 +11,21 @@ Rules:
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
 
+## Engineering constraints
+
+- Prefer the simplest correct implementation; do not over-engineer.
+- Do not add new hashes, checksums, manifests, fingerprints, or provenance/integrity infrastructure unless explicitly required for correctness, security, or an existing protocol.
+- Reuse existing required validation mechanisms when necessary; do not expand them without a concrete requirement.
+- Repo truth > docs > prior chat. Do not infer completion without executable evidence.
+
+## Scope Control
+
+- Implement only what is required for the current task.
+- Do not add adjacent features, abstractions, refactors, optimizations, or infrastructure unless they are required to make the current task correct.
+- If a useful improvement is discovered but is not required for the current task, record it as a future note instead of implementing it.
+- Prefer modifying existing files and abstractions over creating new systems.
+- Stop once the requested behavior is implemented and the relevant tests pass.
+
 ## Stable emotion-system invariants
 
 - Keep the user-selected Primary Garden Mood separate from secondary-emotion classification: ML must not override the user's Primary.

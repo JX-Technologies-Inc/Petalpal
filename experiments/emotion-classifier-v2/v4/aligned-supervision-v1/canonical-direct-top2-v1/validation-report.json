@@ -1,0 +1,73 @@
+{
+  "mapping": {
+    "full21Order": [
+      "admiration",
+      "amusement",
+      "anger",
+      "annoyance",
+      "approval",
+      "caring",
+      "confusion",
+      "curiosity",
+      "disappointment",
+      "disapproval",
+      "disgust",
+      "excitement",
+      "fear",
+      "gratitude",
+      "joy",
+      "love",
+      "neutral",
+      "optimism",
+      "remorse",
+      "sadness",
+      "surprise"
+    ],
+    "selected18Indices": {
+      "admiration": 0,
+      "amusement": 1,
+      "anger": 2,
+      "annoyance": 3,
+      "caring": 5,
+      "confusion": 6,
+      "curiosity": 7,
+      "disappointment": 8,
+      "disgust": 10,
+      "excitement": 11,
+      "fear": 12,
+      "gratitude": 13,
+      "joy": 14,
+      "love": 15,
+      "optimism": 17,
+      "remorse": 18,
+      "sadness": 19,
+      "surprise": 20
+    }
+  },
+  "probabilityProvenance": {
+    "reused": true,
+    "path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-probabilities.npy",
+    "sha256": "f9835c5126e5d642c1a0e863562ad12731e73493e0c8bade70d740c440e10dde",
+    "shape": [
+      149,
+      21
+    ],
+    "devRows": 149,
+    "devHash": "4013fe156dbfa059957c80a49b9e3a2766ac816422c530f88760265b34abe038",
+    "annotationLockHash": "ac28b11a77beb84721ce0ae023d5a9225a2e46451c049bdab114d2a8670fb0f3"
+  },
+  "reachability": {
+    "trainRows": 841,
+    "devRows": 149,
+    "trainMaxCardinality": 2,
+    "devMaxCardinality": 2,
+    "devGoldExpressible": 149,
+    "devGoldTotal": 149,
+    "priorSameClusterConflictSetsPreserved": 19
+  },
+  "hashes": {
+    "evaluator.py": "13461bd77671fe1c51dc8922480a219c79accd331ac311759d1a2278cb746fde",
+    "protocol.json": "9c4a435ffbd7067685c02f7d645cbf229cad75853e961af944bf798d0c45c918",
+    "revisedProtocol": "9a33e4cb0bed0f98a288455f871c1fcd183d05b9fcd3ec87c34c625c06c38292"
+  }
+}

@@ -813,7 +813,7 @@ import {
       }
   
     async function handleBloom({
-      event,
+      journalText,
       mood
     }) {
       if (!currentUser?.id) {
@@ -832,7 +832,7 @@ import {
   
             body: JSON.stringify({
               mood,
-              event
+              journalText
             })
           }
         );

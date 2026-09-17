@@ -1,0 +1,6 @@
+{
+  "status": "TRIAGE_PREPARED_NO_FINAL_ADJUDICATION",
+  "rules": "sol-high-reconciled-deterministic-v1",
+  "final_reference_set_allowed": false,
+  "final_labels_created": false
+}

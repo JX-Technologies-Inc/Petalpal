@@ -1,0 +1,110 @@
+{
+  "scope": "english-only-dev",
+  "heldOutUsed": false,
+  "multilingualUsed": false,
+  "queryCount": 84,
+  "eventCount": 120,
+  "runs": 3,
+  "dimensions": 384,
+  "apiCostUsd": 0,
+  "keywordBaseline": {
+    "recallAt1": 0.5277777777777778,
+    "recallAt3": 0.5277777777777778,
+    "recallAt5": 0.5277777777777778,
+    "recallAt10": 0.9583333333333334,
+    "mrr": 0.5879629629629638,
+    "sliceRecallAt5": {
+      "en-en": 0.38095238095238093,
+      "hard-negative": 0.8333333333333334,
+      "multi-plausible": 0.16666666666666666,
+      "paraphrase": 0.6666666666666666,
+      "proper-noun": 1,
+      "short-vague": 1
+    }
+  },
+  "candidates": [
+    {
+      "model": "Xenova/all-MiniLM-L6-v2",
+      "inputVersion": "summary-v1",
+      "recallAt1": 0.4027777777777778,
+      "recallAt3": 0.4166666666666667,
+      "recallAt5": 0.4444444444444444,
+      "recallAt10": 0.7291666666666666,
+      "mrr": 0.44744819223985893,
+      "sliceRecallAt5": {
+        "en-en": 0.42857142857142855,
+        "hard-negative": 0.16666666666666666,
+        "multi-plausible": 0,
+        "paraphrase": 0.6666666666666666,
+        "proper-noun": 0.6666666666666666,
+        "short-vague": 0.8333333333333334
+      },
+      "medianTotalMs": 943,
+      "medianWarmPerQueryMs": 6.38,
+      "result": "REJECT"
+    },
+    {
+      "model": "Xenova/bge-small-en-v1.5",
+      "inputVersion": "summary-v1",
+      "recallAt1": 0.5486111111111112,
+      "recallAt3": 0.7083333333333334,
+      "recallAt5": 0.75,
+      "recallAt10": 0.8819444444444444,
+      "mrr": 0.6727182539682544,
+      "sliceRecallAt5": {
+        "en-en": 0.6666666666666666,
+        "hard-negative": 0.6666666666666666,
+        "multi-plausible": 0.6666666666666666,
+        "paraphrase": 1,
+        "proper-noun": 1,
+        "short-vague": 1
+      },
+      "sliceRegressionsVsKeyword": {
+        "hard-negativeRecallAt5": -0.16666666666666674,
+        "hard-negativeMrr": -0.35833333333333334,
+        "short-vagueRecallAt5": 0,
+        "short-vagueMrr": -0.08333333333333337
+      },
+      "medianTotalMs": 1892,
+      "observedTotalMsRange": [957, 1979],
+      "medianWarmPerQueryMs": 11.38,
+      "observedWarmPerQueryMsRange": [5.83, 11.45],
+      "result": "SELECTED"
+    },
+    {
+      "model": "Xenova/e5-small-v2",
+      "inputVersion": "summary-v1",
+      "recallAt1": 0.5833333333333334,
+      "recallAt3": 0.6805555555555556,
+      "recallAt5": 0.8125,
+      "recallAt10": 0.9305555555555556,
+      "mrr": 0.6870315255731926,
+      "sliceRecallAt5": {
+        "en-en": 0.8809523809523809,
+        "hard-negative": 0.3333333333333333,
+        "multi-plausible": 0.25,
+        "paraphrase": 1,
+        "proper-noun": 1,
+        "short-vague": 1
+      },
+      "sliceRegressionsVsKeyword": {
+        "hard-negativeRecallAt5": -0.5,
+        "hard-negativeMrr": -0.5296296296296297
+      },
+      "medianTotalMs": 1851,
+      "observedTotalMsRange": [1146, 1885],
+      "medianWarmPerQueryMs": 8.62,
+      "observedWarmPerQueryMsRange": [5.17, 9.02],
+      "result": "NOT_SELECTED"
+    }
+  ],
+  "dominatedInputVersion": {
+    "inputVersion": "structured-v1",
+    "allMiniLmRecallAt5": 0.2916666666666667,
+    "bgeRecallAt5": 0.5763888888888888,
+    "e5RecallAt5": 0.6875
+  },
+  "selectedProfile": "production-bge-small-en-v1.5-v1",
+  "selectionReason": "BGE summary-v1 improves aggregate Recall@1, Recall@3, Recall@5, and MRR over keyword while providing the best balance on hard-negative and multi-plausible slices. E5 has higher aggregate Recall@5 and MRR but a materially larger hard-negative regression and weaker multi-plausible recall.",
+  "deployment": "Local Node.js Transformers.js ONNX q8 inference; 384 dimensions; zero per-call API fee; CPU and model-cache infrastructure cost remains unpriced."
+}

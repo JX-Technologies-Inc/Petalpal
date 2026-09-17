@@ -1,0 +1,4 @@
+source,review_rows_221,finalized_cells,finalized_canonical_negative_cells,missing_clear_count,share_of_88,missing_rate_among_finalized_negative_cells,plausible_count,plausible_rate_among_finalized_cells
+PHQ,110,694,676,12,0.13636363636363635,0.01775147928994083,76,0.10951008645533142
+COSO,103,507,466,71,0.8068181818181818,0.15236051502145923,44,0.08678500986193294
+HUM,8,55,52,5,0.056818181818181816,0.09615384615384616,3,0.05454545454545454

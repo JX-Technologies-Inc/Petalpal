@@ -1,0 +1,171 @@
+{
+  "status": "ANALYSIS ONLY \u2014 DO NOT TRAIN",
+  "inputs": {
+    "canonical_train_rows": 841,
+    "fixed_dev_rows": 149,
+    "review_rows": 221,
+    "hard_reference_cells": 1256,
+    "protected_or_frozen_holdout_loaded": false,
+    "training_performed": false,
+    "new_model_inference_performed": false
+  },
+  "stage1_vs_canonical_matrix": {
+    "canonical_positive__stage1_NO": 0,
+    "canonical_positive__stage1_PLAUSIBLE": 5,
+    "canonical_positive__stage1_CLEAR": 57,
+    "canonical_negative__stage1_NO": 988,
+    "canonical_negative__stage1_PLAUSIBLE": 118,
+    "canonical_negative__stage1_CLEAR": 88
+  },
+  "missing_clear": {
+    "cells": 88,
+    "canonical_rows": 60,
+    "source_counts": {
+      "PHQ": 12,
+      "HUM": 5,
+      "COSO": 71
+    },
+    "bucket_counts": {
+      "C": 87,
+      "A": 1
+    },
+    "canonical_cardinality_cell_counts": {
+      "1": 24,
+      "2": 57,
+      "0": 7
+    },
+    "canonical_cardinality_row_counts": {
+      "2": 35,
+      "1": 18,
+      "0": 7
+    },
+    "canonical_rationale_exact_label_mentions": 0,
+    "unique_source_groups": 59,
+    "bucket_c_prior_clear_vote_count_distribution": {
+      "1": 21,
+      "2": 45,
+      "3": 15,
+      "0": 6
+    }
+  },
+  "plausible": {
+    "cells": 123,
+    "existing_positive": 5,
+    "existing_negative": 118,
+    "source_counts": {
+      "PHQ": 76,
+      "HUM": 3,
+      "COSO": 44
+    }
+  },
+  "selection": {
+    "full_train_ab_disagreement_rows": 179,
+    "full_train_ab_disagreement_share": 0.21284185493460167,
+    "review_ab_disagreement_rows": 179,
+    "review_ab_disagreement_share": 0.8099547511312217,
+    "enrichment_ratio": 3.8054298642533935,
+    "source_ab_disagreement": {
+      "PHQ": {
+        "rows": 468,
+        "count": 91,
+        "rate": 0.19444444444444445
+      },
+      "COSO": {
+        "rows": 319,
+        "count": 82,
+        "rate": 0.25705329153605017
+      },
+      "HUM": {
+        "rows": 54,
+        "count": 6,
+        "rate": 0.1111111111111111
+      }
+    }
+  },
+  "patch_dev_effect": {
+    "macro_f1_before": 0.34517862965139323,
+    "macro_f1_after": 0.3287162196992808,
+    "macro_precision_delta": -0.04587230368385842,
+    "macro_recall_delta": 0.006593714927048189,
+    "micro_precision_before": 0.5797101449275363,
+    "micro_precision_after": 0.5436241610738255,
+    "micro_recall_before": 0.48484848484848486,
+    "micro_recall_after": 0.4909090909090909,
+    "predictions_before": 138,
+    "predictions_after": 149,
+    "gained_predictions": 13,
+    "lost_predictions": 2,
+    "gained_tp": 2,
+    "gained_fp": 11,
+    "lost_tp": 1,
+    "lost_fp": 1,
+    "net_tp": 1,
+    "net_fp": 10
+  },
+  "oof": {
+    "all OOF": {
+      "slice": "all OOF",
+      "rows": 841,
+      "macro_f1_all_18": 0.49230616419885426,
+      "macro_f1_supported_labels": 0.49230616419885426,
+      "supported_labels": 18,
+      "micro_f1": 0.5708884688090737
+    },
+    "PHQ OOF": {
+      "slice": "PHQ OOF",
+      "rows": 468,
+      "macro_f1_all_18": 0.4977110247234349,
+      "macro_f1_supported_labels": 0.4977110247234349,
+      "supported_labels": 18,
+      "micro_f1": 0.5925925925925926
+    },
+    "COSO OOF": {
+      "slice": "COSO OOF",
+      "rows": 319,
+      "macro_f1_all_18": 0.3708919907894789,
+      "macro_f1_supported_labels": 0.3708919907894789,
+      "supported_labels": 18,
+      "micro_f1": 0.5213414634146342
+    },
+    "HUM OOF": {
+      "slice": "HUM OOF",
+      "rows": 54,
+      "macro_f1_all_18": 0.48630751964085295,
+      "macro_f1_supported_labels": 0.5835690235690234,
+      "supported_labels": 15,
+      "micro_f1": 0.6942148760330579
+    },
+    "reviewed 221": {
+      "slice": "reviewed 221",
+      "rows": 221,
+      "macro_f1_all_18": 0.4113372723460442,
+      "macro_f1_supported_labels": 0.4113372723460442,
+      "supported_labels": 18,
+      "micro_f1": 0.46652267818574517
+    },
+    "A/B disagreement 179": {
+      "slice": "A/B disagreement 179",
+      "rows": 179,
+      "macro_f1_all_18": 0.4212912083139121,
+      "macro_f1_supported_labels": 0.4212912083139121,
+      "supported_labels": 18,
+      "micro_f1": 0.4566929133858268
+    },
+    "controls 42": {
+      "slice": "controls 42",
+      "rows": 42,
+      "macro_f1_all_18": 0.23456790123456786,
+      "macro_f1_supported_labels": 0.28148148148148144,
+      "supported_labels": 15,
+      "micro_f1": 0.5121951219512195
+    },
+    "not reviewed 620": {
+      "slice": "not reviewed 620",
+      "rows": 620,
+      "macro_f1_all_18": 0.5238770416887608,
+      "macro_f1_supported_labels": 0.5238770416887608,
+      "supported_labels": 18,
+      "micro_f1": 0.6138790035587188
+    }
+  }
+}

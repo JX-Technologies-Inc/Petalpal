@@ -1,0 +1,20 @@
+{
+  "protocolId": "coso-selective-ranking-v1",
+  "status": "PREPARATION_ONLY",
+  "objective": "One and only one training run testing a combined selective ranking objective and COSO source weighting intervention.",
+  "inputs": {"train": "../train.jsonl", "dev": "../dev.jsonl", "trainRows": 841, "devRows": 149},
+  "guards": {
+    "mapping": "Recover 28-output order from the incumbent checkpoint config and assert exact names, indices, and selected18 order; no hand-entered indices.",
+    "metricLock": "Reuse v4/auto-v1/experiment.py report/metric_report, exact 18-label order and zero_division=0; incumbent .34517862965139323 is a frozen artifact and Dev baseline must not be rerun.",
+    "selectorReachability": "Audit every canonical Train and locked Dev 2-label gold row against existing selectFlowerSecondaryEmotions cluster rules. Any unexpressible canonical Dev set is a blocker. Selector is immutable.",
+    "weightedCardinality": "Mechanically recompute source-weighted k=0/1/2 counts from locked 841 Train and frozen source weights; continue only for exactly [263,596,301], sum 1160.",
+    "leakage": "Assert Train/Dev IDs, source groups and text hashes are disjoint and all lock hashes match.",
+    "validRunBoundary": "VALID TRAINING RUN STARTS AT THE FIRST optimizer.step() AFTER ALL PREFLIGHT GUARDS PASS. Syntax/schema/file/guard failure and preflight STOP are not training. After the first optimizer.step(), no second configuration or rerun is permitted.",
+    "predictionCardinality": "Future evaluation separately records cardinality-head predicted k, pre-cluster top-k count, and final post-selector count.",
+    "interpretation": "This changes both selective objective and COSO source weighting. Success may only be called combined intervention success; it cannot establish independent causal effects of ranking or source weighting."
+  },
+  "expectedWeightedCardinality": [263, 596, 301],
+  "sourceWeights": {"PHQ": 1.0, "COSO": 2.0, "HUM": 1.0},
+  "baseline": {"selected18MacroF1": 0.34517862965139323, "source": "frozen incumbent artifact", "rerunDevBaseline": false},
+  "training": {"allowedConfigurations": 1, "trainingStarted": false}
+}

@@ -10,5 +10,17 @@
   "queue_derivation": "union of saved disagreement keys, frozen missing keys, and protocol tail-sample x label keys",
   "old_metrics_recomputed": false,
   "human_review_frozen": true,
-  "final_reference_set_allowed": false
+  "final_reference_set_allowed": false,
+  "astra_judgments_completed": true,
+  "astra_judgments_n": 1818,
+  "astra_judgments_locked": true,
+  "astra_validation": "PASS",
+  "disk_checkpoint_before_resume": 1458,
+  "newly_completed_rows": 360,
+  "remaining_astra_ids": 0,
+  "comparison_performed": false,
+  "luna_blind_input_prepared": true,
+  "auxiliary_evidence_preserved": true,
+  "luna_judgments_completed": true,
+  "model_panel_comparison_completed": true
 }

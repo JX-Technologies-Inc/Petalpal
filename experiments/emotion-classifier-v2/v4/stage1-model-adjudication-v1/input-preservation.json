@@ -1,0 +1,12 @@
+{
+  "sha256": {
+    "model-adjudication-input.csv": "f3903587a63b50c827288ec681e54f160299a0f28fa7990f693f2eaafe43ced3",
+    "auxiliary-frozen-evidence.csv": "de5659b965e4757833deb30a229ff29aff9a355decd4a44d8b6b60e842ba7887",
+    "core-human-agreement-registry.csv": "02eaeef9beac6cf4d54cfca1002e2331762a3207444fd6e64763f13742db1c8d",
+    "source-manifest.json": "b619036f1c60e03d76440ff4d30e47d5f44744d7ab4e11408e6a530c7749ad12",
+    "model-judge-blind-input.csv": "dc251f90f5cc1be7072f2aeb4895b87cc9034089a6b45b9e494560aef9a5663e",
+    "luna-judge-input.csv": "dc251f90f5cc1be7072f2aeb4895b87cc9034089a6b45b9e494560aef9a5663e",
+    "luna-judgments.csv": "e8152758f2949ddc386586cbc438c3321554e7b69aafc4918ad707a4d48cd78f",
+    "model-stage1-guidance-v1.md": "e3fb6a2c9658645fc31fa9d8e86bcf7546bca54ee6708e1955a861b371dcd145"
+  }
+}

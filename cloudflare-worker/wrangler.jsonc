@@ -5,5 +5,15 @@
   "compatibility_date": "2026-08-26",
   "ai": {
     "binding": "AI"
+  },
+  "vars": {
+    "REPORT_NARRATIVE_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
   }
 }

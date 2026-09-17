@@ -1,0 +1,27 @@
+{
+  "created_after_astra_lock_utc": "2026-09-15T21:27:46.036378+00:00",
+  "independent_panel_judges": [
+    "Astra",
+    "Luna"
+  ],
+  "astra_model_identity": "gpt-6-astra",
+  "astra_current_reasoning_effort": "xhigh",
+  "astra_configuration_transition_count": 667,
+  "astra_original_count": 186,
+  "astra_segments": {
+    "ORIGINAL_186": 186,
+    "RECOVERED_PRIOR_CONTINUATION": 399,
+    "CONTINUATION_BEFORE_EXPLICIT_XHIGH": 82,
+    "EXPLICIT_XHIGH_CONTINUATION": 1151
+  },
+  "astra_same_judge_run_across_segments": true,
+  "luna": {
+    "user_identified_judge": "Luna",
+    "exact_model_identity": "NOT_INDEPENDENTLY_RECORDED",
+    "reasoning_configuration": "NOT_INDEPENDENTLY_RECORDED"
+  },
+  "luna_sha256": "e8152758f2949ddc386586cbc438c3321554e7b69aafc4918ad707a4d48cd78f",
+  "luna_regenerated_this_task": false,
+  "no_ultra_model_judge": true,
+  "final_reference_set_allowed": false
+}

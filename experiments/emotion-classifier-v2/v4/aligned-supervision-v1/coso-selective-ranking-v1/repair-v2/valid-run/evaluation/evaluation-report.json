@@ -1,0 +1,257 @@
+{
+  "semanticCheckpointGuard": "PASS",
+  "devInferenceExecuted": true,
+  "rawModelShape": [
+    149,
+    28
+  ],
+  "productShape": [
+    149,
+    18
+  ],
+  "metrics": {
+    "macro": {
+      "precision": 0.4275462962962963,
+      "recall": 0.33590869007535673,
+      "f1": 0.3563948287229191
+    },
+    "micro": {
+      "precision": 0.593103448275862,
+      "recall": 0.5212121212121212,
+      "f1": 0.5548387096774193
+    }
+  },
+  "perLabel": [
+    {
+      "label": "admiration",
+      "support": 2,
+      "predictedCount": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "TP": 0,
+      "FP": 1,
+      "FN": 2
+    },
+    {
+      "label": "amusement",
+      "support": 7,
+      "predictedCount": 2,
+      "precision": 1.0,
+      "recall": 0.2857142857142857,
+      "f1": 0.4444444444444444,
+      "TP": 2,
+      "FP": 0,
+      "FN": 5
+    },
+    {
+      "label": "anger",
+      "support": 0,
+      "predictedCount": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "TP": 0,
+      "FP": 1,
+      "FN": 0
+    },
+    {
+      "label": "annoyance",
+      "support": 21,
+      "predictedCount": 8,
+      "precision": 0.625,
+      "recall": 0.23809523809523808,
+      "f1": 0.3448275862068966,
+      "TP": 5,
+      "FP": 3,
+      "FN": 16
+    },
+    {
+      "label": "caring",
+      "support": 15,
+      "predictedCount": 9,
+      "precision": 0.5555555555555556,
+      "recall": 0.3333333333333333,
+      "f1": 0.4166666666666667,
+      "TP": 5,
+      "FP": 4,
+      "FN": 10
+    },
+    {
+      "label": "confusion",
+      "support": 1,
+      "predictedCount": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "TP": 0,
+      "FP": 2,
+      "FN": 1
+    },
+    {
+      "label": "curiosity",
+      "support": 2,
+      "predictedCount": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "TP": 0,
+      "FP": 1,
+      "FN": 2
+    },
+    {
+      "label": "disappointment",
+      "support": 4,
+      "predictedCount": 4,
+      "precision": 0.75,
+      "recall": 0.75,
+      "f1": 0.75,
+      "TP": 3,
+      "FP": 1,
+      "FN": 1
+    },
+    {
+      "label": "disgust",
+      "support": 2,
+      "predictedCount": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "TP": 0,
+      "FP": 0,
+      "FN": 2
+    },
+    {
+      "label": "excitement",
+      "support": 8,
+      "predictedCount": 6,
+      "precision": 0.5,
+      "recall": 0.375,
+      "f1": 0.42857142857142855,
+      "TP": 3,
+      "FP": 3,
+      "FN": 5
+    },
+    {
+      "label": "fear",
+      "support": 10,
+      "predictedCount": 9,
+      "precision": 0.4444444444444444,
+      "recall": 0.4,
+      "f1": 0.42105263157894735,
+      "TP": 4,
+      "FP": 5,
+      "FN": 6
+    },
+    {
+      "label": "gratitude",
+      "support": 12,
+      "predictedCount": 8,
+      "precision": 0.875,
+      "recall": 0.5833333333333334,
+      "f1": 0.7,
+      "TP": 7,
+      "FP": 1,
+      "FN": 5
+    },
+    {
+      "label": "joy",
+      "support": 42,
+      "predictedCount": 54,
+      "precision": 0.6666666666666666,
+      "recall": 0.8571428571428571,
+      "f1": 0.75,
+      "TP": 36,
+      "FP": 18,
+      "FN": 6
+    },
+    {
+      "label": "love",
+      "support": 9,
+      "predictedCount": 4,
+      "precision": 0.5,
+      "recall": 0.2222222222222222,
+      "f1": 0.3076923076923077,
+      "TP": 2,
+      "FP": 2,
+      "FN": 7
+    },
+    {
+      "label": "optimism",
+      "support": 12,
+      "predictedCount": 15,
+      "precision": 0.4666666666666667,
+      "recall": 0.5833333333333334,
+      "f1": 0.5185185185185185,
+      "TP": 7,
+      "FP": 8,
+      "FN": 5
+    },
+    {
+      "label": "remorse",
+      "support": 2,
+      "predictedCount": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "TP": 0,
+      "FP": 1,
+      "FN": 2
+    },
+    {
+      "label": "sadness",
+      "support": 11,
+      "predictedCount": 16,
+      "precision": 0.5625,
+      "recall": 0.8181818181818182,
+      "f1": 0.6666666666666666,
+      "TP": 9,
+      "FP": 7,
+      "FN": 2
+    },
+    {
+      "label": "surprise",
+      "support": 5,
+      "predictedCount": 4,
+      "precision": 0.75,
+      "recall": 0.6,
+      "f1": 0.6666666666666666,
+      "TP": 3,
+      "FP": 1,
+      "FN": 2
+    }
+  ],
+  "TP": 86,
+  "FP": 59,
+  "FN": 79,
+  "predictedCardinality": {
+    "0": 38,
+    "1": 77,
+    "2": 34
+  },
+  "goldPredictedCardinalityMatrix": [
+    [
+      20,
+      10,
+      0
+    ],
+    [
+      15,
+      43,
+      15
+    ],
+    [
+      3,
+      24,
+      19
+    ]
+  ],
+  "exactSetCorrect": 56,
+  "exactSetAccuracy": 0.37583892617449666,
+  "zeroLabelPredictions": 38,
+  "averagePredictedLabels": 0.9731543624161074,
+  "gateVerdict": "REJECT",
+  "checkpointSha256": "0b4df957a95ce675f30364065273599f584e52eca307539a7ddb26429483b08f",
+  "devSha256": "4013fe156dbfa059957c80a49b9e3a2766ac816422c530f88760265b34abe038",
+  "noProb21": true
+}

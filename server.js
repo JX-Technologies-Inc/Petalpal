@@ -30,6 +30,10 @@ import {
 } from "./lib/fairy-config.js";
 import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
 import { resolveDailyFlowerEmotion } from "./lib/daily-flower-input.js";
+import { createEventAndEnqueueMemoryJob } from "./lib/ai-jobs.js";
+import { PrivateEventRepository } from "./lib/ai-events.js";
+import { PrismaMemoryRepository } from "./lib/event-memory.js";
+import { PrivateReportRepository } from "./lib/report-foundation.js";
 import { resolveFairyEvent } from "./lib/fairy-events.js";
 import {
   serializeGardenResponse,
@@ -52,7 +56,9 @@ import {
   requireJsonObject
 } from "./lib/http-errors.js";
 import { logServerError } from "./lib/security-log.js";
-import { assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
+import { requestId, emitSecurityEvent } from "./lib/security-events.js";
+import { createAuditEvent } from "./lib/audit-events.js";
+import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +71,12 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rateLimiters();
+
+app.use((req, res, next) => {
+  req.requestId = requestId();
+  res.set("X-Request-ID", req.requestId);
+  next();
+});
 
 app.set("trust proxy", trustProxySetting());
 let emotionClassifier = classifyEmotion;
@@ -203,7 +215,9 @@ app.use(cors({
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiDocument));
+if (apiDocsEnabled()) {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiDocument));
+}
 app.use("/auth", authRateLimit);
 
 app.use((req, res, next) => {
@@ -297,7 +311,7 @@ function hasOnlyBooleans(body, fields) {
   );
 }
 
-for (const parameter of ["userId", "id", "fairyId", "requestId", "flowerId"]) {
+for (const parameter of ["userId", "id", "fairyId", "requestId", "flowerId", "eventId", "memoryId", "reportId"]) {
   app.param(parameter, (req, res, next, value) => {
     if (!validId(value)) return res.status(400).json({ error: `Invalid ${parameter}` });
     return next();
@@ -1524,28 +1538,131 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
   const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
   const now = new Date();
 
-  const consent = await prisma.aiConsent.upsert({
-    where: { userId: req.auth.userId },
-    update: {
-      termsVersion: AI_TERMS_VERSION,
-      aiProcessing,
-      personalization,
-      memoryEnabled,
-      grantedAt: aiProcessing ? now : null,
-      revokedAt: aiProcessing ? null : now
-    },
-    create: {
-      userId: req.auth.userId,
-      termsVersion: AI_TERMS_VERSION,
-      aiProcessing,
-      personalization,
-      memoryEnabled,
-      grantedAt: aiProcessing ? now : null,
-      revokedAt: aiProcessing ? null : now
+  const consent = await prisma.$transaction(async (tx) => {
+    const updated = await tx.aiConsent.upsert({
+      where: { userId: req.auth.userId },
+      update: {
+        termsVersion: AI_TERMS_VERSION,
+        aiProcessing,
+        personalization,
+        memoryEnabled,
+        grantedAt: aiProcessing ? now : null,
+        revokedAt: aiProcessing ? null : now
+      },
+      create: {
+        userId: req.auth.userId,
+        termsVersion: AI_TERMS_VERSION,
+        aiProcessing,
+        personalization,
+        memoryEnabled,
+        grantedAt: aiProcessing ? now : null,
+        revokedAt: aiProcessing ? null : now
+      }
+    });
+    if (!memoryEnabled) {
+      await tx.aiJob.updateMany({
+        where: {
+          ownerId: req.auth.userId,
+          status: { in: ["PENDING", "RUNNING"] }
+        },
+        data: {
+          status: "CANCELLED",
+          completedAt: now,
+          lockedAt: null,
+          lockedBy: null,
+          leaseExpiresAt: null,
+          lastError: "Memory processing consent was disabled"
+        }
+      });
     }
+    return updated;
   });
 
+  try {
+    await createAuditEvent({
+      eventType: aiProcessing ? (personalization || memoryEnabled ? "AI_PROCESSING_GRANTED" : "AI_PROCESSING_GRANTED") : "AI_PROCESSING_REVOKED",
+      outcome: "COMPLETED", correlationId: req.requestId, actorUserId: req.auth.userId,
+      targetClass: "ai_consent", actionCode: "AI_CONSENT"
+    });
+  } catch (auditError) {
+    emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
+  }
+  emitSecurityEvent({ eventType: "ai_consent_changed", outcome: "completed", correlationId: req.requestId, routeClass: req.path, resourceClass: "ai_consent", actorId: req.auth.userId, success: true });
   res.json(consent);
+});
+
+app.post("/events", aiRateLimit, async (req, res) => {
+  try {
+    if (Object.hasOwn(req.body, "ownerId") || Object.hasOwn(req.body, "userId") || req.query.ownerId !== undefined || req.query.userId !== undefined) {
+      return res.status(400).json({ error: "Event ownership is derived from the authenticated Firebase identity" });
+    }
+    const result = await createEventAndEnqueueMemoryJob({
+      prisma,
+      identity: req.auth,
+      content: req.body.content,
+      occurredAt: req.body.occurredAt ?? new Date(),
+      idempotencyKey: req.get("idempotency-key")
+    });
+    return res.status(result.created ? 201 : 200).json({
+      event: result.event,
+      memoryJob: result.job ? { id: result.job.id, status: result.job.status } : null
+    });
+  } catch (error) {
+    if (error?.code === "INVALID_IDEMPOTENCY_KEY" || error?.code === "INVALID_EVENT") {
+      return res.status(400).json({ error: error.message });
+    }
+    if (error?.code === "EVENT_TOO_LARGE") return res.status(413).json({ error: error.message });
+    if (error?.code === "IDEMPOTENCY_CONFLICT") return res.status(409).json({ error: error.message });
+    logServerError("POST /events error", error);
+    return res.status(500).json({ error: "Failed to create Event" });
+  }
+});
+
+app.get("/events/:eventId", async (req, res) => {
+  const event = await new PrivateEventRepository(prisma).getEventById({
+    identity: req.auth,
+    eventId: req.params.eventId
+  });
+  if (!event) return res.status(404).json({ error: "Event not found" });
+  return res.json(event);
+});
+
+app.delete("/events/:eventId", async (req, res) => {
+  try {
+    const deleted = await new PrivateEventRepository(prisma).deleteEventAndAffectedReports({
+      identity: req.auth,
+      eventId: req.params.eventId
+    });
+    if (!deleted) return res.status(404).json({ error: "Event not found" });
+    return res.json({ success: true, ...deleted });
+  } catch (error) {
+    logServerError("DELETE /events/:eventId error", error);
+    return res.status(500).json({ error: "Failed to delete Event" });
+  }
+});
+
+app.get("/ai/memories/:memoryId", async (req, res) => {
+  const memory = await new PrismaMemoryRepository(prisma).getMemoryById({
+    identity: req.auth,
+    memoryId: req.params.memoryId
+  });
+  if (!memory) return res.status(404).json({ error: "Event memory not found" });
+  return res.json(memory);
+});
+
+app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
+  const reports = new PrivateReportRepository(prisma);
+  const input = { identity: req.auth, reportId: req.params.reportId };
+  const readers = {
+    weekly: () => reports.getWeeklyReportById(input),
+    monthly: () => reports.getMonthlyReportById(input),
+    yearly: () => reports.getYearlyReportById(input)
+  };
+  const read = readers[req.params.reportType];
+  if (!read) return res.status(400).json({ error: "Unsupported AI report type" });
+  const report = await read();
+  if (!report) return res.status(404).json({ error: "AI report not found" });
+  return res.json(report);
 });
 
 app.get("/users/:userId/subscription", async (req, res) => {
@@ -2132,9 +2249,6 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
       select: {
         id: true,
         timezone: true,
-        aiConsent: {
-          select: { aiProcessing: true }
-        },
         fairyState: {
           select: {
             onboardingStep: true,
@@ -2150,11 +2264,16 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
 
     let resolvedEmotion;
     try {
+      if (req.body.journalText !== undefined && req.body.event !== undefined) {
+        return res.status(400).json({ error: "Send journalText or the deprecated event alias, not both" });
+      }
+      const journalText = req.body.journalText !== undefined
+        ? req.body.journalText
+        : req.body.event;
+      if (req.body.event !== undefined) res.set("Deprecation", "true");
       resolvedEmotion = await resolveDailyFlowerEmotion({
         mood: req.body.mood,
-        event: req.body.event,
-        aiProcessingAllowed: Boolean(user.aiConsent?.aiProcessing),
-        classify: emotionClassifier
+        event: journalText
       });
     } catch (error) {
       if ([400, 403, 413].includes(error?.status)) {
@@ -3046,6 +3165,13 @@ app.delete("/users/:id", async (req, res) => {
 
       if (!requireOwnUser(req, res, id)) return;
 
+      try {
+        await createAuditEvent({ eventType: "ACCOUNT_DELETION_REQUESTED", outcome: "REQUESTED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
+      } catch (auditError) {
+        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
+        return res.status(503).json({ error: "Account deletion is temporarily unavailable" });
+      }
+
       const deleted = await prisma.$transaction(async (tx) => {
         const user = await tx.user.findUnique({ where: { id } });
         if (!user) return false;
@@ -3087,6 +3213,11 @@ app.delete("/users/:id", async (req, res) => {
         success: true,
         message: "User deleted successfully"
       });
+      try {
+        await createAuditEvent({ eventType: "ACCOUNT_DELETION_COMPLETED", outcome: "COMPLETED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
+      } catch {
+        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "completed_audit_write_failed", fallbackUsed: true });
+      }
     } catch (err) {
       logServerError("DELETE /users/:id error", err);
       res.status(500).json({

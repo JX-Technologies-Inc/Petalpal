@@ -92,23 +92,16 @@ test("Cloudflare request timeout aborts and returns a controlled classifier erro
   );
 });
 
-test("invalid Fast Llama taxonomy falls back and Daily Grow still completes", async () => {
+test("Daily Grow Journal bypasses emotion AI even when a classifier is configured", async () => {
+  let called = false;
   const result = await resolveDailyFlowerEmotion({
     event: "A complicated day",
     mood: "GENTLE_BLOOM",
     aiProcessingAllowed: true,
-    classify: (text, options) => classifyEmotion(text, {
-      ...options,
-      env,
-      localClassifier: async () => ({ label: "sad", confidence: 0.2, margin: 0.1 }),
-      fastClassifier: async () => ({
-        label: "sad",
-        confidence: 0.9,
-        secondaryEmotions: ["tired"]
-      })
-    })
+    classify: async () => { called = true; }
   });
+  assert.equal(called, false);
   assert.equal(result.mood, "GENTLE_BLOOM");
-  assert.equal(result.classification.inferencePath, "DETERMINISTIC_FALLBACK");
+  assert.equal(result.classification.inferencePath, "NO_AI");
   assert.deepEqual(result.classification.secondaryEmotions, []);
 });

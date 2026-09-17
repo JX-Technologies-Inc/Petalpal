@@ -1,0 +1,133 @@
+{
+  "mapping28Order": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "approval",
+    "caring",
+    "confusion",
+    "curiosity",
+    "desire",
+    "disappointment",
+    "disapproval",
+    "disgust",
+    "embarrassment",
+    "excitement",
+    "fear",
+    "gratitude",
+    "grief",
+    "joy",
+    "love",
+    "nervousness",
+    "optimism",
+    "pride",
+    "realization",
+    "relief",
+    "remorse",
+    "sadness",
+    "surprise",
+    "neutral"
+  ],
+  "selected18Labels": [
+    "admiration",
+    "amusement",
+    "anger",
+    "annoyance",
+    "caring",
+    "confusion",
+    "curiosity",
+    "disappointment",
+    "disgust",
+    "excitement",
+    "fear",
+    "gratitude",
+    "joy",
+    "love",
+    "optimism",
+    "remorse",
+    "sadness",
+    "surprise"
+  ],
+  "selected18LogitIndices": {
+    "admiration": 0,
+    "amusement": 1,
+    "anger": 2,
+    "annoyance": 3,
+    "caring": 5,
+    "confusion": 6,
+    "curiosity": 7,
+    "disappointment": 9,
+    "disgust": 11,
+    "excitement": 13,
+    "fear": 14,
+    "gratitude": 15,
+    "joy": 17,
+    "love": 18,
+    "optimism": 20,
+    "remorse": 24,
+    "sadness": 25,
+    "surprise": 26
+  },
+  "selected18OrderSource": "existing v4/gemini-improvement-v1/prepare_split.py",
+  "sourceWeights": {
+    "PHQ": 1.0,
+    "COSO": 2.0,
+    "HUM": 1.0
+  },
+  "sourceCardinalityTable": {
+    "PHQ": {
+      "k0": 123,
+      "k1": 279,
+      "k2": 66,
+      "rows": 468
+    },
+    "COSO": {
+      "k0": 67,
+      "k1": 144,
+      "k2": 108,
+      "rows": 319
+    },
+    "HUM": {
+      "k0": 6,
+      "k1": 29,
+      "k2": 19,
+      "rows": 54
+    }
+  },
+  "expectedSourceCardinalityTable": {
+    "PHQ": {
+      "0": 123,
+      "1": 279,
+      "2": 66
+    },
+    "COSO": {
+      "0": 67,
+      "1": 144,
+      "2": 108
+    },
+    "HUM": {
+      "0": 6,
+      "1": 29,
+      "2": 19
+    }
+  },
+  "rawTrainCardinality": [
+    196,
+    452,
+    193
+  ],
+  "weightedCardinality": [
+    263.0,
+    596.0,
+    301.0
+  ],
+  "weightedTotal": 1160.0,
+  "blockers": [],
+  "hashes": {
+    "train.jsonl": "daaf3ed65a72ece0e0421225b1fde863b4d8c686507a07da16167702526e013a",
+    "annotation-lock.json": "ac28b11a77beb84721ce0ae023d5a9225a2e46451c049bdab114d2a8670fb0f3",
+    "split-lock.json": "b3d6b200ada8a32e78cf31042ff19c2761646b4e6aad2b75a28166762572612e"
+  },
+  "metricImplementationSha256": "5c8b24021999f0f35883498a7705f7b3e5e9c43ea4a14b3a0ccc7fddedc61290"
+}

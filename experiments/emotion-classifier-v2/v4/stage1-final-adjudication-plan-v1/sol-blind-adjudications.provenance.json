@@ -1,0 +1,8 @@
+{
+  "adjudicator_identity": "OpenAI Codex (GPT-5), fresh-context blind judge",
+  "protocol_version": "sol-high-reconciled-deterministic-v1",
+  "instruction_version": "stage1-final-sol-blind-v1",
+  "blind_input_sha256": "325cb7baa5cee556d315ae7bfb3300480c05c2d3272bb00aba362a34f6b48dec",
+  "artifact_kind": "model-adjudicated judgments",
+  "human_gold": false
+}

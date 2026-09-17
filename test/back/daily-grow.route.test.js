@@ -13,15 +13,19 @@ const originals = {
   checkInFindFirst: prisma.dailyCheckIn.findFirst,
   checkInFindMany: prisma.dailyCheckIn.findMany,
   flowerFindMany: prisma.flower.findMany,
+  eventCreate: prisma.event.create,
+  aiJobCreate: prisma.aiJob.create,
   transaction: prisma.$transaction
 };
 
 let state;
 let transactionCalls;
+let longTermAiWrites;
 
 function resetState() {
   state = { checkIn: null, journal: null, emotion: null, flower: null, ai: null, fairyState: null };
   transactionCalls = 0;
+  longTermAiWrites = 0;
 }
 
 const owner = {
@@ -95,6 +99,8 @@ function installPrismaStub() {
     ? [{ ...state.checkIn, flower: state.flower }]
     : [];
   prisma.flower.findMany = async () => state.flower ? [state.flower] : [];
+  prisma.event.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create Event"); };
+  prisma.aiJob.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create AIJob"); };
   prisma.$transaction = async (callback) => {
     transactionCalls += 1;
     return transactionCalls % 2 === 1 ? callback(transaction) : null;
@@ -109,6 +115,8 @@ function restorePrisma() {
   prisma.dailyCheckIn.findFirst = originals.checkInFindFirst;
   prisma.dailyCheckIn.findMany = originals.checkInFindMany;
   prisma.flower.findMany = originals.flowerFindMany;
+  prisma.event.create = originals.eventCreate;
+  prisma.aiJob.create = originals.aiJobCreate;
   prisma.$transaction = originals.transaction;
 }
 
@@ -150,7 +158,7 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
       body: { mood: "", event: "" }
     });
     assert.equal(result.status, 400);
-    assert.deepEqual(result.body, { error: "Choose a mood or write an optional journal entry" });
+    assert.deepEqual(result.body, { error: "Choose a mood; Journal text is private and is never sent to AI" });
   });
 
   await t.test("creates a deterministic canonical Flower from Mood only", async () => {
@@ -174,30 +182,20 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(state.fairyState.lastEvent, "FIRST_FLOWER");
   });
 
-  await t.test("persists valid AI analysis and keeps private data owner-only", async () => {
+  await t.test("deprecated event alias persists Journal only and never calls AI", async () => {
     resetState();
-    setEmotionClassifierForTests(async () => ({
-      label: "happy",
-      confidence: 0.91,
-      secondaryEmotions: ["gratitude"],
-      intensity: 0.7,
-      provider: "CLOUDFLARE_WORKERS_AI",
-      model: "test-model",
-      inferencePath: "FAST_LLM_FALLBACK",
-      latencyMs: 4,
-      success: true,
-      errorCode: null
-    }));
+    setEmotionClassifierForTests(async () => assert.fail("Journal must never call emotion AI"));
 
     const created = await api(baseUrl, `/users/${owner.id}/flowers`, {
       method: "POST",
       body: { mood: "SUNNY_BLOOM", event: "A private thankful moment" }
     });
     assert.equal(created.status, 201);
-    assert.deepEqual(created.body.secondaryEmotions, ["gratitude"]);
-    assert.equal(created.body.flower.variant.colorAccent, "WARM_GOLD");
+    assert.deepEqual(created.body.secondaryEmotions, []);
     assert.equal(state.journal.content, "A private thankful moment");
-    assert.equal(state.ai.provider, "CLOUDFLARE_WORKERS_AI");
+    assert.equal(state.ai, null);
+    assert.equal(state.emotion.inferencePath, "NO_AI");
+    assert.equal(longTermAiWrites, 0);
 
     const checkIns = await api(baseUrl, `/users/${owner.id}/check-ins`);
     assert.equal(checkIns.status, 200);
@@ -207,7 +205,7 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(ownerGarden.body.flowers[0].event, "A private thankful moment");
     assert.deepEqual(
       ownerGarden.body.flowers[0].dailyCheckIn.emotionResult.secondaryEmotions,
-      ["gratitude"]
+      []
     );
 
     const socialGarden = await api(baseUrl, `/users/${owner.id}/garden`, { token: "friend-token" });
@@ -234,26 +232,17 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     }
   });
 
-  await t.test("deterministic AI fallback still completes and persists Daily Grow", async () => {
+  await t.test("canonical journalText remains private even when a classifier is available", async () => {
     resetState();
-    setEmotionClassifierForTests(async () => ({
-      label: "FIRE_BLOOM",
-      confidence: null,
-      secondaryEmotions: [],
-      intensity: null,
-      provider: "DETERMINISTIC",
-      model: "keyword-fallback-v1",
-      inferencePath: "DETERMINISTIC_FALLBACK",
-      latencyMs: 2,
-      success: true,
-      errorCode: "WORKER_INVALID_OUTPUT"
-    }));
+    setEmotionClassifierForTests(async () => assert.fail("Journal must never call emotion AI"));
     const result = await api(baseUrl, `/users/${owner.id}/flowers`, {
       method: "POST",
-      body: { mood: "FIRE_BLOOM", event: "AI can fail without blocking this flower" }
+      body: { mood: "FIRE_BLOOM", journalText: "Private Journal text" }
     });
     assert.equal(result.status, 201);
-    assert.equal(state.emotion.inferencePath, "DETERMINISTIC_FALLBACK");
+    assert.equal(state.journal.content, "Private Journal text");
+    assert.equal(state.emotion.inferencePath, "NO_AI");
+    assert.equal(state.ai, null);
     assert.equal(state.flower.dailyCheckInId, "checkin-1");
   });
 
@@ -283,6 +272,53 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     } finally {
       if (previousValue === undefined) delete process.env.DAILY_GROW_LIMIT_ENABLED;
       else process.env.DAILY_GROW_LIMIT_ENABLED = previousValue;
+    }
+  });
+
+  await t.test("replay and true 20-request concurrency preserve one Daily Grow", async () => {
+    resetState();
+    process.env.DAILY_GROW_LIMIT_ENABLED = "true";
+    const originalTransaction = prisma.$transaction;
+    let queue = Promise.resolve();
+    prisma.$transaction = async (callback) => {
+      const run = queue.then(async () => {
+        if (state.checkIn) {
+          const error = new Error("unique daily grow");
+          error.code = "P2002";
+          throw error;
+        }
+        return callback(transaction);
+      });
+      queue = run.catch(() => {});
+      return run;
+    };
+    try {
+      const first = await api(baseUrl, `/users/${owner.id}/flowers`, {
+        method: "POST", body: { mood: "SUNNY_BLOOM" }
+      });
+      const replay = await api(baseUrl, `/users/${owner.id}/flowers`, {
+        method: "POST", body: { mood: "SUNNY_BLOOM" }
+      });
+      assert.equal(first.status, 201);
+      assert.equal(replay.status, 409);
+      resetState();
+      queue = Promise.resolve();
+      const results = await Promise.all(Array.from({ length: 20 }, () => api(
+        baseUrl, `/users/${owner.id}/flowers`, { method: "POST", body: { mood: "SUNNY_BLOOM" } }
+      )));
+      const statuses = results.reduce((counts, result) => {
+        const key = result.status === 201 ? "success" : result.status === 409 ? "conflict" : `unexpected-${result.status}`;
+        counts[key] = (counts[key] || 0) + 1;
+        return counts;
+      }, {});
+      assert.deepEqual(statuses, { success: 1, conflict: 19 });
+      assert.equal(state.checkIn.localDate, "2026-09-16");
+      assert.equal(state.flower.dailyCheckInId, state.checkIn.id);
+      assert.equal(state.journal, null);
+      assert.equal(longTermAiWrites, 0);
+    } finally {
+      prisma.$transaction = originalTransaction;
+      delete process.env.DAILY_GROW_LIMIT_ENABLED;
     }
   });
 });

@@ -1,0 +1,26 @@
+{
+  "status": "FINAL_ASSEMBLY_COMPLETE_NO_TRAINING",
+  "assembly_timestamp_utc": "2026-09-15T22:24:44.679298+00:00",
+  "assembly_model_or_agent_identity": "Mechanical assembler / validator (no judge call)",
+  "reference_designation": "model-adjudicated reference set",
+  "human_gold_claim_allowed": false,
+  "ground_truth_claim_allowed": false,
+  "finalization_protocol_id": "stage1-finalization-protocol-v1",
+  "finalization_protocol_version": "1.0.0",
+  "triage_manifest_sha256": "99ec8dc143fe65036d2bcfcdb27c1dc23d9a396759d9a5628c72b956d5fe6894",
+  "frozen_fresh_sol_judgments_sha256": "95d225d9bef8812dea7e0c4551457c9a8edc76f01743e2de6a49ce53f34a33f6",
+  "sidecar_used_as_final_label_source": false,
+  "unresolved_preserved": true,
+  "buckets": {
+    "A": 847,
+    "B": 356,
+    "C": 409,
+    "D": 206
+  },
+  "hard_reference_total": 1256,
+  "unresolved_total": 562,
+  "sol_c_exact_set_match": true,
+  "no_judgment_mutation": true,
+  "no_final_holdout_access": true,
+  "stage2_stage3_deprecated": true
+}

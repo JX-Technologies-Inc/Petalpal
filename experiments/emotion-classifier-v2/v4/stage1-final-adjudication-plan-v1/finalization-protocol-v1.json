@@ -1,0 +1,208 @@
+{
+  "protocol_id": "stage1-finalization-protocol-v1",
+  "protocol_version": "1.0.0",
+  "status": "FROZEN_READY_FOR_LUNA_ASSEMBLY",
+  "frozen": true,
+  "policy_kind": "deterministic_stage1_finalization",
+  "reference_designation": "model-adjudicated reference set",
+  "prohibited_designations": [
+    "human gold",
+    "ground truth"
+  ],
+  "scope": {
+    "stage": "Stage 1 applicability only",
+    "stage1_values": [
+      "NO",
+      "PLAUSIBLE",
+      "CLEAR"
+    ],
+    "stage2_status": "DEPRECATED",
+    "stage3_status": "DEPRECATED",
+    "total_universe": 1818,
+    "hard_reference_total": 1256,
+    "uncertainty_total": 562
+  },
+  "inputs": [
+    {
+      "role": "triage_policy",
+      "path": "protocol.json",
+      "sha256": "70ea414bec6fbbd3c3a593db30596405f5d23d4e1c2e9cb9ed7309a6e277f74e",
+      "rules_version": "sol-high-reconciled-deterministic-v1"
+    },
+    {
+      "role": "triage_manifest",
+      "path": "triage-manifest.csv",
+      "sha256": "99ec8dc143fe65036d2bcfcdb27c1dc23d9a396759d9a5628c72b956d5fe6894",
+      "id_field": "adjudication_id",
+      "expected_rows": 1818,
+      "expected_unique_ids": 1818
+    },
+    {
+      "role": "frozen_fresh_sol_blind_judgments",
+      "path": "sol-blind-adjudications.csv",
+      "sha256": "95d225d9bef8812dea7e0c4551457c9a8edc76f01743e2de6a49ce53f34a33f6",
+      "id_field": "ID",
+      "value_field": "judgment",
+      "expected_rows": 409,
+      "expected_unique_ids": 409,
+      "frozen": true
+    },
+    {
+      "role": "frozen_fresh_sol_provenance",
+      "path": "sol-blind-adjudications.provenance.json",
+      "sha256": "c45558ffdb4b367e24a516ef6e546dbb400da6320c30e878f51072d9f1ec10f4"
+    }
+  ],
+  "output_contract": {
+    "hard_value_domain": [
+      "NO",
+      "PLAUSIBLE",
+      "CLEAR"
+    ],
+    "unresolved_representation": {
+      "final_applicability": null,
+      "finalization_status": "UNRESOLVED",
+      "hard_reference_eligible": false
+    },
+    "finalized_representation": {
+      "finalization_status": "FINALIZED",
+      "hard_reference_eligible": true
+    }
+  },
+  "bucket_rules": {
+    "A": {
+      "expected_count": 847,
+      "final_applicability": "COPY(triage-manifest.csv.consensus_applicability_observed)",
+      "finalization_status": "FINALIZED",
+      "hard_reference_eligible": true,
+      "finalization_source": "ASTRA_LUNA_CONSENSUS_OBSERVED",
+      "requirements": [
+        "bucket equals A",
+        "consensus_applicability_observed is one of NO, PLAUSIBLE, CLEAR"
+      ]
+    },
+    "B": {
+      "expected_count": 356,
+      "final_applicability": null,
+      "finalization_status": "UNRESOLVED",
+      "hard_reference_eligible": false,
+      "uncertainty_set_eligible": true,
+      "unresolved_reason": "ADJACENT_MODEL_SPLIT",
+      "voting": "NONE",
+      "tie_break": "NONE"
+    },
+    "C": {
+      "expected_count": 409,
+      "final_applicability": "EXACT_ID_LOOKUP(sol-blind-adjudications.csv.ID -> judgment)",
+      "finalization_status": "FINALIZED",
+      "hard_reference_eligible": true,
+      "finalization_source": "FROZEN_FRESH_SOL_BLIND_JUDGMENT",
+      "merge": {
+        "triage_key": "adjudication_id",
+        "judgment_key": "ID",
+        "cardinality": "ONE_TO_ONE",
+        "required_id_relation": "EXACT_SET_MATCH",
+        "fail_on_duplicate": true,
+        "fail_on_missing": true,
+        "fail_on_extra": true
+      },
+      "constraints": [
+        "Do not re-adjudicate",
+        "Do not modify frozen judgments",
+        "Do not use evidence-sidecar.csv as a final label source",
+        "Do not allow sidecar evidence to override the frozen judgment"
+      ]
+    },
+    "D": {
+      "expected_count": 206,
+      "final_applicability": null,
+      "finalization_status": "UNRESOLVED",
+      "hard_reference_eligible": false,
+      "uncertainty_set_eligible": true,
+      "unresolved_reason": "PROVISIONAL_MODEL_CONSENSUS_NOT_PROMOTED",
+      "promote_consensus_to_hard_label": false,
+      "voting": "NONE",
+      "tie_break": "NONE"
+    }
+  },
+  "unresolved_policy": {
+    "buckets": [
+      "B",
+      "D"
+    ],
+    "expected_count": 562,
+    "retain_in_uncertainty_set": true,
+    "allow_in_hard_reference_supervision": false,
+    "missing_or_unavailable_reviewer_evidence": "PRESERVE_AS_MISSING;DO_NOT_IMPUTE;DO_NOT_INFER",
+    "equal_weight_majority_vote": false,
+    "voting": "NONE",
+    "tie_break": "NONE"
+  },
+  "provenance_requirements": {
+    "required_per_row_fields": [
+      "adjudication_id",
+      "sample_id",
+      "label",
+      "bucket",
+      "final_applicability",
+      "finalization_status",
+      "hard_reference_eligible",
+      "finalization_source_or_unresolved_reason",
+      "finalization_protocol_id",
+      "finalization_protocol_version"
+    ],
+    "required_artifact_metadata": [
+      "triage_manifest_sha256",
+      "frozen_fresh_sol_judgments_sha256",
+      "finalization_protocol_sha256",
+      "assembly_model_or_agent_identity",
+      "assembly_timestamp_utc",
+      "reference_designation"
+    ],
+    "reference_designation_required_value": "model-adjudicated reference set",
+    "human_gold_claim_allowed": false,
+    "ground_truth_claim_allowed": false,
+    "preserve_unresolved_rows": true,
+    "preserve_missing_evidence": true
+  },
+  "assembly_guards": {
+    "execute_assembly_in_this_protocol_freeze": false,
+    "training_authorized": false,
+    "threshold_changes_authorized": false,
+    "protected_or_frozen_holdout_access_authorized": false,
+    "sidecar_override_authorized": false,
+    "stage2_or_stage3_restoration_authorized": false,
+    "fail_closed_on_any_input_hash_mismatch": true,
+    "fail_closed_on_any_count_or_id_mismatch": true
+  },
+  "expected_counts": {
+    "A_finalized": 847,
+    "C_finalized": 409,
+    "hard_reference_total": 1256,
+    "B_unresolved": 356,
+    "D_unresolved": 206,
+    "uncertainty_total": 562,
+    "total_universe": 1818
+  },
+  "freeze_validation": {
+    "status": "PASS",
+    "triage_rows": 1818,
+    "triage_unique_ids": 1818,
+    "bucket_counts": {
+      "A": 847,
+      "B": 356,
+      "C": 409,
+      "D": 206
+    },
+    "a_source_values_complete_and_legal": true,
+    "c_judgment_rows": 409,
+    "c_judgment_unique_ids": 409,
+    "c_id_exact_set_match": true,
+    "c_judgments_legal": true,
+    "hard_reference_count_consistent": true,
+    "unresolved_count_consistent": true,
+    "total_count_consistent": true,
+    "assembly_executed": false
+  },
+  "ready_for_luna_assembly": true
+}

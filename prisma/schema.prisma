@@ -44,6 +44,13 @@ model User {
   subscriptionEntitlement SubscriptionEntitlement?
   fairies                 UserFairy[]
   fairyMonthlyProgress    FairyMonthlyProgress[]
+  events                  Event[]
+  eventMemories           EventMemory[]
+  weeklyReports           WeeklyReport[]
+  monthlyReports          MonthlyReport[]
+  yearlyReports           YearlyReport[]
+  aiJobs                  AiJob[]
+  aiEvidence              AiEvidence[]
 }
 
 model Garden {
@@ -314,6 +321,23 @@ model AiConsent {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model AuditEvent {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  eventType     String   @db.VarChar(64)
+  outcome       String   @db.VarChar(32)
+  correlationId String?  @db.VarChar(128)
+  actorUserId   String?  @db.VarChar(128)
+  targetClass   String   @db.VarChar(64)
+  targetSafeId  String?  @db.VarChar(128)
+  actionCode    String?  @db.VarChar(64)
+  reasonCode    String?  @db.VarChar(64)
+
+  @@index([createdAt])
+  @@index([eventType, createdAt])
+  @@index([actorUserId, createdAt])
+}
+
 model AiInteractionMetadata {
   id             String   @id @default(cuid())
   userId         String
@@ -338,6 +362,217 @@ model AiInteractionMetadata {
   @@index([userId, createdAt])
   @@index([task, createdAt])
   @@index([inferencePath, createdAt])
+}
+
+/// A user-authored, private source for the long-term AI subsystem.
+/// Journal is intentionally a separate model and has no AI relations.
+model Event {
+  id                      String   @id @default(cuid())
+  ownerId                 String
+  content                 String   @db.Text
+  occurredAt              DateTime
+  timezone                String   @db.VarChar(64)
+  localDate               String   @db.VarChar(10)
+  idempotencyKey          String   @db.VarChar(191)
+  memoryProcessingAllowed Boolean  @default(false)
+  consentTermsVersion     String?  @db.VarChar(32)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  owner    User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  memory   EventMemory?
+  aiJobs   AiJob[]
+  evidence AiEvidence[]
+
+  @@unique([id, ownerId])
+  @@unique([ownerId, idempotencyKey])
+  @@index([ownerId, occurredAt])
+  @@index([ownerId, localDate])
+}
+
+model EventMemory {
+  id                     String                      @id @default(cuid())
+  ownerId                String
+  sourceEventId          String                      @unique
+  memoryType             String                      @db.VarChar(64)
+  summary                String                      @db.Text
+  topics                 Json                        @default("[]")
+  people                 Json                        @default("[]")
+  importanceScore        Float?
+  eventDate              DateTime
+  primaryMood            String?                     @db.VarChar(32)
+  secondaryEmotions      Json?
+  emotionConfidence      Float?
+  emotionModelVersion    String?                     @db.VarChar(128)
+  embeddingStatus        String                      @default("NOT_REQUESTED") @db.VarChar(32)
+  embeddingModel         String?                     @db.VarChar(128)
+  embeddingProfileKey    String?                     @db.VarChar(128)
+  embeddingModelRevision String?                     @db.VarChar(128)
+  embeddingInputVersion  String?                     @db.VarChar(32)
+  embeddingInputRevision Int                         @default(1)
+  embeddedInputRevision  Int?
+  embedding              Unsupported("vector(384)")?
+  embeddedAt             DateTime?
+  memoryVersion          String                      @default("v1") @db.VarChar(32)
+  extractionVersion      String                      @default("v1") @db.VarChar(32)
+  createdAt              DateTime                    @default(now())
+  updatedAt              DateTime                    @updatedAt
+
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  sourceEvent Event        @relation(fields: [sourceEventId, ownerId], references: [id, ownerId], onDelete: Cascade)
+  evidence    AiEvidence[]
+
+  @@unique([sourceEventId, ownerId])
+  @@unique([id, ownerId])
+  @@index([ownerId, eventDate])
+  @@index([ownerId, memoryType])
+}
+
+model WeeklyReport {
+  id                String                  @id @default(cuid())
+  ownerId           String
+  timezone          String                  @db.VarChar(64)
+  periodKey         String                  @db.VarChar(10)
+  periodStartUtc    DateTime
+  periodEndUtc      DateTime
+  asOf              DateTime
+  status            AIReportStatus          @default(COMPLETE)
+  eventCount        Int
+  topTopics         Json                    @default("[]")
+  importantEventIds Json                    @default("[]")
+  trendSignals      Json                    @default("{}")
+  summary           String?                 @db.Text
+  narrativeStatus   AIReportNarrativeStatus @default(NOT_GENERATED)
+  narrativeSections Json                    @default("[]")
+  generationVersion String                  @default("deterministic-v1") @db.VarChar(64)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  owner    User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  evidence AiEvidence[]
+
+  @@unique([id, ownerId])
+  @@unique([ownerId, periodKey])
+  @@index([ownerId, periodStartUtc])
+}
+
+model MonthlyReport {
+  id                   String                  @id @default(cuid())
+  ownerId              String
+  timezone             String                  @db.VarChar(64)
+  periodKey            String                  @db.VarChar(7)
+  periodStartUtc       DateTime
+  periodEndUtc         DateTime
+  asOf                 DateTime
+  status               AIReportStatus          @default(COMPLETE)
+  year                 Int
+  month                Int
+  eventCount           Int
+  topTopics            Json                    @default("[]")
+  importantEventIds    Json                    @default("[]")
+  trendSignals         Json                    @default("{}")
+  turningPointEventIds Json                    @default("[]")
+  summary              String?                 @db.Text
+  narrativeStatus      AIReportNarrativeStatus @default(NOT_GENERATED)
+  narrativeSections    Json                    @default("[]")
+  generationVersion    String                  @default("deterministic-v1") @db.VarChar(64)
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  owner    User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  evidence AiEvidence[]
+
+  @@unique([id, ownerId])
+  @@unique([ownerId, year, month])
+  @@unique([ownerId, periodKey])
+  @@index([ownerId, periodStartUtc])
+}
+
+model YearlyReport {
+  id                String         @id @default(cuid())
+  ownerId           String
+  timezone          String         @db.VarChar(64)
+  periodKey         String         @db.VarChar(4)
+  periodStartUtc    DateTime
+  periodEndUtc      DateTime
+  asOf              DateTime
+  status            AIReportStatus @default(COMPLETE)
+  year              Int
+  eventCount        Int
+  topTopics         Json           @default("[]")
+  trendSignals      Json           @default("{}")
+  summary           String?        @db.Text
+  generationVersion String         @default("deterministic-v1") @db.VarChar(64)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  owner    User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  evidence AiEvidence[]
+
+  @@unique([id, ownerId])
+  @@unique([ownerId, year])
+  @@unique([ownerId, periodKey])
+  @@index([ownerId, periodStartUtc])
+}
+
+model AiEvidence {
+  id              String   @id @default(cuid())
+  ownerId         String
+  sourceEventId   String
+  sourceMemoryId  String?
+  claimType       String?  @db.VarChar(64)
+  weeklyReportId  String?
+  monthlyReportId String?
+  yearlyReportId  String?
+  createdAt       DateTime @default(now())
+
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  sourceEvent   Event          @relation(fields: [sourceEventId, ownerId], references: [id, ownerId], onDelete: Cascade)
+  sourceMemory  EventMemory?   @relation(fields: [sourceMemoryId, ownerId], references: [id, ownerId], onDelete: Cascade)
+  weeklyReport  WeeklyReport?  @relation(fields: [weeklyReportId, ownerId], references: [id, ownerId], onDelete: Cascade)
+  monthlyReport MonthlyReport? @relation(fields: [monthlyReportId, ownerId], references: [id, ownerId], onDelete: Cascade)
+  yearlyReport  YearlyReport?  @relation(fields: [yearlyReportId, ownerId], references: [id, ownerId], onDelete: Cascade)
+
+  @@unique([weeklyReportId, sourceEventId])
+  @@unique([monthlyReportId, sourceEventId])
+  @@unique([yearlyReportId, sourceEventId])
+  @@index([ownerId, sourceEventId])
+  @@index([ownerId, sourceMemoryId])
+  @@index([ownerId, weeklyReportId])
+  @@index([ownerId, monthlyReportId])
+  @@index([ownerId, yearlyReportId])
+  @@map("AIEvidence")
+}
+
+model AiJob {
+  id             String      @id @default(cuid())
+  ownerId        String
+  jobType        AIJobType
+  resourceId     String
+  eventId        String?
+  status         AIJobStatus @default(PENDING)
+  attemptCount   Int         @default(0)
+  maxAttempts    Int         @default(3)
+  nextAttemptAt  DateTime    @default(now())
+  lockedAt       DateTime?
+  lockedBy       String?     @db.VarChar(128)
+  leaseExpiresAt DateTime?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  lastError      String?     @db.Text
+  idempotencyKey String      @db.VarChar(191)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  owner User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  event Event? @relation(fields: [eventId, ownerId], references: [id, ownerId], onDelete: Cascade)
+
+  @@unique([ownerId, idempotencyKey])
+  @@index([status, nextAttemptAt])
+  @@index([ownerId, status, nextAttemptAt])
+  @@index([resourceId, jobType])
+  @@index([eventId, jobType])
+  @@map("AIJob")
 }
 
 model SubscriptionEntitlement {
@@ -387,4 +622,30 @@ enum SubscriptionStatus {
   GRACE_PERIOD
   EXPIRED
   CANCELED
+}
+
+enum AIJobType {
+  MEMORY_EXTRACTION
+  EMBEDDING_GENERATION
+  WEEKLY_REPORT
+  MONTHLY_REPORT
+}
+
+enum AIJobStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum AIReportStatus {
+  COMPLETE
+  PARTIAL
+}
+
+enum AIReportNarrativeStatus {
+  NOT_GENERATED
+  GENERATED
+  INSUFFICIENT_EVIDENCE
 }

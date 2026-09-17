@@ -1,0 +1,29 @@
+{
+  "status": "LOCKED",
+  "sealed_utc": "2026-09-15T21:27:46.036378+00:00",
+  "judge_identity": "Astra",
+  "judge_run": "Astra",
+  "model": "gpt-6-astra",
+  "model_identity_evidence": "This agent was dispatched with model gpt-6-astra; no identity inferred from judgment contents.",
+  "reasoning_configuration": "Extremely High",
+  "reasoning_effort": "xhigh",
+  "configuration_scope": "ENTIRE_ASTRA_RUN_PER_LATEST_USER_CONFIRMATION",
+  "configuration_transition_at_667": false,
+  "judgment_n": 1818,
+  "sha256": "71ac4d7862f55071bb7f86fdeb69497b1984fd432accd0fd671c0cb572d2592d",
+  "validation_sha256": "b5cbb8bb514f36afec174857ad1e77c4a828caf0be72efeef2c668a7fe26818c",
+  "completion_attestation_sha256": "f3ff9b4eff2a25de9f3374ea146223f81537f31bee90a6c1610b3755df7752de",
+  "provenance_correction_sha256": "3fe28633888dd7703f9b6b0de38be0b8f0d0a8cf7058a53e63834f87629b0f05",
+  "semantic_inputs_sha256": {
+    "model-judge-blind-input.csv": "dc251f90f5cc1be7072f2aeb4895b87cc9034089a6b45b9e494560aef9a5663e",
+    "model-stage1-guidance-v1.md": "e3fb6a2c9658645fc31fa9d8e86bcf7546bca54ee6708e1955a861b371dcd145",
+    "luna-judge-input.csv": "dc251f90f5cc1be7072f2aeb4895b87cc9034089a6b45b9e494560aef9a5663e"
+  },
+  "luna_output_sha256_unchanged": "e8152758f2949ddc386586cbc438c3321554e7b69aafc4918ad707a4d48cd78f",
+  "existing_rows_preserved": true,
+  "human_or_luna_answers_revealed_to_judge": false,
+  "comparisons_performed": false,
+  "post_lock_judgment_revision_allowed": false,
+  "final_reference_set_allowed": false,
+  "final_labels_created": false
+}

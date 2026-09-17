@@ -1,0 +1,13 @@
+{
+  "protocolId":"coso-selective-ranking-v1",
+  "status":"PREPARATION_ONLY_AFTER_EVALUATOR_REPAIR",
+  "evaluator":"../canonical-direct-top2-v1",
+  "objective":"One bounded combined intervention: pairwise selective ranking objective plus COSO source weighting.",
+  "data":{"canonicalTrainRows":841,"cosoWeight":2.0,"PHQ_HUMWeight":1.0},
+  "initialization":"current-best checkpoint; existing LR/optimizer/batch/accumulation/maxlen/warmup; seed44; one epoch",
+  "loss":"pairwise ranking objective retained unchanged",
+  "removed":["learned cardinality head","cardinality CE loss","argmax(k) output rule"],
+  "output":"canonical-direct-top2-v1 research_direct_top2: p>=0.35 then direct top-2; no cluster dedup or primary redundancy in primary metric",
+  "successGate":"Only revised incumbent is recorded now; Research Lead must freeze relative success/reject gate before training.",
+  "trainingStarted":false
+}

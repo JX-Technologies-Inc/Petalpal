@@ -1,0 +1,659 @@
+{
+  "train": {
+    "rows": 43,
+    "conflicts": [
+      {
+        "id": "PHQ-073",
+        "gold": [
+          "anger",
+          "disgust"
+        ],
+        "selected": [
+          "anger"
+        ]
+      },
+      {
+        "id": "PHQ-161",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "PHQ-196",
+        "gold": [
+          "gratitude",
+          "love"
+        ],
+        "selected": [
+          "gratitude"
+        ]
+      },
+      {
+        "id": "PHQ-214",
+        "gold": [
+          "excitement",
+          "optimism"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "PHQ-262",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "PHQ-269",
+        "gold": [
+          "amusement",
+          "excitement"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "PHQ-291",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "PHQ-402",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "PHQ-403",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "PHQ-417",
+        "gold": [
+          "gratitude",
+          "love"
+        ],
+        "selected": [
+          "gratitude"
+        ]
+      },
+      {
+        "id": "PHQ-436",
+        "gold": [
+          "disgust",
+          "fear"
+        ],
+        "selected": [
+          "disgust"
+        ]
+      },
+      {
+        "id": "PHQ-502",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "PHQ-542",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "PHQ-577",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "HUM-A3-05",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "HUM-CN3-02",
+        "gold": [
+          "disappointment",
+          "sadness"
+        ],
+        "selected": [
+          "disappointment"
+        ]
+      },
+      {
+        "id": "HUM-P001-05",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "HUM-P002-04",
+        "gold": [
+          "anger",
+          "annoyance"
+        ],
+        "selected": [
+          "anger"
+        ]
+      },
+      {
+        "id": "HUM-SELF5-01",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-9bebf858ed1cda329fc17bc4dccece0c_yesterday_cov_1",
+        "gold": [
+          "caring",
+          "love"
+        ],
+        "selected": [
+          "caring"
+        ]
+      },
+      {
+        "id": "COSO-bc290d47971cdc47dca914a69fbda458_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-9f29e365e6cadca7653cbc6d95c5360b_yesterday_pre_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-3f2faeafcd8dec59d97e24c290f25b5f_yesterday_cov_3",
+        "gold": [
+          "excitement",
+          "optimism"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-299ae9e4b4b6e7f454ed192fd6ff63b1_yesterday_cov_2",
+        "gold": [
+          "excitement",
+          "optimism"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-157797ca3f5b6cef954bb2e1c5362796_yesterday_pre_cov_1",
+        "gold": [
+          "disappointment",
+          "sadness"
+        ],
+        "selected": [
+          "disappointment"
+        ]
+      },
+      {
+        "id": "COSO-aeb4977d27d7ce5602283b72990cfbf3_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-8ada2c17096d1cbe821179b9b1836861_yesterday_cov_3",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-a97b720db91fbaecdd9ddaa9ad3005d2_yesterday_cov_2",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-fc5c70d96f0a363a0b7938ce84277564_yesterday_pre_cov_1",
+        "gold": [
+          "curiosity",
+          "surprise"
+        ],
+        "selected": [
+          "curiosity"
+        ]
+      },
+      {
+        "id": "COSO-1499dbaa62e5c526a1ed07d6f25d86cd_yesterday_cov_1",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "COSO-6feffd4ab609d12ca9005b1545e77a3f_yesterday_cov_1",
+        "gold": [
+          "caring",
+          "gratitude"
+        ],
+        "selected": [
+          "caring"
+        ]
+      },
+      {
+        "id": "COSO-9cc78ccc9fb1c4fceeffef9919180372_yesterday_cov_1",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "COSO-7c3839f27ab551be8542120e8a68cc9b_yesterday_cov_1",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "COSO-d6df48229d76a22ea345bda8c19b0480_yesterday_pre_cov_1",
+        "gold": [
+          "caring",
+          "gratitude"
+        ],
+        "selected": [
+          "caring"
+        ]
+      },
+      {
+        "id": "COSO-c85cd5e1bac040f1a43e92f2df2b2c89_yesterday_cov_1",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-3ff04cb4575df2683b323807249522c9_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-fbc30c7f9c8bd451e8acbffcc53748ec_yesterday_cov_2",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-c15c4780887b4497b5de3b028f3304f3_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-6bfbbac2912bac9070084b52922865d0_yesterday_cov_1",
+        "gold": [
+          "confusion",
+          "surprise"
+        ],
+        "selected": [
+          "confusion"
+        ]
+      },
+      {
+        "id": "COSO-9b460e40efdff78db47cd3252bba481e_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-912f9c31643c1766503dbceebb48de13_yesterday_cov_1",
+        "gold": [
+          "anger",
+          "annoyance"
+        ],
+        "selected": [
+          "anger"
+        ]
+      },
+      {
+        "id": "COSO-aa0374f55e0e7b04be357dd0283f27b6_yesterday_cov_1",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-ce59a7ca55174963ee00e3e648aaa62d_yesterday_cov_1",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      }
+    ],
+    "affectedLabelPairs": {
+      "anger|disgust": 1,
+      "amusement|joy": 7,
+      "gratitude|love": 2,
+      "excitement|optimism": 3,
+      "amusement|excitement": 1,
+      "excitement|joy": 7,
+      "disgust|fear": 1,
+      "joy|optimism": 12,
+      "disappointment|sadness": 2,
+      "anger|annoyance": 2,
+      "caring|love": 1,
+      "curiosity|surprise": 1,
+      "caring|gratitude": 2,
+      "confusion|surprise": 1
+    }
+  },
+  "dev": {
+    "rows": 19,
+    "conflicts": [
+      {
+        "id": "COSO-11a6116dffe04884d3ff3e0ee6424508_yesterday_cov_1",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-843f96091610c50fa418a3e275abb8d7_yesterday_cov_1",
+        "gold": [
+          "annoyance",
+          "fear"
+        ],
+        "selected": [
+          "annoyance"
+        ]
+      },
+      {
+        "id": "COSO-1b2094dc75aa7e41bcccae63d5bc3fbb_yesterday_cov_2",
+        "gold": [
+          "admiration",
+          "gratitude"
+        ],
+        "selected": [
+          "admiration"
+        ]
+      },
+      {
+        "id": "COSO-f649e12ca13f9c1235e318d2b0285a69_yesterday_cov_1",
+        "gold": [
+          "gratitude",
+          "love"
+        ],
+        "selected": [
+          "gratitude"
+        ]
+      },
+      {
+        "id": "COSO-431e693e2ed2200ffc23775793543844_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-6272c72ef85f1430367bb3a9d36b77cb_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-7f9bea248f1fc7f4a57c865a19452e7a_yesterday_cov_1",
+        "gold": [
+          "amusement",
+          "excitement"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "COSO-f0ed9a1658094a9a0c4b4a13e08d77be_yesterday_cov_3",
+        "gold": [
+          "excitement",
+          "optimism"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-3e50f69f3e9d0b1a37b4dfc9f1ccb316_yesterday_cov_2",
+        "gold": [
+          "admiration",
+          "gratitude"
+        ],
+        "selected": [
+          "admiration"
+        ]
+      },
+      {
+        "id": "COSO-96f8087e6f53f022c355843777e59501_yesterday_cov_1",
+        "gold": [
+          "excitement",
+          "optimism"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-f62d8498230b19e89593283f32b02921_yesterday_cov_1",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-f2329fd064331038a6276b8b02ad8dda_yesterday_cov_2",
+        "gold": [
+          "excitement",
+          "optimism"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      },
+      {
+        "id": "COSO-86bce9ee311af4e1a6bc16a33992ecf8_yesterday_pre_cov_1",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "COSO-4ceaf03aa6ccb6d257c9e1aa057072c2_yesterday_pre_cov_1",
+        "gold": [
+          "caring",
+          "love"
+        ],
+        "selected": [
+          "caring"
+        ]
+      },
+      {
+        "id": "COSO-3ee167d93effe5a758403ecae318dd7f_yesterday_cov_1",
+        "gold": [
+          "annoyance",
+          "fear"
+        ],
+        "selected": [
+          "annoyance"
+        ]
+      },
+      {
+        "id": "COSO-349711e77ddcf9719d28ff382c18203a_yesterday_cov_1",
+        "gold": [
+          "joy",
+          "optimism"
+        ],
+        "selected": [
+          "joy"
+        ]
+      },
+      {
+        "id": "COSO-d0cef1fa8250dde52a00bc50e65550d3_yesterday_cov_1",
+        "gold": [
+          "annoyance",
+          "fear"
+        ],
+        "selected": [
+          "annoyance"
+        ]
+      },
+      {
+        "id": "COSO-3f700e0a1f75ab5cf13d025bad9cf8b4_yesterday_cov_1",
+        "gold": [
+          "amusement",
+          "joy"
+        ],
+        "selected": [
+          "amusement"
+        ]
+      },
+      {
+        "id": "COSO-520445768736730a70e5da8932dcd0a3_yesterday_cov_3",
+        "gold": [
+          "excitement",
+          "joy"
+        ],
+        "selected": [
+          "excitement"
+        ]
+      }
+    ],
+    "affectedLabelPairs": {
+      "excitement|joy": 3,
+      "annoyance|fear": 3,
+      "admiration|gratitude": 2,
+      "gratitude|love": 1,
+      "joy|optimism": 3,
+      "amusement|excitement": 1,
+      "excitement|optimism": 3,
+      "amusement|joy": 2,
+      "caring|love": 1
+    }
+  }
+}

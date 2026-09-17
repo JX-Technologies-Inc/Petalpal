@@ -595,3 +595,75 @@ Date: 2026-09-14. Decision artifacts: `v4/stage1-human-review-decision-v1/`.
 - No training, legal149 reuse, Blog360 evaluation, protected-holdout access, label overwrite, hard-example deletion, taxonomy reduction, commit, push, or automatic follow-up was performed.
 
 `NO FINAL GOLD LABELS CREATED IN THIS TASK`
+
+
+## Human Review 221 — Transition to Model Adjudication
+
+Date: 2026-09-15. Artifact: `v4/stage1-model-adjudication-v1/`.
+
+- **No further human review = true.** Previous targeted human re-review/calibration/completion plan = **SUPERSEDED**. Human Stage 1 NO / PLAUSIBLE / CLEAR judgments are **FROZEN HUMAN OBSERVATIONAL EVIDENCE**. Stage 2/3 are **DEPRECATED**; `evidence / rank_order / tie_group` remain legacy unused fields.
+- Core/Auxiliary hierarchy is unchanged: Core1/Core2 are frozen anchors; Auxiliary is frozen supporting evidence. Reviewer 1's four missing cells remain `CORE1_HUMAN_MISSING`; Reviewer 2 R3-184..R3-221 remains `CORE2_INVALID_PLACEHOLDER`, permanently excluded and never restored or imputed.
+- Reused the existing **1,818-cell queue** without rebuilding or repeating the old audit. The **2,160 CORE_HUMAN_AGREEMENT** cells remain outside it and cannot be automatically overridden.
+- **Astra: COMPLETE, 1,818/1,818; validation PASS.** Latest cross-account recovery found **918 valid rows**, then added **900 missing IDs** only. Earlier recovery began at 585; the explicit **Extremely High / xhigh** transition occurred after **667 completed rows**, and xhigh supplied 1,151 rows across interruptions. The original **186** and all 585/667/918 checkpoint prefixes were preserved. Runtime agent dispatch exposed **gpt-6-astra** with `reasoning_effort=xhigh`; earlier reasoning levels were not independently instrumented and are not retroactively relabeled. Account change is operational only: this remains one Astra run and one panel vote. See `account-continuation-checkpoint.json`, `astra-configuration-transition.json`, and `astra-judgment-provenance.csv`.
+- Blind source: unchanged `model-judge-blind-input.csv` and `model-stage1-guidance-v1.md`; Luna's semantic input remains byte-identical. Astra was fully validated and hash-locked before revealing Human/Luna answers for comparison. The existing **Luna 1,818/1,818** artifact was validated and preserved; Luna was not rerun. Model-model matrix, per-label agreement, transitions and disagreement rows are in `model-model-*.csv`; separate Core/Auxiliary comparisons are in `model-human-comparison.csv` and `model-human-pairwise-summary.csv`.
+- Auxiliary evidence remains supporting evidence, with Core1/Core2 as anchors. Per the latest user instruction, **AUX-R06 and AUX-R08 are separately identified sensitivity evidence**; current primary support excludes both. R06's earlier audit flag was INCOMPLETE_COVERAGE; no new quality/distribution audit was performed. R06 missing values remain missing. The original R01..R07 master counts are preserved and marked legacy sensitivity-only; `auxiliary-sensitivity-summary.csv` reports the inclusion variants. No all-human vote or Core override was applied.
+- All judge outputs remain model-generated evidence. No new human adjudication or final/reference/gold labels were created. Future `MODEL_ADJUDICATED_*` categories are reserved, not assigned. **Final reference set = NOT ALLOWED YET**: Sol final adjudication and final provenance freeze remain outstanding. This is a supervision diagnostic, not product final evaluation.
+- Next step: **Sol review of the completed panel for final adjudication/provenance freeze**; no automatic follow-up or final resolution was started.
+
+## Stage-1 Final Adjudication Triage Preparation
+
+- Methodology reconciliation completed with authoritative deterministic rules: Bucket A=847, B=356, C=409, D=206; uncertainty queue=562; Sol blind queue=409.
+- The 50-cell ambiguity was resolved deterministically: primary Aux non-support means `primary_aux_supports_model_consensus == false`, including `DEFINED_OPPOSING_CATEGORY`.
+- Triage package generated at `v4/stage1-final-adjudication-plan-v1/`. No judge was called; no judgment, final label, final reference set, or training artifact was created.
+- Validation PASS. Next step: Sol High performs blind applicability adjudication on the sealed 409-cell Bucket-C queue only.
+
+
+## Stage-1 Final Assembly
+
+- Finalization protocol `stage1-finalization-protocol-v1` applied without new voting, tie-break, adjudication, training, or holdout access.
+- A=847 and C=409 finalized; hard reference total=1256. B=356 and D=206 remain unresolved; uncertainty total=562.
+- Sol Bucket-C exact-ID merge PASS (409/409). Reference designation is `model-adjudicated reference set`, not human gold or ground truth.
+- Artifacts: `v4/stage1-final-adjudication-plan-v1/final-assembled-decisions.csv`, `final-hard-reference.csv`, `final-unresolved-uncertainty.csv`, `final-assembly-provenance.json`, `final-validation.json`.
+- Final assembly validation PASS.
+
+## Stage-1 Diagnostic Decision Record
+
+- Reviewed rows: 221; authoritative lineage recovered: 221/221.
+- Role: `model-adjudicated, disagreement-enriched semantic audit set`. This is NOT human gold, NOT a representative Train benchmark, and NOT suitable for direct hard-label Train augmentation.
+- Full Stage-1 direct supervision patch: 213 canonical rows and 1,256 hard-reference cells; NO=988, PLAUSIBLE=123, CLEAR=145; existing positive→NO=0; existing negative→CLEAR=88.
+- Baseline Macro-F1=0.34517862965139323; patched Macro-F1=0.3287162196992808. Decision: **REJECT**.
+- Dev delta: predictions 138→149; added 13 (2 TP, 11 FP); removed 2 (1 TP, 1 FP); net +1 TP and +10 FP. Precision decreased substantially while recall increased only slightly.
+- Interpretation: Stage-1 measures broad semantic applicability; canonical Train/Dev uses selective 0–2 emotion labels for central/non-redundant labels. Stage-1 CLEAR is therefore not equivalent to canonical evaluation-positive, and direct patching primarily created false positives.
+- Strict sourceGroup OOF diagnosis: overall Macro-F1≈0.492306; PHQ≈0.497711; COSO≈0.370892; HUM≈0.486308. Fixed Dev is 149/149 COSO. Source composition/domain difficulty, sample/support differences, and non-identical training procedures descriptively explain most of the gap; canonical annotation policy is the same.
+- Current direction: `COSO + selective 0–2 label selection/ranking`. Do not return to Stage-1 direct patch, CLEAR-as-hard-positive, PLAUSIBLE masking, missing-positive repair, threshold/seed/backbone sweeps.
+- Detailed evidence: `experiments/emotion-classifier-v2/v4/stage1-supervision-diagnostic-v1/REPORT.md`.
+- `RECORD ONLY — NO TRAINING`.
+
+## Data Rights Clearance Checkpoint — Reddit / CoSoWELL Pending
+
+- Reddit-derived data rights: `PENDING RIGHTS CLEARANCE`.
+- CoSoWELL rights: `PENDING RIGHTS CLEARANCE`.
+- Consented 54-row data: existing documentary consent provenance supports research/training/product/deployment/commercial use; no new rights determination was made in this checkpoint.
+- Historical experiments, checkpoints, metrics, and failed-run provenance are preserved; no existing artifact was deleted or rewritten.
+- No new production-targeted training using pending Reddit-derived or CoSoWELL sources is authorized. Checkpoints trained on pending sources must not be marked production-cleared.
+- Created `experiments/emotion-classifier-v2/DATA_RIGHTS.md`.
+- Next action: wait for written permission / rights clarification. Cleared-data fallback dataset work may continue independently.
+
+## COSO Selective Ranking v1 — Legacy Failure, Repair, and First Valid Test
+
+- Legacy invalid run: Macro-F1 `0.0449506987`; Micro-F1 `0.1362007168`; TP/FP/FN `19/95/146`. Status: `IMPLEMENTATION FAILURE / INVALID HYPOTHESIS TEST`. Causes: 21-column probability indices were used for 28-head outputs; 11 of 18 product-label mappings were wrong; `model.train()` was missing; partial accumulation normalization was wrong; scheduler was missing. `Ranking hypothesis NOT FALSIFIED by this run.`
+- Repair-v2 integrity: authoritative 28→18 mapping PASS; namespace isolation PASS; checkpoint integrity PASS; full/partial accumulation equivalence PASS; frozen 53 optimizer-step / 6-warmup scheduler PASS; train/eval/dropout guards PASS. Repaired training completed 53 optimizer steps. The later literal `num_labels` check was adjudicated `GUARD IMPLEMENTATION FAILURE — CHECKPOINT INTACT`; the trained checkpoint remained valid and no retraining occurred.
+- First valid repaired hypothesis test used frozen evaluator `canonical-direct-top2-v1`. Incumbent: Macro-F1 `0.3665010477`; Micro P/R/F1 `0.5972222222 / 0.5212121212 / 0.5566343042`; TP/FP/FN `86/58/79`; exact-set `55/149`. Candidate: Macro-F1 `0.3563948287`; Micro P/R/F1 `0.5931034483 / 0.5212121212 / 0.5548387097`; TP/FP/FN `86/59/79`; predicted cardinality `0:38, 1:77, 2:34`; exact-set `56/149 = 0.3758389262`; verdict `REJECT`.
+- Interpretation: valid candidate did not improve Macro-F1; TP/FN and recall were unchanged; FP increased by 1; exact-set improved by 1 row. The frozen `COSO ×2 + BCE + 0.25 all-pair ranking` intervention did not improve the revised incumbent. Do not promote it, interpret the `.04495` run as evidence, or run λ/COSO-weight/threshold/seed sweeps.
+- Current canonical best: `research_direct_top2 Macro-F1 = 0.3665010477` from the GoEmotions-targeted epoch-1 incumbent checkpoint.
+- Current research direction: return to COSO supervision semantics, label-selection behavior, rare-label/support structure, and data/supervision analysis. No next experiment designed. `RECORD ONLY — NO TRAINING.`
+
+## Stage-1 Lineage Recovery and Supervision Patch History
+
+- The initial exact-text crosswalk was incomplete (109 mapped, 111 unresolved) and is not authoritative. The authoritative `sample-manifest.json` crosswalk recovered 221/221 Stage-1 samples to 221 unique canonical Train IDs: PHQ=110, COSO=103, HUM=8. Manifest: `experiments/emotion-classifier-v2/v4/stage1-final-adjudication-plan-v1/r3-canonical-crosswalk-manifest-v2.csv`.
+- The incomplete patch (108 rows, 694 cells) was rejected and remains provenance-only. Full authoritative patch: 213 canonical rows, 1,256 cells; NO=988, PLAUSIBLE=123, CLEAR=145; existing positive→NO=0; existing negative→CLEAR=88; PLAUSIBLE existing positive=5 and negative=118. PLAUSIBLE was masked, not thresholded. Patch artifacts: `experiments/emotion-classifier-v2/v4/stage1-final-adjudication-plan-v1/stage1-supervision-patch-full-v2.csv` and `stage1-supervision-patch-full-v2-summary.json`.
+- Full patch training was rejected: baseline Macro-F1=0.34517862965139323 versus patched=0.3287162196992808; Dev predictions 138→149, with net +1 TP and +10 FP. Current development best remains `goemotions-targeted-v1 / epoch-1` at 0.34517862965139323. Failed pre-training schema launches did not consume Dev evaluation and are retained as provenance.
+- Stage-1 role: `model-adjudicated, disagreement-enriched semantic audit set`; not human gold, not representative Train performance, and not suitable for direct hard-label Train augmentation. Stage-1 CLEAR is not equivalent to canonical evaluation-positive. The 88 canonical-negative→CLEAR cells are diagnostic model-adjudicated evidence, not human consensus gold; 87/88 came from Bucket C Sol adjudication and 71/88 were COSO.
+- OOF diagnosis: strict sourceGroup overall≈0.492306; PHQ≈0.497711; COSO≈0.370892; HUM≈0.486308; fixed Dev is 149/149 COSO. Reviewed-set OOF≈0.411337 versus non-reviewed Train≈0.523877. Source/domain composition, sample/support differences, and non-identical procedures explain most of the apparent gap; OOF and Dev use the same canonical annotation policy.
+- Current direction: `COSO + selective 0–2 label selection/ranking`. Do not return to Stage-1 direct patch, CLEAR-as-hard-positive, PLAUSIBLE masking, missing-positive repair, threshold/seed/backbone sweeps, or additional human review. Detailed evidence: `experiments/emotion-classifier-v2/v4/stage1-supervision-diagnostic-v1/REPORT.md`.
+- `RECORD ONLY — NO TRAINING`.

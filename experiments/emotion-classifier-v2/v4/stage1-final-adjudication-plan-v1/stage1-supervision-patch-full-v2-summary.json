@@ -1,0 +1,20 @@
+{
+  "crosswalkRows": 221,
+  "crosswalkUniqueCanonicalIds": 221,
+  "sourcePrefixes": {
+    "PHQ": 110,
+    "HUM": 8,
+    "COSO": 103
+  },
+  "patchCells": 1256,
+  "patchCanonicalRows": 213,
+  "NO": 988,
+  "PLAUSIBLE": 123,
+  "CLEAR": 145,
+  "existingPositiveToZeroChanges": 0,
+  "existingNegativeToOneChanges": 88,
+  "plausibleExistingPositive": 5,
+  "plausibleExistingNegative": 118,
+  "crosswalkFile": "experiments/emotion-classifier-v2/v4/stage1-final-adjudication-plan-v1/r3-canonical-crosswalk-manifest-v2.csv",
+  "patchFile": "experiments/emotion-classifier-v2/v4/stage1-final-adjudication-plan-v1/stage1-supervision-patch-full-v2.csv"
+}

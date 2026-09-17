@@ -1,0 +1,28 @@
+{
+  "created_utc": "2026-09-15T21:37:23.963693+00:00",
+  "astra_sealed_utc": "2026-09-15T21:27:46.036378+00:00",
+  "astra_judgments_n": 1818,
+  "luna_judgments_n": 1818,
+  "luna_file_unchanged": true,
+  "model_model_exact_match_n": 1423,
+  "model_model_disagreement_n": 395,
+  "model_model_exact_match_rate": 0.7827282728272827,
+  "primary_auxiliary_reviewers": [
+    "AUX-R01",
+    "AUX-R02",
+    "AUX-R03",
+    "AUX-R04",
+    "AUX-R05",
+    "AUX-R07"
+  ],
+  "separate_sensitivity_reviewers": [
+    "AUX-R06",
+    "AUX-R08"
+  ],
+  "aux_r06_scope": "user-designated sensitivity; prior audit incomplete coverage; no new reviewer quality inference",
+  "no_all_human_pool": true,
+  "no_automatic_core_override": true,
+  "final_labels_created": false,
+  "final_reference_set_allowed": false,
+  "interpretation": "Descriptive agreement on selected queue only, not accuracy or final product evaluation. Missing/invalid human values are never imputed."
+}

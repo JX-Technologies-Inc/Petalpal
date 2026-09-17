@@ -1,0 +1,102 @@
+{
+  "audit": "PHQ/Reddit provenance recovery",
+  "classification": "DIRECT REDDIT COLLECTION PROVENANCE RECOVERED — RIGHTS UNRESOLVED",
+  "original_workbooks_found": true,
+  "recovered_workbook": "PetalPal_Public_Human_Quality_Set_Combined_625_REAL.xlsx",
+  "requested_original_files": [
+    "PetalPal_Public_Human_Quality_Set_Combined_625_REAL(1).xlsx",
+    "PetalPal_Public_Human_Quality_Set_Combined_625_REVIEWED.xlsx",
+    "PetalPal_PHQ326_425_progress_75.xlsx"
+  ],
+  "scope": "PHQ / Reddit-derived canonical 468 only",
+  "training_performed": false,
+  "evaluation_performed": false,
+  "protected_content_accessed": false,
+  "earliest_recoverable_artifact": {
+    "path": "experiments/emotion-classifier-v2/v4/auto-v1/build.py",
+    "commit": "a24b65be2bc351ada8d3f5bd8f8955d544e3f582",
+    "date": "2026-09-07",
+    "author": "starstarrr",
+    "message": "feat: add V4 human-domain emotion experiments"
+  },
+  "lineage": [
+    "row-level Reddit URLs / PHQ-* records",
+    "v4/auto-v1/pass1.jsonl",
+    "v4/auto-v1/train.jsonl or dev.jsonl",
+    "v4/auto-v2 (29-row provenance quarantine)",
+    "v4/auto-v3/train.jsonl (468 rows)",
+    "v4/aligned-supervision-v1/train.jsonl (canonical 841 PHQ component)"
+  ],
+  "canonical_component": {
+    "path": "experiments/emotion-classifier-v2/v4/aligned-supervision-v1/train.jsonl",
+    "total_rows": 841,
+    "phq_rows": 468,
+    "phq_prefix_rows": 468,
+    "source_type_counts": {"PUBLIC_HUMAN": 468},
+    "distinct_source_groups": 135,
+    "reddit_source_group_pattern": "reddit:<submission id>",
+    "row_level_source_urls": true,
+    "human_consented_mixed": false,
+    "cosowell_mixed": false,
+    "sha256": "daaf3ed65a72ece0e0421225b1fde863b4d8c686507a07da16167702526e013a"
+  },
+  "upstream": {
+    "exact_dataset_or_corpus": null,
+    "organization_or_curator": "internal PetalPal collection process",
+    "official_identifier_or_url": null,
+    "version_or_snapshot": null,
+    "all_468_proven_same_source": true,
+    "schema_supports_identification": true,
+    "schema_supports_reddit_linked_public_human_text": true,
+    "evidence": ["row-level Reddit URLs", "sourceGroupId values", "PHQ-prefixed stable IDs", "V4 manifests and build script"],
+    "historical_source_artifact_commit": false,
+    "internal_prefix_conclusion": "PHQ is an internal PetalPal row prefix, not evidence of an upstream named corpus."
+  },
+  "acquisition_review": {
+    "canonical_468_per_row_reddit_source_urls_present": true,
+    "original_625_per_row_reddit_source_urls_present": true,
+    "original_625_per_row_reddit_source_urls_independently_verified": false,
+    "all_625_acquisition_records_present": true,
+    "collection_script_or_log_found": false,
+    "external_dataset_url_found": false,
+    "classification": "DIRECT REDDIT-LINKED PUBLIC-HUMAN COLLECTION",
+    "direct_reddit_collection_proven": true,
+    "imported_named_dataset_proven": false,
+    "workbook_evidence": ["Source", "Source URL", "sourceGroupId", "VERBATIM_PUBLIC_HUMAN", "PUBLIC_USER_WRITTEN_AS_POSTED"],
+    "readme_evidence": "Every new row has its source URL",
+    "representative_rows": [
+      {"id":"PHQ-001","subreddit":"r/Journaling","sourceGroupId":"reddit:1q1rsj0","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-050","subreddit":"r/gratitude","sourceGroupId":"reddit:1ucr1v3","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-115","subreddit":"r/Journaling","sourceGroupId":"reddit:1uiph3w","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-167","subreddit":"r/MadeMeSmile","sourceGroupId":"reddit:1k9zkgf","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-211","subreddit":"r/offmychest","sourceGroupId":"reddit:xk712f","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-256","subreddit":"r/Casualconversation","sourceGroupId":"reddit:1ist8nz","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-299","subreddit":"r/AskReddit","sourceGroupId":"reddit:ow51s2","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-350","subreddit":"r/Journaling","sourceGroupId":"reddit:1od5r6l","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-412","subreddit":"r/Journaling","sourceGroupId":"reddit:1vleawe","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-469","subreddit":"r/Casualconversation","sourceGroupId":"reddit:1ue1vfy","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-517","subreddit":"r/gratitude","sourceGroupId":"reddit:k90gi4","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null},
+      {"id":"PHQ-569","subreddit":"r/Lahore","sourceGroupId":"reddit:1qa3et9","earliestArtifact":"v4/auto-v1/pass1.jsonl","sourceNote":null}
+    ]
+  },
+  "rights": {
+    "license_artifact_recovered": false,
+    "research": "UNVERIFIED",
+    "ml_training": "UNVERIFIED",
+    "fine_tuning": "UNVERIFIED",
+    "product_development": "UNVERIFIED",
+    "commercial_use": "UNVERIFIED",
+    "attribution": "UNVERIFIED",
+    "redistribution": "UNVERIFIED",
+    "current_status": "BLOCKER",
+    "blocker_removable": false,
+    "statement": "The 468-row lineage cannot currently be made production-rights-clean from existing provenance evidence."
+  },
+  "missing_evidence": [
+    "authoritative source export/import record",
+    "exact upstream corpus name and curator",
+    "official repository or dataset identifier",
+    "version/snapshot or acquisition manifest",
+    "official license/terms covering intended uses"
+  ]
+}

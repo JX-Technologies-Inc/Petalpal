@@ -35,7 +35,7 @@ describe("DailyCheckIn", () => {
     await userEvent.selectOptions(screen.getByRole("combobox"), "PEACEFUL_BLOOM");
     await userEvent.click(screen.getByRole("button", { name: "Bloom" }));
 
-    expect(onBloom).toHaveBeenCalledWith({ event: "", mood: "PEACEFUL_BLOOM" });
+    expect(onBloom).toHaveBeenCalledWith({ journalText: "", mood: "PEACEFUL_BLOOM" });
     expect(await screen.findByText(/bloomed successfully/i)).toBeInTheDocument();
   });
 
@@ -44,14 +44,14 @@ describe("DailyCheckIn", () => {
     render(<DailyCheckIn onBloom={onBloom} />);
 
     await userEvent.type(
-      screen.getByPlaceholderText(/optional: what happened/i),
+      screen.getByPlaceholderText(/optional private journal/i),
       "A peaceful afternoon"
     );
     await userEvent.selectOptions(screen.getByRole("combobox"), "SUNNY_BLOOM");
     await userEvent.click(screen.getByRole("button", { name: "Bloom" }));
 
     expect(onBloom).toHaveBeenCalledWith({
-      event: "A peaceful afternoon",
+      journalText: "A peaceful afternoon",
       mood: "SUNNY_BLOOM"
     });
   });

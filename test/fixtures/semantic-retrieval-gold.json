@@ -1,0 +1,7965 @@
+{
+  "benchmarkVersion": "semantic-retrieval-gold-v1",
+  "description": "Synthetic non-sensitive fixture; no production or public dataset content.",
+  "events": [
+    {
+      "eventId": "evt-001",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Career event 1: received a full-time offer from Cedar Labs after the final interview.",
+      "topics": [
+        "career",
+        "job-offer",
+        "cedar-offer",
+        "growth"
+      ],
+      "people": [
+        "Cedar Labs"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-002",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Career event 2: completed Maple Studio internship orientation with mentor Maya.",
+      "topics": [
+        "career",
+        "internship",
+        "maple-orientation",
+        "growth"
+      ],
+      "people": [
+        "Maple Studio",
+        "Maya"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-003",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 3：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-004",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 4: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-005",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 5: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-006",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 6：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-007",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 7: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-008",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 8: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-009",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 9：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-010",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Career event 10: signed a private contract with Northstar Agency.",
+      "topics": [
+        "career",
+        "contract"
+      ],
+      "people": [
+        "Northstar Agency"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-011",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 11: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-012",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 12：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-013",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 13: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-014",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 14: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-015",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 15：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-016",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 16: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-017",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 17: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-018",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 18：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-019",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 19: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-020",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 20: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-021",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 21：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-022",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 22: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-023",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 23: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-024",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 24：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-025",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 25: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-026",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 26: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-027",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 27：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-028",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 28: completed a career activity.",
+      "topics": [
+        "career",
+        "career"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-029",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic career event 29: completed a internship activity.",
+      "topics": [
+        "career",
+        "internship"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-030",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成career事件 30：今天完成了project练习。",
+      "topics": [
+        "career",
+        "project"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-01",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-031",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 31: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-032",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 32: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-033",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 33：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-034",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 34: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-035",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 35: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-036",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 36：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-037",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 37: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-038",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 38: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-039",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 39：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-040",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 40: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-041",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 41: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-042",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 42：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-043",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 43: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-044",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 44: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-045",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 45：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-046",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 46: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-047",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 47: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-048",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 48：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-049",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 49: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-050",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 50: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-051",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 51：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-052",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 52: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-053",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 53: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-054",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 54：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-055",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 55: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-056",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 56: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-057",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 57：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-058",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 58: completed a study activity.",
+      "topics": [
+        "study",
+        "study"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-059",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic study event 59: completed a language activity.",
+      "topics": [
+        "study",
+        "language"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-060",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成study事件 60：今天完成了course练习。",
+      "topics": [
+        "study",
+        "course"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-02",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-061",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Travel event 61: visited the Maritime Museum and studied the blue-whale exhibit.",
+      "topics": [
+        "travel",
+        "museum",
+        "blue-whale-exhibit",
+        "discovery"
+      ],
+      "people": [
+        "Maritime Museum"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-062",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Travel event 62: rode the Coast Starlight train to Portland and noted the route highlights.",
+      "topics": [
+        "travel",
+        "train",
+        "coast-starlight-trip",
+        "discovery"
+      ],
+      "people": [
+        "Coast Starlight",
+        "Portland"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-063",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 63：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-064",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 64: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-065",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 65: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-066",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 66：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-067",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 67: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-068",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 68: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-069",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 69：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-070",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Travel event 70: booked a private Sahara camp with Atlas Tours.",
+      "topics": [
+        "travel",
+        "desert"
+      ],
+      "people": [
+        "Atlas Tours"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-071",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 71: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-072",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 72：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-073",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 73: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-074",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 74: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-075",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 75：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-076",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 76: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-077",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 77: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-078",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 78：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-079",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 79: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-080",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 80: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-081",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 81：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-082",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 82: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-083",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 83: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-084",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 84：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-085",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 85: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-086",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 86: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-087",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 87：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-088",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 88: completed a travel activity.",
+      "topics": [
+        "travel",
+        "travel"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-089",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic travel event 89: completed a museum activity.",
+      "topics": [
+        "travel",
+        "museum"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-090",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成travel事件 90：今天完成了train练习。",
+      "topics": [
+        "travel",
+        "train"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-03",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-091",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Health event 91: finished a physiotherapy stretching session for shoulder recovery with Dr. Chen.",
+      "topics": [
+        "health",
+        "stretching",
+        "shoulder-physio",
+        "recovery"
+      ],
+      "people": [
+        "Dr. Chen"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-092",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Health event 92: walked five kilometers around Stanley Park without knee pain.",
+      "topics": [
+        "health",
+        "walk",
+        "stanley-park-walk",
+        "recovery"
+      ],
+      "people": [
+        "Stanley Park"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-093",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 93：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-094",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 94: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-095",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 95: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-096",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 96：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-097",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 97: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-098",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 98: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-099",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 99：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-100",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Health event 100: booked a private assessment at Alpine Clinic.",
+      "topics": [
+        "health",
+        "assessment"
+      ],
+      "people": [
+        "Alpine Clinic"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-101",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 101: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-102",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 102：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-103",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 103: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-104",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 104: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-105",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 105：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-106",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 106: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-107",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 107: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-108",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 108：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-109",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 109: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-110",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 110: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-111",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 111：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-112",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 112: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-113",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 113: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-114",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 114：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-115",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 115: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-116",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 116: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-117",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 117：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-118",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 118: completed a health activity.",
+      "topics": [
+        "health",
+        "health"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-119",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic health event 119: completed a stretching activity.",
+      "topics": [
+        "health",
+        "stretching"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-120",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成health事件 120：今天完成了walk练习。",
+      "topics": [
+        "health",
+        "walk"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-04",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-121",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 121: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-122",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 122: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-123",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 123：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-124",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 124: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-125",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 125: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-126",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 126：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-127",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 127: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-128",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 128: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-129",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 129：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-130",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 130: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-131",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 131: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-132",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 132：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-133",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 133: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-134",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 134: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-135",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 135：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-136",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 136: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-137",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 137: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-138",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 138：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-139",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 139: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-140",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 140: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-141",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 141：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-142",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 142: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-143",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 143: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-144",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 144：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-145",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 145: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-146",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 146: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-147",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 147：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-148",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 148: completed a creative activity.",
+      "topics": [
+        "creative",
+        "creative"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-149",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic creative event 149: completed a sketch activity.",
+      "topics": [
+        "creative",
+        "sketch"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-150",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成creative事件 150：今天完成了music练习。",
+      "topics": [
+        "creative",
+        "music"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-05",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-151",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Friendship event 151: hosted a picnic at Trout Lake with Maya and felt more connected.",
+      "topics": [
+        "friendship",
+        "picnic",
+        "trout-lake-picnic",
+        "connection"
+      ],
+      "people": [
+        "Maya",
+        "Trout Lake"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-152",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Friendship event 152: had an honest conversation with Leo after a misunderstanding.",
+      "topics": [
+        "friendship",
+        "conversation",
+        "leo-conversation",
+        "connection"
+      ],
+      "people": [
+        "Leo"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-153",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 153：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-154",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 154: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-155",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 155: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-156",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 156：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-157",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 157: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-158",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 158: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-159",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 159：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-160",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Friendship event 160: planned a private reunion with Jordan.",
+      "topics": [
+        "friendship",
+        "reunion"
+      ],
+      "people": [
+        "Jordan"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-161",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 161: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-162",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 162：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-163",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 163: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-164",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 164: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-165",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 165：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-166",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 166: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-167",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 167: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-168",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 168：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-169",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 169: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-170",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 170: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-171",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 171：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-172",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 172: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-173",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 173: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-174",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 174：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-175",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 175: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-176",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 176: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-177",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 177：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-178",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 178: completed a friendship activity.",
+      "topics": [
+        "friendship",
+        "friendship"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-179",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic friendship event 179: completed a picnic activity.",
+      "topics": [
+        "friendship",
+        "picnic"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-180",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成friendship事件 180：今天完成了conversation练习。",
+      "topics": [
+        "friendship",
+        "conversation"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-06",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-181",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Home event 181: cooked dumplings with Mom and felt the comfort of a family tradition.",
+      "topics": [
+        "home",
+        "cooking",
+        "dumpling-tradition",
+        "comfort"
+      ],
+      "people": [
+        "Mom"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-182",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Home event 182: repaired the balcony planters with Alex before spring.",
+      "topics": [
+        "home",
+        "balcony",
+        "alex-planters",
+        "comfort"
+      ],
+      "people": [
+        "Alex"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-183",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 183：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-184",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 184: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-185",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 185: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-186",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 186：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-187",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 187: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-188",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 188: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-189",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 189：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-190",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Home event 190: discussed a private lease with Oak Realty.",
+      "topics": [
+        "home",
+        "lease"
+      ],
+      "people": [
+        "Oak Realty"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-191",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 191: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-192",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 192：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-193",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 193: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-194",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 194: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-195",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 195：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-196",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 196: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-197",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 197: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-198",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 198：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-199",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 199: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-200",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 200: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-201",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 201：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-202",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 202: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-203",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 203: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-204",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 204：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-205",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 205: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-206",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 206: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-207",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 207：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-208",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 208: completed a home activity.",
+      "topics": [
+        "home",
+        "home"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-209",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic home event 209: completed a cooking activity.",
+      "topics": [
+        "home",
+        "cooking"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-210",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成home事件 210：今天完成了balcony练习。",
+      "topics": [
+        "home",
+        "balcony"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-07",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-211",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 211: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-212",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 212: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-213",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 213：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-214",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 214: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-215",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 215: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-216",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 216：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-217",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 217: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-218",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 218: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-219",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 219：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-220",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 220: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-221",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 221: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-222",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 222：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-223",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 223: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-224",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 224: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-225",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 225：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-226",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 226: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-227",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 227: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-228",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 228：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-229",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 229: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-230",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 230: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-231",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 231：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-232",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 232: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-233",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 233: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-234",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 234：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-235",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 235: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-236",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 236: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-237",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 237：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-238",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 238: completed a confidence activity.",
+      "topics": [
+        "confidence",
+        "confidence"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-239",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic confidence event 239: completed a presentation activity.",
+      "topics": [
+        "confidence",
+        "presentation"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-240",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成confidence事件 240：今天完成了practice练习。",
+      "topics": [
+        "confidence",
+        "practice"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-08",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-241",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Calm event 241: brewed jasmine tea and reflected quietly before bed.",
+      "topics": [
+        "calm",
+        "tea",
+        "jasmine-reflection",
+        "reflection"
+      ],
+      "people": [
+        "jasmine tea"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-242",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Calm event 242: watched the sunrise at English Bay before the city became busy.",
+      "topics": [
+        "calm",
+        "sunrise",
+        "english-bay-sunrise",
+        "reflection"
+      ],
+      "people": [
+        "English Bay"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-243",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 243：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-244",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 244: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-245",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 245: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-246",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 246：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-247",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 247: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-248",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 248: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-249",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 249：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-250",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Calm event 250: reserved a private retreat at Silent Pines.",
+      "topics": [
+        "calm",
+        "retreat"
+      ],
+      "people": [
+        "Silent Pines"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-251",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 251: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-252",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 252：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-253",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 253: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-254",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 254: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-255",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 255：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-256",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 256: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-257",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 257: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-258",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 258：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-259",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 259: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-260",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 260: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-261",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 261：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-262",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 262: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-263",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 263: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-264",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 264：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-265",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 265: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-266",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 266: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-267",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 267：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-268",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 268: completed a calm activity.",
+      "topics": [
+        "calm",
+        "calm"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-269",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic calm event 269: completed a tea activity.",
+      "topics": [
+        "calm",
+        "tea"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-270",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成calm事件 270：今天完成了sunrise练习。",
+      "topics": [
+        "calm",
+        "sunrise"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-09",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-271",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 271: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-272",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 272: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-273",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 273：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-274",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 274: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-275",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 275: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-276",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 276：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-277",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 277: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-278",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 278: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-279",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 279：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-280",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 280: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-281",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 281: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-282",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 282：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-283",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 283: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-284",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 284: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-285",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 285：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-286",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 286: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-287",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 287: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-288",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 288：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-289",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 289: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-290",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 290: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-291",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 291：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-292",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 292: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-293",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 293: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-294",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 294：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person1"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-295",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 295: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person2"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-296",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 296: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person3"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-297",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 297：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person4"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    },
+    {
+      "eventId": "evt-298",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 298: completed a community activity.",
+      "topics": [
+        "community",
+        "community"
+      ],
+      "people": [
+        "Person5"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-299",
+      "ownerId": "owner-a",
+      "sourceType": "EVENT",
+      "summary": "Synthetic community event 299: completed a volunteer activity.",
+      "topics": [
+        "community",
+        "volunteer"
+      ],
+      "people": [
+        "Person6"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "en"
+    },
+    {
+      "eventId": "evt-300",
+      "ownerId": "owner-b",
+      "sourceType": "EVENT",
+      "summary": "合成community事件 300：今天完成了workshop练习。",
+      "topics": [
+        "community",
+        "workshop"
+      ],
+      "people": [
+        "Person7"
+      ],
+      "scenarioFamily": "family-10",
+      "language": "zh"
+    }
+  ],
+  "queries": [
+    {
+      "queryId": "q-001",
+      "query": "Which career moment was about receiving a full-time job offer?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "cedar-offer"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "job offer"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique primary topic in this owner and family."
+      }
+    },
+    {
+      "queryId": "q-002",
+      "query": "我做了哪些career相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001",
+        "evt-002"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2,
+        "evt-002": 1
+      }
+    },
+    {
+      "queryId": "q-003",
+      "query": "What did I do about internship?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      }
+    },
+    {
+      "queryId": "q-004",
+      "query": "关于internship，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      }
+    },
+    {
+      "queryId": "q-005",
+      "query": "今天的 internship activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      }
+    },
+    {
+      "queryId": "q-006",
+      "query": "Which moment showed that my job search finally paid off?",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "cedar-offer"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "paid off"
+        ],
+        "expectedCount": 1,
+        "rationale": "Paraphrase expresses the primary Event without copying its topic label."
+      }
+    },
+    {
+      "queryId": "q-007",
+      "query": "Which career moment was a job offer, not an internship?",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "cedar-offer"
+        ],
+        "topicsNone": [
+          "maple-orientation"
+        ],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "not an internship"
+        ],
+        "expectedCount": 1,
+        "rationale": "Positive must satisfy the requested topic and exclude the contrasted topic."
+      }
+    },
+    {
+      "queryId": "q-008",
+      "query": "Which career moment involved Cedar Labs?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Cedar Labs"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Cedar Labs"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique named entity identifies the Event."
+      }
+    },
+    {
+      "queryId": "q-009",
+      "query": "Maple internship",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-002"
+      ],
+      "gradedRelevance": {
+        "evt-002": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "maple-orientation"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Maple internship"
+        ],
+        "expectedCount": 1,
+        "rationale": "Short query still contains the unique secondary concept."
+      }
+    },
+    {
+      "queryId": "q-010",
+      "query": "Which career event involved a submarine license?",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [
+          "absent-career"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "submarine license"
+        ],
+        "expectedCount": 0,
+        "rationale": "No Event in the owner/family has the absent topic."
+      }
+    },
+    {
+      "queryId": "q-011",
+      "query": "Which career moments reflected personal growth?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001",
+        "evt-002"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2,
+        "evt-002": 1
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "growth"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "personal growth"
+        ],
+        "expectedCount": 2,
+        "rationale": "Shared topic intentionally selects exactly two Events."
+      }
+    },
+    {
+      "queryId": "q-012",
+      "query": "What happened with Northstar Agency?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Northstar Agency"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Northstar Agency"
+        ],
+        "expectedCount": 0,
+        "rationale": "Matching Event belongs to another owner and must not enter gold for this owner."
+      }
+    },
+    {
+      "queryId": "q-013",
+      "query": "What did I do related to study?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031",
+        "evt-032"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2,
+        "evt-032": 1
+      }
+    },
+    {
+      "queryId": "q-014",
+      "query": "我做了哪些study相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031",
+        "evt-032"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2,
+        "evt-032": 1
+      }
+    },
+    {
+      "queryId": "q-015",
+      "query": "What did I do about language?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2
+      }
+    },
+    {
+      "queryId": "q-016",
+      "query": "关于language，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2
+      }
+    },
+    {
+      "queryId": "q-017",
+      "query": "今天的 language activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2
+      }
+    },
+    {
+      "queryId": "q-018",
+      "query": "A milestone involving course",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2
+      }
+    },
+    {
+      "queryId": "q-019",
+      "query": "Something about study but not language",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-033"
+      ],
+      "gradedRelevance": {
+        "evt-033": 2
+      }
+    },
+    {
+      "queryId": "q-020",
+      "query": "What did Person2 join?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2
+      }
+    },
+    {
+      "queryId": "q-021",
+      "query": "study",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031",
+        "evt-032"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2,
+        "evt-032": 1
+      }
+    },
+    {
+      "queryId": "q-022",
+      "query": "A synthetic topic absent-1",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-023",
+      "query": "Which study moments involved course?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031",
+        "evt-032"
+      ],
+      "gradedRelevance": {
+        "evt-031": 2,
+        "evt-032": 1
+      }
+    },
+    {
+      "queryId": "q-024",
+      "query": "What did study mean for the other owner?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-025",
+      "query": "Which travel moment was about studying a blue-whale exhibit?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "blue-whale-exhibit"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "blue-whale"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique primary topic in this owner and family."
+      }
+    },
+    {
+      "queryId": "q-026",
+      "query": "我做了哪些travel相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061",
+        "evt-062"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2,
+        "evt-062": 1
+      }
+    },
+    {
+      "queryId": "q-027",
+      "query": "What did I do about train?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      }
+    },
+    {
+      "queryId": "q-028",
+      "query": "关于train，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      }
+    },
+    {
+      "queryId": "q-029",
+      "query": "今天的 train activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      }
+    },
+    {
+      "queryId": "q-030",
+      "query": "Which outing helped me learn about a giant ocean mammal?",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "blue-whale-exhibit"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "ocean mammal"
+        ],
+        "expectedCount": 1,
+        "rationale": "Paraphrase expresses the primary Event without copying its topic label."
+      }
+    },
+    {
+      "queryId": "q-031",
+      "query": "Which travel moment was a museum visit, not a train ride?",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "blue-whale-exhibit"
+        ],
+        "topicsNone": [
+          "coast-starlight-trip"
+        ],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "not a train"
+        ],
+        "expectedCount": 1,
+        "rationale": "Positive must satisfy the requested topic and exclude the contrasted topic."
+      }
+    },
+    {
+      "queryId": "q-032",
+      "query": "Which travel moment involved the Maritime Museum?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Maritime Museum"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Maritime Museum"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique named entity identifies the Event."
+      }
+    },
+    {
+      "queryId": "q-033",
+      "query": "Portland train",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-062"
+      ],
+      "gradedRelevance": {
+        "evt-062": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "coast-starlight-trip"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Portland train"
+        ],
+        "expectedCount": 1,
+        "rationale": "Short query still contains the unique secondary concept."
+      }
+    },
+    {
+      "queryId": "q-034",
+      "query": "Which travel event involved a lunar ferry?",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [
+          "absent-travel"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "lunar ferry"
+        ],
+        "expectedCount": 0,
+        "rationale": "No Event in the owner/family has the absent topic."
+      }
+    },
+    {
+      "queryId": "q-035",
+      "query": "Which travel moments were about making a discovery?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-061",
+        "evt-062"
+      ],
+      "gradedRelevance": {
+        "evt-061": 2,
+        "evt-062": 1
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "discovery"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "a discovery"
+        ],
+        "expectedCount": 2,
+        "rationale": "Shared topic intentionally selects exactly two Events."
+      }
+    },
+    {
+      "queryId": "q-036",
+      "query": "What happened with Atlas Tours?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Atlas Tours"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Atlas Tours"
+        ],
+        "expectedCount": 0,
+        "rationale": "Matching Event belongs to another owner and must not enter gold for this owner."
+      }
+    },
+    {
+      "queryId": "q-037",
+      "query": "Which health moment was about a shoulder physiotherapy session?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "shoulder-physio"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "physiotherapy"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique primary topic in this owner and family."
+      }
+    },
+    {
+      "queryId": "q-038",
+      "query": "我做了哪些health相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091",
+        "evt-092"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2,
+        "evt-092": 1
+      }
+    },
+    {
+      "queryId": "q-039",
+      "query": "What did I do about walk?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      }
+    },
+    {
+      "queryId": "q-040",
+      "query": "关于walk，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      }
+    },
+    {
+      "queryId": "q-041",
+      "query": "今天的 walk activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      }
+    },
+    {
+      "queryId": "q-042",
+      "query": "Which moment showed my shoulder getting professional mobility care?",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "shoulder-physio"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "mobility care"
+        ],
+        "expectedCount": 1,
+        "rationale": "Paraphrase expresses the primary Event without copying its topic label."
+      }
+    },
+    {
+      "queryId": "q-043",
+      "query": "Which health moment was stretching, not a walk?",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "shoulder-physio"
+        ],
+        "topicsNone": [
+          "stanley-park-walk"
+        ],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "not a walk"
+        ],
+        "expectedCount": 1,
+        "rationale": "Positive must satisfy the requested topic and exclude the contrasted topic."
+      }
+    },
+    {
+      "queryId": "q-044",
+      "query": "Which health moment involved Dr. Chen?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Dr. Chen"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Dr. Chen"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique named entity identifies the Event."
+      }
+    },
+    {
+      "queryId": "q-045",
+      "query": "Stanley Park walk",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-092"
+      ],
+      "gradedRelevance": {
+        "evt-092": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "stanley-park-walk"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Stanley Park walk"
+        ],
+        "expectedCount": 1,
+        "rationale": "Short query still contains the unique secondary concept."
+      }
+    },
+    {
+      "queryId": "q-046",
+      "query": "Which health event involved zero-gravity yoga?",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [
+          "absent-health"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "zero-gravity yoga"
+        ],
+        "expectedCount": 0,
+        "rationale": "No Event in the owner/family has the absent topic."
+      }
+    },
+    {
+      "queryId": "q-047",
+      "query": "Which health moments showed physical recovery?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-091",
+        "evt-092"
+      ],
+      "gradedRelevance": {
+        "evt-091": 2,
+        "evt-092": 1
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "recovery"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "physical recovery"
+        ],
+        "expectedCount": 2,
+        "rationale": "Shared topic intentionally selects exactly two Events."
+      }
+    },
+    {
+      "queryId": "q-048",
+      "query": "What happened at Alpine Clinic?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Alpine Clinic"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Alpine Clinic"
+        ],
+        "expectedCount": 0,
+        "rationale": "Matching Event belongs to another owner and must not enter gold for this owner."
+      }
+    },
+    {
+      "queryId": "q-049",
+      "query": "What did I do related to creative?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121",
+        "evt-122"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2,
+        "evt-122": 1
+      }
+    },
+    {
+      "queryId": "q-050",
+      "query": "我做了哪些creative相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121",
+        "evt-122"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2,
+        "evt-122": 1
+      }
+    },
+    {
+      "queryId": "q-051",
+      "query": "What did I do about sketch?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2
+      }
+    },
+    {
+      "queryId": "q-052",
+      "query": "关于sketch，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2
+      }
+    },
+    {
+      "queryId": "q-053",
+      "query": "今天的 sketch activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2
+      }
+    },
+    {
+      "queryId": "q-054",
+      "query": "A milestone involving music",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2
+      }
+    },
+    {
+      "queryId": "q-055",
+      "query": "Something about creative but not sketch",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-123"
+      ],
+      "gradedRelevance": {
+        "evt-123": 2
+      }
+    },
+    {
+      "queryId": "q-056",
+      "query": "What did Person5 join?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2
+      }
+    },
+    {
+      "queryId": "q-057",
+      "query": "creative",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121",
+        "evt-122"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2,
+        "evt-122": 1
+      }
+    },
+    {
+      "queryId": "q-058",
+      "query": "A synthetic topic absent-4",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-059",
+      "query": "Which creative moments involved music?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-121",
+        "evt-122"
+      ],
+      "gradedRelevance": {
+        "evt-121": 2,
+        "evt-122": 1
+      }
+    },
+    {
+      "queryId": "q-060",
+      "query": "What did creative mean for the other owner?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-061",
+      "query": "Which friendship moment was a picnic at Trout Lake?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "trout-lake-picnic"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Trout Lake"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique primary topic in this owner and family."
+      }
+    },
+    {
+      "queryId": "q-062",
+      "query": "我做了哪些friendship相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151",
+        "evt-152"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2,
+        "evt-152": 1
+      }
+    },
+    {
+      "queryId": "q-063",
+      "query": "What did I do about conversation?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      }
+    },
+    {
+      "queryId": "q-064",
+      "query": "关于conversation，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      }
+    },
+    {
+      "queryId": "q-065",
+      "query": "今天的 conversation activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      }
+    },
+    {
+      "queryId": "q-066",
+      "query": "Which gathering outdoors helped me feel closer to a friend?",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "trout-lake-picnic"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "feel closer"
+        ],
+        "expectedCount": 1,
+        "rationale": "Paraphrase expresses the primary Event without copying its topic label."
+      }
+    },
+    {
+      "queryId": "q-067",
+      "query": "Which friendship moment was a picnic, not a conversation?",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "trout-lake-picnic"
+        ],
+        "topicsNone": [
+          "leo-conversation"
+        ],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "not a conversation"
+        ],
+        "expectedCount": 1,
+        "rationale": "Positive must satisfy the requested topic and exclude the contrasted topic."
+      }
+    },
+    {
+      "queryId": "q-068",
+      "query": "Which friendship moment involved Trout Lake?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Maya"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Trout Lake"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique named entity identifies the Event."
+      }
+    },
+    {
+      "queryId": "q-069",
+      "query": "Leo conversation",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-152"
+      ],
+      "gradedRelevance": {
+        "evt-152": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "leo-conversation"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Leo conversation"
+        ],
+        "expectedCount": 1,
+        "rationale": "Short query still contains the unique secondary concept."
+      }
+    },
+    {
+      "queryId": "q-070",
+      "query": "Which friendship event involved a Martian pen pal?",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [
+          "absent-friendship"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Martian pen pal"
+        ],
+        "expectedCount": 0,
+        "rationale": "No Event in the owner/family has the absent topic."
+      }
+    },
+    {
+      "queryId": "q-071",
+      "query": "Which friendship moments strengthened a connection?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-151",
+        "evt-152"
+      ],
+      "gradedRelevance": {
+        "evt-151": 2,
+        "evt-152": 1
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "connection"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "a connection"
+        ],
+        "expectedCount": 2,
+        "rationale": "Shared topic intentionally selects exactly two Events."
+      }
+    },
+    {
+      "queryId": "q-072",
+      "query": "What happened with Jordan?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Jordan"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Jordan"
+        ],
+        "expectedCount": 0,
+        "rationale": "Matching Event belongs to another owner and must not enter gold for this owner."
+      }
+    },
+    {
+      "queryId": "q-073",
+      "query": "Which home moment was about cooking dumplings with Mom?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "dumpling-tradition"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "dumplings"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique primary topic in this owner and family."
+      }
+    },
+    {
+      "queryId": "q-074",
+      "query": "我做了哪些home相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181",
+        "evt-182"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2,
+        "evt-182": 1
+      }
+    },
+    {
+      "queryId": "q-075",
+      "query": "What did I do about balcony?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      }
+    },
+    {
+      "queryId": "q-076",
+      "query": "关于balcony，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      }
+    },
+    {
+      "queryId": "q-077",
+      "query": "今天的 balcony activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      }
+    },
+    {
+      "queryId": "q-078",
+      "query": "Which moment preserved a warm family food tradition?",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "dumpling-tradition"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "family food tradition"
+        ],
+        "expectedCount": 1,
+        "rationale": "Paraphrase expresses the primary Event without copying its topic label."
+      }
+    },
+    {
+      "queryId": "q-079",
+      "query": "Which home moment was cooking, not balcony repair?",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "dumpling-tradition"
+        ],
+        "topicsNone": [
+          "alex-planters"
+        ],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "not balcony"
+        ],
+        "expectedCount": 1,
+        "rationale": "Positive must satisfy the requested topic and exclude the contrasted topic."
+      }
+    },
+    {
+      "queryId": "q-080",
+      "query": "Which home moment involved Mom?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Mom"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Mom"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique named entity identifies the Event."
+      }
+    },
+    {
+      "queryId": "q-081",
+      "query": "Alex balcony",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-182"
+      ],
+      "gradedRelevance": {
+        "evt-182": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "alex-planters"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "Alex balcony"
+        ],
+        "expectedCount": 1,
+        "rationale": "Short query still contains the unique secondary concept."
+      }
+    },
+    {
+      "queryId": "q-082",
+      "query": "Which home event involved an underwater kitchen?",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [
+          "absent-home"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "underwater kitchen"
+        ],
+        "expectedCount": 0,
+        "rationale": "No Event in the owner/family has the absent topic."
+      }
+    },
+    {
+      "queryId": "q-083",
+      "query": "Which home moments made the space feel comfortable?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-181",
+        "evt-182"
+      ],
+      "gradedRelevance": {
+        "evt-181": 2,
+        "evt-182": 1
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "comfort"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "feel comfortable"
+        ],
+        "expectedCount": 2,
+        "rationale": "Shared topic intentionally selects exactly two Events."
+      }
+    },
+    {
+      "queryId": "q-084",
+      "query": "What happened with Oak Realty?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Oak Realty"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Oak Realty"
+        ],
+        "expectedCount": 0,
+        "rationale": "Matching Event belongs to another owner and must not enter gold for this owner."
+      }
+    },
+    {
+      "queryId": "q-085",
+      "query": "What did I do related to confidence?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211",
+        "evt-212"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2,
+        "evt-212": 1
+      }
+    },
+    {
+      "queryId": "q-086",
+      "query": "我做了哪些confidence相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211",
+        "evt-212"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2,
+        "evt-212": 1
+      }
+    },
+    {
+      "queryId": "q-087",
+      "query": "What did I do about presentation?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2
+      }
+    },
+    {
+      "queryId": "q-088",
+      "query": "关于presentation，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2
+      }
+    },
+    {
+      "queryId": "q-089",
+      "query": "今天的 presentation activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2
+      }
+    },
+    {
+      "queryId": "q-090",
+      "query": "A milestone involving practice",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2
+      }
+    },
+    {
+      "queryId": "q-091",
+      "query": "Something about confidence but not presentation",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-213"
+      ],
+      "gradedRelevance": {
+        "evt-213": 2
+      }
+    },
+    {
+      "queryId": "q-092",
+      "query": "What did Person1 join?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2
+      }
+    },
+    {
+      "queryId": "q-093",
+      "query": "confidence",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211",
+        "evt-212"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2,
+        "evt-212": 1
+      }
+    },
+    {
+      "queryId": "q-094",
+      "query": "A synthetic topic absent-7",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-095",
+      "query": "Which confidence moments involved practice?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211",
+        "evt-212"
+      ],
+      "gradedRelevance": {
+        "evt-211": 2,
+        "evt-212": 1
+      }
+    },
+    {
+      "queryId": "q-096",
+      "query": "What did confidence mean for the other owner?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-097",
+      "query": "Which calm moment was about brewing jasmine tea?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "jasmine-reflection"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "jasmine tea"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique primary topic in this owner and family."
+      }
+    },
+    {
+      "queryId": "q-098",
+      "query": "我做了哪些calm相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241",
+        "evt-242"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2,
+        "evt-242": 1
+      }
+    },
+    {
+      "queryId": "q-099",
+      "query": "What did I do about sunrise?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      }
+    },
+    {
+      "queryId": "q-100",
+      "query": "关于sunrise，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      }
+    },
+    {
+      "queryId": "q-101",
+      "query": "今天的 sunrise activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      }
+    },
+    {
+      "queryId": "q-102",
+      "query": "Which bedtime ritual helped me slow down and think quietly?",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "jasmine-reflection"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "slow down"
+        ],
+        "expectedCount": 1,
+        "rationale": "Paraphrase expresses the primary Event without copying its topic label."
+      }
+    },
+    {
+      "queryId": "q-103",
+      "query": "Which calm moment was tea, not a sunrise?",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "jasmine-reflection"
+        ],
+        "topicsNone": [
+          "english-bay-sunrise"
+        ],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "not a sunrise"
+        ],
+        "expectedCount": 1,
+        "rationale": "Positive must satisfy the requested topic and exclude the contrasted topic."
+      }
+    },
+    {
+      "queryId": "q-104",
+      "query": "Which calm moment involved jasmine tea?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "jasmine tea"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "jasmine tea"
+        ],
+        "expectedCount": 1,
+        "rationale": "Unique named entity identifies the Event."
+      }
+    },
+    {
+      "queryId": "q-105",
+      "query": "English Bay sunrise",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-242"
+      ],
+      "gradedRelevance": {
+        "evt-242": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "english-bay-sunrise"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "English Bay sunrise"
+        ],
+        "expectedCount": 1,
+        "rationale": "Short query still contains the unique secondary concept."
+      }
+    },
+    {
+      "queryId": "q-106",
+      "query": "Which calm event involved a volcano concert?",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [
+          "absent-calm"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "volcano concert"
+        ],
+        "expectedCount": 0,
+        "rationale": "No Event in the owner/family has the absent topic."
+      }
+    },
+    {
+      "queryId": "q-107",
+      "query": "Which calm moments included reflection?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241",
+        "evt-242"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2,
+        "evt-242": 1
+      },
+      "goldCriteria": {
+        "topicsAll": [
+          "reflection"
+        ],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [],
+        "queryCues": [
+          "reflection"
+        ],
+        "expectedCount": 2,
+        "rationale": "Shared topic intentionally selects exactly two Events."
+      }
+    },
+    {
+      "queryId": "q-108",
+      "query": "What happened at Silent Pines?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [],
+      "gradedRelevance": {},
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [
+          "Silent Pines"
+        ],
+        "eventIds": [],
+        "queryCues": [
+          "Silent Pines"
+        ],
+        "expectedCount": 0,
+        "rationale": "Matching Event belongs to another owner and must not enter gold for this owner."
+      }
+    },
+    {
+      "queryId": "q-109",
+      "query": "What did I do related to community?",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280",
+        "evt-290"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2,
+        "evt-290": 1
+      }
+    },
+    {
+      "queryId": "q-110",
+      "query": "我做了哪些community相关的事情？",
+      "languageSlice": "zh-zh",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280",
+        "evt-290"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2,
+        "evt-290": 1
+      }
+    },
+    {
+      "queryId": "q-111",
+      "query": "What did I do about volunteer?",
+      "languageSlice": "en-zh",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-112",
+      "query": "关于volunteer，我记录了什么？",
+      "languageSlice": "zh-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-113",
+      "query": "今天的 volunteer activity 是什么？",
+      "languageSlice": "code-switch",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-114",
+      "query": "A milestone involving workshop",
+      "languageSlice": "paraphrase",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-115",
+      "query": "Something about community but not volunteer",
+      "languageSlice": "hard-negative",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-116",
+      "query": "What did Person3 join?",
+      "languageSlice": "proper-noun",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-117",
+      "query": "community",
+      "languageSlice": "short-vague",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280",
+        "evt-290"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2,
+        "evt-290": 1
+      }
+    },
+    {
+      "queryId": "q-118",
+      "query": "A synthetic topic absent-9",
+      "languageSlice": "no-answer",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-119",
+      "query": "Which community moments involved workshop?",
+      "languageSlice": "multi-plausible",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280",
+        "evt-290"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2,
+        "evt-290": 1
+      }
+    },
+    {
+      "queryId": "q-120",
+      "query": "What did community mean for the other owner?",
+      "languageSlice": "cross-owner",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [],
+      "gradedRelevance": {}
+    },
+    {
+      "queryId": "q-121",
+      "query": "Tell me about career event 8",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-008"
+      ],
+      "gradedRelevance": {
+        "evt-008": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-008"
+        ],
+        "queryCues": [
+          "8"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-122",
+      "query": "Tell me about study activity 121",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-031"
+      ],
+      "gradedRelevance": {
+        "evt-031": 1
+      }
+    },
+    {
+      "queryId": "q-123",
+      "query": "Tell me about travel event 71",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-071"
+      ],
+      "gradedRelevance": {
+        "evt-071": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-071"
+        ],
+        "queryCues": [
+          "71"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-124",
+      "query": "Tell me about health event 101",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-101"
+      ],
+      "gradedRelevance": {
+        "evt-101": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-101"
+        ],
+        "queryCues": [
+          "101"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-125",
+      "query": "Tell me about creative activity 124",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-133"
+      ],
+      "gradedRelevance": {
+        "evt-133": 1
+      }
+    },
+    {
+      "queryId": "q-126",
+      "query": "Tell me about friendship event 164",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-164"
+      ],
+      "gradedRelevance": {
+        "evt-164": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-164"
+        ],
+        "queryCues": [
+          "164"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-127",
+      "query": "Tell me about home event 194",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-194"
+      ],
+      "gradedRelevance": {
+        "evt-194": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-194"
+        ],
+        "queryCues": [
+          "194"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-128",
+      "query": "Tell me about confidence activity 127",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-226"
+      ],
+      "gradedRelevance": {
+        "evt-226": 1
+      }
+    },
+    {
+      "queryId": "q-129",
+      "query": "Tell me about calm event 257",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-257"
+      ],
+      "gradedRelevance": {
+        "evt-257": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-257"
+        ],
+        "queryCues": [
+          "257"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-130",
+      "query": "Tell me about community activity 129",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-131",
+      "query": "Tell me about career event 19",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-019"
+      ],
+      "gradedRelevance": {
+        "evt-019": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-019"
+        ],
+        "queryCues": [
+          "19"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-132",
+      "query": "Tell me about study activity 131",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-041"
+      ],
+      "gradedRelevance": {
+        "evt-041": 1
+      }
+    },
+    {
+      "queryId": "q-133",
+      "query": "Tell me about travel event 82",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-082"
+      ],
+      "gradedRelevance": {
+        "evt-082": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-082"
+        ],
+        "queryCues": [
+          "82"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-134",
+      "query": "Tell me about health event 112",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-112"
+      ],
+      "gradedRelevance": {
+        "evt-112": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-112"
+        ],
+        "queryCues": [
+          "112"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-135",
+      "query": "Tell me about creative activity 134",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-143"
+      ],
+      "gradedRelevance": {
+        "evt-143": 1
+      }
+    },
+    {
+      "queryId": "q-136",
+      "query": "Tell me about friendship event 173",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-173"
+      ],
+      "gradedRelevance": {
+        "evt-173": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-173"
+        ],
+        "queryCues": [
+          "173"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-137",
+      "query": "Tell me about home event 205",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-205"
+      ],
+      "gradedRelevance": {
+        "evt-205": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-205"
+        ],
+        "queryCues": [
+          "205"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-138",
+      "query": "Tell me about confidence activity 137",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-236"
+      ],
+      "gradedRelevance": {
+        "evt-236": 1
+      }
+    },
+    {
+      "queryId": "q-139",
+      "query": "Tell me about calm event 266",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-266"
+      ],
+      "gradedRelevance": {
+        "evt-266": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-266"
+        ],
+        "queryCues": [
+          "266"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-140",
+      "query": "Tell me about community activity 139",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-141",
+      "query": "Tell me about career event 1",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-001"
+      ],
+      "gradedRelevance": {
+        "evt-001": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-001"
+        ],
+        "queryCues": [
+          "1"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-142",
+      "query": "Tell me about study activity 141",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-032"
+      ],
+      "gradedRelevance": {
+        "evt-032": 1
+      }
+    },
+    {
+      "queryId": "q-143",
+      "query": "Tell me about travel event 62",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-062"
+      ],
+      "gradedRelevance": {
+        "evt-062": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-062"
+        ],
+        "queryCues": [
+          "62"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-144",
+      "query": "Tell me about health event 94",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-094"
+      ],
+      "gradedRelevance": {
+        "evt-094": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-094"
+        ],
+        "queryCues": [
+          "94"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-145",
+      "query": "Tell me about creative activity 144",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-125"
+      ],
+      "gradedRelevance": {
+        "evt-125": 1
+      }
+    },
+    {
+      "queryId": "q-146",
+      "query": "Tell me about friendship event 155",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-155"
+      ],
+      "gradedRelevance": {
+        "evt-155": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-155"
+        ],
+        "queryCues": [
+          "155"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-147",
+      "query": "Tell me about home event 187",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-187"
+      ],
+      "gradedRelevance": {
+        "evt-187": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-187"
+        ],
+        "queryCues": [
+          "187"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-148",
+      "query": "Tell me about confidence activity 147",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-218"
+      ],
+      "gradedRelevance": {
+        "evt-218": 1
+      }
+    },
+    {
+      "queryId": "q-149",
+      "query": "Tell me about calm event 248",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-248"
+      ],
+      "gradedRelevance": {
+        "evt-248": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-248"
+        ],
+        "queryCues": [
+          "248"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-150",
+      "query": "Tell me about community activity 149",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-151",
+      "query": "Tell me about career event 11",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-011"
+      ],
+      "gradedRelevance": {
+        "evt-011": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-011"
+        ],
+        "queryCues": [
+          "11"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-152",
+      "query": "Tell me about study activity 151",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-042"
+      ],
+      "gradedRelevance": {
+        "evt-042": 1
+      }
+    },
+    {
+      "queryId": "q-153",
+      "query": "Tell me about travel event 73",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-073"
+      ],
+      "gradedRelevance": {
+        "evt-073": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-073"
+        ],
+        "queryCues": [
+          "73"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-154",
+      "query": "Tell me about health event 104",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-104"
+      ],
+      "gradedRelevance": {
+        "evt-104": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-104"
+        ],
+        "queryCues": [
+          "104"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-155",
+      "query": "Tell me about creative activity 154",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-135"
+      ],
+      "gradedRelevance": {
+        "evt-135": 1
+      }
+    },
+    {
+      "queryId": "q-156",
+      "query": "Tell me about friendship event 166",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-166"
+      ],
+      "gradedRelevance": {
+        "evt-166": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-166"
+        ],
+        "queryCues": [
+          "166"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-157",
+      "query": "Tell me about home event 197",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-197"
+      ],
+      "gradedRelevance": {
+        "evt-197": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-197"
+        ],
+        "queryCues": [
+          "197"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-158",
+      "query": "Tell me about confidence activity 157",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-228"
+      ],
+      "gradedRelevance": {
+        "evt-228": 1
+      }
+    },
+    {
+      "queryId": "q-159",
+      "query": "Tell me about calm event 259",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-259"
+      ],
+      "gradedRelevance": {
+        "evt-259": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-259"
+        ],
+        "queryCues": [
+          "259"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-160",
+      "query": "Tell me about community activity 159",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-161",
+      "query": "Tell me about career event 22",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-022"
+      ],
+      "gradedRelevance": {
+        "evt-022": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-022"
+        ],
+        "queryCues": [
+          "22"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-162",
+      "query": "Tell me about study activity 161",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-052"
+      ],
+      "gradedRelevance": {
+        "evt-052": 1
+      }
+    },
+    {
+      "queryId": "q-163",
+      "query": "Tell me about travel event 83",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-083"
+      ],
+      "gradedRelevance": {
+        "evt-083": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-083"
+        ],
+        "queryCues": [
+          "83"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-164",
+      "query": "Tell me about health event 113",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-113"
+      ],
+      "gradedRelevance": {
+        "evt-113": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-113"
+        ],
+        "queryCues": [
+          "113"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-165",
+      "query": "Tell me about creative activity 164",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-145"
+      ],
+      "gradedRelevance": {
+        "evt-145": 1
+      }
+    },
+    {
+      "queryId": "q-166",
+      "query": "Tell me about friendship event 176",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-176"
+      ],
+      "gradedRelevance": {
+        "evt-176": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-176"
+        ],
+        "queryCues": [
+          "176"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-167",
+      "query": "Tell me about home event 206",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-206"
+      ],
+      "gradedRelevance": {
+        "evt-206": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-206"
+        ],
+        "queryCues": [
+          "206"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-168",
+      "query": "Tell me about confidence activity 167",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-238"
+      ],
+      "gradedRelevance": {
+        "evt-238": 1
+      }
+    },
+    {
+      "queryId": "q-169",
+      "query": "Tell me about calm event 241",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-241"
+      ],
+      "gradedRelevance": {
+        "evt-241": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-241"
+        ],
+        "queryCues": [
+          "241"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-170",
+      "query": "Tell me about community activity 169",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    },
+    {
+      "queryId": "q-171",
+      "query": "Tell me about career event 2",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-01",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-002"
+      ],
+      "gradedRelevance": {
+        "evt-002": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-002"
+        ],
+        "queryCues": [
+          "2"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-172",
+      "query": "Tell me about study activity 171",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-02",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-034"
+      ],
+      "gradedRelevance": {
+        "evt-034": 1
+      }
+    },
+    {
+      "queryId": "q-173",
+      "query": "Tell me about travel event 65",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-03",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-065"
+      ],
+      "gradedRelevance": {
+        "evt-065": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-065"
+        ],
+        "queryCues": [
+          "65"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-174",
+      "query": "Tell me about health event 95",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-04",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-095"
+      ],
+      "gradedRelevance": {
+        "evt-095": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-095"
+        ],
+        "queryCues": [
+          "95"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-175",
+      "query": "Tell me about creative activity 174",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-05",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-127"
+      ],
+      "gradedRelevance": {
+        "evt-127": 1
+      }
+    },
+    {
+      "queryId": "q-176",
+      "query": "Tell me about friendship event 158",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-06",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-158"
+      ],
+      "gradedRelevance": {
+        "evt-158": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-158"
+        ],
+        "queryCues": [
+          "158"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-177",
+      "query": "Tell me about home event 188",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-07",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-188"
+      ],
+      "gradedRelevance": {
+        "evt-188": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-188"
+        ],
+        "queryCues": [
+          "188"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-178",
+      "query": "Tell me about confidence activity 177",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-08",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-211"
+      ],
+      "gradedRelevance": {
+        "evt-211": 1
+      }
+    },
+    {
+      "queryId": "q-179",
+      "query": "Tell me about calm event 251",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-09",
+      "ownerId": "owner-a",
+      "relevantEventIds": [
+        "evt-251"
+      ],
+      "gradedRelevance": {
+        "evt-251": 2
+      },
+      "goldCriteria": {
+        "topicsAll": [],
+        "topicsNone": [],
+        "peopleAny": [],
+        "eventIds": [
+          "evt-251"
+        ],
+        "queryCues": [
+          "251"
+        ],
+        "expectedCount": 1,
+        "rationale": "Exact synthetic Event number."
+      }
+    },
+    {
+      "queryId": "q-180",
+      "query": "Tell me about community activity 179",
+      "languageSlice": "en-en",
+      "scenarioFamily": "family-10",
+      "ownerId": "owner-b",
+      "relevantEventIds": [
+        "evt-280"
+      ],
+      "gradedRelevance": {
+        "evt-280": 2
+      }
+    }
+  ],
+  "split": {
+    "method": "scenario-family",
+    "seed": "semantic-gold-v1",
+    "heldOutFamilies": [
+      "family-02",
+      "family-05",
+      "family-08",
+      "family-10"
+    ]
+  }
+}

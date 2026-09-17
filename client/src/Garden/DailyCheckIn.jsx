@@ -26,7 +26,7 @@ function DailyCheckIn({
       setMessage("");
 
       await onBloom({
-        event: trimmedEvent,
+        journalText: trimmedEvent,
         mood: selectedMood
       });
 
@@ -60,8 +60,8 @@ function DailyCheckIn({
         <>
 
       <textarea
-        id="eventInput"
-        placeholder="Optional: what happened today?"
+        id="journalInput"
+        placeholder="Optional private journal (never sent to AI)"
         value={eventText}
         disabled={disabled || isSubmitting}
         onChange={(event) =>

@@ -93,6 +93,7 @@ test("Month 1 vertical slice survives a database restart", async () => {
     await database.exec(await migration("202608270002_flower_variant_semantics"));
     await database.exec(await migration("202609040001_flower_placement_fields"));
     await database.exec(await migration("202609040002_user_preferred_locale"));
+    await database.exec(await migration("202609140001_ai_foundation"));
 
     await assert.rejects(
       database.exec(`

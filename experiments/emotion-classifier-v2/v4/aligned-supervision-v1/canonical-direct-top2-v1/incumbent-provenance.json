@@ -1,0 +1,12 @@
+{
+  "reused": true,
+  "path": "/Users/xingranma/Desktop/Petalpal_JX/experiments/emotion-classifier-v2/v4/aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-probabilities.npy",
+  "sha256": "f9835c5126e5d642c1a0e863562ad12731e73493e0c8bade70d740c440e10dde",
+  "shape": [
+    149,
+    21
+  ],
+  "devRows": 149,
+  "devHash": "4013fe156dbfa059957c80a49b9e3a2766ac816422c530f88760265b34abe038",
+  "annotationLockHash": "ac28b11a77beb84721ce0ae023d5a9225a2e46451c049bdab114d2a8670fb0f3"
+}

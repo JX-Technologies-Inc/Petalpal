@@ -52,9 +52,11 @@ function deletionTransaction() {
 
 test("account deletion is owner-only, deletes all related data and rolls back on Firebase failure", async (t) => {
   const originalFindUnique = prisma.user.findUnique;
+  const originalAuditCreate = prisma.auditEvent.create;
   const originalTransaction = prisma.$transaction;
   let current = deletionTransaction();
   let firebaseUid = null;
+  prisma.auditEvent.create = async () => ({ id: "audit-1" });
 
   prisma.user.findUnique = async ({ where }) => ({
     id: where.firebaseUid === "firebase-owner" ? "owner-1" : "other-1"
@@ -78,6 +80,7 @@ test("account deletion is owner-only, deletes all related data and rolls back on
   await new Promise((resolve) => server.once("listening", resolve));
   t.after(async () => {
     prisma.user.findUnique = originalFindUnique;
+    prisma.auditEvent.create = originalAuditCreate;
     prisma.$transaction = originalTransaction;
     setFirebaseTokenVerifierForTests();
     setFirebaseUserDeleterForTests();

@@ -1,0 +1,662 @@
+{
+  "mapping": [
+    {
+      "label": "admiration",
+      "targetColumn": 0,
+      "actualIndex": 0,
+      "actualHeadLabel": "admiration",
+      "correctIndex": 0
+    },
+    {
+      "label": "amusement",
+      "targetColumn": 1,
+      "actualIndex": 1,
+      "actualHeadLabel": "amusement",
+      "correctIndex": 1
+    },
+    {
+      "label": "anger",
+      "targetColumn": 2,
+      "actualIndex": 2,
+      "actualHeadLabel": "anger",
+      "correctIndex": 2
+    },
+    {
+      "label": "annoyance",
+      "targetColumn": 3,
+      "actualIndex": 3,
+      "actualHeadLabel": "annoyance",
+      "correctIndex": 3
+    },
+    {
+      "label": "caring",
+      "targetColumn": 4,
+      "actualIndex": 5,
+      "actualHeadLabel": "caring",
+      "correctIndex": 5
+    },
+    {
+      "label": "confusion",
+      "targetColumn": 5,
+      "actualIndex": 6,
+      "actualHeadLabel": "confusion",
+      "correctIndex": 6
+    },
+    {
+      "label": "curiosity",
+      "targetColumn": 6,
+      "actualIndex": 7,
+      "actualHeadLabel": "curiosity",
+      "correctIndex": 7
+    },
+    {
+      "label": "disappointment",
+      "targetColumn": 7,
+      "actualIndex": 8,
+      "actualHeadLabel": "desire",
+      "correctIndex": 9
+    },
+    {
+      "label": "disgust",
+      "targetColumn": 8,
+      "actualIndex": 10,
+      "actualHeadLabel": "disapproval",
+      "correctIndex": 11
+    },
+    {
+      "label": "excitement",
+      "targetColumn": 9,
+      "actualIndex": 11,
+      "actualHeadLabel": "disgust",
+      "correctIndex": 13
+    },
+    {
+      "label": "fear",
+      "targetColumn": 10,
+      "actualIndex": 12,
+      "actualHeadLabel": "embarrassment",
+      "correctIndex": 14
+    },
+    {
+      "label": "gratitude",
+      "targetColumn": 11,
+      "actualIndex": 13,
+      "actualHeadLabel": "excitement",
+      "correctIndex": 15
+    },
+    {
+      "label": "joy",
+      "targetColumn": 12,
+      "actualIndex": 14,
+      "actualHeadLabel": "fear",
+      "correctIndex": 17
+    },
+    {
+      "label": "love",
+      "targetColumn": 13,
+      "actualIndex": 15,
+      "actualHeadLabel": "gratitude",
+      "correctIndex": 18
+    },
+    {
+      "label": "optimism",
+      "targetColumn": 14,
+      "actualIndex": 17,
+      "actualHeadLabel": "joy",
+      "correctIndex": 20
+    },
+    {
+      "label": "remorse",
+      "targetColumn": 15,
+      "actualIndex": 18,
+      "actualHeadLabel": "love",
+      "correctIndex": 24
+    },
+    {
+      "label": "sadness",
+      "targetColumn": 16,
+      "actualIndex": 19,
+      "actualHeadLabel": "nervousness",
+      "correctIndex": 25
+    },
+    {
+      "label": "surprise",
+      "targetColumn": 17,
+      "actualIndex": 20,
+      "actualHeadLabel": "optimism",
+      "correctIndex": 26
+    }
+  ],
+  "wrongMappingCount": 11,
+  "groups": {
+    "roberta.": {
+      "count": 124055040,
+      "changed": 90855278,
+      "changedPercent": 73.23787731639118,
+      "beforeNorm": 960.1664780716267,
+      "afterNorm": 960.1664905142422,
+      "deltaNorm": 0.3275294131599108,
+      "relativeDeltaPercent": 0.03411173172986755,
+      "maxAbsDelta": 0.00010816752910614014
+    },
+    "classifier.": {
+      "count": 612124,
+      "changed": 604423,
+      "changedPercent": 98.74192157144631,
+      "beforeNorm": 16.73580701587038,
+      "afterNorm": 16.73510320692534,
+      "deltaNorm": 0.038403923720428425,
+      "relativeDeltaPercent": 0.22947159753939803,
+      "maxAbsDelta": 0.00010784808546304703
+    },
+    "classifier.dense.": {
+      "count": 590592,
+      "changed": 590581,
+      "changedPercent": 99.99813746207195,
+      "beforeNorm": 16.29750456136763,
+      "afterNorm": 16.29674111135419,
+      "deltaNorm": 0.037960572303058694,
+      "relativeDeltaPercent": 0.23292260578985946,
+      "maxAbsDelta": 0.00010784808546304703
+    },
+    "classifier.out_proj.": {
+      "count": 21532,
+      "changed": 13842,
+      "changedPercent": 64.28571428571429,
+      "beforeNorm": 3.8050731326293197,
+      "afterNorm": 3.805247494702671,
+      "deltaNorm": 0.005818617322761328,
+      "relativeDeltaPercent": 0.15291735848295357,
+      "maxAbsDelta": 0.00010213162750005722
+    }
+  },
+  "allFinite": true,
+  "tensorKeyAndShapeMatch": true,
+  "tensorCount": 201,
+  "headRows": [
+    {
+      "index": 0,
+      "label": "admiration",
+      "usedInLoss": true,
+      "beforeNorm": 0.7247852087020874,
+      "afterNorm": 0.7252886295318604,
+      "deltaNorm": 0.001405248767696321,
+      "beforeBias": -0.008527140133082867,
+      "afterBias": -0.00858671497553587,
+      "biasDelta": -5.957484245300293e-05
+    },
+    {
+      "index": 1,
+      "label": "amusement",
+      "usedInLoss": true,
+      "beforeNorm": 0.7623609304428101,
+      "afterNorm": 0.7626802921295166,
+      "deltaNorm": 0.0010391529649496078,
+      "beforeBias": -0.010156064294278622,
+      "afterBias": -0.010201402008533478,
+      "biasDelta": -4.533771425485611e-05
+    },
+    {
+      "index": 2,
+      "label": "anger",
+      "usedInLoss": true,
+      "beforeNorm": 0.6944468021392822,
+      "afterNorm": 0.6951676607131958,
+      "deltaNorm": 0.0017313171410933137,
+      "beforeBias": -0.01020270399749279,
+      "afterBias": -0.010278508067131042,
+      "biasDelta": -7.580406963825226e-05
+    },
+    {
+      "index": 3,
+      "label": "annoyance",
+      "usedInLoss": true,
+      "beforeNorm": 0.6305212378501892,
+      "afterNorm": 0.6308434009552002,
+      "deltaNorm": 0.0006705440464429557,
+      "beforeBias": -0.00852038711309433,
+      "afterBias": -0.008537971414625645,
+      "biasDelta": -1.758430153131485e-05
+    },
+    {
+      "index": 4,
+      "label": "approval",
+      "usedInLoss": false,
+      "beforeNorm": 0.6364167332649231,
+      "afterNorm": 0.6364167332649231,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.00731650460511446,
+      "afterBias": -0.00731650460511446,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 5,
+      "label": "caring",
+      "usedInLoss": true,
+      "beforeNorm": 0.7344193458557129,
+      "afterNorm": 0.734826385974884,
+      "deltaNorm": 0.0009680152288638055,
+      "beforeBias": -0.009894248098134995,
+      "afterBias": -0.009930784814059734,
+      "biasDelta": -3.653671592473984e-05
+    },
+    {
+      "index": 6,
+      "label": "confusion",
+      "usedInLoss": true,
+      "beforeNorm": 0.7028188109397888,
+      "afterNorm": 0.7036857008934021,
+      "deltaNorm": 0.0020314070861786604,
+      "beforeBias": -0.010678965598344803,
+      "afterBias": -0.010768803767859936,
+      "biasDelta": -8.98381695151329e-05
+    },
+    {
+      "index": 7,
+      "label": "curiosity",
+      "usedInLoss": true,
+      "beforeNorm": 0.6923874020576477,
+      "afterNorm": 0.6932022571563721,
+      "deltaNorm": 0.0017882066313177347,
+      "beforeBias": -0.010091790929436684,
+      "afterBias": -0.0101760970428586,
+      "biasDelta": -8.430611342191696e-05
+    },
+    {
+      "index": 8,
+      "label": "desire",
+      "usedInLoss": true,
+      "beforeNorm": 0.7428663372993469,
+      "afterNorm": 0.7425387501716614,
+      "deltaNorm": 0.0011123577132821083,
+      "beforeBias": -0.010495832189917564,
+      "afterBias": -0.010477880015969276,
+      "biasDelta": 1.7952173948287964e-05
+    },
+    {
+      "index": 9,
+      "label": "disappointment",
+      "usedInLoss": false,
+      "beforeNorm": 0.6703952550888062,
+      "afterNorm": 0.6703952550888062,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.01017654687166214,
+      "afterBias": -0.01017654687166214,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 10,
+      "label": "disapproval",
+      "usedInLoss": true,
+      "beforeNorm": 0.6690173149108887,
+      "afterNorm": 0.6688795685768127,
+      "deltaNorm": 0.0011042306432500482,
+      "beforeBias": -0.00904898066073656,
+      "afterBias": -0.00902607198804617,
+      "biasDelta": 2.290867269039154e-05
+    },
+    {
+      "index": 11,
+      "label": "disgust",
+      "usedInLoss": true,
+      "beforeNorm": 0.723844051361084,
+      "afterNorm": 0.7236036062240601,
+      "deltaNorm": 0.000869212148245424,
+      "beforeBias": -0.011418300680816174,
+      "afterBias": -0.011421939358115196,
+      "biasDelta": -3.6386772990226746e-06
+    },
+    {
+      "index": 12,
+      "label": "embarrassment",
+      "usedInLoss": true,
+      "beforeNorm": 0.7658398151397705,
+      "afterNorm": 0.7655691504478455,
+      "deltaNorm": 0.001052635139785707,
+      "beforeBias": -0.011088758707046509,
+      "afterBias": -0.011066087521612644,
+      "biasDelta": 2.2671185433864594e-05
+    },
+    {
+      "index": 13,
+      "label": "excitement",
+      "usedInLoss": true,
+      "beforeNorm": 0.7081403732299805,
+      "afterNorm": 0.7076359987258911,
+      "deltaNorm": 0.001205989858135581,
+      "beforeBias": -0.010973816737532616,
+      "afterBias": -0.010934915393590927,
+      "biasDelta": 3.890134394168854e-05
+    },
+    {
+      "index": 14,
+      "label": "fear",
+      "usedInLoss": true,
+      "beforeNorm": 0.7785110473632812,
+      "afterNorm": 0.7778408527374268,
+      "deltaNorm": 0.0020682632457464933,
+      "beforeBias": -0.012080672197043896,
+      "afterBias": -0.011999939568340778,
+      "biasDelta": 8.073262870311737e-05
+    },
+    {
+      "index": 15,
+      "label": "gratitude",
+      "usedInLoss": true,
+      "beforeNorm": 0.8295899629592896,
+      "afterNorm": 0.8294587135314941,
+      "deltaNorm": 0.0013466128148138523,
+      "beforeBias": -0.010248880833387375,
+      "afterBias": -0.010299332439899445,
+      "biasDelta": -5.04516065120697e-05
+    },
+    {
+      "index": 16,
+      "label": "grief",
+      "usedInLoss": false,
+      "beforeNorm": 0.7337472438812256,
+      "afterNorm": 0.7337472438812256,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.01194611843675375,
+      "afterBias": -0.01194611843675375,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 17,
+      "label": "joy",
+      "usedInLoss": true,
+      "beforeNorm": 0.7023807168006897,
+      "afterNorm": 0.702134370803833,
+      "deltaNorm": 0.0019292652141302824,
+      "beforeBias": -0.010031289421021938,
+      "afterBias": -0.010105198249220848,
+      "biasDelta": -7.390882819890976e-05
+    },
+    {
+      "index": 18,
+      "label": "love",
+      "usedInLoss": true,
+      "beforeNorm": 0.7771584987640381,
+      "afterNorm": 0.776904284954071,
+      "deltaNorm": 0.0009450007346458733,
+      "beforeBias": -0.010396375320851803,
+      "afterBias": -0.010400542989373207,
+      "biasDelta": -4.167668521404266e-06
+    },
+    {
+      "index": 19,
+      "label": "nervousness",
+      "usedInLoss": true,
+      "beforeNorm": 0.7606952786445618,
+      "afterNorm": 0.7606280446052551,
+      "deltaNorm": 0.000945459003560245,
+      "beforeBias": -0.0110350102186203,
+      "afterBias": -0.011044258251786232,
+      "biasDelta": -9.248033165931702e-06
+    },
+    {
+      "index": 20,
+      "label": "optimism",
+      "usedInLoss": true,
+      "beforeNorm": 0.69243323802948,
+      "afterNorm": 0.69243323802948,
+      "deltaNorm": 0.0012926256749778986,
+      "beforeBias": -0.00845601037144661,
+      "afterBias": -0.008501020260155201,
+      "biasDelta": -4.500988870859146e-05
+    },
+    {
+      "index": 21,
+      "label": "pride",
+      "usedInLoss": false,
+      "beforeNorm": 0.7660344243049622,
+      "afterNorm": 0.7660344243049622,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.011983081698417664,
+      "afterBias": -0.011983081698417664,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 22,
+      "label": "realization",
+      "usedInLoss": false,
+      "beforeNorm": 0.6286962628364563,
+      "afterNorm": 0.6286962628364563,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.00959190633147955,
+      "afterBias": -0.00959190633147955,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 23,
+      "label": "relief",
+      "usedInLoss": false,
+      "beforeNorm": 0.7474551796913147,
+      "afterNorm": 0.7474551796913147,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.012074065394699574,
+      "afterBias": -0.012074065394699574,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 24,
+      "label": "remorse",
+      "usedInLoss": false,
+      "beforeNorm": 0.7675433158874512,
+      "afterNorm": 0.7675433158874512,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.011645992286503315,
+      "afterBias": -0.011645992286503315,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 25,
+      "label": "sadness",
+      "usedInLoss": false,
+      "beforeNorm": 0.7083555459976196,
+      "afterNorm": 0.7083555459976196,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.010245024226605892,
+      "afterBias": -0.010245024226605892,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 26,
+      "label": "surprise",
+      "usedInLoss": false,
+      "beforeNorm": 0.7186214327812195,
+      "afterNorm": 0.7186214327812195,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.011963299475610256,
+      "afterBias": -0.011963299475610256,
+      "biasDelta": 0.0
+    },
+    {
+      "index": 27,
+      "label": "neutral",
+      "usedInLoss": false,
+      "beforeNorm": 0.6120076775550842,
+      "afterNorm": 0.6120076775550842,
+      "deltaNorm": 0.0,
+      "beforeBias": -0.005737519823014736,
+      "afterBias": -0.005737519823014736,
+      "biasDelta": 0.0
+    }
+  ],
+  "fileHashes": {
+    "config.json": {
+      "init": "cde641cc1d9a2248bdfdc13844c7a58526dec77da4f08fce2f6cea507eb65478",
+      "final": "cde641cc1d9a2248bdfdc13844c7a58526dec77da4f08fce2f6cea507eb65478"
+    },
+    "tokenizer.json": {
+      "init": "fac96121c0f9c36533e15c1ed9ebd3fe6e37a869247617866ca6a8df40e48e43",
+      "final": "fac96121c0f9c36533e15c1ed9ebd3fe6e37a869247617866ca6a8df40e48e43"
+    },
+    "tokenizer_config.json": {
+      "init": "98395e9d8c4d1f0b1d5c3c497a9c8d9c92ece7f4ec0ad8c74d60b3ed0110a5d6",
+      "final": "98395e9d8c4d1f0b1d5c3c497a9c8d9c92ece7f4ec0ad8c74d60b3ed0110a5d6"
+    },
+    "special_tokens_map.json": {
+      "init": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+      "final": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835"
+    },
+    "vocab.json": {
+      "init": "ed19656ea1707df69134c4af35c8ceda2cc9860bf2c3495026153a133670ab5e",
+      "final": "ed19656ea1707df69134c4af35c8ceda2cc9860bf2c3495026153a133670ab5e"
+    },
+    "merges.txt": {
+      "init": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+      "final": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+    }
+  },
+  "initCheckpointHash": "ad2583307b620d5f13ffc7013d735adf43f023c7cb7e71d96c7141023aca3458",
+  "finalCheckpointHash": "2246456a0f8952b28e1bcdf3808fab46fedc9d3ddad74b475a78705756d5e6fa",
+  "initHashMatchesSummary": true,
+  "configEqual": true,
+  "incumbentProbabilityStats": [
+    {
+      "label": "admiration",
+      "mean": 0.03101172484457493,
+      "median": 0.008311355486512184,
+      "min": 0.0006055075791664422,
+      "max": 0.617496907711029,
+      "fractionGe035": 0.006711409395973154
+    },
+    {
+      "label": "amusement",
+      "mean": 0.028186218813061714,
+      "median": 0.010641023516654968,
+      "min": 0.001678593223914504,
+      "max": 0.5618892908096313,
+      "fractionGe035": 0.013422818791946308
+    },
+    {
+      "label": "anger",
+      "mean": 0.017692891880869865,
+      "median": 0.0061459895223379135,
+      "min": 0.0010381285101175308,
+      "max": 0.373725563287735,
+      "fractionGe035": 0.006711409395973154
+    },
+    {
+      "label": "annoyance",
+      "mean": 0.07262463867664337,
+      "median": 0.025044025853276253,
+      "min": 0.0053909579291939735,
+      "max": 0.7420673370361328,
+      "fractionGe035": 0.053691275167785234
+    },
+    {
+      "label": "caring",
+      "mean": 0.07386238127946854,
+      "median": 0.024873079732060432,
+      "min": 0.0009246361441910267,
+      "max": 0.697827935218811,
+      "fractionGe035": 0.06711409395973154
+    },
+    {
+      "label": "confusion",
+      "mean": 0.02207481488585472,
+      "median": 0.0038547005970031023,
+      "min": 0.0006265497067943215,
+      "max": 0.8994715213775635,
+      "fractionGe035": 0.013422818791946308
+    },
+    {
+      "label": "curiosity",
+      "mean": 0.014647083356976509,
+      "median": 0.0021169784013181925,
+      "min": 0.00034219035296700895,
+      "max": 0.43775880336761475,
+      "fractionGe035": 0.006711409395973154
+    },
+    {
+      "label": "disappointment",
+      "mean": 0.06150703877210617,
+      "median": 0.01759631745517254,
+      "min": 0.0016837655566632748,
+      "max": 0.8450480103492737,
+      "fractionGe035": 0.020134228187919462
+    },
+    {
+      "label": "disgust",
+      "mean": 0.013207096606492996,
+      "median": 0.00569786224514246,
+      "min": 0.000826578529085964,
+      "max": 0.15280738472938538,
+      "fractionGe035": 0.0
+    },
+    {
+      "label": "excitement",
+      "mean": 0.057661183178424835,
+      "median": 0.019922684878110886,
+      "min": 0.0014800294302403927,
+      "max": 0.7978857755661011,
+      "fractionGe035": 0.040268456375838924
+    },
+    {
+      "label": "fear",
+      "mean": 0.0684114396572113,
+      "median": 0.011783888563513756,
+      "min": 0.0006174092413857579,
+      "max": 0.9168663024902344,
+      "fractionGe035": 0.053691275167785234
+    },
+    {
+      "label": "gratitude",
+      "mean": 0.09232735633850098,
+      "median": 0.034790512174367905,
+      "min": 0.0011182330781593919,
+      "max": 0.937774121761322,
+      "fractionGe035": 0.053691275167785234
+    },
+    {
+      "label": "joy",
+      "mean": 0.33240658044815063,
+      "median": 0.21125365793704987,
+      "min": 0.0038404655642807484,
+      "max": 0.9297446608543396,
+      "fractionGe035": 0.40939597315436244
+    },
+    {
+      "label": "love",
+      "mean": 0.03504389524459839,
+      "median": 0.006351738702505827,
+      "min": 0.0005594543763436377,
+      "max": 0.7612783312797546,
+      "fractionGe035": 0.026845637583892617
+    },
+    {
+      "label": "optimism",
+      "mean": 0.11207209527492523,
+      "median": 0.041153762489557266,
+      "min": 0.004564076662063599,
+      "max": 0.9372090697288513,
+      "fractionGe035": 0.10067114093959731
+    },
+    {
+      "label": "remorse",
+      "mean": 0.025682171806693077,
+      "median": 0.00879046879708767,
+      "min": 0.0009728738805279136,
+      "max": 0.6960291862487793,
+      "fractionGe035": 0.006711409395973154
+    },
+    {
+      "label": "sadness",
+      "mean": 0.1103576049208641,
+      "median": 0.022001370787620544,
+      "min": 0.0016787106869742274,
+      "max": 0.9085516929626465,
+      "fractionGe035": 0.10067114093959731
+    },
+    {
+      "label": "surprise",
+      "mean": 0.03151705861091614,
+      "median": 0.007698713801801205,
+      "min": 0.0009920992888510227,
+      "max": 0.6002870202064514,
+      "fractionGe035": 0.020134228187919462
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "benchmarkVersion": "semantic-retrieval-gold-v1",
+  "fixtureHash": "a149aa35bc4e66aeebc3e1182799bf551f21f995ca7f922ecb93890d6198e74e",
+  "auditVersion": "dev-objective-criteria-audit-v2",
+  "auditedAt": "2026-09-17",
+  "scope": "english-only",
+  "split": "dev",
+  "status": "PASS",
+  "queryCount": 84,
+  "positiveEdgeCount": 78,
+  "unresolvedCount": 0,
+  "issueCount": 0,
+  "scenarioFamilyLeakageCount": 0,
+  "crossOwnerLeakageCount": 0,
+  "heldOutFamiliesAudited": false,
+  "excludedQueryCount": 24,
+  "excludedSliceCounts": {
+    "code-switch": 6,
+    "en-zh": 6,
+    "zh-en": 6,
+    "zh-zh": 6
+  },
+  "retainedRootCauseAnalysis": {
+    "staleExactQueryOrdinals": 36,
+    "fixedFirstEventTopicOrCrossLanguageMapping": 18,
+    "incorrectMultiPlausibleMapping": 12,
+    "paraphraseDrift": 6,
+    "properNounDrift": 5,
+    "totalOriginalIssues": 77,
+    "crossLanguageIssuesExcludedFromPhase1": 18,
+    "englishIssuesResolved": 59,
+    "additionalUnderSpecifiedEnglishQueriesRepaired": 24
+  },
+  "conclusion": "PASS for English-only dev evaluation. Multilingual slices are preserved and deferred; held-out remains closed."
+}

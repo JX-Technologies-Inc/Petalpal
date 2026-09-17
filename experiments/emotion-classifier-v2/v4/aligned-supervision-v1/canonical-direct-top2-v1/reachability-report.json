@@ -1,0 +1,9 @@
+{
+  "trainRows": 841,
+  "devRows": 149,
+  "trainMaxCardinality": 2,
+  "devMaxCardinality": 2,
+  "devGoldExpressible": 149,
+  "devGoldTotal": 149,
+  "priorSameClusterConflictSetsPreserved": 19
+}

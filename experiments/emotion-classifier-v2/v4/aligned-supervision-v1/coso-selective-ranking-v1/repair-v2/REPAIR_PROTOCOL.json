@@ -1,0 +1,12 @@
+{
+  "status":"PREPARATION_ONLY_FAIL_CLOSED",
+  "objective":"Protocol-level repair v2; no training or Dev evaluation",
+  "namespaces":{"head28":"authoritative checkpoint config id2label","prob21":"historical saved-probability columns only","product18":"research labels only"},
+  "head28Product18Indices":[0,1,2,3,5,6,7,9,11,13,14,15,17,18,20,24,25,26],
+  "loss":"BCE + 0.25 * all-pair ranking",
+  "sourceWeights":{"PHQ":1.0,"COSO":2.0,"HUM":1.0},
+  "accumulation":{"batchRows":2,"windows":"full 16-row windows; final 9-row partial window; denominator is effective window row count"},
+  "schedule":{"optimizerSteps":53,"warmupSteps":6,"baseLearningRate":0.000002},
+  "mode":"--prepare-only; optimizer.step is fail-closed and must not be called",
+  "trainingStarted":false
+}

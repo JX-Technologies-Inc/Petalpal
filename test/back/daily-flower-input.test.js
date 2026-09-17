@@ -36,18 +36,16 @@ test("no journal is NO_AI and never invokes a classifier", async () => {
   assert.equal(result.classification.inferencePath, "NO_AI");
 });
 
-test("journal plus selected mood runs cheap routing but preserves user primary", async () => {
-  let options;
+test("journal plus selected mood never invokes a classifier", async () => {
+  let called = false;
   const result = await resolveDailyFlowerEmotion({
     event: "I presented my project", mood: "happy", aiProcessingAllowed: true,
-    classify: async (_text, received) => {
-      options = received;
-      return { label: "stressed", secondaryEmotions: ["stressed"], inferencePath: "LOCAL_CLASSIFIER" };
-    }
+    classify: async () => { called = true; }
   });
-  assert.equal(options.userSelectedMood, "happy");
+  assert.equal(called, false);
   assert.equal(result.mood, "happy");
   assert.equal(result.emotionSource, "USER");
+  assert.equal(result.classification.inferencePath, "NO_AI");
 });
 
 test("selected mood without AI consent still plants with NO_AI", async () => {
@@ -59,17 +57,17 @@ test("selected mood without AI consent still plants with NO_AI", async () => {
   assert.equal(result.classification.inferencePath, "NO_AI");
 });
 
-test("journal-only classification still requires consent", async () => {
+test("journal-only input is rejected because Journal never enters AI", async () => {
   await assert.rejects(resolveDailyFlowerEmotion({
     event: "A complicated day", mood: "", aiProcessingAllowed: false, classify: async () => ({})
-  }), (error) => error.status === 403);
+  }), (error) => error.status === 400 && /Journal text is private/.test(error.message));
 });
 
-test("journal-only classification supplies the primary mood", async () => {
-  const result = await resolveDailyFlowerEmotion({
+test("journal-only input never invokes an available classifier", async () => {
+  let called = false;
+  await assert.rejects(resolveDailyFlowerEmotion({
     event: "I am exhausted", mood: "", aiProcessingAllowed: true,
-    classify: async () => ({ label: "tired", secondaryEmotions: [], inferencePath: "LOCAL_CLASSIFIER" })
-  });
-  assert.equal(result.mood, "tired");
-  assert.equal(result.emotionSource, "MODEL");
+    classify: async () => { called = true; }
+  }), (error) => error.status === 400);
+  assert.equal(called, false);
 });

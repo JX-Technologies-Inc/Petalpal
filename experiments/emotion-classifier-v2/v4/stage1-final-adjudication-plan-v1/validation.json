@@ -1,0 +1,19 @@
+{
+  "validation": "PASS",
+  "guards": {
+    "C": 409,
+    "A": 847,
+    "D": 206,
+    "B": 356,
+    "total": 1818,
+    "uncertainty": 562,
+    "sol_queue": 409,
+    "model_severe": 39,
+    "model_consensus_c_union": 370,
+    "discrepancy_guard": 50,
+    "CORE1_MISSING": 4,
+    "CORE2_UNAVAILABLE": 684
+  },
+  "final_labels_created": false,
+  "final_reference_set_allowed": false
+}

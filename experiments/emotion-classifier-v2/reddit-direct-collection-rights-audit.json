@@ -1,0 +1,46 @@
+{
+  "scope": "PHQ-001-625 direct Reddit-linked public-human collection; canonical Train Reddit-derived 468",
+  "training_performed": false,
+  "data_modified": false,
+  "classification": "RIGHTS UNVERIFIED",
+  "provenance": {
+    "status": "DIRECT REDDIT COLLECTION PROVENANCE RECOVERED",
+    "named_upstream_corpus": false,
+    "row_urls_preserved": true,
+    "canonical_train_rows": 468,
+    "lineage": ["direct Reddit-linked public excerpts", "PetalPal PHQ-001-625", "cleanup/leakage/alias removal", "593 unique = 468 Train + 125 Dev", "canonical Train Reddit-derived 468"]
+  },
+  "ownership": {
+    "user_content_owned_by_users": "official_terms_state_users_retain_ownership_rights_they_have",
+    "reddit_license": "broad_transferable_sublicensable_platform_license_to_reddit",
+    "automatic_petalpal_sublicense": "not_established"
+  },
+  "access_route": {
+    "proven_api": false,
+    "proven_direct_web": false,
+    "classification": "DIRECT REDDIT-LINKED; MECHANISM UNVERIFIED",
+    "api_terms_applied_automatically": false,
+    "api_if_used": "Data API Terms apply; ML training requires express permission of applicable rightsholders; commercial/API uses may require separate agreement or written approval.",
+    "direct_web_if_used": "API-specific provisions are not mechanically assumed; public visibility still does not establish ML or commercial rights."
+  },
+  "uses": {
+    "ml_training": "UNVERIFIED",
+    "fine_tuning": "UNVERIFIED",
+    "internal_r_and_d": "UNVERIFIED",
+    "future_deployment": "UNVERIFIED",
+    "commercial_product": "UNVERIFIED",
+    "research_program": "possible_non_commercial_basis_only; not verified for this collection",
+    "redistribution": "UNVERIFIED"
+  },
+  "timing": {"exact_collection_date": "UNVERIFIED", "historical_terms": "HISTORICAL TERMS UNVERIFIED"},
+  "individual_permissions": "No individual licenses recovered; individual rightsholder permission would be one possible rights basis, not pursued.",
+  "legal_exceptions": "POTENTIAL LEGAL EXCEPTION — REQUIRES LEGAL REVIEW",
+  "blocker": {"current_status": "BLOCKER", "can_remove": false},
+  "official_sources": [
+    {"url":"https://redditinc.com/policies/user-agreement","sections":"5, 11","effective":"2026-07-01","last_revised":"2026-05-26"},
+    {"url":"https://redditinc.com/policies/developer-terms","sections":"2.1, 4, 5.2"},
+    {"url":"https://redditinc.com/policies/data-api-terms","sections":"2.1, 2.4, 3.1-3.2, 4.2, 6","last_revised":"2026-07-20"},
+    {"url":"https://support.reddithelp.com/hc/en-us/articles/26410290525844-Public-Content-Policy","sections":"Introduction; public content; non-commercial use; licensing restrictions","updated":"2025-05-29"}
+  ],
+  "remaining_uncertainty": ["historical collection date and applicable historical terms", "API versus manual/direct-web acquisition route", "individual rightsholder licenses", "rights to train, deploy, commercialize, and redistribute"]
+}

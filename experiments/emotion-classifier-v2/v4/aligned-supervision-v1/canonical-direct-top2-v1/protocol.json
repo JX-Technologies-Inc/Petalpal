@@ -1,0 +1,9 @@
+{
+  "name": "research_direct_top2",
+  "status": "FROZEN_BEFORE_METRICS",
+  "labels": ["admiration","amusement","anger","annoyance","caring","confusion","curiosity","disappointment","disgust","excitement","fear","gratitude","joy","love","optimism","remorse","sadness","surprise"],
+  "threshold": 0.35,
+  "rule": "Extract by label name; eligible p>=0.35; descending probability; exact ties by frozen label order; output first min(2,eligible_count). No selector, clusters, redundancy filter, or threshold sweep.",
+  "legacyName": "legacy_product_selector_coupled",
+  "metric": "sklearn precision_recall_fscore_support / zero_division=0"
+}
