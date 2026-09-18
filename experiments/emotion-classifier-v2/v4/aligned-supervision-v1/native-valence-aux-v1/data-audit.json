@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "decision": "TRAIN_ONE_FIXED_AUXILIARY_CANDIDATE",
+  "preparedRows": 8122,
+  "labeledRows": 8120,
+  "coverage": 0.9997537552327013,
+  "missingRows": [
+    {
+      "sourceRecordId": "unexpected-events-experiment-3-000077",
+      "value": ""
+    },
+    {
+      "sourceRecordId": "unexpected-events-experiment-3-000582",
+      "value": ""
+    }
+  ],
+  "classCounts": {
+    "train": {
+      "neg": 4523,
+      "neither": 363,
+      "pos": 2828
+    },
+    "validation": {
+      "neg": 170,
+      "neither": 26,
+      "pos": 210
+    }
+  },
+  "sourceGroups": {
+    "train": 460,
+    "validation": 26
+  },
+  "checks": {
+    "coverage": true,
+    "trainClassCoverage": true,
+    "validationClassCoverage": true,
+    "groupIsolation": true
+  },
+  "labelStatus": "NATIVE_HUMAN_VALENCE_NOT_PRODUCT18_GOLD",
+  "product18MappingPerformed": false,
+  "humanReviewPerformed": false
+}

@@ -1,0 +1,60 @@
+{
+  "protocolId": "selective-consensus-distillation-v1-20260917",
+  "status": "LOCKED_BEFORE_FEASIBILITY_INFERENCE",
+  "researchOnly": true,
+  "productQualityProblem": "The historical incumbent produces 58 false positives and 85 false negatives, while the only short-event labeled development slice has 19 rows and cannot support label-wise tuning. The model needs short-event exposure without repeating MLM DAPT or forcing uncertain pseudo labels.",
+  "hypothesis": "Exact-output consensus between the frozen incumbent and the fixed domain-restoration research checkpoint can identify a conservative subset of admitted short Events with high-confidence Product-18 positives, negatives, and abstentions. Selective masked distillation on that subset may improve short-event decision stability while avoiding the false-positive growth seen in MLM DAPT.",
+  "teachers": [
+    {
+      "name": "incumbent",
+      "checkpoint": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+      "rights": "HISTORICAL_GOEMOTIONS_REDDIT_LINEAGE_UNRESOLVED_RESEARCH_ONLY"
+    },
+    {
+      "name": "domain-restoration",
+      "checkpoint": "../domain-restoration-v1/experiment/epoch-1-checkpoint",
+      "rights": "DESCENDANT_OF_HISTORICAL_UNRESOLVED_LINEAGE_RESEARCH_ONLY"
+    }
+  ],
+  "admissibleTrainingText": {
+    "hippocorpus": "all 2637 prepared train rows; ADMIT_UNLABELED; PRIMARY_FIRST_PERSON_EVENT",
+    "unexpectedEvents": "2637 prepared train rows selected without labels by deterministic participant round-robin; ADMIT_UNLABELED; AUXILIARY_HYPOTHETICAL_EVENT",
+    "sourceBalance": "1:1 row cap so the larger hypothetical corpus cannot dominate",
+    "validationExclusion": "Both prepared validation splits remain untouched until a candidate exists"
+  },
+  "pseudoLabelPolicy": {
+    "status": "WEAK_PSEUDO_NOT_HUMAN_GOLD",
+    "canonicalSelector": "threshold 0.35, Product-18, maximum 2",
+    "agreement": "teachers must produce exactly the same selected output",
+    "positiveConfidence": "minimum probability across both teachers >= 0.70 for every selected label",
+    "negativeConfidence": "maximum probability across both teachers <= 0.10 for a label",
+    "confidentAbstention": "both teachers select zero labels and every Product-18 probability from both teachers <= 0.10",
+    "uncertainLabels": "masked; never forced positive or negative"
+  },
+  "feasibilityPassCriteria": {
+    "eligibleRowsAtLeast": 1000,
+    "eligibleRowsPerSourceAtLeast": 300,
+    "labelsWithAtLeast20StrongPositivesAtLeast": 8,
+    "confidentAbstentionRowsAtLeast": 100
+  },
+  "feasibilityFailure": "If any fixed coverage criterion fails, do not train and do not relax confidence thresholds.",
+  "candidateTrainingIfFeasible": {
+    "initialization": "incumbent",
+    "epochs": 1,
+    "learningRate": 0.000002,
+    "maxLength": 512,
+    "runtimeLengthNote": "512 tokens is safety only; all admitted texts are complete and <=300 characters",
+    "loss": "masked BCE on only strong consensus positives and negatives",
+    "modelUpdates": "classifier plus top two encoder layers only",
+    "noSweep": true
+  },
+  "candidateSuccessCriteria": {
+    "historicalDevelopment": "micro-F1 >= incumbent 0.528052805280528, false positives <=58, false negatives <=85, and no supported-label F1 regression worse than 0.05",
+    "shortDevelopmentSlice": "false positives <=5 and micro-F1 regression no worse than 0.02; descriptive guard only",
+    "untouchedUnlabeledValidations": "no output collapse; each source exact-output agreement with incumbent >=0.85 and 0/1/2 distribution changes <=0.08 absolute per bin",
+    "decision": "RETAIN_FOR_RESEARCH only if every guard passes; otherwise REJECT"
+  },
+  "promotionStatus": "INCONCLUSIVE regardless of outcome because no independent rights-cleared Product-18 human gold exists",
+  "frozenFinalEvaluationOpened": false,
+  "humanReviewPerformed": false
+}

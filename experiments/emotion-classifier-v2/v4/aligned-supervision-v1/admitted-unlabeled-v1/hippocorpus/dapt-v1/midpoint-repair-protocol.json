@@ -1,0 +1,11 @@
+{
+  "status": "LOCKED",
+  "experiment": "hippocorpus-dapt-v1-midpoint-repair",
+  "reason": "The one-epoch DAPT candidate improved held-out MLM loss but failed the false-positive retention guard.",
+  "method": "Interpolate the original historical incumbent encoder and rejected DAPT encoder once at fixed alpha=0.5; keep the original classifier head unchanged; do not sweep alpha.",
+  "alphaAdapted": 0.5,
+  "decisionRule": "RETAIN_RESEARCH_CANDIDATE only if held-out MLM loss improves over the incumbent, frozen-development micro-F1 drops by no more than 0.02, no label with support >=3 drops more than 0.10 F1, and false positives per row increase by no more than 0.05.",
+  "lineage": "Historical GoEmotions/Reddit-derived incumbent with unresolved underlying training-text rights; research-only and not production-cleared.",
+  "promotionAuthorized": false,
+  "humanReview": false
+}

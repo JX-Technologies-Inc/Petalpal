@@ -1,0 +1,232 @@
+{
+  "status": "PASS",
+  "decision": "DESIGN_ONE_CONSISTENCY_CANDIDATE",
+  "trainingPerformed": false,
+  "sources": {
+    "hippocorpus": {
+      "rows": 512,
+      "unstableRows": 204,
+      "unstablePercentage": 39.84375,
+      "allPassExactStableRows": 308,
+      "meanPairwiseExactOutputAgreement": 0.776171875,
+      "minPairwiseExactOutputAgreement": 0.740234375,
+      "maxPairwiseExactOutputAgreement": 0.80859375,
+      "outputCountDistributionByPass": [
+        {
+          "0": 81,
+          "1": 373,
+          "2": 58
+        },
+        {
+          "0": 89,
+          "1": 357,
+          "2": 66
+        },
+        {
+          "0": 87,
+          "1": 378,
+          "2": 47
+        },
+        {
+          "0": 88,
+          "1": 366,
+          "2": 58
+        },
+        {
+          "0": 90,
+          "1": 363,
+          "2": 59
+        }
+      ],
+      "perLabelPredictionCountMeanStd": {
+        "admiration": {
+          "mean": 8.0,
+          "std": 0.8944271909999159
+        },
+        "amusement": {
+          "mean": 5.6,
+          "std": 0.8
+        },
+        "anger": {
+          "mean": 1.2,
+          "std": 0.4
+        },
+        "annoyance": {
+          "mean": 3.6,
+          "std": 0.8
+        },
+        "caring": {
+          "mean": 12.2,
+          "std": 2.227105745132009
+        },
+        "confusion": {
+          "mean": 2.6,
+          "std": 1.019803902718557
+        },
+        "curiosity": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "disappointment": {
+          "mean": 10.2,
+          "std": 1.16619037896906
+        },
+        "disgust": {
+          "mean": 0.6,
+          "std": 0.48989794855663565
+        },
+        "excitement": {
+          "mean": 9.6,
+          "std": 1.3564659966250536
+        },
+        "fear": {
+          "mean": 32.6,
+          "std": 2.4166091947189146
+        },
+        "gratitude": {
+          "mean": 15.8,
+          "std": 1.6
+        },
+        "joy": {
+          "mean": 194.2,
+          "std": 2.6381811916545836
+        },
+        "love": {
+          "mean": 14.0,
+          "std": 0.6324555320336759
+        },
+        "optimism": {
+          "mean": 19.4,
+          "std": 0.7999999999999999
+        },
+        "remorse": {
+          "mean": 4.4,
+          "std": 0.48989794855663565
+        },
+        "sadness": {
+          "mean": 125.8,
+          "std": 1.9390719429665315
+        },
+        "surprise": {
+          "mean": 22.8,
+          "std": 1.1661903789690602
+        }
+      }
+    },
+    "unexpectedEvents": {
+      "rows": 512,
+      "unstableRows": 144,
+      "unstablePercentage": 28.125,
+      "allPassExactStableRows": 368,
+      "meanPairwiseExactOutputAgreement": 0.8525390625,
+      "minPairwiseExactOutputAgreement": 0.83203125,
+      "maxPairwiseExactOutputAgreement": 0.880859375,
+      "outputCountDistributionByPass": [
+        {
+          "0": 376,
+          "1": 134,
+          "2": 2
+        },
+        {
+          "0": 386,
+          "1": 122,
+          "2": 4
+        },
+        {
+          "0": 379,
+          "1": 129,
+          "2": 4
+        },
+        {
+          "0": 385,
+          "1": 125,
+          "2": 2
+        },
+        {
+          "0": 378,
+          "1": 132,
+          "2": 2
+        }
+      ],
+      "perLabelPredictionCountMeanStd": {
+        "admiration": {
+          "mean": 8.6,
+          "std": 0.4898979485566356
+        },
+        "amusement": {
+          "mean": 1.6,
+          "std": 0.4898979485566356
+        },
+        "anger": {
+          "mean": 0.6,
+          "std": 0.48989794855663565
+        },
+        "annoyance": {
+          "mean": 4.6,
+          "std": 1.0198039027185568
+        },
+        "caring": {
+          "mean": 0.4,
+          "std": 0.48989794855663565
+        },
+        "confusion": {
+          "mean": 4.4,
+          "std": 1.019803902718557
+        },
+        "curiosity": {
+          "mean": 2.2,
+          "std": 0.7483314773547882
+        },
+        "disappointment": {
+          "mean": 30.6,
+          "std": 1.854723699099141
+        },
+        "disgust": {
+          "mean": 0.2,
+          "std": 0.4000000000000001
+        },
+        "excitement": {
+          "mean": 0.2,
+          "std": 0.4000000000000001
+        },
+        "fear": {
+          "mean": 2.2,
+          "std": 0.7483314773547882
+        },
+        "gratitude": {
+          "mean": 1.4,
+          "std": 1.019803902718557
+        },
+        "joy": {
+          "mean": 19.6,
+          "std": 1.3564659966250536
+        },
+        "love": {
+          "mean": 2.2,
+          "std": 0.7483314773547882
+        },
+        "optimism": {
+          "mean": 0.4,
+          "std": 0.48989794855663565
+        },
+        "remorse": {
+          "mean": 1.6,
+          "std": 0.4898979485566356
+        },
+        "sadness": {
+          "mean": 45.6,
+          "std": 3.1368774282716245
+        },
+        "surprise": {
+          "mean": 7.6,
+          "std": 0.48989794855663565
+        }
+      }
+    }
+  },
+  "feasibilityGatePassed": true,
+  "validationSplitsOpened": false,
+  "interpretation": "Stochastic dropout instability is only a research uncertainty proxy; it is not emotion correctness or promotion evidence.",
+  "frozenFinalEvaluationOpened": false,
+  "humanReviewPerformed": false
+}

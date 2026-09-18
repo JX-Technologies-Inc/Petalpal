@@ -1,0 +1,21 @@
+{
+  "status": "LOCKED",
+  "task": "short-event-domain-diagnostic-v1",
+  "hypothesis": "The historical COSO-149 development aggregate is dominated by texts longer than the approximately 300-character PetalPal Event domain, so aggregate metrics may conceal materially different short-Event output and false-positive behavior.",
+  "training": false,
+  "incumbent": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "incumbentRights": "historical GoEmotions/Reddit-derived research lineage with unresolved underlying training-text rights; not production-cleared",
+  "diagnostics": {
+    "historicalDevelopment": "../dev.jsonl with the incumbent's already-saved epoch-1 probabilities",
+    "lengthBucketsCharacters": ["<=300", "301-500", ">500"],
+    "unlabeledShortEventBehavior": "../admitted-unlabeled-v1/hippocorpus/prepared/validation.jsonl"
+  },
+  "interpretationRules": [
+    "COSO labels remain historical development diagnostics, not independent rights-cleared human gold.",
+    "Hippocorpus has no emotion gold; report output behavior only and never correctness.",
+    "Length-bucket metrics are descriptive and cannot be used for checkpoint or threshold selection.",
+    "No model promotion can result from this task."
+  ],
+  "successCriteria": "PASS if the audit deterministically reports coverage, per-bucket false positives, 0/1/2 output counts, per-label effects, tokenizer truncation exposure, and unlabeled Hippocorpus behavior without training or opening final evaluation.",
+  "humanReview": false
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checkpointReloaded": true,
+  "classifierHeadUnchanged": true,
+  "developmentProbabilitiesSaved": true,
+  "developmentMetricsExactMatch": true,
+  "corpusRows": {
+    "train": 2637,
+    "validation": 139
+  },
+  "allCorpusRowsAtMost300Characters": true,
+  "sourceGroupsDisjoint": true,
+  "frozenEvaluationOpened": false,
+  "humanReviewPerformed": false
+}

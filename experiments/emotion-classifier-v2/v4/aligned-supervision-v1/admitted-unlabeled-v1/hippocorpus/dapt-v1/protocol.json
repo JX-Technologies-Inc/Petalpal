@@ -1,0 +1,37 @@
+{
+  "status": "LOCKED",
+  "experiment": "hippocorpus-dapt-v1",
+  "hypothesis": "One epoch of top-two-layer masked-language-model adaptation on rights-cleared Hippocorpus recalled summaries will reduce author-isolated held-out MLM loss without materially degrading the historical incumbent on the same frozen development diagnostics.",
+  "admissionClass": "ADMIT_UNLABELED",
+  "corpus": {
+    "train": "../prepared/train.jsonl",
+    "validation": "../prepared/validation.jsonl",
+    "text": "complete recalled summaries of at most 300 Unicode characters; no truncation",
+    "groupIsolation": "WorkerId-derived anonymized sourceGroupId",
+    "labelsUsed": false
+  },
+  "initialization": {
+    "encoder": "existing historical candidate-c checkpoint (SamLowe/roberta-base-go_emotions lineage; Reddit-derived underlying training-data rights unresolved; not production-cleared)",
+    "mlmHead": "FacebookAI/roberta-base",
+    "classifierHeadForRetentionDiagnostic": "unchanged candidate-c head"
+  },
+  "training": {
+    "objective": "masked language modeling",
+    "epochs": 1,
+    "maxLength": 96,
+    "maskProbability": 0.15,
+    "batchSize": 8,
+    "gradientAccumulation": 4,
+    "learningRate": 0.00002,
+    "weightDecay": 0.01,
+    "trainableEncoderLayers": [10, 11],
+    "seed": 44
+  },
+  "decisionRule": "RETAIN_RESEARCH_CANDIDATE only if held-out MLM loss decreases, frozen-development micro-F1 drops by no more than 0.02, no label with support >=3 drops more than 0.10 F1, and false positives per row increase by no more than 0.05; this is not a model-promotion rule.",
+  "evaluationLimits": {
+    "frozenDevelopment": "same 149-row historical development diagnostic for incumbent and candidate; labels are not independent rights-cleared human gold",
+    "frozenProductEvaluationOpened": false,
+    "promotionAuthorized": false,
+    "humanReview": false
+  }
+}

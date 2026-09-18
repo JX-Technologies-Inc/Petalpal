@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "admissionClass": "ADMIT_UNLABELED",
+  "source": "Mendeley Data kkt999sn7b version 1",
+  "license": "CC BY 4.0",
+  "allowedRole": [
+    "auxiliary domain-adaptive pretraining",
+    "representation adaptation",
+    "self-supervised learning",
+    "weak-label research with explicit WEAK/PSEUDO status"
+  ],
+  "forbiddenRole": [
+    "Product-18 human emotion gold",
+    "independent product evaluation",
+    "standalone evidence for model promotion",
+    "treating source valence, topic, or goal-relation labels as Product-18 labels"
+  ],
+  "selection": "answer_text from the three released post-resolution/master experiment tables only; no pre/post-test, rater, comment, label, or participant-identifier fields",
+  "domainQualification": "Short everyday hypothetical event continuations; useful only as auxiliary Event-like text because they are prompted third-person predictions rather than first-person PetalPal Events.",
+  "lengthPolicy": "retain complete responses of at most 300 Unicode characters; no truncation",
+  "qualityPolicy": "require at least three ASCII letters; remove normalized exact duplicates deterministically",
+  "releaseClaimDiscrepancy": {
+    "publishedTextResponseCount": 9720,
+    "nonblankResponsesInSelectedReleasedTables": 8700,
+    "difference": 1020,
+    "handling": "Use reproducible released-table contents; do not infer or synthesize missing records."
+  },
+  "raw": {
+    "tableRows": {
+      "experiment-1": 5080,
+      "experiment-2": 5140,
+      "experiment-3": 1020
+    },
+    "nonblankAnswerTextRows": {
+      "experiment-1": 2540,
+      "experiment-2": 5140,
+      "experiment-3": 1020
+    },
+    "nonblankAnswerTextRowsTotal": 8700,
+    "sourceGroups": 486
+  },
+  "characterLengthBeforePolicy": {
+    "median": 46,
+    "p75": 79,
+    "p90": 125,
+    "percentageAtMost300": 99.19540229885058,
+    "percentageOver300": 0.8045977011494253
+  },
+  "prepared": {
+    "excludedRows": 578,
+    "exclusionReasonCounts": {
+      "fewer_than_3_ascii_letters": 4,
+      "length_gt_300_characters": 70,
+      "normalized_duplicate_text": 504
+    },
+    "rows": 8122,
+    "trainRows": 7716,
+    "validationRows": 406,
+    "sourceGroups": 486,
+    "trainSourceGroups": 460,
+    "validationSourceGroups": 26,
+    "normalizedDuplicateTexts": 0,
+    "characterCount": {
+      "min": 4,
+      "median": 49,
+      "p75": 80,
+      "p90": 125,
+      "max": 299
+    },
+    "wordCount": {
+      "min": 1,
+      "p25": 6,
+      "median": 10,
+      "p75": 16,
+      "p95": 30,
+      "max": 62
+    },
+    "experimentCounts": {
+      "experiment-1": 2425,
+      "experiment-2": 4761,
+      "experiment-3": 936
+    }
+  },
+  "privacyNote": "Raw participant IDs, including IP-like values, are never written to prepared outputs. Deterministic aliases preserve grouping. Automated contact-pattern filtering is risk reduction, not a guarantee that free text contains no personal information.",
+  "humanReviewPerformed": false
+}

@@ -1,0 +1,460 @@
+{
+  "status": "COMPLETE",
+  "decision": "RETAIN_RESEARCH_CANDIDATE",
+  "decisionScope": "research continuation only; not model promotion or production clearance",
+  "alphaAdapted": 0.5,
+  "lineageRights": "UNRESOLVED_UNDERLYING_GOEMOTIONS_REDDIT_TEXT",
+  "heldOutMlm": {
+    "incumbentLoss": 9.098326631587186,
+    "rejectedFullDaptLoss": 3.742931324800999,
+    "midpointLoss": 5.106241150725659,
+    "relativeChangeVsIncumbent": -0.4387713963798544
+  },
+  "frozenDevelopmentDiagnostic": {
+    "goldStatus": "NOT_INDEPENDENT_RIGHTS_CLEARED_HUMAN_GOLD",
+    "before": {
+      "status": "HISTORICAL_DEVELOPMENT_DIAGNOSTIC_NOT_INDEPENDENT_GOLD",
+      "rows": 149,
+      "threshold": 0.35,
+      "topK": 2,
+      "micro": {
+        "precision": 0.5730337078651685,
+        "recall": 0.3090909090909091,
+        "f1": 0.4015748031496063
+      },
+      "macroF1SupportedLabels": 0.24741903130469822,
+      "outputCountDistribution": {
+        "0": 71,
+        "1": 67,
+        "2": 11
+      },
+      "falsePositives": {
+        "count": 38,
+        "perRow": 0.2550335570469799,
+        "negativeDecisionRate": 0.015097338100913786,
+        "rowsWithAtLeastOne": 37
+      },
+      "perLabel": {
+        "admiration": {
+          "support": 2,
+          "predicted": 11,
+          "truePositive": 2,
+          "falsePositive": 9,
+          "falseNegative": 0,
+          "precision": 0.18181818181818182,
+          "recall": 1.0,
+          "f1": 0.3076923076923077
+        },
+        "amusement": {
+          "support": 7,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 7,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "anger": {
+          "support": 0,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "annoyance": {
+          "support": 21,
+          "predicted": 3,
+          "truePositive": 3,
+          "falsePositive": 0,
+          "falseNegative": 18,
+          "precision": 1.0,
+          "recall": 0.14285714285714285,
+          "f1": 0.25
+        },
+        "caring": {
+          "support": 15,
+          "predicted": 1,
+          "truePositive": 0,
+          "falsePositive": 1,
+          "falseNegative": 15,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "confusion": {
+          "support": 1,
+          "predicted": 2,
+          "truePositive": 0,
+          "falsePositive": 2,
+          "falseNegative": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "curiosity": {
+          "support": 2,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "disappointment": {
+          "support": 4,
+          "predicted": 12,
+          "truePositive": 4,
+          "falsePositive": 8,
+          "falseNegative": 0,
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "disgust": {
+          "support": 2,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "excitement": {
+          "support": 8,
+          "predicted": 5,
+          "truePositive": 3,
+          "falsePositive": 2,
+          "falseNegative": 5,
+          "precision": 0.6,
+          "recall": 0.375,
+          "f1": 0.4615384615384615
+        },
+        "fear": {
+          "support": 10,
+          "predicted": 1,
+          "truePositive": 1,
+          "falsePositive": 0,
+          "falseNegative": 9,
+          "precision": 1.0,
+          "recall": 0.1,
+          "f1": 0.18181818181818182
+        },
+        "gratitude": {
+          "support": 12,
+          "predicted": 3,
+          "truePositive": 2,
+          "falsePositive": 1,
+          "falseNegative": 10,
+          "precision": 0.6666666666666666,
+          "recall": 0.16666666666666666,
+          "f1": 0.26666666666666666
+        },
+        "joy": {
+          "support": 42,
+          "predicted": 29,
+          "truePositive": 23,
+          "falsePositive": 6,
+          "falseNegative": 19,
+          "precision": 0.7931034482758621,
+          "recall": 0.5476190476190477,
+          "f1": 0.647887323943662
+        },
+        "love": {
+          "support": 9,
+          "predicted": 4,
+          "truePositive": 2,
+          "falsePositive": 2,
+          "falseNegative": 7,
+          "precision": 0.5,
+          "recall": 0.2222222222222222,
+          "f1": 0.30769230769230765
+        },
+        "optimism": {
+          "support": 12,
+          "predicted": 6,
+          "truePositive": 2,
+          "falsePositive": 4,
+          "falseNegative": 10,
+          "precision": 0.3333333333333333,
+          "recall": 0.16666666666666666,
+          "f1": 0.2222222222222222
+        },
+        "remorse": {
+          "support": 2,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "sadness": {
+          "support": 11,
+          "predicted": 11,
+          "truePositive": 8,
+          "falsePositive": 3,
+          "falseNegative": 3,
+          "precision": 0.7272727272727273,
+          "recall": 0.7272727272727273,
+          "f1": 0.7272727272727273
+        },
+        "surprise": {
+          "support": 5,
+          "predicted": 1,
+          "truePositive": 1,
+          "falsePositive": 0,
+          "falseNegative": 4,
+          "precision": 1.0,
+          "recall": 0.2,
+          "f1": 0.33333333333333337
+        }
+      }
+    },
+    "after": {
+      "status": "HISTORICAL_DEVELOPMENT_DIAGNOSTIC_NOT_INDEPENDENT_GOLD",
+      "rows": 149,
+      "threshold": 0.35,
+      "topK": 2,
+      "micro": {
+        "precision": 0.5416666666666666,
+        "recall": 0.3151515151515151,
+        "f1": 0.39846743295019155
+      },
+      "macroF1SupportedLabels": 0.25655060717494893,
+      "outputCountDistribution": {
+        "0": 67,
+        "1": 68,
+        "2": 14
+      },
+      "falsePositives": {
+        "count": 44,
+        "perRow": 0.2953020134228188,
+        "negativeDecisionRate": 0.01748112832737386,
+        "rowsWithAtLeastOne": 43
+      },
+      "perLabel": {
+        "admiration": {
+          "support": 2,
+          "predicted": 15,
+          "truePositive": 2,
+          "falsePositive": 13,
+          "falseNegative": 0,
+          "precision": 0.13333333333333333,
+          "recall": 1.0,
+          "f1": 0.23529411764705882
+        },
+        "amusement": {
+          "support": 7,
+          "predicted": 1,
+          "truePositive": 1,
+          "falsePositive": 0,
+          "falseNegative": 6,
+          "precision": 1.0,
+          "recall": 0.14285714285714285,
+          "f1": 0.25
+        },
+        "anger": {
+          "support": 0,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "annoyance": {
+          "support": 21,
+          "predicted": 3,
+          "truePositive": 3,
+          "falsePositive": 0,
+          "falseNegative": 18,
+          "precision": 1.0,
+          "recall": 0.14285714285714285,
+          "f1": 0.25
+        },
+        "caring": {
+          "support": 15,
+          "predicted": 1,
+          "truePositive": 0,
+          "falsePositive": 1,
+          "falseNegative": 15,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "confusion": {
+          "support": 1,
+          "predicted": 3,
+          "truePositive": 0,
+          "falsePositive": 3,
+          "falseNegative": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "curiosity": {
+          "support": 2,
+          "predicted": 1,
+          "truePositive": 0,
+          "falsePositive": 1,
+          "falseNegative": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "disappointment": {
+          "support": 4,
+          "predicted": 12,
+          "truePositive": 4,
+          "falsePositive": 8,
+          "falseNegative": 0,
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1": 0.5
+        },
+        "disgust": {
+          "support": 2,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "excitement": {
+          "support": 8,
+          "predicted": 5,
+          "truePositive": 3,
+          "falsePositive": 2,
+          "falseNegative": 5,
+          "precision": 0.6,
+          "recall": 0.375,
+          "f1": 0.4615384615384615
+        },
+        "fear": {
+          "support": 10,
+          "predicted": 1,
+          "truePositive": 1,
+          "falsePositive": 0,
+          "falseNegative": 9,
+          "precision": 1.0,
+          "recall": 0.1,
+          "f1": 0.18181818181818182
+        },
+        "gratitude": {
+          "support": 12,
+          "predicted": 3,
+          "truePositive": 2,
+          "falsePositive": 1,
+          "falseNegative": 10,
+          "precision": 0.6666666666666666,
+          "recall": 0.16666666666666666,
+          "f1": 0.26666666666666666
+        },
+        "joy": {
+          "support": 42,
+          "predicted": 28,
+          "truePositive": 23,
+          "falsePositive": 5,
+          "falseNegative": 19,
+          "precision": 0.8214285714285714,
+          "recall": 0.5476190476190477,
+          "f1": 0.6571428571428571
+        },
+        "love": {
+          "support": 9,
+          "predicted": 4,
+          "truePositive": 2,
+          "falsePositive": 2,
+          "falseNegative": 7,
+          "precision": 0.5,
+          "recall": 0.2222222222222222,
+          "f1": 0.30769230769230765
+        },
+        "optimism": {
+          "support": 12,
+          "predicted": 6,
+          "truePositive": 2,
+          "falsePositive": 4,
+          "falseNegative": 10,
+          "precision": 0.3333333333333333,
+          "recall": 0.16666666666666666,
+          "f1": 0.2222222222222222
+        },
+        "remorse": {
+          "support": 2,
+          "predicted": 0,
+          "truePositive": 0,
+          "falsePositive": 0,
+          "falseNegative": 2,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "sadness": {
+          "support": 11,
+          "predicted": 12,
+          "truePositive": 8,
+          "falsePositive": 4,
+          "falseNegative": 3,
+          "precision": 0.6666666666666666,
+          "recall": 0.7272727272727273,
+          "f1": 0.6956521739130435
+        },
+        "surprise": {
+          "support": 5,
+          "predicted": 1,
+          "truePositive": 1,
+          "falsePositive": 0,
+          "falseNegative": 4,
+          "precision": 1.0,
+          "recall": 0.2,
+          "f1": 0.33333333333333337
+        }
+      }
+    },
+    "microF1Drop": 0.0031073701994147607,
+    "perLabelF1Delta": {
+      "admiration": -0.07239819004524889,
+      "amusement": 0.25,
+      "anger": 0.0,
+      "annoyance": 0.0,
+      "caring": 0.0,
+      "confusion": 0.0,
+      "curiosity": 0.0,
+      "disappointment": 0.0,
+      "disgust": 0.0,
+      "excitement": 0.0,
+      "fear": 0.0,
+      "gratitude": 0.0,
+      "joy": 0.009255533199195143,
+      "love": 0.0,
+      "optimism": 0.0,
+      "remorse": 0.0,
+      "sadness": -0.031620553359683834,
+      "surprise": 0.0
+    },
+    "worstSupportedLabel": {
+      "label": "sadness",
+      "f1Delta": -0.031620553359683834,
+      "minimumSupport": 3
+    },
+    "falsePositiveIncreasePerRow": 0.040268456375838924,
+    "catastrophicForgetting": false,
+    "meanAbsoluteProbabilityChange": 0.006137354299426079,
+    "exactTop2SelectionAgreement": 0.9395973154362416
+  },
+  "promotionConclusion": "INCONCLUSIVE_NO_INDEPENDENT_RIGHTS_CLEARED_HUMAN_GOLD",
+  "frozenEvaluationOpened": false,
+  "humanReviewPerformed": false,
+  "elapsedSeconds": 71.04271292686462
+}

@@ -1,0 +1,23 @@
+{
+  "status": "LOCKED_BEFORE_ANALYSIS",
+  "trainingPerformed": false,
+  "data": "aligned-supervision-v1/dev.jsonl plus saved incumbent epoch-1 probabilities",
+  "dataRole": "HISTORICAL_DEVELOPMENT_DIAGNOSTIC_NOT_INDEPENDENT_RIGHTS_CLEARED_HUMAN_GOLD",
+  "selector": "canonical repository Product-18 selector at threshold 0.35 and topK 2",
+  "questions": [
+    "Which labels contribute most false positives and false negatives?",
+    "Which labels have too little support for meaningful development conclusions?",
+    "How do predicted 0/1/2 output counts mismatch gold label counts?",
+    "Does the <=300-character slice have enough per-label support to guide an intervention?"
+  ],
+  "successCondition": "Exactly reproduce locked incumbent micro-F1 0.528052805280528 and emit aggregate counts without inspecting or modifying samples.",
+  "forbiddenActions": [
+    "sample review",
+    "gold modification",
+    "sample deletion",
+    "threshold or taxonomy tuning",
+    "training",
+    "promotion from this diagnostic"
+  ],
+  "humanReviewPerformed": false
+}

@@ -1,0 +1,46 @@
+{
+  "protocolId": "native-valence-aux-v1-20260917",
+  "status": "LOCKED_BEFORE_DATA_PREPARATION",
+  "researchOnly": true,
+  "productQualityProblem": "Joy contributes 24 historical false positives, while sadness is another frequent short-domain output. Product-18 pseudo-label distillation sharpened teacher biases and increased false positives. A non-categorical auxiliary signal is needed to expose the encoder to short event affect without manufacturing Product-18 gold.",
+  "hypothesis": "Training only the incumbent's top two encoder layers on the rights-cleared native human positive/negative/neither valence task from Unexpected Events, with a separate temporary valence head and the Product-18 classifier head frozen, may improve short-event affect representations without reinforcing categorical pseudo-label errors.",
+  "data": {
+    "source": "Unexpected Events prepared train/validation rows",
+    "admission": "ADMIT_UNLABELED for Product-18; native valence is human source-task supervision but NOT Product-18 gold",
+    "textRights": "CC BY 4.0 original participant-written responses",
+    "labels": "best_senti for experiments 1/2 and val_code for experiment 3; pos/neg/neither only",
+    "forbiddenMapping": "Valence classes must not be converted into Product-18 labels",
+    "leakage": "Use existing participant-disjoint train/validation split; fit only on train"
+  },
+  "dataFeasibilityPassCriteria": {
+    "labeledPreparedCoverageAtLeast": 0.99,
+    "eachTrainClassAtLeast": 100,
+    "eachValidationClassAtLeast": 10,
+    "trainValidationGroupsDisjoint": true
+  },
+  "fixedTraining": {
+    "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "epochs": 1,
+    "learningRate": 0.000002,
+    "batchSize": 16,
+    "maxLength": 512,
+    "runtimeLengthNote": "512 tokens is safety only; every selected text is complete and <=300 characters",
+    "updates": "top two encoder layers plus temporary 3-class valence head",
+    "emotionClassifierHead": "frozen byte-identical; temporary valence head discarded",
+    "loss": "train-derived square-root inverse-frequency weighted cross entropy",
+    "sampling": "deterministic shuffle; no source or label sweep",
+    "seed": 44,
+    "noSweep": true
+  },
+  "successCriteria": {
+    "auxiliaryTask": "held-out participant-disjoint valence macro-F1 >=0.65",
+    "historicalDevelopment": "emotion micro-F1 >=0.528052805280528, false positives <=58, false negatives <=85, and no supported-label F1 regression worse than 0.05",
+    "shortDevelopmentSlice": "false positives <=5 and micro-F1 regression no worse than 0.02; descriptive guard only",
+    "unlabeledBehavior": "Hippocorpus exact-output agreement with incumbent >=0.85; both validation sources have each 0/1/2 distribution shift <=0.08 absolute",
+    "classifierIntegrity": "emotion classifier tensors exactly unchanged",
+    "decision": "RETAIN_FOR_RESEARCH only if every criterion passes; otherwise REJECT"
+  },
+  "promotionStatus": "INCONCLUSIVE regardless of result",
+  "frozenFinalEvaluationOpened": false,
+  "humanReviewPerformed": false
+}

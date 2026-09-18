@@ -1,0 +1,28 @@
+{
+  "protocolId": "agreement-gated-selector-v1-20260917",
+  "status": "LOCKED_BEFORE_ANALYSIS",
+  "researchOnly": true,
+  "productQualityProblem": "The frozen incumbent has 58 historical false positives, led by joy, and both representation-adaptation candidates increased false positives. A non-training selective-output intervention may reduce unsupported outputs without changing model weights or thresholds.",
+  "hypothesis": "Keeping only Product-18 labels selected by both the frozen incumbent and the fixed domain-restoration model will reduce false positives while preserving enough recall to improve or maintain research development F1.",
+  "models": [
+    "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "../domain-restoration-v1/experiment/epoch-1-checkpoint"
+  ],
+  "fixedSelector": {
+    "perModel": "existing canonical threshold 0.35, maximum 2 labels",
+    "combination": "set intersection of the two selected outputs; preserve incumbent output order",
+    "noProbabilityBlend": true,
+    "noThresholdChange": true,
+    "noSweep": true
+  },
+  "successCriteria": {
+    "historicalDevelopment": "micro-F1 >=0.528052805280528, false positives <=53, false negatives <=90, micro precision >=0.5797101449275363, and no supported-label F1 regression worse than 0.05",
+    "shortSlice": "micro-F1 regression no worse than 0.02 and false positives <=5",
+    "unlabeledBehavior": "candidate/incumbent exact-output agreement >=0.85 and each 0/1/2 distribution shift <=0.08 absolute on both admitted validation sources",
+    "decision": "RETAIN_FOR_RESEARCH only if all guards pass; otherwise REJECT"
+  },
+  "promotionStatus": "INCONCLUSIVE regardless of result",
+  "trainingPerformed": false,
+  "frozenFinalEvaluationOpened": false,
+  "humanReviewPerformed": false
+}

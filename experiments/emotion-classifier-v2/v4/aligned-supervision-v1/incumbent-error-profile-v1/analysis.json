@@ -1,0 +1,1215 @@
+{
+  "status": "PASS",
+  "trainingPerformed": false,
+  "humanReviewPerformed": false,
+  "incumbentChanged": false,
+  "incumbent": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "incumbentRights": "UNRESOLVED_UNDERLYING_GOEMOTIONS_REDDIT_TEXT",
+  "dataRole": "HISTORICAL_DEVELOPMENT_DIAGNOSTIC_NOT_INDEPENDENT_RIGHTS_CLEARED_HUMAN_GOLD",
+  "all149": {
+    "rows": 149,
+    "micro": {
+      "precision": 0.5797101449275363,
+      "recall": 0.48484848484848486,
+      "f1": 0.528052805280528
+    },
+    "macro": {
+      "precision": 0.45728214952352886,
+      "recall": 0.31082050665384003,
+      "f1": 0.34517862965139323
+    },
+    "goldLabelCountDistribution": {
+      "0": 30,
+      "1": 73,
+      "2": 46
+    },
+    "predictedLabelCountDistribution": {
+      "0": 35,
+      "1": 90,
+      "2": 24
+    },
+    "goldByPredictedCountMatrix": {
+      "0": {
+        "0": 18,
+        "1": 12,
+        "2": 0
+      },
+      "1": {
+        "0": 14,
+        "1": 49,
+        "2": 10
+      },
+      "2": {
+        "0": 3,
+        "1": 29,
+        "2": 14
+      }
+    },
+    "goldRowsOverTwoLabels": 0,
+    "totalFalsePositives": 58,
+    "totalFalseNegatives": 85,
+    "perLabel": {
+      "admiration": {
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "amusement": {
+        "support": 7,
+        "predicted": 1,
+        "truePositive": 1,
+        "falsePositive": 0,
+        "falseNegative": 6,
+        "precision": 1.0,
+        "recall": 0.14285714285714285
+      },
+      "anger": {
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "annoyance": {
+        "support": 21,
+        "predicted": 8,
+        "truePositive": 5,
+        "falsePositive": 3,
+        "falseNegative": 16,
+        "precision": 0.625,
+        "recall": 0.23809523809523808
+      },
+      "caring": {
+        "support": 15,
+        "predicted": 8,
+        "truePositive": 4,
+        "falsePositive": 4,
+        "falseNegative": 11,
+        "precision": 0.5,
+        "recall": 0.26666666666666666
+      },
+      "confusion": {
+        "support": 1,
+        "predicted": 2,
+        "truePositive": 0,
+        "falsePositive": 2,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "curiosity": {
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "disappointment": {
+        "support": 4,
+        "predicted": 3,
+        "truePositive": 3,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      "disgust": {
+        "support": 2,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "excitement": {
+        "support": 8,
+        "predicted": 4,
+        "truePositive": 3,
+        "falsePositive": 1,
+        "falseNegative": 5,
+        "precision": 0.75,
+        "recall": 0.375
+      },
+      "fear": {
+        "support": 10,
+        "predicted": 8,
+        "truePositive": 4,
+        "falsePositive": 4,
+        "falseNegative": 6,
+        "precision": 0.5,
+        "recall": 0.4
+      },
+      "gratitude": {
+        "support": 12,
+        "predicted": 8,
+        "truePositive": 7,
+        "falsePositive": 1,
+        "falseNegative": 5,
+        "precision": 0.875,
+        "recall": 0.5833333333333334
+      },
+      "joy": {
+        "support": 42,
+        "predicted": 58,
+        "truePositive": 34,
+        "falsePositive": 24,
+        "falseNegative": 8,
+        "precision": 0.5862068965517241,
+        "recall": 0.8095238095238095
+      },
+      "love": {
+        "support": 9,
+        "predicted": 3,
+        "truePositive": 1,
+        "falsePositive": 2,
+        "falseNegative": 8,
+        "precision": 0.3333333333333333,
+        "recall": 0.1111111111111111
+      },
+      "optimism": {
+        "support": 12,
+        "predicted": 13,
+        "truePositive": 6,
+        "falsePositive": 7,
+        "falseNegative": 6,
+        "precision": 0.46153846153846156,
+        "recall": 0.5
+      },
+      "remorse": {
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "sadness": {
+        "support": 11,
+        "predicted": 15,
+        "truePositive": 9,
+        "falsePositive": 6,
+        "falseNegative": 2,
+        "precision": 0.6,
+        "recall": 0.8181818181818182
+      },
+      "surprise": {
+        "support": 5,
+        "predicted": 3,
+        "truePositive": 3,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 1.0,
+        "recall": 0.6
+      }
+    },
+    "labelsRankedByFalsePositive": [
+      {
+        "label": "joy",
+        "support": 42,
+        "predicted": 58,
+        "truePositive": 34,
+        "falsePositive": 24,
+        "falseNegative": 8,
+        "precision": 0.5862068965517241,
+        "recall": 0.8095238095238095
+      },
+      {
+        "label": "optimism",
+        "support": 12,
+        "predicted": 13,
+        "truePositive": 6,
+        "falsePositive": 7,
+        "falseNegative": 6,
+        "precision": 0.46153846153846156,
+        "recall": 0.5
+      },
+      {
+        "label": "sadness",
+        "support": 11,
+        "predicted": 15,
+        "truePositive": 9,
+        "falsePositive": 6,
+        "falseNegative": 2,
+        "precision": 0.6,
+        "recall": 0.8181818181818182
+      },
+      {
+        "label": "caring",
+        "support": 15,
+        "predicted": 8,
+        "truePositive": 4,
+        "falsePositive": 4,
+        "falseNegative": 11,
+        "precision": 0.5,
+        "recall": 0.26666666666666666
+      },
+      {
+        "label": "fear",
+        "support": 10,
+        "predicted": 8,
+        "truePositive": 4,
+        "falsePositive": 4,
+        "falseNegative": 6,
+        "precision": 0.5,
+        "recall": 0.4
+      },
+      {
+        "label": "annoyance",
+        "support": 21,
+        "predicted": 8,
+        "truePositive": 5,
+        "falsePositive": 3,
+        "falseNegative": 16,
+        "precision": 0.625,
+        "recall": 0.23809523809523808
+      },
+      {
+        "label": "confusion",
+        "support": 1,
+        "predicted": 2,
+        "truePositive": 0,
+        "falsePositive": 2,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "love",
+        "support": 9,
+        "predicted": 3,
+        "truePositive": 1,
+        "falsePositive": 2,
+        "falseNegative": 8,
+        "precision": 0.3333333333333333,
+        "recall": 0.1111111111111111
+      },
+      {
+        "label": "admiration",
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "anger",
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "curiosity",
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "excitement",
+        "support": 8,
+        "predicted": 4,
+        "truePositive": 3,
+        "falsePositive": 1,
+        "falseNegative": 5,
+        "precision": 0.75,
+        "recall": 0.375
+      },
+      {
+        "label": "gratitude",
+        "support": 12,
+        "predicted": 8,
+        "truePositive": 7,
+        "falsePositive": 1,
+        "falseNegative": 5,
+        "precision": 0.875,
+        "recall": 0.5833333333333334
+      },
+      {
+        "label": "remorse",
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "amusement",
+        "support": 7,
+        "predicted": 1,
+        "truePositive": 1,
+        "falsePositive": 0,
+        "falseNegative": 6,
+        "precision": 1.0,
+        "recall": 0.14285714285714285
+      },
+      {
+        "label": "disappointment",
+        "support": 4,
+        "predicted": 3,
+        "truePositive": 3,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      {
+        "label": "disgust",
+        "support": 2,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "surprise",
+        "support": 5,
+        "predicted": 3,
+        "truePositive": 3,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 1.0,
+        "recall": 0.6
+      }
+    ],
+    "labelsRankedByFalseNegative": [
+      {
+        "label": "annoyance",
+        "support": 21,
+        "predicted": 8,
+        "truePositive": 5,
+        "falsePositive": 3,
+        "falseNegative": 16,
+        "precision": 0.625,
+        "recall": 0.23809523809523808
+      },
+      {
+        "label": "caring",
+        "support": 15,
+        "predicted": 8,
+        "truePositive": 4,
+        "falsePositive": 4,
+        "falseNegative": 11,
+        "precision": 0.5,
+        "recall": 0.26666666666666666
+      },
+      {
+        "label": "joy",
+        "support": 42,
+        "predicted": 58,
+        "truePositive": 34,
+        "falsePositive": 24,
+        "falseNegative": 8,
+        "precision": 0.5862068965517241,
+        "recall": 0.8095238095238095
+      },
+      {
+        "label": "love",
+        "support": 9,
+        "predicted": 3,
+        "truePositive": 1,
+        "falsePositive": 2,
+        "falseNegative": 8,
+        "precision": 0.3333333333333333,
+        "recall": 0.1111111111111111
+      },
+      {
+        "label": "amusement",
+        "support": 7,
+        "predicted": 1,
+        "truePositive": 1,
+        "falsePositive": 0,
+        "falseNegative": 6,
+        "precision": 1.0,
+        "recall": 0.14285714285714285
+      },
+      {
+        "label": "fear",
+        "support": 10,
+        "predicted": 8,
+        "truePositive": 4,
+        "falsePositive": 4,
+        "falseNegative": 6,
+        "precision": 0.5,
+        "recall": 0.4
+      },
+      {
+        "label": "optimism",
+        "support": 12,
+        "predicted": 13,
+        "truePositive": 6,
+        "falsePositive": 7,
+        "falseNegative": 6,
+        "precision": 0.46153846153846156,
+        "recall": 0.5
+      },
+      {
+        "label": "excitement",
+        "support": 8,
+        "predicted": 4,
+        "truePositive": 3,
+        "falsePositive": 1,
+        "falseNegative": 5,
+        "precision": 0.75,
+        "recall": 0.375
+      },
+      {
+        "label": "gratitude",
+        "support": 12,
+        "predicted": 8,
+        "truePositive": 7,
+        "falsePositive": 1,
+        "falseNegative": 5,
+        "precision": 0.875,
+        "recall": 0.5833333333333334
+      },
+      {
+        "label": "admiration",
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "curiosity",
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "disgust",
+        "support": 2,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "remorse",
+        "support": 2,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "sadness",
+        "support": 11,
+        "predicted": 15,
+        "truePositive": 9,
+        "falsePositive": 6,
+        "falseNegative": 2,
+        "precision": 0.6,
+        "recall": 0.8181818181818182
+      },
+      {
+        "label": "surprise",
+        "support": 5,
+        "predicted": 3,
+        "truePositive": 3,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 1.0,
+        "recall": 0.6
+      },
+      {
+        "label": "confusion",
+        "support": 1,
+        "predicted": 2,
+        "truePositive": 0,
+        "falsePositive": 2,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "disappointment",
+        "support": 4,
+        "predicted": 3,
+        "truePositive": 3,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      {
+        "label": "anger",
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    ]
+  },
+  "atMost300": {
+    "rows": 19,
+    "micro": {
+      "precision": 0.6153846153846154,
+      "recall": 0.6153846153846154,
+      "f1": 0.6153846153846154
+    },
+    "macro": {
+      "precision": 0.14583333333333334,
+      "recall": 0.16666666666666666,
+      "f1": 0.15384615384615385
+    },
+    "goldLabelCountDistribution": {
+      "0": 10,
+      "1": 5,
+      "2": 4
+    },
+    "predictedLabelCountDistribution": {
+      "0": 8,
+      "1": 9,
+      "2": 2
+    },
+    "goldByPredictedCountMatrix": {
+      "0": {
+        "0": 8,
+        "1": 2,
+        "2": 0
+      },
+      "1": {
+        "0": 0,
+        "1": 5,
+        "2": 0
+      },
+      "2": {
+        "0": 0,
+        "1": 2,
+        "2": 2
+      }
+    },
+    "goldRowsOverTwoLabels": 0,
+    "totalFalsePositives": 5,
+    "totalFalseNegatives": 5,
+    "perLabel": {
+      "admiration": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "amusement": {
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "anger": {
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "annoyance": {
+        "support": 2,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "caring": {
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "confusion": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "curiosity": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "disappointment": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "disgust": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "excitement": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "fear": {
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "gratitude": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "joy": {
+        "support": 5,
+        "predicted": 8,
+        "truePositive": 5,
+        "falsePositive": 3,
+        "falseNegative": 0,
+        "precision": 0.625,
+        "recall": 1.0
+      },
+      "love": {
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "optimism": {
+        "support": 1,
+        "predicted": 1,
+        "truePositive": 1,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "remorse": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "sadness": {
+        "support": 2,
+        "predicted": 2,
+        "truePositive": 2,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "surprise": {
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    "labelsRankedByFalsePositive": [
+      {
+        "label": "joy",
+        "support": 5,
+        "predicted": 8,
+        "truePositive": 5,
+        "falsePositive": 3,
+        "falseNegative": 0,
+        "precision": 0.625,
+        "recall": 1.0
+      },
+      {
+        "label": "anger",
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "fear",
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "admiration",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "amusement",
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "annoyance",
+        "support": 2,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "caring",
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "confusion",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "curiosity",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "disappointment",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "disgust",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "excitement",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "gratitude",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "love",
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "optimism",
+        "support": 1,
+        "predicted": 1,
+        "truePositive": 1,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "label": "remorse",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "sadness",
+        "support": 2,
+        "predicted": 2,
+        "truePositive": 2,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "label": "surprise",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    ],
+    "labelsRankedByFalseNegative": [
+      {
+        "label": "annoyance",
+        "support": 2,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "amusement",
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "caring",
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "love",
+        "support": 1,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "admiration",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "anger",
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "confusion",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "curiosity",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "disappointment",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "disgust",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "excitement",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "fear",
+        "support": 0,
+        "predicted": 1,
+        "truePositive": 0,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "gratitude",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "joy",
+        "support": 5,
+        "predicted": 8,
+        "truePositive": 5,
+        "falsePositive": 3,
+        "falseNegative": 0,
+        "precision": 0.625,
+        "recall": 1.0
+      },
+      {
+        "label": "optimism",
+        "support": 1,
+        "predicted": 1,
+        "truePositive": 1,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "label": "remorse",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "label": "sadness",
+        "support": 2,
+        "predicted": 2,
+        "truePositive": 2,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "label": "surprise",
+        "support": 0,
+        "predicted": 0,
+        "truePositive": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    ]
+  },
+  "aggregateFindings": {
+    "labelsWithSupportUnder3All149": [
+      "admiration",
+      "anger",
+      "confusion",
+      "curiosity",
+      "disgust",
+      "remorse"
+    ],
+    "labelsWithSupportAtLeast3All149": 12,
+    "labelsWithSupportAtLeast3AtMost300": [
+      "joy"
+    ],
+    "topFalsePositiveContributorsAll149": [
+      {
+        "label": "joy",
+        "falsePositive": 24
+      },
+      {
+        "label": "optimism",
+        "falsePositive": 7
+      },
+      {
+        "label": "sadness",
+        "falsePositive": 6
+      },
+      {
+        "label": "caring",
+        "falsePositive": 4
+      },
+      {
+        "label": "fear",
+        "falsePositive": 4
+      }
+    ],
+    "topFalseNegativeContributorsAll149": [
+      {
+        "label": "annoyance",
+        "falseNegative": 16
+      },
+      {
+        "label": "caring",
+        "falseNegative": 11
+      },
+      {
+        "label": "joy",
+        "falseNegative": 8
+      },
+      {
+        "label": "love",
+        "falseNegative": 8
+      },
+      {
+        "label": "amusement",
+        "falseNegative": 6
+      }
+    ]
+  },
+  "conclusion": {
+    "shortSliceAdequateForPerLabelModelSelection": false,
+    "modelQualityInterventionIdentified": false,
+    "reason": "The aggregate profile locates historical errors, but only a small subset of labels has even three positive rows in the 19-row short slice. Using these counts to choose/tune a model would optimize the same sparse historical diagnostic rather than establish short-event quality.",
+    "promotionImpact": "NONE"
+  }
+}

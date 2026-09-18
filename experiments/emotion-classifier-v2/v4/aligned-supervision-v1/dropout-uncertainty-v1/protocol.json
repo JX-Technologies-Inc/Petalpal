@@ -1,0 +1,32 @@
+{
+  "protocolId": "dropout-uncertainty-v1-20260917",
+  "status": "LOCKED_BEFORE_INFERENCE",
+  "trainingPerformed": false,
+  "researchQuestion": "Is the incumbent materially unstable under stochastic dropout on admitted short-event train text, providing evidence for a consistency-regularization experiment?",
+  "data": {
+    "hippocorpus": "512 deterministic train rows from distinct-first participant round-robin; ADMIT_UNLABELED",
+    "unexpectedEvents": "512 deterministic train rows from participant round-robin; ADMIT_UNLABELED",
+    "validationSplits": "not opened for this feasibility task"
+  },
+  "model": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "modelRights": "HISTORICAL_GOEMOTIONS_REDDIT_LINEAGE_UNRESOLVED_RESEARCH_ONLY",
+  "inference": {
+    "passes": 5,
+    "dropout": "model.train() with no gradients",
+    "seeds": [440, 441, 442, 443, 444],
+    "selector": "unchanged canonical threshold 0.35, maximum 2",
+    "maxLength": 512,
+    "lengthNote": "runtime safety only; all source text <=300 characters"
+  },
+  "consistencyTrainingFeasibility": {
+    "passIf": "either source has >=15% rows with non-identical outputs across five passes OR mean pairwise exact-output agreement <0.90",
+    "failureAction": "DO_NOT_TRAIN consistency candidate; do not amplify dropout or lower the gate",
+    "passAction": "predeclare one fixed consistency-regularization candidate before training"
+  },
+  "limitations": [
+    "Dropout instability is an uncertainty proxy, not emotion correctness.",
+    "This task cannot justify model promotion."
+  ],
+  "frozenFinalEvaluationOpened": false,
+  "humanReviewPerformed": false
+}

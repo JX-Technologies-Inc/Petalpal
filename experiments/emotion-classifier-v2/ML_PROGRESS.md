@@ -1,5 +1,7 @@
 # ML Progress
 
+> **Authoritative current status:** ML V1 is frozen. See `ML V1 Freeze — 2026-09-17` at the end of this file. Earlier “current”, “active”, and continuation statements are retained only as historical chronology and are superseded by that freeze record.
+
 ## Canonical Human Review Protocol Change — 2026-09-13
 
 - The original Stage 1 / Stage 2 / Stage 3 human-review plan is stopped. This round formally retains **Stage 1 semantic applicability review only**, with ratings `NO`, `PLAUSIBLE`, and `CLEAR`.
@@ -667,3 +669,282 @@ Date: 2026-09-15. Artifact: `v4/stage1-model-adjudication-v1/`.
 - OOF diagnosis: strict sourceGroup overall≈0.492306; PHQ≈0.497711; COSO≈0.370892; HUM≈0.486308; fixed Dev is 149/149 COSO. Reviewed-set OOF≈0.411337 versus non-reviewed Train≈0.523877. Source/domain composition, sample/support differences, and non-identical procedures explain most of the apparent gap; OOF and Dev use the same canonical annotation policy.
 - Current direction: `COSO + selective 0–2 label selection/ranking`. Do not return to Stage-1 direct patch, CLEAR-as-hard-positive, PLAUSIBLE masking, missing-positive repair, threshold/seed/backbone sweeps, or additional human review. Detailed evidence: `experiments/emotion-classifier-v2/v4/stage1-supervision-diagnostic-v1/REPORT.md`.
 - `RECORD ONLY — NO TRAINING`.
+
+## Frozen Epoch-1 Runtime Checkpoint
+
+Date: 2026-09-17.
+
+- Frozen incumbent: `v4/aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint`. PyTorch production-style inference parity **PASS** with explicit `max_length=512` and the frozen `28 → 21 → 18 → threshold 0.35 → probability-descending/fixed-order tie-break → max-2` policy.
+- CPU FP32 ONNX export/parity **PASS**: 149/149 final predictions exactly match PyTorch and all metric deltas are zero. The validated FP32 ONNX artifact remains an optional runtime artifact.
+- Existing dynamic INT8 path **FAILS parity** and cannot replace FP32; no further INT8 or quantization work is authorized.
+- Apple/macOS: FP32 ONNX showed a severe latency regression and higher RSS versus PyTorch.
+- Linux/aarch64 (Debian 13 container on Apple M2/Virtualization.framework, same 149 rows, batch 2, one thread): PyTorch `755.563 ms/sample`; ONNX `706.762 ms/sample`. The macOS latency regression did not reproduce: ONNX was 6.46% faster, but its peak RSS was about 43.6% higher and artifact size was effectively unchanged.
+- Practical runtime default remains **PyTorch FP32**. Actual Linux/x86 production benchmarking is deferred until genuine deployment work.
+- Runtime and production engineering are now **FROZEN**. Return to model-quality/product-evaluation work only; **DO NOT TRAIN** without a newly authorized evaluation foundation and experiment.
+
+## enISEAR Rights / Independent-Evaluation Admission Audit
+
+Date: 2026-09-17. Artifact: `v4/aligned-supervision-v1/public-domain-data-v1-20260910/enisear/RIGHTS_AND_EVAL_ADMISSION_AUDIT_20260917.md`.
+
+- Highest-value task: determine whether the already-retrieved, Event-like enISEAR corpus can supply a rights-cleared independent evaluation component before any further model training. Audit verdict: **PASS**; dataset decision: **EXCLUDE**; training decision: **DO_NOT_TRAIN**.
+- Official release license is ODC-By 1.0. It explicitly permits commercial use of database rights, but explicitly does not cover independent rights in individual contents. The 1,001 first-person event descriptions are original Figure-Eight contributor text, and no separate content license or contributor-to-licensor commercial sublicense grant was found in the official release, paper, supplement, University of Stuttgart page, or creator data-set page. Therefore commercial use, ML-training use, and product-evaluation use of the text remain **UNCLEAR**, which fails the strict PetalPal rights gate.
+- Dataset facts verified from the authoritative local release: 1,001 English generation rows, exactly 143 per native emotion, 65 generation worker IDs; 5,005 human validation rows from 34 validation worker IDs. Native labels are anger, disgust, fear, guilt, joy, sadness, shame.
+- Product mapping is **NOT DEFENSIBLE** for the whole dataset. Anger/disgust/fear/joy/sadness are exact mappings; guilt or shame to remorse is not defensible without subjective reinterpretation. The prompt-balanced corpus also lacks 13 product labels and natural zero-label coverage, so it cannot be Natural Product Evaluation even if rights were later resolved.
+- No rows were admitted, no evaluation set was constructed, no model inference or metric computation occurred, and no threshold/checkpoint/taxonomy changed. The existing historical enISEAR candidate pool remains non-admitted. Model-quality improvement remains unproven pending a rights-cleared, methodologically defensible independent evaluation foundation.
+
+## crowd-enVENT Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- The authoritative corpus archive/readme, official University of Stuttgart page, paper, and supplement contain no dataset/content license. The separate modeling repository's MIT license applies to code and does not establish rights to 6,600 personal event descriptions written by Prolific contributors. Commercial, training, and evaluation rights are therefore **UNCLEAR** and fail the strict admission gate.
+- The source has strong Event-domain relevance and source grouping (`prolific_id`): 6,600 generation texts / 2,379 generation IDs and 6,000 validations over 1,200 texts / 1,217 validation IDs. However the whole label mapping is **NOT DEFENSIBLE**: only anger, disgust, fear, joy, sadness, and surprise map exactly; guilt/shame/trust/pride/relief/boredom cannot be remapped subjectively into Product-18 gold.
+- No row was admitted and no model inference/training occurred. Incumbent remains `goemotions-targeted-v1/epoch-1-checkpoint`. Next selected task: audit the newly released `Less is More Corpus`, a labeled crowd-enVENT derivative whose authoritative catalog states CC BY 4.0 but also states a research-only restriction.
+
+## Less is More Corpus Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- The University of Bamberg-stewarded Mozilla Data Collective record labels the 250-text/500-annotator release CC BY 4.0, but the same authoritative record explicitly restricts it to research purposes. That restriction is incompatible with PetalPal's potentially commercial long-term training/evaluation requirement. It is also derived from crowd-enVENT, whose original personal-text content license remains unresolved.
+- The set is intentionally selected for low emotion-label agreement and is therefore a boundary challenge distribution, not Natural Product Evaluation. Its native 12-label scheme still has only six exact Product-18 mappings (anger/disgust/fear/joy/sadness/surprise); whole-dataset mapping is **NOT DEFENSIBLE**.
+- The dataset was not downloaded; no row was inspected/admitted and no inference/training occurred. Incumbent unchanged. Next selected task: audit `MINDS`, an English multi-label emotion dataset advertised under CC BY 4.0, focusing first on authoritative provenance and whether its underlying text is original/licensable rather than scraped social content.
+
+## MINDS Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- Repo-independent authoritative review found that MINDS contains 227,229 English Twitter posts collected through the Twitter API under Omicron hashtags. The CC BY 4.0 notice is for the paper, while the paper describes the dataset as available “for research purposes”; it does not establish a commercial license for the Twitter content. This independently fails both the research-only and scraped social-platform rights gates.
+- Labels are not human gold: IBM Watson NLU, Komprehend, and Text2emotion outputs were combined with a threshold tuned on SemEval-2018. The five names sadness/joy/fear/disgust/anger map exactly, but model-generated labels cannot support independent product evaluation and whole-taxonomy mapping remains **NOT DEFENSIBLE**.
+- Dataset not downloaded; no rows admitted, no inference/training performed, incumbent unchanged. Next selected task: search authoritative repositories for a genuinely permissive, originally collected human emotion/event corpus rather than another social-media derivative.
+
+## BRIGHTER English Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- Although the official Hugging Face releases state CC BY 4.0, the authoritative BRIGHTER paper explicitly prohibits commercial use without creator approval. English data are Reddit/social-media and subreddit diary posts. Additional approval and underlying social-content rights are therefore both incompatible with the current gate.
+- Human multi-label annotation and the six exact labels (anger/disgust/fear/joy/sadness/surprise) are methodologically useful, but the release does not provide source/user grouping and has high unresolved overlap risk with the Reddit-derived incumbent lineage. No data were downloaded or evaluated.
+- Incumbent unchanged. Next selected task: audit CR4-NarrEmote at its authoritative Dataverse record, including whether a strictly public-domain book subset plus direct human labels can avoid both content-rights and subjective-mapping failures.
+
+## CR4-NarrEmote Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- The authoritative Borealis record applies CC0 1.0 to the deposited dataset, but the required text consists of passages from book-length fiction/non-fiction spanning roughly 1800–2000, including contemporary and twentieth-century collections. Neither the release nor paper establishes per-work public-domain or commercial relicensing rights; CC0 cannot be assumed to waive third-party passage copyrights. Underlying-content rights therefore remain **UNCLEAR**.
+- `t1` contains genuine citizen-science labels, and `file_id` enables source-document isolation. However the released NRC labels use lexical/model mappings, and a direct-label-only exact Product-18 subset would still retain uncleared passages. Only metadata/readme were retrieved; the passage table was not downloaded or evaluated.
+- Incumbent unchanged. Next selected task: audit Hippocorpus, the most product-like rights candidate found (6,854 crowd-written diary-like event stories), to determine whether its license and native fields provide any defensible existing emotion gold without new review.
+
+## Hippocorpus Admission Audit (superseded by rights-first unlabeled-data policy)
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; current dataset decision: **ADMIT_UNLABELED**; source-specific training decision: **UNLABELED_OBJECTIVES_ONLY**.
+- Rights/provenance pass: Microsoft's authoritative release uses **O-UDA-1.0**, which imposes no restriction on data use/modification or on use/modification/distribution of results. The 6,854 recalled/imagined/retold stories were written for the project by MTurk workers rather than scraped, and `WorkerId` plus recalled/imagined/retold pair IDs support source isolation.
+- No native Product-18 labels exist: questionnaire scalars and event-boundary/unexpectedness annotations must not be mapped to emotions or represented as gold. Under the updated policy this does not prevent unlabeled use.
+- The official archive was downloaded and automatically minimized to 2,776 unique recalled summaries after two >300-character exclusions and one contact-pattern exclusion. The author-disjoint train/validation split is 2,637/139 rows across 2,524/135 anonymized author groups. Long stories, demographics, questionnaires, imagined/retold variants, and free-text metadata are excluded. No human review was performed.
+
+## Sentiment-Focused Journaling Dataset Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- The single-user Hugging Face card declares CC BY 4.0, but supplies no original source, author/participant consent or ownership statement, paper, collection method, synthetic-generation disclosure, or label-annotation procedure. Its referenced `LICENSE` file and optional validation file are absent from the published four-file tree. The 3.38 KB CSV therefore has unclear underlying-content and label-provenance rights despite the metadata tag.
+- Labels such as joy/sadness/gratitude/anger overlap exactly, but anxiety/peace/burnout/acceptance/confidence cannot be subjectively remapped. There is no source/user grouping and no basis for treating labels as independent human gold.
+- Dataset not downloaded; no rows admitted, no inference/training performed, incumbent unchanged. Next selected task: audit `MEMO4000`, a larger multi-emotion corpus with closer nominal labels, at its authoritative Mendeley record and any linked paper/source.
+
+## MEMO4000 Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- Mendeley declares CC BY 4.0, but the linked author paper says the 4,000 texts were collected from social-network statuses “such as Twitter” in 2018–2020. No post-author commercial relicense/consent, platform-level rights chain, stable author grouping, or source IDs are documented. Dataset-level CC BY therefore does not clear the underlying posts.
+- The paper merely says texts were labeled with emotions; it gives no annotator count/identity, rubric, independence, agreement, adjudication, or quality control. Seven labels are exact Product-18 names, but hope/pride/other are not exact and the gold provenance is insufficient for independent evaluation.
+- Dataset not downloaded; no rows admitted, no inference/training performed, incumbent unchanged. Next selected task: audit Persona-E2, whose first-party card exposes both broad source composition and an explicit non-commercial license, to close that candidate without handling its text.
+
+## Persona-E2 Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- The creator's release is explicitly **CC BY-NC-SA 4.0**, “Academic Use Only,” and limited to non-commercial work. It also aggregates news, Reddit/social media, and life-narrative sources, including 440 Reddit events, creating unresolved underlying-content and incumbent-overlap concerns.
+- Its 36-person human annotations measure each reader's elicited response, not the original writer's emotion; the paper says General Writer labels are produced by an external classifier because writer ratings are unavailable. Thus even the six exact Product-18 label names do not represent the PetalPal target construct.
+- Dataset not downloaded; no rows admitted, no inference/training performed, incumbent unchanged. Next selected task: audit the CC BY 4.0 `Three Datasets Reporting Unexpected Events` release as a rights-clear original-participant alternative, focusing on whether its labels contain any discrete emotion gold rather than only valence/unexpectedness.
+
+## Unexpected-Events Datasets Admission Audit (superseded by rights-first unlabeled-data policy)
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; current dataset decision: **ADMIT_UNLABELED**; source-specific training decision: **UNLABELED_OBJECTIVES_ONLY after schema verification**.
+- Rights/provenance pass: the Mendeley release is CC BY 4.0 and contains 9,720 original Prolific participant responses elicited for the authors' everyday-scenario experiments. The article documents at least two independent human raters, high agreement, and majority/discussion resolution.
+- Native labels are event topic, positive/neutral/negative valence, and goal-object relation. They cannot be expanded into Product-18 emotions, and “unexpected event” is not gold `surprise`; nevertheless, the original rights-cleared Event text is valid for unlabeled adaptation. Participant-level grouping must be verified from the released tables before a held-out experiment.
+- Dataset not downloaded in this step; Hippocorpus is the first admitted-unlabeled experiment.
+
+## IDEST Admission Audit
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**.
+- The PLOS article is CC BY, but calls the OSF database “freely available for academic research”; an authoritative project/file license establishing commercial text reuse was not available in this audit. Texts were supplied through volunteer writing competitions or written by researchers and translated into English, with no accessible per-contributor commercial relicensing chain.
+- More decisively, 250 first-person stories have human valence, arousal, comprehensibility, and plot-arc ratings, not categorical emotions. The paper explicitly chose a dimensional approach and leaves emotion-category assignment to future work. Mapping dimensions/arcs into Product-18 would be prohibited new interpretation.
+- Dataset not downloaded; no rows admitted, no inference/training performed, incumbent unchanged. Next selected task: audit Stanford Emotional Narratives (SENDv1), the closest remaining first-person autobiographical resource, for exact reuse rights and whether its text has categorical emotion gold rather than continuous valence only.
+
+## SENDv1 Admission Audit and Independent-Eval Limitation
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- SENDv1 audit verdict: **PASS**; dataset decision: **EXCLUDE**; source-specific training decision: **DO_NOT_TRAIN**. Official terms limit controlled access to academic researchers/research purposes and require an EULA. Raw video/transcripts are consent-tiered: 81/193 clips are `Limited-Use`, 112/193 are `Share-Ok` for researchers. Native supervision is continuous self/observer valence, not Product-18 categories.
+- The external admission sweep now covers 12 plausible candidates including the separately recorded enISEAR audit. None simultaneously has clear commercial/content rights, original human Event-like English text, existing human Product-18-compatible labels, source grouping, and independence. Discrete-label candidates fail rights/provenance/construct gates; rights-clear candidates have only valence, unrelated fields, or no emotion gold.
+- Status: **TRAINING_LOOP_ACTIVE; MODEL_PROMOTION_INCONCLUSIVE_WITHOUT_INDEPENDENT_GOLD**. New human labeling/review remains prohibited, and pseudo-labeling cannot create independent gold. Rights-cleared unlabeled corpora may nevertheless support bounded self-supervised/domain-adaptation experiments. Incumbent and frozen inference path remain unchanged unless later evidence satisfies the promotion gate.
+- Minimum external state change: documentary commercial/content clearance for an already human-labeled independent candidate, or an already-labeled, commercially consented, source-grouped independent English Event set. No new labeling is requested.
+- Autonomous loop can continue: **YES**, using admitted unlabeled data without gold/evaluation/promotion claims.
+
+## Rights-First Unlabeled Admission Policy Applied
+
+Date: 2026-09-17.
+
+- All 13 audited external candidates now have one of the required classifications in `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`: 2 `ADMIT_UNLABELED`, 4 `BLOCKED`, and 7 `EXCLUDE`; no new `ADMIT_GOLD` source was found.
+- Hippocorpus is the first operational `ADMIT_UNLABELED` corpus. Preparation is reproducible at `v4/aligned-supervision-v1/admitted-unlabeled-v1/hippocorpus/prepare.py`; its `prepared/audit.json` records the minimized fields, automatic contact-pattern exclusion, source-group isolation, and explicit forbidden roles.
+- Generated/weak/pseudo labels remain non-gold and may not produce an independent product score or independently justify promotion. The absence of independent rights-cleared human gold limits promotion conclusions, not continued engineering.
+- Rights correction: the existing candidate-c / GoEmotions-derived encoder is a **historical research incumbent only**. Because its underlying Reddit-derived training-data rights remain unresolved, neither that checkpoint nor any DAPT descendant may be described as production-cleared. Hippocorpus DAPT is therefore a research adaptation of unresolved historical lineage, even though the newly admitted Hippocorpus input itself is rights-cleared.
+- Product-domain length correction: `max_length=512` is only the runtime safety ceiling; the target Event is approximately at most 300 characters. Before filtering, the 2,779 recalled summaries have median/P75/P90 character lengths 167/213/259; 99.9280% are at most 300 characters and 0.0720% are over. The simplest policy retains complete summaries `<=300` characters and excludes the 2 longer summaries without manual review or truncation.
+
+## Hippocorpus DAPT v1 and Fixed Midpoint Repair
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/admitted-unlabeled-v1/hippocorpus/dapt-v1/`.
+
+- Full DAPT used 2,637 admitted-unlabeled train summaries and 139 author-isolated validation summaries, all complete and at most 300 characters. One epoch updated only the top two encoder layers and MLM transform head (14,818,137/124,697,433 parameters). No Product-18 labels were created or used for DAPT.
+- Held-out MLM loss improved from `9.098327` to `3.742931` (`-58.86%`), but MLM improvement was not treated as model-quality improvement. On the same frozen 149-row historical development diagnostic, micro-F1 changed `0.401575 -> 0.394052`; 0/1/2 output counts changed `71/67/11 -> 69/56/24`; false positives changed `38 -> 51`, or `+0.087248` per row. This exceeded the locked `+0.05` guard, so full DAPT was **REJECTED**.
+- A single predeclared 50% encoder-weight midpoint repair was run with the original classifier head unchanged and no alpha sweep. Held-out MLM loss was `5.106241` (`-43.88%` versus incumbent). Frozen-development micro-F1 was `0.398467` (`-0.003107`); output counts were `67/68/14`; false positives were `44` (`+0.040268` per row); exact selected-output agreement was `93.96%`; mean absolute probability drift was `0.006137`.
+- Per-label check: among labels with support at least 3, the worst F1 change was sadness at `-0.031621`, within the locked `-0.10` guard. No catastrophic-forgetting guard fired. The midpoint is therefore **RETAINED_AS_RESEARCH_CANDIDATE_ONLY**.
+- Reload verification: **PASS**. The saved checkpoint reproduces the recorded development metrics exactly, retains an unchanged classifier head, and its binary probability artifacts were saved. Frozen product evaluation was not opened; no human review occurred.
+- Rights/promotion status: the retained checkpoint still inherits the historical GoEmotions/Reddit-derived incumbent whose underlying training-text rights are unresolved. It is not production-cleared. There is no independent rights-cleared human-gold Product-18 evaluation, so promotion remains **INCONCLUSIVE** and production inference remains unchanged.
+
+## Short-Event Domain Diagnostic v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/short-event-domain-diagnostic-v1/`.
+
+- Status: **PASS — DESCRIPTIVE ONLY**. No training occurred and the incumbent did not change. The canonical repository evaluator/Node selector exactly reproduced the locked incumbent micro-F1 `0.5280528053` on all 149 historical development rows. An earlier local draft using a simplified noncanonical selector was invalidated and renamed `*.invalid-*`.
+- The historical COSO-149 development diagnostic is length-mismatched: character median/P75/P90 are `616/906/1189`; only `19/149` (`12.75%`) are at most 300 characters and `130/149` are longer. Token median/P90/max are `133/275/421`, with zero rows over the 512-token runtime ceiling. Therefore `max_length=512` is not the issue; product-domain length coverage is.
+- On the 19-row `<=300` slice, incumbent micro-F1 is `0.6154`, 0/1/2 output counts are `8/9/2`, and false positives are `5` (`0.2632/row`). On the 130 rows over 300 characters, micro-F1 is `0.5199`, output counts are `27/81/22`, and false positives are `53` (`0.4077/row`). The short-minus-long differences are descriptive only because the short slice is tiny/sparse and COSO is not independent rights-cleared product gold.
+- On Hippocorpus's independent rights-cleared but **unlabeled** 139-row validation split, the incumbent produced 0/1/2-label counts `21/100/18`; the most frequent predictions were sadness 46 and joy 39. This is only a behavior profile, not correctness or product evaluation.
+- Conclusion: short-event evaluation coverage is a material unresolved bottleneck. No quality/promotion claim is made. The incumbent remains `goemotions-targeted-v1/experiment/epoch-1-checkpoint`, whose historical GoEmotions/Reddit-derived training-text rights remain unresolved and which is not production-cleared.
+
+## Unexpected Events Operational Admission and Preparation
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/admitted-unlabeled-v1/unexpected-events/`.
+
+- Admission: **ADMIT_UNLABELED**, qualified as `AUXILIARY_HYPOTHETICAL_EVENT`. The official Mendeley v1 release is CC BY 4.0 and consists of participant-written everyday-event continuations. Its human valence/topic/goal-relation fields are not Product-18 emotion gold and are excluded from prepared records.
+- Schema/provenance verification: all three selected authoritative tables contain participant `user_id`; 486 global participant groups support leakage-controlled splitting. Raw identifiers, including IP-like values, are replaced by deterministic aliases and never written to prepared files.
+- Release discrepancy: the publication/release claims 9,720 text responses, while the selected released tables reproducibly contain 8,700 nonblank responses (`2540 + 5140 + 1020`). The missing 1,020 are not inferred or synthesized; the discrepancy is retained in `prepared/audit.json`.
+- Before policy, character median/P75/P90 are `46/79/125`; `99.1954%` are at most 300 characters and `0.8046%` are over. Automatic preparation retains 8,122 unique complete `<=300`-character responses and creates a participant-disjoint 7,716/406 train/validation split across 460/26 participant groups. It excludes 70 long rows, 4 rows with fewer than three ASCII letters, and 504 normalized duplicates; no human sample review occurred.
+- Training decision: **DO_NOT_TRAIN YET**. This preparation establishes admissible data and leakage control, but does not supply an uncontaminated Product-18 quality evaluation or authorize another DAPT sweep.
+
+## Cross-Source Short-Event Coverage Diagnostic v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/cross-source-domain-coverage-v1/`.
+
+- Status: **PASS — NO TRAINING**. A protocol was locked before automatic analysis. Hippocorpus remains `PRIMARY_FIRST_PERSON_EVENT`; Unexpected Events is `AUXILIARY_HYPOTHETICAL_EVENT` and must not dominate merely because it is larger.
+- Hippocorpus has first-person markers in `95.53%` of 2,776 rows; Unexpected Events has them in only `0.89%` of 8,122 rows and third-person markers in `74.75%`. Median character lengths are `167` versus `49`. These automatic surface diagnostics confirm a strong construct/style difference without reading samples.
+- Vocabulary Jaccard overlap is `0.3081`; Unexpected Events contributes 2,848 source-unique normalized word types across 21 scenario materials, so it offers auxiliary coverage, but vocabulary breadth is not model-quality evidence.
+- No new DAPT run is started: prior full DAPT was rejected, its single fixed midpoint remains research-only/inconclusive, and the instruction forbids further DAPT intensity/LR/epoch sweeps. Neither unlabeled source can independently evaluate Product-18 correctness or justify promotion.
+
+## Story Commonsense Admission Audit and Current Loop Boundary
+
+Date: 2026-09-17. Cumulative artifact: `v4/aligned-supervision-v1/DATASET_ADMISSION_AUDITS_20260917.md`.
+
+- Story Commonsense is **EXCLUDE**. Its 15,000 ROCStories source texts are governed by an accompanying non-commercial, non-revenue-generating research license. The human labels describe third-person story-character reactions/motivations, not the writer's PetalPal Event emotion; six names overlap exactly but the construct is not defensible Product-18 gold.
+- The cumulative external audit now covers 14 candidates including the separate enISEAR record: 2 `ADMIT_UNLABELED`, 4 `BLOCKED`, 8 `EXCLUDE`, and 0 `ADMIT_GOLD`.
+- Current autonomous-loop boundary: admissible short-event corpora are prepared and source roles are locked; the remaining high-value model-changing paths would either repeat the forbidden DAPT sweep family or lack an uncontaminated Product-18 evaluation. This is not a claim that unlabeled data is useless: both sources remain valid for future bounded representation/weak-supervision research with explicit non-gold status. It is a guard against running an unjudgeable model-selection experiment.
+- Minimum external state change for promotion-quality work remains an already-human-labeled, commercially/content-cleared, source-grouped, independent English short-Event evaluation set. No human labeling/review is requested. Until then the model decision is **INCONCLUSIVE**, the incumbent is unchanged, and neither the incumbent nor the midpoint is production-cleared.
+
+## Incumbent Aggregate Error / Rare-Label Profile v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/incumbent-error-profile-v1/`.
+
+- Status: **PASS — DIAGNOSTIC ONLY**. The canonical selector exactly reproduces incumbent micro-F1 `0.5280528053`. No sample was reviewed, no gold changed/deleted, no threshold/taxonomy changed, and no training occurred.
+- All COSO-149 aggregate counts: 58 false positives and 85 false negatives. Largest FP contributors are joy 24, optimism 7, sadness 6, caring 4, and fear 4. Largest FN contributors are annoyance 16, caring 11, joy 8, love 8, and amusement 6.
+- Gold-by-predicted 0/1/2 matrix: gold-0=`18/12/0`; gold-1=`14/49/10`; gold-2=`3/29/14`. The incumbent therefore misses at least one label on many historical two-label rows, while joy dominates false positives.
+- Rare-label limitation: admiration, anger, confusion, curiosity, disgust, and remorse each have support below 3 across all 149 rows. In the 19-row `<=300` slice, only joy has support at least 3. The short slice is not adequate for Product-18 per-label model selection.
+- Decision: **DO_NOT_TRAIN**. The evidence identifies error locations but does not supply an uncontaminated protocol for selecting a loss, sampling, calibration, or encoder intervention. Acting on these counts would optimize the same sparse historical diagnostic. Credible model-quality improvement remains **NOT YET PROVABLE**; current model decision remains **INCONCLUSIVE** and the historical research incumbent is unchanged.
+
+## Status Correction — Research Continues
+
+Date: 2026-09-17.
+
+- Current status is **BLOCKED_FOR_CREDIBLE_PRODUCT_PROMOTION**, not blocked for all model research. Missing independent, rights-cleared, Product-18-compatible human gold prevents a credible `PROMOTE` conclusion, but does not prohibit bounded research-only candidates using admitted data and explicit weak supervision.
+- The frozen research incumbent remains `goemotions-targeted-v1/experiment/epoch-1-checkpoint`. It and every descendant inherit unresolved historical GoEmotions/Reddit-derived underlying-text rights and are not production-cleared.
+
+## Selective Consensus Distillation v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/selective-consensus-distillation-v1/`.
+
+- Product problem: the incumbent has 58 FP and 85 FN, and simple MLM DAPT increased FP. Hypothesis: exact-output, high-confidence consensus from two fixed teachers could supply conservative short-Event weak supervision, with uncertain labels masked, and improve selective 0-2 behavior without another DAPT sweep.
+- Exact teachers: (1) frozen incumbent `goemotions-targeted-v1/experiment/epoch-1-checkpoint`; lineage is historical candidate-c/GoEmotions Reddit-derived research initialization -> aligned/standard continuation -> fixed targeted GoEmotions continuation. (2) `domain-restoration-v1/experiment/epoch-1-checkpoint`; initialized from the incumbent and continued for one fixed epoch on the existing 841-row aligned PetalPal Train. The second teacher had COSO micro-F1 `0.5364` and FP/FN `56/84` versus incumbent `0.5281` and `58/85`, but worse macro-F1 `0.3328` versus `0.3452`. Both teachers remain unresolved-lineage research models.
+- Pseudo-label status: **WEAK_PSEUDO_NOT_HUMAN_GOLD**. Text came only from `ADMIT_UNLABELED` Hippocorpus and Unexpected Events. A deterministic 1:1 train pool contained 2,637 rows per source; prepared participant-disjoint validations remained unopened until after the candidate existed.
+- Locked feasibility gate: **PASS**. Exact teacher output agreement was `98.27%`; fixed confidence rules yielded 2,416 eligible weak rows (Hippocorpus 1,162; Unexpected Events 1,254), 995 confident abstentions, and 9 labels with at least 20 strong positives. No threshold was relaxed.
+- Fixed training: one epoch, LR `2e-6`, seed 44, masked BCE, classifier plus top two encoder layers only, 14,787,868/124,667,164 trainable parameters. All text was complete and `<=300` characters; `max_length=512` remained runtime safety only. No sweep occurred.
+- COSO-149 result: micro P/R/F1 `0.5797/0.4848/0.5281 -> 0.5532/0.4727/0.5098`; FP `58 -> 63`; FN `85 -> 87`; 0/1/2 outputs `35/90/24 -> 31/95/23`. On the 19-row short slice, F1 `0.6154 -> 0.5926`, FP `5 -> 6`, FN stayed 5.
+- Supported-label F1 regressions included gratitude `-0.2294`, disappointment `-0.1905`, optimism `-0.1164`, excitement `-0.1000`, caring `-0.0621`, and sadness `-0.0471`; joy improved `+0.0181` and love `+0.1410`, but the broad regressions and aggregate degradation fail the locked rules.
+- Previously untouched unlabeled validations passed stability-only guards: incumbent/candidate exact-output agreement was `89.21%` on Hippocorpus and `95.07%` on Unexpected Events; every 0/1/2 distribution shift was below 1.5 percentage points. These are not correctness scores and cannot offset labeled-diagnostic failure.
+- Decision: **REJECT**. All labeled quality guards failed; both unlabeled stability guards passed. Candidate checkpoint is not retained as an improved research candidate, incumbent remains unchanged, promotion remains **INCONCLUSIVE**, frozen final evaluation was not opened, and no human review occurred.
+
+## Native Human-Valence Auxiliary Adaptation v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/native-valence-aux-v1/`.
+
+- Distinct hypothesis: the rights-cleared native human `pos/neg/neither` task in Unexpected Events might improve short-event affect representations without converting valence into Product-18 pseudo labels. Only the incumbent's top two encoder layers and a temporary 3-class valence head were trainable; the Product-18 classifier head was frozen and later verified tensor-identical.
+- Data feasibility: **PASS**. Native valence exists for 8,120/8,122 prepared rows (`99.975%`). Participant-disjoint train/validation contain 7,714/406 rows across 460/26 groups. Train counts are neg/neither/pos `4523/363/2828`; validation `170/26/210`. Two missing-label rows were automatically excluded. Status is `NATIVE_HUMAN_VALENCE_NOT_PRODUCT18_GOLD`; no Product-18 mapping or human review occurred.
+- Fixed training: one epoch, LR `2e-6`, batch 16, seed 44, train-derived square-root inverse-frequency cross-entropy, 14,175,744 trainable encoder parameters. Every text was complete and `<=300` characters; `max_length=512` was runtime safety only. No sweep occurred.
+- Auxiliary validation: accuracy `0.8251`, macro-F1 `0.5680`. Negative F1=`0.8455`, positive F1=`0.8585`, but `neither` F1=`0.0` with zero predictions, failing the locked auxiliary macro-F1 `>=0.65` guard.
+- COSO-149 emotion result: micro P/R/F1 `0.5797/0.4848/0.5281 -> 0.5563/0.4788/0.5147`; FP `58 -> 63`; FN `85 -> 86`; 0/1/2 outputs `35/90/24 -> 32/92/25`. The 19-row short slice changed F1 `0.6154 -> 0.5926`, FP `5 -> 6`, FN stayed 5.
+- Supported-label regressions included disappointment `-0.2571`, caring `-0.0751`, gratitude `-0.0684`, sadness `-0.0256`, and joy `-0.0067`; love improved `+0.1410`. The classifier-head integrity guard passed, locating the regression in encoder representation drift rather than head mutation.
+- Unlabeled stability guards passed: exact incumbent/candidate output agreement was `97.12%` on Hippocorpus and `96.06%` on Unexpected Events; 0/1/2 distribution changes stayed within the fixed bounds. These are behavior checks, not correctness scores.
+- Decision: **REJECT**. The auxiliary task, aggregate emotion, FP/FN, supported-label, and short-slice guards failed. Candidate is not retained; incumbent stays unchanged; promotion remains **INCONCLUSIVE**; frozen final evaluation was not opened.
+
+## Agreement-Gated Selector v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/agreement-gated-selector-v1/`.
+
+- Distinct non-training hypothesis: because representation adaptation twice increased FP, retain only labels independently selected by both the frozen incumbent and fixed domain-restoration checkpoint under the existing canonical threshold `.35`/max-2 selector. Combination was a set intersection preserving incumbent order; no probability blend, label-specific rule, threshold change, or sweep was permitted.
+- COSO-149 result: FP `58 -> 53`, FN `85 -> 88`, micro precision `0.5797 -> 0.5923`, recall `0.4848 -> 0.4667`, F1 `0.5281 -> 0.5220`, and 0/1/2 outputs `35/90/24 -> 40/88/21`. The 19-row short slice was unchanged at F1 `0.6154`, FP/FN `5/5`, and outputs `8/9/2`.
+- Supported-label regression guard failed: love F1 `0.1667 -> 0.0`, excitement `0.5000 -> 0.4000`, and gratitude `0.7000 -> 0.6316`. Joy precision improved enough for F1 `0.6800 -> 0.7010`, but this did not offset lost recall elsewhere.
+- Unlabeled behavior guards passed: candidate/incumbent exact-output agreement was `98.56%` on Hippocorpus and `98.52%` on Unexpected Events; distribution changes were small and toward slightly more abstention. These are not correctness scores.
+- Decision: **REJECT**. FP, FN, precision, short-slice, and stability guards passed; overall micro-F1 and supported-label guards failed. No follow-up union/blend/label-specific selector is run because that would tune variants against the same sparse historical development set. Incumbent remains unchanged; promotion stays **INCONCLUSIVE**.
+
+## Dropout Uncertainty Feasibility and Consistency v1
+
+Date: 2026-09-17. Artifacts: `v4/aligned-supervision-v1/dropout-uncertainty-v1/` and `dropout-consistency-v1/`.
+
+- Feasibility question: whether stochastic instability on admitted short-event text supplied evidence for a consistency objective, rather than running representation learning merely because it was available. Five fixed dropout passes used 512 participant-diverse train rows per source; prepared validation remained unopened.
+- Feasibility: **PASS**. Hippocorpus had `204/512` unstable rows (`39.84%`) with mean pairwise exact-output agreement `0.7762`; Unexpected Events had `144/512` (`28.13%`) and agreement `0.8525`. This exceeded the locked `15%`/`0.90` gate and authorized exactly one candidate.
+- Fixed candidate: 5,274 admitted train rows, source-balanced 1:1; one epoch at LR `1e-6`, batch 16, seed 44; top two encoder layers only. Two dropout passes were softly anchored to frozen incumbent Product-18 probabilities and received unit-weight probability-MSE consistency loss. The classifier head was frozen and verified tensor-identical. No hard labels, pseudo-gold, threshold changes, or sweep occurred.
+- Independent validation stability failed. Hippocorpus unstable rows stayed `35.97% -> 35.97%` and pairwise agreement changed `0.8036 -> 0.8000`. Unexpected Events instability worsened `26.11% -> 29.06%` and agreement `0.8648 -> 0.8547`. Average relative unstable-row reduction was `-5.66%`.
+- COSO-149 result: micro P/R/F1 `0.5797/0.4848/0.5281 -> 0.5586/0.4909/0.5226`; FP `58 -> 64`; FN `85 -> 84`; 0/1/2 outputs `35/90/24 -> 32/89/28`. The 19-row short slice retained F1 `0.6154` and FP/FN `5/5`, but outputs shifted `8/9/2 -> 7/11/1`.
+- Supported-label regressions included surprise `-0.0833`, gratitude `-0.0684`, sadness `-0.0256`, fear `-0.0234`, and joy `-0.0133`; love improved `+0.1410`. Core stability, aggregate F1, FP, and supported-label guards failed.
+- Decision: **REJECT**. No consistency-weight, dropout-strength, LR, or epoch follow-up is run. Incumbent remains unchanged; promotion remains **INCONCLUSIVE**; frozen final evaluation and human review were not used.
+
+## Current Autonomous Research Boundary
+
+Date: 2026-09-17.
+
+- Status remains **BLOCKED_FOR_CREDIBLE_PRODUCT_PROMOTION**, not a claim that model research is universally impossible.
+- With current assets, materially different evidence-backed families have now been reasonably exercised: historical supervised continuation/loss weighting and two alternative encoders; short-domain MLM DAPT; high-confidence Product-18 pseudo-label distillation; native human-valence auxiliary adaptation; fixed agreement-gated selection; and soft dropout consistency. The new short-domain paths all failed their locked quality guards, most commonly by increasing false positives or regressing supported labels.
+- Further immediate variants would be intensity/threshold/loss/selector tuning against COSO-149 or the same admitted validations, which would violate the anti-sweep and evaluation-integrity constraints. No such variants are authorized.
+- The next justified restart trigger is one of: a newly discovered `ADMIT_GOLD` source; a materially new `ADMIT_UNLABELED` source with a distinct, relevant native signal; an independently callable model-teacher resource enabling genuinely diverse weak-label consensus; or independent rights-cleared Product-18 human gold. Any future candidate remains research-only until promotion evidence exists.
+- Current best frozen research incumbent remains `goemotions-targeted-v1/experiment/epoch-1-checkpoint`; its historical GoEmotions/Reddit underlying-text rights remain unresolved and it is not production-cleared.
+
+## ML V1 Freeze — 2026-09-17
+
+- Freeze decision: **FREEZE ML V1 — PASS**. Do not start further model, threshold, loss, dropout, selector, DAPT, ONNX, deployment, benchmark, or dataset-search work until a restart condition below is satisfied. No new human review will be performed.
+- Frozen incumbent, unchanged: `v4/aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint`. This is the only current ML V1 model. Every rejected candidate remains non-current and must not replace or be described as the incumbent.
+- Status and rights: **RESEARCH-ONLY**. The incumbent belongs to the historical GoEmotions/Reddit-derived lineage; underlying training-text rights remain unresolved. It is not rights-cleared or production-cleared, and there is **no production promotion**.
+- Frozen inference policy: named `28 → 21 → Product-18` projection, global threshold `0.35`, probability-descending order with fixed-order tie-break, maximum two outputs. `max_length=512` tokens is a runtime safety ceiling, not the expected product length; PetalPal Events target approximately `<=300` characters.
+- Frozen historical development diagnostic (COSO-149; not independent promotion evidence): micro precision/recall/F1 `0.579710 / 0.484848 / 0.528053`; macro F1 `0.345179`; false positives `58`; false negatives `85`; predicted 0/1/2-label counts `35/90/24`. Sparse per-label support and long-text mismatch remain documented limitations.
+- Rejected research paths: selective consensus distillation — **REJECT**; native valence auxiliary adaptation — **REJECT**; teacher-intersection selector — **REJECT** (artifact name `agreement-gated-selector-v1`); dropout consistency adaptation — **REJECT**. None is a current model or promotion candidate. Further threshold/loss/dropout/selector variants would be an unsupported sweep against the same limited diagnostics.
+- Data admission state: Hippocorpus — **ADMIT_UNLABELED**; Unexpected Events — **ADMIT_UNLABELED**. Their text may remain a future research resource, but neither supplies Product-18 human gold or an independent model-quality score.
+- Promotion state: **INCONCLUSIVE / BLOCKED_FOR_CREDIBLE_PRODUCT_PROMOTION**. No independent rights-cleared Product-18 gold exists, so current evidence cannot justify model-quality or production promotion.
+- ML work may restart only on at least one concrete external state change: (1) new `ADMIT_GOLD`; (2) resolved data rights for a relevant lineage or dataset; (3) a new independent rights-cleared short-Event evaluation; (4) new rights-cleared native supervision relevant to Product-18 or the PetalPal Event domain; or (5) real product evidence revealing a concrete classifier gap that defines a bounded, testable intervention.
+- Until a restart condition occurs, the incumbent, inference policy, and metrics above remain frozen. No new framework, hash, or manifest is created by this freeze.

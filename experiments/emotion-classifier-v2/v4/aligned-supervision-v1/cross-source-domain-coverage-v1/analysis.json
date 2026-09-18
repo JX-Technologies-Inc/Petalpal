@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "trainingPerformed": false,
+  "humanReviewPerformed": false,
+  "corpora": {
+    "hippocorpus": {
+      "rows": 2776,
+      "sourceGroups": 2659,
+      "splits": {
+        "train": 2637,
+        "validation": 139
+      },
+      "characterCount": {
+        "median": 167,
+        "p75": 213,
+        "p90": 259,
+        "max": 299
+      },
+      "wordCount": {
+        "median": 32,
+        "p75": 41,
+        "p90": 49,
+        "max": 63
+      },
+      "firstPersonMarkerRows": 2652,
+      "firstPersonMarkerPercentage": 95.53314121037464,
+      "thirdPersonMarkerRows": 922,
+      "thirdPersonMarkerPercentage": 33.21325648414986,
+      "vocabularyTypes": 6760,
+      "materials": 0
+    },
+    "unexpectedEvents": {
+      "rows": 8122,
+      "sourceGroups": 486,
+      "splits": {
+        "train": 7716,
+        "validation": 406
+      },
+      "characterCount": {
+        "median": 49,
+        "p75": 80,
+        "p90": 125,
+        "max": 299
+      },
+      "wordCount": {
+        "median": 10,
+        "p75": 16,
+        "p90": 24,
+        "max": 62
+      },
+      "firstPersonMarkerRows": 72,
+      "firstPersonMarkerPercentage": 0.8864811622753016,
+      "thirdPersonMarkerRows": 6071,
+      "thirdPersonMarkerPercentage": 74.74759911351883,
+      "vocabularyTypes": 5808,
+      "materials": 21
+    }
+  },
+  "vocabularyOverlap": {
+    "sharedTypes": 2960,
+    "unionTypes": 9608,
+    "jaccard": 0.3080766028309742,
+    "hippocorpusUniqueTypes": 3800,
+    "unexpectedEventsUniqueTypes": 2848
+  },
+  "decision": {
+    "hippocorpusRole": "PRIMARY_FIRST_PERSON_EVENT",
+    "unexpectedEventsRole": "AUXILIARY_HYPOTHETICAL_EVENT",
+    "automaticRationale": "Unexpected Events is an explicitly prompt-conditioned third-person prediction corpus and its prepared rows show much lower first-person-marker incidence. Its extra vocabulary and scenario coverage can support bounded auxiliary research, but its larger size must not dominate the more product-like first-person corpus.",
+    "trainingAuthorizedByThisDiagnostic": false,
+    "promotionImpact": "NONE"
+  },
+  "limitations": [
+    "Pronoun-marker counts are automatic surface diagnostics, not semantic labels.",
+    "Neither corpus contains Product-18 human gold.",
+    "Vocabulary coverage does not establish model-quality benefit."
+  ]
+}

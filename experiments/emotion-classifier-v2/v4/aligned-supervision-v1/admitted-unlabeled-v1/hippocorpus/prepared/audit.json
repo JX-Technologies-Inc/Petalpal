@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "admissionClass": "ADMIT_UNLABELED",
+  "source": "raw/release/hcV3-stories.csv",
+  "license": "Open Use of Data Agreement v1.0 (O-UDA-1.0)",
+  "allowedRole": [
+    "domain-adaptive pretraining",
+    "representation adaptation",
+    "self-supervised learning"
+  ],
+  "forbiddenRole": [
+    "human emotion gold",
+    "independent product evaluation",
+    "standalone evidence for model promotion"
+  ],
+  "selection": "recalled summaries only; no long stories, demographics, questionnaire fields, or free-text metadata",
+  "lengthPolicy": "retain complete recalled summaries of at most 300 Unicode characters; no truncation",
+  "raw": {
+    "rows": 6854,
+    "memoryTypes": {
+      "imagined": 2756,
+      "recalled": 2779,
+      "retold": 1319
+    },
+    "workers": 3640
+  },
+  "prepared": {
+    "recalledRowsBeforePolicy": 2779,
+    "recalledSummaryCharacterLengthBeforePolicy": {
+      "median": 167,
+      "p75": 213,
+      "p90": 259,
+      "percentageAtMost300": 99.92803166606693,
+      "percentageOver300": 0.07196833393306945
+    },
+    "excludedRows": 3,
+    "excludedByContactHeuristic": 1,
+    "excludedByLengthPolicy": 2,
+    "rows": 2776,
+    "trainRows": 2637,
+    "validationRows": 139,
+    "sourceGroups": 2659,
+    "trainSourceGroups": 2524,
+    "validationSourceGroups": 135,
+    "normalizedDuplicateTexts": 0,
+    "wordCount": {
+      "min": 13,
+      "p25": 26,
+      "median": 32,
+      "p75": 41,
+      "p95": 54,
+      "max": 63
+    }
+  },
+  "excluded": [
+    {
+      "sourceRecordId": "36DSNE9QZ6K7NVOAR6B69XA4JNFOJL",
+      "reasons": [
+        "length_gt_300_characters"
+      ]
+    },
+    {
+      "sourceRecordId": "39LOEL67OTRTHPZ5H4UNW43F9F938U",
+      "reasons": [
+        "length_gt_300_characters"
+      ]
+    },
+    {
+      "sourceRecordId": "3J2UYBXQQMYAWJHK52F6AS9H08Z06A",
+      "reasons": [
+        "phone_like"
+      ]
+    }
+  ],
+  "privacyNote": "Automated contact-pattern filtering is risk reduction, not a guarantee that narrative text contains no personal information.",
+  "humanReviewPerformed": false
+}

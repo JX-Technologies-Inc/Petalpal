@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "decision": "TRAIN_ONE_FIXED_RESEARCH_CANDIDATE",
+  "device": "cpu",
+  "trainingPerformed": false,
+  "humanReviewPerformed": false,
+  "labelStatus": "WEAK_PSEUDO_NOT_HUMAN_GOLD",
+  "pool": {
+    "rows": 5274,
+    "rowsPerSource": 2637,
+    "sourceGroups": {
+      "hippocorpus": 2524,
+      "unexpectedEvents": 460
+    },
+    "exactTeacherOutputAgreementRows": 5183,
+    "exactTeacherOutputAgreementPercentage": 98.27455441789913
+  },
+  "eligibility": {
+    "rows": 2416,
+    "sourceStats": {
+      "hippocorpus": {
+        "poolRows": 2637,
+        "exactAgreementRows": 2567,
+        "eligibleRows": 1162,
+        "confidentAbstentionRows": 37
+      },
+      "unexpectedEvents": {
+        "poolRows": 2637,
+        "exactAgreementRows": 2616,
+        "eligibleRows": 1254,
+        "confidentAbstentionRows": 958
+      }
+    },
+    "confidentAbstentionRows": 995,
+    "strongPositiveCounts": {
+      "admiration": 27,
+      "amusement": 14,
+      "anger": 6,
+      "annoyance": 1,
+      "caring": 15,
+      "confusion": 6,
+      "curiosity": 2,
+      "disappointment": 15,
+      "disgust": 2,
+      "excitement": 24,
+      "fear": 70,
+      "gratitude": 28,
+      "joy": 524,
+      "love": 37,
+      "optimism": 33,
+      "remorse": 16,
+      "sadness": 496,
+      "surprise": 117
+    },
+    "labelsWithAtLeast20StrongPositives": 9
+  },
+  "fixedCriteria": {
+    "eligibleRowsAtLeast": 1000,
+    "eligibleRowsPerSourceAtLeast": 300,
+    "labelsWithAtLeast20StrongPositivesAtLeast": 8,
+    "confidentAbstentionRowsAtLeast": 100
+  },
+  "checks": {
+    "eligibleRows": true,
+    "eligibleRowsPerSource": true,
+    "labelCoverage": true,
+    "confidentAbstentions": true
+  },
+  "validationSplitsOpened": false,
+  "historicalDevelopmentOpenedForThresholdSelection": false,
+  "frozenFinalEvaluationOpened": false,
+  "rights": {
+    "texts": "ADMIT_UNLABELED",
+    "teachers": "HISTORICAL_UNRESOLVED_LINEAGE_RESEARCH_ONLY",
+    "candidateIfTrained": "RESEARCH_ONLY_NOT_PRODUCTION_CLEARED"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "status": "LOCKED_BEFORE_ANALYSIS",
+  "trainingPerformed": false,
+  "question": "Does Unexpected Events add short-event coverage without being suitable to replace the more product-like first-person Hippocorpus source?",
+  "sources": [
+    "admitted-unlabeled-v1/hippocorpus/prepared/train.jsonl",
+    "admitted-unlabeled-v1/hippocorpus/prepared/validation.jsonl",
+    "admitted-unlabeled-v1/unexpected-events/prepared/train.jsonl",
+    "admitted-unlabeled-v1/unexpected-events/prepared/validation.jsonl"
+  ],
+  "automaticDiagnostics": [
+    "row and source-group counts",
+    "character and whitespace-token distributions",
+    "first-person marker incidence",
+    "third-person marker incidence",
+    "normalized vocabulary overlap and source-unique vocabulary",
+    "Unexpected Events scenario-material coverage"
+  ],
+  "decisionRule": "Keep Hippocorpus as PRIMARY_FIRST_PERSON_EVENT and Unexpected Events as AUXILIARY_HYPOTHETICAL_EVENT when the latter is materially less first-person or is explicitly prompt-conditioned. Do not concatenate or train merely because the auxiliary corpus is larger.",
+  "forbiddenConclusions": [
+    "emotion correctness",
+    "human gold",
+    "model improvement",
+    "model promotion",
+    "production clearance of the historical incumbent"
+  ],
+  "humanReviewPerformed": false
+}
