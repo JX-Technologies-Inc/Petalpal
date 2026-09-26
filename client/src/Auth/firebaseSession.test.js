@@ -26,7 +26,8 @@ vi.mock("firebase/auth", () => ({
 vi.mock("../firebase", () => ({ firebaseAuth: mocks.auth, googleProvider: {} }));
 vi.mock("../api", () => ({ API_BASE_URL: "https://render.example.com" }));
 
-import { completeVerifiedRegistration, restorePendingPasswordRegistration } from "./firebaseSession";
+import { completeVerifiedRegistration, resendRegistrationVerificationEmail, restorePendingPasswordRegistration, signOutVerificationSession } from "./firebaseSession";
+import { sendEmailVerification, signOut } from "firebase/auth";
 
 function backendResponse(body) {
   fetch.mockResolvedValue({ ok: true, json: vi.fn().mockResolvedValue(body) });
@@ -85,5 +86,32 @@ describe("verified registration synchronization", () => {
     mocks.auth.currentUser = null;
     await expect(restorePendingPasswordRegistration()).resolves.toBeNull();
     expect(localStorage.getItem("petalPalPendingPasswordProfile")).toBeNull();
+  });
+
+  it("restores an unverified user without a pending registration marker", async () => {
+    localStorage.removeItem("petalPalPendingPasswordProfile");
+    await expect(restorePendingPasswordRegistration()).resolves.toEqual({ email: mocks.user.email, emailVerified: false });
+  });
+
+  it("signs out and removes only PetalPal auth state", async () => {
+    localStorage.setItem("otherAppData", "keep");
+    localStorage.setItem("petalPalCurrentUser", "cached");
+    await signOutVerificationSession();
+    expect(signOut).toHaveBeenCalledWith(mocks.auth);
+    expect(localStorage.getItem("petalPalPendingPasswordProfile")).toBeNull();
+    expect(localStorage.getItem("petalPalCurrentUser")).toBeNull();
+    expect(localStorage.getItem("otherAppData")).toBe("keep");
+  });
+
+  it("resends verification through the current Firebase user with the current origin as continue URL", async () => {
+    await expect(resendRegistrationVerificationEmail()).resolves.toBe(true);
+    expect(mocks.user.reload).toHaveBeenCalledOnce();
+    expect(sendEmailVerification).toHaveBeenCalledWith(mocks.user, { url: window.location.origin });
+  });
+
+  it("does not claim to resend when the user is already verified", async () => {
+    mocks.user.reload.mockImplementation(async () => { mocks.user.emailVerified = true; });
+    await expect(resendRegistrationVerificationEmail()).resolves.toBe(false);
+    expect(sendEmailVerification).not.toHaveBeenCalled();
   });
 });

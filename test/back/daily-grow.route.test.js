@@ -3,7 +3,7 @@ import test from "node:test";
 
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
-import { app, setEmotionClassifierForTests } from "../../server.js";
+import { app, setEmotionClassifierForTests, setEventEmotionClassifierForTests } from "../../server.js";
 
 const originals = {
   userFindUnique: prisma.user.findUnique,
@@ -146,6 +146,7 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
 
   t.after(async () => {
     setEmotionClassifierForTests();
+    setEventEmotionClassifierForTests();
     setFirebaseTokenVerifierForTests();
     restorePrisma();
     await new Promise((resolve) => httpServer.close(resolve));
@@ -235,15 +236,23 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
   await t.test("canonical journalText remains private even when a classifier is available", async () => {
     resetState();
     setEmotionClassifierForTests(async () => assert.fail("Journal must never call emotion AI"));
-    const result = await api(baseUrl, `/users/${owner.id}/flowers`, {
-      method: "POST",
-      body: { mood: "FIRE_BLOOM", journalText: "Private Journal text" }
-    });
-    assert.equal(result.status, 201);
-    assert.equal(state.journal.content, "Private Journal text");
-    assert.equal(state.emotion.inferencePath, "NO_AI");
-    assert.equal(state.ai, null);
-    assert.equal(state.flower.dailyCheckInId, "checkin-1");
+    setEventEmotionClassifierForTests(async () => assert.fail("Journal must never call Event emotion AI"));
+    const previousFlag = process.env.EMOTION_CLASSIFIER_ENABLED;
+    process.env.EMOTION_CLASSIFIER_ENABLED = "true";
+    try {
+      const result = await api(baseUrl, `/users/${owner.id}/flowers`, {
+        method: "POST",
+        body: { mood: "FIRE_BLOOM", journalText: "Private Journal text" }
+      });
+      assert.equal(result.status, 201);
+      assert.equal(state.journal.content, "Private Journal text");
+      assert.equal(state.emotion.inferencePath, "NO_AI");
+      assert.equal(state.ai, null);
+      assert.equal(state.flower.dailyCheckInId, "checkin-1");
+    } finally {
+      if (previousFlag === undefined) delete process.env.EMOTION_CLASSIFIER_ENABLED;
+      else process.env.EMOTION_CLASSIFIER_ENABLED = previousFlag;
+    }
   });
 
   await t.test("DAILY_GROW_LIMIT_ENABLED=false allows repeated test grows", async () => {
@@ -303,16 +312,18 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
       assert.equal(replay.status, 409);
       resetState();
       queue = Promise.resolve();
+      const dateBeforeRequests = new Date().toISOString().slice(0, 10);
       const results = await Promise.all(Array.from({ length: 20 }, () => api(
         baseUrl, `/users/${owner.id}/flowers`, { method: "POST", body: { mood: "SUNNY_BLOOM" } }
       )));
+      const dateAfterRequests = new Date().toISOString().slice(0, 10);
       const statuses = results.reduce((counts, result) => {
         const key = result.status === 201 ? "success" : result.status === 409 ? "conflict" : `unexpected-${result.status}`;
         counts[key] = (counts[key] || 0) + 1;
         return counts;
       }, {});
       assert.deepEqual(statuses, { success: 1, conflict: 19 });
-      assert.equal(state.checkIn.localDate, "2026-09-16");
+      assert.ok([dateBeforeRequests, dateAfterRequests].includes(state.checkIn.localDate));
       assert.equal(state.flower.dailyCheckInId, state.checkIn.id);
       assert.equal(state.journal, null);
       assert.equal(longTermAiWrites, 0);

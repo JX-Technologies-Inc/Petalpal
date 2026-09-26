@@ -33,6 +33,16 @@ test("rejects partial Firebase Admin credentials", () => {
   );
 });
 
+test("rejects Firebase Admin credentials from another project", () => {
+  assert.throws(
+    () => readFirebaseAdminConfig({
+      FIREBASE_PROJECT_ID: "petalpal-b212c",
+      FIREBASE_SERVICE_ACCOUNT_JSON: JSON.stringify({ project_id: "another-project", private_key: "unused", client_email: "unused" })
+    }),
+    { code: "FIREBASE_ADMIN_PROJECT_MISMATCH" }
+  );
+});
+
 test("Firebase user deletion treats user-not-found as idempotent success", async () => {
   await assert.doesNotReject(deleteFirebaseUser("missing", {
     deleteUser: async () => {

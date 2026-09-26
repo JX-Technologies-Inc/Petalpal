@@ -93,11 +93,15 @@ model Flower {
   userId         String
   gardenId       String
   dailyCheckInId String? @unique
+  sourceEventId  String? @unique
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   garden       Garden        @relation(fields: [gardenId], references: [id], onDelete: Cascade)
   dailyCheckIn DailyCheckIn? @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
+  sourceEvent  Event? @relation(fields: [sourceEventId, userId], references: [id, ownerId], onDelete: Cascade)
   messages     Message[]
+
+  @@unique([sourceEventId, userId])
 }
 
 model Message {
@@ -376,6 +380,15 @@ model Event {
   idempotencyKey          String   @db.VarChar(191)
   memoryProcessingAllowed Boolean  @default(false)
   consentTermsVersion     String?  @db.VarChar(32)
+  primaryGardenMood       String?  @db.VarChar(32)
+  secondaryEmotions       Json     @default("[]")
+  emotionStatus           String   @default("SKIPPED") @db.VarChar(16)
+  emotionOutcome          String   @default("SKIPPED") @db.VarChar(32)
+  emotionProvenance       String?  @db.VarChar(32)
+  emotionModelId          String?  @db.VarChar(128)
+  emotionModelVersion     String?  @db.VarChar(128)
+  emotionModelStatus      String?  @db.VarChar(32)
+  emotionProbabilities    Json?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
@@ -383,6 +396,7 @@ model Event {
   memory   EventMemory?
   aiJobs   AiJob[]
   evidence AiEvidence[]
+  flower   Flower?
 
   @@unique([id, ownerId])
   @@unique([ownerId, idempotencyKey])
@@ -404,6 +418,11 @@ model EventMemory {
   secondaryEmotions      Json?
   emotionConfidence      Float?
   emotionModelVersion    String?                     @db.VarChar(128)
+  emotionOutcome         String?                     @db.VarChar(32)
+  emotionProvenance      String?                     @db.VarChar(32)
+  emotionModelId         String?                     @db.VarChar(128)
+  emotionModelStatus     String?                     @db.VarChar(32)
+  emotionProbabilities   Json?
   embeddingStatus        String                      @default("NOT_REQUESTED") @db.VarChar(32)
   embeddingModel         String?                     @db.VarChar(128)
   embeddingProfileKey    String?                     @db.VarChar(128)

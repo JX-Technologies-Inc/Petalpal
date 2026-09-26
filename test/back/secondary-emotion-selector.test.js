@@ -73,3 +73,12 @@ for (const [primaryGardenMood, redundant] of [
     }), []);
   });
 }
+
+test("development and production select identical semantic layers", () => {
+  const candidates = [{ label: "fear", score: 0.8 }, { label: "anger", score: 0.6 }];
+  for (const primaryGardenMood of ["PEACEFUL_BLOOM", "FIRE_BLOOM"]) {
+    const development = selectFlowerSecondaryEmotions({ primaryGardenMood, candidates, env: { NODE_ENV: "development" } });
+    const production = selectFlowerSecondaryEmotions({ primaryGardenMood, candidates, env: { NODE_ENV: "production" } });
+    assert.deepEqual(development, production);
+  }
+});

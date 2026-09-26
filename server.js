@@ -13,7 +13,10 @@ import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
 import { generateFlowerMetadata } from "./lib/flower-engine.js";
+import { classifyEventEmotion, emotionClassifierEnabled, EVENT_EMOTION_MODEL_ID, EVENT_EMOTION_MODEL_VERSION } from "./lib/event-emotion.js";
+import { canonicalEventLabels, previewEventFlower } from "./lib/event-flower.js";
 import {
+  CANONICAL_PRIMARY_GARDEN_MOODS,
   isSupportedPrimaryGardenMood,
   speciesPoolForPrimary
 } from "./lib/flower-variant-config.js";
@@ -65,6 +68,8 @@ import {
 } from "./lib/auth.js";
 import { rateLimiters } from "./lib/rate-limit.js";
 import { deleteFirebaseUser } from "./lib/firebase-admin.js";
+import { assertDevelopmentDatabase } from "./lib/database-isolation.js";
+import { deleteAccountDataInTransaction } from "./lib/account-deletion.js";
 import {
   endpointNotFound,
   handleHttpError,
@@ -95,6 +100,7 @@ app.use((req, res, next) => {
 
 app.set("trust proxy", trustProxySetting());
 let emotionClassifier = classifyEmotion;
+let eventEmotionClassifier = classifyEventEmotion;
 let firebaseUserDeleter = deleteFirebaseUser;
 const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
   prisma,
@@ -108,6 +114,10 @@ function isDailyGrowLimitEnabled() {
 
 export function setEmotionClassifierForTests(classifier) {
   emotionClassifier = classifier || classifyEmotion;
+}
+
+export function setEventEmotionClassifierForTests(classifier) {
+  eventEmotionClassifier = classifier || classifyEventEmotion;
 }
 
 export function setFirebaseUserDeleterForTests(deleter) {
@@ -603,7 +613,8 @@ async function getGardenResponse(userId, { includePrivate = false } = {}) {
                       }
                     }
                   }
-                }
+                },
+                sourceEvent: { select: { secondaryEmotions: true } }
               }
             : {})
         },
@@ -1615,20 +1626,118 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
   res.json(consent);
 });
 
+async function eventEmotionResult({ userId, eventId, text, primaryGardenMood }) {
+  if (!emotionClassifierEnabled()) return { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: process.env.EMOTION_CLASSIFIER_ENABLED === "true" ? "RESEARCH_ONLY_CONTEXT" : "FEATURE_DISABLED" };
+  let result;
+  try {
+    result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood });
+  } catch {
+    return { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: "RUNTIME_UNAVAILABLE" };
+  }
+  const labels = canonicalEventLabels(result, primaryGardenMood);
+  if (labels === null) return { status: "FAILED", labels: [], latencyMs: result?.latencyMs || 0, fallbackReason: "INVALID_MODEL_OUTPUT" };
+  return { ...result, labels };
+}
+
+function eventEmotionMetadata(emotion) {
+  const success = emotion.status === "SUCCESS";
+  const attempted = success || emotion.status === "FAILED";
+  return {
+    emotionStatus: emotion.status,
+    emotionOutcome: success ? (emotion.labels.length ? `INFERRED_${emotion.labels.length}` : "ABSTAINED") : emotion.status,
+    emotionProvenance: attempted ? "INFERRED_UNCONFIRMED" : null,
+    emotionModelId: attempted ? EVENT_EMOTION_MODEL_ID : null,
+    emotionModelVersion: attempted ? EVENT_EMOTION_MODEL_VERSION : null,
+    emotionModelStatus: attempted ? "research_only" : null,
+    emotionProbabilities: success && emotion.probabilities ? emotion.probabilities : null
+  };
+}
+
+async function enrichCreatedEvent(event, primaryGardenMood) {
+  const emotion = await eventEmotionResult({
+    userId: event.ownerId, eventId: event.id, text: event.content, primaryGardenMood
+  });
+  let flower = null;
+  const metadata = eventEmotionMetadata(emotion);
+  try {
+    await prisma.event.update({
+      where: { id: event.id, ownerId: event.ownerId },
+      data: { primaryGardenMood, secondaryEmotions: emotion.labels, ...metadata }
+    });
+    if (primaryGardenMood) {
+      const garden = await ensureGarden(event.ownerId);
+      const recentFlowers = await prisma.flower.findMany({
+        where: { userId: event.ownerId }, orderBy: { createdAt: "desc" }, take: 5,
+        select: { name: true, left: true, top: true }
+      });
+      const chosen = previewEventFlower({
+        userId: event.ownerId, localDate: event.localDate, primaryGardenMood,
+        labels: emotion.labels, recentFlowers
+      });
+      flower = await prisma.flower.upsert({
+        where: { sourceEventId: event.id },
+        update: {},
+        create: {
+          mood: primaryGardenMood, event: "", name: chosen.name, meaning: chosen.meaning,
+          img: chosen.img, speciesCode: chosen.speciesCode, colorAccent: chosen.colorAccent,
+          visualEffect: chosen.visualEffect, season: chosen.season, generationSeed: chosen.generationSeed,
+          variant: chosen.variant, rarity: chosen.rarity, growthState: chosen.growthState,
+          ...getNonOverlappingPosition(recentFlowers), userId: event.ownerId,
+          gardenId: garden.id, sourceEventId: event.id
+        }
+      });
+    }
+  } catch {
+    console.info("Event enrichment persistence failed", { eventId: event.id, status: "FAILED" });
+    try {
+      await prisma.event.update({ where: { id: event.id, ownerId: event.ownerId },
+        data: { emotionStatus: "FAILED", emotionOutcome: "FAILED", secondaryEmotions: [], emotionProbabilities: null } });
+    } catch { /* A later retry or repair must resolve an Event still marked PENDING. */ }
+    return { emotion: { status: "FAILED", labels: [], latencyMs: emotion.latencyMs, fallbackReason: "PERSISTENCE_FAILED" }, flower: null };
+  }
+  return { emotion, flower };
+}
+
 app.post("/events", aiRateLimit, async (req, res) => {
   try {
+    if (req.get("x-petalpal-emotion-lab") === "1") {
+      try {
+        assertDevelopmentDatabase();
+      } catch {
+        return res.status(503).json({ error: "Emotion Lab development database is not configured safely" });
+      }
+      const testEmail = process.env.AUTH_E2E_TEST_EMAIL?.trim().toLowerCase();
+      if (!testEmail || req.firebase?.email?.trim().toLowerCase() !== testEmail) {
+        return res.status(403).json({ error: "Emotion Lab requires the dedicated E2E test account" });
+      }
+    }
     if (Object.hasOwn(req.body, "ownerId") || Object.hasOwn(req.body, "userId") || req.query.ownerId !== undefined || req.query.userId !== undefined) {
       return res.status(400).json({ error: "Event ownership is derived from the authenticated Firebase identity" });
+    }
+    const primaryGardenMood = req.body.primaryGardenMood ?? null;
+    if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) {
+      return res.status(400).json({ error: "Unsupported Primary Garden Mood" });
     }
     const result = await createEventAndEnqueueMemoryJob({
       prisma,
       identity: req.auth,
       content: req.body.content,
+      primaryGardenMood,
+      enrichmentPending: Boolean(primaryGardenMood || emotionClassifierEnabled()),
       occurredAt: req.body.occurredAt ?? new Date(),
       idempotencyKey: req.get("idempotency-key")
     });
+    const enrichment = result.created
+      ? (primaryGardenMood || emotionClassifierEnabled()
+          ? await enrichCreatedEvent(result.event, primaryGardenMood)
+          : { emotion: { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, flower: null })
+      : { emotion: { status: result.event.emotionStatus || "SKIPPED", labels: result.event.secondaryEmotions || [] },
+          flower: await prisma.flower.findUnique({ where: { sourceEventId: result.event.id } }).catch(() => null) };
     return res.status(result.created ? 201 : 200).json({
-      event: result.event,
+      event: { ...result.event, primaryGardenMood: result.created ? primaryGardenMood : result.event.primaryGardenMood,
+        secondaryEmotions: enrichment.emotion.labels, ...(result.created ? eventEmotionMetadata(enrichment.emotion) : {}) },
+      emotion: { status: enrichment.emotion.status, labels: enrichment.emotion.labels, latencyMs: enrichment.emotion.latencyMs, fallbackReason: enrichment.emotion.fallbackReason },
+      flower: enrichment.flower,
       memoryJob: result.job ? { id: result.job.id, status: result.job.status } : null
     });
   } catch (error) {
@@ -1640,6 +1749,34 @@ app.post("/events", aiRateLimit, async (req, res) => {
     logServerError("POST /events error", error);
     return res.status(500).json({ error: "Failed to create Event" });
   }
+});
+
+app.post("/dev/emotion-preview", aiRateLimit, async (req, res) => {
+  if (process.env.NODE_ENV === "production") return res.status(404).json({ error: "Not found" });
+  const testEmail = process.env.AUTH_E2E_TEST_EMAIL?.trim().toLowerCase();
+  if (!testEmail || req.firebase?.email?.trim().toLowerCase() !== testEmail) {
+    return res.status(403).json({ error: "Emotion Lab requires the dedicated E2E test account" });
+  }
+  if (Object.hasOwn(req.body, "ownerId") || Object.hasOwn(req.body, "userId") || req.query.ownerId !== undefined || req.query.userId !== undefined) {
+    return res.status(400).json({ error: "Owner is derived from the authenticated session" });
+  }
+  const { text, primaryGardenMood = null } = req.body;
+  if (typeof text !== "string" || !text.trim() || text.length > 4000) return res.status(400).json({ error: "Valid Event text is required" });
+  if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) return res.status(400).json({ error: "Unsupported Primary Garden Mood" });
+  const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
+  if (!user) return res.status(404).json({ error: "User not found" });
+  const emotion = await eventEmotionResult({ userId: req.auth.userId, text, primaryGardenMood });
+  const recentFlowers = primaryGardenMood ? await prisma.flower.findMany({
+    where: { userId: req.auth.userId }, orderBy: { createdAt: "desc" }, take: 5, select: { name: true }
+  }) : [];
+  const flower = previewEventFlower({
+    userId: req.auth.userId,
+    localDate: localDateForInstant(new Date(), normalizeTimezone(user.timezone) || "UTC"),
+    primaryGardenMood, labels: emotion.labels, recentFlowers
+  });
+  return res.json({ classifierEnabled: emotionClassifierEnabled(), inferenceStatus: emotion.status,
+    labels: emotion.labels, probabilities: emotion.probabilities || null, flower,
+    latencyMs: emotion.latencyMs, fallbackReason: emotion.fallbackReason || null });
 });
 
 app.get("/events/:eventId", async (req, res) => {
@@ -3265,34 +3402,8 @@ app.delete("/users/:id", async (req, res) => {
       }
 
       const deleted = await prisma.$transaction(async (tx) => {
-        const user = await tx.user.findUnique({ where: { id } });
+        const user = await deleteAccountDataInTransaction(tx, { id });
         if (!user) return false;
-
-        await tx.friendship.deleteMany({
-          where: { OR: [{ userId: id }, { friendId: id }] }
-        });
-        await tx.friendRequest.deleteMany({
-          where: { OR: [{ senderId: id }, { receiverId: id }] }
-        });
-
-        const garden = await tx.garden.findUnique({ where: { ownerId: id } });
-        if (garden) {
-          const flowers = await tx.flower.findMany({
-            where: { gardenId: garden.id },
-            select: { id: true }
-          });
-          const flowerIds = flowers.map((flower) => flower.id);
-          if (flowerIds.length > 0) {
-            await tx.message.deleteMany({ where: { flowerId: { in: flowerIds } } });
-            await tx.flower.deleteMany({ where: { id: { in: flowerIds } } });
-          }
-          await tx.visitRecord.deleteMany({ where: { gardenId: garden.id } });
-          await tx.garden.delete({ where: { id: garden.id } });
-        }
-
-        await tx.visitRecord.deleteMany({ where: { visitorId: id } });
-        await tx.message.deleteMany({ where: { userId: id } });
-        await tx.user.delete({ where: { id } });
         if (user.firebaseUid) await firebaseUserDeleter(user.firebaseUid);
         return true;
       });

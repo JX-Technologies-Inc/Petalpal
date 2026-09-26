@@ -79,6 +79,39 @@ describe("GardenScene", () => {
         isOwnGarden={false}
       />
     );
-    expect(screen.queryByText("Secondary:")).not.toBeInTheDocument();
+    expect(screen.queryByText("Inferred secondary emotions (unconfirmed):")).not.toBeInTheDocument();
+  });
+
+  it("shows Event secondary emotions and existing visual metadata", async () => {
+    render(
+      <GardenScene
+        owner={{ id: "user-1", name: "Petal" }}
+        currentUser={{ id: "user-1", name: "Petal" }}
+        flowers={[{
+          ...flower, dailyCheckIn: null, sourceEventId: "event-1",
+          sourceEvent: { secondaryEmotions: ["optimism"] },
+          colorAccent: "DAWN_GOLD", visualEffect: "RISING_LIGHT"
+        }]}
+        isOwnGarden
+      />
+    );
+    await userEvent.click(screen.getByAltText("Sunflower"));
+    expect(screen.getByText("Inferred secondary emotions (unconfirmed):")).toBeInTheDocument();
+    expect(screen.getByText("optimism")).toBeInTheDocument();
+    expect(screen.getByText("DAWN_GOLD")).toBeInTheDocument();
+    expect(screen.getByText("RISING_LIGHT")).toBeInTheDocument();
+  });
+
+  it("shows None for an Event flower with no secondary emotions", async () => {
+    render(
+      <GardenScene
+        owner={{ id: "user-1", name: "Petal" }}
+        currentUser={{ id: "user-1", name: "Petal" }}
+        flowers={[{ ...flower, dailyCheckIn: null, sourceEventId: "event-2", sourceEvent: { secondaryEmotions: [] } }]}
+        isOwnGarden
+      />
+    );
+    await userEvent.click(screen.getByAltText("Sunflower"));
+    expect(screen.getByText("None")).toBeInTheDocument();
   });
 });

@@ -28,6 +28,7 @@ import {
   import FriendSearch from "./Friends/FriendSearch";
   import FriendList from "./Friends/FriendList";
   import FriendRequests from "./Friends/FriendRequests";
+  import EmotionLab from "./Dev/EmotionLab";
   
   function getSocketUrl() {
     const configuredUrl =
@@ -186,20 +187,27 @@ import {
     const [
       currentUser,
       setCurrentUser
-    ] = useState(() => {
-      try {
-        const savedUser =
-          localStorage.getItem(
-            "petalPalCurrentUser"
-          );
-  
-        return savedUser
-          ? JSON.parse(savedUser)
-          : null;
-      } catch {
-        return null;
-      }
-    });
+    ] = useState(null);
+    const [authReady, setAuthReady] = useState(false);
+
+    useEffect(() => {
+      let active = true;
+      void firebaseAuth.authStateReady().then(() => {
+        if (!active) return;
+        if (firebaseAuth.currentUser?.emailVerified) {
+          try {
+            const savedUser = localStorage.getItem("petalPalCurrentUser");
+            setCurrentUser(savedUser ? JSON.parse(savedUser) : null);
+          } catch {
+            localStorage.removeItem("petalPalCurrentUser");
+          }
+        } else {
+          localStorage.removeItem("petalPalCurrentUser");
+        }
+        setAuthReady(true);
+      });
+      return () => { active = false; };
+    }, []);
     const [gardenData, setGardenData] =
       useState({
         owner: null,
@@ -881,6 +889,12 @@ import {
       }));
     }
   
+    if (!authReady) return <p className="auth-message">Restoring sign-in...</p>;
+
+    if (import.meta.env.DEV && window.location.pathname === "/dev/emotion-lab") {
+      return <EmotionLab currentUser={currentUser} />;
+    }
+
     return (
       <>
         <header>

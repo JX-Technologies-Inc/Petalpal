@@ -244,6 +244,46 @@ test("production memory worker durably enqueues the selected embedding revision"
   assert.equal(result.embeddingJob.idempotencyKey, "EMBEDDING_GENERATION:memory-1:production-bge-small-en-v1.5-v1.1");
 });
 
+test("memory worker defers in-flight enrichment then terminally resolves stale PENDING without inferred labels", async () => {
+  const event = {
+    id: "event-pending", ownerId: alice.userId, content: "A private Event",
+    occurredAt: new Date("2026-09-01"), updatedAt: new Date(Date.now() - 30_000),
+    emotionStatus: "PENDING", emotionOutcome: "PENDING", secondaryEmotions: ["joy"],
+    memoryProcessingAllowed: true
+  };
+  let savedMemory;
+  let updates = 0;
+  const prisma = {
+    event: {
+      async findFirst({ where }) { return where.id === event.id && where.ownerId === event.ownerId ? event : null; },
+      async updateMany({ where, data }) {
+        assert.equal(where.ownerId, alice.userId);
+        if (event.emotionStatus !== where.emotionStatus) return { count: 0 };
+        Object.assign(event, data); updates += 1; return { count: 1 };
+      }
+    },
+    eventMemory: {
+      async findFirst() { return null; },
+      async create({ data }) { savedMemory = { id: "memory-pending", embeddingInputRevision: 1, ...data }; return savedMemory; }
+    },
+    aiJob: {
+      async findUnique() { return null; },
+      async create({ data }) { return { id: "embedding-pending", ...data }; }
+    }
+  };
+  const embeddingProvider = { describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); } };
+  const worker = createProductionAiWorker({ prisma, embeddingProvider, logger: { error() {} } });
+  await assert.rejects(worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id, attemptCount: 1, maxAttempts: 3 }),
+    (error) => error.retryDelayMs === 5_000);
+  assert.equal(updates, 0);
+  await worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id, attemptCount: 3, maxAttempts: 3 });
+  assert.equal(updates, 1);
+  assert.equal(event.emotionStatus, "FAILED");
+  assert.equal(savedMemory.emotionOutcome, "FAILED");
+  assert.deepEqual(savedMemory.secondaryEmotions, []);
+  assert.equal(savedMemory.emotionProvenance, null);
+});
+
 test("embedding backfill is bounded, owner-preserving, cursor-based, and idempotent", async () => {
   const memories = [
     { id: "memory-1", ownerId: "owner-a", sourceEventId: "event-1", embeddingInputRevision: 1 },

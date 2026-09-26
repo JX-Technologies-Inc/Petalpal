@@ -49,6 +49,22 @@ describe("apiRequest", () => {
     );
   });
 
+  it("includes local Firebase verification diagnostics when supplied", async () => {
+    fetch.mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: async () => ({
+        error: "Authentication service unavailable",
+        firebaseErrorCode: "app/invalid-credential",
+        firebaseErrorMessage: "Could not load the default credentials."
+      })
+    });
+
+    await expect(apiRequest("/dev/emotion-preview")).rejects.toThrow(
+      "app/invalid-credential: Could not load the default credentials."
+    );
+  });
+
   it("handles a non-JSON error response", async () => {
     fetch.mockResolvedValue({
       ok: false,

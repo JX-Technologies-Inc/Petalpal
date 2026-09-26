@@ -25,7 +25,14 @@ async function syncUser(user, profile = {}, refreshedIdToken) {
     body: JSON.stringify(profile)
   });
   const data = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(data?.error || "Unable to start PetalPal session");
+  if (!response.ok) {
+    const detail = data?.firebaseErrorCode && data?.firebaseErrorMessage
+      ? ` (${data.firebaseErrorCode}: ${data.firebaseErrorMessage})`
+      : "";
+    const error = new Error(`${data?.error || "Unable to start PetalPal session"}${detail}`);
+    error.code = data?.firebaseErrorCode || null;
+    throw error;
+  }
 
   localStorage.setItem("petalPalCurrentUser", JSON.stringify(data.user));
   return data;
@@ -63,7 +70,9 @@ export async function completePasswordlessProfile(profile) {
 export async function loginWithPassword(email, password) {
   const credential = await signInWithEmailAndPassword(firebaseAuth, email, password);
   if (!credential.user.emailVerified) {
-    throw new Error("Verify your email before signing in with a password.");
+    const error = new Error("Verify your email before signing in with a password.");
+    error.code = "email-not-verified";
+    throw error;
   }
   const data = await syncUser(credential.user, { deferProfileCreation: true });
   localStorage.removeItem(PENDING_PASSWORD_PROFILE);
@@ -83,8 +92,9 @@ export async function resendRegistrationVerificationEmail() {
   const user = firebaseAuth.currentUser;
   if (!user) throw new Error("Your registration session is unavailable. Log in with your PetalPal password to continue.");
   await user.reload();
-  if (user.emailVerified) return;
+  if (user.emailVerified) return false;
   await sendEmailVerification(user, { url: window.location.origin });
+  return true;
 }
 
 export function pendingPasswordRegistration() {
@@ -101,18 +111,23 @@ export function clearPendingPasswordRegistration() {
 
 export async function restorePendingPasswordRegistration() {
   const pending = pendingPasswordRegistration();
-  if (!pending) return null;
   await firebaseAuth.authStateReady();
   const user = firebaseAuth.currentUser;
   if (!user) {
     clearPendingPasswordRegistration();
     return null;
   }
-  const email = user.email || pending.email || "";
-  if (email !== pending.email) {
+  const email = user.email || pending?.email || "";
+  if (pending && email !== pending.email) {
     localStorage.setItem(PENDING_PASSWORD_PROFILE, JSON.stringify({ ...pending, email }));
   }
-  return { email };
+  return { email, emailVerified: user.emailVerified };
+}
+
+export async function signOutVerificationSession() {
+  await signOut(firebaseAuth);
+  clearPendingPasswordRegistration();
+  localStorage.removeItem("petalPalCurrentUser");
 }
 
 export async function recoverPendingRegistrationEmail() {

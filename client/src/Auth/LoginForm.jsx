@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { loginWithPassword } from "./firebaseSession";
 
-function LoginForm({ onLogin }) {
+function LoginForm({ onLogin, onVerificationRequired }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -20,7 +20,8 @@ function LoginForm({ onLogin }) {
       const data = await loginWithPassword(email.trim(), password);
       notifyLogin(data);
     } catch (error) {
-      setMessage(error.message || "Unable to sign in with password.");
+      if (error.code === "email-not-verified") onVerificationRequired?.(email.trim());
+      else setMessage(error.message || "Unable to sign in with password.");
     } finally {
       setIsLoading(false);
     }

@@ -5,7 +5,7 @@ import { io as connectSocket } from "socket.io-client";
 
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
-import { server } from "../../server.js";
+import { server, setEventEmotionClassifierForTests } from "../../server.js";
 
 const privateFields = [
   "event",
@@ -73,6 +73,9 @@ function assertSocialFlower(flower) {
 }
 
 test("support and message HTTP/socket payloads expose only social Flower data", async (t) => {
+  const previousFlag = process.env.EMOTION_CLASSIFIER_ENABLED;
+  process.env.EMOTION_CLASSIFIER_ENABLED = "true";
+  setEventEmotionClassifierForTests(async () => assert.fail("Social content must never call Event emotion AI"));
   const originals = {
     userFindUnique: prisma.user.findUnique,
     flowerFindFirst: prisma.flower.findFirst,
@@ -106,6 +109,9 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
   await delay(10);
 
   t.after(async () => {
+    if (previousFlag === undefined) delete process.env.EMOTION_CLASSIFIER_ENABLED;
+    else process.env.EMOTION_CLASSIFIER_ENABLED = previousFlag;
+    setEventEmotionClassifierForTests();
     socket.close();
     Object.assign(prisma.user, { findUnique: originals.userFindUnique });
     Object.assign(prisma.flower, {

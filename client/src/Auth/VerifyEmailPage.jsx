@@ -5,7 +5,7 @@ import {
   resendRegistrationVerificationEmail
 } from "./firebaseSession";
 
-function VerifyEmailPage({ email: initialEmail, onVerified, onRequireLogin }) {
+function VerifyEmailPage({ email: initialEmail, onVerified, onRequireLogin, onSignOut }) {
   const [email, setEmail] = useState(initialEmail || "");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -42,10 +42,25 @@ function VerifyEmailPage({ email: initialEmail, onVerified, onRequireLogin }) {
   async function handleResend() {
     try {
       setIsLoading(true);
-      await resendRegistrationVerificationEmail();
-      setMessage("A new verification email has been sent. Check your inbox and spam folder.");
+      const sent = await resendRegistrationVerificationEmail();
+      setMessage(sent
+        ? "A new verification email has been sent. Check your inbox and spam folder."
+        : "Your email is already verified. Select ‘I’ve Verified My Email’ to continue.");
     } catch (error) {
-      setMessage(error.message || "Unable to resend the verification email.");
+      setMessage(error.code === "auth/too-many-requests"
+        ? "Too many verification emails were requested. Please wait before trying again. (auth/too-many-requests)"
+        : error.message || "Unable to resend the verification email.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleSignOut() {
+    try {
+      setIsLoading(true);
+      await onSignOut?.();
+    } catch (error) {
+      setMessage(error.message || "Unable to sign out. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -60,6 +75,9 @@ function VerifyEmailPage({ email: initialEmail, onVerified, onRequireLogin }) {
       </button>
       <button type="button" className="verification-resend-link" disabled={isLoading} onClick={() => void handleResend()}>
         Resend Verification Email
+      </button>
+      <button type="button" disabled={isLoading} onClick={() => void handleSignOut()}>
+        Sign Out / Use Another Account
       </button>
       <p className="auth-message">{message}</p>
     </section>

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, it, vi } from "vitest";
 import VerifyEmailPage from "./VerifyEmailPage";
-import { completeVerifiedRegistration } from "./firebaseSession";
+import { completeVerifiedRegistration, resendRegistrationVerificationEmail } from "./firebaseSession";
 
 vi.mock("./firebaseSession", () => ({
   completeVerifiedRegistration: vi.fn(),
@@ -29,10 +29,28 @@ it("moves a cross-device verified user to complete profile", async () => {
   expect(onVerified).toHaveBeenCalledWith(result);
 });
 
-it("stays on verify email when Firebase is not verified", async () => {
+  it("stays on verify email when Firebase is not verified", async () => {
   completeVerifiedRegistration.mockRejectedValue(new Error("Email is not verified yet."));
   render(<VerifyEmailPage email="bloom@example.com" />);
   await userEvent.click(screen.getByRole("button", { name: /i’ve verified my email/i }));
   expect(await screen.findByText("Email is not verified yet.")).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: /verify your email/i })).toBeInTheDocument();
+});
+
+it("does not report a new email when Firebase says the account is already verified", async () => {
+  resendRegistrationVerificationEmail.mockResolvedValue(false);
+  render(<VerifyEmailPage email="bloom@example.com" />);
+  await userEvent.click(screen.getByRole("button", { name: /resend verification email/i }));
+  expect(await screen.findByText(/email is already verified/i)).toBeInTheDocument();
+  expect(screen.queryByText(/a new verification email has been sent/i)).not.toBeInTheDocument();
+});
+
+it("shows the Firebase rate-limit code without claiming an email was sent", async () => {
+  resendRegistrationVerificationEmail.mockRejectedValue(Object.assign(new Error("Firebase: Error (auth/too-many-requests)."), {
+    code: "auth/too-many-requests"
+  }));
+  render(<VerifyEmailPage email="bloom@example.com" />);
+  await userEvent.click(screen.getByRole("button", { name: /resend verification email/i }));
+  expect(await screen.findByText(/auth\/too-many-requests/)).toHaveTextContent(/please wait/i);
+  expect(screen.queryByText(/a new verification email has been sent/i)).not.toBeInTheDocument();
 });

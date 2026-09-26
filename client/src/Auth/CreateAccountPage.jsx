@@ -17,7 +17,9 @@ function CreateAccountPage({ onAccountCreated }) {
       const user = await registerWithPassword(email.trim(), password);
       if (typeof onAccountCreated === "function") onAccountCreated(user?.email || email.trim());
     } catch (error) {
-      setMessage(error.message || "Unable to create account.");
+      setMessage(error.code === "auth/email-already-in-use"
+        ? "This email already has an account (EMAIL_EXISTS). Sign in or use another email."
+        : error.message || "Unable to create account.");
     } finally {
       setIsLoading(false);
     }

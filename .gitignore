@@ -4,6 +4,9 @@ coverage/
 .env
 .env.*
 !.env.example
+!.env.auth-e2e.example
+.env.auth-e2e.local
+.auth-e2e-state.local.json
 
 /generated/prisma
 
@@ -20,6 +23,7 @@ __pycache__/
 # Generated ML binaries, checkpoints, caches, and runtime logs
 *.log
 *.npy
+*.npz
 *.pt
 *.safetensors
 *.onnx
@@ -27,6 +31,10 @@ __pycache__/
 *.zip
 *.xlsx
 **/best-checkpoint/
+experiments/emotion-classifier-v2/v4/**/checkpoint/
+experiments/emotion-classifier-v2/v4/**/final-checkpoint/
+experiments/emotion-classifier-v2/v4/**/onnx-cpu/artifacts/
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/admitted-unlabeled-v1/**/raw/
 
 # Local/raw human-text corpora and generated annotation datasets
 experiments/emotion-classifier-v2/frozen-2/*.jsonl

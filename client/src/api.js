@@ -28,12 +28,15 @@ export async function apiRequest(path, options = {}) {
     .catch(() => null);
 
   if (!response.ok) {
+    const diagnostic = data?.firebaseErrorCode && data?.firebaseErrorMessage
+      ? ` (${data.firebaseErrorCode}: ${data.firebaseErrorMessage})`
+      : "";
     const error = new Error(
-      data?.error ||
-      `Request failed with status ${response.status}`
+      `${data?.error || `Request failed with status ${response.status}`}${diagnostic}`
     );
 
     error.status = response.status;
+    error.code = data?.firebaseErrorCode || null;
 
     if (response.status === 401) {
       localStorage.removeItem("petalPalCurrentUser");

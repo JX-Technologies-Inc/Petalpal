@@ -11,6 +11,13 @@ const FLOWER_IMAGE_MAP = {
 
 const EMPTY_LIST = Object.freeze([]);
 
+function flowerSecondaryEmotions(flower) {
+  const secondary = flower.sourceEventId
+    ? flower.sourceEvent?.secondaryEmotions
+    : flower.dailyCheckIn?.emotionResult?.secondaryEmotions;
+  return Array.isArray(secondary) ? secondary : [];
+}
+
 function getFlowerImagePath(flower) {
   if (!flower) {
     return "/assets/pink.png";
@@ -1262,11 +1269,16 @@ function GardenScene({
             {isOwnGarden && (
               <>
                 <p>
-                  <strong>Secondary:</strong>{" "}
-                  {selectedFlower.dailyCheckIn?.emotionResult?.secondaryEmotions?.length
-                    ? selectedFlower.dailyCheckIn.emotionResult.secondaryEmotions.join(", ")
-                    : "None"}
+                  <strong>Inferred secondary emotions (unconfirmed):</strong>{" "}
+                  {flowerSecondaryEmotions(selectedFlower).join(", ") || "None"}
                 </p>
+
+                {selectedFlower.sourceEventId && selectedFlower.colorAccent && (
+                  <p><strong>Color accent:</strong> {selectedFlower.colorAccent}</p>
+                )}
+                {selectedFlower.sourceEventId && selectedFlower.visualEffect && (
+                  <p><strong>Visual effect:</strong> {selectedFlower.visualEffect}</p>
+                )}
 
                 {selectedFlower.dailyCheckIn?.emotionResult?.intensity != null && (
                   <p>
