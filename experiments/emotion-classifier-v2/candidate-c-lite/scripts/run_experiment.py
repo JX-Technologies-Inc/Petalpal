@@ -146,8 +146,13 @@ def garden_metrics(y_true, y_pred):
     }
 
 
-def export_onnx(model, tokenizer, destination):
-    encoded = tokenizer("PetalPal ONNX export sample", return_tensors="pt")
+def export_onnx(model, tokenizer, destination, max_length=128):
+    encoded = tokenizer(
+        "PetalPal ONNX export sample",
+        truncation=True,
+        max_length=max_length,
+        return_tensors="pt",
+    )
     wrapper = LogitsOnly(model).eval()
     torch.onnx.export(
         wrapper, (encoded["input_ids"], encoded["attention_mask"]), destination,

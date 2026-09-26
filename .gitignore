@@ -105,4 +105,6 @@ experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/*.csv
 experiments/emotion-classifier-v2/v4/stage1-human-review-core-v1/input/**/*.csv
 experiments/emotion-classifier-v2/v4/stage1-human-review-decision-v1/*.csv
 experiments/emotion-classifier-v2/v4/stage1-model-adjudication-v1/*.csv
+experiments/emotion-classifier-v2/v4/stage1-model-adjudication-v1/astra-work/*.csv
+experiments/emotion-classifier-v2/v4/stage1-final-adjudication-plan-v1/*.csv
 experiments/emotion-classifier-v2/v4/stage1-model-adjudication-v1/astra-work/groups.json

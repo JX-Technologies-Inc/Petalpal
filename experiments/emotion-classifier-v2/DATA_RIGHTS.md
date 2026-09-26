@@ -9,6 +9,7 @@ Status-only governance record. This file does not alter dataset contents, checkp
 | Reddit-derived / PHQ public-human | **PENDING RIGHTS CLEARANCE** | Recovered workbook documents direct Reddit-linked public-human collection; row-level `Source URL` and `sourceGroupId` provenance preserved. `PHQ` is an internal PetalPal row prefix. | Preserved in row provenance; no new URL introduced here. |
 | CoSoWELL | **PENDING RIGHTS CLEARANCE** | Existing source snapshot and provenance records; dataset-specific usage and commercial rights await written confirmation. | Existing URLs remain in source metadata; no new URL introduced here. |
 | HUMAN_CONSENTED 54 | **CLEARED on existing documentary-consent evidence** | Collector-confirmed original consent covers ML research, training/fine-tuning, evaluation, product development, deployment, and commercial use. | No additional URL required. |
+| GoEmotions-derived incumbent lineage | **PENDING UNDERLYING-TEXT RIGHTS CLEARANCE** | Dataset packaging/license metadata does not resolve the underlying Reddit-authored training-text rights for production use. Existing checkpoints remain historical research baselines only. | Existing official-source URLs remain in the lineage audit. |
 
 ## Policy for pending-rights data
 
@@ -23,9 +24,8 @@ Pending status is a governance guard, not a deletion instruction. Historical res
 
 ## Current production-use rule
 
-Reddit-derived and CoSoWELL sources are not production-cleared. Any future training or deployment decision using them requires documented written rights clearance first. Cleared-data fallback work may proceed independently.
+Reddit-derived sources, including the GoEmotions-derived incumbent lineage, and CoSoWELL are not production-cleared. Any future training or deployment decision using them requires documented written rights clearance first. Cleared-data fallback work may proceed independently.
 
 ## Evidence limitations
 
 No source URL or permission statement is newly inferred in this document. Where exact permission evidence is absent from the repository, status remains `NOT FOUND — USER INPUT REQUIRED`.
-
