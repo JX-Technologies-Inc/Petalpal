@@ -17,8 +17,9 @@ COPY package*.json ./
 
 COPY prisma ./prisma
 COPY prisma.config.ts ./
+COPY lib/database-isolation.js ./lib/database-isolation.js
 
-RUN npm install
+RUN NODE_ENV=production DATABASE_URL=postgresql://build:build@localhost:5432/petalpal_build npm install --include=dev
 
 COPY . .
 
