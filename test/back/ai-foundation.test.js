@@ -224,6 +224,14 @@ test("production memory worker durably enqueues the selected embedding revision"
       async findUnique({ where }) {
         return jobs.find((job) => job.ownerId === where.ownerId_idempotencyKey.ownerId && job.idempotencyKey === where.ownerId_idempotencyKey.idempotencyKey) || null;
       },
+      async createMany({ data }) {
+        for (const item of data) {
+          if (!jobs.some((job) => job.ownerId === item.ownerId && job.idempotencyKey === item.idempotencyKey)) {
+            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", ...item });
+          }
+        }
+        return { count: data.length };
+      },
       async create({ data }) {
         const row = { id: `job-${jobs.length + 1}`, status: "PENDING", ...data };
         jobs.push(row);
@@ -231,6 +239,8 @@ test("production memory worker durably enqueues the selected embedding revision"
       }
     }
   };
+  prisma.$queryRawUnsafe = async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+  prisma.$transaction = async (callback) => callback(prisma);
   const embeddingProvider = {
     describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
     async embedDocuments() { throw new Error("memory handler must not embed inline"); }
@@ -252,6 +262,7 @@ test("memory worker defers in-flight enrichment then terminally resolves stale P
     memoryProcessingAllowed: true
   };
   let savedMemory;
+  let embeddingJob;
   let updates = 0;
   const prisma = {
     event: {
@@ -267,10 +278,13 @@ test("memory worker defers in-flight enrichment then terminally resolves stale P
       async create({ data }) { savedMemory = { id: "memory-pending", embeddingInputRevision: 1, ...data }; return savedMemory; }
     },
     aiJob: {
-      async findUnique() { return null; },
+      async findUnique() { return embeddingJob || null; },
+      async createMany({ data }) { embeddingJob = { id: "embedding-pending", ...data[0] }; return { count: data.length }; },
       async create({ data }) { return { id: "embedding-pending", ...data }; }
     }
   };
+  prisma.$queryRawUnsafe = async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+  prisma.$transaction = async (callback) => callback(prisma);
   const embeddingProvider = { describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); } };
   const worker = createProductionAiWorker({ prisma, embeddingProvider, logger: { error() {} } });
   await assert.rejects(worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id, attemptCount: 1, maxAttempts: 3 }),
@@ -284,6 +298,154 @@ test("memory worker defers in-flight enrichment then terminally resolves stale P
   assert.equal(savedMemory.emotionProvenance, null);
 });
 
+test("memory job claimed before revocation cancels without creating memory or embedding work", async () => {
+  const event = {
+    id: "event-revoked", ownerId: alice.userId, content: "Private Event",
+    occurredAt: new Date("2026-09-01"), memoryProcessingAllowed: true,
+    emotionStatus: "SKIPPED"
+  };
+  let memoryWrites = 0;
+  let embeddingJobs = 0;
+  let consentEnabled = true;
+  const job = { id: "memory-revoked", ownerId: alice.userId, eventId: event.id,
+    jobType: AI_JOB_TYPES.MEMORY_EXTRACTION, status: "PENDING", attemptCount: 0, maxAttempts: 3 };
+  const prisma = {
+    event: { async findFirst({ where }) { return where.ownerId === event.ownerId && where.id === event.id ? event : null; } },
+    eventMemory: { async findFirst() { return null; }, async create() { memoryWrites += 1; } },
+    aiJob: {
+      async create() { embeddingJobs += 1; },
+      async updateMany({ where, data }) {
+        if (job.status !== where.status || job.lockedBy !== where.lockedBy) return { count: 0 };
+        Object.assign(job, data);
+        return { count: 1 };
+      },
+      async findUnique() { return job; }
+    },
+    aiConsent: { async findUnique() { return { aiProcessing: consentEnabled, personalization: consentEnabled,
+      memoryEnabled: consentEnabled, updatedAt: new Date() }; } },
+    async $queryRawUnsafe(_query, ownerId) {
+      return ownerId === alice.userId && consentEnabled
+        ? [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }] : [];
+    },
+    async $transaction(callback) { return callback(prisma); }
+  };
+  const worker = createProductionAiWorker({ prisma,
+    embeddingProvider: { describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); } },
+    logger: { error() {} } });
+  worker.repository.claimNext = async () => {
+    if (job.status !== "PENDING") return null;
+    job.status = "RUNNING";
+    job.lockedBy = worker.workerId;
+    job.attemptCount += 1;
+    consentEnabled = false;
+    return { ...job };
+  };
+  worker.repository.markSucceeded = async () => { throw new Error("revoked memory must not succeed"); };
+  worker.repository.markFailed = async () => { throw new Error("revocation must not retry"); };
+  const result = await worker.runOnce();
+  assert.equal(result.succeeded, true);
+  assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+  assert.equal(job.status, "CANCELLED");
+  assert.equal(job.attemptCount, 1);
+  assert.equal(memoryWrites, 0);
+  assert.equal(embeddingJobs, 0);
+  assert.deepEqual(await worker.runOnce(), { claimed: false });
+});
+
+test("embedding job revoked after precheck cannot begin durable embedding state", async () => {
+  let consentEnabled = true;
+  let embeddingWrites = 0;
+  let providerCalls = 0;
+  const job = { id: "embedding-revoked", ownerId: alice.userId, resourceId: "memory-revoked",
+    jobType: AI_JOB_TYPES.EMBEDDING_GENERATION, status: "PENDING", attemptCount: 0, maxAttempts: 3 };
+  const prisma = {
+    aiConsent: { async findUnique() { return { aiProcessing: consentEnabled, personalization: consentEnabled,
+      memoryEnabled: consentEnabled, updatedAt: new Date() }; } },
+    eventMemory: { async findFirst() {
+      consentEnabled = false;
+      return { id: job.resourceId, ownerId: alice.userId, sourceEventId: "event-1", summary: "Private Event",
+        topics: [], people: [], embeddingStatus: "NOT_REQUESTED", embeddingInputRevision: 1 };
+    } },
+    async $queryRawUnsafe(query, ownerId) {
+      if (query.includes('FROM "AiConsent"')) return consentEnabled
+        ? [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }] : [];
+      embeddingWrites += 1;
+      return [{ id: job.resourceId }];
+    },
+    async $transaction(callback) { return callback(prisma); }
+  };
+  const worker = createProductionAiWorker({ prisma,
+    embeddingProvider: {
+      describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
+      async embedDocuments() { providerCalls += 1; }
+    }, logger: { error() {} } });
+  worker.repository = {
+    async claimNext() {
+      if (job.status !== "PENDING") return null;
+      job.status = "RUNNING";
+      job.attemptCount += 1;
+      return { ...job };
+    },
+    async cancelClaimed() { job.status = "CANCELLED"; return true; },
+    async markSucceeded() { throw new Error("revoked embedding must not succeed"); },
+    async markFailed() { throw new Error("revocation must not retry"); }
+  };
+  const result = await worker.runOnce();
+  assert.equal(result.succeeded, true);
+  assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+  assert.equal(job.status, "CANCELLED");
+  assert.equal(job.attemptCount, 1);
+  assert.equal(embeddingWrites, 0);
+  assert.equal(providerCalls, 0);
+});
+
+test("embedding generated before revocation is discarded without a post-revoke state write", async () => {
+  let consentEnabled = true;
+  const updates = [];
+  const updatedAt = new Date("2026-09-17T12:00:00Z");
+  const prisma = {
+    aiConsent: { async findUnique() { return { aiProcessing: consentEnabled, personalization: consentEnabled,
+      memoryEnabled: consentEnabled, updatedAt }; } },
+    eventMemory: { async findFirst() { return {
+      id: "memory-1", ownerId: alice.userId, sourceEventId: "event-1", summary: "Private Event",
+      topics: [], people: [], embeddingStatus: "NOT_REQUESTED", embeddingInputRevision: 1
+    }; } },
+    async $queryRawUnsafe(query, ownerId) {
+      if (query.includes('FROM "AiConsent"')) return consentEnabled
+        ? [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true, updatedAt }] : [];
+      updates.push(query.includes("'GENERATING'") ? "BEGIN" : query.includes("'GENERATED'") ? "STORE" : "FAILED");
+      return [{ id: "memory-1" }];
+    },
+    async $transaction(callback) { return callback(prisma); }
+  };
+  const job = { id: "embedding-provider-revoked", ownerId: alice.userId, resourceId: "memory-1",
+    jobType: AI_JOB_TYPES.EMBEDDING_GENERATION, status: "PENDING", attemptCount: 0, maxAttempts: 3 };
+  const worker = createProductionAiWorker({ prisma,
+    embeddingProvider: {
+      describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
+      async embedDocuments() {
+        consentEnabled = false;
+        return { vectors: [[1, ...Array(383).fill(0)]] };
+      }
+    }, logger: { error() {} } });
+  worker.repository = {
+    async claimNext() {
+      if (job.status !== "PENDING") return null;
+      job.status = "RUNNING";
+      job.attemptCount += 1;
+      return { ...job };
+    },
+    async cancelClaimed() { job.status = "CANCELLED"; return true; },
+    async markSucceeded() { throw new Error("revoked embedding must not succeed"); },
+    async markFailed() { throw new Error("revocation must not retry"); }
+  };
+  const result = await worker.runOnce();
+  assert.equal(result.succeeded, true);
+  assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+  assert.equal(job.status, "CANCELLED");
+  assert.deepEqual(updates, ["BEGIN"]);
+});
+
 test("embedding backfill is bounded, owner-preserving, cursor-based, and idempotent", async () => {
   const memories = [
     { id: "memory-1", ownerId: "owner-a", sourceEventId: "event-1", embeddingInputRevision: 1 },
@@ -291,10 +453,20 @@ test("embedding backfill is bounded, owner-preserving, cursor-based, and idempot
     { id: "memory-3", ownerId: "owner-c", sourceEventId: "event-3", embeddingInputRevision: 1 }
   ];
   const jobs = [];
+  const revokedOwners = new Set();
   const prisma = {
-    async $queryRawUnsafe(_sql, afterId, _profileKey, _model, _modelRevision, _inputVersion, limit) {
+    async $queryRawUnsafe(sql, afterId, _profileKey, _model, _modelRevision, _inputVersion, limit) {
+      if (sql.includes('FROM "AiConsent"')) {
+        return revokedOwners.has(afterId) ? []
+          : [{ userId: afterId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+      }
       return memories.filter((memory) => afterId === null || memory.id > afterId).slice(0, limit);
     },
+    async $transaction(callback) { return callback(prisma); },
+    event: { async findFirst({ where }) {
+      return memories.find((memory) => memory.sourceEventId === where.id && memory.ownerId === where.ownerId) || null;
+    } },
+    user: { async findUnique() { return { preferredLocale: "en" }; } },
     aiJob: {
       async findUnique({ where }) {
         const key = where.ownerId_idempotencyKey;
@@ -304,6 +476,14 @@ test("embedding backfill is bounded, owner-preserving, cursor-based, and idempot
         const job = { id: `job-${jobs.length + 1}`, status: "PENDING", ...data };
         jobs.push(job);
         return job;
+      },
+      async createMany({ data }) {
+        for (const item of data) {
+          if (!jobs.some((job) => job.ownerId === item.ownerId && job.idempotencyKey === item.idempotencyKey)) {
+            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", ...item });
+          }
+        }
+        return { count: data.length };
       }
     }
   };
@@ -329,6 +509,11 @@ test("embedding backfill is bounded, owner-preserving, cursor-based, and idempot
   assert.equal(second.selected, 1);
   assert.equal(second.jobIds[0], "job-3");
   assert.equal(second.hasMore, false);
+  revokedOwners.add("owner-c");
+  const revoked = await enqueueEventMemoryEmbeddingBackfill({ prisma, batchSize: 2, afterId: first.nextCursor });
+  assert.equal(revoked.selected, 1);
+  assert.deepEqual(revoked.jobIds, []);
+  assert.equal(jobs.length, 3);
   assert.equal(embeddingJobProcessingVersion(2), "production-bge-small-en-v1.5-v1.2");
   await assert.rejects(
     enqueueEventMemoryEmbeddingBackfill({ prisma, batchSize: MAX_EMBEDDING_BACKFILL_BATCH_SIZE + 1 }),
@@ -461,15 +646,16 @@ test("report evidence selection reports insufficiency and enforces count/context
 
 test("Weekly and Monthly report inputs reuse period aggregates and semantic retrieval with distinct bounds", async () => {
   const eventRows = [
-    { id: "event-1", ownerId: alice.userId, occurredAt: new Date("2026-09-03"), memory: { id: "memory-1", topics: ["career"], importanceScore: 0.8 } },
-    { id: "event-2", ownerId: alice.userId, occurredAt: new Date("2026-09-10"), memory: { id: "memory-2", topics: ["study"], importanceScore: 0.6 } },
-    { id: "event-3", ownerId: alice.userId, occurredAt: new Date("2026-09-20"), memory: { id: "memory-3", topics: ["career"], importanceScore: 0.9 } }
+    { id: "event-1", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-03"), memory: { id: "memory-1", topics: ["career"], importanceScore: 0.8 } },
+    { id: "event-2", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-10"), memory: { id: "memory-2", topics: ["study"], importanceScore: 0.6 } },
+    { id: "event-3", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-20"), memory: { id: "memory-3", topics: ["career"], importanceScore: 0.9 } }
   ];
   const prisma = {
     user: { async findUnique() { return { timezone: "UTC" }; } },
+    aiConsent: { async findUnique() { return { aiProcessing: true, personalization: true, memoryEnabled: true, updatedAt: new Date() }; } },
     event: {
       async findMany({ where }) {
-        return eventRows.filter((event) => event.occurredAt >= where.occurredAt.gte && event.occurredAt < where.occurredAt.lt);
+        return eventRows.filter((event) => event.ownerId === where.ownerId && event.memoryProcessingAllowed === where.memoryProcessingAllowed && event.occurredAt >= where.occurredAt.gte && event.occurredAt < where.occurredAt.lt);
       }
     }
   };
@@ -477,7 +663,7 @@ test("Weekly and Monthly report inputs reuse period aggregates and semantic retr
   const semanticRetrieval = {
     async retrieve(args) {
       calls.push(args);
-      const within = eventRows.filter((event) => event.occurredAt >= args.dateFrom && event.occurredAt < args.dateTo);
+      const within = eventRows.filter((event) => event.ownerId === args.identity.userId && event.memoryProcessingAllowed && event.occurredAt >= args.dateFrom && event.occurredAt < args.dateTo);
       return within.map((event, index) => ({
         id: event.memory.id,
         ownerId: alice.userId,
@@ -827,6 +1013,7 @@ test("AI jobs are version-idempotent and Event plus processing intent are atomic
   const jobs = [];
   const events = [];
   const tx = {
+    $queryRawUnsafe: async () => [{ termsVersion: "2026-09", aiProcessing: true, personalization: true, memoryEnabled: true }],
     user: {
       async findUnique() {
         return {

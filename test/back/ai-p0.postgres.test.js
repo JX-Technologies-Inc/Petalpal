@@ -17,7 +17,7 @@ import {
 import { createProductionAiWorker } from "../../lib/ai-worker.js";
 import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import { PrismaMemoryRepository } from "../../lib/event-memory.js";
-import { ReportInputService, WeeklyReportService } from "../../lib/report-foundation.js";
+import { GroundedReportPersistenceService, ReportInputService, WeeklyReportService } from "../../lib/report-foundation.js";
 import { REPORT_NARRATIVE_GENERATION_VERSION } from "../../lib/report-narrative.js";
 import { PrismaEventEmbeddingRepository, SemanticEventRetrievalService } from "../../lib/semantic-retrieval.js";
 
@@ -380,6 +380,10 @@ realTest("real PostgreSQL builds bounded owner-safe Monthly evidence input from 
       await createEmbeddedMemory({ id: `${prefix}-02`, ownerId: alice, summary: "Started a new internship!", occurredAt: new Date("2026-09-04T12:00:00Z"), topics: ["career"], vector: vectors.close });
       const changed = await createEmbeddedMemory({ id: `${prefix}-03`, ownerId: alice, summary: "Changed internship teams and felt supported", occurredAt: new Date("2026-09-20T12:00:00Z"), topics: ["career"], vector: vectors.related });
       const study = await createEmbeddedMemory({ id: `${prefix}-04`, ownerId: alice, summary: "Completed the final exam", occurredAt: new Date("2026-09-10T12:00:00Z"), topics: ["study"], vector: vectors.other });
+      await prisma.event.create({ data: {
+        ownerId: alice, content: "Not eligible for memory processing", occurredAt: new Date("2026-09-11T12:00:00Z"),
+        timezone: "UTC", localDate: "2026-09-11", idempotencyKey: `${prefix}-ineligible`, memoryProcessingAllowed: false
+      } });
       await createEmbeddedMemory({ id: `${prefix}-05-outside`, ownerId: alice, summary: "August event outside report", occurredAt: new Date("2026-08-20T12:00:00Z"), topics: ["career"], vector: vectors.exact });
       const bobPrivate = await createEmbeddedMemory({ id: `${prefix}-06-bob`, ownerId: bob, summary: "Bob private event", occurredAt: new Date("2026-09-05T12:00:00Z"), topics: ["career"], vector: vectors.exact });
       await createEmbeddedMemory({ id: `${prefix}-07-revoked`, ownerId: revoked, summary: "Revoked private event", occurredAt: new Date("2026-09-06T12:00:00Z"), topics: ["career"], vector: vectors.exact });
@@ -401,6 +405,7 @@ realTest("real PostgreSQL builds bounded owner-safe Monthly evidence input from 
       });
 
       assert.equal(input.reportType, "MONTHLY");
+      assert.equal(input.aggregates.eventCount, 4);
       assert.equal(input.evidenceSelection.status, "READY");
       assert.equal(input.evidenceSelection.candidateCount, 4);
       assert.equal(input.evidenceSelection.deduplicatedCount, 3);
@@ -503,7 +508,7 @@ realTest("real PostgreSQL report worker persists grounded narrative and provenan
         jobId: job.id,
         ownerId,
         jobType: AI_JOB_TYPES.WEEKLY_REPORT,
-        now: new Date("2026-09-22T00:00:00Z")
+        now: new Date()
       });
       assert.equal(run.succeeded, true);
       assert.equal(run.result.status, "GENERATED");
@@ -544,8 +549,9 @@ realTest("real report regeneration is atomic and leaves only B and C evidence", 
     const suffix = Date.now();
     const ownerId = `pg-report-owner-${suffix}`;
     await seedUser(prisma, ownerId, "America/Vancouver");
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
     try {
-      const common = { ownerId, timezone: "America/Vancouver", memoryProcessingAllowed: false };
+      const common = { ownerId, timezone: "America/Vancouver", memoryProcessingAllowed: true };
       const eventA = await prisma.event.create({ data: { ...common, content: "A", occurredAt: new Date("2026-09-15T12:00:00Z"), localDate: "2026-09-15", idempotencyKey: `a-${suffix}` } });
       const eventB = await prisma.event.create({ data: { ...common, content: "B", occurredAt: new Date("2026-09-16T12:00:00Z"), localDate: "2026-09-16", idempotencyKey: `b-${suffix}` } });
       const service = new WeeklyReportService(prisma);
@@ -605,6 +611,41 @@ realTest("25 independent Prisma connections claim a single lease without duplica
   }
 });
 
+realTest("SKIP LOCKED claims the next eligible job while an earlier job row is locked", async () => {
+  await withPrisma(async (prisma) => {
+    const ownerId = `pg-skip-locked-${Date.now()}`;
+    await seedUser(prisma, ownerId);
+    const client = new pg.Client({ connectionString: databaseUrl });
+    await client.connect();
+    let transactionOpen = false;
+    try {
+      const jobs = [];
+      for (const index of [0, 1]) {
+        const event = await prisma.event.create({ data: {
+          ownerId, content: `Claim ${index}`, occurredAt: new Date(), timezone: "UTC", localDate: "2026-09-14",
+          idempotencyKey: `skip-locked-${Date.now()}-${index}`, memoryProcessingAllowed: true
+        } });
+        jobs.push(await prisma.aiJob.create({ data: {
+          ownerId, jobType: "MEMORY_EXTRACTION", resourceId: event.id, eventId: event.id,
+          idempotencyKey: `memory:${event.id}:v1`, nextAttemptAt: new Date(Date.now() - 10_000 + index * 1_000)
+        } }));
+      }
+      await client.query("BEGIN");
+      transactionOpen = true;
+      await client.query(`SELECT "id" FROM "AIJob" WHERE "id" = $1 FOR UPDATE`, [jobs[0].id]);
+      const claim = new PrismaAiJobRepository(prisma).claimNext({ workerId: "pg-skip-locked-worker" });
+      const outcome = await Promise.race([claim, new Promise((resolve) => setTimeout(() => resolve(null), 1_000))]);
+      assert.equal(outcome?.id, jobs[1].id);
+      await client.query("COMMIT");
+      transactionOpen = false;
+    } finally {
+      if (transactionOpen) await client.query("ROLLBACK");
+      await client.end();
+      await prisma.user.delete({ where: { id: ownerId } });
+    }
+  });
+});
+
 realTest("Event and memory job intent are atomic, consent-aware and idempotent", async () => {
   await withPrisma(async (prisma) => {
     const suffix = Date.now();
@@ -649,11 +690,13 @@ realTest("actual worker child process survives crash through lease recovery and 
   let jobId;
   await withPrisma(async (prisma) => {
     await seedUser(prisma, ownerId);
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
     const event = await prisma.event.create({ data: { ownerId, content: "worker runtime", occurredAt: new Date(), timezone: "UTC", localDate: "2026-09-14", idempotencyKey: `runtime-${Date.now()}`, memoryProcessingAllowed: true } });
     jobId = (await prisma.aiJob.create({ data: { ownerId, jobType: "MEMORY_EXTRACTION", resourceId: event.id, eventId: event.id, idempotencyKey: `memory:${event.id}:v1` } })).id;
   });
 
-  const crashing = fork(fixturePath, [], { env: { ...process.env, DATABASE_URL: databaseUrl, AI_WORKER_TEST_MODE: "hang-after-claim", AI_WORKER_ID: "crashing-worker", AI_JOB_LEASE_MS: "1000" }, stdio: ["ignore", "pipe", "pipe", "ipc"] });
+  const childEnv = { ...process.env, NODE_ENV: "test", DEV_DATABASE_URL: databaseUrl, DATABASE_URL: "postgresql://unused:unused@localhost:5433/petalpal_never_use" };
+  const crashing = fork(fixturePath, [], { env: { ...childEnv, AI_WORKER_TEST_MODE: "hang-after-claim", AI_WORKER_ID: "crashing-worker", AI_JOB_LEASE_MS: "1000" }, stdio: ["ignore", "pipe", "pipe", "ipc"] });
   try {
     const claimed = await childMessage(crashing, "claimed");
     assert.equal(claimed.jobId, jobId);
@@ -661,7 +704,7 @@ realTest("actual worker child process survives crash through lease recovery and 
     await new Promise((resolve) => crashing.once("exit", resolve));
     await new Promise((resolve) => setTimeout(resolve, 1_100));
 
-    const restarted = fork(fixturePath, [], { env: { ...process.env, DATABASE_URL: databaseUrl, AI_WORKER_TEST_MODE: "once", AI_WORKER_ID: "restarted-worker" }, stdio: ["ignore", "pipe", "pipe", "ipc"] });
+    const restarted = fork(fixturePath, [], { env: { ...childEnv, AI_WORKER_TEST_MODE: "once", AI_WORKER_ID: "restarted-worker" }, stdio: ["ignore", "pipe", "pipe", "ipc"] });
     const result = await childMessage(restarted, "result");
     assert.deepEqual({ claimed: result.claimed, succeeded: result.succeeded, jobId: result.jobId }, { claimed: true, succeeded: true, jobId });
     await new Promise((resolve) => restarted.once("exit", resolve));
@@ -686,6 +729,7 @@ realTest("real report SQL uses Vancouver [startUtc, endUtc) across DST", async (
     const suffix = Date.now();
     const ownerId = `pg-timezone-${suffix}`;
     await seedUser(prisma, ownerId, "America/Vancouver");
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
     try {
       const times = [
         ["start", "2026-03-02T08:00:00Z", "2026-03-02"],
@@ -694,7 +738,7 @@ realTest("real report SQL uses Vancouver [startUtc, endUtc) across DST", async (
         ["exclusive-end", "2026-03-09T07:00:00Z", "2026-03-09"]
       ];
       for (const [label, occurredAt, localDate] of times) {
-        await prisma.event.create({ data: { ownerId, content: label, occurredAt: new Date(occurredAt), timezone: "America/Vancouver", localDate, idempotencyKey: `${label}-${suffix}`, memoryProcessingAllowed: false } });
+        await prisma.event.create({ data: { ownerId, content: label, occurredAt: new Date(occurredAt), timezone: "America/Vancouver", localDate, idempotencyKey: `${label}-${suffix}`, memoryProcessingAllowed: true } });
       }
       const report = await new WeeklyReportService(prisma).generate({ identity: { userId: ownerId }, localDate: "2026-03-08", asOf: new Date("2026-03-10T00:00:00Z") });
       assert.equal(report.periodStartUtc.toISOString(), "2026-03-02T08:00:00.000Z");
@@ -703,6 +747,113 @@ realTest("real report SQL uses Vancouver [startUtc, endUtc) across DST", async (
       const sources = await prisma.aiEvidence.findMany({ where: { weeklyReportId: report.id }, include: { sourceEvent: true } });
       assert.deepEqual(sources.map((row) => row.sourceEvent.content).sort(), ["before-dst-end", "start", "utc-next-day-local-prior"].sort());
     } finally {
+      await prisma.user.delete({ where: { id: ownerId } });
+    }
+  });
+});
+
+realTest("revoke waits out claimed memory work, cancels it, and re-grant permits a new Event", async () => {
+  await withPrisma(async (prisma) => {
+    const ownerId = `pg-regrant-${Date.now()}`;
+    await seedUser(prisma, ownerId);
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    const client = new pg.Client({ connectionString: databaseUrl });
+    await client.connect();
+    let transactionOpen = false;
+    try {
+      const first = await createEventAndEnqueueMemoryJob({ prisma, identity: { userId: ownerId }, content: "Before revoke", idempotencyKey: `before-revoke-${Date.now()}` });
+      const workerId = `pg-revoke-worker-${Date.now()}`;
+      const worker = createProductionAiWorker({ prisma, workerId, logger: { error() {} } });
+      const claimed = await new PrismaAiJobRepository(prisma).claimById({
+        jobId: first.job.id, ownerId, jobType: AI_JOB_TYPES.MEMORY_EXTRACTION, workerId
+      });
+      assert.ok(claimed);
+      await client.query("BEGIN");
+      transactionOpen = true;
+      await client.query(`UPDATE "AiConsent" SET "aiProcessing" = false, "personalization" = false, "memoryEnabled" = false WHERE "userId" = $1`, [ownerId]);
+      await client.query(`UPDATE "AIJob" SET "status" = 'CANCELLED', "completedAt" = NOW(), "lockedAt" = NULL, "lockedBy" = NULL, "leaseExpiresAt" = NULL WHERE "ownerId" = $1 AND "status" IN ('PENDING', 'RUNNING')`, [ownerId]);
+      const pending = worker.executeClaimed(claimed);
+      assert.equal(await Promise.race([pending.then(() => "settled", () => "settled"), new Promise((resolve) => setTimeout(() => resolve("blocked"), 100))]), "blocked");
+      assert.equal(await prisma.eventMemory.count({ where: { ownerId } }), 0);
+      await client.query("COMMIT");
+      transactionOpen = false;
+      const result = await pending;
+      assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+      assert.equal((await prisma.aiJob.findUnique({ where: { id: first.job.id } })).status, "CANCELLED");
+      assert.equal(await prisma.eventMemory.count({ where: { ownerId } }), 0);
+
+      await prisma.aiConsent.update({ where: { userId: ownerId }, data: { aiProcessing: true, personalization: true, memoryEnabled: true } });
+      const next = await createEventAndEnqueueMemoryJob({ prisma, identity: { userId: ownerId }, content: "After re-grant", idempotencyKey: `after-regrant-${Date.now()}` });
+      assert.equal(next.job.status, "PENDING");
+      assert.notEqual(next.job.id, first.job.id);
+      const processed = await worker.runJob({ jobId: next.job.id, ownerId, jobType: AI_JOB_TYPES.MEMORY_EXTRACTION });
+      assert.equal(processed.succeeded, true);
+      assert.equal(await prisma.eventMemory.count({ where: { ownerId, sourceEventId: next.event.id } }), 1);
+      assert.equal((await prisma.aiJob.findUnique({ where: { id: first.job.id } })).status, "CANCELLED");
+    } finally {
+      if (transactionOpen) await client.query("ROLLBACK");
+      await client.end();
+      await prisma.user.delete({ where: { id: ownerId } });
+    }
+  });
+});
+
+realTest("revoke blocks vector and Weekly/Monthly persistence until consent is rechecked", async () => {
+  await withPrisma(async (prisma) => {
+    const ownerId = `pg-persistence-race-${Date.now()}`;
+    await seedUser(prisma, ownerId);
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    const client = new pg.Client({ connectionString: databaseUrl });
+    await client.connect();
+    let transactionOpen = false;
+    try {
+      const event = await prisma.event.create({ data: {
+        ownerId, content: "Consent race", occurredAt: new Date("2026-09-16T12:00:00Z"), timezone: "UTC",
+        localDate: "2026-09-16", idempotencyKey: `race-${Date.now()}`, memoryProcessingAllowed: true
+      } });
+      const memory = await prisma.eventMemory.create({ data: { ownerId, sourceEventId: event.id, memoryType: "EVENT", summary: event.content, eventDate: event.occurredAt } });
+      const embeddings = new PrismaEventEmbeddingRepository(prisma);
+      await embeddings.begin({ identity: { userId: ownerId }, memoryId: memory.id, inputRevision: 1 });
+      const consent = await prisma.aiConsent.findUnique({ where: { userId: ownerId } });
+      const inputService = new ReportInputService({ prisma, semanticRetrieval: { async retrieve() { return []; } } });
+      const weeklyInput = await inputService.buildWeeklyInput({ identity: { userId: ownerId }, localDate: "2026-09-16", asOf: new Date("2026-10-02T00:00:00Z") });
+      const monthlyInput = await inputService.buildMonthlyInput({ identity: { userId: ownerId }, year: 2026, month: 9, asOf: new Date("2026-10-02T00:00:00Z") });
+      const persistence = new GroundedReportPersistenceService(prisma);
+      const persistInsufficient = (reportInput) => persistence.persist({
+        identity: { userId: ownerId }, reportInput, generationVersion: REPORT_NARRATIVE_GENERATION_VERSION,
+        narrativeResult: {
+          ownerId, reportType: reportInput.reportType, periodKey: reportInput.period.periodKey,
+          status: "INSUFFICIENT_EVIDENCE", narrative: null, sections: [],
+          provenance: { selectedEvidence: [], citedEvidence: [] }
+        }
+      });
+      await client.query("BEGIN");
+      transactionOpen = true;
+      await client.query(`UPDATE "AiConsent" SET "aiProcessing" = false, "personalization" = false, "memoryEnabled" = false WHERE "userId" = $1`, [ownerId]);
+      const vectorWrite = embeddings.store({
+        identity: { userId: ownerId }, memoryId: memory.id, inputRevision: 1,
+        vector: [1, ...Array(383).fill(0)], consentUpdatedAt: consent.updatedAt
+      });
+      const reportWrite = new WeeklyReportService(prisma).generate({ identity: { userId: ownerId }, localDate: "2026-09-16", asOf: new Date("2026-09-22T00:00:00Z") });
+      const groundedWeeklyWrite = persistInsufficient(weeklyInput);
+      const groundedMonthlyWrite = persistInsufficient(monthlyInput);
+      const pending = [vectorWrite, reportWrite, groundedWeeklyWrite, groundedMonthlyWrite];
+      for (const operation of pending) {
+        assert.equal(await Promise.race([operation.then(() => "settled", () => "settled"), new Promise((resolve) => setTimeout(() => resolve("blocked"), 100))]), "blocked");
+      }
+      await client.query("COMMIT");
+      transactionOpen = false;
+      await assert.rejects(vectorWrite, (error) => error.code === "AI_FORBIDDEN");
+      await assert.rejects(reportWrite, (error) => error.code === "AI_FORBIDDEN");
+      await assert.rejects(groundedWeeklyWrite, (error) => error.code === "AI_FORBIDDEN");
+      await assert.rejects(groundedMonthlyWrite, (error) => error.code === "AI_FORBIDDEN");
+      const stored = await prisma.$queryRawUnsafe(`SELECT "embedding" IS NULL AS empty FROM "EventMemory" WHERE "id" = $1`, memory.id);
+      assert.equal(stored[0].empty, true);
+      assert.equal(await prisma.weeklyReport.count({ where: { ownerId } }), 0);
+      assert.equal(await prisma.monthlyReport.count({ where: { ownerId } }), 0);
+    } finally {
+      if (transactionOpen) await client.query("ROLLBACK");
+      await client.end();
       await prisma.user.delete({ where: { id: ownerId } });
     }
   });

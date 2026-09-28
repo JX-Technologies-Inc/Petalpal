@@ -22,6 +22,10 @@ function fixture() {
     }
   };
   const tx = {
+    $queryRawUnsafe: async (_query, ownerId) => {
+      const consent = users[ownerId]?.aiConsent;
+      return consent ? [{ ...consent }] : [];
+    },
     user: { findUnique: async ({ where }) => users[where.id] || null },
     event: {
       findUnique: async ({ where }) => events.find((event) =>
@@ -37,6 +41,14 @@ function fixture() {
       findUnique: async ({ where }) => jobs.find((job) =>
         job.ownerId === where.ownerId_idempotencyKey.ownerId &&
         job.idempotencyKey === where.ownerId_idempotencyKey.idempotencyKey) || null,
+      createMany: async ({ data }) => {
+        for (const item of data) {
+          if (!jobs.some((job) => job.ownerId === item.ownerId && job.idempotencyKey === item.idempotencyKey)) {
+            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, ...item });
+          }
+        }
+        return { count: data.length };
+      },
       create: async ({ data }) => {
         const job = { id: `job-${jobs.length + 1}`, status: "PENDING", ...data };
         jobs.push(job);
@@ -220,6 +232,14 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   });
   assert.equal(arbitraryJob.status, 400);
   assert.equal(workerCalls.length, 0);
+
+  const revokedTrigger = await request(baseUrl, "/ai/reports/weekly/trigger", {
+    token: "bob-token",
+    method: "POST",
+    body: { localDate: "2026-09-08" }
+  });
+  assert.equal(revokedTrigger.status, 403);
+  assert.equal(state.jobs.length, jobsBeforeTrigger);
 
   const triggered = await request(baseUrl, "/ai/reports/weekly/trigger", {
     method: "POST",

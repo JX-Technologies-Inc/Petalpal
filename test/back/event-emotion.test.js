@@ -163,6 +163,10 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? users[where.firebaseUid === "firebase-alice" ? "alice" : "bob"] : users[where.id] || null;
   prisma.$transaction = async (callback) => callback({
+    $queryRawUnsafe: async (_query, ownerId) => {
+      const consent = users[ownerId]?.aiConsent;
+      return consent ? [{ ...consent }] : [];
+    },
     user: { findUnique: async ({ where }) => users[where.id] || null },
     aiJob: { findUnique: async () => null },
     event: {

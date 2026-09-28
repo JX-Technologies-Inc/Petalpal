@@ -50,8 +50,8 @@ Journal
 
 - Event flow: authenticated `POST /events` persists a private Event with
   request idempotency. Ownership comes only from verified Firebase identity.
-  When the consent snapshot has AI processing, personalization, and memory all
-  enabled, Event and the versioned memory job are committed atomically.
+  When the locked current consent row has AI processing, personalization, and
+  memory all enabled, Event and the versioned memory job are committed atomically.
 - Journal flow: `DailyCheckIn` has an optional private `Journal`; the existing
   Daily Grow route creates it transactionally and never invokes emotion AI.
 - Authentication / authorization: Firebase ID tokens are verified server-side;
@@ -59,8 +59,9 @@ Journal
   protect private HTTP resources.
 - AI modules: local mood classification, optional Cloudflare Workers AI
   inference, secondary emotion selection, and deterministic Flower metadata.
-- Cloudflare Workers AI: implemented as an inference-only emotion service with
-  server-only bearer authentication, schema validation, timeout, and fallback.
+- Cloudflare Workers AI: implemented for Event secondary emotions and grounded
+  Weekly/Monthly narratives with server-only bearer authentication, bounded
+  input, and schema validation.
 - Current database models: Prisma PostgreSQL schema includes User,
   DailyCheckIn, Journal, EmotionResult, Flower, consent, metadata, social,
   Fairy, and subscription models. This revision adds Event, EventMemory,
@@ -68,10 +69,11 @@ Journal
 - Current async/background processing: `AiJob` is DB-backed and supports atomic
   `SKIP LOCKED` claim, leases, crash recovery, bounded attempts, and guarded
   transitions. `npm run start:ai-worker` runs the production worker loop with
-  graceful shutdown and the deterministic Event-to-EventMemory handler.
+  graceful shutdown and the EventMemory, embedding, and grounded Weekly/Monthly
+  handlers.
 - Current report support: `Report` is the existing social moderation/report
-  model; AI Weekly/Monthly/Yearly reports are new private foundation models and
-  are not exposed by routes.
+  model. Private AI report reads and an authenticated Weekly trigger exist;
+  Monthly generation uses the worker, while Yearly remains a foundation model.
 - Current tests: backend and client suites cover auth, ownership, Daily Grow,
   emotion routing, Worker boundaries, deletion, Flower/Fairy behavior, and the
   new foundation contracts.
@@ -80,31 +82,22 @@ Journal
 
 - Emotion ML is an optional structured signal and is not a dependency of
   EventMemory. Its production readiness remains tracked in `ML_PROGRESS.md`.
-- Account deletion now benefits from cascade relationships for the new AI
-  records, but vector/object-store cleanup does not exist because no vector
-  storage is implemented.
+- Account/Event deletion cascades the inline pgvector value and citing reports.
+  Managed worker deployment and a production grounded-report smoke remain
+  unverified.
 
 ### SCAFFOLD ONLY
 
-- MemoryExtractor, EmbeddingProvider, RetrievalStrategy, HybridRetrieval,
-  YearlyQueryRouter, and evaluation traces.
-- Phase 1 deterministic embedding input versions (`summary-v1`,
-  `structured-v1`), server-side profiles, deterministic test double, and local
-  Transformers.js provider are implemented. English dev evidence selected
-  `bge-small-en-v1.5` + `summary-v1` as the production candidate; it is not yet
-  wired to storage or workers.
-- Deterministic Weekly / Monthly aggregation and trend comparison are usable
-  foundation logic, but LLM narrative generation is not connected.
-- pgvector extension migration exists in the repository, but this foundation
-  adds no vector column, provider, index, or semantic search implementation.
+- Replaceable MemoryExtractor and RetrievalStrategy contracts, HybridRetrieval,
+  YearlyQueryRouter, and evaluation traces. The deterministic extractor remains
+  the production EventMemory extraction implementation.
 
 ### NOT IMPLEMENTED
 
-- Managed worker deployment/process supervision, embeddings, pgvector/Vectorize retrieval,
-  keyword full-text indexing,
-  reranking, RAG answer generation, and user-facing reports.
-- Actual deletion propagation to external vectors/object storage, report
-  scheduling, and benchmark data collection.
+- Managed worker deployment/process supervision, keyword full-text indexing,
+  reranking, report scheduling, Yearly generation, and user-facing report UI.
+- Production groundedness/evidence-coverage metrics and a real grounded-report
+  provider smoke. No external vector/object store is used by this pipeline.
 
 ## 4. Target Architecture
 
@@ -151,8 +144,10 @@ Hierarchical memory target:
 `EventMemory` supports `summary`, `topics`, `people`, `importanceScore`,
 `eventDate`, extraction/memory versions, and optional structured emotion fields
 (`primaryMood`, `secondaryEmotions`, `emotionConfidence`,
-`emotionModelVersion`). It also records embedding status/model metadata without
-pretending that an embedding vector exists.
+`emotionModelVersion`, `emotionOutcome`, `emotionProvenance`,
+`emotionModelId`, `emotionModelStatus`, `emotionProbabilities`). It also stores
+an inline `vector(384)` with embedding status, profile, model, and
+input-revision metadata.
 
 Composite foreign keys enforce that EventMemory, AiEvidence, report evidence,
 and Event-linked AiJob rows have the same owner as their parent records.
@@ -568,6 +563,39 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   parent suite).
 - Status: PASS for implementation. No real LLM inference was made. Deploy this
   checkpoint before issuing the single authenticated production Weekly smoke.
+
+### End-to-end consent safety checkpoint — 2026-09-28
+
+- Long-term processing still starts only from a user-owned Event. Event/job
+  creation, embedding backfill enqueue, and the authenticated Weekly trigger
+  lock the existing AI processing, personalization, and memory consent row
+  before enqueue. Weekly/Monthly input checks current consent before loading
+  periods, and its owner-scoped Event query excludes rows with
+  `memoryProcessingAllowed = false` before counts or trends are computed.
+  Existing semantic retrieval applies the same source eligibility before
+  ranking; bounded evidence and narrative input therefore cannot include an
+  ineligible Event.
+- Memory persistence and embedding-job enqueue now share one transaction. That
+  transaction locks and rechecks current consent and source Event eligibility
+  before writing EventMemory or durable embedding intent. Embedding status
+  changes also recheck current consent before writing. Weekly/Monthly report,
+  narrative, and evidence persistence locks and rechecks current consent in its
+  existing atomic transaction after any provider call.
+- A claimed job that reaches a revoked-consent check uses the existing
+  `CANCELLED` status, including when the consent route already cancelled it.
+  No memory, vector, report, or citation is written after that check; the job
+  does not retry solely because consent was revoked. The existing consent route
+  still cancels pending/running jobs, and semantic retrieval still rejects
+  revoked consent.
+- Re-enabling consent does not reopen terminal `CANCELLED` jobs with the same
+  idempotency key. Historical reprocessing after a re-grant still needs an
+  explicit product policy and versioned re-enqueue path.
+- Focused route, foundation, PGlite, report-worker, semantic-retrieval, and
+  Event-emotion suites passed 73/73 locally, including memory, embedding,
+  Weekly, Monthly, aggregate-eligibility, and owner-isolation regressions.
+  The real PostgreSQL
+  suite was unavailable because `REAL_POSTGRES_DATABASE_URL` was unset. No
+  schema migration, deployment, live LLM call, model, or prompt change occurred.
 
 ## 13. Decisions / ADR-style Log
 

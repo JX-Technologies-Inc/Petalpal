@@ -23,10 +23,10 @@ function embeddingProvider() {
 
 function reportEvents() {
   return [
-    { id: "event-1", ownerId, occurredAt: new Date("2026-09-15T12:00:00Z"), memory: { id: "memory-1", topics: ["career"], importanceScore: 0.9 } },
-    { id: "event-2", ownerId, occurredAt: new Date("2026-09-16T12:00:00Z"), memory: { id: "memory-2", topics: ["study"], importanceScore: 0.8 } },
-    { id: "event-3", ownerId, occurredAt: new Date("2026-09-20T12:00:00Z"), memory: { id: "memory-3", topics: ["career"], importanceScore: 0.7 } },
-    { id: "event-previous", ownerId, occurredAt: new Date("2026-09-10T12:00:00Z"), memory: { id: "memory-previous", topics: ["study"], importanceScore: 0.5 } }
+    { id: "event-1", ownerId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-15T12:00:00Z"), memory: { id: "memory-1", topics: ["career"], importanceScore: 0.9 } },
+    { id: "event-2", ownerId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-16T12:00:00Z"), memory: { id: "memory-2", topics: ["study"], importanceScore: 0.8 } },
+    { id: "event-3", ownerId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-20T12:00:00Z"), memory: { id: "memory-3", topics: ["career"], importanceScore: 0.7 } },
+    { id: "event-previous", ownerId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-10T12:00:00Z"), memory: { id: "memory-previous", topics: ["study"], importanceScore: 0.5 } }
   ];
 }
 
@@ -36,7 +36,8 @@ function createReportPrisma() {
     weeklyReports: [],
     monthlyReports: [],
     evidence: [],
-    failEvidence: false
+    failEvidence: false,
+    memoryConsent: true
   };
 
   function rowsFor(type) {
@@ -85,14 +86,30 @@ function createReportPrisma() {
     user: {
       async findUnique({ where }) { return where.id === ownerId ? { timezone: "UTC" } : null; }
     },
+    aiConsent: {
+      async findUnique({ where }) {
+        return where.userId === ownerId ? {
+          aiProcessing: state.memoryConsent,
+          personalization: state.memoryConsent,
+          memoryEnabled: state.memoryConsent,
+          updatedAt: new Date()
+        } : null;
+      }
+    },
     event: {
       async findMany({ where }) {
         return state.events.filter((event) =>
           event.ownerId === where.ownerId &&
+          event.memoryProcessingAllowed === where.memoryProcessingAllowed &&
           event.occurredAt >= where.occurredAt.gte &&
           event.occurredAt < where.occurredAt.lt
         );
       }
+    },
+    async $queryRawUnsafe(_query, requestedOwnerId) {
+      return requestedOwnerId === ownerId && state.memoryConsent
+        ? [{ userId: requestedOwnerId, aiProcessing: true, personalization: true, memoryEnabled: true }]
+        : [];
     },
     weeklyReport: model("WEEKLY"),
     monthlyReport: model("MONTHLY"),
@@ -134,7 +151,7 @@ function semanticRetrieval(prisma, { take = Infinity, candidateOwnerId = ownerId
     async retrieve({ identity, dateFrom, dateTo }) {
       assert.equal(identity.userId, ownerId);
       return prisma.state.events
-        .filter((event) => event.ownerId === ownerId && event.occurredAt >= dateFrom && event.occurredAt < dateTo)
+        .filter((event) => event.ownerId === ownerId && event.memoryProcessingAllowed && event.occurredAt >= dateFrom && event.occurredAt < dateTo)
         .slice(0, take)
         .map((event, index) => ({
           id: event.memory.id,
@@ -210,6 +227,12 @@ function jobRepository(job) {
       job.status = job.attemptCount >= job.maxAttempts ? "FAILED" : "PENDING";
       job.lockedBy = null;
       return { ...job };
+    },
+    async cancelClaimed() {
+      if (job.status !== "RUNNING" && job.status !== "CANCELLED") return false;
+      job.status = "CANCELLED";
+      job.lockedBy = null;
+      return true;
     }
   };
 }
@@ -344,6 +367,73 @@ test("Monthly report worker generates and atomically persists grounded narrative
   assert.equal(prisma.state.monthlyReports[0].periodKey, "2026-09");
   assert.equal(prisma.state.evidence.length, 4);
   assert.equal(new Set(prisma.state.evidence.map((item) => item.sourceEventId)).size, 4);
+});
+
+test("Weekly and Monthly discard generated input when consent is revoked before persistence", async () => {
+  for (const [jobType, periodKey, now] of [
+    [AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14", "2026-09-22T00:00:00Z"],
+    [AI_JOB_TYPES.MONTHLY_REPORT, "2026-09", "2026-10-02T00:00:00Z"]
+  ]) {
+    const prisma = createReportPrisma();
+    const job = reportJob(jobType, periodKey);
+    let providerCalls = 0;
+    const worker = reportWorker({ prisma, job, provider: {
+      async generateNarrative(input) {
+        providerCalls += 1;
+        assert.ok(input.report.selectedEvidence.length >= 2);
+        prisma.state.memoryConsent = false;
+        job.status = "CANCELLED";
+        return validProviderOutput(input.report.reportType);
+      }
+    } });
+    const result = await worker.runOnce({ now: new Date(now) });
+    assert.equal(result.succeeded, true);
+    assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+    assert.equal(job.status, "CANCELLED");
+    assert.equal(job.attemptCount, 1);
+    assert.equal(providerCalls, 1);
+    assert.equal(prisma.state.weeklyReports.length, 0);
+    assert.equal(prisma.state.monthlyReports.length, 0);
+    assert.equal(prisma.state.evidence.length, 0);
+    assert.deepEqual(await worker.runOnce(), { claimed: false });
+  }
+});
+
+test("ineligible and cross-owner Events cannot affect Weekly or Monthly aggregates, evidence, or claims", async () => {
+  for (const [jobType, periodKey, now] of [
+    [AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14", "2026-09-22T00:00:00Z"],
+    [AI_JOB_TYPES.MONTHLY_REPORT, "2026-09", "2026-10-02T00:00:00Z"]
+  ]) {
+    const prisma = createReportPrisma();
+    prisma.state.events.push(
+      { id: "ineligible", ownerId, memoryProcessingAllowed: false,
+        occurredAt: new Date("2026-09-17T12:00:00Z"), memory: { id: "memory-ineligible", topics: ["private-topic"], importanceScore: 1 } },
+      { id: "other-owner", ownerId: otherOwnerId, memoryProcessingAllowed: true,
+        occurredAt: new Date("2026-09-18T12:00:00Z"), memory: { id: "memory-other", topics: ["foreign-topic"], importanceScore: 1 } }
+    );
+    let narrativeInput;
+    const job = reportJob(jobType, periodKey);
+    const worker = reportWorker({ prisma, job, provider: {
+      async generateNarrative(input) {
+        narrativeInput = input;
+        return validProviderOutput(input.report.reportType);
+      }
+    } });
+    const result = await worker.runOnce({ now: new Date(now) });
+    assert.equal(result.succeeded, true);
+    const expectedEventIds = jobType === AI_JOB_TYPES.WEEKLY_REPORT
+      ? ["event-1", "event-2", "event-3"]
+      : ["event-1", "event-2", "event-3", "event-previous"];
+    assert.equal(narrativeInput.report.aggregates.eventCount, expectedEventIds.length);
+    const payload = JSON.stringify(narrativeInput);
+    assert.equal(payload.includes("ineligible"), false);
+    assert.equal(payload.includes("private-topic"), false);
+    assert.equal(payload.includes("other-owner"), false);
+    assert.equal(payload.includes("foreign-topic"), false);
+    assert.deepEqual(new Set(prisma.state.evidence.map((item) => item.sourceEventId)),
+      new Set(expectedEventIds));
+    assert.equal(result.result.report.eventCount, expectedEventIds.length);
+  }
 });
 
 test("INSUFFICIENT_EVIDENCE is persisted without calling the provider", async () => {

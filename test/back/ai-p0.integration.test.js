@@ -231,15 +231,17 @@ test("report regeneration loads owner-period Events and atomically replaces evid
   const evidence = [];
   const report = { id: "weekly-1" };
   const eventRows = [
-    { id: "event-current", ownerId: "alice", occurredAt: new Date("2026-09-15T12:00:00Z"), memory: { id: "memory-current", topics: ["career"], importanceScore: 0.9 } },
-    { id: "event-previous", ownerId: "alice", occurredAt: new Date("2026-09-09T12:00:00Z"), memory: { id: "memory-previous", topics: ["study"], importanceScore: 0.2 } },
-    { id: "event-bob", ownerId: "bob", occurredAt: new Date("2026-09-15T12:00:00Z"), memory: null }
+    { id: "event-current", ownerId: "alice", memoryProcessingAllowed: true, occurredAt: new Date("2026-09-15T12:00:00Z"), memory: { id: "memory-current", topics: ["career"], importanceScore: 0.9 } },
+    { id: "event-previous", ownerId: "alice", memoryProcessingAllowed: true, occurredAt: new Date("2026-09-09T12:00:00Z"), memory: { id: "memory-previous", topics: ["study"], importanceScore: 0.2 } },
+    { id: "event-bob", ownerId: "bob", memoryProcessingAllowed: true, occurredAt: new Date("2026-09-15T12:00:00Z"), memory: null }
   ];
   const tx = {
+    $queryRawUnsafe: async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }],
     user: { findUnique: async () => ({ timezone: "America/Vancouver" }) },
     event: {
       findMany: async ({ where }) => eventRows.filter((event) =>
         event.ownerId === where.ownerId &&
+        event.memoryProcessingAllowed === where.memoryProcessingAllowed &&
         event.occurredAt >= where.occurredAt.gte &&
         event.occurredAt < where.occurredAt.lt)
     },

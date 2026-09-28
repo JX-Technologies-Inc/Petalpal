@@ -48,6 +48,7 @@ import { createProductionAiWorker } from "./lib/ai-worker.js";
 import { PrivateEventRepository } from "./lib/ai-events.js";
 import { PrismaMemoryRepository } from "./lib/event-memory.js";
 import { PrivateReportRepository } from "./lib/report-foundation.js";
+import { requireLockedMemoryConsent } from "./lib/semantic-retrieval.js";
 import {
   REPORT_NARRATIVE_GENERATION_VERSION,
   configuredCloudflareReportNarrativeProvider
@@ -1880,12 +1881,16 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
     }
 
     const repository = new PrismaAiJobRepository(prisma);
-    const job = await repository.enqueue({
-      identity: req.auth,
-      jobType: AI_JOB_TYPES.WEEKLY_REPORT,
-      resourceId: period.periodKey,
-      processingVersion: REPORT_NARRATIVE_GENERATION_VERSION,
-      maxAttempts: 1
+    const job = await prisma.$transaction(async (tx) => {
+      await requireLockedMemoryConsent(tx, req.auth);
+      return repository.enqueue({
+        identity: req.auth,
+        jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+        resourceId: period.periodKey,
+        processingVersion: REPORT_NARRATIVE_GENERATION_VERSION,
+        maxAttempts: 1,
+        transaction: tx
+      });
     });
     const execution = await weeklyReportWorkerFactory().runJob({
       jobId: job.id,
@@ -1917,6 +1922,7 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
     }
     return res.status(storedJob?.status === "SUCCEEDED" ? 200 : 202).json(payload);
   } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI memory processing is not currently authorized" });
     logServerError("POST /ai/reports/weekly/trigger error", error);
     return res.status(500).json({ error: "Failed to trigger Weekly report" });
   }
