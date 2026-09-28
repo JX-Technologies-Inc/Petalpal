@@ -2,11 +2,13 @@ FROM node:24-alpine AS client-builder
 
 WORKDIR /app/client
 
+ARG VITE_FIREBASE_API_KEY
+
 COPY client/package*.json ./
 RUN npm install
 
 COPY client/ ./
-RUN npm run build
+RUN test -n "$VITE_FIREBASE_API_KEY" && npm run build
 
 
 FROM node:24-alpine
