@@ -646,6 +646,31 @@ realTest("SKIP LOCKED claims the next eligible job while an earlier job row is l
   });
 });
 
+realTest("single-attempt report failure writes a typed completion timestamp", async () => {
+  await withPrisma(async (prisma) => {
+    const ownerId = `pg-report-failure-${Date.now()}`;
+    await seedUser(prisma, ownerId);
+    try {
+      const repository = new PrismaAiJobRepository(prisma);
+      const job = await repository.enqueue({
+        identity: { userId: ownerId }, jobType: AI_JOB_TYPES.WEEKLY_REPORT,
+        resourceId: "2026-09-07", processingVersion: REPORT_NARRATIVE_GENERATION_VERSION,
+        maxAttempts: 1
+      });
+      const workerId = `pg-failure-worker-${Date.now()}`;
+      const claimed = await repository.claimById({ jobId: job.id, ownerId, jobType: AI_JOB_TYPES.WEEKLY_REPORT, workerId });
+      assert.equal(claimed?.status, "RUNNING");
+      const failed = await repository.markFailed({ jobId: job.id, workerId, error: new Error("synthetic provider failure") });
+      assert.equal(failed.status, "FAILED");
+      assert.equal(failed.attemptCount, 1);
+      assert.ok(failed.completedAt);
+      assert.equal(await repository.claimById({ jobId: job.id, ownerId, jobType: AI_JOB_TYPES.WEEKLY_REPORT, workerId }), null);
+    } finally {
+      await prisma.user.delete({ where: { id: ownerId } });
+    }
+  });
+});
+
 realTest("Event and memory job intent are atomic, consent-aware and idempotent", async () => {
   await withPrisma(async (prisma) => {
     const suffix = Date.now();
