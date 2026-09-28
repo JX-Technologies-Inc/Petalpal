@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFile } from "node:fs/promises";
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
-import { classifyEventEmotion, emotionClassifierEnabled } from "../../lib/event-emotion.js";
+import { classifyEventEmotion, classifyEventSecondaryEmotions, emotionClassifierEnabled } from "../../lib/event-emotion.js";
 import { DeterministicMemoryExtractor, PrismaMemoryRepository } from "../../lib/event-memory.js";
 import { app, setEventEmotionClassifierForTests } from "../../server.js";
 
@@ -35,8 +35,45 @@ test("frozen adapter uses canonical Product-18 selector and bounded fallback", a
   assert.equal(blocked.fallbackReason, "RESEARCH_ONLY_CONTEXT");
 });
 
+test("Event LLM adapter sends only Primary Mood and Event text and validates ordered Product-18 output", async () => {
+  const env = { CLOUDFLARE_WORKER_AI_URL: "https://worker.example/", CLOUDFLARE_WORKER_AI_TOKEN: "secret" };
+  let request;
+  const classify = (output) => classifyEventSecondaryEmotions({
+    text: "A friend helped me.", primaryGardenMood: "SUNNY_BLOOM", env,
+    fetchImpl: async (url, options) => { request = { url, options }; return { ok: true, json: async () => output }; }
+  });
+  assert.deepEqual((await classify({ e: [] })).labels, []);
+  assert.equal(request.url, "https://worker.example/v1/event-emotion");
+  assert.deepEqual(JSON.parse(request.options.body), { p: "SUNNY_BLOOM", e: "A friend helped me." });
+  assert.deepEqual((await classify({ e: ["gratitude"] })).labels, ["gratitude"]);
+  assert.deepEqual((await classify({ e: ["gratitude", "fear"] })).labels, ["gratitude", "fear"]);
+  assert.deepEqual((await classify({ e: ["gratitude", "fear", "surprise"] })).labels, ["gratitude", "fear"]);
+  assert.deepEqual((await classify({ e: ["fake", "gratitude", "approval", "fear"] })).labels, ["gratitude", "fear"]);
+  assert.deepEqual((await classify({ e: ["gratitude", "gratitude", "fear"] })).labels, ["gratitude", "fear"]);
+  assert.deepEqual((await classify({ e: ["joy", "gratitude"] })).labels, ["gratitude"]);
+  assert.deepEqual((await classify({ e: ["gratitude", "love"] })).labels, ["gratitude"]);
+  assert.deepEqual((await classify({ e: "gratitude" })).labels, []);
+  assert.deepEqual((await classify({})).labels, []);
+  assert.deepEqual((await classify({ e: null })).labels, []);
+  assert.deepEqual((await classify({ e: [null, 1, "gratitude"] })).labels, ["gratitude"]);
+  const malformed = await classifyEventSecondaryEmotions({ text: "event", primaryGardenMood: "SUNNY_BLOOM", env,
+    fetchImpl: async () => ({ ok: true, json: async () => { throw new SyntaxError("bad JSON"); } }) });
+  assert.equal(malformed.status, "FAILED");
+  assert.deepEqual(malformed.labels, []);
+  const providerError = await classifyEventSecondaryEmotions({ text: "event", primaryGardenMood: "SUNNY_BLOOM", env,
+    fetchImpl: async () => { throw new Error("network"); } });
+  assert.deepEqual(providerError.labels, []);
+  const httpError = await classifyEventSecondaryEmotions({ text: "event", primaryGardenMood: "SUNNY_BLOOM", env,
+    fetchImpl: async () => ({ ok: false, status: 502 }) });
+  assert.deepEqual(httpError.labels, []);
+  const timedOut = await classifyEventSecondaryEmotions({ text: "event", primaryGardenMood: "SUNNY_BLOOM",
+    env: { ...env, AI_REQUEST_TIMEOUT_MS: "5" }, fetchImpl: () => new Promise(() => {}) });
+  assert.equal(timedOut.fallbackReason, "TIMEOUT");
+  assert.deepEqual(timedOut.labels, []);
+});
+
 test("Event save and dev preview share adapter, preserve ownership, and never duplicate Flower", async (t) => {
-  const originalEnv = { flag: process.env.EMOTION_CLASSIFIER_ENABLED, mode: process.env.NODE_ENV, testEmail: process.env.AUTH_E2E_TEST_EMAIL };
+  const originalEnv = { url: process.env.CLOUDFLARE_WORKER_AI_URL, token: process.env.CLOUDFLARE_WORKER_AI_TOKEN, mode: process.env.NODE_ENV, testEmail: process.env.AUTH_E2E_TEST_EMAIL };
   const original = {
     transaction: prisma.$transaction, userFind: prisma.user.findUnique,
     eventFind: prisma.event.findFirst, eventUpdate: prisma.event.update,
@@ -88,7 +125,10 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   const server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
   t.after(async () => {
-    process.env.EMOTION_CLASSIFIER_ENABLED = originalEnv.flag;
+    if (originalEnv.url === undefined) delete process.env.CLOUDFLARE_WORKER_AI_URL;
+    else process.env.CLOUDFLARE_WORKER_AI_URL = originalEnv.url;
+    if (originalEnv.token === undefined) delete process.env.CLOUDFLARE_WORKER_AI_TOKEN;
+    else process.env.CLOUDFLARE_WORKER_AI_TOKEN = originalEnv.token;
     process.env.NODE_ENV = originalEnv.mode;
     if (originalEnv.testEmail === undefined) delete process.env.AUTH_E2E_TEST_EMAIL;
     else process.env.AUTH_E2E_TEST_EMAIL = originalEnv.testEmail;
@@ -112,14 +152,17 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
     return { status: result.status, data: await result.json() };
   }
   const eventBody = { content: "A friend helped me.", primaryGardenMood: "SUNNY_BLOOM" };
-  process.env.EMOTION_CLASSIFIER_ENABLED = "false";
+  delete process.env.CLOUDFLARE_WORKER_AI_URL;
+  delete process.env.CLOUDFLARE_WORKER_AI_TOKEN;
   const off = await request("/events", { key: "off-event-1", body: eventBody });
   assert.equal(off.status, 201);
   assert.equal(calls, 0);
   assert.deepEqual(off.data.emotion.labels, []);
   assert.equal(off.data.event.emotionOutcome, "SKIPPED");
   assert.ok(off.data.flower);
-  process.env.EMOTION_CLASSIFIER_ENABLED = "true";
+  process.env.CLOUDFLARE_WORKER_AI_URL = "https://worker.example";
+  process.env.CLOUDFLARE_WORKER_AI_TOKEN = "secret";
+  users.alice.aiConsent.aiProcessing = true;
   const preview = await request("/dev/emotion-preview", { body: { text: eventBody.content, primaryGardenMood: eventBody.primaryGardenMood } });
   assert.equal(preview.status, 200);
   assert.deepEqual(preview.data.labels, ["gratitude"]);
@@ -132,8 +175,9 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   assert.equal(saved.data.event.primaryGardenMood, "SUNNY_BLOOM");
   assert.equal(saved.data.event.emotionOutcome, "INFERRED_1");
   assert.equal(saved.data.event.emotionProvenance, "INFERRED_UNCONFIRMED");
-  assert.equal(saved.data.event.emotionModelStatus, "research_only");
-  assert.deepEqual(events[1].emotionProbabilities, { gratitude: 0.9 });
+  assert.equal(saved.data.event.emotionModelStatus, "production");
+  assert.equal(events[1].emotionProbabilities, null);
+  assert.ok(["SUNFLOWER", "TULIP"].includes(saved.data.flower.speciesCode));
   const retry = await request("/events", { key: "on-event-1", body: eventBody });
   assert.equal(retry.status, 200);
   assert.equal(calls, 2);
@@ -143,10 +187,14 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   const abstained = await request("/events", { key: "abstained-event-1", body: eventBody });
   assert.equal(abstained.data.event.emotionOutcome, "ABSTAINED");
   assert.deepEqual(abstained.data.event.secondaryEmotions, []);
+  assert.equal(abstained.data.flower.colorAccent, null);
   responseLabels = ["gratitude", "fear"];
   const two = await request("/events", { key: "two-event-1", body: eventBody });
   assert.equal(two.data.event.emotionOutcome, "INFERRED_2");
   assert.deepEqual(two.data.event.secondaryEmotions, ["gratitude", "fear"]);
+  assert.equal(two.data.flower.colorAccent, "WARM_GOLD");
+  assert.equal(two.data.flower.visualEffect, "SUBTLE_MIST");
+  assert.ok(["SUNFLOWER", "TULIP"].includes(two.data.flower.speciesCode));
   failNextPersistence = true;
   const persistenceFailure = await request("/events", { key: "write-failure-1", body: eventBody });
   assert.equal(persistenceFailure.data.event.emotionOutcome, "FAILED");
@@ -167,11 +215,29 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   const exceptionSave = await request("/events", { key: "exception-event-1", body: eventBody });
   assert.equal(exceptionSave.status, 201);
   assert.equal(exceptionSave.data.emotion.fallbackReason, "RUNTIME_UNAVAILABLE");
+  setEventEmotionClassifierForTests(async () => { calls += 1; return { status: "SUCCESS", labels: ["gratitude"], latencyMs: 2 }; });
+  users.alice.aiConsent.aiProcessing = false;
+  const callsBeforeNoConsent = calls;
+  const noConsentPreview = await request("/dev/emotion-preview", { body: { text: eventBody.content, primaryGardenMood: eventBody.primaryGardenMood } });
+  assert.equal(noConsentPreview.status, 200);
+  assert.deepEqual(noConsentPreview.data.labels, []);
+  assert.equal(noConsentPreview.data.classifierEnabled, false);
+  const noConsentSave = await request("/events", { key: "no-consent-event-1", body: eventBody });
+  assert.equal(noConsentSave.status, 201);
+  assert.equal(noConsentSave.data.event.primaryGardenMood, "SUNNY_BLOOM");
+  assert.deepEqual(noConsentSave.data.event.secondaryEmotions, []);
+  assert.equal(noConsentSave.data.flower.colorAccent, null);
+  assert.equal(calls, callsBeforeNoConsent);
+  users.alice.aiConsent.aiProcessing = true;
+  const consentSave = await request("/events", { key: "consent-event-1", body: eventBody });
+  assert.equal(consentSave.status, 201);
+  assert.deepEqual(consentSave.data.event.secondaryEmotions, ["gratitude"]);
+  assert.equal(calls, callsBeforeNoConsent + 1);
   const extracted = await new DeterministicMemoryExtractor().extract({ ...events[1], kind: "EVENT" });
   assert.equal(extracted.primaryMood, "SUNNY_BLOOM");
   assert.deepEqual(extracted.secondaryEmotions, ["gratitude"]);
   assert.equal(extracted.emotionProvenance, "INFERRED_UNCONFIRMED");
-  assert.equal(extracted.emotionModelStatus, "research_only");
+  assert.equal(extracted.emotionModelStatus, "production");
   let savedMemory;
   const memoryRepository = new PrismaMemoryRepository({
     event: { findFirst: async () => events[1] },
@@ -183,7 +249,7 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   await memoryRepository.saveMemory({ identity: { userId: "alice" }, memory: extracted });
   assert.equal(savedMemory.emotionProvenance, "INFERRED_UNCONFIRMED");
   assert.equal(savedMemory.emotionModelId, events[1].emotionModelId);
-  assert.deepEqual(savedMemory.emotionProbabilities, events[1].emotionProbabilities);
+  assert.equal(savedMemory.emotionProbabilities ?? null, null);
   const forged = await request("/events", { key: "forged-event-1", body: { ...eventBody, ownerId: "bob" } });
   assert.equal(forged.status, 400);
   const bobRead = await fetch(base + `/events/${saved.data.event.id}`, { headers: { Authorization: "Bearer bob-token" } });
@@ -193,9 +259,11 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   process.env.NODE_ENV = "production";
   const blocked = await request("/dev/emotion-preview", { body: { text: eventBody.content } });
   assert.equal(blocked.status, 404);
-  const productionEvent = await request("/events", { key: "production-blocked-1", body: eventBody });
-  assert.equal(productionEvent.data.event.emotionOutcome, "SKIPPED");
-  assert.equal(productionEvent.data.emotion.fallbackReason, "RESEARCH_ONLY_CONTEXT");
+  setEventEmotionClassifierForTests(async () => ({ status: "SUCCESS", labels: ["gratitude"], latencyMs: 2 }));
+  const productionEvent = await request("/events", { key: "production-llm-1", body: eventBody });
+  assert.equal(productionEvent.status, 201);
+  assert.equal(productionEvent.data.event.emotionOutcome, "INFERRED_1");
+  assert.equal(productionEvent.data.event.primaryGardenMood, "SUNNY_BLOOM");
 });
 
 test("dev client routes through authenticated API only and has no model credentials", async () => {

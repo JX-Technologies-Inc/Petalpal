@@ -77,20 +77,25 @@ test("flower engine avoids the most recent species when another is available", (
   assert.match(result.generationSeed, /^[a-f0-9]{64}$/);
 });
 
-test("secondary emotions modify semantic color and effect without changing species pool", () => {
-  const result = generateFlowerMetadata({
-    options,
-    primaryGardenMood: "SUNNY_BLOOM",
-    secondaryEmotions: [
-      { label: "gratitude", score: 0.9, role: "PRIMARY_VARIANT" }
-    ],
-    localDate: "2026-08-26",
-    userId: "user-variant",
-    recentFlowers: []
-  });
-  assert.ok(options.some(({ name }) => name === result.name));
-  assert.equal(result.colorAccent, "WARM_GOLD");
-  assert.equal(result.visualEffect, "SOFT_SPARKLE");
+test("secondary emotions modify only visuals after stable Primary Mood species selection", () => {
+  const { pool } = speciesPoolForPrimary("SUNNY_BLOOM", flowerDB);
+  const input = { options: pool, primaryGardenMood: "SUNNY_BLOOM", localDate: "2026-09-28", userId: "alice", recentFlowers: [] };
+  const base = generateFlowerMetadata({ ...input, secondaryEmotions: [] });
+  const one = generateFlowerMetadata({ ...input, secondaryEmotions: [{ label: "gratitude" }] });
+  const two = generateFlowerMetadata({ ...input, secondaryEmotions: [{ label: "gratitude" }, { label: "surprise" }] });
+
+  for (const flower of [one, two]) {
+    assert.equal(flower.speciesCode, base.speciesCode);
+    assert.equal(flower.name, base.name);
+    assert.equal(flower.img, base.img);
+    assert.equal(flower.generationSeed, base.generationSeed);
+    assert.equal(flower.variant, base.variant);
+  }
+  assert.equal(base.colorAccent, null);
+  assert.equal(one.colorAccent, "WARM_GOLD");
+  assert.equal(one.visualEffect, "SOFT_SPARKLE");
+  assert.equal(two.colorAccent, "WARM_GOLD");
+  assert.equal(two.visualEffect, "FLASH_SPARKLE");
 });
 
 test("seasonForLocalDate maps calendar months", () => {

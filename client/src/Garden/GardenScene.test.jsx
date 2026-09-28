@@ -114,4 +114,53 @@ describe("GardenScene", () => {
     await userEvent.click(screen.getByAltText("Sunflower"));
     expect(screen.getByText("None")).toBeInTheDocument();
   });
+
+  it("renders secondary accents and effects without changing the Primary Mood flower image", () => {
+    const base = {
+      ...flower, mood: "SUNNY_BLOOM", dailyCheckIn: null, sourceEventId: "event-3",
+      sourceEvent: { secondaryEmotions: [] }, colorAccent: null, visualEffect: null
+    };
+    const props = { owner: { id: "user-1", name: "Petal" }, flowers: [base] };
+    const { rerender } = render(<GardenScene {...props} />);
+    const imagePath = screen.getByAltText("Sunflower").getAttribute("src");
+    let card = screen.getByAltText("Sunflower").closest("article");
+    expect(card).not.toHaveClass("flower-card-accented");
+    expect(card.querySelector(".flower-accent-halo")).toBeNull();
+
+    rerender(<GardenScene {...props} flowers={[{
+      ...base, sourceEvent: { secondaryEmotions: ["gratitude"] },
+      colorAccent: "WARM_GOLD", visualEffect: "SOFT_SPARKLE"
+    }]} />);
+    card = screen.getByAltText("Sunflower").closest("article");
+    expect(card).toHaveClass("flower-card-accented", "flower-effect-sparkle");
+    expect(card.style.getPropertyValue("--flower-accent")).toBe("#eab84e");
+    expect(card.querySelector(".flower-accent-halo")).not.toBeNull();
+    expect(screen.getByAltText("Sunflower").getAttribute("src")).toBe(imagePath);
+
+    rerender(<GardenScene {...props} flowers={[{
+      ...base, sourceEvent: { secondaryEmotions: ["gratitude", "surprise"] },
+      colorAccent: "WARM_GOLD", visualEffect: "FLASH_SPARKLE"
+    }]} />);
+    card = screen.getByAltText("Sunflower").closest("article");
+    expect(card).toHaveClass("flower-card-accented", "flower-effect-flash");
+    expect(card).not.toHaveClass("flower-effect-sparkle");
+    expect(card.style.getPropertyValue("--flower-accent")).toBe("#eab84e");
+    expect(screen.getByAltText("Sunflower").getAttribute("src")).toBe(imagePath);
+
+    rerender(<GardenScene {...props} flowers={[{
+      ...base, sourceEvent: { secondaryEmotions: ["gratitude", "fear"] },
+      colorAccent: "WARM_GOLD", visualEffect: "SUBTLE_MIST"
+    }]} />);
+    card = screen.getByAltText("Sunflower").closest("article");
+    expect(card).toHaveClass("flower-card-accented", "flower-effect-haze");
+    expect(card).not.toHaveClass("flower-effect-sparkle");
+    expect(card.style.getPropertyValue("--flower-accent")).toBe("#eab84e");
+    expect(screen.getByAltText("Sunflower").getAttribute("src")).toBe(imagePath);
+
+    rerender(<GardenScene {...props} flowers={[{
+      ...base, sourceEventId: undefined, sourceEvent: undefined,
+      colorAccent: "WARM_GOLD", visualEffect: "SUBTLE_MIST"
+    }]} />);
+    expect(screen.getByAltText("Sunflower").closest("article")).toHaveClass("flower-card-accented", "flower-effect-haze");
+  });
 });

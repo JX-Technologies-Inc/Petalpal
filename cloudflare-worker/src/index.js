@@ -1,4 +1,6 @@
 import {
+  CANONICAL_PRIMARY_GARDEN_MOODS,
+  EXCLUDED_SECONDARY_EMOTIONS,
   LEGACY_PRIMARY_MOODS,
   SECONDARY_EMOTION_LABELS
 } from "../../lib/flower-variant-config.js";
@@ -10,6 +12,8 @@ import {
 import { REPORT_EVIDENCE_LIMITS } from "../../lib/report-foundation.js";
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+const PRODUCT_EMOTIONS = SECONDARY_EMOTION_LABELS.filter((label) => !EXCLUDED_SECONDARY_EMOTIONS.includes(label));
+export const EVENT_EMOTION_PROMPT = `Find 0-2 additional emotions in the event. Primary mood is user-selected; do not repeat its meaning. Allowed: ${PRODUCT_EMOTIONS.join(",")}. JSON only.`;
 export const DEFAULT_REPORT_NARRATIVE_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 function json(body, status = 200) {
@@ -224,14 +228,52 @@ async function generateReportNarrative(request, env) {
   return json({ ...output, model });
 }
 
+async function generateEventEmotions(request, env) {
+  const body = await request.json().catch(() => null);
+  if (!CANONICAL_PRIMARY_GARDEN_MOODS.includes(body?.p) || typeof body?.e !== "string" || !body.e.trim() || body.e.length > 4000) {
+    return json({ error: "Valid Primary Mood and Event text are required" }, 400);
+  }
+  let result;
+  try {
+    result = await env.AI.run(MODEL, {
+      messages: [
+        { role: "system", content: EVENT_EMOTION_PROMPT },
+        { role: "user", content: `p:${body.p}\ne:${body.e}` }
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          type: "object",
+          properties: { e: { type: "array", items: { type: "string", enum: PRODUCT_EMOTIONS }, maxItems: 2 } },
+          required: ["e"],
+          additionalProperties: false
+        }
+      },
+      temperature: 0,
+      max_tokens: 64
+    });
+  } catch (error) {
+    return inferenceFailure("AI_RUN_FAILED", error);
+  }
+  let output;
+  try {
+    output = typeof result?.response === "string" ? JSON.parse(result.response) : result?.response;
+  } catch (error) {
+    return inferenceFailure("JSON_PARSE_FAILED", error);
+  }
+  if (!output || !Array.isArray(output.e)) return inferenceFailure("SCHEMA_VALIDATION_FAILED");
+  return json({ e: output.e });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (request.method !== "POST" || !["/v1/emotion", "/v1/report-narrative"].includes(url.pathname)) {
+    if (request.method !== "POST" || !["/v1/emotion", "/v1/event-emotion", "/v1/report-narrative"].includes(url.pathname)) {
       return json({ error: "Not found" }, 404);
     }
     if (!authorized(request, env)) return json({ error: "Unauthorized" }, 401);
     if (url.pathname === "/v1/report-narrative") return generateReportNarrative(request, env);
+    if (url.pathname === "/v1/event-emotion") return generateEventEmotions(request, env);
 
     const body = await request.json().catch(() => null);
     const text = typeof body?.text === "string" ? body.text.trim() : "";

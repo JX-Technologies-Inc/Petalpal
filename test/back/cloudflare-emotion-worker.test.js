@@ -1,9 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import worker, { DEFAULT_REPORT_NARRATIVE_MODEL } from "../../cloudflare-worker/src/index.js";
+import worker, { DEFAULT_REPORT_NARRATIVE_MODEL, EVENT_EMOTION_PROMPT } from "../../cloudflare-worker/src/index.js";
 
 const endpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/emotion";
+const eventEndpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/event-emotion";
 const reportEndpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/report-narrative";
 
 function reportInput(reportType) {
@@ -90,6 +91,27 @@ test("emotion Worker rejects callers without the shared secret", async () => {
   );
 
   assert.equal(response.status, 401);
+});
+
+test("Event emotion Worker sends only Primary Mood and Event text to structured Workers AI", async () => {
+  let input;
+  const response = await worker.fetch(new Request(eventEndpoint, {
+    method: "POST", headers: { Authorization: "Bearer secret" },
+    body: JSON.stringify({ p: "SUNNY_BLOOM", e: "A friend helped me.", userId: "private-id", journal: "private journal" })
+  }), { RENDER_SHARED_SECRET: "secret", AI: { run: async (_model, value) => {
+    input = value;
+    return { response: '{"e":["gratitude","fear"]}' };
+  } } });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { e: ["gratitude", "fear"] });
+  assert.deepEqual(input.messages, [
+    { role: "system", content: EVENT_EMOTION_PROMPT },
+    { role: "user", content: "p:SUNNY_BLOOM\ne:A friend helped me." }
+  ]);
+  assert.equal(input.temperature, 0);
+  assert.equal(input.max_tokens, 64);
+  assert.equal(input.response_format.type, "json_schema");
+  assert.deepEqual(input.response_format.json_schema.required, ["e"]);
 });
 
 test("emotion Worker returns a legacy primary fallback plus 21-label secondary emotions", async () => {

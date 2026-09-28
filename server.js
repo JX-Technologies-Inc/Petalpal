@@ -13,7 +13,7 @@ import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
 import { generateFlowerMetadata } from "./lib/flower-engine.js";
-import { classifyEventEmotion, emotionClassifierEnabled, EVENT_EMOTION_MODEL_ID, EVENT_EMOTION_MODEL_VERSION } from "./lib/event-emotion.js";
+import { classifyEventSecondaryEmotions, eventSecondaryEmotionEnabled, EVENT_SECONDARY_MODEL_ID, EVENT_SECONDARY_MODEL_VERSION } from "./lib/event-emotion.js";
 import { canonicalEventLabels, previewEventFlower } from "./lib/event-flower.js";
 import {
   CANONICAL_PRIMARY_GARDEN_MOODS,
@@ -100,7 +100,7 @@ app.use((req, res, next) => {
 
 app.set("trust proxy", trustProxySetting());
 let emotionClassifier = classifyEmotion;
-let eventEmotionClassifier = classifyEventEmotion;
+let eventEmotionClassifier = classifyEventSecondaryEmotions;
 let firebaseUserDeleter = deleteFirebaseUser;
 const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
   prisma,
@@ -117,7 +117,7 @@ export function setEmotionClassifierForTests(classifier) {
 }
 
 export function setEventEmotionClassifierForTests(classifier) {
-  eventEmotionClassifier = classifier || classifyEventEmotion;
+  eventEmotionClassifier = classifier || classifyEventSecondaryEmotions;
 }
 
 export function setFirebaseUserDeleterForTests(deleter) {
@@ -1626,8 +1626,9 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
   res.json(consent);
 });
 
-async function eventEmotionResult({ userId, eventId, text, primaryGardenMood }) {
-  if (!emotionClassifierEnabled()) return { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: process.env.EMOTION_CLASSIFIER_ENABLED === "true" ? "RESEARCH_ONLY_CONTEXT" : "FEATURE_DISABLED" };
+async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, aiProcessingAllowed }) {
+  if (aiProcessingAllowed !== true) return { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "CONSENT_DISABLED" };
+  if (!primaryGardenMood || !eventSecondaryEmotionEnabled()) return { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" };
   let result;
   try {
     result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood });
@@ -1646,16 +1647,16 @@ function eventEmotionMetadata(emotion) {
     emotionStatus: emotion.status,
     emotionOutcome: success ? (emotion.labels.length ? `INFERRED_${emotion.labels.length}` : "ABSTAINED") : emotion.status,
     emotionProvenance: attempted ? "INFERRED_UNCONFIRMED" : null,
-    emotionModelId: attempted ? EVENT_EMOTION_MODEL_ID : null,
-    emotionModelVersion: attempted ? EVENT_EMOTION_MODEL_VERSION : null,
-    emotionModelStatus: attempted ? "research_only" : null,
-    emotionProbabilities: success && emotion.probabilities ? emotion.probabilities : null
+    emotionModelId: attempted ? EVENT_SECONDARY_MODEL_ID : null,
+    emotionModelVersion: attempted ? EVENT_SECONDARY_MODEL_VERSION : null,
+    emotionModelStatus: attempted ? "production" : null,
+    emotionProbabilities: null
   };
 }
 
-async function enrichCreatedEvent(event, primaryGardenMood) {
+async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed) {
   const emotion = await eventEmotionResult({
-    userId: event.ownerId, eventId: event.id, text: event.content, primaryGardenMood
+    userId: event.ownerId, eventId: event.id, text: event.content, primaryGardenMood, aiProcessingAllowed
   });
   let flower = null;
   const metadata = eventEmotionMetadata(emotion);
@@ -1723,13 +1724,13 @@ app.post("/events", aiRateLimit, async (req, res) => {
       identity: req.auth,
       content: req.body.content,
       primaryGardenMood,
-      enrichmentPending: Boolean(primaryGardenMood || emotionClassifierEnabled()),
+      enrichmentPending: Boolean(primaryGardenMood),
       occurredAt: req.body.occurredAt ?? new Date(),
       idempotencyKey: req.get("idempotency-key")
     });
     const enrichment = result.created
-      ? (primaryGardenMood || emotionClassifierEnabled()
-          ? await enrichCreatedEvent(result.event, primaryGardenMood)
+      ? (primaryGardenMood
+          ? await enrichCreatedEvent(result.event, primaryGardenMood, result.aiProcessingAllowed)
           : { emotion: { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, flower: null })
       : { emotion: { status: result.event.emotionStatus || "SKIPPED", labels: result.event.secondaryEmotions || [] },
           flower: await prisma.flower.findUnique({ where: { sourceEventId: result.event.id } }).catch(() => null) };
@@ -1763,9 +1764,10 @@ app.post("/dev/emotion-preview", aiRateLimit, async (req, res) => {
   const { text, primaryGardenMood = null } = req.body;
   if (typeof text !== "string" || !text.trim() || text.length > 4000) return res.status(400).json({ error: "Valid Event text is required" });
   if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) return res.status(400).json({ error: "Unsupported Primary Garden Mood" });
-  const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
+  const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true, aiConsent: { select: { aiProcessing: true } } } });
   if (!user) return res.status(404).json({ error: "User not found" });
-  const emotion = await eventEmotionResult({ userId: req.auth.userId, text, primaryGardenMood });
+  const aiProcessingAllowed = user.aiConsent?.aiProcessing === true;
+  const emotion = await eventEmotionResult({ userId: req.auth.userId, text, primaryGardenMood, aiProcessingAllowed });
   const recentFlowers = primaryGardenMood ? await prisma.flower.findMany({
     where: { userId: req.auth.userId }, orderBy: { createdAt: "desc" }, take: 5, select: { name: true }
   }) : [];
@@ -1774,7 +1776,7 @@ app.post("/dev/emotion-preview", aiRateLimit, async (req, res) => {
     localDate: localDateForInstant(new Date(), normalizeTimezone(user.timezone) || "UTC"),
     primaryGardenMood, labels: emotion.labels, recentFlowers
   });
-  return res.json({ classifierEnabled: emotionClassifierEnabled(), inferenceStatus: emotion.status,
+  return res.json({ classifierEnabled: aiProcessingAllowed && eventSecondaryEmotionEnabled(), inferenceStatus: emotion.status,
     labels: emotion.labels, probabilities: emotion.probabilities || null, flower,
     latencyMs: emotion.latencyMs, fallbackReason: emotion.fallbackReason || null });
 });

@@ -1980,6 +1980,67 @@ body {
   user-select: none;
 }
 
+.flower-card-accented .flower-image {
+  filter: drop-shadow(0 0 6px var(--flower-accent)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.08));
+}
+
+.flower-accent-halo {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  z-index: 1;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--flower-accent), transparent 70%);
+  opacity: 0.34;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: flowerAccentPulse 3s ease-in-out infinite alternate;
+}
+
+.flower-effect-sparkle .flower-accent-halo {
+  border: 2px dotted var(--flower-accent);
+  box-shadow: 0 0 8px var(--flower-accent);
+}
+
+.flower-effect-flash .flower-accent-halo {
+  border: 2px dotted var(--flower-accent);
+  box-shadow: 0 0 12px var(--flower-accent);
+  animation: flowerAccentFlash 1.3s ease-in-out infinite alternate;
+}
+
+.flower-effect-haze .flower-accent-halo {
+  width: 84px;
+  filter: blur(6px);
+  animation: flowerAccentDrift 4s ease-in-out infinite alternate;
+}
+
+.flower-effect-motes .flower-accent-halo {
+  border: 2px dashed var(--flower-accent);
+  animation: flowerAccentOrbit 8s linear infinite;
+}
+
+@keyframes flowerAccentPulse {
+  to { opacity: 0.55; transform: translateX(-50%) scale(1.08); }
+}
+
+@keyframes flowerAccentFlash {
+  to { opacity: 0.68; transform: translateX(-50%) scale(1.1); }
+}
+
+@keyframes flowerAccentDrift {
+  to { opacity: 0.52; transform: translateX(-42%); }
+}
+
+@keyframes flowerAccentOrbit {
+  to { transform: translateX(-50%) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flower-card .flower-accent-halo { animation: none; }
+}
+
 @keyframes flowerSway {
   0% {
     transform: translateX(-50%) rotate(-2deg);
