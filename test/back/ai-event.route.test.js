@@ -42,9 +42,10 @@ function fixture() {
         job.ownerId === where.ownerId_idempotencyKey.ownerId &&
         job.idempotencyKey === where.ownerId_idempotencyKey.idempotencyKey) || null,
       createMany: async ({ data }) => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
         for (const item of data) {
           if (!jobs.some((job) => job.ownerId === item.ownerId && job.idempotencyKey === item.idempotencyKey)) {
-            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, ...item });
+            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, nextAttemptAt: new Date(), ...item });
           }
         }
         return { count: data.length };
@@ -253,6 +254,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     { ownerId: workerCalls[0].ownerId, jobType: workerCalls[0].jobType },
     { ownerId: "alice", jobType: AI_JOB_TYPES.WEEKLY_REPORT }
   );
+  assert.ok(workerCalls[0].now >= state.jobs.at(-1).nextAttemptAt);
   assert.equal(state.jobs.length, jobsBeforeTrigger + 1);
 
   const duplicate = await request(baseUrl, "/ai/reports/weekly/trigger", {

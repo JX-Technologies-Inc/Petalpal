@@ -1896,7 +1896,7 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
       jobId: job.id,
       ownerId,
       jobType: AI_JOB_TYPES.WEEKLY_REPORT,
-      now
+      now: new Date()
     });
     const storedJob = await prisma.aiJob.findFirst({
       where: { id: job.id, ownerId, jobType: AI_JOB_TYPES.WEEKLY_REPORT },
@@ -1923,7 +1923,10 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
     return res.status(storedJob?.status === "SUCCEEDED" ? 200 : 202).json(payload);
   } catch (error) {
     if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI memory processing is not currently authorized" });
-    logServerError("POST /ai/reports/weekly/trigger error", error);
+    logServerError("POST /ai/reports/weekly/trigger error", {
+      name: error?.name,
+      code: error?.meta?.code || error?.code
+    });
     return res.status(500).json({ error: "Failed to trigger Weekly report" });
   }
 });
