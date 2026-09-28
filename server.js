@@ -1626,18 +1626,44 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
   res.json(consent);
 });
 
-async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, aiProcessingAllowed }) {
-  if (aiProcessingAllowed !== true) return { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "CONSENT_DISABLED" };
-  if (!primaryGardenMood || !eventSecondaryEmotionEnabled()) return { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" };
+function withEmotionLabDiagnostics(result, includeDiagnostics, details = result.diagnostics) {
+  if (!includeDiagnostics) return result;
+  return { ...result, diagnostics: {
+    provider: "Cloudflare Workers AI",
+    model: EVENT_SECONDARY_MODEL_ID.replace(/^@/, ""),
+    attempted: details?.attempted ?? result.status !== "SKIPPED",
+    status: details?.status || (result.status === "FAILED"
+      ? (result.fallbackReason === "INVALID_MODEL_OUTPUT" ? "INVALID_RESPONSE" : "PROVIDER_ERROR")
+      : result.status),
+    fallbackReason: details?.fallbackReason ?? result.fallbackReason ?? null,
+    workerLabels: details?.workerLabels || [],
+    productLabels: details?.productLabels || [],
+    validatedLabels: details?.validatedLabels || [],
+    removedLabels: details?.removedLabels || []
+  } };
+}
+
+async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, aiProcessingAllowed, includeDiagnostics = false }) {
+  if (aiProcessingAllowed !== true) return withEmotionLabDiagnostics(
+    { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "CONSENT_DISABLED" }, includeDiagnostics,
+    { attempted: false, status: "SKIPPED", fallbackReason: "AI_CONSENT_DISABLED" });
+  if (!primaryGardenMood || !eventSecondaryEmotionEnabled()) return withEmotionLabDiagnostics(
+    { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, includeDiagnostics,
+    { attempted: false, status: "SKIPPED", fallbackReason: "FEATURE_DISABLED" });
   let result;
   try {
-    result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood });
+    result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood,
+      ...(includeDiagnostics ? { includeDiagnostics: true } : {}) });
   } catch {
-    return { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: "RUNTIME_UNAVAILABLE" };
+    return withEmotionLabDiagnostics(
+      { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: "RUNTIME_UNAVAILABLE" }, includeDiagnostics,
+      { attempted: true, status: "PROVIDER_ERROR", fallbackReason: "RUNTIME_UNAVAILABLE" });
   }
   const labels = canonicalEventLabels(result, primaryGardenMood);
-  if (labels === null) return { status: "FAILED", labels: [], latencyMs: result?.latencyMs || 0, fallbackReason: "INVALID_MODEL_OUTPUT" };
-  return { ...result, labels };
+  if (labels === null) return withEmotionLabDiagnostics(
+    { status: "FAILED", labels: [], latencyMs: result?.latencyMs || 0, fallbackReason: "INVALID_MODEL_OUTPUT" }, includeDiagnostics,
+    { ...result?.diagnostics, attempted: true, status: "INVALID_RESPONSE", fallbackReason: "INVALID_MODEL_OUTPUT", validatedLabels: [] });
+  return withEmotionLabDiagnostics({ ...result, labels }, includeDiagnostics);
 }
 
 function eventEmotionMetadata(emotion) {
@@ -1767,7 +1793,7 @@ app.post("/dev/emotion-preview", aiRateLimit, async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true, aiConsent: { select: { aiProcessing: true } } } });
   if (!user) return res.status(404).json({ error: "User not found" });
   const aiProcessingAllowed = user.aiConsent?.aiProcessing === true;
-  const emotion = await eventEmotionResult({ userId: req.auth.userId, text, primaryGardenMood, aiProcessingAllowed });
+  const emotion = await eventEmotionResult({ userId: req.auth.userId, text, primaryGardenMood, aiProcessingAllowed, includeDiagnostics: true });
   const recentFlowers = primaryGardenMood ? await prisma.flower.findMany({
     where: { userId: req.auth.userId }, orderBy: { createdAt: "desc" }, take: 5, select: { name: true }
   }) : [];
@@ -1777,7 +1803,7 @@ app.post("/dev/emotion-preview", aiRateLimit, async (req, res) => {
     primaryGardenMood, labels: emotion.labels, recentFlowers
   });
   return res.json({ classifierEnabled: aiProcessingAllowed && eventSecondaryEmotionEnabled(), inferenceStatus: emotion.status,
-    labels: emotion.labels, probabilities: emotion.probabilities || null, flower,
+    labels: emotion.labels, flower, diagnostics: emotion.diagnostics,
     latencyMs: emotion.latencyMs, fallbackReason: emotion.fallbackReason || null });
 });
 

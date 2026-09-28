@@ -38,8 +38,8 @@ test("frozen adapter uses canonical Product-18 selector and bounded fallback", a
 test("Event LLM adapter sends only Primary Mood and Event text and validates ordered Product-18 output", async () => {
   const env = { CLOUDFLARE_WORKER_AI_URL: "https://worker.example/", CLOUDFLARE_WORKER_AI_TOKEN: "secret" };
   let request;
-  const classify = (output) => classifyEventSecondaryEmotions({
-    text: "A friend helped me.", primaryGardenMood: "SUNNY_BLOOM", env,
+  const classify = (output, primaryGardenMood = "SUNNY_BLOOM") => classifyEventSecondaryEmotions({
+    text: "A friend helped me.", primaryGardenMood, env,
     fetchImpl: async (url, options) => { request = { url, options }; return { ok: true, json: async () => output }; }
   });
   assert.deepEqual((await classify({ e: [] })).labels, []);
@@ -51,7 +51,13 @@ test("Event LLM adapter sends only Primary Mood and Event text and validates ord
   assert.deepEqual((await classify({ e: ["fake", "gratitude", "approval", "fear"] })).labels, ["gratitude", "fear"]);
   assert.deepEqual((await classify({ e: ["gratitude", "gratitude", "fear"] })).labels, ["gratitude", "fear"]);
   assert.deepEqual((await classify({ e: ["joy", "gratitude"] })).labels, ["gratitude"]);
-  assert.deepEqual((await classify({ e: ["gratitude", "love"] })).labels, ["gratitude"]);
+  for (const pair of [["gratitude", "caring"], ["caring", "love"], ["fear", "annoyance"]]) {
+    assert.deepEqual((await classify({ e: pair })).labels, pair);
+  }
+  for (const pair of [["joy", "excitement"], ["joy", "optimism"]]) {
+    assert.deepEqual((await classify({ e: pair }, "HEALING_BLOOM")).labels, pair);
+    assert.deepEqual((await classify({ e: pair })).labels, [pair[1]]);
+  }
   assert.deepEqual((await classify({ e: "gratitude" })).labels, []);
   assert.deepEqual((await classify({})).labels, []);
   assert.deepEqual((await classify({ e: null })).labels, []);
@@ -70,6 +76,69 @@ test("Event LLM adapter sends only Primary Mood and Event text and validates ord
     env: { ...env, AI_REQUEST_TIMEOUT_MS: "5" }, fetchImpl: () => new Promise(() => {}) });
   assert.equal(timedOut.fallbackReason, "TIMEOUT");
   assert.deepEqual(timedOut.labels, []);
+});
+
+test("Emotion Lab diagnostics distinguish Worker output, filtering, and safe failures", async () => {
+  const env = { CLOUDFLARE_WORKER_AI_URL: "https://worker.example", CLOUDFLARE_WORKER_AI_TOKEN: "secret" };
+  const classify = (output, fetchImpl = async () => ({ ok: true, json: async () => output })) =>
+    classifyEventSecondaryEmotions({ text: "Synthetic Event", primaryGardenMood: "SUNNY_BLOOM", env, fetchImpl, includeDiagnostics: true });
+
+  const empty = await classify({ e: [] });
+  assert.equal(empty.status, "SUCCESS");
+  assert.deepEqual(empty.diagnostics, { attempted: true, status: "SUCCESS", fallbackReason: null,
+    workerLabels: [], productLabels: [], validatedLabels: [], removedLabels: [] });
+
+  const valid = await classify({ e: ["gratitude", "fear"] });
+  assert.deepEqual(valid.diagnostics.workerLabels, ["gratitude", "fear"]);
+  assert.deepEqual(valid.diagnostics.productLabels, ["gratitude", "fear"]);
+  assert.deepEqual(valid.diagnostics.validatedLabels, ["gratitude", "fear"]);
+
+  const redundant = await classify({ e: ["joy", "gratitude"] });
+  assert.deepEqual(redundant.diagnostics.workerLabels, ["joy", "gratitude"]);
+  assert.deepEqual(redundant.diagnostics.validatedLabels, ["gratitude"]);
+  assert.deepEqual(redundant.diagnostics.removedLabels, [{ label: "joy", reason: "PRIMARY_REDUNDANT" }]);
+
+  const invalid = await classify({ e: ["fake", "gratitude"] });
+  assert.deepEqual(invalid.diagnostics.workerLabels, ["fake", "gratitude"]);
+  assert.deepEqual(invalid.diagnostics.productLabels, ["gratitude"]);
+  assert.deepEqual(invalid.diagnostics.validatedLabels, ["gratitude"]);
+  assert.deepEqual(invalid.diagnostics.removedLabels, [{ label: "fake", reason: "INVALID_TAXONOMY" }]);
+
+  const duplicate = await classify({ e: ["gratitude", "gratitude"] });
+  assert.deepEqual(duplicate.diagnostics.validatedLabels, ["gratitude"]);
+  assert.deepEqual(duplicate.diagnostics.removedLabels, [{ label: "gratitude", reason: "DUPLICATE" }]);
+  const capped = await classify({ e: ["gratitude", "fear", "curiosity"] });
+  assert.deepEqual(capped.diagnostics.removedLabels, [{ label: "curiosity", reason: "MAX_2_CAP" }]);
+  const cooccurring = await classify({ e: ["gratitude", "caring"] });
+  assert.deepEqual(cooccurring.diagnostics.workerLabels, ["gratitude", "caring"]);
+  assert.deepEqual(cooccurring.diagnostics.validatedLabels, ["gratitude", "caring"]);
+  assert.deepEqual(cooccurring.diagnostics.removedLabels, []);
+
+  for (const [fetchImpl, reason] of [
+    [async () => { throw new Error("network details must stay hidden"); }, "NETWORK_ERROR"],
+    [async () => ({ ok: false, status: 502 }), "HTTP_ERROR"]
+  ]) {
+    const failed = await classify(null, fetchImpl);
+    assert.equal(failed.status, "FAILED");
+    assert.deepEqual(failed.labels, []);
+    assert.equal(failed.diagnostics.attempted, true);
+    assert.equal(failed.diagnostics.status, "PROVIDER_ERROR");
+    assert.equal(failed.diagnostics.fallbackReason, reason);
+    assert.doesNotMatch(JSON.stringify(failed.diagnostics), /network details must stay hidden/);
+  }
+  const malformedJson = await classify(null, async () => ({ ok: true, json: async () => { throw new SyntaxError("private body"); } }));
+  assert.equal(malformedJson.diagnostics.status, "INVALID_RESPONSE");
+  assert.equal(malformedJson.diagnostics.fallbackReason, "MALFORMED_JSON");
+  assert.deepEqual(malformedJson.labels, []);
+  const malformedOutput = await classify({ e: "gratitude" });
+  assert.equal(malformedOutput.diagnostics.status, "INVALID_RESPONSE");
+  assert.equal(malformedOutput.diagnostics.fallbackReason, "INVALID_MODEL_OUTPUT");
+  assert.deepEqual(malformedOutput.labels, []);
+
+  const productionShape = await classifyEventSecondaryEmotions({ text: "Synthetic Event", primaryGardenMood: "SUNNY_BLOOM", env,
+    fetchImpl: async () => ({ ok: true, json: async () => ({ e: ["gratitude"] }) }) });
+  assert.deepEqual(productionShape, { status: "SUCCESS", labels: ["gratitude"], latencyMs: productionShape.latencyMs });
+  assert.equal(Object.hasOwn(productionShape, "diagnostics"), false);
 });
 
 test("Event save and dev preview share adapter, preserve ownership, and never duplicate Flower", async (t) => {
@@ -166,11 +235,35 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   const preview = await request("/dev/emotion-preview", { body: { text: eventBody.content, primaryGardenMood: eventBody.primaryGardenMood } });
   assert.equal(preview.status, 200);
   assert.deepEqual(preview.data.labels, ["gratitude"]);
+  assert.equal(preview.data.diagnostics.attempted, true);
+  assert.equal(preview.data.diagnostics.status, "SUCCESS");
+  assert.equal(preview.data.diagnostics.provider, "Cloudflare Workers AI");
+  assert.equal(preview.data.diagnostics.model, "cf/meta/llama-3.1-8b-instruct-fast");
+  assert.equal(Object.hasOwn(preview.data, "probabilities"), false);
   assert.equal(events.length, 1);
   assert.equal(flowers.length, 1);
+  setEventEmotionClassifierForTests((input) => classifyEventSecondaryEmotions({ ...input,
+    fetchImpl: async () => ({ ok: true, json: async () => ({ e: ["joy", "gratitude"] }) }) }));
+  const tracedPreview = await request("/dev/emotion-preview", { body: { text: eventBody.content, primaryGardenMood: eventBody.primaryGardenMood } });
+  assert.deepEqual(tracedPreview.data.diagnostics.workerLabels, ["joy", "gratitude"]);
+  assert.deepEqual(tracedPreview.data.diagnostics.productLabels, ["joy", "gratitude"]);
+  assert.deepEqual(tracedPreview.data.diagnostics.validatedLabels, ["gratitude"]);
+  assert.deepEqual(tracedPreview.data.diagnostics.removedLabels, [{ label: "joy", reason: "PRIMARY_REDUNDANT" }]);
+  setEventEmotionClassifierForTests((input) => classifyEventSecondaryEmotions({ ...input,
+    fetchImpl: async () => ({ ok: true, json: async () => ({ e: ["gratitude", "caring"] }) }) }));
+  const cooccurringPreview = await request("/dev/emotion-preview", { body: { text: eventBody.content, primaryGardenMood: eventBody.primaryGardenMood } });
+  assert.deepEqual(cooccurringPreview.data.labels, ["gratitude", "caring"]);
+  assert.deepEqual(cooccurringPreview.data.diagnostics.workerLabels, ["gratitude", "caring"]);
+  assert.deepEqual(cooccurringPreview.data.diagnostics.validatedLabels, ["gratitude", "caring"]);
+  assert.deepEqual(cooccurringPreview.data.diagnostics.removedLabels, []);
+  assert.equal(cooccurringPreview.data.flower.visualEffect, "GENTLE_GLOW");
+  assert.equal(events.length, 1);
+  setEventEmotionClassifierForTests(async () => { calls += 1; return { status: "SUCCESS", labels: responseLabels, probabilities: responseProbabilities, latencyMs: 2 }; });
   const saved = await request("/events", { key: "on-event-1", body: eventBody });
   assert.equal(saved.status, 201);
   assert.deepEqual(saved.data.emotion.labels, preview.data.labels);
+  assert.equal(Object.hasOwn(saved.data.emotion, "diagnostics"), false);
+  assert.equal(Object.hasOwn(saved.data.event, "diagnostics"), false);
   assert.equal(saved.data.flower.colorAccent, preview.data.flower.colorAccent);
   assert.equal(saved.data.event.primaryGardenMood, "SUNNY_BLOOM");
   assert.equal(saved.data.event.emotionOutcome, "INFERRED_1");
@@ -195,6 +288,13 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   assert.equal(two.data.flower.colorAccent, "WARM_GOLD");
   assert.equal(two.data.flower.visualEffect, "SUBTLE_MIST");
   assert.ok(["SUNFLOWER", "TULIP"].includes(two.data.flower.speciesCode));
+  responseLabels = ["gratitude", "caring"];
+  const cooccurringSave = await request("/events", { key: "cooccurring-event-1", body: eventBody });
+  assert.equal(cooccurringSave.status, 201);
+  assert.deepEqual(cooccurringSave.data.event.secondaryEmotions, ["gratitude", "caring"]);
+  assert.equal(cooccurringSave.data.event.emotionOutcome, "INFERRED_2");
+  assert.equal(cooccurringSave.data.event.primaryGardenMood, "SUNNY_BLOOM");
+  assert.equal(cooccurringSave.data.flower.visualEffect, "GENTLE_GLOW");
   failNextPersistence = true;
   const persistenceFailure = await request("/events", { key: "write-failure-1", body: eventBody });
   assert.equal(persistenceFailure.data.event.emotionOutcome, "FAILED");
@@ -222,6 +322,9 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   assert.equal(noConsentPreview.status, 200);
   assert.deepEqual(noConsentPreview.data.labels, []);
   assert.equal(noConsentPreview.data.classifierEnabled, false);
+  assert.equal(noConsentPreview.data.diagnostics.attempted, false);
+  assert.equal(noConsentPreview.data.diagnostics.status, "SKIPPED");
+  assert.equal(noConsentPreview.data.diagnostics.fallbackReason, "AI_CONSENT_DISABLED");
   const noConsentSave = await request("/events", { key: "no-consent-event-1", body: eventBody });
   assert.equal(noConsentSave.status, 201);
   assert.equal(noConsentSave.data.event.primaryGardenMood, "SUNNY_BLOOM");
@@ -271,5 +374,7 @@ test("dev client routes through authenticated API only and has no model credenti
   assert.match(source, /apiRequest\(path/);
   assert.match(source, /run\("\/dev\/emotion-preview"/);
   assert.match(source, /run\("\/events"/);
+  assert.match(source, /diagnostic\.diagnostics\.workerLabels/);
+  assert.doesNotMatch(source, /probabilities/);
   assert.doesNotMatch(source, /CLOUDFLARE_WORKER_AI_TOKEN|model-fp32\.onnx|Authorization/);
 });

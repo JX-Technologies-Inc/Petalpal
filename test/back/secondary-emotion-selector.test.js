@@ -38,6 +38,45 @@ test("deduplicates labels and semantic clusters and returns at most two", () => 
   ]);
 });
 
+test("LLM policy preserves two distinct Worker labels even within one cluster", () => {
+  for (const pair of [
+    ["gratitude", "caring"], ["caring", "love"], ["joy", "excitement"],
+    ["joy", "optimism"], ["fear", "annoyance"]
+  ]) {
+    for (const ordered of [pair, [...pair].reverse()]) {
+      const diagnostics = {};
+      const selected = selectFlowerSecondaryEmotions({
+        primaryGardenMood: "HEALING_BLOOM", candidates: ordered, selectionPolicy: "llm", diagnostics
+      });
+      assert.deepEqual(selected.map(({ label }) => label), ordered);
+      assert.deepEqual(diagnostics.validatedLabels, ordered);
+      assert.deepEqual(diagnostics.removedLabels, []);
+    }
+  }
+  const scored = selectFlowerSecondaryEmotions({
+    primaryGardenMood: "HEALING_BLOOM", candidates: [
+      { label: "joy", score: 0.7 }, { label: "excitement", score: 0.9 }
+    ]
+  });
+  assert.deepEqual(scored.map(({ label }) => label), ["excitement"]);
+});
+
+test("LLM policy still applies taxonomy, Primary Mood, duplicate, and max-two rules", () => {
+  const diagnostics = {};
+  const selected = selectFlowerSecondaryEmotions({
+    primaryGardenMood: "SUNNY_BLOOM",
+    candidates: ["joy", "fake", "gratitude", "gratitude", "caring", "fear"],
+    selectionPolicy: "llm", diagnostics
+  });
+  assert.deepEqual(selected.map(({ label }) => label), ["gratitude", "caring"]);
+  assert.deepEqual(diagnostics.removedLabels, [
+    { label: "joy", reason: "PRIMARY_REDUNDANT" },
+    { label: "fake", reason: "INVALID_TAXONOMY" },
+    { label: "gratitude", reason: "DUPLICATE" },
+    { label: "fear", reason: "MAX_2_CAP" }
+  ]);
+});
+
 test("legacy coarse classifier labels never enter the 21-label selector", () => {
   const selected = selectFlowerSecondaryEmotions({
     primaryGardenMood: "FIRE_BLOOM",

@@ -56,12 +56,19 @@ export default function EmotionLab({ currentUser }) {
     {error && <p role="alert">{error}</p>}
     {diagnostic && <section aria-label="Preview diagnostics">
       <h2>Preview</h2>
-      <p>Classifier: {diagnostic.classifierEnabled ? "enabled" : "disabled"}</p>
-      <p>Inference: {diagnostic.inferenceStatus}</p>
-      <p>Labels: {diagnostic.labels.join(", ") || "none"}</p>
+      <p>Provider: {diagnostic.diagnostics.provider}</p>
+      <p>Model: {diagnostic.diagnostics.model}</p>
+      <p>Attempted: {diagnostic.diagnostics.attempted ? "YES" : "NO"}</p>
+      <p>Status: {diagnostic.diagnostics.status}</p>
+      <p>Worker labels: {JSON.stringify(diagnostic.diagnostics.workerLabels)}</p>
+      <p>Product-18 labels: {JSON.stringify(diagnostic.diagnostics.productLabels)}</p>
+      <p>Validated labels: {JSON.stringify(diagnostic.diagnostics.validatedLabels)}</p>
+      <p>Removed labels: {diagnostic.diagnostics.removedLabels.length
+        ? diagnostic.diagnostics.removedLabels.map(({ label, reason }) => `${label} — ${reason}`).join(", ")
+        : "[]"}</p>
       <p>Latency: {diagnostic.latencyMs} ms</p>
-      <p>Fallback: {diagnostic.fallbackReason || "none"}</p>
-      <pre>{JSON.stringify({ probabilities: diagnostic.probabilities, flower: diagnostic.flower }, null, 2)}</pre>
+      <p>Fallback: {diagnostic.diagnostics.fallbackReason || "None"}</p>
+      <pre>{JSON.stringify({ flower: diagnostic.flower }, null, 2)}</pre>
     </section>}
     {saved && <section aria-label="Saved Event">
       <h2>Saved Event</h2>

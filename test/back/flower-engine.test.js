@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { generateFlowerMetadata, seasonForLocalDate } from "../../lib/flower-engine.js";
+import { previewEventFlower } from "../../lib/event-flower.js";
 import flowerDB from "../../data/flowerDB.js";
 import {
   CANONICAL_PRIMARY_GARDEN_MOODS,
@@ -96,6 +97,17 @@ test("secondary emotions modify only visuals after stable Primary Mood species s
   assert.equal(one.visualEffect, "SOFT_SPARKLE");
   assert.equal(two.colorAccent, "WARM_GOLD");
   assert.equal(two.visualEffect, "FLASH_SPARKLE");
+});
+
+test("two same-cluster LLM labels change Event visuals without changing base species", () => {
+  const input = { userId: "synthetic-user", localDate: "2026-09-28", primaryGardenMood: "SUNNY_BLOOM", recentFlowers: [] };
+  const base = previewEventFlower({ ...input, labels: [] });
+  const two = previewEventFlower({ ...input, labels: ["gratitude", "caring"] });
+  assert.equal(two.speciesCode, base.speciesCode);
+  assert.equal(two.name, base.name);
+  assert.equal(two.generationSeed, base.generationSeed);
+  assert.equal(two.colorAccent, "WARM_GOLD");
+  assert.equal(two.visualEffect, "GENTLE_GLOW");
 });
 
 test("seasonForLocalDate maps calendar months", () => {
