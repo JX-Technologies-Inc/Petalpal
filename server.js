@@ -1925,7 +1925,7 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
     if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI memory processing is not currently authorized" });
     logServerError("POST /ai/reports/weekly/trigger error", {
       name: error?.name,
-      code: error?.meta?.code || error?.code
+      code: error?.meta?.driverAdapterError?.cause?.originalCode || error?.meta?.code || error?.code
     });
     return res.status(500).json({ error: "Failed to trigger Weekly report" });
   }
