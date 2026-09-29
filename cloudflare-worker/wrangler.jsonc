@@ -32,7 +32,7 @@
           "max_concurrency": 1
         }]
       },
-      "triggers": { "crons": ["*/20 * * * *"] }
+      "triggers": { "crons": [] }
     },
     "production": {
       "name": "petalpal-ai-dispatch-production",

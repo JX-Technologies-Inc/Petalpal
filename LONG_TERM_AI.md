@@ -753,13 +753,14 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   `INSUFFICIENT_EVIDENCE`. Queue acknowledged 10/10 messages with zero retries
   or backlog; no new failed, retried, or RUNNING jobs were observed. All 21
   migrations were already applied, and Render auto-deploy remained off.
-- Reconciliation is not yet isolated to the production Queue. The staging
-  dispatch Worker retains an active twenty-minute Cron and points at the same
-  production Render executor. During stranded-job recovery, staging Queue
-  logged two deliveries and production Queue logged one. Both reconcilers can
-  enqueue due production `AiJob` IDs; the exact claiming delivery was not
-  established. This needs a staging configuration follow-up; no rollback or
-  staging assets were changed during this documentation pass.
+- The production twenty-minute Cron is the authoritative reconciler. The
+  staging Cron was disabled in Cloudflare and removed from the staging Wrangler
+  configuration after cutover; its Worker, Queue consumer, bindings, and secrets
+  remain available during observation. The production Cron schedule and Queue
+  binding are unchanged. A controlled stranded PENDING job was recovered by the
+  production Cron at 22:20 UTC after staging Cron removal: extraction and BGE
+  embedding each succeeded once, one 384-dimensional vector persisted, and the
+  staging Queue's ingested count stayed unchanged.
 - Observe for 1–3 days before reconsidering staging or rollback cleanup:
   1. Queue backlog and transport retries.
   2. PENDING age, RUNNING lease expiry, and AiJob attempt counts.
@@ -768,7 +769,7 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   5. Cloudflare embedding failures and 384-dimensional vector persistence errors.
   6. Owner-scoped pgvector retrieval failures.
   7. Weekly and Monthly job failures.
-  8. Staging versus production Queue reconciliation routing until isolated.
+  8. Confirm staging has no scheduled trigger while production reconciliation runs.
 - Keep shadow mode, the Node worker fallback, local ONNX and local embedding
   profile/vectors, and PostgreSQL claim/lease/heartbeat/idempotency support
   throughout observation. Rollback remains available.
@@ -826,10 +827,8 @@ ANN, backfill, multilingual data, and held-out data remain unused.
 
 ### NEXT
 
-- Resolve staging Cron participation in production reconciliation under a
-  separate configuration change, then complete the 1–3 day observation
-  checklist above. A sufficient-evidence Weekly report provider smoke remains
-  to be verified.
+- Complete the 1–3 day observation checklist above. A sufficient-evidence
+  Weekly report provider smoke remains to be verified.
 
 ### LATER
 
