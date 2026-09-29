@@ -135,6 +135,7 @@ Hierarchical memory target:
 | --- | --- | --- |
 | `Event` | Private user-authored source | `ownerId` is a required User FK |
 | `EventMemory` | Structured derived memory | owner-scoped; unique `sourceEventId` |
+| `EventMemoryEmbedding` | Profile-keyed pgvector generation | owner-preserving EventMemory cascade |
 | `WeeklyReport` | Weekly recap and trend container | owner + unique period |
 | `MonthlyReport` | Monthly patterns and turning points | owner + unique year/month |
 | `YearlyReport` | Future yearly growth/journey container | owner + unique year |
@@ -148,6 +149,12 @@ Hierarchical memory target:
 `emotionModelId`, `emotionModelStatus`, `emotionProbabilities`). It also stores
 an inline `vector(384)` with embedding status, profile, model, and
 input-revision metadata.
+
+`EventMemoryEmbedding` is the expanded, profile-keyed `vector(384)` store. It
+records one row per EventMemory/profile/input revision, including model
+revision, status, and generation time. The existing inline local vector
+and metadata remain during rollout so older application versions can continue
+to read/write them and rollback does not discard the local corpus.
 
 Composite foreign keys enforce that EventMemory, AiEvidence, report evidence,
 and Event-linked AiJob rows have the same owner as their parent records.
@@ -253,6 +260,7 @@ foundation work.
 | MemoryExtractor | SCAFFOLD ONLY | `DeterministicMemoryExtractor` | Replaceable contract, not LLM extraction |
 | EmbeddingProvider | IMPLEMENTED | local Transformers.js provider + durable embedding worker | BGE small English v1.5, summary-v1, 384d |
 | pgvector | IMPLEMENTED | `vector(384)` migration + PostgreSQL integration tests | Exact cosine Top-K; ANN intentionally deferred |
+| Multi-profile embedding storage | PREPARED, NOT CUT OVER | `EventMemoryEmbedding` expand/copy migration + isolated PostgreSQL rehearsal | Local remains active; Cloudflare is a candidate only |
 | MemoryRepository | IMPLEMENTED FOR SEMANTIC RETRIEVAL | `PrismaMemoryRepository`, `PrismaEventEmbeddingRepository` | Owner-scoped storage, invalidation, exact semantic retrieval |
 | Weekly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | No LLM narrative or scheduler |
 | Monthly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | No LLM narrative or scheduler |
@@ -620,6 +628,34 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   PostgreSQL suite passed 16/16, including concurrent claim, lease recovery,
   long-running claim protection, and consent cancellation. No Render worker,
   production database operation, model change, or live report-provider call was made.
+
+### Multi-profile embedding storage preparation — 2026-09-28
+
+- Added profile-keyed `EventMemoryEmbedding` rows with 384-dimensional pgvector,
+  model/input revisions, status, and a composite owner-preserving cascade to
+  EventMemory. The expand migration copies complete, current local generations
+  without removing the legacy inline vectors or metadata.
+- The active production profile remains local
+  `production-bge-small-en-v1.5-v1`. The registered
+  `migration-cloudflare-bge-small-en-v1.5-mean-v1` profile is a candidate only;
+  no production Cloudflare embedding provider or backfill is enabled.
+- New local generation writes the legacy slot and profile row atomically. Local
+  retrieval continues to use the legacy slot, so old instances can still write
+  it after expansion and rollback remains immediate. Candidate generation and
+  retrieval use only its own profile row. Query and document profile identities
+  are checked; mixed embedding spaces are forbidden.
+- A summary change invalidates both local and profile rows. Retrieval requires
+  current input revision, owner, eligible Event, English locale, active consent,
+  and matching profile/model revision before exact cosine ranking. Candidate
+  backfill must be complete and verified before any later cutover. Old instances
+  may write legacy-only rows while running or leave older profile rows behind;
+  the input-revision predicate excludes stale rows, and a future backfill must
+  account for those writes before cutover.
+- Isolated PostgreSQL 16 + pgvector rehearsal applied all 21 migrations,
+  verified migration copy, dual-profile coexistence, owner/consent isolation,
+  interrupted resume, idempotent upsert, failure and invalid-vector handling,
+  deletion cascade, candidate cutover, and local rollback. No production
+  migration, deployment, provider switch, or production re-embedding occurred.
 
 ## 13. Decisions / ADR-style Log
 

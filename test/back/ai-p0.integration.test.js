@@ -36,7 +36,8 @@ const migrationNames = [
   "202609040003_enable_pgvector",
   "202609140001_ai_foundation",
   "202609170001_event_memory_embeddings",
-  "202609170002_grounded_report_narratives"
+  "202609170002_grounded_report_narratives",
+  "202609280001_multi_profile_event_memory_embeddings"
 ];
 
 async function migratedDatabase() {
