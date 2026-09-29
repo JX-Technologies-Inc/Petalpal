@@ -597,6 +597,30 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   suite was unavailable because `REAL_POSTGRES_DATABASE_URL` was unset. No
   schema migration, deployment, live LLM call, model, or prompt change occurred.
 
+### Managed worker preflight — 2026-09-28
+
+- An isolated PostgreSQL worker process stayed alive with an empty queue, resumed
+  processing after idle time, and exited cleanly on SIGTERM. Idle polling had
+  accumulated abort listeners and relied on an unreferenced timer; the loop now
+  retains its timer and removes each listener after the poll interval.
+- The default job lease is 60 seconds. A real PostgreSQL probe showed that a
+  healthy handler exceeding a one-second test lease could be reclaimed by a
+  second worker. Active jobs now renew their existing lease until the handler
+  finishes. A two-connection PostgreSQL test confirmed no competing claim after
+  the original lease elapsed; consent cancellation remains terminal.
+- Under a 512 MiB Docker limit, the production-compatible amd64 image was
+  OOM-killed while loading the selected BGE embedding model. Under a strict
+  1 GiB limit, an isolated synthetic chain completed three EventMemory jobs
+  and three real BGE embeddings, stored three 384-dimensional vectors, retrieved
+  only the intended owner's memories, and completed mocked Weekly and Monthly
+  report jobs. The worker returned to stable idle polling without an OOM; peak
+  observed RSS across the constrained runs was about 694 MiB. A 2 GiB run also
+  passed the representative memory and embedding chain.
+- Focused lifecycle/report/retrieval tests passed 47/47, and the isolated real
+  PostgreSQL suite passed 16/16, including concurrent claim, lease recovery,
+  long-running claim protection, and consent cancellation. No Render worker,
+  production database operation, model change, or live report-provider call was made.
+
 ## 13. Decisions / ADR-style Log
 
 ### 2026-09-14 — Journal removed from long-term AI workflows

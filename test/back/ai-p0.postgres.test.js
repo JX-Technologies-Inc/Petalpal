@@ -14,7 +14,7 @@ import {
   createEventAndEnqueueMemoryJob,
   enqueueEventMemoryEmbeddingBackfill
 } from "../../lib/ai-jobs.js";
-import { createProductionAiWorker } from "../../lib/ai-worker.js";
+import { AiJobWorker, createProductionAiWorker } from "../../lib/ai-worker.js";
 import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import { PrismaMemoryRepository } from "../../lib/event-memory.js";
 import { GroundedReportPersistenceService, ReportInputService, WeeklyReportService } from "../../lib/report-foundation.js";
@@ -608,6 +608,45 @@ realTest("25 independent Prisma connections claim a single lease without duplica
   } finally {
     await Promise.all(clients.map((client) => client.$disconnect()));
     await withPrisma((prisma) => prisma.user.delete({ where: { id: ownerId } }));
+  }
+});
+
+realTest("a healthy long-running worker renews its lease before another worker can reclaim", async () => {
+  const ownerId = `pg-heartbeat-${Date.now()}`;
+  const first = prismaClient();
+  const second = prismaClient();
+  let release;
+  const barrier = new Promise((resolve) => { release = resolve; });
+  try {
+    await seedUser(first, ownerId);
+    const event = await first.event.create({ data: {
+      ownerId, content: "synthetic heartbeat", occurredAt: new Date(), timezone: "UTC",
+      localDate: "2026-09-28", idempotencyKey: ownerId, memoryProcessingAllowed: true
+    } });
+    const job = await first.aiJob.create({ data: {
+      ownerId, jobType: AI_JOB_TYPES.MEMORY_EXTRACTION, resourceId: event.id,
+      eventId: event.id, idempotencyKey: `memory:${event.id}:v1`
+    } });
+    let entered;
+    const started = new Promise((resolve) => { entered = resolve; });
+    const worker = new AiJobWorker({
+      repository: new PrismaAiJobRepository(first), workerId: `heartbeat-${ownerId}`,
+      leaseMs: 1_000, handlers: { [AI_JOB_TYPES.MEMORY_EXTRACTION]: async () => { entered(); await barrier; } }
+    });
+    const pending = worker.runOnce();
+    await started;
+    await new Promise((resolve) => setTimeout(resolve, 1_250));
+    const competing = await new PrismaAiJobRepository(second).claimNext({ workerId: `competitor-${ownerId}`, leaseMs: 1_000 });
+    assert.equal(competing, null);
+    release();
+    assert.equal((await pending).succeeded, true);
+    const stored = await first.aiJob.findUnique({ where: { id: job.id } });
+    assert.equal(stored.status, "SUCCEEDED");
+    assert.equal(stored.attemptCount, 1);
+  } finally {
+    release?.();
+    await first.user.deleteMany({ where: { id: ownerId } });
+    await Promise.all([first.$disconnect(), second.$disconnect()]);
   }
 });
 
