@@ -58,6 +58,11 @@ test("reconciliation is bounded and disabled for ordinary manual traffic", async
   assert.equal(args[2], ownerId);
   assert.equal(args[3].getTime(), new Date(shadow.AI_ASYNC_SHADOW_STARTED_AT).getTime());
   assert.equal(args[4], 5);
+  assert.deepEqual(await listDispatchableAiJobs(prisma, {
+    env: { ...shadow, AI_ASYNC_EXECUTION_MODE: "cloudflare_queue" }
+  }), [{ jobId }]);
+  assert.equal(args[2], null);
+  assert.equal(args[3], null);
 });
 
 test("duplicate and terminal deliveries never invoke the targeted worker", async () => {
