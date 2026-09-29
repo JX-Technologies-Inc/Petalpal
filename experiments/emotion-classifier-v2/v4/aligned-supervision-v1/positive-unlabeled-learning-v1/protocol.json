@@ -1,0 +1,90 @@
+{
+  "experiment": "positive-unlabeled-learning-v1",
+  "status": "LOCKED_BEFORE_TRAINING",
+  "hypothesis": "Confirmed positives plus non-negative PU risk can learn Product-18 without treating any unconfirmed cell as a hard negative.",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "data": {
+    "sources": [
+      "three-state-partial-supervision-v1",
+      "three-state-partial-supervision-v2",
+      "three-state-partial-supervision-v3"
+    ],
+    "positiveTiers": ["HIGH_POSITIVE", "MEDIUM_POSITIVE"],
+    "expectedEvents": 324,
+    "expectedPositiveCells": 329,
+    "expectedUnlabeledCells": 5503,
+    "minimumPositiveCellsPerLabel": 17,
+    "unconfirmedCellTreatment": "UNLABELED mixture only; never target 0 or neutral gold",
+    "labelStatus": "MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD",
+    "referenceOrEvalRowsAllowed": false
+  },
+  "objective": {
+    "name": "per-label non-negative positive-unlabeled logistic risk (nnPU)",
+    "formula": "pi * mean_P(softplus(-z)) + max(0, mean_U(softplus(z)) - pi * mean_P(softplus(z)))",
+    "scope": "one target Product-18 label per stratified batch; no loss on other logits",
+    "classPrior": {
+      "valuePerLabel": 0.05555555555555555,
+      "method": "uniform 1/18 from the frozen training-side generator design: each source cohort has exactly one intended positive assignment per Event on average and balanced intended assignments across 18 labels",
+      "estimatedFromRTNOrCOSO": false,
+      "swept": false
+    },
+    "negativeRiskPolicy": "clamp at zero",
+    "customAuxiliaryLoss": false
+  },
+  "training": {
+    "initialCheckpoint": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "trainableParameters": "classifier and encoder layers 10-11 only",
+    "optimizer": "AdamW",
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "epochs": 1,
+    "epochDefinition": "one shuffled pass through every unlabeled cell for every label",
+    "batchSizeCells": 32,
+    "positiveCellsPerBatch": 8,
+    "unlabeledCellsPerBatch": 24,
+    "positiveSampling": "seeded with-replacement sampling from the target label's confirmed positives",
+    "seed": 54,
+    "maxLength": 512,
+    "gradientClipNorm": 1.0,
+    "scheduler": "linear with 10% warmup",
+    "runs": 1,
+    "hyperparameterSweep": false
+  },
+  "inference": {
+    "threshold": 0.35,
+    "maxOutputs": 2,
+    "evaluator": "existing canonical Product-18 selector and frozen identical COSO/RTN comparison logic"
+  },
+  "successCriteria": {
+    "rtnResolvedMicroF1Minimum": 0.3313265306,
+    "rtnResolvedMacroF1Minimum": 0.3184,
+    "rtnResolvedExactSetMinimumPercent": 50.4098,
+    "rtnResolvedPrecisionMinimum": 0.3342,
+    "rtnResolvedRecallMinimum": 0.2857,
+    "rtnResolvedFalsePositiveMaximum": 64,
+    "rtnResolvedFalseNegativeMaximum": 85,
+    "rtnResolvedDistributionErrorMaximum": 54,
+    "rtnHighMicroF1Minimum": 0.3678,
+    "rtnHighExactSetMinimumPercent": 55.6604,
+    "minimumSupportedLabelsImprovingBy002": 2,
+    "maximumSupportedLabelRtnRegression": 0.10,
+    "cosoMicroF1Minimum": 0.5230528,
+    "cosoMacroF1Minimum": 0.3401786,
+    "cosoExactSetMaximumDrop": 0.01,
+    "cosoFalsePositiveMaximum": 60,
+    "cosoFalseNegativeMaximum": 87,
+    "maximumSupportedLabelCosoRegression": 0.05,
+    "allChecksRequired": true
+  },
+  "hardBoundaries": {
+    "RTNOrCOSOAvailableBeforeFrozenCheckpoint": false,
+    "incumbentModifiedInPlace": false,
+    "humanReview": false,
+    "newExternalData": false,
+    "rescueRun": false
+  }
+}

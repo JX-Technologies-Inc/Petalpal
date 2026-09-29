@@ -1,0 +1,75 @@
+{
+  "protocolId": "synthetic-semantic-v2-20260918",
+  "status": "LOCKED_BEFORE_V2_GENERATION",
+  "researchOnly": true,
+  "objective": "Test whether contrast-aware, product-fit generation can add semantically faithful supervision for eight V1-omitted or severely low-support Product-18 labels, repair the unstable love boundary, and create genuine two-label Events.",
+  "evidenceBasis": "V1 generator-fidelity audit only. RTN and per-row COSO evidence are excluded.",
+  "generationPlan": {
+    "singleLabelTargets": {
+      "amusement": 12,
+      "annoyance": 12,
+      "caring": 12,
+      "confusion": 12,
+      "disappointment": 12,
+      "gratitude": 12,
+      "joy": 12,
+      "love": 12,
+      "surprise": 12
+    },
+    "twoLabelTargets": {
+      "surprise+joy": 6,
+      "caring+fear": 6,
+      "disappointment+sadness": 6,
+      "gratitude+love": 6,
+      "annoyance+confusion": 6
+    },
+    "emptyContrasts": "2 for each of the nine single-label targets",
+    "totalRows": 156,
+    "whyThisSize": "Twelve independent single-label trials per weak label permit an 8/12 exact-hit gate without broad regeneration; six trials per pair yield 30 multi-label rows, enough to test the unchanged minimum-15 resolved two-label requirement; 18 empty contrasts test boundary restraint."
+  },
+  "semanticConstraints": {
+    "amusement": "A concrete funny, playful, or entertaining trigger; not generic positive outcome, contentment, or future anticipation.",
+    "annoyance": "Mild irritation from a limited bothersome event; no serious boundary violation, hostility, danger, or large consequence that would imply anger or fear.",
+    "caring": "Active concern or support for another's wellbeing; not mere closeness/love and not appreciation for help received.",
+    "confusion": "Conflicting, missing, or unclear information blocks understanding or action; not an active desire to explore or learn.",
+    "disappointment": "A specific prior expectation or hoped-for result is unmet; not generic loss or sadness without expectation.",
+    "gratitude": "Another person's intentional help directly benefits the author; not admiration, caring toward the helper, or generic affection.",
+    "joy": "A favorable outcome has already happened and produces clear present positive response; not future optimism or high-energy anticipation.",
+    "love": "Distinctive ongoing attachment or closeness; not merely receiving help, politeness, family-role mention, or sadness from separation.",
+    "surprise": "The event or outcome is notably unexpected; positive/negative arousal must not dominate unless the row is an intended pair.",
+    "twoLabel": "Both labels have independent evidence in one coherent event; neither is a synonym and no unrelated clauses are concatenated.",
+    "emptyContrast": "Surface vocabulary resembles the paired label family, but the event remains routine and supplies no reasonable Product-18 emotional evidence."
+  },
+  "textPolicy": {
+    "language": "English",
+    "characters": "20-300",
+    "domain": "natural user-authored personal-life Event",
+    "forbidden": [
+      "emotion-label words used as answer hints",
+      "this made me feel X templates",
+      "long explanatory tails",
+      "synthetic transition boilerplate",
+      "repeated sentence skeletons",
+      "restricted-source paraphrases",
+      "RTN/COSO text or error use"
+    ]
+  },
+  "blindValidation": {
+    "agent-a": "gpt-6-astra / medium",
+    "agent-b": "gpt-5.6-sol / medium",
+    "agent-c": "gpt-5.6-luna / medium",
+    "visibility": "Only rowId, Event text, Product-18 definitions, and 0-2 output policy. Intended target, V1 audit, generator, other outputs, incumbent, RTN, and COSO are hidden.",
+    "consensus": "HIGH=3/3 exact set; MEDIUM=2/3 exact set; UNRESOLVED=no exact 2/3; no fourth adjudicator or human review."
+  },
+  "generatorQualityGate": {
+    "mechanical": "156 unique valid Events; exact/normalized/TF-IDF near duplicates 0; transition/repeated-clause/repeated-five-word-suffix types 0; product-fit failures 0.",
+    "agreement": "HIGH>=60, RESOLVED>=130, UNRESOLVED<=26; every pairwise exact-set agreement rate>=0.45.",
+    "singleLabelFidelity": "For each of nine labels: 12 intended, RESOLVED>=10, exact target hit>=8, target included>=9, empty consensus<=2.",
+    "coverage": "All nine targets have consensus support>=8; no target has zero or severe support below 5; no label exceeds 25% of all resolved label assignments.",
+    "multiLabelFidelity": "Across 30 intended pair rows: RESOLVED>=24, exact pair hit>=18, both targets included>=21, resolved two-label outputs>=18; every pair has at least 3 exact hits.",
+    "emptyContrast": "Across 18 intended-empty rows: RESOLVED>=15 and exact empty>=12.",
+    "failure": "DO_NOT_TRAIN. Do not lower a gate, add emergency examples, rerun validators, change target counts, or add a fourth model."
+  },
+  "trainingBoundary": "No training protocol is selected until and unless every generator-quality gate passes. RTN and per-row COSO remain unopened throughout generation and validation.",
+  "hashOrManifestAdded": false
+}

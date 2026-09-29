@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://petalpal.local/schemas/target-first-selective-data-v1.json",
+  "title": "PetalPal target-first selective data records",
+  "description": "Append-only TARGET, TARGET_INVALIDATION, GENERATION_ATTEMPT, and QA_RESULT records. Operational validation must enforce that TARGET exists first and is immutable.",
+  "oneOf": [
+    { "$ref": "#/$defs/targetRecord" },
+    { "$ref": "#/$defs/targetInvalidationRecord" },
+    { "$ref": "#/$defs/generationAttemptRecord" },
+    { "$ref": "#/$defs/qaResultRecord" }
+  ],
+  "$defs": {
+    "productLabel": {
+      "enum": [
+        "admiration",
+        "amusement",
+        "anger",
+        "annoyance",
+        "caring",
+        "confusion",
+        "curiosity",
+        "disappointment",
+        "disgust",
+        "excitement",
+        "fear",
+        "gratitude",
+        "joy",
+        "love",
+        "optimism",
+        "remorse",
+        "sadness",
+        "surprise"
+      ]
+    },
+    "split": {
+      "enum": ["TRAIN", "DEV", "FINAL_TEST"]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "supervision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected", "plausibleNotSelected", "notApplicable"],
+      "properties": {
+        "selected": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productLabel" }
+        },
+        "plausibleNotSelected": {
+          "type": "array",
+          "minItems": 0,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productLabel" }
+        },
+        "notApplicable": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 18,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productLabel" }
+        }
+      },
+      "$comment": "Semantic validation additionally requires three disjoint arrays whose union is Product-18. Two selected labels must occupy distinct selector clusters. selected=[] requires plausibleNotSelected=[] and all 18 labels in notApplicable."
+    },
+    "boundaryPair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selectedLabel", "plausibleLabel", "priority", "whySecondary"],
+      "properties": {
+        "selectedLabel": { "$ref": "#/$defs/productLabel" },
+        "plausibleLabel": { "$ref": "#/$defs/productLabel" },
+        "priority": { "enum": ["P0", "OTHER"] },
+        "whySecondary": { "type": "string", "minLength": 1 }
+      }
+    },
+    "p0Pair": {
+      "enum": [
+        "sadness|caring",
+        "caring|love",
+        "joy|optimism",
+        "joy|excitement",
+        "caring|gratitude",
+        "joy|love",
+        "fear|annoyance"
+      ]
+    },
+    "p0Coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pair", "mode"],
+      "properties": {
+        "pair": { "$ref": "#/$defs/p0Pair" },
+        "mode": {
+          "enum": [
+            "FIRST_SELECTED_SECOND_PLAUSIBLE",
+            "SECOND_SELECTED_FIRST_PLAUSIBLE",
+            "BOTH_SELECTED",
+            "NEITHER_SELECTED_CONTROL"
+          ]
+        }
+      },
+      "$comment": "BOTH_SELECTED is valid only for sadness|caring and joy|love, the cross-cluster P0 pairs, and only when both emotions are independently central."
+    },
+    "labelReason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "reason"],
+      "properties": {
+        "label": { "$ref": "#/$defs/productLabel" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "targetRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recordType",
+        "protocolVersion",
+        "targetId",
+        "targetHash",
+        "createdAt",
+        "split",
+        "scenarioFamilyId",
+        "targetKind",
+        "coverageTags",
+        "scenarioPlan",
+        "supervision",
+        "boundaryPairs",
+        "p0Coverage",
+        "selectedReasons",
+        "plausibleReasons",
+        "twoSelectedNonRedundancy",
+        "abstentionJustification",
+        "primaryGardenMood",
+        "annotationProvenance",
+        "attemptBudget",
+        "legacyRowContentUsed"
+      ],
+      "properties": {
+        "recordType": { "const": "TARGET" },
+        "protocolVersion": { "const": "target-first-selective-data-v1" },
+        "targetId": { "type": "string", "pattern": "^TFV1-(TRAIN|DEV|FINAL_TEST)-[0-9]{5}$" },
+        "targetHash": { "$ref": "#/$defs/sha256" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "split": { "$ref": "#/$defs/split" },
+        "scenarioFamilyId": { "type": "string", "pattern": "^TFV1-FAM-[A-Z0-9-]+$" },
+        "targetKind": {
+          "enum": ["ABSTENTION", "SINGLE_SELECTED", "TWO_SELECTED", "SELECTIVE_BOUNDARY"]
+        },
+        "coverageTags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "P0_DIRECTIONAL",
+              "P0_BOTH_SELECTED",
+              "P0_NEITHER_CONTROL",
+              "RARE_LABEL",
+              "ORDINARY_DAILY",
+              "MIXED_VALENCE",
+              "SUBTLE",
+              "CLEAR_SINGLE",
+              "GENERAL_TWO_SELECTED",
+              "GENERAL_BOUNDARY"
+            ]
+          }
+        },
+        "scenarioPlan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["authorRoleOrRelationship", "precipitatingEvent", "stakes", "authorResponse", "outcome", "surfaceVariationBan"],
+          "properties": {
+            "authorRoleOrRelationship": { "type": "string", "minLength": 1 },
+            "precipitatingEvent": { "type": "string", "minLength": 1 },
+            "stakes": { "type": "string", "minLength": 1 },
+            "authorResponse": { "type": "string", "minLength": 1 },
+            "outcome": { "type": "string", "minLength": 1 },
+            "surfaceVariationBan": { "type": "string", "minLength": 1 }
+          },
+          "description": "Abstract causal skeleton fixed before Event prose; it must not copy or paraphrase source text."
+        },
+        "supervision": { "$ref": "#/$defs/supervision" },
+        "boundaryPairs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/boundaryPair" }
+        },
+        "p0Coverage": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/p0Coverage" }
+        },
+        "selectedReasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/labelReason" }
+        },
+        "plausibleReasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/labelReason" }
+        },
+        "twoSelectedNonRedundancy": { "type": ["string", "null"] },
+        "abstentionJustification": { "type": ["string", "null"] },
+        "primaryGardenMood": { "type": "null" },
+        "annotationProvenance": { "const": "SYNTHETIC_WEAK_SUPERVISION" },
+        "attemptBudget": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "legacyRowContentUsed": { "const": false }
+      },
+      "$comment": "boundaryPairs must equal selected x plausibleNotSelected. selectedReasons and plausibleReasons must cover their respective arrays exactly. Hash is computed over the canonical target excluding targetHash."
+    },
+    "targetInvalidationRecord": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["recordType", "targetId", "stage", "reasonCode", "conflictsWith", "note", "source"],
+          "properties": {
+            "recordType": { "const": "TARGET_INVALIDATION" },
+            "targetId": { "type": "string", "pattern": "^TFV1-(TRAIN|DEV|FINAL_TEST)-[0-9]{5}$" },
+            "stage": { "const": "PRE_GENERATION" },
+            "reasonCode": { "const": "SCENARIO_SKELETON_OVERLAP" },
+            "conflictsWith": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^TFV1-(TRAIN|DEV|FINAL_TEST)-[0-9]{5}$" } },
+            "note": { "type": "string", "minLength": 1 }, "source": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["recordType", "targetId", "targetHash", "stage", "reasonCode", "evidenceArtifact", "replacementTargetId", "note", "source"],
+          "properties": {
+            "recordType": { "const": "TARGET_INVALIDATION" },
+            "targetId": { "type": "string", "pattern": "^TFV1-(TRAIN|DEV|FINAL_TEST)-[0-9]{5}$" },
+            "targetHash": { "$ref": "#/$defs/sha256" },
+            "stage": { "const": "POST_GENERATION_TERMINAL" },
+            "reasonCode": { "const": "TARGET_CONSTRAINT_CONFLICT" },
+            "evidenceArtifact": { "const": "dev-exhausted-target-feasibility.json" },
+            "replacementTargetId": { "type": "string", "pattern": "^TFV1-(TRAIN|DEV|FINAL_TEST)-[0-9]{5}$" },
+            "note": { "type": "string", "minLength": 1 }, "source": { "type": "string", "minLength": 1 }
+          }
+        }
+      ],
+      "$comment": "PRE_GENERATION remains attempt-free. POST_GENERATION_TERMINAL is append-only, evidence-gated, preserves history, permanently blocks admission, and reserves exactly one replacement ID."
+    },
+    "generationAttemptRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recordType",
+        "protocolVersion",
+        "targetId",
+        "targetHash",
+        "attemptId",
+        "generatedAt",
+        "generator",
+        "generatorVersion",
+        "promptVersion",
+        "eventText",
+        "unicodeCharacterCount",
+        "sourceDeclaration",
+        "mechanicalChecks"
+      ],
+      "properties": {
+        "recordType": { "const": "GENERATION_ATTEMPT" },
+        "protocolVersion": { "const": "target-first-selective-data-v1" },
+        "targetId": { "type": "string" },
+        "targetHash": { "$ref": "#/$defs/sha256" },
+        "attemptId": { "type": "string", "pattern": "^TFV1-ATT-[0-9]{7}$" },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "generator": { "type": "string", "minLength": 1 },
+        "generatorVersion": { "type": "string", "minLength": 1 },
+        "promptVersion": { "type": "string", "minLength": 1 },
+        "eventText": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "unicodeCharacterCount": { "type": "integer", "minimum": 1, "maximum": 300 },
+        "sourceDeclaration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["createdFromScratch", "legacyRowContentUsed", "rightsPendingTextUsed", "protectedContentUsed", "incumbentOrErrorDataUsed", "modelVotesUsed"],
+          "properties": {
+            "createdFromScratch": { "const": true },
+            "legacyRowContentUsed": { "const": false },
+            "rightsPendingTextUsed": { "const": false },
+            "protectedContentUsed": { "const": false },
+            "incumbentOrErrorDataUsed": { "const": false },
+            "modelVotesUsed": { "const": false }
+          }
+        },
+        "mechanicalChecks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema", "english", "length", "labelLeakage", "exactDuplicate", "normalizedDuplicate", "nearDuplicateCandidate", "delexicalizedTemplate", "scenarioSplitIsolation"],
+          "properties": {
+            "schema": { "enum": ["PASS", "FAIL"] },
+            "english": { "enum": ["PASS", "FAIL", "REVIEW"] },
+            "length": { "enum": ["PASS", "FAIL"] },
+            "labelLeakage": { "enum": ["PASS", "FAIL", "REVIEW"] },
+            "exactDuplicate": { "enum": ["CLEAR", "MATCH"] },
+            "normalizedDuplicate": { "enum": ["CLEAR", "MATCH"] },
+            "nearDuplicateCandidate": { "enum": ["CLEAR", "REVIEW"] },
+            "delexicalizedTemplate": { "enum": ["CLEAR", "REVIEW"] },
+            "scenarioSplitIsolation": { "enum": ["PASS", "FAIL"] }
+          }
+        }
+      }
+    },
+    "qaResultRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recordType",
+        "protocolVersion",
+        "targetId",
+        "targetHash",
+        "attemptId",
+        "reviewedAt",
+        "qaRole",
+        "decision",
+        "flags",
+        "selectedSupported",
+        "plausibleSupportedAndSecondary",
+        "notApplicableUnsupported",
+        "selectionNaturalAndNonRedundant",
+        "eventNaturalAndWithinLength",
+        "mayEditTarget",
+        "mayEditEvent"
+      ],
+      "properties": {
+        "recordType": { "const": "QA_RESULT" },
+        "protocolVersion": { "const": "target-first-selective-data-v1" },
+        "targetId": { "type": "string" },
+        "targetHash": { "$ref": "#/$defs/sha256" },
+        "attemptId": { "type": "string" },
+        "reviewedAt": { "type": "string", "format": "date-time" },
+        "qaRole": { "const": "INDEPENDENT_TARGET_VISIBLE_VERIFIER" },
+        "decision": { "enum": ["PASS", "REJECT", "FLAG"] },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "SELECTED_UNSUPPORTED",
+              "SELECTED_NOT_CENTRAL",
+              "PLAUSIBLE_UNSUPPORTED",
+              "PLAUSIBLE_NOT_SECONDARY",
+              "NOT_APPLICABLE_SUPPORTED",
+              "TWO_SELECTED_REDUNDANT",
+              "SELECTOR_INCOMPATIBLE",
+              "ABSTENTION_FALSE_NEGATIVE",
+              "NON_ENGLISH",
+              "LENGTH",
+              "UNNATURAL",
+              "NOT_PERSONAL_EVENT",
+              "LABEL_WORD_LEAKAGE",
+              "TEMPLATED",
+              "DUPLICATE_OR_FAMILY_LEAKAGE",
+              "RIGHTS_OR_PROVENANCE",
+              "UNRESOLVED_SEMANTIC_AMBIGUITY",
+              "OTHER"
+            ]
+          }
+        },
+        "selectedSupported": { "enum": ["YES", "NO", "UNCERTAIN"] },
+        "plausibleSupportedAndSecondary": { "enum": ["YES", "NO", "NOT_APPLICABLE", "UNCERTAIN"] },
+        "notApplicableUnsupported": { "enum": ["YES", "NO", "UNCERTAIN"] },
+        "selectionNaturalAndNonRedundant": { "enum": ["YES", "NO", "UNCERTAIN"] },
+        "eventNaturalAndWithinLength": { "enum": ["YES", "NO", "UNCERTAIN"] },
+        "mayEditTarget": { "const": false },
+        "mayEditEvent": { "const": false }
+      },
+      "$comment": "PASS requires every applicable check YES and no flags. Clear target/Event mismatch is REJECT. Unresolved semantic or provenance questions are FLAG. QA never relabels or rewrites."
+    }
+  }
+}

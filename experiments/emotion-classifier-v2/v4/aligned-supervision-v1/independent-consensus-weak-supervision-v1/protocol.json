@@ -1,0 +1,91 @@
+{
+  "protocolId": "independent-consensus-weak-supervision-v1-20260917",
+  "status": "LOCKED_BEFORE_POOL_SELECTION_OR_AGENT_LABELING",
+  "researchOnly": true,
+  "classifierProblem": "The frozen research incumbent shows label-specific imbalance on short Events: excessive abstention and broad under-production coexist with over-production of a common positive label. Historical loss reweighting and correlated-teacher distillation did not correct this without regression.",
+  "hypothesis": "Independent semantic Product-18 supervision from three genuinely different language-model agents on rights-admitted short Event text can add missing label semantics without inheriting the incumbent's class priors. Training once on resolved consensus rows, with non-empty and empty outputs balanced, should improve broad short-Event Product-18 behavior without destroying historical COSO behavior.",
+  "generalizationRationale": "The intervention targets missing semantic supervision across the whole fixed taxonomy on two separately collected short-Event sources. Pool selection and labeling do not use RTN-300, incumbent predictions, COSO errors, desired per-label counts, or label-specific thresholds.",
+  "sourcePool": {
+    "hippocorpus": {
+      "path": "../admitted-unlabeled-v1/hippocorpus/prepared/train.jsonl",
+      "admission": "ADMIT_UNLABELED",
+      "role": "PRIMARY_FIRST_PERSON_EVENT",
+      "rows": 450,
+      "selection": "one row from each of 450 source groups after fixed-seed group shuffle; no labels or model outputs used"
+    },
+    "unexpectedEvents": {
+      "path": "../admitted-unlabeled-v1/unexpected-events/prepared/train.jsonl",
+      "admission": "ADMIT_UNLABELED",
+      "role": "AUXILIARY_HYPOTHETICAL_EVENT",
+      "rows": 450,
+      "selection": "one row from each of 450 participant groups after fixed-seed group shuffle; no native labels or model outputs used"
+    },
+    "validationExclusion": "prepared validation groups are excluded and remain unopened until a candidate exists",
+    "referenceExclusion": "Roadtrip Nation RTN-300 is reference-only and is not used for selection, labeling, training, calibration, or checkpoint selection"
+  },
+  "blindAgents": {
+    "agent-a": "gpt-6-astra / medium",
+    "agent-b": "gpt-5.6-sol / medium",
+    "agent-c": "gpt-5.6-luna / medium",
+    "independence": "Each agent receives only rowId, Event text, the fixed Product-18 definitions, and the 0-2 output contract. It may not read incumbent predictions, COSO/RTN labels, other agent outputs, consensus, source identity, or desired label counts. Each output is frozen before deterministic consensus.",
+    "labelStatus": "MODEL_GENERATED_WEAK_PSEUDO_NOT_HUMAN_GOLD"
+  },
+  "consensusPolicy": {
+    "high": "all three exact label sets match",
+    "medium": "exactly two exact label sets match",
+    "unresolved": "no exact two-of-three set agreement; exclude from training",
+    "uncertainty": "diagnostic only and never overrides exact-set disagreement",
+    "noAdjudicator": true
+  },
+  "feasibilityGate": {
+    "resolvedRowsAtLeast": 500,
+    "resolvedRowsPerSourceAtLeast": 200,
+    "resolvedNonEmptyRowsAtLeast": 150,
+    "distinctConsensusLabelsAtLeast": 12,
+    "labelsWithAtLeast10PositivesAtLeast": 6,
+    "failure": "DO_NOT_TRAIN; do not relax the gate, change consensus, or add an adjudicator"
+  },
+  "trainingRowsIfFeasible": {
+    "positiveRows": "all resolved non-empty rows",
+    "emptyRows": "deterministically sample at most one resolved empty row per resolved non-empty row, source-proportion matched as closely as possible",
+    "unresolvedRows": "excluded",
+    "labels": "resolved exact-set consensus; all absent Product-18 labels are negatives",
+    "labelStatus": "MODEL_GENERATED_WEAK_PSEUDO_NOT_HUMAN_GOLD"
+  },
+  "candidateTrainingIfFeasible": {
+    "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "updates": "Product-18 classifier head plus top two encoder layers only",
+    "epochs": 1,
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "batchSize": 16,
+    "seed": 46,
+    "maxLength": 512,
+    "loss": "standard unweighted Product-18 BCEWithLogitsLoss",
+    "checkpointSelection": "single final checkpoint; no interim COSO or RTN evaluation and no sweep"
+  },
+  "evaluation": {
+    "selector": "unchanged Product-18 global threshold 0.35, probability-descending fixed-order tie-break, maximum two labels",
+    "historicalCOSO149": "candidate and incumbent under the same canonical evaluator",
+    "frozenRTN300": "one broad candidate-vs-incumbent comparison on frozen HIGH_CONSENSUS and RESOLVED subsets after candidate is final",
+    "sourceNative": "none; model consensus is weak Product-18 supervision, not native or human gold",
+    "untouchedUnlabeledValidation": "behavior/stability only, never correctness"
+  },
+  "successCriteria": {
+    "RTNResolved": "micro-F1 improves by at least 0.015 absolute over 0.3163265306; exact-set does not regress; precision does not regress by more than 0.02; recall does not regress; FP <= 64; FN <= 85; summed absolute 0/1/2 count error versus consensus does not exceed incumbent 54",
+    "RTNHigh": "micro-F1 and exact-set do not regress from 0.3678160920 and 0.5566037736 respectively",
+    "COSO149": "micro-F1 >= 0.5180528053; macro-F1 >= 0.3351786297; FP <= 60; FN <= 87; no label with support >=5 loses more than 0.08 F1",
+    "outputIntegrity": "no output outside 0-2 labels and no taxonomy/evaluator/threshold change",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT, or INCONCLUSIVE if evaluation cannot establish direction"
+  },
+  "promotionStatus": "NO_PRODUCTION_PROMOTION regardless of outcome; RTN is model-consensus reference and the incumbent lineage is rights-unresolved",
+  "forbidden": [
+    "train on RTN-300",
+    "use RTN-300 for calibration, threshold, checkpoint, sample, or intervention selection",
+    "inspect other agents before own output is frozen",
+    "human review or adjudication",
+    "fourth-model adjudication",
+    "post-result rescue variant",
+    "hyperparameter, loss, selector, or threshold sweep"
+  ]
+}

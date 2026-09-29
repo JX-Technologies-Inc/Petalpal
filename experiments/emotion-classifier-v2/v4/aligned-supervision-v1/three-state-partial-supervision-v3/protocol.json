@@ -1,0 +1,75 @@
+{
+  "status": "LOCKED_BEFORE_GENERATION",
+  "date": "2026-09-18",
+  "hypothesis": "Broad, balanced, high-confidence explicit-negative supervision plus masked unknown cells improves Product-18 short-Event classification.",
+  "dataPolicy": "FULLY_ORIGINAL_MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "datasetDesign": {
+    "rows": 108,
+    "singlePositiveRows": 72,
+    "twoPositiveRows": 18,
+    "zeroPositiveRows": 18,
+    "intendedPositivePerLabel": 6,
+    "intendedNegativePerLabel": 18,
+    "negativeCellsPerEvent": 3,
+    "rationale": "Eighteen diverse intended-negative opportunities per label leave six combined-consensus misses and thirteen unanimous-consensus misses before a per-label gate fails. This is materially broader than V2 without brute-force scale."
+  },
+  "inclusionPolicy": "HIGH_PLUS_MEDIUM_EQUAL_WEIGHT",
+  "cellConsensus": {
+    "HIGH_POSITIVE": "3/3 POSITIVE",
+    "MEDIUM_POSITIVE": "2/3 POSITIVE and third is UNCLEAR",
+    "HIGH_NEGATIVE": "3/3 NEGATIVE",
+    "MEDIUM_NEGATIVE": "2/3 NEGATIVE and third is UNCLEAR",
+    "UNCERTAIN": "All remaining cases, including every direct POSITIVE versus NEGATIVE conflict"
+  },
+  "qualityGates": {
+    "exactRows": 108,
+    "maxCharacters": 300,
+    "productFitFailures": 0,
+    "exactDuplicates": 0,
+    "normalizedDuplicates": 0,
+    "nearDuplicatePairs": 0,
+    "maxRepeatedOpeningFourWordType": 2,
+    "minHighPositiveCellsTotal": 90,
+    "minHighNegativeCellsTotal": 130,
+    "minCombinedPositiveCellsPerLabel": 5,
+    "minCombinedNegativeCellsPerLabel": 12,
+    "minIntendedPositiveCombinedHitsGlobal": 100,
+    "minIntendedPositiveCombinedHitsPerLabel": 5,
+    "minIntendedNegativeCombinedHitsGlobal": 270,
+    "minIntendedNegativeCombinedHitsPerLabel": 12,
+    "minIntendedNegativeHighHitsGlobal": 140,
+    "minIntendedNegativeHighHitsPerLabel": 5,
+    "maxDirectPolarityConflictCells": 24,
+    "minTwoPositiveRowsWithBothCombinedPositive": 16,
+    "maxZeroPositiveRowsWithAnyCombinedPositive": 3
+  },
+  "validatorProtocol": {
+    "models": ["gpt-6-astra", "gpt-5.6-sol", "gpt-5.6-luna"],
+    "reasoning": "medium",
+    "isolatedPayloads": true,
+    "fourthAdjudicator": false,
+    "repeatedModelVotes": false,
+    "humanReview": false
+  },
+  "trainingIfGatePasses": {
+    "initialCheckpoint": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "loss": "BCE over boolean-indexed supervised cells only; masked null cells never enter the loss expression",
+    "trainableLayers": "classifier plus encoder layers 10 and 11",
+    "learningRate": 0.000001,
+    "epochs": 1,
+    "seed": 52,
+    "batchSize": 16,
+    "weightDecay": 0.01,
+    "maxLength": 512,
+    "threshold": 0.35,
+    "maxLabels": 2,
+    "runs": 1
+  },
+  "evaluationBoundary": "Do not open RTN or COSO per-row evidence until data, consensus, mask, training protocol, and trained checkpoint are frozen.",
+  "hashManifestAdded": false
+}

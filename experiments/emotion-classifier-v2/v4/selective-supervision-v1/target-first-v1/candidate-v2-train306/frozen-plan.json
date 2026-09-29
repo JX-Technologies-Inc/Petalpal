@@ -1,0 +1,54 @@
+{
+  "status": "FROZEN_BEFORE_TRAINING",
+  "planId": "TARGET_FIRST_V1_CANDIDATE_V2_TRAIN306_001",
+  "hypothesis": "Increasing P0 causal diversity in accepted Train from 270 to 306 rows improves Train-to-Dev relational generalization.",
+  "controlPlan": "../candidate-v2/frozen-plan.json",
+  "exactChangeFromV2": "Accepted Train rows only: 270 -> 306. The base checkpoint, seed, optimization, loss, selector, threshold, Dev data, nine Dev gates, and final-checkpoint-only rule are unchanged.",
+  "trainArtifact": {
+    "path": "../accepted/train.jsonl",
+    "rows": 306,
+    "sha256": "da57b4ab7a6b8a7b672ee301d9b0d884e69e5512325a6d797623592ecd202b14"
+  },
+  "devArtifact": {
+    "path": "../accepted/dev.jsonl",
+    "rows": 315,
+    "sha256": "beef087a052bbebbd089561a2194fc7bc7ffc84b675a7a159a0c3abc818b2bbb"
+  },
+  "finalPolicy": "No Final Test file reads, inference, error inspection, tuning, or model-selection use.",
+  "baseCheckpoint": "../../../aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "seed": 56,
+  "training": {
+    "epochs": 1,
+    "batchSize": 16,
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "optimizer": "AdamW",
+    "scheduler": "none",
+    "maxGradientNorm": 1.0,
+    "maxTokenizerLength": 512,
+    "trainableParameters": "classifier and encoder layers 10-11 only",
+    "checkpointRule": "save and evaluate the final one-epoch checkpoint only",
+    "earlyStopping": false
+  },
+  "loss": {
+    "selected": "unweighted BCEWithLogits target 1",
+    "plausibleNotSelected": "masked out of BCE",
+    "notApplicable": "unweighted BCEWithLogits target 0",
+    "bceReduction": "mean over unmasked Product-18 cells within each row",
+    "ranking": "mean softplus(z_plausible - z_selected) over the within-row Cartesian product",
+    "lambdaRank": 0.16304347826086957,
+    "lambdaRankExact": "15/92",
+    "rowReduction": "L_bce + lambdaRank * L_rank, then unweighted batch mean"
+  },
+  "thresholdSelection": {
+    "protocol": "predeclared singleton; no threshold sweep",
+    "candidates": [0.35],
+    "selectedThreshold": 0.35,
+    "selector": "canonical clustered Product-18 selector",
+    "maxOutputLabels": 2,
+    "primaryGardenMood": null
+  },
+  "selectionMetric": "unchanged nine-gate Selective Dev contract",
+  "stoppingAndSelectionRule": "one epoch; final checkpoint only; KEEP_CANDIDATE only on all nine unchanged Dev gates, otherwise REJECT_CANDIDATE; no restart or rescue run",
+  "stopGoDataExpansionRule": "STOP_DATA_EXPANSION unless Dev P0 raw-ranking macro improves by at least 0.030 over V2, selected-above-plausible rate improves by at least 0.030 over V2, net bad-to-good P0 ordering flips are positive, and total Dev false positives rise by no more than four over V2."
+}

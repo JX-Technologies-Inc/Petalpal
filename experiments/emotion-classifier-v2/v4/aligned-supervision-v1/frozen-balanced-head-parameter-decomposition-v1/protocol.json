@@ -1,0 +1,75 @@
+{
+  "status": "LOCKED_BEFORE_FEATURE_MEAN_OR_REFERENCE_ANALYSIS",
+  "purpose": "Frozen Balanced Head parameter decomposition only; no training, tuning, candidate creation, checkpoint modification, or incumbent change.",
+  "checkpoints": {
+    "incumbent": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "balancedHead": "../decoupled-balanced-head-v1/candidate/checkpoint"
+  },
+  "featureMeanSources": {
+    "hippocorpus": "../admitted-unlabeled-v1/hippocorpus/prepared/train.jsonl",
+    "unexpectedEvents": "../admitted-unlabeled-v1/unexpected-events/prepared/train.jsonl"
+  },
+  "featureMean": {
+    "feature": "Incumbent eval-mode tanh(classifier.dense(CLS)); dropout disabled.",
+    "rows": "All rows in each admitted training partition.",
+    "sourceBalance": "mu = 0.5 * mean(Hippocorpus features) + 0.5 * mean(Unexpected Events features).",
+    "labelsUsed": false,
+    "maxLength": 512,
+    "batchSize": 32
+  },
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "canonicalLabelOrder": [
+    "admiration", "amusement", "anger", "annoyance", "approval", "caring",
+    "confusion", "curiosity", "disappointment", "disapproval", "disgust",
+    "excitement", "fear", "gratitude", "joy", "love", "neutral", "optimism",
+    "remorse", "sadness", "surprise"
+  ],
+  "decomposition": {
+    "alpha": "dot(w_B,w_I)/dot(w_I,w_I)",
+    "direction": "v = w_B - alpha*w_I, with dot(v,w_I)=0 up to floating-point error.",
+    "meanDelta": "m = dot(w_B-w_I,mu) + (b_B-b_I).",
+    "incumbent": "z_I(h) = dot(w_I,h)+b_I.",
+    "scaleOnly": "z_S(h) = z_I(h) + (alpha-1)*dot(w_I,h-mu) + m.",
+    "directionOnly": "z_D(h) = z_I(h) + dot(v,h-mu).",
+    "balanced": "z_B(h) = dot(w_B,h)+b_B = z_S(h)+z_D(h)-z_I(h).",
+    "interpretation": "Scale-only receives the complete training-mean logit shift, including bias and the mean carried by v. Direction-only is centered to have zero change at mu."
+  },
+  "selector": {
+    "threshold": 0.35,
+    "excluded": ["neutral", "approval", "disapproval"],
+    "maxOutputs": 2,
+    "ranking": "Descending score, then canonical input order for exact ties.",
+    "clusters": {
+      "UPBEAT": ["joy", "amusement", "excitement", "optimism"],
+      "WARM_SOCIAL": ["gratitude", "love", "caring", "admiration"],
+      "REFLECTIVE": ["sadness", "disappointment", "remorse"],
+      "THREAT_INTENSITY": ["anger", "annoyance", "fear", "disgust"],
+      "EXPLORATION": ["curiosity", "confusion", "surprise"]
+    },
+    "primaryMood": null
+  },
+  "referenceAnalysis": {
+    "references": [
+      "COSO historical model-labeled development diagnostic",
+      "RTN model-consensus short-Event research diagnostic resolved subset"
+    ],
+    "support": "At least 5 reference-positive and 5 reference-negative rows per Product-18 label; sparse labels remain displayed but are excluded from Macro-AP.",
+    "averagePrecision": "Mean precision at positive ranks after stable descending-logit order; original row order breaks exact score ties.",
+    "importantLabels": ["annoyance", "caring", "fear", "surprise", "gratitude", "joy", "optimism", "excitement"],
+    "bootstrap": {
+      "replicates": 2000,
+      "seed": 5712,
+      "unit": "sourceGroupId/sourceGroup when present, otherwise singleton row",
+      "interval": "Paired percentile 2.5% to 97.5% for condition-minus-incumbent Micro-F1, supported-label Macro-AP, TP, and FP."
+    }
+  },
+  "interpretationGate": {
+    "supported": "On both references, direction-only has positive Micro-F1 and supported-label Macro-AP point deltas, preserves at least 50% of full Balanced Micro-F1 and TP gains, cuts at least 50% of full Balanced FP inflation, and at least one of its Micro-F1 or Macro-AP paired intervals has lower bound above zero per reference.",
+    "notSupported": "On both references, scale-only preserves at least 80% of full Balanced Micro-F1 and TP gains while direction-only preserves less than 25% of either full gain and has non-positive supported-label Macro-AP delta.",
+    "otherwise": "INCONCLUSIVE, including reference disagreement or intervals too wide to satisfy the support rule."
+  }
+}

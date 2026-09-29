@@ -1,0 +1,69 @@
+{
+  "status": "FROZEN_BEFORE_TRAINING",
+  "planId": "TARGET_FIRST_V1_CANDIDATE_V2_001",
+  "hypothesis": "Candidate V1's ranking mechanism was correctly implemented but diluted because only 92 of 270 Train rows contain SELECTED-to-PLAUSIBLE pairs. Increasing only lambdaRank by the exact fixed dilution compensator should make the preference gradient comparable to BCE without adding absolute positive pressure to plausible labels, improving P0 ordering and reducing plausible false positives.",
+  "evidence": {
+    "pairBearingTrainRows": 92,
+    "totalTrainRows": 270,
+    "v1WeightedRankGradientNormOverBce": 0.28375678218767714,
+    "v1BceRankGradientCosine": 0.26658164270711265,
+    "v1NewFalsePositives": 5,
+    "v1ResolvedFalsePositives": 0,
+    "v1AllDevPairMarginDelta": -0.0021401255,
+    "plausibleBceMaskGradientVerifiedZero": true
+  },
+  "exactChangeFromV1": "lambdaRank only: 1/18 -> (270/92)*(1/18) = 15/92. No other code, data, model, optimization, inference, threshold, or selection change.",
+  "trainArtifact": {
+    "path": "../accepted/train.jsonl",
+    "rows": 270,
+    "sha256": "5dd96ae522c36f5ed907c3b41b1e0728db03aa3ecb37771c2918ef9751d444dd"
+  },
+  "devArtifact": {
+    "path": "../accepted/dev.jsonl",
+    "rows": 315,
+    "sha256": "beef087a052bbebbd089561a2194fc7bc7ffc84b675a7a159a0c3abc818b2bbb"
+  },
+  "finalPolicy": "No Final Test file reads, inference, error inspection, tuning, or model-selection use.",
+  "baseCheckpoint": "../../../aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "seed": 56,
+  "training": {
+    "epochs": 1,
+    "batchSize": 16,
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "optimizer": "AdamW",
+    "scheduler": "none",
+    "maxGradientNorm": 1.0,
+    "maxTokenizerLength": 512,
+    "trainableParameters": "classifier and encoder layers 10-11 only",
+    "checkpointRule": "save and evaluate the final one-epoch checkpoint only",
+    "earlyStopping": false
+  },
+  "loss": {
+    "selected": "unweighted BCEWithLogits target 1",
+    "plausibleNotSelected": "masked out of BCE",
+    "notApplicable": "unweighted BCEWithLogits target 0",
+    "bceReduction": "mean over unmasked Product-18 cells within each row",
+    "ranking": "mean softplus(z_plausible - z_selected) over the within-row Cartesian product",
+    "lambdaRank": 0.16304347826086957,
+    "lambdaRankExact": "15/92",
+    "rowReduction": "L_bce + lambdaRank * L_rank, then unweighted batch mean"
+  },
+  "thresholdSelection": {
+    "protocol": "predeclared singleton; no threshold sweep",
+    "candidates": [0.35],
+    "selectedThreshold": 0.35,
+    "selector": "canonical clustered Product-18 selector",
+    "maxOutputLabels": 2,
+    "primaryGardenMood": null
+  },
+  "selectionMetric": "unchanged nine-gate Selective Dev contract",
+  "stoppingAndSelectionRule": "one epoch; final checkpoint only; KEEP_CANDIDATE only on all nine unchanged Dev gates, otherwise REJECT_CANDIDATE; no restart or rescue run",
+  "expectedMeasurableP0Effect": {
+    "directionalSelectionMacro": "greater than V1 0.445437; unchanged gate requires at least incumbent 0.470238 + 0.080",
+    "rawRankingMacro": "greater than V1 0.535714; unchanged gate requires at least incumbent 0.552579 + 0.050",
+    "selectedAbovePlausibleRate": "greater than V1 0.553846",
+    "pairGuard": "at least five of seven pairs improve strictly vs incumbent and no pair regresses more than 0.050",
+    "falsePositiveGuard": "no more than incumbent 75 + 4"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "protocolId": "prior-corrected-decoupled-head-v1-20260917",
+  "status": "LOCKED_BEFORE_BIAS_CORRECTION_OR_INFERENCE",
+  "researchOnly": true,
+  "hypothesis": "The balanced-head candidate improved recall, macro-F1, and label-count alignment but inflated false positives because replacement sampling changed each binary label prior. Applying the exact unit-strength binary log-odds difference between original combined-train priors and the deterministic sampled priors to the learned head biases should restore calibration while preserving ranking and representation gains.",
+  "initialization": "../decoupled-balanced-head-v1/candidate/checkpoint",
+  "correction": {
+    "formula": "bias_delta[label] = logit(original combined-train positive rate) - logit(realized sampled positive rate)",
+    "originalData": "the same fixed 841 aligned + 204 targeted training rows",
+    "sampleReproduction": "the same inverse-frequency row weights, 1045 replacement draws, torch generator seed 44",
+    "strength": 1.0,
+    "updatedParameters": "Product-18 output biases only",
+    "evaluationInputs": "none"
+  },
+  "inference": "unchanged Product-18, global threshold 0.35, canonical max-two selector",
+  "successCriteria": {
+    "RTNResolved": "micro-F1 >=0.3313265306; macro-F1 >=0.3184047525; exact-set >=50.41%; FP<=64; FN<=85; summed absolute 0/1/2 count error<=54",
+    "RTNHigh": "micro-F1>=0.3678160920 and exact-set>=55.66%",
+    "COSO149": "micro-F1>=0.5180528053; macro-F1>=0.3351786297; FP<=60; FN<=87; no support>=5 label loses >0.08 F1",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT"
+  },
+  "rights": "HISTORICAL_UNRESOLVED_RESEARCH_LINEAGE_ONLY",
+  "forbidden": [
+    "COSO or RTN fitted calibration",
+    "correction-strength, threshold, prior, label, or seed sweep",
+    "per-label manual adjustment",
+    "post-result blend or rescue",
+    "human review"
+  ]
+}

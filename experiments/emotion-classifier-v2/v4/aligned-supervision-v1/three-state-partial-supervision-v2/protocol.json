@@ -1,0 +1,67 @@
+{
+  "status": "LOCKED_BEFORE_GENERATION",
+  "date": "2026-09-18",
+  "hypothesis": "Stronger contrastive explicit-negative supervision with masked unknown cells improves Product-18 short-Event classification.",
+  "dataPolicy": "FULLY_ORIGINAL_MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "datasetDesign": {
+    "rows": 90,
+    "singlePositiveRows": 54,
+    "twoPositiveRows": 18,
+    "zeroPositiveRows": 18,
+    "intendedPositivePerLabel": 5,
+    "intendedNegativePerLabel": 10,
+    "negativeCellsPerEvent": 2,
+    "rationale": "V1 established positive, pair, zero-positive, and masking feasibility. V2 keeps those structures while concentrating 180 strong contrastive negative trials in the smallest pool expected to exceed 72 HIGH_NEGATIVE cells with normal disagreement margin."
+  },
+  "cellConsensus": {
+    "HIGH_POSITIVE": "3/3 POSITIVE",
+    "MEDIUM_POSITIVE": "2/3 POSITIVE and third is UNCLEAR",
+    "HIGH_NEGATIVE": "3/3 NEGATIVE",
+    "MEDIUM_NEGATIVE": "2/3 NEGATIVE and third is UNCLEAR",
+    "UNCERTAIN": "All remaining cases, including every direct POSITIVE versus NEGATIVE conflict"
+  },
+  "qualityGates": {
+    "exactRows": 90,
+    "maxCharacters": 300,
+    "productFitFailures": 0,
+    "exactDuplicates": 0,
+    "normalizedDuplicates": 0,
+    "nearDuplicatePairs": 0,
+    "maxRepeatedOpeningFourWordType": 2,
+    "minHighPositiveCellsTotal": 72,
+    "minHighNegativeCellsTotal": 72,
+    "minCombinedPositiveCellsPerLabel": 4,
+    "minCombinedNegativeCellsPerLabel": 7,
+    "minIntendedPositiveCombinedHitsGlobal": 81,
+    "minIntendedPositiveCombinedHitsPerLabel": 4,
+    "minIntendedNegativeCombinedHitsGlobal": 135,
+    "minIntendedNegativeCombinedHitsPerLabel": 7,
+    "minIntendedNegativeHighHitsGlobal": 72,
+    "minIntendedNegativeHighHitsPerLabel": 3,
+    "maxDirectPolarityConflictCells": 24,
+    "minTwoPositiveRowsWithBothCombinedPositive": 14,
+    "maxZeroPositiveRowsWithAnyCombinedPositive": 4
+  },
+  "inclusionPolicyDecision": "Choose HIGH_ONLY only if it independently meets all per-label polarity, pair-retention, and zero-positive gates; otherwise choose HIGH_PLUS_MEDIUM_EQUAL_WEIGHT if the combined pool passes every frozen gate. Use training-pool agreement statistics only.",
+  "trainingIfGatePasses": {
+    "initialCheckpoint": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "loss": "BCE over boolean-indexed supervised cells only; masked null cells never enter the loss expression",
+    "trainableLayers": "classifier plus encoder layers 10 and 11",
+    "learningRate": 0.000001,
+    "epochs": 1,
+    "seed": 51,
+    "batchSize": 16,
+    "weightDecay": 0.01,
+    "maxLength": 512,
+    "threshold": 0.35,
+    "maxLabels": 2,
+    "runs": 1
+  },
+  "evaluationBoundary": "Do not open RTN or COSO per-row evidence until data, consensus, mask, training protocol, and trained checkpoint are frozen.",
+  "hashManifestAdded": false
+}

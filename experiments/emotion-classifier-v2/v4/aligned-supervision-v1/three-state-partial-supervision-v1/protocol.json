@@ -1,0 +1,78 @@
+{
+  "status": "LOCKED_BEFORE_GENERATION",
+  "date": "2026-09-18",
+  "hypothesis": "Explicit partial POSITIVE/NEGATIVE supervision with UNCLEAR cells masked from loss improves Product-18 short-Event classification.",
+  "dataPolicy": "FULLY_ORIGINAL_MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "datasetDesign": {
+    "rows": 126,
+    "singlePositiveRows": 90,
+    "twoPositiveRows": 18,
+    "zeroPositiveRows": 18,
+    "intendedPositivePerLabel": 7,
+    "intendedNegativePerLabel": 9,
+    "intendedUnclearDefinition": "Every Product-18 cell not explicitly designated POSITIVE or NEGATIVE in the hidden generation specification.",
+    "rationale": "Seven positive and nine explicit-negative trials per label are the smallest balanced pool judged sufficient to test broad cell-level coverage while retaining 18 coherent pair trials and 18 low-signal controls. Counts derive only from supervision coverage needs."
+  },
+  "cellConsensus": {
+    "HIGH_POSITIVE": "3/3 POSITIVE",
+    "MEDIUM_POSITIVE": "2/3 POSITIVE and third is UNCLEAR",
+    "HIGH_NEGATIVE": "3/3 NEGATIVE",
+    "MEDIUM_NEGATIVE": "2/3 NEGATIVE and third is UNCLEAR",
+    "UNCERTAIN": "All remaining cases, including every direct POSITIVE versus NEGATIVE conflict"
+  },
+  "validatorProtocol": {
+    "agents": [
+      {"model": "gpt-6-astra", "reasoning": "medium"},
+      {"model": "gpt-5.6-sol", "reasoning": "medium"},
+      {"model": "gpt-5.6-luna", "reasoning": "medium"}
+    ],
+    "blindFields": ["rowId", "text"],
+    "judgmentsPerRow": 18,
+    "allowedJudgments": ["POSITIVE", "NEGATIVE", "UNCLEAR"],
+    "fourthAdjudicator": false,
+    "humanAdjudication": false
+  },
+  "qualityGates": {
+    "exactRows": 126,
+    "maxCharacters": 300,
+    "productFitFailures": 0,
+    "exactDuplicates": 0,
+    "normalizedDuplicates": 0,
+    "nearDuplicatePairs": 0,
+    "maxRepeatedOpeningFourWordType": 2,
+    "minCombinedPositiveCellsPerLabel": 4,
+    "minCombinedNegativeCellsPerLabel": 5,
+    "minHighPositiveCellsTotal": 54,
+    "minHighNegativeCellsTotal": 72,
+    "maxDirectPolarityConflictRateAllCells": 0.015,
+    "minTwoPositiveRowsWithBothCombinedPositive": 14,
+    "maxZeroPositiveRowsWithAnyCombinedPositive": 4,
+    "minGlobalPositiveFidelity": 0.70,
+    "minGlobalNegativeFidelity": 0.70,
+    "minPerLabelPositiveFidelity": 0.5714285714,
+    "minPerLabelNegativeFidelity": 0.6666666667
+  },
+  "inclusionPolicyDecision": "After outputs are frozen, choose HIGH_ONLY if it independently meets every per-label polarity minimum and pair/zero-positive coverage gate; otherwise choose HIGH_PLUS_MEDIUM_EQUAL_WEIGHT if the combined pool meets every frozen gate. This decision uses training-pool agreement statistics only and is made before training.",
+  "trainingIfGatePasses": {
+    "initialCheckpoint": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "loss": "elementwise Product-18 BCEWithLogitsLoss multiplied by the frozen supervision mask, normalized by included cell weights; UNCERTAIN cells have weight zero",
+    "trainableLayers": "classifier plus encoder layers 10 and 11",
+    "learningRate": 0.000001,
+    "epochs": 1,
+    "seed": 50,
+    "batchSize": 16,
+    "weightDecay": 0.01,
+    "maxLength": 512,
+    "threshold": 0.35,
+    "maxLabels": 2,
+    "runs": 1
+  },
+  "evaluationBoundary": "Do not open RTN or COSO per-row evidence until data, consensus, mask, training protocol, and trained checkpoint are frozen.",
+  "decisionLabels": ["RETAIN_FOR_RESEARCH", "REJECT", "INCONCLUSIVE"],
+  "hashManifestAdded": false
+}

@@ -1,0 +1,29 @@
+{
+  "protocolId": "ranking-repair-rtn-evaluation-v1-20260917",
+  "status": "LOCKED_BEFORE_CANONICAL_INFERENCE",
+  "researchOnly": true,
+  "hypothesis": "The correctly mapped repaired selective-ranking checkpoint may preserve COSO behavior while improving short-Event ordering because its pairwise objective explicitly separates selected labels from absent labels. Its historical evaluation used a different direct-top2 research evaluator and it has never been measured on RTN-300.",
+  "candidate": "../coso-selective-ranking-v1/repair-v2/valid-run/checkpoint",
+  "candidateTrainingAlreadyComplete": true,
+  "candidateTrainingSummary": "841 aligned historical research rows; incumbent initialization; source-weighted BCE plus 0.25 pairwise ranking; one epoch; LR 2e-6; seed 44; corrected 28-to-18 mapping",
+  "evaluation": {
+    "COSO149": "unchanged canonical Product-18 evaluator, threshold 0.35, max two",
+    "RTN300": "frozen model-consensus reference; HIGH and RESOLVED; diagnostic only",
+    "incumbent": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "RTNUse": "evaluation only; no training, calibration, threshold, sample, or intervention selection"
+  },
+  "successCriteria": {
+    "RTNResolved": "micro-F1 >=0.3313265306; macro-F1 >=0.3184047525; exact-set >=50.41%; FP<=64; FN<=85; summed absolute 0/1/2 count error<=54",
+    "RTNHigh": "micro-F1>=0.3678160920 and exact-set>=55.66%",
+    "COSO149": "micro-F1>=0.5180528053; macro-F1>=0.3351786297; FP<=60; FN<=87; no support>=5 label loses >0.08 F1",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT"
+  },
+  "rights": "HISTORICAL_UNRESOLVED_RESEARCH_LINEAGE_ONLY",
+  "forbidden": [
+    "training or checkpoint modification",
+    "RTN-specific threshold, calibration, label rule, or sample selection",
+    "evaluator or Product-18 change",
+    "post-result blend or rescue",
+    "human review"
+  ]
+}

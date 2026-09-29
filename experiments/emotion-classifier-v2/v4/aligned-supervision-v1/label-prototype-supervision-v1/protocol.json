@@ -1,0 +1,93 @@
+{
+  "experiment": "label-prototype-supervision-v1",
+  "status": "LOCKED_BEFORE_DATA_FREEZE_AND_TRAINING",
+  "hypothesis": "Attracting validated positive Event representations toward fixed incumbent-derived label centroids can improve Product-18 geometry without fabricating negatives.",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "data": {
+    "sources": [
+      "positive-unlabeled-learning-v1/pu-train.jsonl: nonempty frozen positiveLabels only",
+      "synthetic-semantic-v2/weak-train.jsonl: nonempty frozen weakLabels only"
+    ],
+    "expectedEvents": 407,
+    "expectedLabelMemberships": 500,
+    "expectedSingleLabelEvents": 314,
+    "expectedMultiLabelEvents": 93,
+    "minimumPositiveSupportPerLabel": 18,
+    "labelStatus": "MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD",
+    "newSyntheticGeneration": false,
+    "newAgentValidation": false,
+    "referenceOrEvalRowsAllowed": false
+  },
+  "prototype": {
+    "formulation": "one fixed centroid per Product-18 label",
+    "representation": "L2-normalized final RoBERTa encoder CLS vector before the classification head",
+    "construction": "L2-normalize each frozen-incumbent positive Event representation, mean within each validated label membership, then L2-normalize the centroid",
+    "multiLabelPolicy": "a multi-label Event contributes independently to every validated label centroid and every corresponding attraction term",
+    "prototypeTrainability": "fixed after construction",
+    "attractionLoss": "mean over validated memberships of 1 - cosine(event_representation, fixed_label_centroid)",
+    "repulsionLoss": "none",
+    "negativePairs": "none"
+  },
+  "baseLossPolicy": {
+    "choice": "A: prototype auxiliary added to existing masked classification objective",
+    "classificationLoss": "positive-only masked BCE: mean softplus(-target_logit) over validated label memberships only",
+    "unconfirmedCells": "masked; never target 0 and never treated as negatives",
+    "prototypeWeight": 1.0,
+    "weightReason": "both positive BCE and cosine distance are unit-scale; equal weight gives geometry a material role without a sweep"
+  },
+  "training": {
+    "initialCheckpoint": "goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "trainableParameters": "RoBERTa encoder layers 10-11 only; classifier frozen",
+    "optimizer": "AdamW",
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "epochs": 2,
+    "batchSizeEvents": 16,
+    "seed": 55,
+    "maxLength": 512,
+    "gradientClipNorm": 1.0,
+    "scheduler": "linear with 10% warmup",
+    "runs": 1,
+    "hyperparameterSweep": false
+  },
+  "inference": {
+    "threshold": 0.35,
+    "maxOutputs": 2,
+    "evaluator": "existing canonical Product-18 selector and frozen identical COSO/RTN comparison logic"
+  },
+  "successCriteria": {
+    "rtnResolvedMicroF1Minimum": 0.3313265306,
+    "rtnResolvedMacroF1Minimum": 0.3184,
+    "rtnResolvedExactSetMinimumPercent": 50.4098,
+    "rtnResolvedPrecisionMinimum": 0.3342,
+    "rtnResolvedRecallMinimum": 0.2857,
+    "rtnResolvedFalsePositiveMaximum": 64,
+    "rtnResolvedFalseNegativeMaximum": 85,
+    "rtnResolvedDistributionErrorMaximum": 54,
+    "rtnHighMicroF1Minimum": 0.3678,
+    "rtnHighExactSetMinimumPercent": 55.6604,
+    "minimumSupportedLabelsImprovingBy002": 2,
+    "maximumSupportedLabelRtnRegression": 0.10,
+    "cosoMicroF1Minimum": 0.5230528,
+    "cosoMacroF1Minimum": 0.3401786,
+    "cosoExactSetMaximumDrop": 0.01,
+    "cosoFalsePositiveMaximum": 60,
+    "cosoFalseNegativeMaximum": 87,
+    "maximumSupportedLabelCosoRegression": 0.05,
+    "allChecksRequired": true,
+    "representationDiagnosticIsAuxiliaryOnly": true
+  },
+  "hardBoundaries": {
+    "RTNOrCOSOAvailableBeforeFrozenCheckpoint": false,
+    "incumbentModifiedInPlace": false,
+    "unresolvedRightsTextUsedForNewTraining": false,
+    "hardNegativesCreated": false,
+    "humanReview": false,
+    "newExternalData": false,
+    "rescueRun": false
+  }
+}

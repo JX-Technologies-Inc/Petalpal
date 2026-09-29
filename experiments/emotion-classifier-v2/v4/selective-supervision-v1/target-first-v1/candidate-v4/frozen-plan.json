@@ -1,0 +1,64 @@
+{
+  "status": "FROZEN_BEFORE_TRAINING",
+  "planId": "TARGET_FIRST_V1_CANDIDATE_V4_001",
+  "hypothesis": "Candidate V2's one-epoch relational objective may lack sufficient adaptable representation capacity in encoder layers 10-11. Unfreezing encoder layers 8-9 in addition to 10-11 should allow the same objective to reshape SELECTED-over-PLAUSIBLE features without changing optimization time, loss balance, threshold, or data.",
+  "protocolVerification": {
+    "status": "PASS",
+    "referencePlan": "../candidate-v2/frozen-plan.json",
+    "requiredOnlyMaterialChange": "trainable encoder layers 10-11 -> 8-11",
+    "checkpointSelection": "one-epoch final checkpoint only",
+    "thresholdSelection": "predeclared singleton 0.35; no sweep"
+  },
+  "exactChangeFromV2": "trainable encoder layers only: 10-11 -> 8-11",
+  "trainArtifact": {
+    "path": "../accepted/train.jsonl",
+    "rows": 270,
+    "sha256": "5dd96ae522c36f5ed907c3b41b1e0728db03aa3ecb37771c2918ef9751d444dd"
+  },
+  "devArtifact": {
+    "path": "../accepted/dev.jsonl",
+    "rows": 315,
+    "sha256": "beef087a052bbebbd089561a2194fc7bc7ffc84b675a7a159a0c3abc818b2bbb"
+  },
+  "finalPolicy": "No Final Test file reads, inference, error inspection, tuning, or model-selection use.",
+  "baseCheckpoint": "../../../aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "seed": 56,
+  "training": {
+    "epochs": 1,
+    "batchSize": 16,
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "optimizer": "AdamW",
+    "scheduler": "none",
+    "maxGradientNorm": 1.0,
+    "maxTokenizerLength": 512,
+    "trainableParameters": "classifier and encoder layers 8-11 only",
+    "checkpointRule": "save and evaluate the final one-epoch checkpoint only",
+    "earlyStopping": false
+  },
+  "loss": {
+    "selected": "unweighted BCEWithLogits target 1",
+    "plausibleNotSelected": "masked out of BCE",
+    "notApplicable": "unweighted BCEWithLogits target 0",
+    "bceReduction": "mean over unmasked Product-18 cells within each row",
+    "ranking": "mean softplus(z_plausible - z_selected) over the within-row Cartesian product",
+    "lambdaRank": 0.16304347826086957,
+    "lambdaRankExact": "15/92",
+    "rowReduction": "L_bce + lambdaRank * L_rank, then unweighted batch mean"
+  },
+  "thresholdSelection": {
+    "protocol": "predeclared singleton; no threshold sweep",
+    "candidates": [0.35],
+    "selectedThreshold": 0.35,
+    "selector": "canonical clustered Product-18 selector",
+    "maxOutputLabels": 2,
+    "primaryGardenMood": null
+  },
+  "selectionMetric": "unchanged nine-gate Selective Dev contract",
+  "stoppingAndSelectionRule": "one epoch; final checkpoint only; KEEP_CANDIDATE only on all nine unchanged Dev gates, otherwise REJECT_CANDIDATE; no restart or rescue run",
+  "expectedMeasurableEffect": {
+    "primary": "P0 raw-ranking Macro and selected-above-plausible rate exceed V2",
+    "secondary": "P0 directional Macro exceeds V2 without increasing FP above V2 or the unchanged incumbent allowance",
+    "failureCondition": "absolute logits rise broadly while relational margins remain flat or regress"
+  }
+}

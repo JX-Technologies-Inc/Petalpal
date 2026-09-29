@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://petalpal.local/schemas/selective-supervision-v1.json",
+  "title": "PetalPal Selective Supervision V1 row",
+  "$comment": "Event-only V1: primaryGardenMood is always null at evaluation and must never be inferred. Only qa=PASS with VERIFIED rights/provenance may be admitted; synthetic origin alone is not rights clearance. Preserve generator/source records and incumbent rights-pending lineage separately under the existing protocol.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rowId",
+    "eventText",
+    "eventTextOrigin",
+    "sourceReference",
+    "split",
+    "scenarioFamilyId",
+    "generationTargetId",
+    "supervision",
+    "boundaryPairs",
+    "annotationProvenance",
+    "annotationMethod",
+    "qa"
+  ],
+  "properties": {
+    "rowId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "eventText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "description": "For reused rows this must be byte-decoded-equivalent to the original Event field; never normalized or rewritten in storage."
+    },
+    "eventTextOrigin": {
+      "enum": ["REUSED_ORIGINAL", "NEW_SYNTHETIC"]
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["datasetName", "originalPath", "originalRowId", "originalEventField", "provenanceStatus", "priorExposure"],
+      "properties": {
+        "datasetName": {
+          "enum": ["synthetic_personal_events_1000", "selective_supervision_v1_new"]
+        },
+        "originalPath": {
+          "type": ["string", "null"]
+        },
+        "originalRowId": {
+          "type": ["string", "integer", "null"]
+        },
+        "originalEventField": {
+          "type": ["string", "null"]
+        },
+        "provenanceStatus": {
+          "enum": ["VERIFIED", "PARTIAL", "MISSING"]
+        },
+        "priorExposure": {
+          "enum": ["NONE_VERIFIED", "TRAIN_ONLY", "UNCLEAR", "NOT_APPLICABLE_NEW"]
+        }
+      }
+    },
+    "split": {
+      "enum": ["TRAIN", "DEV", "FINAL_TEST"]
+    },
+    "scenarioFamilyId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generationTargetId": {
+      "type": ["string", "null"],
+      "default": null
+    },
+    "supervision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected", "plausibleNotSelected", "notApplicable"],
+      "properties": {
+        "selected": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productLabel" }
+        },
+        "plausibleNotSelected": {
+          "type": "array",
+          "minItems": 0,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productLabel" }
+        },
+        "notApplicable": {
+          "type": "array",
+          "minItems": 0,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/productLabel" }
+        }
+      },
+      "$comment": "Dataset validation must additionally enforce disjoint arrays whose union is all 18 labels; selected labels must occupy distinct selector clusters; selected=[] requires plausibleNotSelected=[] and all 18 labels in notApplicable. Every plausible label must have author-specific textual support and be lower priority than every selected label. Unresolved applicability/order is FLAG, never an automatic negative; Primary redundancy cannot determine these states."
+    },
+    "boundaryPairs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["selectedLabel", "plausibleLabel", "priority"],
+        "properties": {
+          "selectedLabel": { "$ref": "#/$defs/productLabel" },
+          "plausibleLabel": { "$ref": "#/$defs/productLabel" },
+          "priority": { "enum": ["P0", "OTHER"] }
+        }
+      },
+      "$comment": "Must equal the Cartesian product selected x plausibleNotSelected, with each ordering semantically justified. P0 denotes exactly the 14 directed contrasts in generation-spec.md; all other pairs are OTHER."
+    },
+    "annotationProvenance": {
+      "const": "SYNTHETIC_WEAK_SUPERVISION"
+    },
+    "annotationMethod": {
+      "enum": [
+        "EXISTING_EVENT_FIXED_RUBRIC_WEAK_ANNOTATION",
+        "SEMANTIC_TARGET_THEN_GENERATE"
+      ]
+    },
+    "qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "flags", "mayEditSupervision"],
+      "properties": {
+        "decision": {
+          "enum": ["PASS", "REJECT", "FLAG"]
+        },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "NON_ENGLISH",
+              "LENGTH",
+              "NOT_PERSONAL_EVENT",
+              "LABEL_WORD_LEAKAGE",
+              "TEMPLATED",
+              "NAME_OR_PLACE_SWAP",
+              "EXACT_DUPLICATE",
+              "NORMALIZED_DUPLICATE",
+              "NEAR_DUPLICATE",
+              "SCENARIO_SPLIT_LEAKAGE",
+              "STATE_MISMATCH",
+              "UNNATURAL",
+              "RIGHTS_OR_PROVENANCE",
+              "OTHER"
+            ]
+          }
+        },
+        "mayEditSupervision": {
+          "const": false
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "eventTextOrigin": { "const": "REUSED_ORIGINAL" } },
+        "required": ["eventTextOrigin"]
+      },
+      "then": {
+        "properties": {
+          "generationTargetId": { "type": "null" },
+          "annotationMethod": { "const": "EXISTING_EVENT_FIXED_RUBRIC_WEAK_ANNOTATION" },
+          "sourceReference": {
+            "properties": { "datasetName": { "const": "synthetic_personal_events_1000" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "eventTextOrigin": { "const": "NEW_SYNTHETIC" } },
+        "required": ["eventTextOrigin"]
+      },
+      "then": {
+        "properties": {
+          "generationTargetId": { "type": "string", "minLength": 1 },
+          "annotationMethod": { "const": "SEMANTIC_TARGET_THEN_GENERATE" },
+          "sourceReference": {
+            "properties": {
+              "datasetName": { "const": "selective_supervision_v1_new" },
+              "priorExposure": { "const": "NOT_APPLICABLE_NEW" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "split": { "const": "FINAL_TEST" } },
+        "required": ["split"]
+      },
+      "then": {
+        "properties": { "eventTextOrigin": { "const": "NEW_SYNTHETIC" } }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "qa": {
+            "properties": { "decision": { "const": "PASS" } },
+            "required": ["decision"]
+          }
+        },
+        "required": ["qa"]
+      },
+      "then": {
+        "properties": {
+          "sourceReference": {
+            "properties": { "provenanceStatus": { "const": "VERIFIED" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "eventTextOrigin": { "const": "REUSED_ORIGINAL" },
+          "split": { "const": "DEV" }
+        },
+        "required": ["eventTextOrigin", "split"]
+      },
+      "then": {
+        "properties": {
+          "sourceReference": {
+            "properties": { "priorExposure": { "const": "NONE_VERIFIED" } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "productLabel": {
+      "enum": [
+        "admiration",
+        "amusement",
+        "anger",
+        "annoyance",
+        "caring",
+        "confusion",
+        "curiosity",
+        "disappointment",
+        "disgust",
+        "excitement",
+        "fear",
+        "gratitude",
+        "joy",
+        "love",
+        "optimism",
+        "remorse",
+        "sadness",
+        "surprise"
+      ]
+    }
+  }
+}

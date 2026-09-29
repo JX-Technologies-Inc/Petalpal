@@ -1,0 +1,69 @@
+{
+  "protocolId": "taxonomy-balanced-synthetic-v1-20260917",
+  "status": "LOCKED_BEFORE_GENERATION",
+  "researchOnly": true,
+  "classifierProblem": "Natural short-Event weak supervision remained severely label-skewed even after three-model consensus, providing almost no curiosity, annoyance, remorse, anger, or disgust supervision.",
+  "hypothesis": "A taxonomy-balanced set of original short Event exemplars generated from all fixed Product-18 definitions, then accepted only when two blind validators independently recover the exact target, can strengthen underrepresented label semantics without changing thresholds or fitting RTN rows.",
+  "generalizationRationale": "All 18 labels receive the same generation budget and fixed acceptance rule. No RTN text, prediction, mismatch, desired RTN count, COSO error, incumbent output, or external restricted text is used in generation or acceptance.",
+  "generation": {
+    "generator": "gpt-6-astra / medium",
+    "singleLabelTargetsPerLabel": 24,
+    "emptyTargets": 100,
+    "total": 532,
+    "requirements": "original first-person private Event, English, 30-260 characters, no copied or paraphrased source, 0-2 Product-18 contract; single-label target must be central without requiring a second label",
+    "status": "MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD"
+  },
+  "blindValidation": {
+    "validator-b": "gpt-5.6-sol / medium",
+    "validator-c": "gpt-5.6-luna / medium",
+    "visibility": "validators receive only rowId, text, Product-18 definitions, and the 0-2 output contract; target, generator identity, other validator, RTN, COSO, incumbent outputs, and desired counts are hidden",
+    "acceptance": "both validators must independently return the exact target label set; uncertainty does not override mismatch",
+    "noAdjudicator": true
+  },
+  "feasibilityGate": {
+    "acceptedPerLabelAtLeast": 12,
+    "acceptedEmptyAtLeast": 72,
+    "failure": "DO_NOT_TRAIN; do not regenerate, relax acceptance, add an adjudicator, or change quotas"
+  },
+  "trainingSetIfFeasible": {
+    "perLabel": "first 12 accepted rows by frozen rowId for each of 18 labels",
+    "empty": "first 72 accepted empty rows by frozen rowId",
+    "rows": 288,
+    "labelStatus": "MODEL_GENERATED_SYNTHETIC_WEAK_PSEUDO_NOT_HUMAN_GOLD"
+  },
+  "candidateTraining": {
+    "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "updates": "classifier head plus top two encoder layers only",
+    "epochs": 1,
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "batchSize": 16,
+    "seed": 47,
+    "maxLength": 512,
+    "loss": "standard unweighted Product-18 BCEWithLogitsLoss",
+    "checkpointSelection": "single final checkpoint; no sweep or interim COSO/RTN evaluation"
+  },
+  "evaluation": {
+    "selector": "unchanged threshold 0.35, fixed Product-18 order tie-break, maximum two",
+    "COSO149": "same canonical candidate-vs-incumbent evaluator",
+    "RTN300": "one frozen broad candidate-vs-incumbent comparison after candidate final",
+    "correlationWarning": "The synthetic generator/validators share model families with the RTN panel. RTN is therefore correlated research evidence, not independent validation or promotion evidence."
+  },
+  "successCriteria": {
+    "RTNResolved": "micro-F1 >= 0.3313265306; exact-set >=50.41%; precision >=0.3341666667; recall >=0.2857142857; FP<=64; FN<=85; summed absolute 0/1/2 count error<=54",
+    "RTNHigh": "micro-F1>=0.3678160920 and exact-set>=55.66%",
+    "COSO149": "micro-F1>=0.5180528053; macro-F1>=0.3351786297; FP<=60; FN<=87; no support>=5 label loses >0.08 F1",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT"
+  },
+  "promotionStatus": "NO_PRODUCTION_PROMOTION regardless of result",
+  "forbidden": [
+    "RTN training/calibration/sample/checkpoint/intervention selection",
+    "external source paraphrase",
+    "target leakage to validators",
+    "validator output sharing",
+    "human or fourth-model adjudication",
+    "regeneration after feasibility result",
+    "post-result rescue",
+    "loss, threshold, selector, seed, epoch, or LR sweep"
+  ]
+}

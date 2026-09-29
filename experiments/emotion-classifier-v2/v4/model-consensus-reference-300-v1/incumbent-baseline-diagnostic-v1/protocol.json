@@ -1,0 +1,51 @@
+{
+  "status": "LOCKED_BEFORE_INFERENCE",
+  "task": "Frozen incumbent short-Event baseline diagnostic against MODEL_CONSENSUS_REFERENCE_300",
+  "diagnosticOnly": true,
+  "training": false,
+  "incumbent": "../../aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "incumbentMutationAllowed": false,
+  "reference": "../frozen-reference-300.jsonl",
+  "consensus": "../consensus.jsonl",
+  "blindAgents": {
+    "agent-a": "../agent-a-labels.jsonl",
+    "agent-b": "../agent-b-labels.jsonl",
+    "agent-c": "../agent-c-labels.jsonl"
+  },
+  "referenceRole": "MODEL_GENERATED_WEAK_PSEUDO_REFERENCE_NOT_HUMAN_GOLD_PERMANENT_REFERENCE_ONLY",
+  "referenceRows": 300,
+  "referenceSourceGroups": 300,
+  "frozenReferenceSha256": "33a6d585ca2fd603ece335013a40752cc101e1b3f370c4da3befc71db889944d",
+  "consensusSha256": "ec74ea4c6e23895c7494e943689f20188a591fa504fc4bb33a29b71743cec8bf",
+  "selector": {
+    "implementation": "existing v4/auto-v1/experiment.py canonical report/select_variants path",
+    "taxonomy": "Product-18",
+    "threshold": 0.35,
+    "maximumOutputs": 2,
+    "primaryRedundancyFilter": "unavailable; no Primary mood exists for RTN rows"
+  },
+  "subsets": {
+    "HIGH_CONSENSUS": "3/3 exact agent label-set agreement only",
+    "RESOLVED": "HIGH_CONSENSUS plus 2/3 MEDIUM_CONSENSUS",
+    "UNRESOLVED": "behavior only; no gold-based precision, recall, or F1"
+  },
+  "forbidden": [
+    "training",
+    "fine-tuning",
+    "calibration",
+    "threshold tuning",
+    "checkpoint selection",
+    "loss tuning",
+    "selector tuning",
+    "taxonomy changes",
+    "incumbent modification",
+    "promotion decision",
+    "using RTN-300 rows or labels outside permanent reference diagnostics"
+  ],
+  "interpretationRule": "Agreement is agreement with model consensus, not product accuracy or human-gold correctness. COSO-149 remains a distinct historical human-labeled development diagnostic.",
+  "diagnosticClassification": {
+    "INFORMATIVE": "All frozen inputs validate; incumbent inference and all requested HIGH/RESOLVED/UNRESOLVED plus per-agent analyses complete; HIGH has at least 75 rows and RESOLVED at least 200 rows.",
+    "WEAKLY_INFORMATIVE": "Inference completes but one requested noncritical analysis is unavailable, HIGH has fewer than 75 rows, RESOLVED has fewer than 200 rows, or predictions collapse to a single output count/label pattern.",
+    "NOT_INFORMATIVE": "Frozen input validation or incumbent inference fails, or gold-based metrics are computed for UNRESOLVED rows."
+  }
+}

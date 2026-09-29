@@ -1,0 +1,89 @@
+{
+  "status": "LOCKED_BEFORE_REFERENCE_ANALYSIS",
+  "purpose": "Frozen-model mechanism diagnosis only; no training, tuning, calibration, candidate creation, or incumbent change.",
+  "models": {
+    "incumbent": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "pu_v1": "../positive-unlabeled-learning-v1/candidate/checkpoint",
+    "prototype_v1": "../label-prototype-supervision-v1/candidate/checkpoint",
+    "balanced_head": "../decoupled-balanced-head-v1/candidate/checkpoint"
+  },
+  "trainingSideSources": {
+    "hippocorpus": {
+      "train": "../admitted-unlabeled-v1/hippocorpus/prepared/train.jsonl",
+      "validation": "../admitted-unlabeled-v1/hippocorpus/prepared/validation.jsonl"
+    },
+    "unexpected_events": {
+      "train": "../admitted-unlabeled-v1/unexpected-events/prepared/train.jsonl",
+      "validation": "../admitted-unlabeled-v1/unexpected-events/prepared/validation.jsonl"
+    }
+  },
+  "fit": {
+    "samplePerTrainingSource": 1000,
+    "sampling": "Independent deterministic random sample without replacement from each admitted training partition; sources contribute equally.",
+    "seed": 5601,
+    "regression": "Per-label ordinary least squares: z_candidate = a * z_incumbent + b + epsilon.",
+    "scores": "Raw checkpoint logits for the canonical Product-18 columns.",
+    "validation": "All rows in each existing admitted validation partition, evaluated separately and never used for fitting."
+  },
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "canonicalLabelOrder": [
+    "admiration", "amusement", "anger", "annoyance", "approval", "caring",
+    "confusion", "curiosity", "disappointment", "disapproval", "disgust",
+    "excitement", "fear", "gratitude", "joy", "love", "neutral", "optimism",
+    "remorse", "sadness", "surprise"
+  ],
+  "selector": {
+    "threshold": 0.35,
+    "excluded": ["neutral", "approval", "disapproval"],
+    "maxOutputs": 2,
+    "ranking": "Descending score, then canonical input order for exact ties.",
+    "clusters": {
+      "UPBEAT": ["joy", "amusement", "excitement", "optimism"],
+      "WARM_SOCIAL": ["gratitude", "love", "caring", "admiration"],
+      "REFLECTIVE": ["sadness", "disappointment", "remorse"],
+      "THREAT_INTENSITY": ["anger", "annoyance", "fear", "disgust"],
+      "EXPLORATION": ["curiosity", "confusion", "surprise"]
+    },
+    "primaryMood": null
+  },
+  "explainedVariation": {
+    "perLabel": "1 - sum((delta-delta_hat)^2) / sum((delta-mean(delta))^2) on the named validation source.",
+    "aggregate": "1 - sum_label SSE_label / sum_label SST_label, with each label centered by its own validation-source delta mean.",
+    "delta": "z_candidate-z_incumbent",
+    "deltaHat": "(a-1)*z_incumbent+b"
+  },
+  "outputChangeReproduction": {
+    "event": "A row-label addition to or removal from the frozen selector output relative to incumbent.",
+    "precisionRecallF1": "Micro event counts comparing affine-predicted changes with actual candidate changes.",
+    "requiredForGate": "F1 >= 0.80 on each of the two validation sources."
+  },
+  "referenceAnalysis": {
+    "support": "At least 5 reference-positive and 5 reference-negative rows per label; sparse labels remain displayed but are excluded from stable macro AP.",
+    "minimumStableLabels": 8,
+    "averagePrecision": "Mean precision at positive ranks after stable descending-score order; original row order breaks exact score ties.",
+    "bootstrap": {
+      "replicates": 2000,
+      "seed": 5602,
+      "unit": "sourceGroupId when present, otherwise each row is a singleton group",
+      "interval": "Paired percentile 2.5% to 97.5% interval for candidate-minus-incumbent supported-label Macro-AP"
+    },
+    "scaleReset": "For each label, z_reset=(z_candidate-b)/a using only frozen training-side coefficients; if any a<=0.05, that candidate's inverse analysis is declared unsupported rather than patched or tuned.",
+    "selectorAttribution": "For each final-output membership change, assign the first differing Product-18 stage in order: threshold, cluster, max-2; Product-18 filtering and exact-tie effects are counted separately and are expected to be structurally zero unless observed."
+  },
+  "validationUncertainty": {
+    "replicates": 1000,
+    "seed": 5603,
+    "unit": "sourceGroupId",
+    "interval": "Percentile 2.5% to 97.5% for aggregate explained variation and output-change F1"
+  },
+  "mechanismGate": {
+    "supported": "For both PU V1 and Prototype V1: aggregate explained variation >=0.80 and output-change F1 >=0.80 on both admitted validation sources, and RTN and COSO Macro-AP delta interval upper bounds are each <0.02.",
+    "falsifiedA": "A candidate has aggregate explained variation <0.50 and output-change F1 <0.50 on both admitted validation sources.",
+    "falsifiedB": "A candidate has supported-label Macro-AP point improvement >=0.02 on both RTN and COSO with both paired interval lower bounds >0.",
+    "otherwise": "INCONCLUSIVE"
+  }
+}

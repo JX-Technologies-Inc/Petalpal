@@ -1,0 +1,56 @@
+{
+  "protocolId": "nli-label-entailment-v1-20260917",
+  "status": "LOCKED_BEFORE_PAIR_CONSTRUCTION_OR_TRAINING",
+  "researchOnly": true,
+  "classifierProblem": "The incumbent uses independent BCE cells, so every absent label is trained as a hard negative even when selective 0-2 annotation only establishes that a label was not selected. This can entrench common-label priors and suppress semantically plausible rare labels.",
+  "hypothesis": "Preserving a pretrained NLI sentence-pair head and training Event-to-label-definition pairs with selected labels as entailment and sampled absent labels as neutral can learn explicit Product-18 semantics without treating annotation absence as contradiction. This should broaden short-Event label behavior while keeping precision defensible.",
+  "differenceFromHistoricalNliDeberta": "The rejected historical experiment discarded the NLI head and attached a new 21-label head. This experiment preserves the original contradiction/entailment/neutral head and performs one pairwise semantic judgment per Product-18 label.",
+  "pretrainedModel": "cross-encoder/nli-deberta-v3-small",
+  "trainingData": {
+    "alignedRows": "../train.jsonl; 841 historical research rows",
+    "goemotionsTargetedRows": "../public-source-shortlist-20260910/goemotions-targeted-tranche.jsonl; 204 historical research rows",
+    "rights": "HISTORICAL_UNRESOLVED_RESEARCH_LINEAGE_ONLY; no new production or redistribution clearance claimed",
+    "sourceIsolation": "existing sourceGroup disjointness against COSO-149 must pass",
+    "RTNUse": "none"
+  },
+  "pairConstruction": {
+    "positive": "every selected Product-18 label becomes an entailment pair",
+    "absent": "exactly three deterministic absent Product-18 labels per row become neutral pairs",
+    "emptyRows": "three deterministic neutral pairs",
+    "contradictionTargets": "none added; label absence is not asserted to contradict the Event",
+    "hypotheses": "fixed canonical Product-18 definitions phrased as the writer's secondary emotion",
+    "selectionInputs": "training row ID and seed 48 only; no model output, COSO error, RTN result, or desired label count"
+  },
+  "training": {
+    "epochs": 1,
+    "learningRate": 0.000002,
+    "weightDecay": 0.01,
+    "batchSize": 16,
+    "seed": 48,
+    "maxLength": 256,
+    "loss": "unweighted three-class cross entropy using the preserved NLI head",
+    "updates": "all model parameters",
+    "checkpointSelection": "single final checkpoint; no interim COSO/RTN evaluation and no sweep"
+  },
+  "inference": {
+    "score": "softmax entailment probability for each of 18 fixed Event/hypothesis pairs",
+    "selector": "unchanged global threshold 0.35, probability-descending fixed-order tie-break, maximum two labels",
+    "taxonomy": "unchanged Product-18"
+  },
+  "successCriteria": {
+    "RTNResolved": "micro-F1 >=0.3313265306; macro-F1 >=0.3184047525; exact-set >=50.41%; FP<=64; FN<=85; summed absolute 0/1/2 count error<=54",
+    "RTNHigh": "micro-F1>=0.3678160920 and exact-set>=55.66%",
+    "COSO149": "micro-F1>=0.5180528053; macro-F1>=0.3351786297; FP<=60; FN<=87; no support>=5 label loses >0.08 F1",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT"
+  },
+  "promotionStatus": "NO_PRODUCTION_PROMOTION regardless of outcome",
+  "forbidden": [
+    "RTN training, calibration, sample, hypothesis, checkpoint, threshold, or intervention selection",
+    "per-label thresholds",
+    "hypothesis-template sweep",
+    "neutral-count sweep",
+    "learning-rate, seed, epoch, or loss sweep",
+    "post-result rescue",
+    "human review or adjudication"
+  ]
+}

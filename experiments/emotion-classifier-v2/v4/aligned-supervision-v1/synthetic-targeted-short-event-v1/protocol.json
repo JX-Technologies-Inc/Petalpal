@@ -1,0 +1,68 @@
+{
+  "protocolId": "synthetic-targeted-short-event-v1-20260918",
+  "status": "LOCKED_BEFORE_PRODUCT_AUDIT_OR_AGENT_LABELING",
+  "researchOnly": true,
+  "source": "synthetic_targeted_events_800_v1.csv candidate pool; never human gold",
+  "productAudit": {
+    "mode": "fully automatic programmatic audit and deterministic minimal repair; no sample-by-sample human review",
+    "repairPriority": "remove known transition/explanatory tails while preserving the core Event; add concrete personal relationship context only for role-led third-person reports; replace only if deterministic repair cannot produce a valid Event",
+    "automaticRemoval": "invalid 20-300 character Event shape, exact/normalized duplicate after repair, or TF-IDF char>=0.90 / word>=0.85 near-duplicate pair; lower rowId wins",
+    "forbidden": "emotion-label injection, target-label leakage, RTN/COSO/incumbent-guided repair, mechanical I-saw/I-heard wrappers"
+  },
+  "blindAgents": {
+    "agent-a": "gpt-6-astra / medium",
+    "agent-b": "gpt-5.6-sol / medium",
+    "agent-c": "gpt-5.6-luna / medium",
+    "independence": "Each receives only rowId, final Event text, fixed Product-18 definitions, and 0-2 output contract. Other agents, generator targets, source generator, incumbent, COSO, RTN, consensus, and desired counts are hidden. All three outputs freeze before deterministic consensus.",
+    "labelStatus": "MODEL_GENERATED_WEAK_PSEUDO_NOT_HUMAN_GOLD"
+  },
+  "consensusPolicy": {
+    "high": "all three exact label sets match",
+    "medium": "exactly two exact label sets match",
+    "unresolved": "no exact two-of-three label-set agreement; exclude",
+    "uncertainty": "diagnostic only and never overrides exact-set agreement",
+    "noFourthAdjudicator": true
+  },
+  "trainingDecision": {
+    "highOnlyGate": "HIGH rows>=300, HIGH non-empty>=200, >=10 represented labels, >=8 labels with support>=5, max label share<=0.35, empty rate<=0.50",
+    "resolvedGate": "HIGH+MEDIUM rows>=500, non-empty>=250, >=12 represented labels, >=10 labels with support>=5, max label share<=0.35, empty rate<=0.50, and >=15 two-label rows",
+    "selection": "Use HIGH only if its gate passes; otherwise use HIGH+MEDIUM if the resolved gate passes; otherwise DO_NOT_TRAIN. Never use UNRESOLVED.",
+    "emptyRows": "Within the selected consensus tier, keep all non-empty rows and the first rowIds needed to cap empty rows at 35% of the final training set; if already below cap, keep all empty rows.",
+    "mediumTreatment": "When the resolved gate is used, HIGH and MEDIUM rows receive identical standard BCE treatment; no invented gold weights. Consensus status remains recorded for analysis.",
+    "failure": "DO_NOT_TRAIN; do not relax gates, add an adjudicator, regenerate for label quotas, or inspect RTN rows"
+  },
+  "candidateTrainingIfFeasible": {
+    "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "updates": "Product-18 classifier head plus top two encoder layers only",
+    "epochs": 1,
+    "learningRate": 0.000001,
+    "weightDecay": 0.01,
+    "batchSize": 16,
+    "seed": 48,
+    "maxLength": 512,
+    "loss": "standard unweighted Product-18 BCEWithLogitsLoss",
+    "checkpointSelection": "single final checkpoint; no interim COSO or RTN evaluation and no sweep"
+  },
+  "evaluation": {
+    "selector": "unchanged Product-18 global threshold 0.35, probability-descending fixed-order tie-break, maximum two labels",
+    "COSO149": "same frozen canonical candidate-vs-incumbent evaluator",
+    "RTN300": "one frozen candidate-vs-incumbent comparison on HIGH_CONSENSUS and RESOLVED reference subsets after candidate is completely trained",
+    "RTNRole": "MODEL_GENERATED_WEAK_PSEUDO_REFERENCE_NOT_HUMAN_GOLD"
+  },
+  "successCriteria": {
+    "RTNResolved": "micro-F1>=0.3313265306; macro-F1>=0.3134; exact-set>=50.41%; precision>=0.3342; recall>=0.2857; FP<=64; FN<=85; summed absolute 0/1/2 count error<=54",
+    "RTNHigh": "micro-F1>=0.3678160920 and exact-set>=55.66%",
+    "COSO149": "micro-F1>=0.5230528053; macro-F1>=0.3401786297; exact-set no more than 1 point below incumbent; FP<=60; FN<=87; no support>=5 label loses >0.05 F1",
+    "broadImprovement": "all gates must pass and at least two RTN-resolved per-label F1 values with reference support>=5 improve by >=0.02 while none regress by >0.10",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT, or INCONCLUSIVE if the frozen evaluation cannot establish direction"
+  },
+  "forbidden": [
+    "RTN/COSO/incumbent use in product audit, sample selection, weak labels, class weights, quotas, loss, LR, epochs, threshold, or checkpoint selection",
+    "human review or adjudication",
+    "fourth-model adjudication",
+    "post-result rescue variant",
+    "hyperparameter, label quota, consensus threshold, loss, selector, or seed sweep",
+    "new hash/checksum/manifest/fingerprint infrastructure"
+  ],
+  "hashOrManifestAdded": false
+}
