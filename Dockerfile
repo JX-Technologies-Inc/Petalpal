@@ -11,9 +11,12 @@ COPY client/ ./
 RUN test -n "$VITE_FIREBASE_API_KEY" && npm run build
 
 
-FROM node:24-alpine
+FROM node:24-bookworm-slim
 
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends openssl \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
 
