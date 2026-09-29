@@ -669,7 +669,17 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   guards, writes only the candidate profile, and leaves local vectors intact.
 - Isolated PostgreSQL and one real Cloudflare inference call verified that a
   synthetic memory can hold both profiles without altering the legacy local
-  vector. Production candidate backfill and shadow retrieval remain pending.
+  vector. The deployed private Worker answered one synthetic embedding,
+  event-emotion, and report-narrative call successfully; Render deployed the
+  provider code with no pending schema migration.
+- Production preflight found one eligible memory, one current local vector,
+  and zero candidate rows. One bounded candidate call generated its vector.
+  Postflight found one complete 384-dimensional candidate vector, no failed or
+  unresolved candidate rows, no orphans or ineligible rows, and the original
+  local vector intact. Three shadow queries for the dedicated safe test account
+  returned the same sole Top-1 memory across profiles with no provider errors.
+  This one-memory corpus cannot measure ranking quality; the separate controlled
+  English benchmark remains the quality evidence.
 - The active profile remains `production-bge-small-en-v1.5-v1`.
   `migration-cloudflare-bge-small-en-v1.5-mean-v1` remains a candidate.
   Cutover has not happened; local ONNX remains available for rollback.
