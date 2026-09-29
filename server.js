@@ -45,6 +45,13 @@ import {
   weeklyPeriodForLocalDate
 } from "./lib/ai-periods.js";
 import { createProductionAiWorker } from "./lib/ai-worker.js";
+import {
+  aiJobDispatchAllowed,
+  aiJobServiceAuthorized,
+  dispatchAiJob,
+  executeAiJobById,
+  listDispatchableAiJobs
+} from "./lib/ai-async-dispatch.js";
 import { PrivateEventRepository } from "./lib/ai-events.js";
 import { PrismaMemoryRepository } from "./lib/event-memory.js";
 import { PrivateReportRepository } from "./lib/report-foundation.js";
@@ -108,6 +115,7 @@ const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
   reportNarrativeProvider: configuredCloudflareReportNarrativeProvider()
 });
 let weeklyReportWorkerFactory = createDefaultWeeklyReportWorker;
+let aiJobDispatcher = dispatchAiJob;
 
 function isDailyGrowLimitEnabled() {
   return process.env.DAILY_GROW_LIMIT_ENABLED !== "false";
@@ -127,6 +135,10 @@ export function setFirebaseUserDeleterForTests(deleter) {
 
 export function setWeeklyReportWorkerFactoryForTests(factory) {
   weeklyReportWorkerFactory = factory || createDefaultWeeklyReportWorker;
+}
+
+export function setAiJobDispatcherForTests(dispatcher) {
+  aiJobDispatcher = dispatcher || dispatchAiJob;
 }
 
 const io = new Server(server, {
@@ -250,6 +262,33 @@ app.use(cors({
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/internal/ai-jobs", (req, res, next) => {
+  if (!aiJobServiceAuthorized(req.get("Authorization"))) return res.status(401).json({ error: "Unauthorized" });
+  next();
+});
+app.get("/internal/ai-jobs/dispatchable", async (req, res) => {
+  if (Object.keys(req.query).length) return res.status(400).json({ error: "Invalid query" });
+  try {
+    return res.json({ jobs: await listDispatchableAiJobs(prisma) });
+  } catch {
+    return res.status(503).json({ error: "Dispatch reconciliation unavailable" });
+  }
+});
+app.post("/internal/ai-jobs/:id/execute", async (req, res) => {
+  if (Object.keys(req.body).length || Object.keys(req.query).length) {
+    return res.status(400).json({ error: "Invalid executor request" });
+  }
+  try {
+    const result = await executeAiJobById({
+      prisma,
+      jobId: req.params.id,
+      workerFactory: weeklyReportWorkerFactory
+    });
+    return res.json(result);
+  } catch {
+    return res.status(503).json({ error: "AI job execution unavailable" });
+  }
+});
 if (apiDocsEnabled()) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiDocument));
 }
@@ -1761,6 +1800,14 @@ app.post("/events", aiRateLimit, async (req, res) => {
           : { emotion: { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, flower: null })
       : { emotion: { status: result.event.emotionStatus || "SKIPPED", labels: result.event.secondaryEmotions || [] },
           flower: await prisma.flower.findUnique({ where: { sourceEventId: result.event.id } }).catch(() => null) };
+    if (result.job && aiJobDispatchAllowed(result.job)) {
+      try {
+        await aiJobDispatcher(result.job);
+      } catch {
+        // The canonical PENDING AiJob remains available to the bounded reconciler.
+        console.warn("AI job dispatch deferred", { jobId: result.job.id });
+      }
+    }
     return res.status(result.created ? 201 : 200).json({
       event: { ...result.event, primaryGardenMood: result.created ? primaryGardenMood : result.event.primaryGardenMood,
         secondaryEmotions: enrichment.emotion.labels, ...(result.created ? eventEmotionMetadata(enrichment.emotion) : {}) },
@@ -1892,6 +1939,31 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
         transaction: tx
       });
     });
+    if (aiJobDispatchAllowed(job)) {
+      let dispatched = false;
+      try {
+        dispatched = (await aiJobDispatcher(job)).dispatched;
+      } catch {
+        console.warn("AI job dispatch deferred", { jobId: job.id });
+      }
+      const [storedJob, report] = await Promise.all([
+        prisma.aiJob.findFirst({
+          where: { id: job.id, ownerId, jobType: AI_JOB_TYPES.WEEKLY_REPORT },
+          select: { id: true, status: true, attemptCount: true, completedAt: true }
+        }),
+        prisma.weeklyReport.findUnique({
+          where: { ownerId_periodKey: { ownerId, periodKey: period.periodKey } },
+          select: { id: true, periodKey: true, narrativeStatus: true, generationVersion: true }
+        })
+      ]);
+      return res.status(storedJob?.status === "SUCCEEDED" ? 200 : 202).json({
+        periodKey: period.periodKey,
+        job: storedJob,
+        report,
+        execution: storedJob?.status === "SUCCEEDED" ? "ALREADY_FINALIZED" :
+          dispatched ? "QUEUED" : "PENDING_DISPATCH"
+      });
+    }
     const execution = await weeklyReportWorkerFactory().runJob({
       jobId: job.id,
       ownerId,

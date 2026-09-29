@@ -12,6 +12,7 @@ import {
 import { REPORT_EVIDENCE_LIMITS } from "../../lib/report-foundation.js";
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+const AI_JOB_ID = /^[A-Za-z0-9_-]{8,191}$/;
 export const EMBEDDING_MODEL = "@cf/baai/bge-small-en-v1.5";
 const PRODUCT_EMOTIONS = SECONDARY_EMOTION_LABELS.filter((label) => !EXCLUDED_SECONDARY_EMOTIONS.includes(label));
 export const EVENT_EMOTION_PROMPT = `Find 0-2 additional emotions in the event. Primary mood is user-selected; do not repeat its meaning. Allowed: ${PRODUCT_EMOTIONS.join(",")}. JSON only.`;
@@ -42,6 +43,61 @@ function reportInferenceFailure(code, error) {
 function authorized(request, env) {
   const expected = env.RENDER_SHARED_SECRET;
   return Boolean(expected) && request.headers.get("Authorization") === `Bearer ${expected}`;
+}
+
+function authorizedJobDispatch(request, env) {
+  const expected = env.AI_JOB_DISPATCH_TOKEN;
+  return Boolean(expected) && request.headers.get("Authorization") === `Bearer ${expected}`;
+}
+
+function validJobEnvelope(value) {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value) &&
+    Object.keys(value).length === 1 && AI_JOB_ID.test(value.jobId || ""));
+}
+
+async function dispatchAiJob(request, env) {
+  if (!authorizedJobDispatch(request, env)) return json({ error: "Unauthorized" }, 401);
+  if (!env.AI_JOB_QUEUE) return json({ error: "Queue unavailable" }, 503);
+  const body = await request.json().catch(() => null);
+  if (!validJobEnvelope(body)) return json({ error: "Invalid job envelope" }, 400);
+  try {
+    await env.AI_JOB_QUEUE.send({ jobId: body.jobId });
+    return json({ queued: true }, 202);
+  } catch {
+    return json({ error: "Queue dispatch unavailable" }, 503);
+  }
+}
+
+function executorUrl(env, path) {
+  const base = env.AI_JOB_EXECUTOR_URL;
+  if (!base || !/^https:\/\//.test(base) || !env.AI_JOB_EXECUTOR_TOKEN) {
+    throw new Error("AI job executor is not configured");
+  }
+  return `${base.replace(/\/$/, "")}${path}`;
+}
+
+async function executeQueuedJob(message, env) {
+  if (!validJobEnvelope(message.body)) {
+    message.ack();
+    return;
+  }
+  try {
+    const response = await fetch(executorUrl(env, `/internal/ai-jobs/${message.body.jobId}/execute`), {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.AI_JOB_EXECUTOR_TOKEN}`, "Content-Type": "application/json" },
+      body: "{}",
+      signal: AbortSignal.timeout(240_000)
+    });
+    if (!response.ok) throw new Error(`Executor HTTP ${response.status}`);
+    const result = await response.json();
+    if (result?.nextJobId && AI_JOB_ID.test(result.nextJobId)) {
+      await env.AI_JOB_QUEUE.send({ jobId: result.nextJobId });
+    }
+    message.ack();
+  } catch {
+    // Postgres controls job attempts. Queue retries only transport failures.
+    message.retry({ delaySeconds: 60 });
+  }
 }
 
 function finiteNumber(value) {
@@ -295,6 +351,9 @@ async function generateEmbedding(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (request.method === "POST" && url.pathname === "/v1/ai-jobs/dispatch") {
+      return dispatchAiJob(request, env);
+    }
     if (request.method !== "POST" || !["/v1/emotion", "/v1/event-emotion", "/v1/report-narrative", "/v1/embedding"].includes(url.pathname)) {
       return json({ error: "Not found" }, 404);
     }
@@ -369,5 +428,21 @@ export default {
       confidence: output.confidence,
       model: MODEL
     });
+  },
+  async queue(batch, env) {
+    for (const message of batch.messages) await executeQueuedJob(message, env);
+  },
+  async scheduled(_event, env) {
+    const response = await fetch(executorUrl(env, "/internal/ai-jobs/dispatchable"), {
+      headers: { Authorization: `Bearer ${env.AI_JOB_EXECUTOR_TOKEN}` },
+      signal: AbortSignal.timeout(120_000)
+    });
+    if (!response.ok) throw new Error(`Dispatch reconciliation HTTP ${response.status}`);
+    const payload = await response.json();
+    if (!Array.isArray(payload?.jobs) || payload.jobs.length > 5 ||
+        payload.jobs.some((job) => !validJobEnvelope(job))) {
+      throw new Error("Invalid dispatch reconciliation response");
+    }
+    for (const job of payload.jobs) await env.AI_JOB_QUEUE.send({ jobId: job.jobId });
   }
 };

@@ -4,7 +4,7 @@ import test from "node:test";
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
 import { AI_JOB_TYPES } from "../../lib/ai-jobs.js";
-import { app, setWeeklyReportWorkerFactoryForTests } from "../../server.js";
+import { app, setAiJobDispatcherForTests, setWeeklyReportWorkerFactoryForTests } from "../../server.js";
 
 function fixture() {
   const events = [];
@@ -88,6 +88,9 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   };
   const finalizedReports = new Map();
   const workerCalls = [];
+  const dispatchedJobs = [];
+  const previousMode = process.env.AI_ASYNC_EXECUTION_MODE;
+  const previousShadowOwner = process.env.AI_ASYNC_SHADOW_OWNER_ID;
   prisma.user.findUnique = async ({ where }) => {
     if (where.firebaseUid) return { id: where.firebaseUid === "firebase-alice" ? "alice" : "bob" };
     return state.users[where.id] || null;
@@ -160,7 +163,12 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     prisma.weeklyReport.findUnique = originals.weeklyFindUnique;
     prisma.$transaction = originals.transaction;
     setWeeklyReportWorkerFactoryForTests();
+    setAiJobDispatcherForTests();
     setFirebaseTokenVerifierForTests();
+    if (previousMode === undefined) delete process.env.AI_ASYNC_EXECUTION_MODE;
+    else process.env.AI_ASYNC_EXECUTION_MODE = previousMode;
+    if (previousShadowOwner === undefined) delete process.env.AI_ASYNC_SHADOW_OWNER_ID;
+    else process.env.AI_ASYNC_SHADOW_OWNER_ID = previousShadowOwner;
     await new Promise((resolve) => server.close(resolve));
   });
 
@@ -172,6 +180,12 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   assert.equal(forged.status, 400);
   assert.equal(state.events.length, 0);
 
+  process.env.AI_ASYNC_EXECUTION_MODE = "shadow";
+  process.env.AI_ASYNC_SHADOW_OWNER_ID = "alice";
+  setAiJobDispatcherForTests(async (job) => {
+    dispatchedJobs.push({ id: job.id, ownerId: job.ownerId, jobType: job.jobType });
+    return { dispatched: true };
+  });
   const created = await request(baseUrl, "/events", {
     method: "POST",
     headers: { "Idempotency-Key": "mobile-event-1" },
@@ -183,6 +197,8 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   assert.equal(created.body.memoryJob.status, "PENDING");
   assert.equal(state.events.length, 1);
   assert.equal(state.jobs.length, 1);
+  assert.deepEqual(dispatchedJobs, [{ id: created.body.memoryJob.id, ownerId: "alice", jobType: AI_JOB_TYPES.MEMORY_EXTRACTION }]);
+  process.env.AI_ASYNC_EXECUTION_MODE = "manual";
 
   const noConsent = await request(baseUrl, "/events", {
     token: "bob-token",
@@ -265,6 +281,18 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   assert.equal(duplicate.body.job.id, triggered.body.job.id);
   assert.equal(state.jobs.length, jobsBeforeTrigger + 1);
   assert.equal(finalizedReports.size, 1);
+
+  process.env.AI_ASYNC_EXECUTION_MODE = "shadow";
+  const queuedWeekly = await request(baseUrl, "/ai/reports/weekly/trigger", {
+    method: "POST",
+    body: { localDate: "2026-09-22" }
+  });
+  assert.equal(queuedWeekly.status, 202);
+  assert.equal(queuedWeekly.body.job.status, "PENDING");
+  assert.equal(queuedWeekly.body.execution, "QUEUED");
+  assert.equal(dispatchedJobs.at(-1).jobType, AI_JOB_TYPES.WEEKLY_REPORT);
+  assert.equal(workerCalls.length, 2);
+  process.env.AI_ASYNC_EXECUTION_MODE = "manual";
 
   const protectedReport = {
     id: "weekly-finalized",

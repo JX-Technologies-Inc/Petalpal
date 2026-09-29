@@ -702,6 +702,34 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   LLMs, and AiJob claim/lease/retry behavior are unchanged. No Cloudflare Queue
   or Workflow migration or managed background worker was introduced.
 
+### Queue dispatch preparation — 2026-09-28
+
+- The planned dispatch boundary keeps PostgreSQL `AiJob` as the canonical
+  audit, idempotency, retry, and status record. Cloudflare Queue carries only
+  an opaque job ID. A private token-authenticated Render endpoint invokes the
+  existing targeted `runJob` implementation; no EventMemory, embedding,
+  retrieval, or report business logic moves into Cloudflare.
+- The application defaults to `AI_ASYNC_EXECUTION_MODE=manual`. `shadow`
+  restricts Queue execution to the configured safe test owner; ordinary users
+  retain current behavior. A later `cloudflare_queue` setting enables normal
+  dispatch only after staging and production gates pass.
+- Immediate dispatch follows committed Event or Weekly AiJob creation. A
+  twenty-minute Cloudflare Cron requests at most five due job IDs from Render and
+  re-enqueues them if immediate dispatch was lost. The Queue consumer calls
+  Render for an exact job ID, and PostgreSQL lease and attempt rules make
+  duplicate delivery harmless. Render's current consent checks remain the
+  authority. A successful memory job may enqueue its embedding child job.
+- The long-running Node worker remains available as fallback code. The Queue
+  path does not require an always-on Render Background Worker. Cloudflare
+  Workflow is not part of this design; Queue's 15-minute consumer duration
+  covers the observed job durations, subject to staging cold-start checks.
+- The free-plan staging Queue `petalpal-ai-jobs-staging` and separate dispatch
+  Worker were created with a single-message consumer, one concurrent consumer,
+  three transport retries, and a twenty-minute reconciler. Its private
+  dispatch route rejects unauthenticated requests. Production AiJob routing
+  remains manual until the staging Event, embedding, Weekly, duplicate,
+  reconciliation, and cold-start checks have passed.
+
 ## 13. Decisions / ADR-style Log
 
 ### 2026-09-14 — Journal removed from long-term AI workflows
