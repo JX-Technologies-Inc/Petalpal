@@ -28,8 +28,8 @@ not backfilled into Event; any future import requires explicit user opt-in.
 
 ```text
 Event
-  → Private EventMemory
-  → Embedding / Retrieval
+  → PostgreSQL AiJob → Cloudflare Queue → private Render executor
+  → Private EventMemory → Cloudflare BGE → pgvector retrieval
   → Weekly Recap + Trend
   → Monthly Pattern Analysis
   → Yearly Growth / Journey
@@ -66,11 +66,18 @@ Journal
   DailyCheckIn, Journal, EmotionResult, Flower, consent, metadata, social,
   Fairy, and subscription models. This revision adds Event, EventMemory,
   WeeklyReport, MonthlyReport, YearlyReport, AiEvidence, and AiJob.
-- Current async/background processing: `AiJob` is DB-backed and supports atomic
-  `SKIP LOCKED` claim, leases, crash recovery, bounded attempts, and guarded
-  transitions. `npm run start:ai-worker` runs the production worker loop with
-  graceful shutdown and the EventMemory, embedding, and grounded Weekly/Monthly
-  handlers.
+- Current async/background processing: production uses
+  `AI_ASYNC_EXECUTION_MODE=cloudflare_queue`. PostgreSQL `AiJob` remains the
+  canonical audit, idempotency, claim/lease/heartbeat, retry, and status record.
+  Cloudflare Queue carries opaque job IDs; the Render Web Service's private,
+  authenticated executor invokes the existing targeted `runJob` handlers.
+  Consent checks remain authoritative on Render/PostgreSQL. No always-on Render
+  Background Worker is required. Shadow mode and `npm run start:ai-worker`
+  remain available for rollback.
+- Current embedding/retrieval: Cloudflare BGE small English v1.5 generates the
+  active 384-dimensional profile, stored and retrieved in owner-scoped
+  PostgreSQL pgvector. Local ONNX, the local profile, and local vectors remain
+  available for rollback.
 - Current report support: `Report` is the existing social moderation/report
   model. Private AI report reads and an authenticated Weekly trigger exist;
   Monthly generation uses the worker, while Yearly remains a foundation model.
@@ -83,7 +90,7 @@ Journal
 - Emotion ML is an optional structured signal and is not a dependency of
   EventMemory. Its production readiness remains tracked in `ML_PROGRESS.md`.
 - Account/Event deletion cascades the inline pgvector value and citing reports.
-  Managed worker deployment and a production grounded-report smoke remain
+  A production grounded-report provider smoke with sufficient evidence remains
   unverified.
 
 ### SCAFFOLD ONLY
@@ -94,8 +101,8 @@ Journal
 
 ### NOT IMPLEMENTED
 
-- Managed worker deployment/process supervision, keyword full-text indexing,
-  reranking, report scheduling, Yearly generation, and user-facing report UI.
+- Keyword full-text indexing, reranking, report scheduling, Yearly generation,
+  and user-facing report UI.
 - Production groundedness/evidence-coverage metrics and a real grounded-report
   provider smoke. No external vector/object store is used by this pipeline.
 
@@ -262,12 +269,12 @@ foundation work.
 | pgvector | IMPLEMENTED | `vector(384)` migration + PostgreSQL integration tests | Exact cosine Top-K; ANN intentionally deferred |
 | Multi-profile embedding storage | CLOUDFLARE ACTIVE | `EventMemoryEmbedding` expand/copy migration + production candidate backfill | Cloudflare is active; local vectors and ONNX remain for rollback |
 | MemoryRepository | IMPLEMENTED FOR SEMANTIC RETRIEVAL | `PrismaMemoryRepository`, `PrismaEventEmbeddingRepository` | Owner-scoped storage, invalidation, exact semantic retrieval |
-| Weekly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | No LLM narrative or scheduler |
-| Monthly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | No LLM narrative or scheduler |
+| Weekly Report | PRODUCTION JOB VERIFIED | deterministic aggregates, bounded semantic evidence, Queue execution | Closed synthetic period succeeded with insufficient evidence; sufficient-evidence provider smoke and scheduling remain unverified |
+| Monthly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | Handler exists; production smoke and scheduling remain unverified |
 | Trend Analyzer | PARTIAL | `lib/trend-analyzer.js`, report services | Deterministic counts/comparison; advanced normalization remains deferred |
 | Evidence / Provenance | INPUT SELECTION IMPLEMENTED | owner-safe selector + relational `AiEvidence` foundation | Selected input retains Event/EventMemory references; no narrative citations yet |
 | Yearly Router | SCAFFOLD ONLY | `lib/yearly-query-router.js` | Routing contract, no retrieval workers |
-| Background Jobs | IMPLEMENTED | PostgreSQL atomic intent, lease recovery, memory and embedding handlers | Embedding failures use the existing bounded three-attempt job lifecycle |
+| Background Jobs | PRODUCTION QUEUE ACTIVE | PostgreSQL AiJob, Cloudflare Queue, private Render executor, production cutover checks | Canonical claim/lease/heartbeat and bounded attempts retained; local worker fallback available |
 | RAG Evaluation | SCAFFOLD ONLY | `lib/rag-evaluation.js` | Trace shape only |
 
 ### M1 checkpoint — 2026-09-16
@@ -727,9 +734,36 @@ ANN, backfill, multilingual data, and held-out data remain unused.
 - The free-plan staging Queue `petalpal-ai-jobs-staging` and separate dispatch
   Worker were created with a single-message consumer, one concurrent consumer,
   three transport retries, and a twenty-minute reconciler. Its private
-  dispatch route rejects unauthenticated requests. Production AiJob routing
-  remains manual until the staging Event, embedding, Weekly, duplicate,
-  reconciliation, and cold-start checks have passed.
+  dispatch route rejects unauthenticated requests. At this preparation
+  checkpoint, production AiJob routing remained manual pending staging and
+  production gates.
+
+### Production Queue cutover and observation — 2026-09-29
+
+- Production runs `AI_ASYNC_EXECUTION_MODE=cloudflare_queue` with the separate
+  `petalpal-ai-jobs-production` Queue and dispatch Worker. PostgreSQL `AiJob`
+  remains canonical; Queue payloads contain opaque job IDs only. The private
+  authenticated Render Web Service executes targeted jobs and performs the
+  canonical owner and consent checks. No Render Background Worker or Cloudflare
+  Workflow is used.
+- Production E2E passed Event → AiJob → Queue → Render executor → EventMemory →
+  Cloudflare BGE → `vector(384)` → owner-scoped pgvector retrieval. Eligible
+  owner routing, duplicate delivery, revoke-after-enqueue, and stranded PENDING
+  reconciliation passed. One Weekly job succeeded in one attempt with
+  `INSUFFICIENT_EVIDENCE`. Queue acknowledged 10/10 messages with zero retries
+  or backlog; no new failed, retried, or RUNNING jobs were observed. All 21
+  migrations were already applied, and Render auto-deploy remained off.
+- Observe for 1–3 days before reconsidering staging or rollback cleanup:
+  1. Queue backlog and transport retries.
+  2. PENDING age, RUNNING lease expiry, and AiJob attempt counts.
+  3. Private executor 401/403 responses.
+  4. EventMemory creation success and consent cancellation loops.
+  5. Cloudflare embedding failures and 384-dimensional vector persistence errors.
+  6. Owner-scoped pgvector retrieval failures.
+  7. Weekly and Monthly job failures.
+- Keep shadow mode, the Node worker fallback, local ONNX and local embedding
+  profile/vectors, and PostgreSQL claim/lease/heartbeat/idempotency support
+  throughout observation. Rollback remains available.
 
 ## 13. Decisions / ADR-style Log
 
@@ -784,9 +818,8 @@ ANN, backfill, multilingual data, and held-out data remain unused.
 
 ### NEXT
 
-- Deploy the authenticated Weekly trigger, then call it once for a closed
-  owner period and verify the real Workers AI inference, grounding, provenance,
-  atomic persistence, and unchanged free-tier usage boundary.
+- Complete the 1–3 day production Queue observation checklist above. A
+  sufficient-evidence Weekly report provider smoke remains to be verified.
 
 ### LATER
 
