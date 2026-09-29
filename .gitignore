@@ -119,3 +119,23 @@ experiments/emotion-classifier-v2/v4/model-consensus-reference-300-v1/**/*.jsonl
 experiments/emotion-classifier-v2/v4/model-consensus-reference-300-v1/source/*.csv
 experiments/emotion-classifier-v2/v4/selective-supervision-v1/**/*.jsonl
 experiments/emotion-classifier-v2/v4/stage1-model-adjudication-v1/astra-work/*.json
+
+# Generated outputs from the reviewed 40-file research batch
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/balanced-head-error-analysis-v1/analysis.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/balanced-head-mean-anchor-v1/anchor-diagnostic.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/balanced-head-mean-anchor-v1/anchor-freeze.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/balanced-head-mean-anchor-v1/evaluation-result.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/balanced-head-mean-anchor-v1/training-result.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/confusion-aware-hard-negative-v1/blind-input-lock.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/confusion-aware-hard-negative-v1/eligibility-summary.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/confusion-aware-hard-negative-v1/leakage-audit.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/confusion-aware-hard-negative-v1/model-panel-provenance.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/confusion-aware-hard-negative-v1/panel-summary.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/confusion-aware-hard-negative-v1/source-audit.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/counterfactual-pairwise-ranking-v1/generation-audit.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/counterfactual-pairwise-ranking-v1/pair-quality-report.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/counterfactual-pairwise-ranking-v1/validator-freeze.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/decoupled-balanced-head-v1/candidate/results.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/decoupled-balanced-head-v1/invalid-assembly-run/results.json
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/external-dataset-search-v1/search-log.md
+experiments/emotion-classifier-v2/v4/aligned-supervision-v1/external-dataset-search-v1/summary.json
