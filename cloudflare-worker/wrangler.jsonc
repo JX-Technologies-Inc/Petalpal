@@ -33,6 +33,23 @@
         }]
       },
       "triggers": { "crons": ["*/20 * * * *"] }
+    },
+    "production": {
+      "name": "petalpal-ai-dispatch-production",
+      "vars": {
+        "AI_JOB_EXECUTOR_URL": "https://petalpal-v2.onrender.com"
+      },
+      "queues": {
+        "producers": [{ "binding": "AI_JOB_QUEUE", "queue": "petalpal-ai-jobs-production" }],
+        "consumers": [{
+          "queue": "petalpal-ai-jobs-production",
+          "max_batch_size": 1,
+          "max_batch_timeout": 1,
+          "max_retries": 3,
+          "max_concurrency": 1
+        }]
+      },
+      "triggers": { "crons": ["*/20 * * * *"] }
     }
   }
 }
