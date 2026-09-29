@@ -413,7 +413,8 @@ test("embedding generated before revocation is discarded without a post-revoke s
     async $queryRawUnsafe(query, ownerId) {
       if (query.includes('FROM "AiConsent"')) return consentEnabled
         ? [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true, updatedAt }] : [];
-      updates.push(query.includes("'GENERATING'") ? "BEGIN" : query.includes("'GENERATED'") ? "STORE" : "FAILED");
+      updates.push(query.includes("'NOT_REQUESTED'") ? "PROFILE_INVALIDATE" :
+        query.includes("'GENERATING'") ? "BEGIN" : query.includes("'GENERATED'") ? "STORE" : "FAILED");
       return [{ id: "memory-1" }];
     },
     async $transaction(callback) { return callback(prisma); }
@@ -443,7 +444,7 @@ test("embedding generated before revocation is discarded without a post-revoke s
   assert.equal(result.succeeded, true);
   assert.equal(result.result.status, "CONSENT_INELIGIBLE");
   assert.equal(job.status, "CANCELLED");
-  assert.deepEqual(updates, ["BEGIN"]);
+  assert.deepEqual(updates, ["BEGIN", "PROFILE_INVALIDATE", "BEGIN"]);
 });
 
 test("embedding backfill is bounded, owner-preserving, cursor-based, and idempotent", async () => {

@@ -221,6 +221,11 @@ realTest("real PostgreSQL stores and retrieves owner-scoped 384d Event embedding
       assert.equal(updated.embeddingStatus, "NOT_REQUESTED");
       const stored = await prisma.$queryRawUnsafe(`SELECT "embedding" IS NULL AS empty FROM "EventMemory" WHERE "id" = $1`, aliceMemory.id);
       assert.equal(stored[0].empty, true);
+      const profileRows = await prisma.$queryRawUnsafe(`
+        SELECT "status", "inputRevision", "embedding" IS NULL AS empty
+        FROM "EventMemoryEmbedding" WHERE "eventMemoryId" = $1 AND "profileKey" = $2
+      `, aliceMemory.id, PRODUCTION_EMBEDDING_PROFILE_KEY);
+      assert.deepEqual(profileRows, [{ status: "NOT_REQUESTED", inputRevision: 1, empty: true }]);
 
       await prisma.event.delete({ where: { id: aliceEvent.id } });
       assert.equal(await prisma.eventMemory.count({ where: { id: aliceMemory.id } }), 0);

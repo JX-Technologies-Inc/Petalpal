@@ -440,11 +440,32 @@ model EventMemory {
   owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   sourceEvent Event        @relation(fields: [sourceEventId, ownerId], references: [id, ownerId], onDelete: Cascade)
   evidence    AiEvidence[]
+  embeddings  EventMemoryEmbedding[]
 
   @@unique([sourceEventId, ownerId])
   @@unique([id, ownerId])
   @@index([ownerId, eventDate])
   @@index([ownerId, memoryType])
+}
+
+model EventMemoryEmbedding {
+  eventMemoryId String
+  ownerId       String
+  profileKey    String   @db.VarChar(128)
+  model         String   @db.VarChar(128)
+  modelRevision String   @db.VarChar(128)
+  inputVersion  String   @db.VarChar(32)
+  inputRevision Int
+  status        String   @default("NOT_REQUESTED") @db.VarChar(32)
+  embedding     Unsupported("vector(384)")?
+  embeddedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  memory EventMemory @relation(fields: [eventMemoryId, ownerId], references: [id, ownerId], onDelete: Cascade)
+
+  @@id([eventMemoryId, profileKey, inputRevision])
+  @@index([ownerId, profileKey, status])
 }
 
 model WeeklyReport {
