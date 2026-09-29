@@ -1,0 +1,26 @@
+{
+  "note": "Schema for validating imported pre-existing human annotations. It does not request or authorize new human annotation.",
+  "requiredFields": {
+    "rowId": "stable acquired-row identifier",
+    "sourceRecordId": "original source identifier",
+    "sourceGroupId": "author/participant/story grouping identifier",
+    "text": "complete English Event text, 30-300 characters",
+    "positiveProduct18Labels": "all Product-18 labels explicitly judged applicable",
+    "explicitNegativeProduct18Labels": "Product-18 labels explicitly judged not applicable",
+    "uncertainProduct18Labels": "labels explicitly marked uncertain or not adjudicable",
+    "annotationExhaustive": "boolean indicating whether all Product-18 labels were considered",
+    "humanAnnotatorCount": "number of independent human judgments",
+    "agreementOrAdjudication": "agreement/adjudication status supplied by the source",
+    "annotationInstructionsVersion": "source guideline version",
+    "licenseId": "dataset license identifier",
+    "underlyingTextRightsEvidence": "evidence covering the participant-authored text",
+    "commercialMlEvaluationAllowed": "boolean supported by documented terms"
+  },
+  "admissionRules": [
+    "At least one priority confusion pair has one label positive and the other explicitly negative, or the row is an accepted neutral/co-occurrence control.",
+    "Uncertain is never converted to negative.",
+    "Selective omission is never converted to negative.",
+    "Synthetic, LLM, and weak-consensus labels retain non-gold status and cannot satisfy this schema.",
+    "Rows lacking source grouping or underlying-text rights evidence are rejected."
+  ]
+}

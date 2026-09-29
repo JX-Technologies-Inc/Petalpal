@@ -1,0 +1,52 @@
+{
+  "status": "SPECIFICATION_ONLY_NO_ROWS_ACQUIRED",
+  "purpose": "Rank candidates from a rights-cleared corpus that already contains qualifying human annotations; this does not authorize new human labeling.",
+  "requiredInputFields": [
+    "sourceRecordId",
+    "sourceGroupId",
+    "text",
+    "language",
+    "characterLength",
+    "licenseId",
+    "underlyingTextRightsEvidence",
+    "humanAnnotationProvenance"
+  ],
+  "rankingStages": [
+    {
+      "stage": 1,
+      "rule": "Apply legal/provenance, language, length, first-person Event, duplication, and source-group filters before model inference."
+    },
+    {
+      "stage": 2,
+      "rule": "Run the frozen incumbent and frozen balanced-head candidate only; record Product-18 probabilities and canonical outputs without opening source labels."
+    },
+    {
+      "stage": 3,
+      "rule": "Prioritize rows where balanced-head adds a priority label, where a priority-pair score margin is small, or where incumbent and balanced-head disagree on cardinality."
+    },
+    {
+      "stage": 4,
+      "rule": "Use deterministic round-robin selection across priority pairs and source groups; do not select by RTN/COSO similarity or desired evaluation outcome."
+    },
+    {
+      "stage": 5,
+      "rule": "After row IDs are frozen, reveal the pre-existing human annotations and admit only rows satisfying the explicit-positive/explicit-negative schema."
+    }
+  ],
+  "rankingKeysInOrder": [
+    "legalAndProvenancePass descending",
+    "priorityPairCoverage ascending",
+    "balancedAddsPriorityLabel descending",
+    "absolutePriorityPairProbabilityMargin ascending",
+    "incumbentBalancedCardinalityDisagreement descending",
+    "sourceGroupId ascending",
+    "sourceRecordId ascending"
+  ],
+  "forbidden": [
+    "RTN row or label use",
+    "COSO row reuse as training data",
+    "threshold search",
+    "model-generated label acceptance as human gold",
+    "manual cherry-picking after labels are opened"
+  ]
+}

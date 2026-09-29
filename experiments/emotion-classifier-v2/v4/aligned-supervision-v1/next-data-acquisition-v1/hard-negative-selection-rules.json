@@ -1,0 +1,45 @@
+{
+  "scope": "Acquire existing human-labeled data; do not create labels with synthetic generation or model consensus.",
+  "textRequirements": {
+    "language": "English",
+    "lengthCharacters": {"minimum": 30, "maximum": 300},
+    "style": "First-person description of a concrete recent or past Event; complete text; no truncation.",
+    "exclusions": [
+      "third-person-only stories",
+      "decontextualized emotion words",
+      "clinical records",
+      "social-platform text with unclear underlying rights",
+      "duplicates or paraphrases of COSO, RTN, canonical Train, or existing acquired rows"
+    ]
+  },
+  "hardNegativeDefinition": {
+    "required": "For a target pair A/B, the existing human annotation must explicitly judge A applicable and B not applicable, or B applicable and A not applicable.",
+    "insufficient": [
+      "B is merely omitted from a selective top-k label set",
+      "a model predicts A but not B",
+      "a synthetic generator intended A",
+      "a single model rationale asserts B is absent"
+    ]
+  },
+  "targetCounts": {
+    "pairwiseExplicitHardNegatives": {
+      "pairFamilies": 7,
+      "perDirectionPerPair": 20,
+      "total": 280
+    },
+    "noClearEmotionLexicalControls": 60,
+    "trueTwoLabelCooccurrenceControls": {
+      "pairFamilies": 3,
+      "perPair": 20,
+      "total": 60
+    },
+    "grandTotal": 400
+  },
+  "splitRules": {
+    "sourceGroupDisjoint": true,
+    "authorOrParticipantDisjoint": true,
+    "trainDevelopmentTestRatios": "60/20/20 by source group after acquisition",
+    "COSOAndRTNOverlap": "zero normalized text and zero source-group overlap",
+    "selectionBlindness": "Model-based acquisition ranking must be frozen before existing human labels are revealed."
+  }
+}

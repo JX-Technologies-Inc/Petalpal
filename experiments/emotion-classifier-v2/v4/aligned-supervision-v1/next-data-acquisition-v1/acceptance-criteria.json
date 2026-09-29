@@ -1,0 +1,23 @@
+{
+  "datasetGate": {
+    "rights": "Documented commercial use, ML training, evaluation, redistribution/processing as needed, and underlying participant-text rights.",
+    "provenance": "Original source, collection method, human annotation method, guideline, and source-group identifier are documented.",
+    "construct": "English first-person Event text with exhaustive or explicit pairwise Product-18 applicability judgments.",
+    "minimumRows": 320,
+    "targetRows": 400,
+    "minimumPairFamilies": 6,
+    "minimumPerDirectionPerPair": 15,
+    "minimumNeutralControls": 40,
+    "minimumTwoLabelControls": 40,
+    "maximumLengthCharacters": 300,
+    "normalizedOverlapWithExistingEvaluation": 0
+  },
+  "experimentAuthorizationGate": [
+    "Dataset gate passes before any candidate training.",
+    "Acquisition row ranking is frozen before imported human labels are opened.",
+    "Train/development/test source groups are disjoint.",
+    "A single confusion-aware objective and training configuration is frozen before development evaluation.",
+    "RTN remains unopened until the final candidate is frozen and is evaluated at most once."
+  ],
+  "failureAction": "If explicit negative judgments or legal provenance are missing, do not train; keep the manifest as BLOCKED_DATA_ACQUISITION."
+}

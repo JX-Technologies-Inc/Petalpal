@@ -1,0 +1,46 @@
+{
+  "artifact": "next-data-acquisition-v1",
+  "chosenRoute": "confusion-aware-hard-negative-v1",
+  "dominantFailure": "DISTRIBUTED_NEAR_BOUNDARY_RELATED_EMOTION_CONFUSION",
+  "notDominant": {
+    "emotionPresence": "Only 13/71 balanced FP label events are on gold-empty rows, and forced-nonempty gold-empty rows decline from 12 to 11.",
+    "singleConfusionPair": "No substitution pair occurs more than three times.",
+    "RTNSpecificBehavior": "RTN row-level errors were not inspected and did not select this route."
+  },
+  "incrementalBalancedHeadChanges": {
+    "recoveredTruePositives": 13,
+    "lostTruePositives": 3,
+    "addedFalsePositives": 20,
+    "removedFalsePositives": 7,
+    "addedFalsePositiveScoreBins": {
+      "0.35-0.50": 15,
+      "0.50-0.70": 4,
+      ">=0.70": 1
+    },
+    "addedFalsePositivesAtMost300Chars": 1
+  },
+  "priorityLabels": [
+    {"label": "caring", "addedFP": 4, "recoveredFN": 4},
+    {"label": "gratitude", "addedFP": 4, "recoveredFN": 0},
+    {"label": "annoyance", "addedFP": 3, "recoveredFN": 4},
+    {"label": "disappointment", "addedFP": 3, "recoveredFN": 0},
+    {"label": "excitement", "addedFP": 2, "recoveredFN": 0},
+    {"label": "sadness", "addedFP": 2, "recoveredFN": 0},
+    {"label": "fear", "addedFP": 1, "recoveredFN": 2},
+    {"label": "surprise", "addedFP": 1, "recoveredFN": 2}
+  ],
+  "priorityConfusionFamilies": [
+    ["sadness", "caring"],
+    ["caring", "love"],
+    ["joy", "optimism"],
+    ["excitement", "joy"],
+    ["caring", "gratitude"],
+    ["joy", "love"],
+    ["fear", "annoyance"]
+  ],
+  "priorityCoPredictionControls": [
+    ["caring", "joy"],
+    ["gratitude", "joy"],
+    ["caring", "fear"]
+  ]
+}
