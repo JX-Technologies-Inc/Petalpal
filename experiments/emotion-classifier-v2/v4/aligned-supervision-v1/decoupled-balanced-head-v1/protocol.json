@@ -1,0 +1,47 @@
+{
+  "protocolId": "decoupled-balanced-head-v1-20260917",
+  "status": "LOCKED_BEFORE_FEATURE_EXTRACTION_OR_TRAINING",
+  "researchOnly": true,
+  "hypothesis": "Full-model continuations can improve aggregate precision while erasing supported rare-label behavior. A long-tail decoupled classifier retraining stage can keep the incumbent representation exactly frozen and adjust only Product-18 output rows under label-balanced sampling, improving label breadth without representation forgetting.",
+  "differenceFromClassBalancedV1": "class-balanced-v1 updated the full model with positive-weighted BCE. This experiment freezes the encoder and classifier feature transform, uses ordinary BCE, and changes only Product-18 output rows through one class-balanced sampling stage.",
+  "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "trainingData": {
+    "aligned": "../train.jsonl; 841 historical research rows",
+    "targetedReplay": "../public-source-shortlist-20260910/goemotions-targeted-tranche.jsonl; 204 historical research rows",
+    "total": 1045,
+    "rights": "HISTORICAL_UNRESOLVED_RESEARCH_LINEAGE_ONLY",
+    "RTNUse": "none"
+  },
+  "featureAndSampling": {
+    "features": "deterministic incumbent eval-mode tanh(classifier.dense(CLS)); encoder and dense transform frozen",
+    "rowWeight": "empty rows receive 1/empty_count; positive rows receive the maximum inverse combined-train positive count among their Product-18 labels",
+    "draws": 1045,
+    "replacement": true,
+    "seed": 44
+  },
+  "training": {
+    "updatedParameters": "only the 18 Product-18 rows and biases of classifier.out_proj; all other tensors remain incumbent values",
+    "initialization": "copy incumbent Product-18 output rows",
+    "epochs": 1,
+    "optimizer": "AdamW",
+    "learningRate": 0.001,
+    "weightDecay": 0.0,
+    "batchSize": 32,
+    "loss": "ordinary unweighted Product-18 BCE on sampled frozen features",
+    "checkpointSelection": "single final head; no intermediate evaluation or sweep"
+  },
+  "inference": "unchanged Product-18, global threshold 0.35, canonical max-two selector",
+  "successCriteria": {
+    "RTNResolved": "micro-F1 >=0.3313265306; macro-F1 >=0.3184047525; exact-set >=50.41%; FP<=64; FN<=85; summed absolute 0/1/2 count error<=54",
+    "RTNHigh": "micro-F1>=0.3678160920 and exact-set>=55.66%",
+    "COSO149": "micro-F1>=0.5180528053; macro-F1>=0.3351786297; FP<=60; FN<=87; no support>=5 label loses >0.08 F1",
+    "decision": "RETAIN_FOR_RESEARCH only if every gate passes; otherwise REJECT"
+  },
+  "forbidden": [
+    "RTN training, calibration, sample, checkpoint, threshold, or parameter selection",
+    "sampler, learning-rate, optimizer, epoch, seed, or threshold sweep",
+    "representation or dense-feature-transform update",
+    "post-result blend or rescue",
+    "human review"
+  ]
+}

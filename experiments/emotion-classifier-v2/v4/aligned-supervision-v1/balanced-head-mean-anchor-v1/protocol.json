@@ -1,0 +1,101 @@
+{
+  "protocolId": "balanced-head-mean-anchor-v1-20260918",
+  "status": "LOCKED_BEFORE_FEATURE_EXTRACTION_OR_TRAINING",
+  "researchRole": "HISTORICAL_UNRESOLVED_RESEARCH_LINEAGE_ONLY",
+  "hypothesis": "A one-sided training-side mean-logit anchor can retain useful Product-18 head direction learning while reducing excessive positive drift and false positives.",
+  "initialization": "../goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+  "historicalBalancedCheckpoint": "../decoupled-balanced-head-v1/candidate/checkpoint",
+  "supervisedData": [
+    {"path": "../train.jsonl", "rows": 841, "order": 1},
+    {"path": "../public-source-shortlist-20260910/goemotions-targeted-tranche.jsonl", "rows": 204, "order": 2}
+  ],
+  "anchorData": [
+    {"name": "hippocorpus", "path": "../admitted-unlabeled-v1/hippocorpus/prepared/train.jsonl", "rows": 2637, "sourceWeight": 0.5},
+    {"name": "unexpected_events", "path": "../admitted-unlabeled-v1/unexpected-events/prepared/train.jsonl", "rows": 7716, "sourceWeight": 0.5}
+  ],
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "feature": {
+    "definition": "eval-mode tanh(classifier.dense(CLS)) with dropout disabled",
+    "maxLength": 512,
+    "batchSize": 32,
+    "meanAccumulation": "FP64",
+    "sourceMeansComputedSeparately": true,
+    "anchorLabelsUsed": false
+  },
+  "trainable": "Only a standalone copy of the 18 Product-18 classifier.out_proj rows and biases; exactly 13,842 parameters, then index-copied into the incumbent checkpoint after the complete run.",
+  "frozen": ["encoder", "classifier.dense", "non-Product-18 output rows", "tokenizer", "label mapping"],
+  "sampling": {
+    "rowWeightEmpty": "1/n_empty",
+    "rowWeightPositive": "max(1/n_l) over the row's positive Product-18 labels",
+    "replacement": true,
+    "draws": 1045,
+    "seed": 44
+  },
+  "loss": {
+    "balancedBCE": "ordinary Product-18 BCE with historical binary target semantics and no class weighting",
+    "sourceDrift": "d_s,l=(w_l-w_I,l)^T mu_s+(b_l-b_I,l)",
+    "rawAnchor": "mean over 2 sources x 18 labels of max(0,d_s,l)^2",
+    "lambda": 0.125,
+    "total": "balancedBCE + 0.125*rawAnchor",
+    "oneSided": true,
+    "margin": 0
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "learningRate": 0.001,
+    "betas": [0.9, 0.999],
+    "eps": 1e-8,
+    "weightDecay": 0,
+    "gradientClipNorm": 1.0,
+    "scheduler": null,
+    "epochs": 1,
+    "batchSize": 32,
+    "expectedUpdates": 33,
+    "finalBatchSize": 21
+  },
+  "selector": {
+    "threshold": 0.35,
+    "maxOutputs": 2,
+    "implementation": "../../../../auto-v1/experiment.py plus repository canonical selector",
+    "changed": false
+  },
+  "mechanismGate": {
+    "effectiveIf": "Candidate positive drift RMS is at most 50% of historical Balanced Head positive drift RMS on the identical two-source anchor means.",
+    "retentionDecision": false
+  },
+  "qualityGate": {
+    "coso": {
+      "microF1Minimum": 0.5401000222721658,
+      "macroF1Minimum": 0.3401786296513932,
+      "truePositiveMinimum": 85,
+      "falseNegativeMaximum": 80,
+      "falsePositiveMaximum": 64,
+      "exactSetCountMinimum": 50
+    },
+    "rtnResolved": {
+      "microF1Minimum": 0.3403257697015347,
+      "macroF1Minimum": 0.3422008084902373,
+      "truePositiveMinimum": 40,
+      "falseNegativeMaximum": 79,
+      "falsePositiveMaximum": 72,
+      "exactSetCountMinimum": 121
+    },
+    "supportedLabelMinimumSupport": 5,
+    "supportedLabelMaximumF1DeclineVsIncumbent": 0.1,
+    "allOutputsFiniteAndValid": true,
+    "allConditionsRequired": true
+  },
+  "runPolicy": {
+    "singleRun": true,
+    "noEarlyStopping": true,
+    "noIntermediateCheckpointSelection": true,
+    "noContinuation": true,
+    "noSecondSeed": true,
+    "noRescue": true,
+    "incumbentAutoPromotion": false
+  }
+}

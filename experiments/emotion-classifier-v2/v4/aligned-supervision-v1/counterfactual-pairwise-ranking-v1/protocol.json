@@ -1,0 +1,100 @@
+{
+  "experiment": "counterfactual-pairwise-ranking-v1",
+  "status_before_validation": "FROZEN",
+  "supervision": "MODEL_GENERATED / WEAK_PSEUDO",
+  "labels": [
+    "admiration", "amusement", "anger", "annoyance", "caring", "confusion",
+    "curiosity", "disappointment", "disgust", "excitement", "fear", "gratitude",
+    "joy", "love", "optimism", "remorse", "sadness", "surprise"
+  ],
+  "pair_design": {
+    "pairs_per_label": 8,
+    "total_pairs": 144,
+    "intended_a_stronger_per_label": 4,
+    "intended_b_stronger_per_label": 4,
+    "global_intended_a_stronger": 72,
+    "global_intended_b_stronger": 72,
+    "event_max_chars": 300,
+    "order_seed": 53,
+    "source_policy": "fully original synthetic personal-life events; no prior or external corpus text"
+  },
+  "consensus": {
+    "HIGH_PAIR": "3/3 validators choose the same non-tie direction",
+    "MEDIUM_PAIR": "2/3 validators choose the same non-tie direction and the third chooses TIE_UNCLEAR",
+    "CONFLICT": "at least one A_STRONGER and at least one B_STRONGER",
+    "UNRESOLVED": "all other patterns",
+    "training_inclusion": ["HIGH_PAIR", "MEDIUM_PAIR"]
+  },
+  "pair_quality_gates": {
+    "exact_total_pairs": 144,
+    "exact_pairs_per_label": 8,
+    "exact_intended_a_stronger": 72,
+    "exact_intended_b_stronger": 72,
+    "exact_event_duplicates": 0,
+    "exact_pair_duplicates": 0,
+    "cross_pair_near_duplicates_max": 0,
+    "cross_pair_near_duplicate_token_jaccard_threshold": 0.78,
+    "product_fit_failures_max": 0,
+    "high_pairs_min": 90,
+    "usable_pairs_min": 108,
+    "high_pairs_per_label_min": 4,
+    "usable_pairs_per_label_min": 6,
+    "intended_direction_correct_usable_min": 108,
+    "intended_direction_correct_per_label_min": 6,
+    "direct_conflicts_max": 14,
+    "unresolved_max": 22,
+    "usable_consensus_a_minus_b_abs_max": 14,
+    "usable_each_direction_per_label_min": 2
+  },
+  "validator_protocol": {
+    "validators": [
+      {"name": "astra", "model": "gpt-6-astra", "reasoning": "medium"},
+      {"name": "sol", "model": "gpt-5.6-sol", "reasoning": "medium"},
+      {"name": "luna", "model": "gpt-5.6-luna", "reasoning": "medium"}
+    ],
+    "allowed_input_fields": ["pairId", "targetLabel", "targetDefinition", "eventA", "eventB", "decisionOptions"],
+    "allowed_output_fields": ["pairId", "judgment"],
+    "judgments": ["A_STRONGER", "B_STRONGER", "TIE_UNCLEAR"],
+    "semantic_recall_after_disagreement": false,
+    "fourth_adjudicator": false,
+    "repeated_model_vote": false
+  },
+  "training_protocol_if_pair_gate_passes": {
+    "initial_checkpoint": "experiments/emotion-classifier-v2/v4/aligned-supervision-v1/goemotions-targeted-v1/experiment/epoch-1-checkpoint",
+    "base_loss_policy": "pairwise ranking loss only; no base classification examples",
+    "objective": "mean softplus(-(z_strong_target - z_weak_target))",
+    "target_scope": "only the pair target label logit",
+    "trainable_parameters": "classifier and encoder layers 10-11 only",
+    "learning_rate": 0.000001,
+    "weight_decay": 0.01,
+    "epochs": 1,
+    "batch_size_pairs": 8,
+    "seed": 53,
+    "max_length": 512,
+    "threshold": 0.35,
+    "max_outputs": 2,
+    "runs": 1,
+    "loss_sweep": false,
+    "threshold_sweep": false
+  },
+  "candidate_success_gates": {
+    "pair_correct_rate_not_below_incumbent": true,
+    "pair_mean_margin_must_increase": true,
+    "rtn_resolved_micro_min": 0.3313265306,
+    "rtn_resolved_macro_min": 0.3184,
+    "rtn_resolved_exact_min": 0.504098,
+    "rtn_resolved_precision_min": 0.3342,
+    "rtn_resolved_recall_min": 0.2857,
+    "rtn_false_positives_max": 64,
+    "rtn_false_negatives_max": 85,
+    "rtn_output_distribution_l1_from_reference_max": 54,
+    "rtn_supported_labels_improving_by_0_02_min": 2,
+    "rtn_any_supported_label_delta_min": -0.10,
+    "coso_micro_min": 0.5230528,
+    "coso_macro_min": 0.3401786,
+    "coso_exact_drop_max": 0.01,
+    "coso_false_positives_max": 60,
+    "coso_false_negatives_max": 87,
+    "coso_any_supported_label_delta_min": -0.05
+  }
+}
