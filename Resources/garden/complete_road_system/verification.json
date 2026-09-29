@@ -1,0 +1,84 @@
+{
+  "checkpoint": "APPROVED_CIRCULATION_V1_2026-09-23_155002",
+  "files_checked": 482,
+  "changed_existing_files": [
+    "mobile/src/components/garden/GardenScene.tsx"
+  ],
+  "unexpected_changes": [],
+  "all_existing_assets_and_transforms_unchanged": true,
+  "road_rgba_canvas": [
+    2400,
+    1800
+  ],
+  "road_substantial_connected_components": 1,
+  "road_component_areas": [
+    7487
+  ],
+  "new_road_geometry": {
+    "R01": {
+      "centerline_cubics": [
+        [
+          [
+            703,
+            433
+          ],
+          [
+            690,
+            452
+          ],
+          [
+            690,
+            481
+          ],
+          [
+            653,
+            501
+          ]
+        ],
+        [
+          [
+            653,
+            501
+          ],
+          [
+            616,
+            521
+          ],
+          [
+            594,
+            550
+          ],
+          [
+            556,
+            529
+          ]
+        ]
+      ],
+      "ordinary_width": 39,
+      "endpoint_widths": [
+        48,
+        44
+      ],
+      "method": "Curve V2 rigid source stone stamps; short receiving-path paving blend",
+      "source": "Resources/decorations/road/road_straight_master.png",
+      "runtime_asset": "mobile\\assets\\garden\\roads\\complete\\R01_treehouse_path.png",
+      "canvas": [
+        2400,
+        1800
+      ],
+      "runtime_transform": {
+        "x": 0,
+        "y": 0,
+        "width": 2400,
+        "height": 1800,
+        "rotation": 0
+      },
+      "unsupported_pixels_before_clip": 138,
+      "visible_pixels_over_alpha_less_than_32": 0
+    }
+  },
+  "new_runtime_assets": {
+    "R01_existing_foreground.png": "3deba01354e2f51de23424a133378f4da9d2102fa571194fbec4d9db7c5e2d0c",
+    "R01_treehouse_path.png": "31b6f99c8d0888d75f0c21cd0fb42e6d54f26bf2fc1d179186f487e1de10a1cc"
+  }
+}

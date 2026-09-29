@@ -7,7 +7,6 @@ import {
   FlowerPlacement,
   validateFlowerPlacement,
 } from './placementValidator';
-import { getFlowerPlacementDefinition } from './flowerFootprintConfig';
 
 export interface RegionFullnessReport {
   month: number;
@@ -29,7 +28,8 @@ export function evaluateRegionFullness(
   month: number,
   existingPlacements: FlowerPlacement[],
   flowerName?: string,
-  gridStep: number = 24
+  gridStep: number = 24,
+  speciesCode?: string
 ): RegionFullnessReport {
   const meta: MonthRegionMeta | undefined = MONTH_REGION_METAS[month];
   if (!meta) {
@@ -64,6 +64,7 @@ export function evaluateRegionFullness(
         worldY: y,
         existingPlacements: flowersInMonth,
         flowerName,
+        speciesCode,
       });
 
       if (res.isValid) {

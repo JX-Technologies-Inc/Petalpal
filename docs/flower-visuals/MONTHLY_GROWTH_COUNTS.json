@@ -1,0 +1,125 @@
+[
+  {
+    "month": 6,
+    "day": 5,
+    "stage": "NEW GARDEN",
+    "realRecordCount": 5,
+    "primaryPieces": 11,
+    "companionPieces": 10,
+    "fillerPieces": 17,
+    "nonInteractiveVisualPieces": 38,
+    "approvedMaskCoverage": 0.08818897637795275,
+    "clipCoverage": 0.090863704443335,
+    "speciesCounts": {
+      "HYDRANGEA": 1,
+      "LAVENDER": 1,
+      "POPPY": 1,
+      "DAISY": 1,
+      "TULIP": 1
+    }
+  },
+  {
+    "month": 6,
+    "day": 10,
+    "stage": "EARLY GROWTH",
+    "realRecordCount": 10,
+    "primaryPieces": 23,
+    "companionPieces": 40,
+    "fillerPieces": 50,
+    "nonInteractiveVisualPieces": 113,
+    "approvedMaskCoverage": 0.2141732283464567,
+    "clipCoverage": 0.22066899650524213,
+    "speciesCounts": {
+      "HYDRANGEA": 1,
+      "LAVENDER": 2,
+      "POPPY": 1,
+      "DAISY": 2,
+      "TULIP": 3,
+      "CHAMOMILE": 1
+    }
+  },
+  {
+    "month": 6,
+    "day": 20,
+    "stage": "LUSH",
+    "realRecordCount": 20,
+    "primaryPieces": 38,
+    "companionPieces": 160,
+    "fillerPieces": 135,
+    "nonInteractiveVisualPieces": 333,
+    "approvedMaskCoverage": 0.5247728649303453,
+    "clipCoverage": 0.5406889665501747,
+    "speciesCounts": {
+      "HYDRANGEA": 2,
+      "LAVENDER": 4,
+      "POPPY": 2,
+      "DAISY": 4,
+      "TULIP": 4,
+      "CHAMOMILE": 2,
+      "COREOPSIS": 2
+    }
+  },
+  {
+    "month": 6,
+    "day": 30,
+    "stage": "FULL MONTH",
+    "realRecordCount": 30,
+    "primaryPieces": 57,
+    "companionPieces": 360,
+    "fillerPieces": 174,
+    "nonInteractiveVisualPieces": 591,
+    "approvedMaskCoverage": 0.757359176256814,
+    "clipCoverage": 0.7803295057413879,
+    "speciesCounts": {
+      "HYDRANGEA": 2,
+      "LAVENDER": 4,
+      "POPPY": 4,
+      "DAISY": 5,
+      "TULIP": 6,
+      "CHAMOMILE": 6,
+      "COREOPSIS": 3
+    }
+  },
+  {
+    "month": 4,
+    "day": 30,
+    "stage": "FULL MONTH",
+    "realRecordCount": 30,
+    "primaryPieces": 86,
+    "companionPieces": 360,
+    "fillerPieces": 387,
+    "nonInteractiveVisualPieces": 833,
+    "approvedMaskCoverage": 0.7656736327256558,
+    "clipCoverage": 0.7801268498942917,
+    "speciesCounts": {
+      "DAISY": 5,
+      "HYDRANGEA": 2,
+      "BLUEBELL": 4,
+      "COREOPSIS": 3,
+      "CHAMOMILE": 6,
+      "PETUNIA": 4,
+      "TULIP": 6
+    }
+  },
+  {
+    "month": 10,
+    "day": 30,
+    "stage": "FULL MONTH",
+    "realRecordCount": 30,
+    "primaryPieces": 82,
+    "companionPieces": 360,
+    "fillerPieces": 1595,
+    "nonInteractiveVisualPieces": 2037,
+    "approvedMaskCoverage": 0.7768089337616644,
+    "clipCoverage": 0.7800307219662058,
+    "speciesCounts": {
+      "TULIP": 5,
+      "POPPY": 5,
+      "CHAMOMILE": 6,
+      "COREOPSIS": 3,
+      "HEATHER": 4,
+      "ASTER": 5,
+      "HYDRANGEA": 2
+    }
+  }
+]

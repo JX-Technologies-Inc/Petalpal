@@ -1,5 +1,5 @@
 import { Canvas, Circle, Group, Image, Path, Rect, useImage } from '@shopify/react-native-skia';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
@@ -33,12 +33,21 @@ import {
 import {
   type MaskStroke,
   type MaskTool,
+  type MaskEditHistory,
+  type MaskEditState,
+  commitMaskEdit,
+  createMaskEditHistory,
   createMaskStroke,
+  isPointInRefinedMaskLandLocal,
+  landLocalToRefinementLocal,
   loadMonthMaskRefinement,
-  resetMonthMaskRefinement,
+  redoMaskEdit,
+  resetMaskEditToLockedBase,
   saveMonthMaskRefinement,
+  undoMaskEdit,
 } from './planting/plantingMaskRefinement';
 import PlantedFlowerLayer from './planting/PlantedFlowerLayer';
+import { USE_MONTHLY_GARDEN_GROWTH_V1_1, gardenSpecies, hitProductionFlower } from './planting/productionGrowth';
 import PlantingPlacementControls from './planting/PlantingPlacementControls';
 import FlowerDetailModal from './planting/FlowerDetailModal';
 import {
@@ -46,7 +55,8 @@ import {
   usePlanting,
 } from './planting/PlantingContext';
 import { getFlowerPlacementDefinition } from './planting/flowerFootprintConfig';
-import { MONTH_CENTROIDS } from './planting/plantingRegionData';
+import { MONTH_CENTROIDS, MONTH_REGION_METAS } from './planting/plantingRegionData';
+import { getApprovedMonthCentroid } from './planting/approvedPlantingMasks';
 import { FlowerPlacementRecord } from './planting/plantingPersistence';
 import { useLocalSearchParams } from 'expo-router';
 import GardenReferenceLayer from './GardenReferenceLayer';
@@ -175,10 +185,12 @@ const MAX_CAMERA_ZOOM = 3;
 export type GardenSceneProps = {
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
+  gardenOwnerUserId?: string;
 };
 
 function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion = 'legacy' }: GardenSceneProps = {}) {
   const planting = usePlanting();
+  const [useMonthlyGrowth, setUseMonthlyGrowth] = useState(USE_MONTHLY_GARDEN_GROWTH_V1_1);
   const {
     placements,
     activeMode,
@@ -206,6 +218,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
     setShowPlacementDebug,
   } = planting;
 
+  const unresolvedGardenArt = useMemo(() => [...new Set(placements.filter(p => !gardenSpecies(p))
+    .map(p => p.speciesCode || p.flowerName || 'UNKNOWN'))], [placements]);
+
   const activeModeRef = useRef(activeMode);
   const placementsRef = useRef(placements);
   useEffect(() => {
@@ -216,6 +231,8 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   const searchParams = useLocalSearchParams<{
     mode?: string;
     flowerId?: string;
+    journalEntryId?: string;
+    plantedDate?: string;
     month?: string;
     flowerName?: string;
     speciesCode?: string;
@@ -267,16 +284,35 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   const [paintTool, setPaintTool] = useState<MaskTool>('add');
   const [paintBrushSize, setPaintBrushSize] = useState<number>(40);
   const [paintInteractionMode, setPaintInteractionMode] = useState<PaintInteractionMode>('paint');
-  const [paintOpacity, setPaintOpacity] = useState<number>(0.5);
+  const [paintOpacity, setPaintOpacity] = useState<number>(0.55);
   const [showBaseMask, setShowBaseMask] = useState<boolean>(false);
   const [showAdditions, setShowAdditions] = useState<boolean>(false);
   const [showErasures, setShowErasures] = useState<boolean>(false);
   const [showFinalMask, setShowFinalMask] = useState<boolean>(true);
-  const [paintStrokes, setPaintStrokes] = useState<MaskStroke[]>([]);
-  const paintStrokesRef = useRef<MaskStroke[]>([]);
-  paintStrokesRef.current = paintStrokes;
-  const [undoStack, setUndoStack] = useState<MaskStroke[][]>([]);
-  const [redoStack, setRedoStack] = useState<MaskStroke[][]>([]);
+  const [maskHistory, setMaskHistory] = useState<MaskEditHistory>(() => createMaskEditHistory());
+  const maskHistoryRef = useRef(maskHistory);
+  maskHistoryRef.current = maskHistory;
+  const paintStrokes = maskHistory.current.strokes;
+  const maskOffset = maskHistory.current;
+  const undoStack = maskHistory.undo;
+  const redoStack = maskHistory.redo;
+  const setPaintStrokes = useCallback((value: SetStateAction<MaskStroke[]>) => {
+    setMaskHistory((prev) => ({ ...prev, current: {
+      ...prev.current, strokes: typeof value === 'function' ? value(prev.current.strokes) : value,
+    } }));
+  }, []);
+  const setUndoStack = useCallback((value: SetStateAction<MaskEditState[]>) => {
+    setMaskHistory((prev) => ({ ...prev, undo: typeof value === 'function' ? value(prev.undo) : value }));
+  }, []);
+  const setRedoStack = useCallback((value: SetStateAction<MaskEditState[]>) => {
+    setMaskHistory((prev) => ({ ...prev, redo: typeof value === 'function' ? value(prev.redo) : value }));
+  }, []);
+  const [isMovingMask, setIsMovingMask] = useState(false);
+  const moveMaskDragRef = useRef<{
+    start: MaskEditState;
+    pointer: { x: number; y: number };
+    committed: boolean;
+  } | null>(null);
   const [brushCursor, setBrushCursor] = useState<{
     lx: number;
     ly: number;
@@ -344,6 +380,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   const cameraX = useSharedValue(0);
   const cameraY = useSharedValue(0);
   const cameraZoom = useSharedValue(1);
+  const maskScreenScale = useDerivedValue(() => fit * cameraZoom.value, [fit]);
   const startX = useSharedValue(0);
   const startY = useSharedValue(0);
   const startZoom = useSharedValue(1);
@@ -386,12 +423,14 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       const monthNum = parseInt(searchParams.month || '1', 10);
       startPlanting({
         flowerId: searchParams.flowerId,
+        journalEntryId: searchParams.journalEntryId,
+        plantedDate: searchParams.plantedDate,
         month: monthNum,
         flowerName: searchParams.flowerName || 'pink',
         speciesCode: searchParams.speciesCode,
         mood: searchParams.mood,
       });
-      const c = MONTH_CENTROIDS[monthNum] || { x: 1200, y: 900 };
+      const c = getApprovedMonthCentroid(monthNum);
       focusCoords(c.x, c.y);
       setPreviewMode(true);
     } else if (searchParams.mode === 'adjust') {
@@ -437,51 +476,37 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   useEffect(() => {
     if (calibrationMode === 'planting-regions') {
       const refinement = loadMonthMaskRefinement(selectedCalMonth);
-      setPaintStrokes(refinement ? [...refinement.strokes] : []);
-      setUndoStack([]);
-      setRedoStack([]);
+      setMaskHistory(createMaskEditHistory(refinement));
+      setBrushCursor(null);
+      moveMaskDragRef.current = null;
+      setIsMovingMask(false);
     }
   }, [selectedCalMonth, calibrationMode]);
 
   const handleUndoMask = useCallback(() => {
-    if (undoStack.length === 0) return;
-    const previous = undoStack[undoStack.length - 1];
-    setUndoStack((prev) => prev.slice(0, -1));
-    setRedoStack((prev) => [...prev, paintStrokes]);
-    setPaintStrokes(previous);
+    setMaskHistory(undoMaskEdit);
     setBrushCursor(null);
-  }, [undoStack, paintStrokes]);
+  }, []);
 
   const handleRedoMask = useCallback(() => {
-    if (redoStack.length === 0) return;
-    const next = redoStack[redoStack.length - 1];
-    setRedoStack((prev) => prev.slice(0, -1));
-    setUndoStack((prev) => [...prev, paintStrokes]);
-    setPaintStrokes(next);
+    setMaskHistory(redoMaskEdit);
     setBrushCursor(null);
-  }, [redoStack, paintStrokes]);
+  }, []);
 
   const handleClearUnsavedMask = useCallback(() => {
     const refinement = loadMonthMaskRefinement(selectedCalMonth);
-    setPaintStrokes(refinement ? [...refinement.strokes] : []);
-    setUndoStack([]);
-    setRedoStack([]);
+    setMaskHistory(createMaskEditHistory(refinement));
     setBrushCursor(null);
   }, [selectedCalMonth]);
 
   const handleResetMaskToLockedBase = useCallback(() => {
-    resetMonthMaskRefinement(selectedCalMonth);
-    setPaintStrokes([]);
-    setUndoStack([]);
-    setRedoStack([]);
+    setMaskHistory(resetMaskEditToLockedBase);
     setBrushCursor(null);
-  }, [selectedCalMonth]);
+  }, []);
 
   const handleCancelMaskEdit = useCallback(() => {
     const refinement = loadMonthMaskRefinement(selectedCalMonth);
-    setPaintStrokes(refinement ? [...refinement.strokes] : []);
-    setUndoStack([]);
-    setRedoStack([]);
+    setMaskHistory(createMaskEditHistory(refinement));
     setBrushCursor(null);
     setCalSubMode('transform');
   }, [selectedCalMonth]);
@@ -495,9 +520,26 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       selectedCalMonth,
       paintStrokes,
       land.id,
-      cal.parentLandAsset
+      cal.parentLandAsset,
+      maskOffset
     );
-  }, [plantingCalibrationMap, selectedCalMonth, calibrationLayout, paintStrokes]);
+  }, [plantingCalibrationMap, selectedCalMonth, calibrationLayout, paintStrokes, maskOffset]);
+
+  const handleMaskOffsetNudge = useCallback((axis: 'offsetX' | 'offsetY', amount: number) => {
+    setMaskHistory((prev) => commitMaskEdit(prev, {
+      ...prev.current, [axis]: prev.current[axis] + amount,
+    }));
+    setBrushCursor(null);
+  }, []);
+
+  const handleMaskInteractionMode = useCallback((mode: PaintInteractionMode) => {
+    moveMaskDragRef.current = null;
+    currentStrokePointsRef.current = [];
+    setIsMovingMask(false);
+    setBrushCursor(null);
+    if (mode === 'move') setShowFinalMask(true);
+    setPaintInteractionMode(mode);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && __DEV__) {
@@ -583,7 +625,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
         plantingCalibrationMap[selectedCalMonth] ||
         PLANTING_REGION_CALIBRATION[selectedCalMonth];
       const land = getParentLand(cal.parentLandAsset, calibrationLayout);
-      const landLocal = worldToLandLocal(worldX, worldY, land);
+      const landLocal = landLocalToRefinementLocal(
+        worldToLandLocal(worldX, worldY, land), maskHistoryRef.current.current
+      );
       setBrushCursor({
         lx: landLocal.x,
         ly: landLocal.y,
@@ -642,8 +686,8 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       updatePreview(worldX, worldY);
     } else {
       const currentPlacements = placementsRef.current;
-      let hitFlower: FlowerPlacementRecord | null = null;
-      for (let i = currentPlacements.length - 1; i >= 0; i--) {
+      let hitFlower: FlowerPlacementRecord | null = useMonthlyGrowth?hitProductionFlower(currentPlacements,worldX,worldY):null;
+      for (let i = currentPlacements.length - 1; !useMonthlyGrowth && i >= 0; i--) {
         const p = currentPlacements[i];
         const def = getFlowerPlacementDefinition(p.flowerName);
         const hitCenterY = p.worldY - def.visualHeight * 0.35;
@@ -658,7 +702,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
         openFlowerDetail(hitFlower);
       }
     }
-  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout]);
+  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth]);
 
   const startMaskPos = useRef({ localX: 0, localY: 0 });
 
@@ -715,7 +759,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
           plantingCalibrationMap[selectedCalMonth] ||
           PLANTING_REGION_CALIBRATION[selectedCalMonth];
         const land = getParentLand(cal.parentLandAsset, calibrationLayout);
-        const landLocal = worldToLandLocal(worldX, worldY, land);
+        const landLocal = landLocalToRefinementLocal(
+          worldToLandLocal(worldX, worldY, land), maskHistoryRef.current.current
+        );
 
         currentStrokePointsRef.current = [{ x: landLocal.x, y: landLocal.y }];
         const newStroke = createMaskStroke(
@@ -723,9 +769,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
           paintBrushSize / 2,
           currentStrokePointsRef.current
         );
-        setUndoStack((prev) => [...prev, paintStrokesRef.current]);
-        setRedoStack([]);
-        setPaintStrokes((prev) => [...prev, newStroke]);
+        setMaskHistory((prev) => commitMaskEdit(prev, {
+          ...prev.current, strokes: [...prev.current.strokes, newStroke],
+        }));
         setBrushCursor({
           lx: landLocal.x,
           ly: landLocal.y,
@@ -743,7 +789,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
           plantingCalibrationMap[selectedCalMonth] ||
           PLANTING_REGION_CALIBRATION[selectedCalMonth];
         const land = getParentLand(cal.parentLandAsset, calibrationLayout);
-        const landLocal = worldToLandLocal(worldX, worldY, land);
+        const landLocal = landLocalToRefinementLocal(
+          worldToLandLocal(worldX, worldY, land), maskHistoryRef.current.current
+        );
 
         setBrushCursor({
           lx: landLocal.x,
@@ -785,6 +833,52 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
     paintBrushSize,
   ]);
 
+  const moveMaskPan = useMemo(() => {
+    const pointerInLand = (x: number, y: number) => {
+      const cal = plantingCalibrationMap[selectedCalMonth] || PLANTING_REGION_CALIBRATION[selectedCalMonth];
+      const land = getParentLand(cal.parentLandAsset, calibrationLayout);
+      return worldToLandLocal(
+        (x - baseX - cameraX.value) / (fit * cameraZoom.value),
+        (y - baseY - cameraY.value) / (fit * cameraZoom.value), land
+      );
+    };
+    return Gesture.Pan()
+      .maxPointers(1)
+      .minDistance(0)
+      .runOnJS(true)
+      .onBegin((event) => {
+        moveMaskDragRef.current = null;
+        const pointer = pointerInLand(event.x, event.y);
+        const start = maskHistoryRef.current.current;
+        const cal = plantingCalibrationMap[selectedCalMonth] || PLANTING_REGION_CALIBRATION[selectedCalMonth];
+        // Begin only on the actual final silhouette, including adds and holes.
+        if (!isPointInRefinedMaskLandLocal(selectedCalMonth, pointer.x, pointer.y,
+          start.strokes, cal, MONTH_REGION_METAS[selectedCalMonth], start)) return;
+        moveMaskDragRef.current = { start, pointer, committed: false };
+        setIsMovingMask(true);
+        setBrushCursor(null);
+      })
+      .onUpdate((event) => {
+        const drag = moveMaskDragRef.current;
+        if (!drag) return;
+        const pointer = pointerInLand(event.x, event.y);
+        const dx = pointer.x - drag.pointer.x;
+        const dy = pointer.y - drag.pointer.y;
+        if (!drag.committed && dx === 0 && dy === 0) return;
+        const current = {
+          ...drag.start, offsetX: drag.start.offsetX + dx, offsetY: drag.start.offsetY + dy,
+        };
+        const firstUpdate = !drag.committed;
+        drag.committed = true;
+        setMaskHistory((prev) => firstUpdate ? commitMaskEdit(prev, current) : { ...prev, current });
+      })
+      .onFinalize(() => {
+        moveMaskDragRef.current = null;
+        setIsMovingMask(false);
+      });
+  }, [baseX, baseY, fit, cameraX, cameraY, cameraZoom,
+    plantingCalibrationMap, selectedCalMonth, calibrationLayout]);
+
   const cameraGesture = useMemo(() => {
     const pan = Gesture.Pan()
       .maxPointers(1)
@@ -820,6 +914,10 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
     let effectivePan = pan;
     if (isPlantingCal) {
       if (calSubMode === 'mask-paint') {
+        if (paintInteractionMode === 'move') {
+          // Keep the view stationary while a mask translation is being edited.
+          return Gesture.Simultaneous(moveMaskPan, tap);
+        }
         effectivePan = paintInteractionMode === 'paint' ? paintPan : pan;
       } else {
         effectivePan = calDragMode === 'region' ? maskPan : pan;
@@ -827,7 +925,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
     }
     return Gesture.Simultaneous(effectivePan, pinch, tap);
   }, [baseX, baseY, fit, cameraX, cameraY, cameraZoom, focalWorldX, focalWorldY,
-    startX, startY, startZoom, handleGardenTap, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan]);
+    startX, startY, startZoom, handleGardenTap, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan, moveMaskPan]);
   const resetView = useCallback(() => {
     cameraX.value = 0;
     cameraY.value = 0;
@@ -959,6 +1057,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
               selectedLandId={__DEV__ && !previewMode && calibrationMode === 'land' ? selectedLandId : null} />
             {/* Month Planting Region Overlay */}
             <PlantingRegionOverlay
+              screenScale={maskScreenScale}
               highlightedMonth={activeMode !== 'normal' && targetFlower ? targetFlower.month : null}
               showAllRegions={showDevPlantingRegions}
               isCalibrating={__DEV__ && !previewMode && calibrationMode === 'planting-regions'}
@@ -971,6 +1070,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
               isPaintingMask={__DEV__ && !previewMode && calibrationMode === 'planting-regions' && calSubMode === 'mask-paint'}
               paintingMonth={selectedCalMonth}
               activeStrokes={paintStrokes}
+              activeOffset={maskOffset}
               brushCursor={brushCursor}
               showBaseMask={showBaseMask}
               showAdditions={showAdditions}
@@ -992,6 +1092,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             )}
             {showLandmarks && (
               <LandmarkLayer
+                behindTeaSet={<PlantedFlowerLayer depthPass="behind-tea-set" useMonthlyGrowth={useMonthlyGrowth} />}
                 waterfallVersion={waterfallVersion}
                 showDiagnostics={__DEV__ && !previewMode && !waterfallFocus && showDiagnostics}
                 showBounds={__DEV__ && !previewMode && !waterfallFocus && calibrationMode !== 'land' && calibrationMode !== 'impact' && calibrationMode !== 'water-top'}
@@ -1022,7 +1123,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             )}
             {__DEV__ && infrastructureEnabled && showLandmarks && <GardenRoadApproachLayer />}
             {/* Planted Flowers & Active Placement Preview Layer */}
-            <PlantedFlowerLayer />
+            <PlantedFlowerLayer depthPass={showLandmarks ? 'foreground' : 'all'} useMonthlyGrowth={useMonthlyGrowth} />
             {__DEV__ && !previewMode && calibrationMode === 'impact' && (
               <WaterfallImpactOverlay placement={waterfallImpactPlacement} />
             )}
@@ -1152,6 +1253,11 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
           {/* 🌿 Production Flower Planting System DEV Controls */}
           <View style={[styles.controlRow, { alignItems: 'center', backgroundColor: '#ECFDF5', padding: 4, borderRadius: 6 }]}>
             <Text style={[styles.diagnosticText, { fontWeight: '700', color: '#065F46' }]}>Planting DEV:</Text>
+            <ToggleButton label={`Growth V1.1 ${useMonthlyGrowth?'ON':'OFF'}`} enabled={useMonthlyGrowth}
+              onPress={()=>setUseMonthlyGrowth(v=>!v)} />
+            {useMonthlyGrowth && unresolvedGardenArt.length > 0 && <Text style={styles.diagnosticText}>
+              Garden art unavailable: {unresolvedGardenArt.join(', ')} (DEV anchor markers)
+            </Text>}
             <ToggleButton
               label={`Calibrate Regions ${(calibrationMode as string) === 'planting-regions' ? 'ON' : 'OFF'}`}
               enabled={(calibrationMode as string) === 'planting-regions'}
@@ -1510,6 +1616,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             tool={paintTool}
             brushSize={paintBrushSize}
             interactionMode={paintInteractionMode}
+            maskOffset={maskOffset}
+            isMovingMask={isMovingMask}
+            onNudgeOffset={handleMaskOffsetNudge}
             opacity={paintOpacity}
             showBaseMask={showBaseMask}
             showAdditions={showAdditions}
@@ -1524,7 +1633,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             }}
             onChangeTool={setPaintTool}
             onChangeBrushSize={setPaintBrushSize}
-            onChangeInteractionMode={setPaintInteractionMode}
+            onChangeInteractionMode={handleMaskInteractionMode}
             onChangeOpacity={setPaintOpacity}
             onToggleShowBaseMask={() => setShowBaseMask((v) => !v)}
             onToggleShowAdditions={() => setShowAdditions((v) => !v)}
@@ -1646,8 +1755,9 @@ function WaterfallImpactDebugShape({ placement }: { placement: WaterfallImpactPl
 }
 
 export default function GardenScene(props: GardenSceneProps = {}) {
+  const detailParams = useLocalSearchParams<{ ownerId?: string }>();
   return (
-    <PlantingProvider>
+    <PlantingProvider gardenOwnerUserId={props.gardenOwnerUserId || detailParams.ownerId}>
       <GardenSceneContent {...props} />
     </PlantingProvider>
   );

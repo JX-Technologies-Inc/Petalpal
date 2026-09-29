@@ -7,6 +7,8 @@ import {
 } from '@shopify/react-native-skia';
 import { usePlanting } from './PlantingContext';
 import { getFlowerPlacementDefinition } from './flowerFootprintConfig';
+import { flowerInDepthPass, type FlowerDepthPass } from '../flowerOcclusion';
+import { ProductionPlantedFlowers } from './ProductionPlantedFlowers';
 
 const FLOWER_ASSETS: Record<string, any> = {
   pink: require('../../../../assets/garden/flowers/pink.png'),
@@ -16,7 +18,11 @@ const FLOWER_ASSETS: Record<string, any> = {
   tulip: require('../../../../assets/garden/flowers/tulip.png'),
 };
 
-export default function PlantedFlowerLayer() {
+export default function PlantedFlowerLayer({depthPass='all',useMonthlyGrowth=false}:{depthPass?:FlowerDepthPass;useMonthlyGrowth?:boolean}) {
+  return useMonthlyGrowth?<ProductionPlantedFlowers depthPass={depthPass}/>:<LegacyPlantedFlowerLayer depthPass={depthPass}/>;
+}
+
+export function LegacyPlantedFlowerLayer({ depthPass = 'all' }: { depthPass?: FlowerDepthPass }) {
   const {
     placements,
     activeMode,
@@ -54,12 +60,13 @@ export default function PlantedFlowerLayer() {
     <Group>
       {/* 1. Committed Planted Flowers */}
       {sortedPlacements.map((flower) => {
+        if (!flowerInDepthPass(flower.month, depthPass)) return null;
         // If this flower is actively being adjusted, hide it from its old location
         if (activeMode === 'adjusting' && targetFlower?.id === flower.id) {
           return null;
         }
 
-        const def = getFlowerPlacementDefinition(flower.flowerName);
+        const def = getFlowerPlacementDefinition(flower.flowerName, flower.speciesCode);
         const img = getImageForFlower(flower.flowerName);
         if (!img) return null;
 
@@ -124,10 +131,10 @@ export default function PlantedFlowerLayer() {
       })}
 
       {/* 2. Active Preview Flower (Planting or Adjusting) */}
-      {activeMode !== 'normal' && previewCoords && targetFlower && (
+      {activeMode !== 'normal' && previewCoords && targetFlower && flowerInDepthPass(targetFlower.month, depthPass) && (
         <Group>
           {(() => {
-            const def = getFlowerPlacementDefinition(targetFlower.flowerName);
+            const def = getFlowerPlacementDefinition(targetFlower.flowerName, targetFlower.speciesCode);
             const img = getImageForFlower(targetFlower.flowerName);
             const isValid = validationResult?.isValid ?? false;
             const w = def.visualWidth;

@@ -1,0 +1,13 @@
+{
+  "lockedHashesMatch": {
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\Resources\\decorations\\stair\\ST01\\ST01_master.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\SS01_stepping_stones.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B01_bridge.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B02_bridge.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\ST01_approved.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\Road_grounded_connection.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\Road_ground_junctions.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\bridges\\approved-circulation\\main-road-connected.png": true
+  },
+  "operation": "local texture reuse and alpha/foreground masks only; bridge/stair/land transforms unchanged"
+}

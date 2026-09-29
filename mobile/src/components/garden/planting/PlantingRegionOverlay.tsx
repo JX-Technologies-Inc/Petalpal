@@ -1,4 +1,6 @@
-import { Circle, Group, Image, Path, Rect, useImage } from '@shopify/react-native-skia';
+import { useMemo } from 'react';
+import { BlendMode, Circle, ColorMatrix, Group, Image, Path, Rect, Skia, useImage } from '@shopify/react-native-skia';
+import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import {
   MONTH_REGION_METAS,
 } from './plantingRegionData';
@@ -13,8 +15,11 @@ import { GARDEN_LANDS, type GardenLandLayout } from '../gardenMapLayout';
 import {
   MaskStroke,
   MaskTool,
+  type MaskOffset,
+  getMaskRefinementOffset,
   getMonthMaskRefinement,
 } from './plantingMaskRefinement';
+import { APPROVED_MASK_CALIBRATION, APPROVED_MASK_REFINEMENTS } from './approvedPlantingMasks';
 
 
 const NORMAL_MONTH_IMAGES: Record<number, any> = {
@@ -48,68 +53,15 @@ const DEBUG_MONTH_IMAGES: Record<number, any> = {
 };
 
 
-interface StrokeGroup {
-  id: string;
-  tool: MaskTool;
-  radius: number;
-  strokes: MaskStroke[];
-}
-
-function groupConsecutiveStrokes(strokes: MaskStroke[]): StrokeGroup[] {
-  const groups: StrokeGroup[] = [];
-  for (const s of strokes) {
-    if (!s.points || s.points.length === 0) continue;
-    const current = groups[groups.length - 1];
-    if (current && current.tool === s.tool && current.radius === s.radius) {
-      current.strokes.push(s);
-    } else {
-      groups.push({
-        id: s.id,
-        tool: s.tool,
-        radius: s.radius,
-        strokes: [s],
-      });
-    }
-  }
-  return groups;
-}
-
-function strokeGroupToPath(group: StrokeGroup, landX: number, landY: number): string {
-  const subpaths: string[] = [];
-  for (let i = 0; i < group.strokes.length; i++) {
-    const s = group.strokes[i];
-    const pts = s.points;
-    if (!pts || pts.length === 0) continue;
-
-    // Check if the start of this stroke connects to the end of the previous stroke
-    if (i > 0) {
-      const prev = group.strokes[i - 1];
-      const prevEnd = prev.points[prev.points.length - 1];
-      const curStart = pts[0];
-      const dx = curStart.x - prevEnd.x;
-      const dy = curStart.y - prevEnd.y;
-      // If the two strokes touch or overlap (within diameter), bridge them directly!
-      if (dx * dx + dy * dy <= (s.radius * 2) * (s.radius * 2)) {
-        for (let j = 0; j < pts.length; j++) {
-          subpaths.push(`L ${landX + pts[j].x} ${landY + pts[j].y}`);
-        }
-        continue;
-      }
-    }
-
-    // Otherwise start a new subpath
-    if (pts.length === 1) {
-      subpaths.push(`M ${landX + pts[0].x} ${landY + pts[0].y} L ${landX + pts[0].x + 0.05} ${landY + pts[0].y}`);
-    } else {
-      let d = `M ${landX + pts[0].x} ${landY + pts[0].y}`;
-      for (let j = 1; j < pts.length; j++) {
-        d += ` L ${landX + pts[j].x} ${landY + pts[j].y}`;
-      }
-      subpaths.push(d);
-    }
-  }
-  return subpaths.join(' ');
-}
+// The locked PNGs use alpha 160 for their interiors. Restore coverage before
+// editing, otherwise opaque additions look darker and expose the brush geometry.
+// Keep the original antialiased boundary; do not threshold or smooth painted area.
+const BASE_COVERAGE_MATRIX = [
+  0, 0, 0, 0, 1,
+  0, 0, 0, 0, 1,
+  0, 0, 0, 0, 1,
+  0, 0, 0, 255 / 160, 0,
+];
 
 function renderStrokeInLand(
   stroke: MaskStroke,
@@ -122,14 +74,14 @@ function renderStrokeInLand(
 ) {
   const pts = stroke.points;
   if (!pts || pts.length === 0) return null;
-  let d = '';
   if (pts.length === 1) {
-    d = `M ${landX + pts[0].x} ${landY + pts[0].y} L ${landX + pts[0].x + 0.05} ${landY + pts[0].y}`;
-  } else {
-    d = `M ${landX + pts[0].x} ${landY + pts[0].y}`;
-    for (let i = 1; i < pts.length; i++) {
-      d += ` L ${landX + pts[i].x} ${landY + pts[i].y}`;
-    }
+    return <Circle key={`${keyPrefix}${stroke.id}`} cx={landX + pts[0].x}
+      cy={landY + pts[0].y} r={stroke.radius} color={color}
+      opacity={opacity} blendMode={blendMode} />;
+  }
+  let d = `M ${landX + pts[0].x} ${landY + pts[0].y}`;
+  for (let i = 1; i < pts.length; i++) {
+    d += ` L ${landX + pts[i].x} ${landY + pts[i].y}`;
   }
 
   return (
@@ -151,18 +103,20 @@ function CalibratedMonthRegion({
   month,
   isCalibrating,
   isSelected,
-  cal,
+  cal: requestedCalibration,
   layout,
   opacity,
   showLandBounds,
   isPaintingMask,
   paintingMonth,
   activeStrokes,
+  activeOffset,
   brushCursor,
   showBaseMask = false,
   showAdditions = false,
   showErasures = false,
   showFinalMask = true,
+  screenScale,
 }: {
   month: number;
   isCalibrating: boolean;
@@ -174,18 +128,45 @@ function CalibratedMonthRegion({
   isPaintingMask?: boolean;
   paintingMonth?: number;
   activeStrokes?: MaskStroke[];
+  activeOffset?: MaskOffset;
   brushCursor?: { lx: number; ly: number; radius: number; tool: MaskTool } | null;
   showBaseMask?: boolean;
   showAdditions?: boolean;
   showErasures?: boolean;
   showFinalMask?: boolean;
+  screenScale?: SharedValue<number>;
 }) {
+  const cal = isCalibrating ? requestedCalibration : APPROVED_MASK_CALIBRATION[month];
   const imgSrc =
     isCalibrating && !isPaintingMask
       ? DEBUG_MONTH_IMAGES[month]
       : NORMAL_MONTH_IMAGES[month];
   const meta = MONTH_REGION_METAS[month];
   const image = useImage(imgSrc);
+  const isThisMonthPainting = isPaintingMask && paintingMonth === month;
+  const fillPaint = useMemo(() => {
+    const paint = Skia.Paint();
+    paint.setColorFilter(Skia.ColorFilter.MakeBlend(
+      Skia.Color(isThisMonthPainting ? '#00DDEB' : '#06B6D4'), BlendMode.SrcIn
+    ));
+    // Keep the original baseline overlay strength outside the manual editor.
+    paint.setAlphaf(isThisMonthPainting ? opacity : opacity * 0.9 * (160 / 255));
+    return paint;
+  }, [isThisMonthPainting, opacity]);
+  const outlinePaint = useDerivedValue(() => {
+    const paint = Skia.Paint();
+    // Subtract an eroded COPY from the completed coverage to get an inner ring.
+    // Erosion affects the outline only, never the mask or planting rules.
+    const radius = 2.5 / Math.max(screenScale?.value ?? 1, 0.001);
+    paint.setImageFilter(Skia.ImageFilter.MakeBlend(
+      BlendMode.DstOut,
+      Skia.ImageFilter.MakeOffset(0, 0),
+      Skia.ImageFilter.MakeErode(radius, radius)
+    ));
+    paint.setColorFilter(Skia.ColorFilter.MakeBlend(Skia.Color('#006B78'), BlendMode.SrcIn));
+    paint.setAlphaf(0.95);
+    return paint;
+  }, [screenScale]);
   if (!image || !meta) return null;
 
   const land = getParentLand(cal.parentLandAsset, layout);
@@ -199,17 +180,36 @@ function CalibratedMonthRegion({
   const centroid = getCalibratedCentroid(month, { [month]: cal }, layout);
 
   // Determine strokes to render for this month
-  const isThisMonthPainting = isPaintingMask && paintingMonth === month;
-  let strokesToRender: MaskStroke[] = [];
-  if (isThisMonthPainting && activeStrokes) {
-    strokesToRender = activeStrokes;
-  } else {
-    const saved = getMonthMaskRefinement(month);
-    if (saved) strokesToRender = saved.strokes;
-  }
+  const saved = isCalibrating ? getMonthMaskRefinement(month) : APPROVED_MASK_REFINEMENTS[month];
+  const strokesToRender = isThisMonthPainting && activeStrokes ? activeStrokes : saved?.strokes ?? [];
+  const offset = getMaskRefinementOffset(isThisMonthPainting ? activeOffset : saved);
 
   const addStrokes = strokesToRender.filter((s) => s.tool === 'add');
   const eraseStrokes = strokesToRender.filter((s) => s.tool === 'remove');
+
+  // One opaque coverage surface: locked baseline, then each operation in order.
+  // Stroke paths are mask inputs only; tint/opacity and outline apply after union.
+  const finalCoverage = (
+    <Group>
+      <Group layer={true}>
+        <Group transform={[
+          { translateX: regCenterX }, { translateY: regCenterY },
+          { rotate: (cal.rotation * Math.PI) / 180 },
+          { scaleX: cal.scaleX || 1.0 }, { scaleY: cal.scaleY || 1.0 },
+          { translateX: -regCenterX }, { translateY: -regCenterY },
+        ]}>
+          <Image image={image} x={land.x + cal.localX} y={land.y + cal.localY}
+            width={W} height={H}>
+            <ColorMatrix matrix={BASE_COVERAGE_MATRIX} />
+          </Image>
+        </Group>
+      </Group>
+      {strokesToRender.map((stroke) => renderStrokeInLand(
+        stroke, land.x, land.y, '#FFFFFF', 1,
+        stroke.tool === 'add' ? 'srcOver' : 'clear', 'final-'
+      ))}
+    </Group>
+  );
 
   return (
     <Group>
@@ -222,65 +222,15 @@ function CalibratedMonthRegion({
           { translateY: -landCenterY },
         ]}
       >
-        {/* 1. Final Composite Mask: BASE MASK + ADDITIONS - ERASURES */}
+        {/* A refinement translation wraps the complete mask in parent-land space. */}
+        <Group transform={[{ translateX: offset.offsetX }, { translateY: offset.offsetY }]}>
+        {/* 1. Display only the completed alpha silhouette. */}
         {showFinalMask && (
-          <Group layer={true} opacity={opacity * 0.9}>
-            {/* Base Mask: Image with srcIn Cyan fill inside its own layer */}
-            <Group layer={true}>
-              <Group
-                transform={[
-                  { translateX: regCenterX },
-                  { translateY: regCenterY },
-                  { rotate: (cal.rotation * Math.PI) / 180 },
-                  { scaleX: cal.scaleX || 1.0 },
-                  { scaleY: cal.scaleY || 1.0 },
-                  { translateX: -regCenterX },
-                  { translateY: -regCenterY },
-                ]}
-              >
-                <Image
-                  image={image}
-                  x={land.x + cal.localX}
-                  y={land.y + cal.localY}
-                  width={W}
-                  height={H}
-                />
-                <Rect
-                  x={land.x + cal.localX}
-                  y={land.y + cal.localY}
-                  width={W}
-                  height={H}
-                  color="#06B6D4"
-                  blendMode="srcIn"
-                />
-              </Group>
-            </Group>
-
-            {/* Sequential Strokes in chronological order:
-                - Brush/Add paints Cyan (#06B6D4) with srcOver as continuous Skia Paths
-                - Eraser/Remove clears the mask with blendMode="clear" as continuous Skia Paths
-                Later strokes naturally take precedence (Brush can repaint an erased area,
-                and Eraser can erase it again).
-                Consecutive/overlapping Add strokes visually union with each other and the Base Mask.
-            */}
-            {groupConsecutiveStrokes(strokesToRender).map((group) => {
-              const d = strokeGroupToPath(group, land.x, land.y);
-              if (!d) return null;
-              const isAdd = group.tool === 'add';
-              return (
-                <Path
-                  key={`final-group-${group.id}`}
-                  path={d}
-                  style="stroke"
-                  strokeWidth={group.radius * 2}
-                  strokeCap="round"
-                  strokeJoin="round"
-                  color={isAdd ? '#06B6D4' : '#000000'}
-                  opacity={1.0}
-                  blendMode={isAdd ? 'srcOver' : 'clear'}
-                />
-              );
-            })}
+          <Group>
+            <Group layer={fillPaint}>{finalCoverage}</Group>
+            {isThisMonthPainting && (
+              <Group layer={outlinePaint}>{finalCoverage}</Group>
+            )}
           </Group>
         )}
 
@@ -376,6 +326,8 @@ function CalibratedMonthRegion({
           </Group>
         )}
 
+        </Group>
+
         {/* 7. Land Outline Border */}
         {isCalibrating && isSelected && showLandBounds && (
           <Rect
@@ -412,6 +364,7 @@ function CalibratedMonthRegion({
 }
 
 export interface PlantingRegionOverlayProps {
+  screenScale?: SharedValue<number>;
   showAllRegions?: boolean;
   highlightedMonth?: number | null;
   // Calibration DEV mode props
@@ -426,6 +379,7 @@ export interface PlantingRegionOverlayProps {
   isPaintingMask?: boolean;
   paintingMonth?: number;
   activeStrokes?: MaskStroke[];
+  activeOffset?: MaskOffset;
   brushCursor?: { lx: number; ly: number; radius: number; tool: MaskTool } | null;
   showBaseMask?: boolean;
   showAdditions?: boolean;
@@ -446,11 +400,13 @@ export default function PlantingRegionOverlay({
   isPaintingMask = false,
   paintingMonth = 1,
   activeStrokes,
+  activeOffset,
   brushCursor,
   showBaseMask = false,
   showAdditions = false,
   showErasures = false,
   showFinalMask = true,
+  screenScale,
 }: PlantingRegionOverlayProps) {
   const currentCalibrationMap = calibrationMap || PLANTING_REGION_CALIBRATION;
 
@@ -470,11 +426,13 @@ export default function PlantingRegionOverlay({
           isPaintingMask={true}
           paintingMonth={paintingMonth}
           activeStrokes={activeStrokes}
+          activeOffset={activeOffset}
           brushCursor={brushCursor}
           showBaseMask={showBaseMask}
           showAdditions={showAdditions}
           showErasures={showErasures}
           showFinalMask={showFinalMask}
+          screenScale={screenScale}
         />
       </Group>
     );

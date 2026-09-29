@@ -1,4 +1,5 @@
-// Authoritative flower placement and footprint metadata definitions.
+import { resolveParentCollision, UNRESOLVED_PARENT_COLLISION_RADIUS } from './parentCollision';
+// Visual/hit-target metadata is preserved; parent radius comes from one resolver.
 
 export interface FlowerPlacementDefinition {
   footprintRadius: number; // Radius of logical hole/planting base (collision shape)
@@ -8,57 +9,59 @@ export interface FlowerPlacementDefinition {
 }
 
 export const DEFAULT_FLOWER_PLACEMENT_DEF: FlowerPlacementDefinition = {
-  footprintRadius: 22,
+  footprintRadius: UNRESOLVED_PARENT_COLLISION_RADIUS,
   hitboxRadius: 40,
   visualWidth: 76,
   visualHeight: 76,
 };
 
-// Flower species-specific definitions if needed (all use consistent standard hole size)
+// Historical visual and hit-target dimensions; unresolved legacy entries are
+// conservative occupied-anchor metadata, not approved new planting classes.
 export const FLOWER_PLACEMENT_DEFINITIONS: Record<string, FlowerPlacementDefinition> = {
   default: DEFAULT_FLOWER_PLACEMENT_DEF,
   Sunflower: {
-    footprintRadius: 24,
+    footprintRadius: resolveParentCollision('SUNFLOWER').radius,
     hitboxRadius: 44,
     visualWidth: 84,
     visualHeight: 84,
   },
   Tulip: {
-    footprintRadius: 20,
+    footprintRadius: resolveParentCollision('TULIP').radius,
     hitboxRadius: 38,
     visualWidth: 70,
     visualHeight: 70,
   },
   Lotus: {
-    footprintRadius: 22,
+    footprintRadius: UNRESOLVED_PARENT_COLLISION_RADIUS,
     hitboxRadius: 40,
     visualWidth: 76,
     visualHeight: 76,
   },
   Lavender: {
-    footprintRadius: 20,
+    footprintRadius: resolveParentCollision('LAVENDER').radius,
     hitboxRadius: 38,
     visualWidth: 72,
     visualHeight: 72,
   },
   'Cherry Blossom': {
-    footprintRadius: 22,
+    footprintRadius: UNRESOLVED_PARENT_COLLISION_RADIUS,
     hitboxRadius: 40,
     visualWidth: 76,
     visualHeight: 76,
   },
 };
 
-export function getFlowerPlacementDefinition(speciesOrName?: string): FlowerPlacementDefinition {
-  if (!speciesOrName) return DEFAULT_FLOWER_PLACEMENT_DEF;
+export function getFlowerPlacementDefinition(speciesOrName?: string, speciesCode?: string): FlowerPlacementDefinition {
+  const radius = resolveParentCollision(speciesCode, speciesOrName).radius;
+  if (!speciesOrName) return { ...DEFAULT_FLOWER_PLACEMENT_DEF, footprintRadius: radius };
   const direct = FLOWER_PLACEMENT_DEFINITIONS[speciesOrName];
-  if (direct) return direct;
+  if (direct) return { ...direct, footprintRadius: radius };
 
   const lower = speciesOrName.toLowerCase();
   for (const [key, val] of Object.entries(FLOWER_PLACEMENT_DEFINITIONS)) {
     if (key.toLowerCase() === lower || lower.includes(key.toLowerCase())) {
-      return val;
+      return { ...val, footprintRadius: radius };
     }
   }
-  return DEFAULT_FLOWER_PLACEMENT_DEF;
+  return { ...DEFAULT_FLOWER_PLACEMENT_DEF, footprintRadius: radius };
 }

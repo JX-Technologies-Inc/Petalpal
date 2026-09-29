@@ -1,0 +1,184 @@
+{
+  "primaryBlooms": {
+    "SUNNY_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": [
+        "joy"
+      ]
+    },
+    "GENTLE_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": [
+        "caring"
+      ]
+    },
+    "QUIET_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": [
+        "sadness"
+      ]
+    },
+    "HEALING_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": []
+    },
+    "FIRE_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": [
+        "anger"
+      ]
+    },
+    "WONDER_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": [
+        "curiosity"
+      ]
+    },
+    "DRIFTING_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": [
+        "confusion"
+      ]
+    },
+    "PEACEFUL_BLOOM": {
+      "speciesPool": [],
+      "redundantSecondaryEmotions": []
+    }
+  },
+  "secondaryModifiers": {
+    "admiration": {
+      "colorAccent": "PEARL_GOLD",
+      "effect": "SOFT_SHIMMER"
+    },
+    "amusement": {
+      "colorAccent": "BRIGHT_CORAL",
+      "effect": "PLAYFUL_SPARKLE"
+    },
+    "anger": {
+      "colorAccent": "EMBER_RED",
+      "effect": "HEAT_SPARK"
+    },
+    "annoyance": {
+      "colorAccent": "SHARP_ORANGE",
+      "effect": "SUBTLE_FLICKER"
+    },
+    "caring": {
+      "colorAccent": "WARM_CREAM",
+      "effect": "GENTLE_GLOW"
+    },
+    "confusion": {
+      "colorAccent": "MIXED_VIOLET",
+      "effect": "DRIFTING_MOTES"
+    },
+    "curiosity": {
+      "colorAccent": "IRIDESCENT_BLUE",
+      "effect": "ORBITING_MOTES"
+    },
+    "disappointment": {
+      "colorAccent": "MUTED_BLUE",
+      "effect": "SOFT_RAIN"
+    },
+    "disgust": {
+      "colorAccent": "COOL_GREEN",
+      "effect": "SUBTLE_SPORES"
+    },
+    "excitement": {
+      "colorAccent": "VIVID_GOLD",
+      "effect": "BURST_SPARKLE"
+    },
+    "fear": {
+      "colorAccent": "COOL_DARK_EDGE",
+      "effect": "SUBTLE_MIST"
+    },
+    "gratitude": {
+      "colorAccent": "WARM_GOLD",
+      "effect": "SOFT_SPARKLE"
+    },
+    "joy": {
+      "colorAccent": "SUNLIT_YELLOW",
+      "effect": "SUNLIGHT"
+    },
+    "love": {
+      "colorAccent": "SOFT_PINK",
+      "effect": "GENTLE_GLOW"
+    },
+    "optimism": {
+      "colorAccent": "DAWN_GOLD",
+      "effect": "RISING_LIGHT"
+    },
+    "remorse": {
+      "colorAccent": "SILVER_BLUE",
+      "effect": "DEW_SHIMMER"
+    },
+    "sadness": {
+      "colorAccent": "COOL_BLUE",
+      "effect": "SOFT_RAIN"
+    },
+    "surprise": {
+      "colorAccent": "CONTRAST_POP",
+      "effect": "FLASH_SPARKLE"
+    }
+  },
+  "legacyCatalog": {
+    "happy": [
+      {
+        "name": "Sunflower",
+        "meaning": "Happiness",
+        "img": "🌻"
+      },
+      {
+        "name": "Tulip",
+        "meaning": "Joy",
+        "img": "🌷"
+      }
+    ],
+    "sad": [
+      {
+        "name": "Blue Rose",
+        "meaning": "Melancholy",
+        "img": "🥀"
+      },
+      {
+        "name": "Lavender",
+        "meaning": "Quiet comfort",
+        "img": "🪻"
+      }
+    ],
+    "calm": [
+      {
+        "name": "Lotus",
+        "meaning": "Peace",
+        "img": "🪷"
+      },
+      {
+        "name": "Cherry Blossom",
+        "meaning": "Gentleness",
+        "img": "🌸"
+      }
+    ],
+    "tired": [
+      {
+        "name": "Lavender",
+        "meaning": "Rest",
+        "img": "🪻"
+      },
+      {
+        "name": "Daisy",
+        "meaning": "Soft recovery",
+        "img": "🌼"
+      }
+    ],
+    "stressed": [
+      {
+        "name": "Chamomile",
+        "meaning": "Relaxation",
+        "img": "🌼"
+      },
+      {
+        "name": "Lotus",
+        "meaning": "Breathe and reset",
+        "img": "🪷"
+      }
+    ]
+  }
+}

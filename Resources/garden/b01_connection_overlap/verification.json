@@ -1,0 +1,29 @@
+{
+  "opaque_paving_overlap_pixels": 4251,
+  "lower_neck_overlap_pixels": 2249,
+  "landing_bounds": [
+    1572,
+    1412,
+    1671,
+    1556
+  ],
+  "checked_files": 378,
+  "changed_files": [
+    "mobile\\assets\\garden\\infrastructure\\entrance-connections\\b01-foot-landing.png",
+    "mobile\\src\\components\\garden\\GardenInfrastructureLayer.tsx"
+  ],
+  "all_other_files_unchanged": true,
+  "continuous_opaque_corridor": {
+    "bounds": [
+      1610,
+      1455,
+      1630,
+      1600
+    ],
+    "gap_pixels": 0
+  },
+  "runtime_arch_off_inspected": true,
+  "arch_restored": true,
+  "approved": false,
+  "checkpoint_created": false
+}

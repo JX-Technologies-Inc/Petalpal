@@ -1,9 +1,14 @@
-import { MONTH_CENTROIDS } from './plantingRegionData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlowerPlacement } from './placementValidator';
+import type { FlowerMessage } from './flowerDetailData';
 
 export interface FlowerPlacementRecord extends FlowerPlacement {
   supportCount: number;
   notes?: string;
+  ownerUserId?: string;
+  meaning?: string;
+  image?: string;
+  messages?: FlowerMessage[];
 }
 
 const STORAGE_KEY = 'petalpal_flower_placements_v1';
@@ -80,13 +85,15 @@ export const DEFAULT_SEED_PLACEMENTS: FlowerPlacementRecord[] = [
   },
 ];
 
-// Memory store fallback for non-web environments
+// Cache only; browser and native storage remain the durable source of truth.
 let memoryPlacementsStore: FlowerPlacementRecord[] | null = null;
 
 export async function loadFlowerPlacements(): Promise<FlowerPlacementRecord[]> {
   try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
+    {
+      const stored = typeof window !== 'undefined' && window.localStorage
+        ? window.localStorage.getItem(STORAGE_KEY)
+        : await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
@@ -103,22 +110,25 @@ export async function loadFlowerPlacements(): Promise<FlowerPlacementRecord[]> {
     return memoryPlacementsStore;
   }
 
-  // First time initialization: use seed
-  memoryPlacementsStore = [...DEFAULT_SEED_PLACEMENTS];
-  await saveFlowerPlacements(memoryPlacementsStore);
+  // An empty installation starts empty. Loading must never create or commit
+  // unconfirmed flower coordinates; existing saved records are retained above.
+  memoryPlacementsStore = [];
   return memoryPlacementsStore;
 }
 
 export async function saveFlowerPlacements(
   placements: FlowerPlacementRecord[]
 ): Promise<void> {
-  memoryPlacementsStore = placements;
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(placements));
+    } else {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(placements));
     }
+    memoryPlacementsStore = placements;
   } catch (err) {
     console.warn('[plantingPersistence] Failed to write to localStorage:', err);
+    throw err;
   }
 }
 
@@ -146,16 +156,11 @@ export async function addOrUpdateFlowerPlacement(
   return updated;
 }
 
-export async function incrementFlowerSupport(
+export async function removeFlowerPlacement(
   flowerId: string
 ): Promise<FlowerPlacementRecord[]> {
   const current = await loadFlowerPlacements();
-  const updated = current.map((p) => {
-    if (p.flowerId === flowerId || p.id === flowerId) {
-      return { ...p, supportCount: (p.supportCount || 0) + 1 };
-    }
-    return p;
-  });
+  const updated = current.filter((p) => p.flowerId !== flowerId && p.id !== flowerId);
   await saveFlowerPlacements(updated);
   return updated;
 }

@@ -1,0 +1,26 @@
+{
+  "nonWisteriaBefore": "35027bb106101daadbe4a0493a8c58566e6711994cf7de135d81d3d93778184b",
+  "nonWisteriaAfter": "35027bb106101daadbe4a0493a8c58566e6711994cf7de135d81d3d93778184b",
+  "cameraRestored": true,
+  "existingMaterialsReused": [
+    "Hanging lilac",
+    "Hanging violet",
+    "Hanging pale tips"
+  ],
+  "quarterBlossomCounts": [
+    18,
+    19,
+    19,
+    19,
+    19,
+    18,
+    19,
+    18,
+    19,
+    18,
+    19,
+    19
+  ],
+  "baseFaces": 6720,
+  "representation": "Open three-wing petal surfaces; no spheres or closed beads; no subdivision modifier"
+}

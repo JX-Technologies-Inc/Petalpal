@@ -1,0 +1,2379 @@
+{
+  "species": [
+    {
+      "speciesCode": "COREOPSIS",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "airy branching yellow flowers",
+      "sourcePath": "Resources/Garden Flowers/Coreopsis/coreopsis.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      }
+    },
+    {
+      "speciesCode": "DAISY",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "small irregular white flowering stems",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "GERBERA_DAISY",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "broad pink focal blooms",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "SUNFLOWER",
+      "flowerClass": "L",
+      "footprintRadius": 16,
+      "baseVisualScale": 1,
+      "morphology": "tall focal yellow heads",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      }
+    },
+    {
+      "speciesCode": "ANEMONE",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "open flowers on light stems",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "BLUEBELL",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "drooping bell stems",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "HEATHER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "fine vertical branching spikes",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "SNOWDROP",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "small downward white bells",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "GENTIAN",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "upright trumpet flowers",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "PETUNIA",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "open asymmetric pink trumpets",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "POPPY",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "delicate papery bloom stems",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "BIRD_OF_PARADISE",
+      "flowerClass": "L",
+      "footprintRadius": 16,
+      "baseVisualScale": 1,
+      "morphology": "architectural leaves and angular blooms",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 2,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      }
+    },
+    {
+      "speciesCode": "WHITE_ROSE",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "compact layered white blooms and foliage",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "YELLOW_DAFFODIL",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "upright yellow trumpets and narrow leaves",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "ASTER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "small purple daisy-like stems",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "DANDELION",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "yellow blooms and occasional seed heads",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "YELLOW_RAPESEED_FLOWER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "airy yellow flowering branches",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "CHINESE_VIOLET_CRESS",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "light purple open stems",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "LAVENDER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "narrow vertical purple spikes",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      }
+    },
+    {
+      "speciesCode": "OLIVE",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 0.9,
+      "morphology": "foliage/branch form, not a flower bush",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      }
+    }
+  ],
+  "components": [
+    {
+      "componentId": "coreopsis/sparse/upright",
+      "speciesCode": "COREOPSIS",
+      "category": "sparse",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.4921875,
+      "anchorY": 0.888671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.1,
+      "contentBounds": [
+        178,
+        329,
+        333,
+        474
+      ],
+      "asset": "mobile/assets/garden/flowers/species/coreopsis/components/batch/sparse/upright.png",
+      "sourcePath": "Resources/Garden Flowers/Coreopsis/coreopsis.png",
+      "sourceRect": [
+        118,
+        259,
+        377,
+        491
+      ],
+      "sourceGroundPoint": [
+        244,
+        446
+      ],
+      "canvasOffset": [
+        126,
+        268
+      ],
+      "sha256": "45373cdb30f31264db6b5d4c7ab97af91d005c722cf9bd6f105cbc3703d60bfe",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "coreopsis/sparse/side",
+      "speciesCode": "COREOPSIS",
+      "category": "sparse",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.49609375,
+      "anchorY": 0.88671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.1,
+      "contentBounds": [
+        162,
+        293,
+        343,
+        465
+      ],
+      "asset": "mobile/assets/garden/flowers/species/coreopsis/components/batch/sparse/side.png",
+      "sourcePath": "Resources/Garden Flowers/Coreopsis/coreopsis.png",
+      "sourceRect": [
+        331,
+        247,
+        596,
+        497
+      ],
+      "sourceGroundPoint": [
+        462,
+        451
+      ],
+      "canvasOffset": [
+        123,
+        250
+      ],
+      "sha256": "a6fc743b56f471af6e8a4b6a236dadfdfc509c3422e38027460893b1561baac3",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "coreopsis/sparse/branching",
+      "speciesCode": "COREOPSIS",
+      "category": "sparse",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953125,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.1,
+      "contentBounds": [
+        156,
+        296,
+        384,
+        461
+      ],
+      "asset": "mobile/assets/garden/flowers/species/coreopsis/components/batch/sparse/branching.png",
+      "sourcePath": "Resources/Garden Flowers/Coreopsis/coreopsis.png",
+      "sourceRect": [
+        531,
+        250,
+        838,
+        501
+      ],
+      "sourceGroundPoint": [
+        686,
+        453
+      ],
+      "canvasOffset": [
+        102,
+        249
+      ],
+      "sha256": "7e58568038fe941ae92964735b70f4742d90604749b44d071745a28e14d0084d",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "daisy/single/upright",
+      "speciesCode": "DAISY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.529296875,
+      "anchorY": 0.888671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        215,
+        327,
+        306,
+        462
+      ],
+      "asset": "mobile/assets/garden/flowers/species/daisy/components/batch/single/upright.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        282,
+        14,
+        437,
+        222
+      ],
+      "sourceGroundPoint": [
+        375,
+        177
+      ],
+      "canvasOffset": [
+        178,
+        292
+      ],
+      "sha256": "d395aafa9c77f738c9e5e1c5effb588542294f590ee1ca401047aaf5be74a489",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "daisy/single/branching",
+      "speciesCode": "DAISY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.474609375,
+      "anchorY": 0.875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        211,
+        331,
+        266,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/daisy/components/batch/single/branching.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        365,
+        16,
+        535,
+        223
+      ],
+      "sourceGroundPoint": [
+        437,
+        171
+      ],
+      "canvasOffset": [
+        171,
+        293
+      ],
+      "sha256": "5dfcf3ed506f4cabde1f2f5769cec862ce3289d75af906b2de72d521ec658e67",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "daisy/single/side",
+      "speciesCode": "DAISY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.478515625,
+      "anchorY": 0.880859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        203,
+        329,
+        304,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/daisy/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        462,
+        13,
+        638,
+        223
+      ],
+      "sourceGroundPoint": [
+        539,
+        174
+      ],
+      "canvasOffset": [
+        168,
+        290
+      ],
+      "sha256": "f0384f932d36ae0257bb2ebefb7afbcefcb3ab11bd38b65889915f3aff18e8fe",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "gerbera_daisy/single/upright",
+      "speciesCode": "GERBERA_DAISY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.525390625,
+      "anchorY": 0.873046875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        213,
+        314,
+        309,
+        460
+      ],
+      "asset": "mobile/assets/garden/flowers/species/gerbera_daisy/components/batch/single/upright.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        571,
+        11,
+        742,
+        234
+      ],
+      "sourceGroundPoint": [
+        670,
+        181
+      ],
+      "canvasOffset": [
+        170,
+        277
+      ],
+      "sha256": "dfccfb5b33d8c9c48784a87f716741fd1c6929f731c2fc31d17569b6c14c6301",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "gerbera_daisy/single/side",
+      "speciesCode": "GERBERA_DAISY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.4921875,
+      "anchorY": 0.88671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        208,
+        317,
+        295,
+        462
+      ],
+      "asset": "mobile/assets/garden/flowers/species/gerbera_daisy/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        672,
+        11,
+        835,
+        233
+      ],
+      "sourceGroundPoint": [
+        750,
+        187
+      ],
+      "canvasOffset": [
+        174,
+        278
+      ],
+      "sha256": "c7298c878a79f5b07d290063869cd8a0b9ab5f1b6ea7d33f00ff9c0aa90ada19",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "gerbera_daisy/single/leaning",
+      "speciesCode": "GERBERA_DAISY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48046875,
+      "anchorY": 0.86328125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        210,
+        318,
+        294,
+        448
+      ],
+      "asset": "mobile/assets/garden/flowers/species/gerbera_daisy/components/batch/single/leaning.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        800,
+        14,
+        954,
+        236
+      ],
+      "sourceGroundPoint": [
+        867,
+        178
+      ],
+      "canvasOffset": [
+        179,
+        278
+      ],
+      "sha256": "90df75ff333cb28a739207dee0a468bef4e1f691435bce97cce07f81b01c5550",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "sunflower/single/upright",
+      "speciesCode": "SUNFLOWER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.498046875,
+      "anchorY": 0.84375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "contentBounds": [
+        197,
+        303,
+        329,
+        459
+      ],
+      "asset": "mobile/assets/garden/flowers/species/sunflower/components/batch/single/upright.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        887,
+        11,
+        1084,
+        243
+      ],
+      "sourceGroundPoint": [
+        985,
+        175
+      ],
+      "canvasOffset": [
+        157,
+        268
+      ],
+      "sha256": "bbebde1246ba0aba934cfa65f480e9c7c01a8ce2e3b558eec3542179b28dce29",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "sunflower/partial/opening",
+      "speciesCode": "SUNFLOWER",
+      "category": "partial",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "contentBounds": [
+        231,
+        320,
+        285,
+        455
+      ],
+      "asset": "mobile/assets/garden/flowers/species/sunflower/components/batch/partial/opening.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1003,
+        14,
+        1143,
+        232
+      ],
+      "sourceGroundPoint": [
+        1078,
+        180
+      ],
+      "canvasOffset": [
+        186,
+        282
+      ],
+      "sha256": "16eccd657a692457fb7f0d2796c75fc1aab57fcf9e99995a275c1297c63d6eee",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "sunflower/single/side",
+      "speciesCode": "SUNFLOWER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48828125,
+      "anchorY": 0.85546875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "contentBounds": [
+        215,
+        327,
+        288,
+        456
+      ],
+      "asset": "mobile/assets/garden/flowers/species/sunflower/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1067,
+        24,
+        1205,
+        231
+      ],
+      "sourceGroundPoint": [
+        1130,
+        169
+      ],
+      "canvasOffset": [
+        187,
+        293
+      ],
+      "sha256": "3f5ee4716da9ee097682872aad63d8c2c027ccb37bb8fc3c61d3642a72daec41",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "anemone/single/pink",
+      "speciesCode": "ANEMONE",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.54296875,
+      "anchorY": 0.869140625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        219,
+        301,
+        302,
+        454
+      ],
+      "asset": "mobile/assets/garden/flowers/species/anemone/components/batch/single/pink.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1193,
+        14,
+        1370,
+        251
+      ],
+      "sourceGroundPoint": [
+        1304,
+        196
+      ],
+      "canvasOffset": [
+        167,
+        263
+      ],
+      "sha256": "990adac42c3bb877785063774554705e14ff5f40ad93afb50691d1ba17f31289",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "anemone/single/white",
+      "speciesCode": "ANEMONE",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.505859375,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        215,
+        329,
+        286,
+        465
+      ],
+      "asset": "mobile/assets/garden/flowers/species/anemone/components/batch/single/white.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1288,
+        13,
+        1441,
+        232
+      ],
+      "sourceGroundPoint": [
+        1368,
+        184
+      ],
+      "canvasOffset": [
+        179,
+        281
+      ],
+      "sha256": "b5f42574ab461a77c868004408f675104796b3cb6cff477ce10b5ec356fca69c",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "anemone/single/purple",
+      "speciesCode": "ANEMONE",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5078125,
+      "anchorY": 0.888671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        222,
+        318,
+        313,
+        462
+      ],
+      "asset": "mobile/assets/garden/flowers/species/anemone/components/batch/single/purple.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1399,
+        10,
+        1536,
+        234
+      ],
+      "sourceGroundPoint": [
+        1472,
+        189
+      ],
+      "canvasOffset": [
+        187,
+        276
+      ],
+      "sha256": "86f05a19e6058fb548c04f1ce5cc973456cc8e621fdf8826fd9c7f6a992a401c",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "bluebell/single/drooping",
+      "speciesCode": "BLUEBELL",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.490234375,
+      "anchorY": 0.876953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        190,
+        284,
+        306,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/bluebell/components/batch/single/drooping.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        0,
+        513,
+        153,
+        762
+      ],
+      "sourceGroundPoint": [
+        72,
+        711
+      ],
+      "canvasOffset": [
+        179,
+        251
+      ],
+      "sha256": "daae8ea7e1c6bed62968238d7da15c8d593d9bd713889313ffd3d9665f2c242b",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "bluebell/single/branching",
+      "speciesCode": "BLUEBELL",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        219,
+        307,
+        309,
+        452
+      ],
+      "asset": "mobile/assets/garden/flowers/species/bluebell/components/batch/single/branching.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        115,
+        526,
+        276,
+        760
+      ],
+      "sourceGroundPoint": [
+        196,
+        710
+      ],
+      "canvasOffset": [
+        175,
+        266
+      ],
+      "sha256": "19f50bccaf6f46cbe22c3363ff9ca58c8498f47b7db6321fbf2dafc09ad11dde",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "bluebell/foliage/upright",
+      "speciesCode": "BLUEBELL",
+      "category": "foliage",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        219,
+        299,
+        287,
+        461
+      ],
+      "asset": "mobile/assets/garden/flowers/species/bluebell/components/batch/foliage/upright.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        202,
+        518,
+        330,
+        757
+      ],
+      "sourceGroundPoint": [
+        263,
+        709
+      ],
+      "canvasOffset": [
+        192,
+        261
+      ],
+      "sha256": "83bb002a3af73860f58ca6244c8fbda0885751b65bc5bed7a5019eef306aca14",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "heather/single/tall",
+      "speciesCode": "HEATHER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.515625,
+      "anchorY": 0.88671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        224,
+        268,
+        305,
+        464
+      ],
+      "asset": "mobile/assets/garden/flowers/species/heather/components/batch/single/tall.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        278,
+        506,
+        423,
+        770
+      ],
+      "sourceGroundPoint": [
+        359,
+        724
+      ],
+      "canvasOffset": [
+        183,
+        236
+      ],
+      "sha256": "ff7cec3eef69c47dd9e281dd21a124697de1a41a37c11bdbfa5d01f56db0c6a7",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "heather/single/narrow",
+      "speciesCode": "HEATHER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.513671875,
+      "anchorY": 0.88671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        244,
+        322,
+        287,
+        457
+      ],
+      "asset": "mobile/assets/garden/flowers/species/heather/components/batch/single/narrow.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        349,
+        537,
+        480,
+        753
+      ],
+      "sourceGroundPoint": [
+        422,
+        707
+      ],
+      "canvasOffset": [
+        190,
+        284
+      ],
+      "sha256": "6e3cabaf1e234bb4879fcbc8ade2320992733e8b6cbbaa5070a34e862242414d",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "heather/single/branching",
+      "speciesCode": "HEATHER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48828125,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        220,
+        278,
+        294,
+        466
+      ],
+      "asset": "mobile/assets/garden/flowers/species/heather/components/batch/single/branching.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        487,
+        504,
+        638,
+        768
+      ],
+      "sourceGroundPoint": [
+        557,
+        718
+      ],
+      "canvasOffset": [
+        180,
+        236
+      ],
+      "sha256": "9c44a7cb3e1b64a50cde879a67c5a5e1c8284e6493286f4e95058b35101a3d5e",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "snowdrop/single/left",
+      "speciesCode": "SNOWDROP",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.521484375,
+      "anchorY": 0.884765625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        215,
+        294,
+        329,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/snowdrop/components/batch/single/left.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        578,
+        519,
+        748,
+        759
+      ],
+      "sourceGroundPoint": [
+        674,
+        712
+      ],
+      "canvasOffset": [
+        171,
+        260
+      ],
+      "sha256": "95d57165cf06d005ff2bffb1d96eff853318c753b12882fc6c3e405e1fa7cd2d",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "snowdrop/single/center",
+      "speciesCode": "SNOWDROP",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.53515625,
+      "anchorY": 0.884765625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        222,
+        301,
+        315,
+        454
+      ],
+      "asset": "mobile/assets/garden/flowers/species/snowdrop/components/batch/single/center.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        667,
+        525,
+        834,
+        759
+      ],
+      "sourceGroundPoint": [
+        769,
+        712
+      ],
+      "canvasOffset": [
+        172,
+        266
+      ],
+      "sha256": "2efe9d923e973cb5c19bf481d3aa0f60e88c63ee54f7dfd09ec30f7ffa2c3747",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "snowdrop/single/right",
+      "speciesCode": "SNOWDROP",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51171875,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        197,
+        287,
+        319,
+        449
+      ],
+      "asset": "mobile/assets/garden/flowers/species/snowdrop/components/batch/single/right.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        758,
+        531,
+        941,
+        769
+      ],
+      "sourceGroundPoint": [
+        856,
+        719
+      ],
+      "canvasOffset": [
+        164,
+        262
+      ],
+      "sha256": "9e8e023e36b30b8b283e47939b6a931185b2c136873643e2d2aec0c174bdf50c",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "gentian/single/open",
+      "speciesCode": "GENTIAN",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5234375,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        207,
+        306,
+        306,
+        458
+      ],
+      "asset": "mobile/assets/garden/flowers/species/gentian/components/batch/single/open.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        900,
+        521,
+        1058,
+        758
+      ],
+      "sourceGroundPoint": [
+        991,
+        710
+      ],
+      "canvasOffset": [
+        177,
+        263
+      ],
+      "sha256": "87b155e0fef024b05d141f7685047d339db5fb254b074c05bb6c5df70cb65752",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "gentian/bud/upright",
+      "speciesCode": "GENTIAN",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.517578125,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        234,
+        323,
+        281,
+        455
+      ],
+      "asset": "mobile/assets/garden/flowers/species/gentian/components/batch/bud/upright.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        989,
+        528,
+        1126,
+        743
+      ],
+      "sourceGroundPoint": [
+        1067,
+        693
+      ],
+      "canvasOffset": [
+        187,
+        285
+      ],
+      "sha256": "f80190ae4659c7e68549f20d5b033c0595c4676a2981cb9d01e0e1f373bfef84",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "gentian/single/side",
+      "speciesCode": "GENTIAN",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51953125,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        206,
+        302,
+        304,
+        467
+      ],
+      "asset": "mobile/assets/garden/flowers/species/gentian/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1090,
+        519,
+        1260,
+        757
+      ],
+      "sourceGroundPoint": [
+        1185,
+        709
+      ],
+      "canvasOffset": [
+        171,
+        262
+      ],
+      "sha256": "6736feebb66491750cec6e5a309085399f18062a2449c20552d06a41404076ca",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "petunia/single/open",
+      "speciesCode": "PETUNIA",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51953125,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        207,
+        301,
+        306,
+        459
+      ],
+      "asset": "mobile/assets/garden/flowers/species/petunia/components/batch/single/open.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1198,
+        519,
+        1378,
+        753
+      ],
+      "sourceGroundPoint": [
+        1298,
+        705
+      ],
+      "canvasOffset": [
+        166,
+        266
+      ],
+      "sha256": "04117a7aedadedef4d9e2e6fcb53532b595c5e4c271299f5f9bd073dbac8d6a6",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "petunia/bud/upright",
+      "speciesCode": "PETUNIA",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953125,
+      "anchorY": 0.880859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        222,
+        316,
+        284,
+        462
+      ],
+      "asset": "mobile/assets/garden/flowers/species/petunia/components/batch/bud/upright.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1306,
+        519,
+        1441,
+        743
+      ],
+      "sourceGroundPoint": [
+        1375,
+        694
+      ],
+      "canvasOffset": [
+        188,
+        276
+      ],
+      "sha256": "b28f748b95f48224d2a512433ef59564905323741c587788877d179c1ce0ffbe",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "petunia/single/branching",
+      "speciesCode": "PETUNIA",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.876953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        207,
+        306,
+        330,
+        464
+      ],
+      "asset": "mobile/assets/garden/flowers/species/petunia/components/batch/single/branching.png",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "sourceRect": [
+        1370,
+        512,
+        1536,
+        745
+      ],
+      "sourceGroundPoint": [
+        1458,
+        694
+      ],
+      "canvasOffset": [
+        173,
+        267
+      ],
+      "sha256": "56e5c287f9ef5be71e30e3b354f40cd3dae2e5a037da0f15683325f1502deaaf",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "poppy/single/open",
+      "speciesCode": "POPPY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953125,
+      "anchorY": 0.859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        204,
+        276,
+        293,
+        448
+      ],
+      "asset": "mobile/assets/garden/flowers/species/poppy/components/batch/single/open.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        0,
+        20,
+        155,
+        281
+      ],
+      "sourceGroundPoint": [
+        79,
+        221
+      ],
+      "canvasOffset": [
+        178,
+        239
+      ],
+      "sha256": "448c8af185d9bdb0d619e435983867846e442e0361801ce05832e63447108373",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "poppy/single/side",
+      "speciesCode": "POPPY",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.513671875,
+      "anchorY": 0.880859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        211,
+        295,
+        312,
+        445
+      ],
+      "asset": "mobile/assets/garden/flowers/species/poppy/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        172,
+        21,
+        350,
+        262
+      ],
+      "sourceGroundPoint": [
+        268,
+        213
+      ],
+      "canvasOffset": [
+        167,
+        259
+      ],
+      "sha256": "9ea1464c4213e5b80d2695b6c9153db0640d2c4e5edc5a258b462df50642d051",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "poppy/bud/upright",
+      "speciesCode": "POPPY",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.498046875,
+      "anchorY": 0.88671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        226,
+        313,
+        276,
+        476
+      ],
+      "asset": "mobile/assets/garden/flowers/species/poppy/components/batch/bud/upright.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        84,
+        25,
+        193,
+        249
+      ],
+      "sourceGroundPoint": [
+        138,
+        203
+      ],
+      "canvasOffset": [
+        201,
+        276
+      ],
+      "sha256": "17a129a22a65858e1b3d6020a179fbe74d2593839d7f385330b38220b5ce6065",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "bird_of_paradise/single/left",
+      "speciesCode": "BIRD_OF_PARADISE",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.560546875,
+      "anchorY": 0.880859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "contentBounds": [
+        190,
+        270,
+        326,
+        460
+      ],
+      "asset": "mobile/assets/garden/flowers/species/bird_of_paradise/components/batch/single/left.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        290,
+        16,
+        498,
+        288
+      ],
+      "sourceGroundPoint": [
+        425,
+        239
+      ],
+      "canvasOffset": [
+        152,
+        228
+      ],
+      "sha256": "00d68cce746a16bbe20c41baf324a374a758d8f7eea2a833048a81f8c0802fb2",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "bird_of_paradise/single/right",
+      "speciesCode": "BIRD_OF_PARADISE",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.484375,
+      "anchorY": 0.865234375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "contentBounds": [
+        170,
+        286,
+        300,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/bird_of_paradise/components/batch/single/right.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        417,
+        19,
+        658,
+        270
+      ],
+      "sourceGroundPoint": [
+        530,
+        213
+      ],
+      "canvasOffset": [
+        135,
+        249
+      ],
+      "sha256": "e66bce6bbfcf9304449bdd21cb270a5efb76324c1dbcfabf29c6f15a53fc0bfa",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "white_rose/single/open",
+      "speciesCode": "WHITE_ROSE",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.4609375,
+      "anchorY": 0.875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        203,
+        305,
+        311,
+        458
+      ],
+      "asset": "mobile/assets/garden/flowers/species/white_rose/components/batch/single/open.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        592,
+        21,
+        761,
+        263
+      ],
+      "sourceGroundPoint": [
+        657,
+        211
+      ],
+      "canvasOffset": [
+        171,
+        258
+      ],
+      "sha256": "accc530565331850ff185b37ea723f51bc90494fc97842f335c5f66dbc47e474",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "white_rose/bud/left",
+      "speciesCode": "WHITE_ROSE",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.49609375,
+      "anchorY": 0.876953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        223,
+        309,
+        291,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/white_rose/components/batch/bud/left.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        684,
+        17,
+        824,
+        250
+      ],
+      "sourceGroundPoint": [
+        752,
+        199
+      ],
+      "canvasOffset": [
+        186,
+        267
+      ],
+      "sha256": "fdd56b8eb70c29f33b02a68d79307aff988fd92bf6d9c0cdce43dca06ecb69ce",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "white_rose/bud/right",
+      "speciesCode": "WHITE_ROSE",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.50390625,
+      "anchorY": 0.875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        240,
+        317,
+        332,
+        456
+      ],
+      "asset": "mobile/assets/garden/flowers/species/white_rose/components/batch/bud/right.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        745,
+        23,
+        950,
+        256
+      ],
+      "sourceGroundPoint": [
+        850,
+        204
+      ],
+      "canvasOffset": [
+        153,
+        267
+      ],
+      "sha256": "77c441b832616541fd37be7df34bc1b379d75d7c24bc83308e0d4171e42b557d",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "yellow_daffodil/single/left",
+      "speciesCode": "YELLOW_DAFFODIL",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5234375,
+      "anchorY": 0.88671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        223,
+        271,
+        304,
+        461
+      ],
+      "asset": "mobile/assets/garden/flowers/species/yellow_daffodil/components/batch/single/left.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        895,
+        17,
+        1066,
+        282
+      ],
+      "sourceGroundPoint": [
+        993,
+        236
+      ],
+      "canvasOffset": [
+        170,
+        235
+      ],
+      "sha256": "a031effc4a1e9599e36f42c3f467bee29220afcc41349d98ccffef54183fe3bb",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "yellow_daffodil/single/center",
+      "speciesCode": "YELLOW_DAFFODIL",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.47265625,
+      "anchorY": 0.87109375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        221,
+        301,
+        304,
+        458
+      ],
+      "asset": "mobile/assets/garden/flowers/species/yellow_daffodil/components/batch/single/center.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        990,
+        23,
+        1140,
+        268
+      ],
+      "sourceGroundPoint": [
+        1051,
+        214
+      ],
+      "canvasOffset": [
+        181,
+        255
+      ],
+      "sha256": "76aeca6e55d0011e1aa729ed0b458ab929fc69ca399f2d3399b6e208fffe4a9c",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "yellow_daffodil/single/side",
+      "speciesCode": "YELLOW_DAFFODIL",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.47265625,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.15,
+      "contentBounds": [
+        213,
+        275,
+        285,
+        449
+      ],
+      "asset": "mobile/assets/garden/flowers/species/yellow_daffodil/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1117,
+        15,
+        1268,
+        283
+      ],
+      "sourceGroundPoint": [
+        1179,
+        233
+      ],
+      "canvasOffset": [
+        180,
+        232
+      ],
+      "sha256": "3cc6bd06c46a4d97bd011ad974b3a68610db5cfe2aec08ac205e4b159465157e",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "aster/single/open",
+      "speciesCode": "ASTER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.525390625,
+      "anchorY": 0.876953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        213,
+        282,
+        314,
+        457
+      ],
+      "asset": "mobile/assets/garden/flowers/species/aster/components/batch/single/open.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1208,
+        14,
+        1384,
+        273
+      ],
+      "sourceGroundPoint": [
+        1309,
+        222
+      ],
+      "canvasOffset": [
+        168,
+        241
+      ],
+      "sha256": "012ba771f586beaf7a7c6643d4e5cfa82b346b12ac82e30deb4faa57d0ca8b3f",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "aster/bud/branching",
+      "speciesCode": "ASTER",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.484375,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        221,
+        336,
+        268,
+        458
+      ],
+      "asset": "mobile/assets/garden/flowers/species/aster/components/batch/bud/branching.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1309,
+        17,
+        1473,
+        249
+      ],
+      "sourceGroundPoint": [
+        1383,
+        199
+      ],
+      "canvasOffset": [
+        174,
+        268
+      ],
+      "sha256": "fb7e81e2edb316acf4f7f8b224e57ad8251aa230e57c2517a0bfea7bef9d00f8",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "aster/bud/side",
+      "speciesCode": "ASTER",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.533203125,
+      "anchorY": 0.873046875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        246,
+        323,
+        295,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/aster/components/batch/bud/side.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1392,
+        20,
+        1536,
+        238
+      ],
+      "sourceGroundPoint": [
+        1481,
+        185
+      ],
+      "canvasOffset": [
+        184,
+        282
+      ],
+      "sha256": "a0b2aa101aca454eb4070b0ba1379a47d012311ce74bc2063f4f747c856ac43c",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "dandelion/single/yellow",
+      "speciesCode": "DANDELION",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.458984375,
+      "anchorY": 0.859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        168,
+        277,
+        311,
+        458
+      ],
+      "asset": "mobile/assets/garden/flowers/species/dandelion/components/batch/single/yellow.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        0,
+        516,
+        197,
+        780
+      ],
+      "sourceGroundPoint": [
+        78,
+        720
+      ],
+      "canvasOffset": [
+        157,
+        236
+      ],
+      "sha256": "b0c2070b6b387ca8de93f75f18eef7c3f8639e1d60b015691660f8a494092f20",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "dandelion/bud/upright",
+      "speciesCode": "DANDELION",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.490234375,
+      "anchorY": 0.87109375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        239,
+        322,
+        273,
+        457
+      ],
+      "asset": "mobile/assets/garden/flowers/species/dandelion/components/batch/bud/upright.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        122,
+        548,
+        227,
+        764
+      ],
+      "sourceGroundPoint": [
+        170,
+        710
+      ],
+      "canvasOffset": [
+        203,
+        284
+      ],
+      "sha256": "f1576c53f814ce090a3ee226f051ba1f0446188baa9df8a9d54df0c516c7d99e",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "dandelion/single/seed_head",
+      "speciesCode": "DANDELION",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.50390625,
+      "anchorY": 0.833984375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        217,
+        292,
+        285,
+        437
+      ],
+      "asset": "mobile/assets/garden/flowers/species/dandelion/components/batch/single/seed_head.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        164,
+        514,
+        302,
+        765
+      ],
+      "sourceGroundPoint": [
+        235,
+        692
+      ],
+      "canvasOffset": [
+        187,
+        249
+      ],
+      "sha256": "0976756f18495a1b59c6fa848c53a03718064f9693e428a190c2a242709c0a75",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "yellow_rapeseed_flower/single/branching",
+      "speciesCode": "YELLOW_RAPESEED_FLOWER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5078125,
+      "anchorY": 0.888671875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        209,
+        280,
+        307,
+        468
+      ],
+      "asset": "mobile/assets/garden/flowers/species/yellow_rapeseed_flower/components/batch/single/branching.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        288,
+        516,
+        473,
+        771
+      ],
+      "sourceGroundPoint": [
+        385,
+        726
+      ],
+      "canvasOffset": [
+        163,
+        245
+      ],
+      "sha256": "2381c94f32fef96679263b7ffb7b1a11cb1a1475c6741b4312fc003cb41758b7",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "yellow_rapeseed_flower/single/narrow",
+      "speciesCode": "YELLOW_RAPESEED_FLOWER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.517578125,
+      "anchorY": 0.880859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        244,
+        389,
+        283,
+        472
+      ],
+      "asset": "mobile/assets/garden/flowers/species/yellow_rapeseed_flower/components/batch/single/narrow.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        392,
+        521,
+        512,
+        764
+      ],
+      "sourceGroundPoint": [
+        461,
+        715
+      ],
+      "canvasOffset": [
+        196,
+        257
+      ],
+      "sha256": "f4714793c6ae8ab458608815bcbfd72bd765c95a6d1052287f6552748e7ed0b4",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "yellow_rapeseed_flower/single/side",
+      "speciesCode": "YELLOW_RAPESEED_FLOWER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.50390625,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        244,
+        301,
+        334,
+        470
+      ],
+      "asset": "mobile/assets/garden/flowers/species/yellow_rapeseed_flower/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        440,
+        515,
+        643,
+        771
+      ],
+      "sourceGroundPoint": [
+        544,
+        723
+      ],
+      "canvasOffset": [
+        154,
+        244
+      ],
+      "sha256": "c06b152d0b8798476ba3d5a26b55da5bab0bba6f0a0717e6ed126ced0fe43b98",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "chinese_violet_cress/single/branching",
+      "speciesCode": "CHINESE_VIOLET_CRESS",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.486328125,
+      "anchorY": 0.875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        194,
+        273,
+        314,
+        466
+      ],
+      "asset": "mobile/assets/garden/flowers/species/chinese_violet_cress/components/batch/single/branching.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        591,
+        515,
+        803,
+        783
+      ],
+      "sourceGroundPoint": [
+        690,
+        731
+      ],
+      "canvasOffset": [
+        150,
+        232
+      ],
+      "sha256": "13010fd7095b7f6c18959af4f7cf1e9aed1f084f85eb11925e84af21292236cf",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "chinese_violet_cress/bud/narrow",
+      "speciesCode": "CHINESE_VIOLET_CRESS",
+      "category": "bud",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.490234375,
+      "anchorY": 0.880859375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        225,
+        330,
+        281,
+        452
+      ],
+      "asset": "mobile/assets/garden/flowers/species/chinese_violet_cress/components/batch/bud/narrow.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        723,
+        520,
+        837,
+        765
+      ],
+      "sourceGroundPoint": [
+        775,
+        716
+      ],
+      "canvasOffset": [
+        199,
+        255
+      ],
+      "sha256": "104c2863bc01f69c0cc63111f594554ccc563a4c5bd55bbbd38ba4c1c677f89e",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "chinese_violet_cress/single/side",
+      "speciesCode": "CHINESE_VIOLET_CRESS",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.408203125,
+      "anchorY": 0.89453125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        199,
+        295,
+        305,
+        467
+      ],
+      "asset": "mobile/assets/garden/flowers/species/chinese_violet_cress/components/batch/single/side.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        770,
+        519,
+        947,
+        762
+      ],
+      "sourceGroundPoint": [
+        812,
+        720
+      ],
+      "canvasOffset": [
+        167,
+        257
+      ],
+      "sha256": "66ad4d26d4278e75fdafd38f9ccf3bdcf475cdbeb3d7d6559e1e785e362fd14a",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "lavender/single/left",
+      "speciesCode": "LAVENDER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.8828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        207,
+        279,
+        293,
+        465
+      ],
+      "asset": "mobile/assets/garden/flowers/species/lavender/components/batch/single/left.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        893,
+        516,
+        1068,
+        779
+      ],
+      "sourceGroundPoint": [
+        978,
+        731
+      ],
+      "canvasOffset": [
+        168,
+        237
+      ],
+      "sha256": "f11da2a1cce9ff232ff0f751ce73d57ac5dacd853bb0bd4747ba0a97a2994544",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "lavender/single/center",
+      "speciesCode": "LAVENDER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.53125,
+      "anchorY": 0.876953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        248,
+        301,
+        303,
+        468
+      ],
+      "asset": "mobile/assets/garden/flowers/species/lavender/components/batch/single/center.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        990,
+        513,
+        1156,
+        769
+      ],
+      "sourceGroundPoint": [
+        1089,
+        718
+      ],
+      "canvasOffset": [
+        173,
+        244
+      ],
+      "sha256": "2eff432e46832c1baa0d27a10d300de3e219913012783142b89a86d58f5aef3e",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "lavender/single/right",
+      "speciesCode": "LAVENDER",
+      "category": "single",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.873046875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.12,
+      "contentBounds": [
+        235,
+        295,
+        309,
+        466
+      ],
+      "asset": "mobile/assets/garden/flowers/species/lavender/components/batch/single/right.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1077,
+        524,
+        1255,
+        769
+      ],
+      "sourceGroundPoint": [
+        1171,
+        716
+      ],
+      "canvasOffset": [
+        167,
+        255
+      ],
+      "sha256": "1100262c053b13818ed51215a00765c060e61e7e099cbdc71ad6c5495c52a904",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "olive/branch/green_olive",
+      "speciesCode": "OLIVE",
+      "category": "branch",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5,
+      "anchorY": 0.873046875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.13,
+      "contentBounds": [
+        193,
+        258,
+        294,
+        453
+      ],
+      "asset": "mobile/assets/garden/flowers/species/olive/components/batch/branch/green_olive.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1202,
+        519,
+        1394,
+        778
+      ],
+      "sourceGroundPoint": [
+        1298,
+        725
+      ],
+      "canvasOffset": [
+        160,
+        241
+      ],
+      "sha256": "11bdb5c73cd50b11c74599ce2096d977db633ec4ef5d9ee45a39864a286c4e81",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "olive/branch/dark_olive",
+      "speciesCode": "OLIVE",
+      "category": "branch",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48828125,
+      "anchorY": 0.875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.13,
+      "contentBounds": [
+        212,
+        288,
+        293,
+        452
+      ],
+      "asset": "mobile/assets/garden/flowers/species/olive/components/batch/branch/dark_olive.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1310,
+        519,
+        1459,
+        771
+      ],
+      "sourceGroundPoint": [
+        1379,
+        719
+      ],
+      "canvasOffset": [
+        181,
+        248
+      ],
+      "sha256": "075c90bc6744240bb46f857e8424a4b02b21cf0368322225be4f6f7f34629233",
+      "status": "READY_FOR_REVIEW"
+    },
+    {
+      "componentId": "olive/branch/leafy",
+      "speciesCode": "OLIVE",
+      "category": "branch",
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.52734375,
+      "anchorY": 0.87890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.13,
+      "contentBounds": [
+        208,
+        271,
+        322,
+        459
+      ],
+      "asset": "mobile/assets/garden/flowers/species/olive/components/batch/branch/leafy.png",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "sourceRect": [
+        1379,
+        506,
+        1536,
+        776
+      ],
+      "sourceGroundPoint": [
+        1472,
+        726
+      ],
+      "canvasOffset": [
+        177,
+        230
+      ],
+      "sha256": "9071319ccce354622c5e3deebd3c572bd4cc3aba3baae1ec342887d1a9d454e3",
+      "status": "READY_FOR_REVIEW"
+    }
+  ],
+  "skipped": [],
+  "skippedPieces": [],
+  "alphaIsolation": {
+    "supportThreshold": 32,
+    "originalEdgePaddingPixels": 3,
+    "noColorKey": true,
+    "outputPixels": "Original RGBA; no resampling or recoloring"
+  }
+}

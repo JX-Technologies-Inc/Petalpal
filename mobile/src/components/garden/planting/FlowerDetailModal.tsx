@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { usePlanting } from './PlantingContext';
 import { MONTH_REGION_METAS } from './plantingRegionData';
+import { resolveFlowerDetail } from './flowerDetailData';
+import { sourceFlowerImageUri } from './flowerDetailApi';
 
 const FLOWER_ASSETS: Record<string, any> = {
   pink: require('../../../../assets/garden/flowers/pink.png'),
@@ -24,29 +28,59 @@ export default function FlowerDetailModal() {
     closeFlowerDetail,
     startAdjusting,
     supportFlower,
+    leaveMessage,
+    deleteSelectedFlower,
+    selectedFlowerIsOwner,
+    currentUserId,
+    flowerDetailSource,
+    isDetailLoading,
+    isDetailWorking,
+    detailError,
   } = usePlanting();
+  const [messageText, setMessageText] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  useEffect(() => {
+    setConfirmDelete(false);
+    if (!selectedFlower) setMessageText('');
+  }, [selectedFlower?.flowerId]);
 
   if (!selectedFlower) return null;
 
   const meta = MONTH_REGION_METAS[selectedFlower.month];
   const monthName = meta?.monthName || `Month ${selectedFlower.month}`;
+  const detail = resolveFlowerDetail(selectedFlower, flowerDetailSource);
 
   const getImage = (name?: string) => {
     if (!name) return FLOWER_ASSETS.pink;
     const lower = name.toLowerCase();
     if (lower.includes('sunflower')) return FLOWER_ASSETS.sunflower;
     if (lower.includes('tulip')) return FLOWER_ASSETS.tulip;
-    if (lower.includes('purple')) return FLOWER_ASSETS.purple;
-    if (lower.includes('blue')) return FLOWER_ASSETS.blue;
+    if (lower.includes('purple') || lower.includes('lavender')) return FLOWER_ASSETS.purple;
+    if (lower.includes('blue') || lower.includes('lotus')) return FLOWER_ASSETS.blue;
     return FLOWER_ASSETS.pink;
   };
 
-  const flowerImg = getImage(selectedFlower.flowerName);
+  const existingImage = detail.image.split('/').pop()?.toLowerCase().replace('.png', '');
+  const flowerImg = existingImage && FLOWER_ASSETS[existingImage]
+    ? FLOWER_ASSETS[existingImage]
+    : detail.image ? { uri: sourceFlowerImageUri(detail.image) } : getImage(detail.name);
 
-  const formattedDate = new Date(selectedFlower.plantedDate).toLocaleDateString(
+  const plantedDate = new Date(selectedFlower.plantedDate);
+  const formattedDate = Number.isNaN(plantedDate.getTime()) ? '' : plantedDate.toLocaleDateString(
     undefined,
     { month: 'short', day: 'numeric', year: 'numeric' }
   );
+  const supportedToday = !!detail.supportState?.supportedToday;
+  const supportDisabled = !currentUserId || isDetailLoading || isDetailWorking || supportedToday ||
+    detail.supportState?.canSupport === false;
+
+  const sendMessage = async () => {
+    const clean = messageText.trim();
+    if (!clean) return;
+    setMessageText('');
+    if (!(await leaveMessage(clean))) setMessageText(clean);
+  };
 
   return (
     <Modal
@@ -58,17 +92,18 @@ export default function FlowerDetailModal() {
       <View style={styles.modalBackdrop}>
         <Pressable style={styles.backdropPressable} onPress={closeFlowerDetail} />
 
-        <View style={styles.modalCard}>
+        <View style={styles.modalCard} accessibilityViewIsModal>
           {/* Close button */}
           <Pressable
             accessibilityRole="button"
+            accessibilityLabel="Close flower details"
             onPress={closeFlowerDetail}
             style={styles.closeButton}
           >
             <Text style={styles.closeButtonText}>✕</Text>
           </Pressable>
 
-          {/* Flower Visual Header */}
+          <ScrollView style={styles.detailScroll} contentContainerStyle={styles.detailContent}>
           <View style={styles.imageWrapper}>
             <Image
               source={flowerImg}
@@ -79,48 +114,63 @@ export default function FlowerDetailModal() {
 
           {/* Details */}
           <Text style={styles.flowerName}>
-            {selectedFlower.flowerName ? selectedFlower.flowerName.toUpperCase() : 'Garden Bloom'}
+            {detail.name.toUpperCase()}
           </Text>
           <Text style={styles.locationSubtitle}>
-            {monthName} Garden • {meta?.landId || 'Garden'}
+            {monthName} Garden • {selectedFlower.landId || meta?.landId || 'Garden'}
           </Text>
 
-          {selectedFlower.mood && (
             <View style={styles.tagRow}>
               <View style={styles.moodTag}>
-                <Text style={styles.moodTagText}>Mood: {selectedFlower.mood}</Text>
+                <Text style={styles.moodTagText}>Mood: {detail.mood}</Text>
               </View>
-              <View style={styles.dateTag}>
+              {!!formattedDate && <View style={styles.dateTag}>
                 <Text style={styles.dateTagText}>Planted: {formattedDate}</Text>
-              </View>
+              </View>}
             </View>
-          )}
 
-          {selectedFlower.notes ? (
+          {detail.memory ? (
             <View style={styles.notesContainer}>
-              <Text style={styles.notesText}>"{selectedFlower.notes}"</Text>
+              <Text style={styles.detailLabel}>Memory</Text>
+              <Text style={styles.notesText}>{detail.memory}</Text>
             </View>
           ) : null}
+          {detail.meaning ? <View style={styles.notesContainer}>
+            <Text style={styles.detailLabel}>Meaning</Text>
+            <Text style={styles.notesText}>{detail.meaning}</Text>
+          </View> : null}
 
-          {/* Action Row: Support & Adjust Position */}
+          <Text style={styles.receivedSupport}>♥ Support received: {detail.supportCount}</Text>
+          {detail.messages.length > 0 && <View style={styles.notesContainer}>
+            <Text style={styles.detailLabel}>Messages</Text>
+            {detail.messages.map((message, index) => <Text key={message.id || index} style={styles.messageText}>
+              {message.author || message.senderName || 'Friend'}: {message.text}{message.pending ? ' (sending...)' : ''}
+            </Text>)}
+          </View>}
+          {isDetailLoading && <Text style={styles.statusText}>Loading flower details…</Text>}
+
           <View style={styles.actionRow}>
-            {/* Give Support Button (Preserving Existing Production Support Feature) */}
+            {!selectedFlowerIsOwner && <>
             <Pressable
               accessibilityRole="button"
+              accessibilityState={{ disabled: supportDisabled }}
+              disabled={supportDisabled}
               onPress={() => supportFlower(selectedFlower.flowerId)}
               style={({ pressed }) => [
                 styles.supportButton,
+                supportDisabled && styles.buttonDisabled,
                 pressed && styles.buttonPressed,
               ]}
             >
               <Text style={styles.supportButtonText}>
-                💗 Support ({selectedFlower.supportCount || 0})
+                {supportedToday ? 'Supported today ✓' : isDetailWorking ? 'Working...' : 'Give Support 💗'}
               </Text>
             </Pressable>
-
-            {/* Adjust Position Button */}
+            </>}
+            {selectedFlowerIsOwner && <>
             <Pressable
               accessibilityRole="button"
+              disabled={isDetailLoading || isDetailWorking}
               onPress={() => startAdjusting(selectedFlower)}
               style={({ pressed }) => [
                 styles.adjustButton,
@@ -129,7 +179,38 @@ export default function FlowerDetailModal() {
             >
               <Text style={styles.adjustButtonText}>🔄 Adjust Position</Text>
             </Pressable>
+            <Pressable accessibilityRole="button" disabled={isDetailWorking || isDetailLoading}
+              style={styles.deleteButton} onPress={() => setConfirmDelete(true)}>
+              <Text style={styles.deleteButtonText}>Delete Flower</Text>
+            </Pressable>
+            </>}
           </View>
+          {!selectedFlowerIsOwner && <View style={styles.messageForm}>
+            <TextInput accessibilityLabel="Leave a kind message" multiline maxLength={300}
+              placeholder="Leave a kind message..." value={messageText} onChangeText={setMessageText}
+              editable={!!currentUserId && !isDetailWorking} style={styles.messageInput} />
+            <Pressable accessibilityRole="button" onPress={sendMessage}
+              disabled={!currentUserId || !messageText.trim() || isDetailWorking}
+              style={[styles.supportButton, styles.messageSubmitButton,
+                (!currentUserId || !messageText.trim() || isDetailWorking) && styles.buttonDisabled]}>
+              <Text style={styles.supportButtonText}>Leave Message</Text>
+            </Pressable>
+          </View>}
+          {confirmDelete && selectedFlowerIsOwner && <View style={styles.messageForm}>
+            <Text style={styles.statusText}>Delete this {detail.name}?</Text>
+            <View style={styles.actionRow}>
+              <Pressable accessibilityRole="button" onPress={() => setConfirmDelete(false)} style={styles.supportButton}>
+                <Text style={styles.supportButtonText}>Cancel</Text>
+              </Pressable>
+              <Pressable accessibilityRole="button" disabled={isDetailWorking} style={styles.deleteButton}
+                onPress={async () => { if (await deleteSelectedFlower()) setConfirmDelete(false); }}>
+                <Text style={styles.deleteButtonText}>{isDetailWorking ? 'Working...' : 'Confirm Delete'}</Text>
+              </Pressable>
+            </View>
+          </View>}
+          {detailError ? <Text accessibilityRole="alert" style={styles.actionError}>{detailError}</Text> : null}
+          {!selectedFlowerIsOwner && !currentUserId && <Text style={styles.statusText}>Sign in to interact with this flower.</Text>}
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -150,6 +231,7 @@ const styles = StyleSheet.create({
   modalCard: {
     width: '100%',
     maxWidth: 360,
+    maxHeight: '90%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
@@ -161,6 +243,8 @@ const styles = StyleSheet.create({
     elevation: 10,
     position: 'relative',
   },
+  detailScroll: { width: '100%', maxHeight: 560, flexShrink: 1 },
+  detailContent: { alignItems: 'center', paddingTop: 12, paddingBottom: 4 },
   closeButton: {
     position: 'absolute',
     top: 14,
@@ -207,6 +291,7 @@ const styles = StyleSheet.create({
   },
   tagRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginBottom: 12,
   },
@@ -248,6 +333,19 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: 'center',
   },
+  detailLabel: { fontSize: 12, fontWeight: '700', color: '#334155', marginBottom: 6 },
+  messageText: { fontSize: 12, color: '#334155', lineHeight: 18, marginBottom: 4 },
+  receivedSupport: { fontSize: 13, fontWeight: '700', color: '#BE185D', marginBottom: 12 },
+  statusText: { fontSize: 12, color: '#64748B', textAlign: 'center', marginTop: 8 },
+  actionError: { fontSize: 12, color: '#B91C1C', textAlign: 'center', marginTop: 8 },
+  messageForm: { width: '100%', gap: 8, marginTop: 12 },
+  messageSubmitButton: { flexGrow: 0, flexShrink: 0, flexBasis: 'auto' },
+  messageInput: { minHeight: 76, borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 10,
+    padding: 10, fontSize: 13, color: '#334155', textAlignVertical: 'top' },
+  deleteButton: { flex: 1, paddingVertical: 10, backgroundColor: '#FEF2F2', borderRadius: 12,
+    alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#FCA5A5' },
+  deleteButtonText: { fontSize: 13, fontWeight: '700', color: '#B91C1C' },
+  buttonDisabled: { opacity: 0.55 },
   actionRow: {
     flexDirection: 'row',
     gap: 10,

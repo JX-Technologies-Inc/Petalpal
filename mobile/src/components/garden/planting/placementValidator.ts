@@ -5,17 +5,15 @@ import {
   GARDEN_WORLD_HEIGHT,
   GARDEN_WORLD_WIDTH,
   MONTH_REGION_METAS,
-  getRegionAtWorld,
 } from './plantingRegionData';
 import {
   FlowerPlacementDefinition,
   getFlowerPlacementDefinition,
 } from './flowerFootprintConfig';
-import {
-  MonthRegionCalibration,
-  getCalibratedRegionAtWorld,
-} from './plantingRegionCalibration';
+import { type MonthRegionCalibration } from './plantingRegionGeometry';
+import { getApprovedRegionAtWorld, isFootprintInApprovedMonthMaskWorld } from './approvedPlantingMasks';
 import type { GardenLandLayout } from '../gardenMapLayout';
+import { resolveParentCollision } from './parentCollision';
 
 export interface FlowerPlacement {
   id: string;
@@ -27,6 +25,7 @@ export interface FlowerPlacement {
   worldY: number;
   scale: number;
   rotation: number;
+  landId?: string; // Legacy placements remain readable; confirmations always persist this.
   placementVersion: number;
   flowerName?: string;
   speciesCode?: string;
@@ -40,7 +39,8 @@ export type InvalidPlacementReason =
   | 'FOOTPRINT_OUTSIDE_REGION'
   | 'COLLIDES_WITH_FLOWER'
   | 'MISSING_FLOWER_DEFINITION'
-  | 'MISSING_MONTH_REGION';
+  | 'MISSING_MONTH_REGION'
+  | 'COLLISION_CLASS_UNRESOLVED';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -57,14 +57,13 @@ export interface ValidatePlacementParams {
   worldY: number;
   existingPlacements: FlowerPlacement[];
   ignorePlacementId?: string;
+  /** @deprecated Cannot override authoritative production parent collision. */
   definition?: FlowerPlacementDefinition;
   flowerName?: string;
+  speciesCode?: string;
   calibrationMap?: Record<number, MonthRegionCalibration>;
   landLayout?: GardenLandLayout;
 }
-
-const SAMPLE_ANGLES_COUNT = 16;
-const INTERIOR_SAMPLE_COUNT = 8;
 
 export function validateFlowerPlacement({
   flowerId,
@@ -73,12 +72,15 @@ export function validateFlowerPlacement({
   worldY,
   existingPlacements,
   ignorePlacementId,
-  definition,
   flowerName,
-  calibrationMap,
+  speciesCode,
   landLayout,
 }: ValidatePlacementParams): ValidationResult {
-  const def = definition || getFlowerPlacementDefinition(flowerName);
+  const collision = resolveParentCollision(speciesCode, flowerName);
+  if (collision.status === 'UNRESOLVED') {
+    return { isValid:false, reason:'COLLISION_CLASS_UNRESOLVED',
+      userFeedback:'This flower is not ready for planting yet.' };
+  }
   const targetMeta = MONTH_REGION_METAS[month];
   const targetMonthName = targetMeta?.monthName || `Month ${month}`;
 
@@ -97,11 +99,10 @@ export function validateFlowerPlacement({
   }
 
   // 2. Center Check: Grass & Month Region
-  const centerRegion = getCalibratedRegionAtWorld(
+  const centerRegion = getApprovedRegionAtWorld(
     worldX,
     worldY,
     month,
-    calibrationMap,
     landLayout
   );
 
@@ -125,53 +126,15 @@ export function validateFlowerPlacement({
 
   // 3. Entire Footprint Containment Check
   // The entire logical footprint (circle of radius footprintRadius) must fit inside the target month region.
-  const r = def.footprintRadius;
+  const r = collision.radius;
 
-  // Perimeter points
-  for (let i = 0; i < SAMPLE_ANGLES_COUNT; i++) {
-    const angle = (i * 2 * Math.PI) / SAMPLE_ANGLES_COUNT;
-    const sx = worldX + Math.cos(angle) * r;
-    const sy = worldY + Math.sin(angle) * r;
-
-    const sampleRegion = getCalibratedRegionAtWorld(
-      sx,
-      sy,
-      month,
-      calibrationMap,
-      landLayout
-    );
-    if (sampleRegion !== month) {
-      return {
-        isValid: false,
-        reason: 'FOOTPRINT_OUTSIDE_REGION',
-        userFeedback: 'Choose a little more space around the flower.',
-        detectedMonth: sampleRegion,
-      };
-    }
-  }
-
-  // Inner ring points (at 50% radius)
-  const innerR = r * 0.5;
-  for (let i = 0; i < INTERIOR_SAMPLE_COUNT; i++) {
-    const angle = (i * 2 * Math.PI) / INTERIOR_SAMPLE_COUNT;
-    const sx = worldX + Math.cos(angle) * innerR;
-    const sy = worldY + Math.sin(angle) * innerR;
-
-    const sampleRegion = getCalibratedRegionAtWorld(
-      sx,
-      sy,
-      month,
-      calibrationMap,
-      landLayout
-    );
-    if (sampleRegion !== month) {
-      return {
-        isValid: false,
-        reason: 'FOOTPRINT_OUTSIDE_REGION',
-        userFeedback: 'Choose a little more space around the flower.',
-        detectedMonth: sampleRegion,
-      };
-    }
+  if (!isFootprintInApprovedMonthMaskWorld(month, worldX, worldY, r, landLayout)) {
+    return {
+      isValid: false,
+      reason: 'FOOTPRINT_OUTSIDE_REGION',
+      userFeedback: 'Choose a little more space around the flower.',
+      detectedMonth: month,
+    };
   }
 
   // 4. One Hole, One Flower: Footprint-to-Footprint Collision
@@ -181,7 +144,7 @@ export function validateFlowerPlacement({
       continue;
     }
 
-    const existingDef = getFlowerPlacementDefinition(existing.flowerName);
+    const existingDef = getFlowerPlacementDefinition(existing.flowerName, existing.speciesCode);
     const minDistance = r + existingDef.footprintRadius;
 
     const dx = worldX - existing.worldX;

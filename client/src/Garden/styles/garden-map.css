@@ -1,0 +1,336 @@
+.garden-map {
+  /* Reserved world layer order: water 0, land 10, connections 20,
+     landmarks 30, decorations 35, flowers 40, characters 50, UI 100+. */
+  --garden-layer-water: 0;
+  --garden-layer-land-base: 10;
+  --garden-layer-debug: 90;
+  --garden-layer-ui: 100;
+  --garden-layer-editor: 110;
+  margin: 0;
+  padding: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #78b8b2;
+  box-shadow: 0 12px 32px rgba(45, 69, 43, 0.18);
+}
+
+.garden-map-viewport {
+  position: relative;
+  width: 100%;
+  height: min(760px, calc(100dvh - 120px));
+  min-height: 520px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  overscroll-behavior: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  background: #78b8b2;
+}
+
+.garden-map-viewport:active {
+  cursor: grabbing;
+}
+
+.garden-map-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.garden-map-water,
+.garden-map-land-layer,
+.garden-map-world-boundary {
+  position: absolute;
+  inset: 0;
+}
+
+.garden-map-water {
+  z-index: var(--garden-layer-water);
+  background: #78b8b2;
+}
+
+.garden-map-land-layer {
+  z-index: var(--garden-layer-land-base);
+}
+
+.garden-map-land {
+  position: absolute;
+  transform-origin: center center;
+}
+
+.garden-map-land-editable {
+  cursor: move;
+}
+
+.garden-map-land-selected::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border: 5px solid #ffe36e;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 3px rgba(31, 54, 49, 0.72);
+  pointer-events: none;
+}
+
+.garden-map-land img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.garden-map-land-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(25, 48, 44, 0.82);
+  color: #fff;
+  font: 700 18px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 14px rgba(19, 43, 39, 0.24);
+  pointer-events: none;
+}
+
+.garden-map-resize-handle,
+.garden-map-rotation-handle {
+  position: absolute;
+  z-index: 7;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 3px solid #203c38;
+  border-radius: 50%;
+  background: #ffe36e;
+  box-shadow: 0 3px 8px rgba(24, 48, 43, 0.28);
+  touch-action: none;
+}
+
+.garden-map-resize-nw { left: 0; top: 0; transform: translate(-50%, -50%); cursor: nwse-resize; }
+.garden-map-resize-ne { right: 0; top: 0; transform: translate(50%, -50%); cursor: nesw-resize; }
+.garden-map-resize-se { right: 0; bottom: 0; transform: translate(50%, 50%); cursor: nwse-resize; }
+.garden-map-resize-sw { left: 0; bottom: 0; transform: translate(-50%, 50%); cursor: nesw-resize; }
+
+.garden-map-rotation-handle {
+  left: 50%;
+  top: -54px;
+  background: #9ae7df;
+  transform: translateX(-50%);
+  cursor: grab;
+}
+
+.garden-map-rotation-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 25px;
+  width: 3px;
+  height: 29px;
+  background: #203c38;
+  transform: translateX(-50%);
+}
+
+.garden-map-world-boundary {
+  z-index: var(--garden-layer-debug);
+  box-sizing: border-box;
+  border: 12px solid #d95f5f;
+  pointer-events: none;
+}
+
+.garden-map-debug-readout,
+.garden-map-help {
+  position: absolute;
+  z-index: var(--garden-layer-ui);
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 14px;
+  background: rgba(31, 47, 30, 0.84);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(28, 43, 27, 0.18);
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.garden-map-debug-readout {
+  left: 14px;
+  top: 14px;
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  font: 12px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.garden-layout-editor {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: var(--garden-layer-editor);
+  width: min(240px, calc(100% - 28px));
+  max-height: calc(100% - 28px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  background: rgba(30, 51, 47, 0.92);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(23, 43, 39, 0.3);
+  font-size: 13px;
+  user-select: text;
+  backdrop-filter: blur(10px);
+}
+
+.garden-layout-editor-collapsed {
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+.garden-editor-expand-button {
+  margin: 0;
+  padding: 9px 13px;
+  pointer-events: auto;
+}
+
+.garden-editor-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin: -4px -4px 8px;
+  padding: 4px;
+  cursor: move;
+  touch-action: none;
+}
+
+.garden-editor-header h2 {
+  margin: 0;
+  pointer-events: none;
+}
+
+.garden-editor-header button {
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+.garden-layout-editor h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 17px;
+}
+
+.garden-editor-toggle {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 7px 0;
+}
+
+.garden-editor-toggle input {
+  width: auto;
+}
+
+.garden-editor-selected {
+  margin: 12px 0 8px;
+}
+
+.garden-editor-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.garden-editor-fields label,
+.garden-editor-export {
+  display: grid;
+  gap: 4px;
+}
+
+.garden-editor-fields input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px;
+}
+
+.garden-editor-rotation-slider {
+  grid-column: 1 / -1;
+}
+
+.garden-editor-rotation-slider input {
+  width: 100%;
+}
+
+.garden-editor-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.garden-editor-actions button {
+  margin: 0;
+  padding: 8px;
+  font-size: 11px;
+}
+
+.garden-editor-copy-status {
+  margin: 8px 0 0;
+  color: #b9fff4;
+  font-weight: 700;
+}
+
+.garden-editor-export {
+  margin-top: 12px;
+}
+
+.garden-editor-export textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font: 10px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.garden-map-help {
+  right: 14px;
+  bottom: 14px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .garden-map {
+    border-radius: 18px;
+  }
+
+  .garden-map-viewport {
+    height: calc(100dvh - 96px);
+    min-height: 480px;
+  }
+
+  .garden-map-help {
+    left: 14px;
+    right: auto;
+  }
+
+  .garden-layout-editor {
+    top: auto;
+    bottom: 52px;
+    max-height: 46%;
+  }
+}

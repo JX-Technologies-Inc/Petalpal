@@ -27,6 +27,13 @@ import {
 } from "./lib/fairy-config.js";
 import { monthFromLocalDate, normalizeProgress } from "./lib/fairy-progress.js";
 import { resolveDailyFlowerEmotion } from "./lib/daily-flower-input.js";
+import {
+  FLOWER_DETAIL_INCLUDE,
+  FlowerSupportError,
+  getFlowerDetail,
+  giveFlowerSupport,
+  withGardenFlowerSupportState
+} from "./lib/flower-support.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
@@ -449,7 +456,7 @@ function getNonOverlappingPosition(existingFlowers) {
   }
   
 
-async function getGardenResponse(userId) {
+async function getGardenResponse(userId, viewerUserId = userId) {
   const user = await getUser(userId);
 
   if (!user) {
@@ -462,9 +469,7 @@ async function getGardenResponse(userId) {
     where: { id: garden.id },
     include: {
       flowers: {
-        include: {
-          messages: true,
-        },
+        include: FLOWER_DETAIL_INCLUDE,
         orderBy: {
           createdAt: "desc",
         },
@@ -484,7 +489,7 @@ async function getGardenResponse(userId) {
       name: user.name,
       avatar: user.avatar,
     },
-    flowers: fullGarden.flowers,
+    flowers: await withGardenFlowerSupportState(prisma, fullGarden.flowers, viewerUserId),
     visitRecords: fullGarden.visitRecords,
     activeVisitors: getActiveVisitors(fullGarden.id),
   };
@@ -618,7 +623,7 @@ app.get("/users/:userId/friends", async (req, res) => {
 
 app.get("/users/:userId/garden", async (req, res) => {
   try {
-    const gardenResponse = await getGardenResponse(req.params.userId);
+    const gardenResponse = await getGardenResponse(req.params.userId, req.auth.userId);
 
     if (!gardenResponse) {
       return res.status(404).json({ error: "User not found" });
@@ -1106,7 +1111,7 @@ app.get("/session", async (req, res) => {
         flower: { include: { messages: true } }
       }
     }),
-    getGardenResponse(user.id)
+    getGardenResponse(user.id, req.auth.userId)
   ]);
 
   res.json({
@@ -2198,122 +2203,54 @@ const createdFlower = await prisma.$transaction(async (tx) => {
   }
 });
 
-app.post(
-    "/users/:userId/flowers/:flowerId/support",
-    async (req, res) => {
-      const startTime = Date.now();
-  
-      try {
-        const { userId, flowerId } = req.params;
-        const { visitorAvatar } = req.body;
-        const visitorUserId = req.auth.userId;
-  
-
-        const flower = await prisma.flower.findFirst({
-          where: {
-            id: flowerId,
-            userId
-          },
-          select: {
-            id: true,
-            gardenId: true
-          }
-        });
-  
-        if (!flower) {
-          return res.status(404).json({
-            error: "Flower not found"
-          });
-        }
-  
-        const [updatedFlower, visitor] = await Promise.all([
-          prisma.flower.update({
-            where: {
-              id: flower.id
-            },
-            data: {
-              supportCount: {
-                increment: 1
-              }
-            },
-            include: {
-              messages: true
-            }
-          }),
-  
-          visitorUserId
-            ? prisma.user.findUnique({
-                where: {
-                  id: visitorUserId
-                },
-                select: {
-                  id: true,
-                  name: true,
-                  avatar: true
-                }
-              })
-            : Promise.resolve(null)
-        ]);
-  
-        const supportPayload = {
-          gardenOwnerId: userId,
-          flowerId: updatedFlower.id,
-          flower: updatedFlower
-        };
-  
-      
-        io
-          .to(`garden:${userId}`)
-          .to(`user:${userId}`)
-          .emit("supportUpdated", supportPayload);
-  
-        let newVisitRecord = null;
-  
-        if (visitor) {
-          newVisitRecord = await prisma.visitRecord.create({
-            data: {
-              visitorId: visitor.id,
-              visitorName: visitor.name,
-              visitorAvatar:
-                visitorAvatar ||
-                visitor.avatar ||
-                "🦋",
-              action: "support",
-              gardenId: flower.gardenId,
-              userId: visitor.id
-            }
-          });
-  
-          io
-            .to(`garden:${userId}`)
-            .to(`user:${userId}`)
-            .emit(
-              "visitRecordAdded",
-              newVisitRecord
-            );
-        }
-  
-        console.log(
-          `support completed in ${Date.now() - startTime}ms`
-        );
-  
-        res.json(updatedFlower);
-      } catch (err) {
-        console.error(
-          "POST /users/:userId/flowers/:flowerId/support error:",
-          err
-        );
-  
-        console.log(
-          `support failed after ${Date.now() - startTime}ms`
-        );
-  
-        res.status(500).json({
-          error: "Failed to support flower"
-        });
-      }
+app.get("/users/:userId/flowers/:flowerId", async (req, res) => {
+  try {
+    const flower = await getFlowerDetail(prisma, {
+      ownerUserId: req.params.userId,
+      flowerId: req.params.flowerId,
+      viewerUserId: req.auth.userId
+    });
+    res.json(flower);
+  } catch (error) {
+    if (error instanceof FlowerSupportError) {
+      return res.status(error.status).json({ error: error.message, code: error.code });
     }
-  );
+    console.error("GET /users/:userId/flowers/:flowerId error:", error);
+    res.status(500).json({ error: "Failed to get flower details" });
+  }
+});
+
+app.post("/users/:userId/flowers/:flowerId/support", async (req, res) => {
+  try {
+    const result = await giveFlowerSupport(prisma, {
+      ownerUserId: req.params.userId,
+      flowerId: req.params.flowerId,
+      supporterUserId: req.auth.userId,
+      visitorAvatar: req.body?.visitorAvatar
+    });
+    if (result.visitRecord) {
+      // Only a newly committed social action emits notifications. Repeated
+      // same-day calls return the authoritative count without duplicate events.
+      // Support state belongs to the initiating viewer, not every socket peer.
+      const { supportState: _viewerState, ...sharedFlower } = result.flower;
+      io.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
+        .emit("supportUpdated", {
+          gardenOwnerId: req.params.userId,
+          flowerId: result.flower.id,
+          flower: sharedFlower
+        });
+      io.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
+        .emit("visitRecordAdded", result.visitRecord);
+    }
+    res.json(result.flower);
+  } catch (error) {
+    if (error instanceof FlowerSupportError) {
+      return res.status(error.status).json({ error: error.message, code: error.code });
+    }
+    console.error("POST /users/:userId/flowers/:flowerId/support error:", error);
+    res.status(500).json({ error: "Failed to support flower" });
+  }
+});
   
   app.post(
     "/users/:userId/flowers/:flowerId/message",

@@ -8,8 +8,8 @@ import {
   View,
 } from 'react-native';
 import {
-  MaskStroke,
   MaskTool,
+  type MaskOffset,
 } from './plantingMaskRefinement';
 import { MONTH_REGION_METAS } from './plantingRegionData';
 import { PARENT_LAND_ASSET_BY_MONTH } from './plantingRegionCalibration';
@@ -47,13 +47,16 @@ const MONTH_NAMES: Record<number, string> = {
   12: 'December',
 };
 
-export type PaintInteractionMode = 'paint' | 'camera';
+export type PaintInteractionMode = 'paint' | 'move' | 'camera';
 
 interface Props {
   selectedMonth: number;
   tool: MaskTool;
   brushSize: number;
   interactionMode: PaintInteractionMode;
+  maskOffset: MaskOffset;
+  isMovingMask: boolean;
+  onNudgeOffset: (axis: 'offsetX' | 'offsetY', amount: number) => void;
   opacity: number;
   showBaseMask: boolean;
   showAdditions: boolean;
@@ -84,6 +87,9 @@ export default function ManualMaskPaintEditor({
   tool,
   brushSize,
   interactionMode,
+  maskOffset,
+  isMovingMask,
+  onNudgeOffset,
   opacity,
   showBaseMask,
   showAdditions,
@@ -294,6 +300,14 @@ export default function ManualMaskPaintEditor({
             </Text>
           </Pressable>
           <Pressable
+            style={[styles.interactBtn, interactionMode === 'move' && styles.interactBtnActiveMove]}
+            onPress={() => onChangeInteractionMode('move')}
+          >
+            <Text style={[styles.interactBtnText, interactionMode === 'move' && styles.interactBtnTextActive]}>
+              ✋ Move Mask
+            </Text>
+          </Pressable>
+          <Pressable
             style={[styles.interactBtn, interactionMode === 'camera' && styles.interactBtnActiveCamera]}
             onPress={() => onChangeInteractionMode('camera')}
           >
@@ -302,6 +316,31 @@ export default function ManualMaskPaintEditor({
             </Text>
           </Pressable>
         </View>
+
+        {interactionMode === 'move' && (
+          <>
+            <Text style={styles.moveHint}>
+              {isMovingMask ? '✋ Moving entire mask…' : '✋ Drag on the Final Mask to move it.'}
+            </Text>
+            <Text style={styles.sectionHeader}>Mask Offset</Text>
+            {(['offsetX', 'offsetY'] as const).map((axis) => (
+              <View key={axis} style={styles.offsetAxis}>
+                <Text style={styles.offsetReadout}>
+                  {axis === 'offsetX' ? 'X' : 'Y'}: {maskOffset[axis] >= 0 ? '+' : ''}{Number(maskOffset[axis].toFixed(2))} px
+                </Text>
+                <View style={styles.buttonRow}>
+                  {[-10, -5, -1, 1, 5, 10].map((amount) => (
+                    <Pressable key={amount} style={styles.sizeChip}
+                      accessibilityLabel={`Move mask ${axis === 'offsetX' ? 'X' : 'Y'} ${amount > 0 ? '+' : ''}${amount} pixels`}
+                      onPress={() => onNudgeOffset(axis, amount)}>
+                      <Text style={styles.sizeChipText}>{amount > 0 ? '+' : ''}{amount}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            ))}
+          </>
+        )}
 
         {/* Mask Opacity */}
         <View style={styles.rowBetween}>
@@ -360,7 +399,7 @@ export default function ManualMaskPaintEditor({
 
         {/* History (Undo / Redo) */}
         <View style={styles.rowBetween}>
-          <Text style={styles.sectionHeader}>History ({strokeCount} edits):</Text>
+          <Text style={styles.sectionHeader}>History ({strokeCount} strokes):</Text>
           <View style={styles.historyGroup}>
             <Pressable
               style={[styles.historyBtn, !canUndo && styles.historyBtnDisabled]}
@@ -616,6 +655,23 @@ const styles = StyleSheet.create({
   },
   interactBtnActiveCamera: {
     backgroundColor: '#3B82F6',
+  },
+  interactBtnActiveMove: {
+    backgroundColor: '#0891B2',
+  },
+  moveHint: {
+    fontSize: 11,
+    color: '#0E7490',
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  offsetAxis: {
+    gap: 4,
+  },
+  offsetReadout: {
+    fontSize: 11,
+    color: '#334155',
+    fontWeight: '700',
   },
   interactBtnText: {
     fontSize: 11,

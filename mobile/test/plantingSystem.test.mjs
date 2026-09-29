@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { runApprovedRuntimeTests } from './approvedPlantingRuntime.test.mjs';
 
 console.log('====================================================');
 console.log('PETALPAL FLOWER PLANTING SYSTEM V1 — TEST SUITE');
@@ -516,6 +517,8 @@ const c1Orig = getCalibratedCentroid(1);
 const c1Custom = getCalibratedCentroid(1, customCal);
 assert(Math.abs(c1Custom.x - (c1Orig.x + 25)) < 1e-6, 'Nudging localX +25 shifts centroid X by exactly +25');
 assert(Math.abs(c1Custom.y - c1Orig.y) < 1e-6, 'Nudging localX does not alter centroid Y');
+
+await runApprovedRuntimeTests(assert);
 
 console.log('\n====================================================');
 console.log(`TEST SUMMARY: ${passedTests} / ${totalTests} assertions passed (${Math.round((passedTests / totalTests) * 100)}%)`);

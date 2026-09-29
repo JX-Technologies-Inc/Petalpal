@@ -1,0 +1,25 @@
+{
+  "checked_files": 378,
+  "changed": [
+    "mobile\\assets\\garden\\infrastructure\\entrance-connections\\b01-foot-landing.png"
+  ],
+  "locked_artwork_and_code_unchanged": true,
+  "overlay_bounds": [
+    1577,
+    1412,
+    1666,
+    1508
+  ],
+  "world_canvas": [
+    2400,
+    1800
+  ],
+  "transform": {
+    "x": 0,
+    "y": 0,
+    "width": 2400,
+    "height": 1800,
+    "rotation": 0
+  },
+  "review_count": 4
+}

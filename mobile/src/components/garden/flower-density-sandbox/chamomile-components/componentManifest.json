@@ -1,0 +1,1026 @@
+{
+  "source": "Resources/Garden Flowers/Chamomile/chamomile_garden_abc_candidate.png",
+  "sourceSha256": "8842911c29ea4059a2beb2dfe5ee8bbccc253dea0ed5f8b638b37d144a306d6e",
+  "alphaIsolation": {
+    "supportThreshold": 8,
+    "originalEdgePaddingPixels": 3,
+    "noColorKey": true
+  },
+  "components": [
+    {
+      "componentId": "single/upright_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.4921875,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/upright_01.png",
+      "sourceRect": [
+        45,
+        30,
+        190,
+        238
+      ],
+      "canvasOffset": [
+        183,
+        292
+      ],
+      "sourceGroundPoint": [
+        114,
+        225
+      ],
+      "contentBounds": [
+        201,
+        310,
+        304,
+        494
+      ],
+      "sha256": "de095e1157a7eebe96b8a2373683e280fcadd902e9579a55a6fc68851634acb0"
+    },
+    {
+      "componentId": "single/leaning_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/leaning_01.png",
+      "sourceRect": [
+        207,
+        30,
+        339,
+        238
+      ],
+      "canvasOffset": [
+        190,
+        292
+      ],
+      "sourceGroundPoint": [
+        273,
+        225
+      ],
+      "contentBounds": [
+        198,
+        310,
+        303,
+        494
+      ],
+      "sha256": "7438769ca9a3d4ffeb46c3ac7eaeb652b8a913ac84448573696b7244876e3e4b"
+    },
+    {
+      "componentId": "single/upright_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.498046875,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/upright_02.png",
+      "sourceRect": [
+        343,
+        30,
+        482,
+        238
+      ],
+      "canvasOffset": [
+        186,
+        292
+      ],
+      "sourceGroundPoint": [
+        412,
+        225
+      ],
+      "contentBounds": [
+        194,
+        312,
+        299,
+        493
+      ],
+      "sha256": "924adf87b688fb182c11383e35ed07665f0ce04ffbb46e81b43e8f0b2f48c3a4"
+    },
+    {
+      "componentId": "single/bud_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/bud_01.png",
+      "sourceRect": [
+        478,
+        30,
+        587,
+        238
+      ],
+      "canvasOffset": [
+        201,
+        292
+      ],
+      "sourceGroundPoint": [
+        538,
+        225
+      ],
+      "contentBounds": [
+        203,
+        314,
+        310,
+        494
+      ],
+      "sha256": "d9edbb99103cde6f6fd58c02991da028a31b96e0bd5e982d34c0c498fc933cc3"
+    },
+    {
+      "componentId": "single/leaning_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48046875,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/leaning_02.png",
+      "sourceRect": [
+        588,
+        30,
+        756,
+        238
+      ],
+      "canvasOffset": [
+        172,
+        292
+      ],
+      "sourceGroundPoint": [
+        662,
+        225
+      ],
+      "contentBounds": [
+        184,
+        304,
+        332,
+        494
+      ],
+      "sha256": "652c7f607fc581cd6404a0ca89c38a89d542cd9422cfef67e5667f24f35fdbb7"
+    },
+    {
+      "componentId": "single/tiny_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953125,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/tiny_01.png",
+      "sourceRect": [
+        776,
+        30,
+        922,
+        238
+      ],
+      "canvasOffset": [
+        183,
+        292
+      ],
+      "sourceGroundPoint": [
+        850,
+        225
+      ],
+      "contentBounds": [
+        195,
+        330,
+        324,
+        495
+      ],
+      "sha256": "3102e594c030c4f0f18d93d29c5c70e2c1483282375c01e314edf11d0e0e6222"
+    },
+    {
+      "componentId": "single/upright_03",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5234375,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/upright_03.png",
+      "sourceRect": [
+        937,
+        30,
+        1071,
+        238
+      ],
+      "canvasOffset": [
+        189,
+        292
+      ],
+      "sourceGroundPoint": [
+        1016,
+        225
+      ],
+      "contentBounds": [
+        197,
+        313,
+        323,
+        494
+      ],
+      "sha256": "9cee99dde40fa6f9cc16876308c7a4c011943079b465da119168e916c9ef3ebe"
+    },
+    {
+      "componentId": "single/bud_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.515625,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/bud_02.png",
+      "sourceRect": [
+        1072,
+        25,
+        1216,
+        238
+      ],
+      "canvasOffset": [
+        184,
+        287
+      ],
+      "sourceGroundPoint": [
+        1152,
+        225
+      ],
+      "contentBounds": [
+        201,
+        296,
+        327,
+        494
+      ],
+      "sha256": "c5792bf56e6af4a9bc995b49d434f14632344fd5d966dccf725cc55cb866df78"
+    },
+    {
+      "componentId": "single/bud_03",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.474609375,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/bud_03.png",
+      "sourceRect": [
+        1226,
+        60,
+        1343,
+        238
+      ],
+      "canvasOffset": [
+        197,
+        322
+      ],
+      "sourceGroundPoint": [
+        1272,
+        225
+      ],
+      "contentBounds": [
+        228,
+        351,
+        310,
+        494
+      ],
+      "sha256": "3110b59746413f959ce5a8e3727570243999c010af1ec1686edb1ce86a661128"
+    },
+    {
+      "componentId": "single/bud_04",
+      "speciesCode": "CHAMOMILE",
+      "category": "single",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5078125,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/single/bud_04.png",
+      "sourceRect": [
+        1352,
+        40,
+        1505,
+        238
+      ],
+      "canvasOffset": [
+        179,
+        302
+      ],
+      "sourceGroundPoint": [
+        1433,
+        225
+      ],
+      "contentBounds": [
+        195,
+        325,
+        308,
+        494
+      ],
+      "sha256": "56023a1b79cf930ffb1e5f15a180e0056e4f61d48e17e8213e7bba340f192c0e"
+    },
+    {
+      "componentId": "small/bud_pair_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "small",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51953125,
+      "anchorY": 0.939453125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/small/bud_pair_01.png",
+      "sourceRect": [
+        35,
+        250,
+        239,
+        445
+      ],
+      "canvasOffset": [
+        154,
+        305
+      ],
+      "sourceGroundPoint": [
+        147,
+        426
+      ],
+      "contentBounds": [
+        167,
+        311,
+        346,
+        488
+      ],
+      "sha256": "8c38ccd3a86d8b2be971770592615a76ee4b572f129529ce8e977b0b0546fb40"
+    },
+    {
+      "componentId": "small/open_pair_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "small",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953125,
+      "anchorY": 0.943359375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/small/open_pair_01.png",
+      "sourceRect": [
+        273,
+        250,
+        476,
+        445
+      ],
+      "canvasOffset": [
+        154,
+        305
+      ],
+      "sourceGroundPoint": [
+        376,
+        428
+      ],
+      "contentBounds": [
+        165,
+        311,
+        346,
+        491
+      ],
+      "sha256": "c5933ed64c42c7079f90bd74f646e15911d91ac509840e555ba375a2558aeb40"
+    },
+    {
+      "componentId": "medium/airy_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "medium",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5,
+      "anchorY": 0.943359375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/medium/airy_01.png",
+      "sourceRect": [
+        522,
+        250,
+        759,
+        445
+      ],
+      "canvasOffset": [
+        137,
+        305
+      ],
+      "sourceGroundPoint": [
+        641,
+        428
+      ],
+      "contentBounds": [
+        142,
+        314,
+        355,
+        493
+      ],
+      "sha256": "1308a59199c076af54b53696d3b5db4e0e6cbfbf6f42a3a69055be709ef02f41"
+    },
+    {
+      "componentId": "medium/airy_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "medium",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/medium/airy_02.png",
+      "sourceRect": [
+        783,
+        250,
+        1015,
+        445
+      ],
+      "canvasOffset": [
+        140,
+        305
+      ],
+      "sourceGroundPoint": [
+        896,
+        432
+      ],
+      "contentBounds": [
+        160,
+        313,
+        359,
+        498
+      ],
+      "sha256": "1e0907b5b27dbb02c4e8fbdac132963c7673d98c16bbaeebb5c0962d7c1f7ceb"
+    },
+    {
+      "componentId": "small/open_pair_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "small",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.943359375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/small/open_pair_02.png",
+      "sourceRect": [
+        1061,
+        250,
+        1259,
+        445
+      ],
+      "canvasOffset": [
+        157,
+        305
+      ],
+      "sourceGroundPoint": [
+        1157,
+        428
+      ],
+      "contentBounds": [
+        172,
+        305,
+        349,
+        490
+      ],
+      "sha256": "4a6b60ee9e5daf3b4a5bda8fed61e2d3a9fdb13c685df332acdea39de5fb6dbd"
+    },
+    {
+      "componentId": "medium/airy_03",
+      "speciesCode": "CHAMOMILE",
+      "category": "medium",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.962890625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/medium/airy_03.png",
+      "sourceRect": [
+        1300,
+        240,
+        1525,
+        439
+      ],
+      "canvasOffset": [
+        143,
+        301
+      ],
+      "sourceGroundPoint": [
+        1410,
+        432
+      ],
+      "contentBounds": [
+        147,
+        314,
+        339,
+        500
+      ],
+      "sha256": "04d8ad84f13c4878a6cd1b90f968e85aaa261a39769901b05a1498dd8255af5e"
+    },
+    {
+      "componentId": "full/spreading_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "full",
+      "bloomCount": 6,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48828125,
+      "anchorY": 0.93359375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/full/spreading_01.png",
+      "sourceRect": [
+        30,
+        447,
+        319,
+        702
+      ],
+      "canvasOffset": [
+        111,
+        245
+      ],
+      "sourceGroundPoint": [
+        169,
+        680
+      ],
+      "contentBounds": [
+        111,
+        245,
+        392,
+        497
+      ],
+      "sha256": "8929964438fa2b4d7b42bb75d1ef2b3d64a5768e223e54ea36aa992abb18a185"
+    },
+    {
+      "componentId": "full/upright_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "full",
+      "bloomCount": 6,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5,
+      "anchorY": 0.91796875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/full/upright_01.png",
+      "sourceRect": [
+        340,
+        447,
+        640,
+        710
+      ],
+      "canvasOffset": [
+        106,
+        237
+      ],
+      "sourceGroundPoint": [
+        490,
+        680
+      ],
+      "contentBounds": [
+        117,
+        245,
+        396,
+        496
+      ],
+      "sha256": "b003a63b1c48fb80b097d2a3048b03de29a9032c84c109876f09139b3b5d123b"
+    },
+    {
+      "componentId": "full/spreading_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "full",
+      "bloomCount": 7,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.91796875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/full/spreading_02.png",
+      "sourceRect": [
+        650,
+        450,
+        962,
+        716
+      ],
+      "canvasOffset": [
+        100,
+        234
+      ],
+      "sourceGroundPoint": [
+        811,
+        686
+      ],
+      "contentBounds": [
+        105,
+        248,
+        407,
+        498
+      ],
+      "sha256": "6b1ae28aafe84fd294f54a0a539fdb86acb0c4a0bda56b4a2d4cdf856b8f5616"
+    },
+    {
+      "componentId": "full/airy_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "full",
+      "bloomCount": 9,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.486328125,
+      "anchorY": 0.9296875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/full/airy_01.png",
+      "sourceRect": [
+        979,
+        445,
+        1264,
+        714
+      ],
+      "canvasOffset": [
+        113,
+        231
+      ],
+      "sourceGroundPoint": [
+        1115,
+        690
+      ],
+      "contentBounds": [
+        118,
+        251,
+        369,
+        492
+      ],
+      "sha256": "3314f2555b83adc26e924c02816454a60fa8a4999012ae403e03771af36e31eb"
+    },
+    {
+      "componentId": "full/airy_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "full",
+      "bloomCount": 6,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.52734375,
+      "anchorY": 0.931640625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/full/airy_02.png",
+      "sourceRect": [
+        1260,
+        438,
+        1524,
+        714
+      ],
+      "canvasOffset": [
+        124,
+        224
+      ],
+      "sourceGroundPoint": [
+        1406,
+        691
+      ],
+      "contentBounds": [
+        127,
+        224,
+        368,
+        498
+      ],
+      "sha256": "0a596c6d6672b3449c053256eab9d36fb47699c146a8db4887e374ebd9170e7a"
+    },
+    {
+      "componentId": "foliage/leaves_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.50390625,
+      "anchorY": 0.93359375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/leaves_01.png",
+      "sourceRect": [
+        20,
+        727,
+        199,
+        924
+      ],
+      "canvasOffset": [
+        166,
+        303
+      ],
+      "sourceGroundPoint": [
+        112,
+        902
+      ],
+      "contentBounds": [
+        179,
+        315,
+        340,
+        490
+      ],
+      "sha256": "3d82b7de2d848d585e7fefdd977a14850ed3078dc93058f27a281df81a9d3107"
+    },
+    {
+      "componentId": "foliage/leaves_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.94140625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/leaves_02.png",
+      "sourceRect": [
+        200,
+        700,
+        380,
+        924
+      ],
+      "canvasOffset": [
+        166,
+        276
+      ],
+      "sourceGroundPoint": [
+        287,
+        906
+      ],
+      "contentBounds": [
+        181,
+        279,
+        328,
+        489
+      ],
+      "sha256": "9892d97b2ab4d78c6c22c7165357197647fda411a8c1f192b8619a84fbb869b2"
+    },
+    {
+      "componentId": "foliage/leaves_03",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.498046875,
+      "anchorY": 0.94140625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/leaves_03.png",
+      "sourceRect": [
+        380,
+        726,
+        548,
+        929
+      ],
+      "canvasOffset": [
+        172,
+        297
+      ],
+      "sourceGroundPoint": [
+        463,
+        911
+      ],
+      "contentBounds": [
+        172,
+        324,
+        324,
+        484
+      ],
+      "sha256": "fa1ba66c34cdce00e594bd10b73642d169850e6e1ce0710e3a62aec1a5ceb461"
+    },
+    {
+      "componentId": "foliage/leaves_04",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51171875,
+      "anchorY": 0.935546875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/leaves_04.png",
+      "sourceRect": [
+        550,
+        748,
+        738,
+        930
+      ],
+      "canvasOffset": [
+        162,
+        318
+      ],
+      "sourceGroundPoint": [
+        650,
+        909
+      ],
+      "contentBounds": [
+        177,
+        337,
+        337,
+        484
+      ],
+      "sha256": "4d04e11076f85246301e546dc5e910a87f4c558b7ef5c92702151a3196f6464b"
+    },
+    {
+      "componentId": "foliage/ground_01",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.482421875,
+      "anchorY": 0.927734375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/ground_01.png",
+      "sourceRect": [
+        741,
+        764,
+        924,
+        934
+      ],
+      "canvasOffset": [
+        164,
+        330
+      ],
+      "sourceGroundPoint": [
+        824,
+        909
+      ],
+      "contentBounds": [
+        173,
+        359,
+        331,
+        486
+      ],
+      "sha256": "604c22f23add8048907590523382c3e250ae00c053c6538567c212aff3a1f330"
+    },
+    {
+      "componentId": "foliage/ground_02",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.482421875,
+      "anchorY": 0.9296875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/ground_02.png",
+      "sourceRect": [
+        926,
+        750,
+        1105,
+        933
+      ],
+      "canvasOffset": [
+        166,
+        317
+      ],
+      "sourceGroundPoint": [
+        1007,
+        909
+      ],
+      "contentBounds": [
+        172,
+        340,
+        336,
+        486
+      ],
+      "sha256": "1897035a3bf0b2b5797116779690d389556cdf0577c088487bfef6458325c492"
+    },
+    {
+      "componentId": "foliage/ground_03",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953125,
+      "anchorY": 0.92578125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/ground_03.png",
+      "sourceRect": [
+        1107,
+        748,
+        1310,
+        935
+      ],
+      "canvasOffset": [
+        154,
+        313
+      ],
+      "sourceGroundPoint": [
+        1210,
+        909
+      ],
+      "contentBounds": [
+        166,
+        326,
+        340,
+        483
+      ],
+      "sha256": "e41a09aeac049dab269606971532b3a6718f1d23b990e415802a96bf3c90a3d1"
+    },
+    {
+      "componentId": "foliage/ground_04",
+      "speciesCode": "CHAMOMILE",
+      "category": "foliage",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48828125,
+      "anchorY": 0.923828125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.105,
+      "status": "APPROVED_S_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/chamomile/components/foliage/ground_04.png",
+      "sourceRect": [
+        1311,
+        750,
+        1508,
+        935
+      ],
+      "canvasOffset": [
+        157,
+        315
+      ],
+      "sourceGroundPoint": [
+        1404,
+        908
+      ],
+      "contentBounds": [
+        162,
+        332,
+        348,
+        476
+      ],
+      "sha256": "fd4e9aac3dfa1af902831412814cbb74d790b698b511d04106242af2d8e6b51d"
+    }
+  ]
+}

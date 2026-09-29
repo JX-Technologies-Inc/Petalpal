@@ -1,0 +1,467 @@
+[
+  {
+    "month": 6,
+    "objects": 30,
+    "classCounts": {
+      "S": 18,
+      "M": 9,
+      "L": 3
+    },
+    "areaProfile": "SMALL",
+    "weights": {
+      "sparse": 15,
+      "normal": 60,
+      "full": 25
+    },
+    "actualCompositionCounts": {
+      "sparse": 5,
+      "normal": 18,
+      "full": 7
+    },
+    "speciesCounts": {
+      "BIRD_OF_PARADISE": 1,
+      "HYDRANGEA": 1,
+      "SUNFLOWER": 1,
+      "OLIVE": 1,
+      "TULIP": 3,
+      "ANEMONE": 1,
+      "GENTIAN": 1,
+      "WHITE_ROSE": 1,
+      "POPPY": 1,
+      "YELLOW_DAFFODIL": 1,
+      "HEATHER": 2,
+      "ASTER": 2,
+      "CHAMOMILE": 2,
+      "DAISY": 3,
+      "COREOPSIS": 2,
+      "DANDELION": 1,
+      "YELLOW_RAPESEED_FLOWER": 2,
+      "SNOWDROP": 2,
+      "CHINESE_VIOLET_CRESS": 1,
+      "BLUEBELL": 1
+    },
+    "v1CompositionCounts": {
+      "sparse": 13,
+      "normal": 15,
+      "full": 2
+    },
+    "v1VisualPieces": 57,
+    "v2VisualPieces": 92,
+    "neighborhoods": [
+      {
+        "id": "neighborhood-1",
+        "flowerIds": [
+          "density-06-all-species-07",
+          "density-06-all-species-08",
+          "density-06-all-species-09",
+          "density-06-all-species-21",
+          "density-06-all-species-22"
+        ],
+        "x": 1802.2649703977745,
+        "y": 354.24958061848594,
+        "speciesCounts": {
+          "WHITE_ROSE": 1,
+          "TULIP": 1,
+          "POPPY": 1,
+          "YELLOW_RAPESEED_FLOWER": 2
+        }
+      },
+      {
+        "id": "neighborhood-2",
+        "flowerIds": [
+          "density-06-all-species-11",
+          "density-06-all-species-13",
+          "density-06-all-species-23",
+          "density-06-all-species-24",
+          "density-06-all-species-26",
+          "density-06-all-species-27"
+        ],
+        "x": 2090.3894115625008,
+        "y": 407.1904050514786,
+        "speciesCounts": {
+          "YELLOW_DAFFODIL": 1,
+          "ASTER": 2,
+          "SNOWDROP": 2,
+          "CHINESE_VIOLET_CRESS": 1
+        }
+      },
+      {
+        "id": "neighborhood-3",
+        "flowerIds": [
+          "density-06-all-species-00",
+          "density-06-all-species-17",
+          "density-06-all-species-18",
+          "density-06-all-species-28"
+        ],
+        "x": 1976.605347136705,
+        "y": 314.4158908984573,
+        "speciesCounts": {
+          "BIRD_OF_PARADISE": 1,
+          "COREOPSIS": 2,
+          "DANDELION": 1
+        }
+      },
+      {
+        "id": "neighborhood-4",
+        "flowerIds": [
+          "density-06-all-species-14",
+          "density-06-all-species-15",
+          "density-06-all-species-16",
+          "density-06-all-species-19",
+          "density-06-all-species-20"
+        ],
+        "x": 1769.153610248107,
+        "y": 413.3595535524626,
+        "speciesCounts": {
+          "CHAMOMILE": 2,
+          "DAISY": 3
+        }
+      },
+      {
+        "id": "neighborhood-5",
+        "flowerIds": [
+          "density-06-all-species-01",
+          "density-06-all-species-02",
+          "density-06-all-species-03",
+          "density-06-all-species-10"
+        ],
+        "x": 1902.6955251527252,
+        "y": 330.08613757418425,
+        "speciesCounts": {
+          "HYDRANGEA": 1,
+          "SUNFLOWER": 1,
+          "OLIVE": 1,
+          "TULIP": 1
+        }
+      },
+      {
+        "id": "neighborhood-6",
+        "flowerIds": [
+          "density-06-all-species-04",
+          "density-06-all-species-05",
+          "density-06-all-species-06",
+          "density-06-all-species-12",
+          "density-06-all-species-25",
+          "density-06-all-species-29"
+        ],
+        "x": 2041.1963494166557,
+        "y": 361.8799844236734,
+        "speciesCounts": {
+          "TULIP": 1,
+          "ANEMONE": 1,
+          "GENTIAN": 1,
+          "HEATHER": 2,
+          "BLUEBELL": 1
+        }
+      }
+    ]
+  },
+  {
+    "month": 4,
+    "objects": 30,
+    "classCounts": {
+      "S": 18,
+      "M": 9,
+      "L": 3
+    },
+    "areaProfile": "MEDIUM",
+    "weights": {
+      "sparse": 15,
+      "normal": 50,
+      "full": 35
+    },
+    "actualCompositionCounts": {
+      "sparse": 5,
+      "normal": 15,
+      "full": 10
+    },
+    "speciesCounts": {
+      "SUNFLOWER": 1,
+      "BIRD_OF_PARADISE": 1,
+      "HYDRANGEA": 1,
+      "GERBERA_DAISY": 2,
+      "YELLOW_DAFFODIL": 1,
+      "PETUNIA": 1,
+      "POPPY": 4,
+      "TULIP": 1,
+      "LAVENDER": 2,
+      "SNOWDROP": 1,
+      "BLUEBELL": 4,
+      "CHAMOMILE": 3,
+      "HEATHER": 2,
+      "DANDELION": 2,
+      "COREOPSIS": 2,
+      "CHINESE_VIOLET_CRESS": 2
+    },
+    "v1CompositionCounts": {
+      "sparse": 10,
+      "normal": 11,
+      "full": 9
+    },
+    "v1VisualPieces": 59,
+    "v2VisualPieces": 86,
+    "neighborhoods": [
+      {
+        "id": "neighborhood-1",
+        "flowerIds": [
+          "density-04-all-species-06",
+          "density-04-all-species-08",
+          "density-04-all-species-18",
+          "density-04-all-species-23",
+          "density-04-all-species-24"
+        ],
+        "x": 1313.0604476356239,
+        "y": 169.8968908423558,
+        "speciesCounts": {
+          "PETUNIA": 1,
+          "TULIP": 1,
+          "BLUEBELL": 1,
+          "COREOPSIS": 2
+        }
+      },
+      {
+        "id": "neighborhood-2",
+        "flowerIds": [
+          "density-04-all-species-10",
+          "density-04-all-species-11",
+          "density-04-all-species-12",
+          "density-04-all-species-13",
+          "density-04-all-species-14",
+          "density-04-all-species-17"
+        ],
+        "x": 1435.1281022156254,
+        "y": 89.02127011260018,
+        "speciesCounts": {
+          "POPPY": 2,
+          "LAVENDER": 2,
+          "SNOWDROP": 1,
+          "CHAMOMILE": 1
+        }
+      },
+      {
+        "id": "neighborhood-3",
+        "flowerIds": [
+          "density-04-all-species-19",
+          "density-04-all-species-25",
+          "density-04-all-species-26",
+          "density-04-all-species-27"
+        ],
+        "x": 1372.683419283907,
+        "y": 251.56795162026538,
+        "speciesCounts": {
+          "HEATHER": 2,
+          "CHINESE_VIOLET_CRESS": 2
+        }
+      },
+      {
+        "id": "neighborhood-4",
+        "flowerIds": [
+          "density-04-all-species-00",
+          "density-04-all-species-01",
+          "density-04-all-species-20",
+          "density-04-all-species-21",
+          "density-04-all-species-22"
+        ],
+        "x": 1244.6739409272413,
+        "y": 237.44434358691797,
+        "speciesCounts": {
+          "SUNFLOWER": 1,
+          "BIRD_OF_PARADISE": 1,
+          "DANDELION": 2,
+          "CHAMOMILE": 1
+        }
+      },
+      {
+        "id": "neighborhood-5",
+        "flowerIds": [
+          "density-04-all-species-02",
+          "density-04-all-species-03",
+          "density-04-all-species-04",
+          "density-04-all-species-05"
+        ],
+        "x": 1357.2767162441542,
+        "y": 109.36858253367245,
+        "speciesCounts": {
+          "HYDRANGEA": 1,
+          "GERBERA_DAISY": 2,
+          "YELLOW_DAFFODIL": 1
+        }
+      },
+      {
+        "id": "neighborhood-6",
+        "flowerIds": [
+          "density-04-all-species-07",
+          "density-04-all-species-09",
+          "density-04-all-species-15",
+          "density-04-all-species-16",
+          "density-04-all-species-28",
+          "density-04-all-species-29"
+        ],
+        "x": 1405.5095554181607,
+        "y": 187.212217886971,
+        "speciesCounts": {
+          "POPPY": 2,
+          "BLUEBELL": 3,
+          "CHAMOMILE": 1
+        }
+      }
+    ]
+  },
+  {
+    "month": 10,
+    "objects": 30,
+    "classCounts": {
+      "S": 18,
+      "M": 9,
+      "L": 3
+    },
+    "areaProfile": "LARGE",
+    "weights": {
+      "sparse": 15,
+      "normal": 45,
+      "full": 40
+    },
+    "actualCompositionCounts": {
+      "sparse": 5,
+      "normal": 13,
+      "full": 12
+    },
+    "speciesCounts": {
+      "BIRD_OF_PARADISE": 1,
+      "HYDRANGEA": 1,
+      "SUNFLOWER": 1,
+      "PETUNIA": 2,
+      "POPPY": 1,
+      "OLIVE": 2,
+      "GENTIAN": 1,
+      "ANEMONE": 2,
+      "TULIP": 1,
+      "LAVENDER": 1,
+      "YELLOW_RAPESEED_FLOWER": 1,
+      "CHINESE_VIOLET_CRESS": 3,
+      "DANDELION": 1,
+      "COREOPSIS": 1,
+      "CHAMOMILE": 5,
+      "DAISY": 1,
+      "HEATHER": 2,
+      "BLUEBELL": 2,
+      "ASTER": 1
+    },
+    "v1CompositionCounts": {
+      "sparse": 1,
+      "normal": 15,
+      "full": 14
+    },
+    "v1VisualPieces": 77,
+    "v2VisualPieces": 90,
+    "neighborhoods": [
+      {
+        "id": "neighborhood-1",
+        "flowerIds": [
+          "density-10-all-species-02",
+          "density-10-all-species-03",
+          "density-10-all-species-08",
+          "density-10-all-species-09",
+          "density-10-all-species-10"
+        ],
+        "x": 730.6608189043749,
+        "y": 917.067946015815,
+        "speciesCounts": {
+          "SUNFLOWER": 1,
+          "PETUNIA": 1,
+          "GENTIAN": 1,
+          "ANEMONE": 2
+        }
+      },
+      {
+        "id": "neighborhood-2",
+        "flowerIds": [
+          "density-10-all-species-13",
+          "density-10-all-species-14",
+          "density-10-all-species-15",
+          "density-10-all-species-16",
+          "density-10-all-species-27",
+          "density-10-all-species-28"
+        ],
+        "x": 511.61981800852664,
+        "y": 1012.1486516593346,
+        "speciesCounts": {
+          "YELLOW_RAPESEED_FLOWER": 1,
+          "CHINESE_VIOLET_CRESS": 3,
+          "CHAMOMILE": 1,
+          "ASTER": 1
+        }
+      },
+      {
+        "id": "neighborhood-3",
+        "flowerIds": [
+          "density-10-all-species-00",
+          "density-10-all-species-11",
+          "density-10-all-species-17",
+          "density-10-all-species-18"
+        ],
+        "x": 566.976747198154,
+        "y": 1124.2375784129117,
+        "speciesCounts": {
+          "BIRD_OF_PARADISE": 1,
+          "TULIP": 1,
+          "DANDELION": 1,
+          "COREOPSIS": 1
+        }
+      },
+      {
+        "id": "neighborhood-4",
+        "flowerIds": [
+          "density-10-all-species-12",
+          "density-10-all-species-19",
+          "density-10-all-species-20",
+          "density-10-all-species-21",
+          "density-10-all-species-22"
+        ],
+        "x": 404.5076084688902,
+        "y": 1119.8988959251285,
+        "speciesCounts": {
+          "LAVENDER": 1,
+          "CHAMOMILE": 1,
+          "DAISY": 1,
+          "HEATHER": 2
+        }
+      },
+      {
+        "id": "neighborhood-5",
+        "flowerIds": [
+          "density-10-all-species-05",
+          "density-10-all-species-06",
+          "density-10-all-species-07",
+          "density-10-all-species-29"
+        ],
+        "x": 672.645524845515,
+        "y": 1042.308821013171,
+        "speciesCounts": {
+          "PETUNIA": 1,
+          "OLIVE": 2,
+          "CHAMOMILE": 1
+        }
+      },
+      {
+        "id": "neighborhood-6",
+        "flowerIds": [
+          "density-10-all-species-01",
+          "density-10-all-species-04",
+          "density-10-all-species-23",
+          "density-10-all-species-24",
+          "density-10-all-species-25",
+          "density-10-all-species-26"
+        ],
+        "x": 647.0998264767871,
+        "y": 915.6258045893361,
+        "speciesCounts": {
+          "HYDRANGEA": 1,
+          "POPPY": 1,
+          "BLUEBELL": 2,
+          "CHAMOMILE": 2
+        }
+      }
+    ]
+  }
+]

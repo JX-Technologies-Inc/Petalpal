@@ -22,8 +22,13 @@ import {
 export type MaskTool = 'add' | 'remove';
 
 export interface MaskPoint {
-  x: number; // Land-local coordinates
-  y: number; // Land-local coordinates
+  x: number; // Refinement-local coordinates (land-local minus the month offset)
+  y: number;
+}
+
+export interface MaskOffset {
+  offsetX: number; // Translation in parent-land pixels, after mask calibration
+  offsetY: number;
 }
 
 export interface MaskStroke {
@@ -40,7 +45,73 @@ export interface MonthMaskRefinement {
   landId: string;
   parentLandAsset: ParentLandAssetId;
   strokes: MaskStroke[];
+  offsetX?: number; // Optional for compatibility with existing version 1 saves
+  offsetY?: number;
   savedAt: string;
+}
+
+export interface MaskEditState extends MaskOffset {
+  strokes: MaskStroke[];
+}
+
+export interface MaskEditHistory {
+  current: MaskEditState;
+  undo: MaskEditState[];
+  redo: MaskEditState[];
+}
+
+export function getMaskRefinementOffset(offset?: Partial<MaskOffset> | null): MaskOffset {
+  const offsetX = offset?.offsetX ?? 0;
+  const offsetY = offset?.offsetY ?? 0;
+  return {
+    offsetX: Number.isFinite(offsetX) ? offsetX : 0,
+    offsetY: Number.isFinite(offsetY) ? offsetY : 0,
+  };
+}
+
+export function landLocalToRefinementLocal(point: MaskPoint, offset: MaskOffset): MaskPoint {
+  return { x: point.x - offset.offsetX, y: point.y - offset.offsetY };
+}
+
+export function createMaskEditHistory(refinement?: MonthMaskRefinement | null): MaskEditHistory {
+  return {
+    current: { strokes: [...(refinement?.strokes ?? [])], ...getMaskRefinementOffset(refinement) },
+    undo: [],
+    redo: [],
+  };
+}
+
+// Each history entry is a whole immutable edit state. Drag/paint previews replace
+// current only; commit once per gesture so Undo restores both position and shape.
+export function commitMaskEdit(history: MaskEditHistory, current: MaskEditState): MaskEditHistory {
+  if (current.strokes === history.current.strokes &&
+      current.offsetX === history.current.offsetX && current.offsetY === history.current.offsetY) {
+    return history;
+  }
+  return { current, undo: [...history.undo, history.current], redo: [] };
+}
+
+export function undoMaskEdit(history: MaskEditHistory): MaskEditHistory {
+  if (history.undo.length === 0) return history;
+  return {
+    current: history.undo[history.undo.length - 1],
+    undo: history.undo.slice(0, -1),
+    redo: [...history.redo, history.current],
+  };
+}
+
+export function redoMaskEdit(history: MaskEditHistory): MaskEditHistory {
+  if (history.redo.length === 0) return history;
+  return {
+    current: history.redo[history.redo.length - 1],
+    undo: [...history.undo, history.current],
+    redo: history.redo.slice(0, -1),
+  };
+}
+
+export function resetMaskEditToLockedBase(history: MaskEditHistory): MaskEditHistory {
+  // Reset is a preview edit until Save; Cancel can still restore the saved mask.
+  return commitMaskEdit(history, { strokes: [], offsetX: 0, offsetY: 0 });
 }
 
 const STORAGE_KEY_PREFIX = 'petalpal_planting_mask_refinement_v1_month_';
@@ -57,7 +128,7 @@ export function loadAllMaskRefinementsFromStorage(): Record<number, MonthMaskRef
       if (raw) {
         const parsed = JSON.parse(raw) as MonthMaskRefinement;
         if (parsed && parsed.version === 1 && parsed.month === m) {
-          activeRefinements[m] = parsed;
+          activeRefinements[m] = { ...parsed, ...getMaskRefinementOffset(parsed) };
         }
       }
     }
@@ -81,7 +152,8 @@ export function saveMonthMaskRefinement(
   month: number,
   strokes: MaskStroke[],
   landId: string,
-  parentLandAsset: ParentLandAssetId
+  parentLandAsset: ParentLandAssetId,
+  offset?: MaskOffset
 ): MonthMaskRefinement {
   const refinement: MonthMaskRefinement = {
     version: 1,
@@ -89,6 +161,7 @@ export function saveMonthMaskRefinement(
     landId,
     parentLandAsset,
     strokes: [...strokes],
+    ...getMaskRefinementOffset(offset),
     savedAt: new Date().toISOString(),
   };
 
@@ -165,6 +238,102 @@ function distSqToSegment(
 }
 
 /**
+ * Proves containment of the whole circular footprint, including small interior
+ * holes that perimeter/ring samples miss. Cells are classified conservatively:
+ * a stroke distance bound covers every point of a cell; the base uses all grid
+ * cells under its inverse calibration. Uncertain boundary cells are subdivided,
+ * never accepted by a center sample. This does not alter the approved mask.
+ */
+export function isCircleInRefinedMaskLandLocal(
+  month: number,
+  landX: number,
+  landY: number,
+  radius: number,
+  strokes: MaskStroke[],
+  cal: MonthRegionCalibration,
+  meta: MonthRegionMeta,
+  offset: MaskOffset
+): boolean {
+  const center = landLocalToRefinementLocal({ x: landX, y: landY }, offset);
+  if (!Number.isFinite(radius) || radius < 0) return false;
+  if (radius === 0) return isPointInRefinedMaskLandLocal(month, landX, landY, strokes, cal, meta, offset);
+  const grid = getRegionGrid();
+  const relevant = strokes.filter((s) => s.points.length > 0 &&
+    s.bbox.minX <= center.x + radius && s.bbox.maxX >= center.x - radius &&
+    s.bbox.minY <= center.y + radius && s.bbox.maxY >= center.y - radius);
+  function classify(x: number, y: number, half: number): -1 | 0 | 1 {
+    const diagonal = half * Math.SQRT2;
+    let partialAdd = false;
+    let partialRemove = false;
+    const resolve = (status: -1 | 0 | 1): -1 | 0 | 1 =>
+      status === 1 && !partialRemove ? 1 : status === -1 && !partialAdd ? -1 : 0;
+    for (let i = relevant.length - 1; i >= 0; i--) {
+      const s = relevant[i];
+      if (x + half < s.bbox.minX || x - half > s.bbox.maxX ||
+          y + half < s.bbox.minY || y - half > s.bbox.maxY) continue;
+      let distanceSq = Infinity;
+      if (s.points.length === 1) {
+        distanceSq = (x - s.points[0].x) ** 2 + (y - s.points[0].y) ** 2;
+      } else {
+        for (let j = 1; j < s.points.length; j++) {
+          distanceSq = Math.min(distanceSq, distSqToSegment(x, y,
+            s.points[j - 1].x, s.points[j - 1].y, s.points[j].x, s.points[j].y));
+        }
+      }
+      const distance = Math.sqrt(distanceSq);
+      if (distance - diagonal > s.radius) continue;
+      if (distance + diagonal <= s.radius) return resolve(s.tool === 'add' ? 1 : -1);
+      // A partial Add cannot invalidate an already-covered cell, and a partial
+      // Remove cannot make an empty cell plantable. Keep inspecting older coverage
+      // so filled-over holes do not leave false boundaries in the containment proof.
+      if (s.tool === 'add') partialAdd = true;
+      else partialRemove = true;
+    }
+    const corners = [
+      landLocalToMaskLocal(x - half, y - half, cal, meta),
+      landLocalToMaskLocal(x + half, y - half, cal, meta),
+      landLocalToMaskLocal(x - half, y + half, cal, meta),
+      landLocalToMaskLocal(x + half, y + half, cal, meta),
+    ];
+    const minU = Math.min(...corners.map((p) => p.u));
+    const maxU = Math.max(...corners.map((p) => p.u));
+    const minV = Math.min(...corners.map((p) => p.v));
+    const maxV = Math.max(...corners.map((p) => p.v));
+    if (maxU < 0 || maxV < 0 || minU > meta.bbox.width || minV > meta.bbox.height) return resolve(-1);
+    let inside = false;
+    let outside = minU < 0 || minV < 0 || maxU > meta.bbox.width || maxV > meta.bbox.height;
+    const minGX = Math.floor((meta.bbox.x + Math.max(0, minU)) / REGION_GRID_SCALE);
+    const maxGX = Math.floor((meta.bbox.x + Math.min(meta.bbox.width, maxU)) / REGION_GRID_SCALE);
+    const minGY = Math.floor((meta.bbox.y + Math.max(0, minV)) / REGION_GRID_SCALE);
+    const maxGY = Math.floor((meta.bbox.y + Math.min(meta.bbox.height, maxV)) / REGION_GRID_SCALE);
+    for (let gy = minGY; gy <= maxGY; gy++) {
+      for (let gx = minGX; gx <= maxGX; gx++) {
+        const plantable = gx >= 0 && gy >= 0 && gx < REGION_GRID_WIDTH && gy < REGION_GRID_HEIGHT &&
+          grid[gy * REGION_GRID_WIDTH + gx] === month;
+        inside ||= plantable;
+        outside ||= !plantable;
+        if (inside && outside) return 0;
+      }
+    }
+    return resolve(inside ? 1 : -1);
+  }
+  let remainingCells = 100000;
+  function covered(x: number, y: number, half: number): boolean {
+    const dx = Math.max(Math.abs(x - center.x) - half, 0);
+    const dy = Math.max(Math.abs(y - center.y) - half, 0);
+    if (dx * dx + dy * dy > radius * radius) return true; // Entire cell is outside the footprint.
+    const status = classify(x, y, half);
+    if (status !== 0) return status === 1;
+    // Numerical/work limits fail closed; no unproved portion of a footprint is accepted.
+    if (half <= 1 / 1024 || --remainingCells <= 0) return false;
+    const h = half / 2;
+    return covered(x - h, y - h, h) && covered(x + h, y - h, h) &&
+      covered(x - h, y + h, h) && covered(x + h, y + h, h);
+  }
+  return covered(center.x, center.y, radius);
+}
+
+/**
  * Checks if point (lx, ly) in Land-local coordinates falls within a stroke.
  */
 export function isPointInStroke(lx: number, ly: number, stroke: MaskStroke): boolean {
@@ -235,18 +404,20 @@ export function isPointInRefinedMaskLandLocal(
   landY: number,
   strokes: MaskStroke[],
   cal: MonthRegionCalibration,
-  meta: MonthRegionMeta
+  meta: MonthRegionMeta,
+  offset: MaskOffset = { offsetX: 0, offsetY: 0 }
 ): boolean {
+  const local = landLocalToRefinementLocal({ x: landX, y: landY }, offset);
   // Check strokes in reverse chronological order (newest stroke takes precedence)
   for (let i = strokes.length - 1; i >= 0; i--) {
     const stroke = strokes[i];
-    if (isPointInStroke(landX, landY, stroke)) {
+    if (isPointInStroke(local.x, local.y, stroke)) {
       return stroke.tool === 'add';
     }
   }
 
   // If no manual stroke covered this point, fall back to the locked base mask
-  return isPointInBaseMask(month, landX, landY, cal, meta);
+  return isPointInBaseMask(month, local.x, local.y, cal, meta);
 }
 
 /**
@@ -284,14 +455,15 @@ export function isPointInMonthRefinedMaskWorld(
 
   // Otherwise check if a saved refinement exists for this month
   const savedRefinement = getMonthMaskRefinement(month);
-  if (savedRefinement && savedRefinement.strokes.length > 0) {
+  if (savedRefinement) {
     return isPointInRefinedMaskLandLocal(
       month,
       landLocal.x,
       landLocal.y,
       savedRefinement.strokes,
       cal,
-      meta
+      meta,
+      getMaskRefinementOffset(savedRefinement)
     );
   }
 

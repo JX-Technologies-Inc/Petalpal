@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import vm from 'node:vm';
+import { createRequire } from 'node:module';
 
 console.log('====================================================');
 console.log('PETALPAL PLANTING MASK PAINT REFINEMENT — TEST SUITE');
@@ -371,6 +373,241 @@ const singlePointPath = strokeToSvgPath([{ x: 10, y: 20 }]);
 assert(singlePointPath.startsWith('M 10 20 L'), 'Single point produces valid segment path');
 const multiPointPath = strokeToSvgPath([{ x: 10, y: 20 }, { x: 30, y: 40 }, { x: 50, y: 60 }]);
 assert(multiPointPath === 'M 10 20 L 30 40 L 50 60', 'Multi-point produces polyline SVG path');
+
+// Exercise the real TypeScript modules for translation, storage and history.
+// Each loader has a fresh module cache to simulate a full reload. Storage is an
+// isolated in-memory fixture; these tests never access the user's browser data.
+const nodeRequire = createRequire(import.meta.url);
+const ts = nodeRequire('typescript');
+function loadActualMaskModules(storage) {
+  const cache = new Map();
+  function load(file) {
+    if (cache.has(file)) return cache.get(file).exports;
+    const module = { exports: {} };
+    cache.set(file, module);
+    const { outputText } = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    });
+    const requireLocal = (request) => {
+      if (request.startsWith('@/assets/')) return request;
+      if (request.startsWith('.')) return load(path.resolve(path.dirname(file), request + '.ts'));
+      return nodeRequire(request);
+    };
+    const run = vm.runInNewContext('(function(exports, require, module) {\n' + outputText + '\n})', {
+      localStorage: storage, console, Uint8Array,
+    }, { filename: file });
+    run(module.exports, requireLocal, module);
+    return module.exports;
+  }
+  const plantingDir = path.resolve(basePath + 'src/components/garden/planting');
+  return {
+    mask: load(path.join(plantingDir, 'plantingMaskRefinement.ts')),
+    geometry: load(path.join(plantingDir, 'plantingRegionGeometry.ts')),
+    data: load(path.join(plantingDir, 'plantingRegionData.ts')),
+  };
+}
+
+console.log('\n--- SUITE 8: Legacy Refinements & Offset Persistence ---');
+const storageItems = new Map();
+const storage = {
+  getItem: (key) => storageItems.get(key) ?? null,
+  setItem: (key, value) => storageItems.set(key, value),
+  removeItem: (key) => storageItems.delete(key),
+};
+const januaryKey = 'petalpal_planting_mask_refinement_v1_month_1';
+const legacy = {
+  version: 1, month: 1, landId: 'central', parentLandAsset: 'central',
+  strokes: [addStroke, eraseStroke], savedAt: '2026-09-01T00:00:00.000Z',
+};
+const legacyJSON = JSON.stringify(legacy);
+storageItems.set(januaryKey, legacyJSON);
+const actual = loadActualMaskModules(storage);
+const api = actual.mask;
+const loadedLegacy = api.loadMonthMaskRefinement(1);
+assert(loadedLegacy.offsetX === 0 && loadedLegacy.offsetY === 0, 'Legacy save loads with zero translation');
+assert(JSON.stringify(loadedLegacy.strokes) === JSON.stringify(legacy.strokes), 'Legacy stroke geometry/order is preserved');
+assert(storageItems.get(januaryKey) === legacyJSON, 'Loading legacy data does not rewrite storage');
+assert(api.getMaskRefinementOffset({ offsetX: Infinity, offsetY: NaN }).offsetX === 0,
+  'Non-finite offsets safely default to zero');
+const savedOffset = { offsetX: 20.125, offsetY: -10.25 };
+api.saveMonthMaskRefinement(1, loadedLegacy.strokes, legacy.landId, legacy.parentLandAsset, savedOffset);
+const reloaded = loadActualMaskModules(storage);
+const restored = reloaded.mask.loadMonthMaskRefinement(1);
+assert(restored.version === 1 && restored.offsetX === 20.125 && restored.offsetY === -10.25,
+  'Save/reload preserves the offset exactly using the existing v1 key');
+assert(JSON.stringify(restored.strokes) === JSON.stringify(legacy.strokes), 'Save/reload leaves all stroke points and radii intact');
+assert(reloaded.mask.getMonthMaskRefinement(2) === null, 'Saving January does not create another month refinement');
+
+console.log('\n--- SUITE 9: Whole-Mask Translation & Paint Coordinates ---');
+const actualCal = actual.geometry.PLANTING_REGION_CALIBRATION[1];
+const actualMeta = actual.data.MONTH_REGION_METAS[1];
+const baselineJSON = JSON.stringify(actual.geometry.PLANTING_REGION_CALIBRATION);
+const erasedPoint = actual.geometry.maskLocalToLandLocal(
+  actualMeta.centroid.x - actualMeta.bbox.x, actualMeta.centroid.y - actualMeta.bbox.y, actualCal, actualMeta
+);
+const addedPoint = actual.geometry.maskLocalToLandLocal(actualMeta.bbox.width + 80,
+  actualMeta.bbox.height / 2, actualCal, actualMeta);
+const translatedStrokes = [api.createMaskStroke('add', 8, [addedPoint]), api.createMaskStroke('remove', 5, [erasedPoint])];
+const hit = (point, strokes, offset) => api.isPointInRefinedMaskLandLocal(1, point.x, point.y,
+  strokes, actualCal, actualMeta, offset);
+const translate = (point, offset) => ({ x: point.x + offset.offsetX, y: point.y + offset.offsetY });
+assert(!api.isPointInBaseMask(1, addedPoint.x, addedPoint.y, actualCal, actualMeta), 'Added test area starts outside the locked baseline');
+assert(hit(translate(erasedPoint, savedOffset), [], savedOffset), 'Baseline receives the month translation');
+assert(hit(translate(addedPoint, savedOffset), translatedStrokes, savedOffset), 'Additions receive the identical translation');
+assert(!hit(translate(erasedPoint, savedOffset), translatedStrokes, savedOffset), 'Erasures remain registered to the moved baseline');
+let shapeMatches = true;
+for (let y = -30; y <= actualMeta.bbox.height + 30; y += 3) {
+  for (let x = -30; x <= actualMeta.bbox.width + 100; x += 3) {
+    const p = actual.geometry.maskLocalToLandLocal(x, y, actualCal, actualMeta);
+    if (hit(p, translatedStrokes) !== hit(translate(p, savedOffset), translatedStrokes, savedOffset)) shapeMatches = false;
+  }
+}
+assert(shapeMatches, 'Moving preserves the complete final silhouette, including holes and additions');
+const pointer = translate(addedPoint, savedOffset);
+const storedPoint = api.landLocalToRefinementLocal(pointer, savedOffset);
+assert(storedPoint.x === addedPoint.x && storedPoint.y === addedPoint.y, 'Painting after movement subtracts the same offset before storing coordinates');
+const afterPaint = [...translatedStrokes, api.createMaskStroke('remove', 2, [storedPoint])];
+const secondOffset = { offsetX: -15, offsetY: 17.5 };
+assert(!hit(translate(addedPoint, secondOffset), afterPaint, secondOffset), 'A new erasure stays registered when the whole mask moves again');
+const afterRepaint = [...afterPaint, api.createMaskStroke('add', 1, [storedPoint])];
+assert(hit(translate(addedPoint, secondOffset), afterRepaint, secondOffset), 'Latest Add still wins over Remove after translation');
+api.saveMonthMaskRefinement(1, afterRepaint, legacy.landId, legacy.parentLandAsset, secondOffset);
+const secondReload = loadActualMaskModules(storage).mask;
+const savedState = secondReload.loadMonthMaskRefinement(1);
+assert(hit(translate(addedPoint, savedState), savedState.strokes, savedState), 'Move/paint/erase/move/save/reload restores the final position');
+const rotatedLand = { ...actual.geometry.getParentLand(actualCal.parentLandAsset), rotation: 31 };
+assert(api.isPointInMonthRefinedMaskWorld(1,
+  actual.geometry.landLocalToWorld(addedPoint.x + secondOffset.offsetX, addedPoint.y + secondOffset.offsetY, rotatedLand).x,
+  actual.geometry.landLocalToWorld(addedPoint.x + secondOffset.offsetX, addedPoint.y + secondOffset.offsetY, rotatedLand).y,
+  undefined, { 1: actualCal }, [rotatedLand]), 'Saved offsets also work in world-space hit testing on a rotated land');
+const baseOnly = loadActualMaskModules({ ...storage, getItem: (key) => key === januaryKey
+  ? JSON.stringify({ ...legacy, strokes: [], ...savedOffset }) : null }).mask;
+const movedBaseWorld = actual.geometry.landLocalToWorld(erasedPoint.x + savedOffset.offsetX,
+  erasedPoint.y + savedOffset.offsetY, rotatedLand);
+assert(baseOnly.isPointInMonthRefinedMaskWorld(1, movedBaseWorld.x, movedBaseWorld.y,
+  undefined, { 1: actualCal }, [rotatedLand]), 'A saved translation works even when no brush strokes exist');
+
+console.log('\n--- SUITE 10: Undo/Redo, Reset & Discard ---');
+let history = api.createMaskEditHistory(savedState);
+const beforeMove = history.current;
+history = api.commitMaskEdit(history, { ...history.current, offsetX: 9, offsetY: -6 });
+const afterMove = history.current;
+history = api.commitMaskEdit(history, { ...history.current, strokes: [...history.current.strokes,
+  api.createMaskStroke('remove', 1, [storedPoint])] });
+history = api.undoMaskEdit(history);
+assert(history.current === afterMove, 'Undoing paint restores shape while retaining the moved position');
+history = api.undoMaskEdit(history);
+assert(history.current === beforeMove, 'Undoing movement restores the prior translation and strokes');
+history = api.redoMaskEdit(history);
+assert(history.current === afterMove, 'Redo restores the exact moved position');
+history = api.commitMaskEdit(history, { ...history.current, offsetY: history.current.offsetY + 1 });
+assert(history.redo.length === 0, 'Fine-tuning after Undo clears the old redo branch');
+const storedBeforeReset = storageItems.get(januaryKey);
+history = api.resetMaskEditToLockedBase(history);
+assert(history.current.strokes.length === 0 && history.current.offsetX === 0 && history.current.offsetY === 0,
+  'Reset restores zero offset and no manual strokes');
+assert(JSON.stringify(actual.geometry.PLANTING_REGION_CALIBRATION) === baselineJSON,
+  'Reset and movement never mutate the authoritative baseline calibration');
+assert(storageItems.get(januaryKey) === storedBeforeReset, 'Reset preview leaves saved January data available for Cancel');
+history = api.createMaskEditHistory(api.loadMonthMaskRefinement(1));
+assert(history.current.offsetX === secondOffset.offsetX && history.current.offsetY === secondOffset.offsetY &&
+  JSON.stringify(history.current.strokes) === JSON.stringify(afterRepaint), 'Discard restores the saved translation and shape');
+
+// Drive the actual GardenScene gesture callbacks with fake pointer events.
+// No browser, screenshot runner, or duplicated gesture implementation is used.
+console.log('\n--- SUITE 11: Move Gesture Hit Testing & One-Step Undo ---');
+const sceneSource = fs.readFileSync(path.resolve(basePath + 'src/components/garden/GardenScene.tsx'), 'utf8').replace(/\r\n/g, '\n');
+const gestureCode = sceneSource.slice(sceneSource.indexOf('  const moveMaskPan = useMemo('),
+  sceneSource.indexOf('  const cameraGesture = useMemo(')) + '\n moveMaskPan;';
+const compiledGesture = ts.transpileModule(gestureCode, {
+  compilerOptions: { target: ts.ScriptTarget.ES2022 },
+}).outputText;
+const callbacks = {};
+const fakePan = {};
+for (const method of ['maxPointers', 'minDistance', 'runOnJS', 'onBegin', 'onStart', 'onUpdate', 'onEnd', 'onFinalize']) {
+  fakePan[method] = (value) => { callbacks[method] = value; return fakePan; };
+}
+let gestureHistory = api.createMaskEditHistory({ ...legacy, strokes: translatedStrokes, ...savedOffset });
+const gestureStrokes = gestureHistory.current.strokes;
+const historyRef = { current: gestureHistory };
+const dragRef = { current: null };
+const gestureContext = {
+  ...api, ...actual.geometry,
+  useMemo: (callback) => callback(), Gesture: { Pan: () => fakePan },
+  selectedCalMonth: 1, plantingCalibrationMap: { 1: actualCal }, calibrationLayout: [rotatedLand],
+  MONTH_REGION_METAS: actual.data.MONTH_REGION_METAS,
+  fit: 0.5, baseX: 20, baseY: 30,
+  cameraX: { value: 12 }, cameraY: { value: -7 }, cameraZoom: { value: 2 },
+  maskHistoryRef: historyRef, moveMaskDragRef: dragRef,
+  setIsMovingMask: () => {}, setBrushCursor: () => {},
+  setMaskHistory: (update) => {
+    gestureHistory = typeof update === 'function' ? update(gestureHistory) : update;
+    historyRef.current = gestureHistory;
+  },
+};
+vm.runInNewContext(compiledGesture, gestureContext);
+const screenEvent = (point) => {
+  const w = actual.geometry.landLocalToWorld(point.x, point.y, rotatedLand);
+  return { x: w.x + 32, y: w.y + 23 }; // fit * zoom = 1, including camera pan
+};
+callbacks.onBegin(screenEvent(translate(erasedPoint, savedOffset)));
+callbacks.onUpdate(screenEvent(translate(erasedPoint, secondOffset)));
+assert(gestureHistory.undo.length === 0 && dragRef.current === null, 'Pointer down in an erased hole cannot start movement');
+callbacks.onBegin(screenEvent(pointer));
+callbacks.onUpdate(screenEvent({ x: pointer.x + 10, y: pointer.y - 5 }));
+callbacks.onUpdate(screenEvent({ x: pointer.x + 20, y: pointer.y - 10 }));
+callbacks.onFinalize();
+assert(Math.abs(gestureHistory.current.offsetX - savedOffset.offsetX - 20) < 1e-8 &&
+  Math.abs(gestureHistory.current.offsetY - savedOffset.offsetY + 10) < 1e-8,
+  'Dragging an addition moves the whole mask correctly through rotated-land/camera transforms');
+assert(gestureHistory.undo.length === 1 && gestureHistory.current.strokes === gestureStrokes,
+  'Multiple drag updates produce one undo entry without rewriting strokes');
+gestureHistory = api.undoMaskEdit(gestureHistory);
+assert(gestureHistory.current.offsetX === savedOffset.offsetX && gestureHistory.current.offsetY === savedOffset.offsetY,
+  'One Undo restores the position before the entire drag');
+
+console.log('\n--- SUITE 12: Actual Paint/Eraser Gestures After Moving ---');
+gestureHistory = api.createMaskEditHistory({ ...legacy, strokes: translatedStrokes, ...savedOffset });
+historyRef.current = gestureHistory;
+const paintContext = {
+  ...gestureContext, useCallback: (callback) => callback,
+  paintTool: 'add', paintBrushSize: 4,
+  currentStrokePointsRef: { current: [] },
+};
+const runScenePart = (start, end, result, context) => vm.runInNewContext(ts.transpileModule(
+  sceneSource.slice(sceneSource.indexOf(start), sceneSource.indexOf(end)) + '\n' + result + ';',
+  { compilerOptions: { target: ts.ScriptTarget.ES2022 } }
+).outputText, context);
+paintContext.setPaintStrokes = runScenePart('  const setPaintStrokes = useCallback(',
+  '  const setUndoStack = useCallback(', 'setPaintStrokes', paintContext);
+runScenePart('  const paintPan = useMemo(', '  const moveMaskPan = useMemo(', 'paintPan', paintContext);
+callbacks.onStart(screenEvent(pointer));
+callbacks.onUpdate(screenEvent({ x: pointer.x + 10, y: pointer.y - 5 }));
+callbacks.onEnd();
+let painted = gestureHistory.current.strokes.at(-1);
+assert(Math.abs(painted.points[0].x - addedPoint.x) < 1e-8 && Math.abs(painted.points[0].y - addedPoint.y) < 1e-8,
+  'Actual Brush gesture stores its starting point in refinement-local space after a move');
+assert(Math.abs(painted.points[1].x - addedPoint.x - 10) < 1e-8 && Math.abs(painted.points[1].y - addedPoint.y + 5) < 1e-8,
+  'Actual Brush updates use the same local coordinates without a jump');
+assert(gestureHistory.undo.length === 1, 'A multi-point paint gesture creates one undo entry');
+paintContext.paintTool = 'remove';
+callbacks.onStart(screenEvent(pointer));
+callbacks.onEnd();
+painted = gestureHistory.current.strokes.at(-1);
+assert(painted.tool === 'remove' && Math.abs(painted.points[0].x - addedPoint.x) < 1e-8,
+  'Actual Eraser gesture uses the moved coordinate system too');
+gestureHistory = api.commitMaskEdit(gestureHistory, { ...gestureHistory.current, ...secondOffset });
+assert(!hit(translate(addedPoint, secondOffset), gestureHistory.current.strokes, secondOffset),
+  'Painting and erasing remain registered through another whole-mask move');
+const modeContext = {
+  ...paintContext,
+  setPaintInteractionMode: () => {}, setShowFinalMask: () => {},
+};
+const changeMode = runScenePart('  const handleMaskInteractionMode = useCallback(',
+  '  useEffect(() => {\n    if (typeof window', 'handleMaskInteractionMode', modeContext);
+const beforeSwitch = gestureHistory.current;
+for (const mode of ['move', 'paint', 'camera']) changeMode(mode);
+assert(gestureHistory.current === beforeSwitch, 'Switching among Move/Paint/Pan preserves position and stroke geometry');
 
 console.log('\n====================================================');
 console.log(`TEST SUMMARY: ${passed} / ${total} assertions passed (${Math.round((passed / total) * 100)}%)`);

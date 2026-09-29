@@ -1,0 +1,63 @@
+{
+  "world": [
+    2400,
+    1800
+  ],
+  "locked_previous_asset_sha256": {
+    "B01_bridge.png": "695de35810f71b6be33446ffd3a3363c7af7de08bc2efc637e54fcb99903ca20",
+    "B01_shore_foreground.png": "6f518f4a2e4ff86bcacd2772f0273015c60712e1d13dbd2682a02dc97330246a",
+    "road_entrance_existing_neck.png": "9d69beb95bee9c8e0604c92f14db865281a2077b58504b325a1b3abab78df96e"
+  },
+  "B02": {
+    "anchor": [
+      1676,
+      490
+    ],
+    "scale": 0.158,
+    "clockwise_degrees": 32,
+    "left_land": "0405 connected to Central",
+    "right_land": "06"
+  },
+  "ST01": {
+    "endpoints": [
+      [
+        1490,
+        895
+      ],
+      [
+        1797,
+        1048
+      ]
+    ],
+    "treads": 10,
+    "nominal_width_px": 51
+  },
+  "SS01": {
+    "stone_centers": [
+      [
+        2186,
+        900
+      ],
+      [
+        2170,
+        937
+      ],
+      [
+        2148,
+        970
+      ],
+      [
+        2126,
+        1004
+      ],
+      [
+        2107,
+        1035
+      ],
+      [
+        2086,
+        1063
+      ]
+    ]
+  }
+}

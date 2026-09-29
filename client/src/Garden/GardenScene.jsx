@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiRequest } from "../api";
 
 const FLOWER_IMAGE_MAP = {
@@ -10,6 +10,12 @@ const FLOWER_IMAGE_MAP = {
 };
 
 const EMPTY_LIST = Object.freeze([]);
+
+function publicFlowerFields(flower) {
+  const fields = { ...(flower || {}) };
+  delete fields.supportState;
+  return fields;
+}
 
 function getFlowerImagePath(flower) {
   if (!flower) {
@@ -100,13 +106,26 @@ function GardenScene({
   const [messageText, setMessageText] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState("");
+  const [supportDetails, setSupportDetails] = useState({});
 
   const sceneRef = useRef(null);
+  const supportRequestVersions = useRef({});
+  const supportKey = JSON.stringify([
+    owner?.id || "",
+    currentUser?.id || "",
+    selectedFlower?.id || ""
+  ]);
+  const selectedSupportDetails = supportDetails[supportKey];
+  const supportState = selectedSupportDetails?.state;
+  const supportLoading = Boolean(
+    !isOwnGarden && selectedFlower?.id && owner?.id && currentUser?.id &&
+    (!selectedSupportDetails || selectedSupportDetails.loading)
+  );
 
-  function updateFlowerEverywhere(
+  const updateFlowerEverywhere = useCallback((
     flowerId,
     updater
-  ) {
+  ) => {
     setLiveFlowers((currentFlowers) =>
       currentFlowers.map((flower) =>
         String(flower.id) ===
@@ -127,7 +146,7 @@ function GardenScene({
 
       return updater(currentFlower);
     });
-  }
+  }, []);
 
   function getMessageId(message) {
     return (
@@ -211,6 +230,64 @@ function GardenScene({
   }, [activeVisitors]);
 
   useEffect(() => {
+    if (isOwnGarden || !selectedFlower?.id || !owner?.id || !currentUser?.id) {
+      return undefined;
+    }
+
+    let active = true;
+    const flowerId = selectedFlower.id;
+    const requestVersion = (supportRequestVersions.current[supportKey] || 0) + 1;
+    supportRequestVersions.current[supportKey] = requestVersion;
+    setSupportDetails((current) => ({
+      ...current,
+      [supportKey]: { loading: true, state: null, error: "" }
+    }));
+
+    apiRequest(
+      `/users/${encodeURIComponent(owner.id)}/flowers/${encodeURIComponent(flowerId)}`,
+      { method: "GET" }
+    ).then((response) => {
+      if (!active || supportRequestVersions.current[supportKey] !== requestVersion) {
+        return;
+      }
+      const serverFlower = response?.flower || response;
+      const state = response?.supportState || serverFlower?.supportState;
+      if (!state || typeof state.supportedToday !== "boolean") {
+        throw new Error("Failed to load support status.");
+      }
+      updateFlowerEverywhere(flowerId, (flower) => ({
+        ...flower,
+        ...publicFlowerFields(serverFlower)
+      }));
+      setSupportDetails((current) => ({
+        ...current,
+        [supportKey]: { loading: false, state, error: "" }
+      }));
+    }).catch((error) => {
+      if (!active || supportRequestVersions.current[supportKey] !== requestVersion) {
+        return;
+      }
+      setSupportDetails((current) => ({
+        ...current,
+        [supportKey]: {
+          loading: false,
+          state: null,
+          error: error.message || "Failed to load support status."
+        }
+      }));
+    });
+
+    return () => { active = false; };
+  }, [
+    isOwnGarden,
+    selectedFlower?.id,
+    owner?.id,
+    currentUser?.id,
+    supportKey,
+    updateFlowerEverywhere
+  ]);
+
+  useEffect(() => {
     if (!socket) {
       return undefined;
     }
@@ -256,7 +333,7 @@ function GardenScene({
         flowerId,
         (flower) => ({
           ...flower,
-          ...(serverFlower || {}),
+          ...publicFlowerFields(serverFlower),
           supportCount:
             typeof supportCount === "number"
               ? supportCount
@@ -311,7 +388,7 @@ function GardenScene({
           if (serverFlower) {
             return {
               ...flower,
-              ...serverFlower,
+              ...publicFlowerFields(serverFlower),
               messages:
                 Array.isArray(
                   serverFlower.messages
@@ -359,7 +436,8 @@ function GardenScene({
     };
   }, [
     socket,
-    owner?.id
+    owner?.id,
+    updateFlowerEverywhere
   ]);
 
   useEffect(() => {
@@ -578,37 +656,22 @@ function GardenScene({
       !selectedFlower?.id ||
       !owner?.id ||
       !currentUser?.id ||
-      actionLoading
+      actionLoading ||
+      supportLoading ||
+      supportState?.supportedToday ||
+      supportState?.canSupport === false
     ) {
       return;
     }
 
     const flowerId = selectedFlower.id;
 
-    const previousSupportCount =
-      Number(
-        selectedFlower.supportCount
-      ) || 0;
-
-    const optimisticSupportCount =
-      previousSupportCount + 1;
-
     setActionLoading(true);
     setActionError("");
 
-    // Optimistic UI: show +1 immediately.
-    updateFlowerEverywhere(
-      flowerId,
-      (flower) => ({
-        ...flower,
-        supportCount:
-          optimisticSupportCount
-      })
-    );
-
     try {
       const response = await postJson(
-        `/users/${owner.id}/flowers/${flowerId}/support`,
+        `/users/${encodeURIComponent(owner.id)}/flowers/${encodeURIComponent(flowerId)}/support`,
         {
           visitorUserId: currentUser.id,
           visitorAvatar:
@@ -625,15 +688,20 @@ function GardenScene({
       const serverSupportCount =
         response?.supportCount ??
         serverFlower?.supportCount;
+      const state = response?.supportState || serverFlower?.supportState;
+
+      supportRequestVersions.current[supportKey] =
+        (supportRequestVersions.current[supportKey] || 0) + 1;
+      setSupportDetails((current) => ({
+        ...current,
+        [supportKey]: { loading: false, state: state || null, error: "" }
+      }));
 
       updateFlowerEverywhere(
         flowerId,
         (flower) => ({
           ...flower,
-          ...(serverFlower &&
-          typeof serverFlower === "object"
-            ? serverFlower
-            : {}),
+          ...publicFlowerFields(serverFlower),
           supportCount:
             typeof serverSupportCount ===
             "number"
@@ -645,16 +713,6 @@ function GardenScene({
       console.error(
         "Support flower error:",
         error
-      );
-
-      // Roll back the optimistic +1.
-      updateFlowerEverywhere(
-        flowerId,
-        (flower) => ({
-          ...flower,
-          supportCount:
-            previousSupportCount
-        })
       );
 
       setActionError(
@@ -1316,12 +1374,17 @@ function GardenScene({
                 <button
                   type="button"
                   className="support-flower-button"
-                  disabled={actionLoading}
+                  disabled={
+                    actionLoading || supportLoading ||
+                    supportState?.supportedToday || supportState?.canSupport === false
+                  }
                   onClick={handleGiveSupport}
                 >
-                  {actionLoading
+                  {actionLoading || supportLoading
                     ? "Working..."
-                    : "Give Support 💗"}
+                    : supportState?.supportedToday
+                      ? "Supported today ✓"
+                      : "Give Support 💗"}
                 </button>
 
                 <form
@@ -1350,9 +1413,9 @@ function GardenScene({
                   </button>
                 </form>
 
-                {actionError && (
+                {(actionError || selectedSupportDetails?.error) && (
                   <p className="flower-action-error">
-                    {actionError}
+                    {actionError || selectedSupportDetails?.error}
                   </p>
                 )}
               </div>
