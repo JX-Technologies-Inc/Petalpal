@@ -34,13 +34,15 @@ test("authenticated executor refuses a job outside the shadow owner", async (t) 
     token: process.env.AI_JOB_EXECUTOR_TOKEN,
     mode: process.env.AI_ASYNC_EXECUTION_MODE,
     owner: process.env.AI_ASYNC_SHADOW_OWNER_ID,
+    startedAt: process.env.AI_ASYNC_SHADOW_STARTED_AT,
     findUnique: prisma.aiJob.findUnique
   };
   process.env.AI_JOB_EXECUTOR_TOKEN = "dedicated-test-executor-token";
   process.env.AI_ASYNC_EXECUTION_MODE = "shadow";
   process.env.AI_ASYNC_SHADOW_OWNER_ID = "approved-test-owner";
+  process.env.AI_ASYNC_SHADOW_STARTED_AT = "2026-09-27T00:00:00Z";
   prisma.aiJob.findUnique = async () => ({
-    id: "cmforeignjob0001", ownerId: "another-owner", jobType: "MEMORY_EXTRACTION", status: "PENDING"
+    id: "cmforeignjob0001", ownerId: "another-owner", createdAt: new Date(), jobType: "MEMORY_EXTRACTION", status: "PENDING"
   });
   const server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
@@ -48,7 +50,8 @@ test("authenticated executor refuses a job outside the shadow owner", async (t) 
     await new Promise((resolve) => server.close(resolve));
     prisma.aiJob.findUnique = previous.findUnique;
     for (const [key, value] of [["AI_JOB_EXECUTOR_TOKEN", previous.token],
-      ["AI_ASYNC_EXECUTION_MODE", previous.mode], ["AI_ASYNC_SHADOW_OWNER_ID", previous.owner]]) {
+      ["AI_ASYNC_EXECUTION_MODE", previous.mode], ["AI_ASYNC_SHADOW_OWNER_ID", previous.owner],
+      ["AI_ASYNC_SHADOW_STARTED_AT", previous.startedAt]]) {
       if (value === undefined) delete process.env[key];
       else process.env[key] = value;
     }

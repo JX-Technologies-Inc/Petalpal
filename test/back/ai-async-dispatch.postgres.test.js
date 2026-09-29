@@ -9,6 +9,7 @@ import { AiJobWorker, createProductionAiWorker } from "../../lib/ai-worker.js";
 
 const databaseUrl = process.env.REAL_POSTGRES_DATABASE_URL;
 const realTest = databaseUrl ? test : test.skip;
+const shadowStartedAt = "2026-09-27T00:00:00Z";
 
 async function withPrisma(callback) {
   const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseUrl }) });
@@ -43,11 +44,20 @@ realTest("reconciliation finds stranded due jobs only for the selected shadow ow
     try {
       const first = await seed(prisma, firstOwner);
       const second = await seed(prisma, secondOwner);
+      const old = await prisma.aiJob.create({ data: {
+        ownerId: firstOwner, jobType: AI_JOB_TYPES.MEMORY_EXTRACTION,
+        resourceId: first.event.id, eventId: first.event.id,
+        idempotencyKey: `async-old:${first.event.id}`,
+        createdAt: new Date("2026-09-26T00:00:00Z"),
+        nextAttemptAt: new Date(Date.now() - 1_000)
+      } });
       const rows = await listDispatchableAiJobs(prisma, {
-        env: { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: firstOwner }
+        env: { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: firstOwner,
+          AI_ASYNC_SHADOW_STARTED_AT: shadowStartedAt }
       });
       assert.ok(rows.some((row) => row.jobId === first.job.id));
       assert.ok(rows.every((row) => row.jobId !== second.job.id));
+      assert.ok(rows.every((row) => row.jobId !== old.id));
       assert.ok(rows.length <= 5);
     } finally {
       await prisma.user.deleteMany({ where: { id: { in: [firstOwner, secondOwner] } } });
@@ -67,7 +77,8 @@ realTest("duplicate delivery is a no-op and a healthy lease blocks concurrent ex
         handlers: { [AI_JOB_TYPES.MEMORY_EXTRACTION]: async () => { executions++; return {}; } },
         logger: { error() {} }
       });
-      const env = { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId };
+      const env = { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId,
+        AI_ASYNC_SHADOW_STARTED_AT: shadowStartedAt };
       const claimedAt = new Date();
       await repository.claimById({ jobId: job.id, ownerId, jobType: job.jobType, workerId: "first-lease", now: claimedAt, leaseMs: 1_000 });
       const leased = await executeAiJobById({ prisma, jobId: job.id, workerFactory, env, now: claimedAt });
@@ -93,7 +104,8 @@ realTest("expired exhausted job becomes terminal FAILED without rerunning", asyn
       const claimedAt = new Date();
       await repository.claimById({ jobId: job.id, ownerId, jobType: job.jobType, workerId: "lost-worker", now: claimedAt, leaseMs: 1_000 });
       const result = await executeAiJobById({ prisma, jobId: job.id,
-        env: { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId },
+        env: { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId,
+          AI_ASYNC_SHADOW_STARTED_AT: shadowStartedAt },
         now: new Date(claimedAt.getTime() + 1_001),
         workerFactory: () => new AiJobWorker({ repository, workerId: "recovery-worker", leaseMs: 1_000,
           handlers: { [AI_JOB_TYPES.MEMORY_EXTRACTION]: () => { throw new Error("must not run"); } } })
@@ -115,7 +127,8 @@ realTest("consent revoked after enqueue cancels targeted work without EventMemor
         aiProcessing: false, personalization: false, memoryEnabled: false, revokedAt: new Date()
       } });
       const result = await executeAiJobById({ prisma, jobId: job.id,
-        env: { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId },
+        env: { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId,
+          AI_ASYNC_SHADOW_STARTED_AT: shadowStartedAt },
         workerFactory: () => createProductionAiWorker({ prisma, logger: { error() {} } })
       });
       assert.equal(result.outcome, "CANCELLED");

@@ -13,13 +13,17 @@ import cloudflareWorker from "../../cloudflare-worker/src/index.js";
 
 const ownerId = "safe-test-owner";
 const jobId = "cmtestjob000001";
-const shadow = { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId };
+const createdAt = new Date("2026-09-28T00:00:00Z");
+const shadow = { AI_ASYNC_EXECUTION_MODE: "shadow", AI_ASYNC_SHADOW_OWNER_ID: ownerId,
+  AI_ASYNC_SHADOW_STARTED_AT: "2026-09-27T00:00:00Z" };
 
 test("manual mode is the default and shadow dispatch is owner-scoped", () => {
   assert.equal(aiAsyncExecutionMode({}), "manual");
   assert.equal(aiJobDispatchAllowed({ ownerId }, {}), false);
-  assert.equal(aiJobDispatchAllowed({ ownerId }, shadow), true);
-  assert.equal(aiJobDispatchAllowed({ ownerId: "another-owner" }, shadow), false);
+  assert.equal(aiJobDispatchAllowed({ ownerId, createdAt }, shadow), true);
+  assert.equal(aiJobDispatchAllowed({ ownerId, createdAt: new Date("2026-09-26T00:00:00Z") }, shadow), false);
+  assert.equal(aiJobDispatchAllowed({ ownerId, createdAt }, { ...shadow, AI_ASYNC_SHADOW_STARTED_AT: "" }), false);
+  assert.equal(aiJobDispatchAllowed({ ownerId: "another-owner", createdAt }, shadow), false);
   assert.throws(() => aiAsyncExecutionMode({ AI_ASYNC_EXECUTION_MODE: "unknown" }));
 });
 
@@ -32,7 +36,7 @@ test("executor requires the dedicated bearer token", () => {
 });
 
 test("immediate dispatch sends only an opaque job ID and failure leaves the job recoverable", async () => {
-  const job = { id: jobId, ownerId, status: "PENDING" };
+  const job = { id: jobId, ownerId, createdAt, status: "PENDING" };
   const env = { ...shadow, AI_JOB_DISPATCH_URL: "https://worker.example", AI_JOB_DISPATCH_TOKEN: "dispatch-secret" };
   let captured;
   const success = await dispatchAiJob(job, { env, fetchImpl: async (_url, init) => {
@@ -41,7 +45,7 @@ test("immediate dispatch sends only an opaque job ID and failure leaves the job 
   } });
   assert.deepEqual(success, { dispatched: true });
   assert.deepEqual(captured, { jobId });
-  assert.deepEqual(job, { id: jobId, ownerId, status: "PENDING" });
+  assert.deepEqual(job, { id: jobId, ownerId, createdAt, status: "PENDING" });
   await assert.rejects(dispatchAiJob(job, { env, fetchImpl: async () => new Response(null, { status: 503 }) }));
   assert.equal(job.status, "PENDING");
 });
@@ -52,12 +56,13 @@ test("reconciliation is bounded and disabled for ordinary manual traffic", async
   assert.deepEqual(await listDispatchableAiJobs(prisma, { env: {} }), []);
   assert.deepEqual(await listDispatchableAiJobs(prisma, { env: shadow }), [{ jobId }]);
   assert.equal(args[2], ownerId);
-  assert.equal(args[3], 5);
+  assert.equal(args[3].getTime(), new Date(shadow.AI_ASYNC_SHADOW_STARTED_AT).getTime());
+  assert.equal(args[4], 5);
 });
 
 test("duplicate and terminal deliveries never invoke the targeted worker", async () => {
   for (const status of ["SUCCEEDED", "CANCELLED", "FAILED"]) {
-    const prisma = { aiJob: { findUnique: async () => ({ id: jobId, ownerId, jobType: "MEMORY_EXTRACTION", status }) } };
+    const prisma = { aiJob: { findUnique: async () => ({ id: jobId, ownerId, createdAt, jobType: "MEMORY_EXTRACTION", status }) } };
     const result = await executeAiJobById({ prisma, jobId, env: shadow, workerFactory: () => { throw new Error("should not run"); } });
     assert.deepEqual(result, { outcome: status });
   }
@@ -66,8 +71,8 @@ test("duplicate and terminal deliveries never invoke the targeted worker", async
 test("healthy lease and another owner's job cannot execute", async () => {
   const now = new Date("2026-09-28T00:00:00Z");
   for (const job of [
-    { id: jobId, ownerId, jobType: "MEMORY_EXTRACTION", status: "RUNNING", leaseExpiresAt: new Date(now.getTime() + 60_000) },
-    { id: jobId, ownerId: "another-owner", jobType: "MEMORY_EXTRACTION", status: "PENDING", nextAttemptAt: now }
+    { id: jobId, ownerId, createdAt, jobType: "MEMORY_EXTRACTION", status: "RUNNING", leaseExpiresAt: new Date(now.getTime() + 60_000) },
+    { id: jobId, ownerId: "another-owner", createdAt, jobType: "MEMORY_EXTRACTION", status: "PENDING", nextAttemptAt: now }
   ]) {
     const prisma = { aiJob: { findUnique: async () => job } };
     const result = await executeAiJobById({ prisma, jobId, env: shadow, now, workerFactory: () => { throw new Error("should not run"); } });
@@ -77,7 +82,7 @@ test("healthy lease and another owner's job cannot execute", async () => {
 
 test("targeted execution returns only safe status and child job ID", async () => {
   const now = new Date("2026-09-28T00:00:00Z");
-  const job = { id: jobId, ownerId, jobType: "MEMORY_EXTRACTION", status: "PENDING", nextAttemptAt: now };
+  const job = { id: jobId, ownerId, createdAt, jobType: "MEMORY_EXTRACTION", status: "PENDING", nextAttemptAt: now };
   const prisma = { aiJob: { findUnique: async ({ select }) => select?.ownerId ? job : { status: "SUCCEEDED" } } };
   let runInput;
   const result = await executeAiJobById({ prisma, jobId, env: shadow, now, workerFactory: () => ({

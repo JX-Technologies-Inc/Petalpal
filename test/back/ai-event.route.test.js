@@ -45,13 +45,13 @@ function fixture() {
         await new Promise((resolve) => setTimeout(resolve, 5));
         for (const item of data) {
           if (!jobs.some((job) => job.ownerId === item.ownerId && job.idempotencyKey === item.idempotencyKey)) {
-            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, nextAttemptAt: new Date(), ...item });
+            jobs.push({ id: `job-${jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, createdAt: new Date(), nextAttemptAt: new Date(), ...item });
           }
         }
         return { count: data.length };
       },
       create: async ({ data }) => {
-        const job = { id: `job-${jobs.length + 1}`, status: "PENDING", ...data };
+        const job = { id: `job-${jobs.length + 1}`, status: "PENDING", createdAt: new Date(), ...data };
         jobs.push(job);
         return job;
       }
@@ -91,6 +91,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   const dispatchedJobs = [];
   const previousMode = process.env.AI_ASYNC_EXECUTION_MODE;
   const previousShadowOwner = process.env.AI_ASYNC_SHADOW_OWNER_ID;
+  const previousShadowStartedAt = process.env.AI_ASYNC_SHADOW_STARTED_AT;
   prisma.user.findUnique = async ({ where }) => {
     if (where.firebaseUid) return { id: where.firebaseUid === "firebase-alice" ? "alice" : "bob" };
     return state.users[where.id] || null;
@@ -111,7 +112,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     return key ? state.jobs.find((job) => job.ownerId === key.ownerId && job.idempotencyKey === key.idempotencyKey) || null : null;
   };
   prisma.aiJob.create = async ({ data }) => {
-    const job = { id: `job-${state.jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, ...data };
+    const job = { id: `job-${state.jobs.length + 1}`, status: "PENDING", attemptCount: 0, completedAt: null, createdAt: new Date(), ...data };
     state.jobs.push(job);
     return job;
   };
@@ -169,6 +170,8 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     else process.env.AI_ASYNC_EXECUTION_MODE = previousMode;
     if (previousShadowOwner === undefined) delete process.env.AI_ASYNC_SHADOW_OWNER_ID;
     else process.env.AI_ASYNC_SHADOW_OWNER_ID = previousShadowOwner;
+    if (previousShadowStartedAt === undefined) delete process.env.AI_ASYNC_SHADOW_STARTED_AT;
+    else process.env.AI_ASYNC_SHADOW_STARTED_AT = previousShadowStartedAt;
     await new Promise((resolve) => server.close(resolve));
   });
 
@@ -182,6 +185,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
 
   process.env.AI_ASYNC_EXECUTION_MODE = "shadow";
   process.env.AI_ASYNC_SHADOW_OWNER_ID = "alice";
+  process.env.AI_ASYNC_SHADOW_STARTED_AT = "2026-09-27T00:00:00Z";
   setAiJobDispatcherForTests(async (job) => {
     dispatchedJobs.push({ id: job.id, ownerId: job.ownerId, jobType: job.jobType });
     return { dispatched: true };

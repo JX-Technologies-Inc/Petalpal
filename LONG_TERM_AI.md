@@ -710,8 +710,9 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   existing targeted `runJob` implementation; no EventMemory, embedding,
   retrieval, or report business logic moves into Cloudflare.
 - The application defaults to `AI_ASYNC_EXECUTION_MODE=manual`. `shadow`
-  restricts Queue execution to the configured safe test owner; ordinary users
-  retain current behavior. A later `cloudflare_queue` setting enables normal
+  restricts Queue execution to jobs created after the configured start time
+  for the safe test owner; older pending jobs and ordinary users retain current
+  behavior. A later `cloudflare_queue` setting enables normal
   dispatch only after staging and production gates pass.
 - Immediate dispatch follows committed Event or Weekly AiJob creation. A
   twenty-minute Cloudflare Cron requests at most five due job IDs from Render and
