@@ -657,6 +657,23 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   deletion cascade, candidate cutover, and local rollback. No production
   migration, deployment, provider switch, or production re-embedding occurred.
 
+### Cloudflare embedding candidate provider — 2026-09-28
+
+- The private Cloudflare Worker now has a bearer-protected `/v1/embedding`
+  endpoint for `@cf/baai/bge-small-en-v1.5` with mean pooling and strict
+  384-dimensional finite-vector validation. The Node provider uses the same
+  summary-v1 document construction and query prefix as the local profile;
+  selecting it does not initialize local ONNX.
+- An explicit, bounded, resumable candidate backfill command reports counts
+  and estimated usage before writing. It reuses owner, Event, and consent
+  guards, writes only the candidate profile, and leaves local vectors intact.
+- Isolated PostgreSQL and one real Cloudflare inference call verified that a
+  synthetic memory can hold both profiles without altering the legacy local
+  vector. Production candidate backfill and shadow retrieval remain pending.
+- The active profile remains `production-bge-small-en-v1.5-v1`.
+  `migration-cloudflare-bge-small-en-v1.5-mean-v1` remains a candidate.
+  Cutover has not happened; local ONNX remains available for rollback.
+
 ## 13. Decisions / ADR-style Log
 
 ### 2026-09-14 — Journal removed from long-term AI workflows

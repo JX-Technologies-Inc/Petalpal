@@ -1,11 +1,38 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import worker, { DEFAULT_REPORT_NARRATIVE_MODEL, EVENT_EMOTION_PROMPT } from "../../cloudflare-worker/src/index.js";
+import worker, { DEFAULT_REPORT_NARRATIVE_MODEL, EMBEDDING_MODEL, EVENT_EMOTION_PROMPT } from "../../cloudflare-worker/src/index.js";
 
 const endpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/emotion";
 const eventEndpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/event-emotion";
 const reportEndpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/report-narrative";
+const embeddingEndpoint = "https://petalpal-emotion-ai.example.workers.dev/v1/embedding";
+
+test("private embedding route sends only text and mean pooling to Workers AI", async () => {
+  let seen;
+  const response = await worker.fetch(new Request(embeddingEndpoint, {
+    method: "POST", headers: { Authorization: "Bearer secret" },
+    body: JSON.stringify({ text: "Synthetic memory" })
+  }), { RENDER_SHARED_SECRET: "secret", AI: { run: async (model, input) => {
+    seen = { model, input };
+    return { data: [Array(384).fill(0.1)], shape: [1, 384], pooling: "mean" };
+  } } });
+  assert.equal(response.status, 200);
+  assert.deepEqual(seen, { model: EMBEDDING_MODEL, input: { text: ["Synthetic memory"], pooling: "mean" } });
+  const result = await response.json();
+  assert.equal(result.vector.length, 384);
+  assert.equal(result.dimensions, 384);
+});
+
+test("private embedding route rejects unauthorized, extra fields, and invalid vectors", async () => {
+  const env = { RENDER_SHARED_SECRET: "secret", AI: { run: async () => ({ data: [[NaN]] }) } };
+  const request = (body, auth = true) => new Request(embeddingEndpoint, {
+    method: "POST", headers: auth ? { Authorization: "Bearer secret" } : {}, body: JSON.stringify(body)
+  });
+  assert.equal((await worker.fetch(request({ text: "synthetic" }, false), env)).status, 401);
+  assert.equal((await worker.fetch(request({ text: "synthetic", ownerId: "private" }), env)).status, 400);
+  assert.equal((await worker.fetch(request({ text: "synthetic" }), env)).status, 502);
+});
 
 function reportInput(reportType) {
   const monthly = reportType === "MONTHLY";

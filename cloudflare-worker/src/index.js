@@ -12,6 +12,7 @@ import {
 import { REPORT_EVIDENCE_LIMITS } from "../../lib/report-foundation.js";
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+export const EMBEDDING_MODEL = "@cf/baai/bge-small-en-v1.5";
 const PRODUCT_EMOTIONS = SECONDARY_EMOTION_LABELS.filter((label) => !EXCLUDED_SECONDARY_EMOTIONS.includes(label));
 export const EVENT_EMOTION_PROMPT = `Find 0-2 additional emotions in the event. Primary mood is user-selected; do not repeat its meaning. Allowed: ${PRODUCT_EMOTIONS.join(",")}. JSON only.`;
 export const DEFAULT_REPORT_NARRATIVE_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
@@ -265,13 +266,40 @@ async function generateEventEmotions(request, env) {
   return json({ e: output.e });
 }
 
+async function generateEmbedding(request, env) {
+  const body = await request.json().catch(() => null);
+  if (!body || Object.keys(body).some((key) => key !== "text") ||
+      typeof body.text !== "string" || !body.text.trim() || body.text.length > 8_500) {
+    return json({ error: "A bounded text input is required" }, 400);
+  }
+  let result;
+  try {
+    result = await env.AI.run(EMBEDDING_MODEL, { text: [body.text], pooling: "mean" });
+  } catch (error) {
+    console.error({ event: "embedding_inference_failed", code: "AI_RUN_FAILED",
+      errorName: error instanceof Error ? error.name : "UnknownError" });
+    return json({ error: "Embedding inference failed", code: "AI_RUN_FAILED" }, 502);
+  }
+  const vector = result?.data?.[0];
+  if (!Array.isArray(result?.data) || result.data.length !== 1 ||
+      !Array.isArray(vector) || vector.length !== 384 ||
+      vector.some((value) => typeof value !== "number" || !Number.isFinite(value)) ||
+      (result.shape && (result.shape[0] !== 1 || result.shape[1] !== 384)) ||
+      (result.pooling && result.pooling !== "mean")) {
+    console.error({ event: "embedding_inference_failed", code: "INVALID_OUTPUT" });
+    return json({ error: "Embedding inference failed", code: "INVALID_OUTPUT" }, 502);
+  }
+  return json({ vector, model: EMBEDDING_MODEL, pooling: "mean", dimensions: 384 });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (request.method !== "POST" || !["/v1/emotion", "/v1/event-emotion", "/v1/report-narrative"].includes(url.pathname)) {
+    if (request.method !== "POST" || !["/v1/emotion", "/v1/event-emotion", "/v1/report-narrative", "/v1/embedding"].includes(url.pathname)) {
       return json({ error: "Not found" }, 404);
     }
     if (!authorized(request, env)) return json({ error: "Unauthorized" }, 401);
+    if (url.pathname === "/v1/embedding") return generateEmbedding(request, env);
     if (url.pathname === "/v1/report-narrative") return generateReportNarrative(request, env);
     if (url.pathname === "/v1/event-emotion") return generateEventEmotions(request, env);
 
