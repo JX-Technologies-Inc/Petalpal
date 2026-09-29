@@ -4,7 +4,7 @@ import test from "node:test";
 import cloudflareWorker, { DEFAULT_REPORT_NARRATIVE_MODEL } from "../../cloudflare-worker/src/index.js";
 import { AI_JOB_TYPES } from "../../lib/ai-jobs.js";
 import { createProductionAiWorker } from "../../lib/ai-worker.js";
-import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
+import { getEmbeddingProfile, LOCAL_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import {
   CloudflareWorkersReportNarrativeProvider,
   REPORT_NARRATIVE_GENERATION_VERSION
@@ -15,7 +15,7 @@ const otherOwnerId = "other-owner";
 
 function embeddingProvider() {
   return {
-    describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
+    describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); },
     async embedDocuments() { throw new Error("report tests must not embed documents"); },
     async embedQuery() { throw new Error("injected report retrieval must handle queries"); }
   };

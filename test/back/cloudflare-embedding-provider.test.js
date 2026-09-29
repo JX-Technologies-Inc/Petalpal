@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CloudflareWorkersEmbeddingProvider } from "../../lib/embedding-provider.js";
+import { CloudflareWorkersEmbeddingProvider, createProductionEmbeddingProvider } from "../../lib/embedding-provider.js";
 import { CLOUDFLARE_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 
 const vector = Array.from({ length: 384 }, (_, index) => index / 384);
@@ -25,6 +25,12 @@ test("Cloudflare provider preserves document/query formatting without initializi
   ]);
   assert.ok(requests.every((item) => item.url === "https://worker.example/v1/embedding"));
   assert.ok(requests.every((item) => item.options.headers.Authorization === "Bearer test-secret"));
+  assert.equal(provider.extractorPromise, undefined);
+});
+
+test("active production provider selects Cloudflare without creating the ONNX extractor", () => {
+  const provider = createProductionEmbeddingProvider({ env: environment });
+  assert.ok(provider instanceof CloudflareWorkersEmbeddingProvider);
   assert.equal(provider.extractorPromise, undefined);
 });
 

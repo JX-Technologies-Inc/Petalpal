@@ -15,7 +15,7 @@ import {
   enqueueEventMemoryEmbeddingBackfill
 } from "../../lib/ai-jobs.js";
 import { AiJobWorker, createProductionAiWorker } from "../../lib/ai-worker.js";
-import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
+import { getEmbeddingProfile, LOCAL_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import { PrismaMemoryRepository } from "../../lib/event-memory.js";
 import { GroundedReportPersistenceService, ReportInputService, WeeklyReportService } from "../../lib/report-foundation.js";
 import { REPORT_NARRATIVE_GENERATION_VERSION } from "../../lib/report-narrative.js";
@@ -193,7 +193,7 @@ realTest("real PostgreSQL stores and retrieves owner-scoped 384d Event embedding
       const bobMemory = await prisma.eventMemory.create({
         data: { ownerId: bob, sourceEventId: bobEvent.id, memoryType: "EVENT", summary: "Bob private event", eventDate: new Date() }
       });
-      const embeddings = new PrismaEventEmbeddingRepository(prisma);
+      const embeddings = new PrismaEventEmbeddingRepository(prisma, LOCAL_EMBEDDING_PROFILE_KEY);
       for (const [ownerId, memoryId] of [[alice, aliceMemory.id], [bob, bobMemory.id]]) {
         const consent = await prisma.aiConsent.findUnique({ where: { userId: ownerId } });
         await embeddings.begin({ identity: { userId: ownerId }, memoryId, inputRevision: 1 });
@@ -224,7 +224,7 @@ realTest("real PostgreSQL stores and retrieves owner-scoped 384d Event embedding
       const profileRows = await prisma.$queryRawUnsafe(`
         SELECT "status", "inputRevision", "embedding" IS NULL AS empty
         FROM "EventMemoryEmbedding" WHERE "eventMemoryId" = $1 AND "profileKey" = $2
-      `, aliceMemory.id, PRODUCTION_EMBEDDING_PROFILE_KEY);
+      `, aliceMemory.id, LOCAL_EMBEDDING_PROFILE_KEY);
       assert.deepEqual(profileRows, [{ status: "NOT_REQUESTED", inputRevision: 1, empty: true }]);
 
       await prisma.event.delete({ where: { id: aliceEvent.id } });
@@ -274,7 +274,7 @@ realTest("real PostgreSQL embedding backfill selects only eligible English missi
       const chinese = await createMemory(`${prefix}-04-chinese`, owners.chinese, "中文事件");
       const revoked = await createMemory(`${prefix}-05-revoked`, owners.revoked, "Revoked English event");
       const vector = [1, ...Array(383).fill(0)];
-      const embeddings = new PrismaEventEmbeddingRepository(prisma);
+      const embeddings = new PrismaEventEmbeddingRepository(prisma, LOCAL_EMBEDDING_PROFILE_KEY);
 
       for (const item of [stale, current]) {
         const consent = await prisma.aiConsent.findUnique({ where: { userId: item.memory.ownerId } });
@@ -311,7 +311,7 @@ realTest("real PostgreSQL embedding backfill selects only eligible English missi
       assert.equal(jobs.every((job) => job.maxAttempts === 3 && job.jobType === AI_JOB_TYPES.EMBEDDING_GENERATION), true);
 
       let providerCalls = 0;
-      const profile = getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY);
+      const profile = getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY);
       const worker = createProductionAiWorker({
         prisma,
         embeddingProvider: {
@@ -336,7 +336,7 @@ realTest("real PostgreSQL embedding backfill selects only eligible English missi
       });
       assert.equal(updated.every((memory) =>
         memory.embeddingStatus === "GENERATED" &&
-        memory.embeddingProfileKey === PRODUCTION_EMBEDDING_PROFILE_KEY &&
+        memory.embeddingProfileKey === LOCAL_EMBEDDING_PROFILE_KEY &&
         memory.embeddedInputRevision === memory.embeddingInputRevision
       ), true);
       assert.equal((await enqueueEventMemoryEmbeddingBackfill({ prisma, batchSize: 10 })).selected, 0);
@@ -362,7 +362,7 @@ realTest("real PostgreSQL builds bounded owner-safe Monthly evidence input from 
       related: [0.85, 0.15, ...Array(382).fill(0)],
       other: [0.7, 0.3, ...Array(382).fill(0)]
     };
-    const embeddings = new PrismaEventEmbeddingRepository(prisma);
+    const embeddings = new PrismaEventEmbeddingRepository(prisma, LOCAL_EMBEDDING_PROFILE_KEY);
     const createEmbeddedMemory = async ({ id, ownerId, summary, occurredAt, topics, vector }) => {
       const event = await prisma.event.create({
         data: {
@@ -398,7 +398,7 @@ realTest("real PostgreSQL builds bounded owner-safe Monthly evidence input from 
       });
 
       let queryCalls = 0;
-      const profile = getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY);
+      const profile = getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY);
       const provider = {
         describeProfile() { return profile; },
         async embedQuery() { queryCalls += 1; return { vectors: [vectors.exact], dimensions: 384, modelRevision: profile.modelRevision }; }
@@ -476,7 +476,7 @@ realTest("real PostgreSQL report worker persists grounded narrative and provenan
         processingVersion: REPORT_NARRATIVE_GENERATION_VERSION
       });
       let providerCalls = 0;
-      const profile = getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY);
+      const profile = getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY);
       const worker = createProductionAiWorker({
         prisma,
         embeddingProvider: {
@@ -881,7 +881,7 @@ realTest("revoke blocks vector and Weekly/Monthly persistence until consent is r
         localDate: "2026-09-16", idempotencyKey: `race-${Date.now()}`, memoryProcessingAllowed: true
       } });
       const memory = await prisma.eventMemory.create({ data: { ownerId, sourceEventId: event.id, memoryType: "EVENT", summary: event.content, eventDate: event.occurredAt } });
-      const embeddings = new PrismaEventEmbeddingRepository(prisma);
+      const embeddings = new PrismaEventEmbeddingRepository(prisma, LOCAL_EMBEDDING_PROFILE_KEY);
       await embeddings.begin({ identity: { userId: ownerId }, memoryId: memory.id, inputRevision: 1 });
       const consent = await prisma.aiConsent.findUnique({ where: { userId: ownerId } });
       const inputService = new ReportInputService({ prisma, semanticRetrieval: { async retrieve() { return []; } } });

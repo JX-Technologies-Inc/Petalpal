@@ -1,6 +1,6 @@
 import prisma from "../lib/prisma.js";
 import { CloudflareWorkersEmbeddingProvider } from "../lib/embedding-provider.js";
-import { CLOUDFLARE_EMBEDDING_PROFILE_KEY, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../lib/embedding-profiles.js";
+import { CLOUDFLARE_EMBEDDING_PROFILE_KEY, LOCAL_EMBEDDING_PROFILE_KEY } from "../lib/embedding-profiles.js";
 import { candidateBackfillPreflight, runCandidateBackfill } from "../lib/cloudflare-embedding-backfill.js";
 
 const execute = process.argv.includes("--execute");
@@ -16,8 +16,8 @@ try {
   if (production !== (process.env.NODE_ENV === "production")) {
     throw new Error("--production must match NODE_ENV=production");
   }
-  if (PRODUCTION_EMBEDDING_PROFILE_KEY === CLOUDFLARE_EMBEDDING_PROFILE_KEY) {
-    throw new Error("Candidate profile must remain separate from the active profile");
+  if (LOCAL_EMBEDDING_PROFILE_KEY === CLOUDFLARE_EMBEDDING_PROFILE_KEY) {
+    throw new Error("Cloudflare and local embedding profiles must remain separate");
   }
   const before = await candidateBackfillPreflight(prisma);
   console.log(JSON.stringify({ phase: "preflight", ...before }));

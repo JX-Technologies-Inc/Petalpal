@@ -4,7 +4,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client.ts";
 import {
   CLOUDFLARE_EMBEDDING_PROFILE_KEY,
-  PRODUCTION_EMBEDDING_PROFILE_KEY,
+  LOCAL_EMBEDDING_PROFILE_KEY,
   getEmbeddingProfile
 } from "../../lib/embedding-profiles.js";
 import { PrismaMemoryRepository } from "../../lib/event-memory.js";
@@ -56,7 +56,11 @@ function retrieval(prisma, profileKey) {
 }
 
 test("provider and repository profiles cannot be mixed", () => {
-  const repository = new PrismaEventEmbeddingRepository({}, PRODUCTION_EMBEDDING_PROFILE_KEY);
+  const active = new PrismaEventEmbeddingRepository({});
+  assert.equal(active.profile.profileKey, CLOUDFLARE_EMBEDDING_PROFILE_KEY);
+  assert.equal(active.legacyLocalProfile, false);
+  const repository = new PrismaEventEmbeddingRepository({}, LOCAL_EMBEDDING_PROFILE_KEY);
+  assert.equal(repository.legacyLocalProfile, true);
   const provider = { describeProfile: () => getEmbeddingProfile(CLOUDFLARE_EMBEDDING_PROFILE_KEY) };
   assert.throws(() => new SemanticEventRetrievalService({ prisma: {}, provider, repository }), /profiles must match/);
   assert.throws(() => new EventEmbeddingService({ prisma: {}, provider, repository }), /profile must match/);
@@ -67,7 +71,7 @@ realTest("local and candidate vectors coexist, isolate owners, cut over and roll
     const suffix = Date.now();
     const alice = `embedding-alice-${suffix}`;
     const bob = `embedding-bob-${suffix}`;
-    const local = new PrismaEventEmbeddingRepository(prisma, PRODUCTION_EMBEDDING_PROFILE_KEY);
+    const local = new PrismaEventEmbeddingRepository(prisma, LOCAL_EMBEDDING_PROFILE_KEY);
     const candidate = new PrismaEventEmbeddingRepository(prisma, CLOUDFLARE_EMBEDDING_PROFILE_KEY);
     try {
       const first = await seed(prisma, alice, `first-${suffix}`);
@@ -92,7 +96,7 @@ realTest("local and candidate vectors coexist, isolate owners, cut over and roll
         WHERE "eventMemoryId" = $1 AND "status" = 'GENERATING'
       `, second.id);
       assert.equal(partial[0].count, 1);
-      assert.deepEqual((await retrieval(prisma, PRODUCTION_EMBEDDING_PROFILE_KEY).retrieve({ identity: { userId: alice }, query: "synthetic" })).map((row) => row.id), [first.memory.id, second.id]);
+      assert.deepEqual((await retrieval(prisma, LOCAL_EMBEDDING_PROFILE_KEY).retrieve({ identity: { userId: alice }, query: "synthetic" })).map((row) => row.id), [first.memory.id, second.id]);
       await store(prisma, candidate, alice, second.id, axis(0));
       await store(prisma, candidate, alice, first.memory.id, axis(1)); // idempotent upsert
       await store(prisma, candidate, bob, other.memory.id, axis(0));
@@ -123,7 +127,7 @@ realTest("local and candidate vectors coexist, isolate owners, cut over and roll
       `, excludedMemory.id, alice, profile.profileKey, profile.model,
       profile.modelRevision, profile.inputVersion, `[${axis(0).join(",")}]`);
 
-      let activeProfileKey = PRODUCTION_EMBEDDING_PROFILE_KEY;
+      let activeProfileKey = LOCAL_EMBEDDING_PROFILE_KEY;
       const activeSearch = () => retrieval(prisma, activeProfileKey).retrieve({ identity: { userId: alice }, query: "synthetic" });
       const localRows = await activeSearch();
       activeProfileKey = CLOUDFLARE_EMBEDDING_PROFILE_KEY;
@@ -140,7 +144,7 @@ realTest("local and candidate vectors coexist, isolate owners, cut over and roll
       assert.deepEqual(scoped.map((row) => row.id), [second.id]);
       await prisma.user.update({ where: { id: bob }, data: { preferredLocale: "zh" } });
       assert.deepEqual(await retrieval(prisma, CLOUDFLARE_EMBEDDING_PROFILE_KEY).retrieve({ identity: { userId: bob }, query: "synthetic" }), []);
-      activeProfileKey = PRODUCTION_EMBEDDING_PROFILE_KEY;
+      activeProfileKey = LOCAL_EMBEDDING_PROFILE_KEY;
       assert.equal((await activeSearch())[0].id, first.memory.id);
 
       // An old application instance can still write only the legacy slot after expansion.
@@ -153,7 +157,7 @@ realTest("local and candidate vectors coexist, isolate owners, cut over and roll
         ownerId: alice, sourceEventId: legacyEvent.id, memoryType: "EVENT",
         summary: "Synthetic legacy writer", eventDate: legacyEvent.occurredAt
       } });
-      const localProfile = getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY);
+      const localProfile = getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY);
       await prisma.$executeRawUnsafe(`
         UPDATE "EventMemory" SET "embedding" = $1::vector, "embeddingStatus" = 'GENERATED',
           "embeddingModel" = $2, "embeddingProfileKey" = $3,
@@ -162,7 +166,7 @@ realTest("local and candidate vectors coexist, isolate owners, cut over and roll
         WHERE "id" = $6
       `, `[${axis(0).join(",")}]`, localProfile.model, localProfile.profileKey,
       localProfile.modelRevision, localProfile.inputVersion, legacyMemory.id);
-      assert.equal((await retrieval(prisma, PRODUCTION_EMBEDDING_PROFILE_KEY).retrieve({ identity: { userId: alice }, query: "synthetic" })).some((row) => row.id === legacyMemory.id), true);
+      assert.equal((await retrieval(prisma, LOCAL_EMBEDDING_PROFILE_KEY).retrieve({ identity: { userId: alice }, query: "synthetic" })).some((row) => row.id === legacyMemory.id), true);
       assert.equal((await retrieval(prisma, CLOUDFLARE_EMBEDDING_PROFILE_KEY).retrieve({ identity: { userId: alice }, query: "synthetic" })).some((row) => row.id === legacyMemory.id), false);
 
       const changed = await new PrismaMemoryRepository(prisma).saveMemory({
@@ -204,7 +208,7 @@ realTest("candidate failure, bad dimensions, revoke and deletion leave local vec
   await withDatabase(async (prisma) => {
     const suffix = Date.now();
     const owner = `embedding-failure-${suffix}`;
-    const local = new PrismaEventEmbeddingRepository(prisma, PRODUCTION_EMBEDDING_PROFILE_KEY);
+    const local = new PrismaEventEmbeddingRepository(prisma, LOCAL_EMBEDDING_PROFILE_KEY);
     const candidate = new PrismaEventEmbeddingRepository(prisma, CLOUDFLARE_EMBEDDING_PROFILE_KEY);
     try {
       const source = await seed(prisma, owner, `failure-${suffix}`);

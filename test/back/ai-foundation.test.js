@@ -33,8 +33,8 @@ import {
 import { TrendAnalyzer } from "../../lib/trend-analyzer.js";
 import { HybridRetrieval, RetrievalStrategyContract, yearlyQueryRouter } from "../../lib/yearly-query-router.js";
 import { buildEmbeddingInput, EMBEDDING_INPUT_VERSIONS } from "../../lib/embedding-input.js";
-import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY, PRODUCTION_EMBEDDING_PROFILE_SELECTED } from "../../lib/embedding-profiles.js";
-import { DeterministicEmbeddingProvider, TransformersJsEmbeddingProvider } from "../../lib/embedding-provider.js";
+import { getEmbeddingProfile, CLOUDFLARE_EMBEDDING_PROFILE_KEY, LOCAL_EMBEDDING_PROFILE_KEY, PRODUCTION_EMBEDDING_PROFILE_KEY, PRODUCTION_EMBEDDING_PROFILE_SELECTED } from "../../lib/embedding-profiles.js";
+import { createProductionEmbeddingProvider, DeterministicEmbeddingProvider, TransformersJsEmbeddingProvider } from "../../lib/embedding-provider.js";
 import { EventEmbeddingService, SemanticEventRetrievalService } from "../../lib/semantic-retrieval.js";
 
 const alice = { userId: "user-alice" };
@@ -171,7 +171,7 @@ test("embedding generation skips current inputs and marks bounded provider failu
     embeddingStatus: "GENERATED", embeddingInputRevision: 1
   };
   const repository = {
-    profile: getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY),
+    profile: getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY),
     async getSource() { return current; },
     isCurrent() { return true; }
   };
@@ -242,7 +242,7 @@ test("production memory worker durably enqueues the selected embedding revision"
   prisma.$queryRawUnsafe = async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
   prisma.$transaction = async (callback) => callback(prisma);
   const embeddingProvider = {
-    describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
+    describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); },
     async embedDocuments() { throw new Error("memory handler must not embed inline"); }
   };
   const worker = createProductionAiWorker({ prisma, embeddingProvider, logger: { error() {} } });
@@ -251,7 +251,7 @@ test("production memory worker durably enqueues the selected embedding revision"
   assert.equal(result.embeddingJob.jobType, AI_JOB_TYPES.EMBEDDING_GENERATION);
   assert.equal(result.embeddingJob.resourceId, "memory-1");
   assert.equal(result.embeddingJob.eventId, "event-1");
-  assert.equal(result.embeddingJob.idempotencyKey, "EMBEDDING_GENERATION:memory-1:production-bge-small-en-v1.5-v1.1");
+  assert.equal(result.embeddingJob.idempotencyKey, "EMBEDDING_GENERATION:memory-1:migration-cloudflare-bge-small-en-v1.5-mean-v1.1");
 });
 
 test("memory worker defers in-flight enrichment then terminally resolves stale PENDING without inferred labels", async () => {
@@ -285,7 +285,7 @@ test("memory worker defers in-flight enrichment then terminally resolves stale P
   };
   prisma.$queryRawUnsafe = async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
   prisma.$transaction = async (callback) => callback(prisma);
-  const embeddingProvider = { describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); } };
+  const embeddingProvider = { describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); } };
   const worker = createProductionAiWorker({ prisma, embeddingProvider, logger: { error() {} } });
   await assert.rejects(worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id, attemptCount: 1, maxAttempts: 3 }),
     (error) => error.retryDelayMs === 5_000);
@@ -330,7 +330,7 @@ test("memory job claimed before revocation cancels without creating memory or em
     async $transaction(callback) { return callback(prisma); }
   };
   const worker = createProductionAiWorker({ prisma,
-    embeddingProvider: { describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); } },
+    embeddingProvider: { describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); } },
     logger: { error() {} } });
   worker.repository.claimNext = async () => {
     if (job.status !== "PENDING") return null;
@@ -376,7 +376,7 @@ test("embedding job revoked after precheck cannot begin durable embedding state"
   };
   const worker = createProductionAiWorker({ prisma,
     embeddingProvider: {
-      describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
+      describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); },
       async embedDocuments() { providerCalls += 1; }
     }, logger: { error() {} } });
   worker.repository = {
@@ -423,7 +423,7 @@ test("embedding generated before revocation is discarded without a post-revoke s
     jobType: AI_JOB_TYPES.EMBEDDING_GENERATION, status: "PENDING", attemptCount: 0, maxAttempts: 3 };
   const worker = createProductionAiWorker({ prisma,
     embeddingProvider: {
-      describeProfile() { return getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY); },
+      describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); },
       async embedDocuments() {
         consentEnabled = false;
         return { vectors: [[1, ...Array(383).fill(0)]] };
@@ -491,7 +491,7 @@ test("embedding backfill is bounded, owner-preserving, cursor-based, and idempot
 
   const first = await enqueueEventMemoryEmbeddingBackfill({ prisma, batchSize: 2 });
   assert.deepEqual(first, {
-    profileKey: PRODUCTION_EMBEDDING_PROFILE_KEY,
+    profileKey: LOCAL_EMBEDDING_PROFILE_KEY,
     selected: 2,
     jobIds: ["job-1", "job-2"],
     nextCursor: "memory-2",
@@ -515,7 +515,7 @@ test("embedding backfill is bounded, owner-preserving, cursor-based, and idempot
   assert.equal(revoked.selected, 1);
   assert.deepEqual(revoked.jobIds, []);
   assert.equal(jobs.length, 3);
-  assert.equal(embeddingJobProcessingVersion(2), "production-bge-small-en-v1.5-v1.2");
+  assert.equal(embeddingJobProcessingVersion(2), "migration-cloudflare-bge-small-en-v1.5-mean-v1.2");
   await assert.rejects(
     enqueueEventMemoryEmbeddingBackfill({ prisma, batchSize: MAX_EMBEDDING_BACKFILL_BATCH_SIZE + 1 }),
     /batchSize/
@@ -1109,8 +1109,11 @@ test("embedding input rejects invalid, oversized, Journal, alias, and unprovenan
 
 test("embedding profiles are fixed server-side and unknown profiles are rejected", () => {
   assert.equal(PRODUCTION_EMBEDDING_PROFILE_SELECTED, true);
-  assert.equal(PRODUCTION_EMBEDDING_PROFILE_KEY, "production-bge-small-en-v1.5-v1");
-  const production = getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY);
+  assert.equal(LOCAL_EMBEDDING_PROFILE_KEY, "production-bge-small-en-v1.5-v1");
+  assert.equal(PRODUCTION_EMBEDDING_PROFILE_KEY, CLOUDFLARE_EMBEDDING_PROFILE_KEY);
+  assert.equal(getEmbeddingProfile(PRODUCTION_EMBEDDING_PROFILE_KEY).environment, "PRODUCTION");
+  assert.equal(createProductionEmbeddingProvider({ env: {} }).describeProfile().profileKey, CLOUDFLARE_EMBEDDING_PROFILE_KEY);
+  const production = getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY);
   assert.equal(production.environment, "PRODUCTION");
   assert.equal(production.dimensions, 384);
   assert.equal(production.inputVersion, "summary-v1");
@@ -1126,7 +1129,7 @@ test("local production embedding provider applies role-specific encoding and val
     calls.push({ texts, options });
     return { data: new Float32Array(texts.length * 384).fill(0.25), dims: [texts.length, 384] };
   };
-  const provider = new TransformersJsEmbeddingProvider(PRODUCTION_EMBEDDING_PROFILE_KEY, { pipelineFactory });
+  const provider = new TransformersJsEmbeddingProvider(LOCAL_EMBEDDING_PROFILE_KEY, { pipelineFactory });
   const documents = await provider.embedDocuments(["document one", "document two"]);
   const queries = await provider.embedQueries(["find my event"]);
   assert.equal(documents.vectors.length, 2);

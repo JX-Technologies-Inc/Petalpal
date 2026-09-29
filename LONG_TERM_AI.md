@@ -258,9 +258,9 @@ foundation work.
 | Event-only AI boundary | IMPLEMENTED | Event API + Daily Grow route tests | Journal path is isolated; Event API is the only long-term AI source |
 | EventMemory | IMPLEMENTED | Prisma schema + pgvector migration | Structured Event memory with versioned 384d vector lifecycle |
 | MemoryExtractor | SCAFFOLD ONLY | `DeterministicMemoryExtractor` | Replaceable contract, not LLM extraction |
-| EmbeddingProvider | IMPLEMENTED | local Transformers.js provider + durable embedding worker | BGE small English v1.5, summary-v1, 384d |
+| EmbeddingProvider | IMPLEMENTED | Cloudflare Workers AI and retained local Transformers.js providers + durable embedding worker | BGE small English v1.5, summary-v1, 384d |
 | pgvector | IMPLEMENTED | `vector(384)` migration + PostgreSQL integration tests | Exact cosine Top-K; ANN intentionally deferred |
-| Multi-profile embedding storage | PREPARED, NOT CUT OVER | `EventMemoryEmbedding` expand/copy migration + isolated PostgreSQL rehearsal | Local remains active; Cloudflare is a candidate only |
+| Multi-profile embedding storage | CLOUDFLARE ACTIVE | `EventMemoryEmbedding` expand/copy migration + production candidate backfill | Cloudflare is active; local vectors and ONNX remain for rollback |
 | MemoryRepository | IMPLEMENTED FOR SEMANTIC RETRIEVAL | `PrismaMemoryRepository`, `PrismaEventEmbeddingRepository` | Owner-scoped storage, invalidation, exact semantic retrieval |
 | Weekly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | No LLM narrative or scheduler |
 | Monthly Report | INPUT READY | deterministic aggregates + bounded semantic evidence input | No LLM narrative or scheduler |
@@ -680,9 +680,27 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   returned the same sole Top-1 memory across profiles with no provider errors.
   This one-memory corpus cannot measure ranking quality; the separate controlled
   English benchmark remains the quality evidence.
-- The active profile remains `production-bge-small-en-v1.5-v1`.
-  `migration-cloudflare-bge-small-en-v1.5-mean-v1` remains a candidate.
-  Cutover has not happened; local ONNX remains available for rollback.
+- At this candidate checkpoint, the active profile was
+  `production-bge-small-en-v1.5-v1`; cutover had not happened.
+
+### Cloudflare embedding production cutover — 2026-09-28
+
+- The canonical `PRODUCTION_EMBEDDING_PROFILE_KEY` now selects
+  `migration-cloudflare-bge-small-en-v1.5-mean-v1` for new embedding jobs and
+  semantic retrieval. The default provider follows that selection and uses the
+  private Cloudflare Worker without initializing local ONNX.
+- `production-bge-small-en-v1.5-v1` remains registered as the local rollback
+  profile. Existing local vectors, legacy EventMemory vector columns, and the
+  local ONNX implementation are retained. Returning the canonical active key
+  to the local profile restores local-profile retrieval; profile-key predicates
+  prevent mixed-space retrieval.
+- The pre-cutover production gate found one eligible memory and one complete
+  Cloudflare vector, with zero unresolved candidate rows and one intact local
+  vector. Isolated PostgreSQL rehearsal verified targeted EventMemory creation,
+  Cloudflare embedding generation, 384-dimensional storage, and retrieval.
+- pgvector remains the only vector store. Top-K, ranking, consent semantics,
+  LLMs, and AiJob claim/lease/retry behavior are unchanged. No Cloudflare Queue
+  or Workflow migration or managed background worker was introduced.
 
 ## 13. Decisions / ADR-style Log
 
