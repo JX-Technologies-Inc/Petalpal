@@ -1,3 +1,4 @@
+import { eventFlowers, plantingRecord, readEvent, type BackendFlower } from '../../../services/events';
 import React, {
   createContext,
   useCallback,
@@ -82,9 +83,10 @@ export interface PlantingProviderProps {
   value?: PlantingContextValue;
   gardenOwnerUserId?: string;
   session?: FlowerSession;
+  backendMode?: boolean;
 }
 
-export function PlantingProvider({ children, value, gardenOwnerUserId, session }: PlantingProviderProps) {
+export function PlantingProvider({ children, value, gardenOwnerUserId, session, backendMode }: PlantingProviderProps) {
   // If an existing context value is provided (e.g. bridging across React Native Skia Canvas boundary),
   // re-inject the exact same context value so that descendant nodes share the exact same state.
   if (value) {
@@ -95,10 +97,10 @@ export function PlantingProvider({ children, value, gardenOwnerUserId, session }
     );
   }
 
-  return <PlantingProviderRoot gardenOwnerUserId={gardenOwnerUserId} session={session}>{children}</PlantingProviderRoot>;
+  return <PlantingProviderRoot gardenOwnerUserId={gardenOwnerUserId} session={session} backendMode={backendMode}>{children}</PlantingProviderRoot>;
 }
 
-function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSession }: Omit<PlantingProviderProps, 'value'>) {
+function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSession, backendMode = false }: Omit<PlantingProviderProps, 'value'>) {
   const [placements, setPlacements] = useState<FlowerPlacementRecord[]>([]);
   const [activeMode, setActiveMode] = useState<PlantingMode>('normal');
   const [targetFlower, setTargetFlower] = useState<FlowerPlacementRecord | null>(null);
@@ -133,13 +135,23 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
   // Load placements on mount
   useEffect(() => {
     let mounted = true;
-    loadFlowerPlacements().then((loaded) => {
+    const load = async () => {
+      const local = await loadFlowerPlacements();
+      if (!backendMode || !suppliedSession) return local;
+      const remote = await eventFlowers(suppliedSession.user.id);
+      return local.flatMap((layout) => {
+        const flower = remote.find((item) => item.id === layout.flowerId);
+        return flower ? [{ ...layout, ...plantingRecord(flower, suppliedSession.user.timezone),
+          worldX: layout.worldX, worldY: layout.worldY, landId: layout.landId }] : [];
+      });
+    };
+    load().then((loaded) => {
       if (mounted) setPlacements(loaded);
-    });
+    }).catch((error) => { if (mounted) setDetailError(error.message); });
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [backendMode, suppliedSession]);
 
   useEffect(() => {
     if (suppliedSession) { setSession(suppliedSession); return; }
@@ -207,8 +219,17 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
   );
 
   const startPlanting = useCallback(
-    (flower: Partial<FlowerPlacementRecord> & { flowerId: string; month: number; flowerName: string }) => {
+    async (flower: Partial<FlowerPlacementRecord> & { flowerId: string; month: number; flowerName: string }) => {
       if (gardenOwnerUserId && gardenOwnerUserId !== session?.user.id) return;
+      if (backendMode) {
+        if (!session) return;
+        try {
+          const source = await loadFlowerSource(session.user.id, flower.flowerId) as unknown as BackendFlower;
+          if (!source.sourceEventId || source.userId !== session.user.id) throw new Error('Choose one of your saved Event flowers.');
+          const event = await readEvent(source.sourceEventId);
+          flower = { ...flower, ...plantingRecord(source, session.user.timezone, event.localDate), secondaryEmotions: event.secondaryEmotions };
+        } catch (error) { setDetailError((error as Error).message); return; }
+      }
       const journal = findJournalEntry(flower.flowerId, flower.journalEntryId);
       // Pick initial preview at calibrated month centroid or fallback
       const centroid = getApprovedMonthCentroid(flower.month);
@@ -228,7 +249,10 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
         speciesCode: flower.speciesCode,
         mood: flower.mood || 'Happy',
         supportCount: flower.supportCount ?? 0,
-        notes: flower.notes || '',
+        sourceEventId: flower.sourceEventId,
+        colorAccent: flower.colorAccent, visualEffect: flower.visualEffect,
+        secondaryEmotions: flower.secondaryEmotions,
+        notes: backendMode ? undefined : flower.notes || '',
         ownerUserId: flower.ownerUserId || session?.user.id,
         meaning: flower.meaning,
         image: flower.image,
@@ -253,7 +277,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
       });
       setValidationResult(res);
     },
-    [placements, gardenOwnerUserId, session]
+    [placements, gardenOwnerUserId, session, backendMode]
   );
 
   const startAdjusting = useCallback(
@@ -327,6 +351,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
         placementVersion: 1,
       };
 
+      if (backendMode && session) await loadFlowerSource(session.user.id, committed.flowerId);
       const updated = await addOrUpdateFlowerPlacement(committed);
       setPlacements(updated);
       setActiveMode('normal');
@@ -340,7 +365,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
     } finally {
       setIsSaving(false);
     }
-  }, [targetFlower, previewCoords, validationResult, isSaving, activeMode, validateAt, session, gardenOwnerUserId]);
+  }, [targetFlower, previewCoords, validationResult, isSaving, activeMode, validateAt, session, gardenOwnerUserId, backendMode]);
 
   const cancelPlacement = useCallback(() => {
     setActiveMode('normal');

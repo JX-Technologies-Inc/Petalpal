@@ -4,6 +4,10 @@ import type { FlowerMessage } from './flowerDetailData';
 
 export interface FlowerPlacementRecord extends FlowerPlacement {
   supportCount: number;
+  sourceEventId?: string;
+  secondaryEmotions?: string[];
+  colorAccent?: string;
+  visualEffect?: string;
   notes?: string;
   ownerUserId?: string;
   meaning?: string;
@@ -11,7 +15,11 @@ export interface FlowerPlacementRecord extends FlowerPlacement {
   messages?: FlowerMessage[];
 }
 
-const STORAGE_KEY = 'petalpal_flower_placements_v1';
+let STORAGE_KEY = 'petalpal_flower_placements_v1';
+export function scopeFlowerPlacements(userId: string | null) {
+  STORAGE_KEY = userId ? `petalpal_flower_placements_v1:${encodeURIComponent(userId)}` : 'petalpal_flower_placements_v1';
+  memoryPlacementsStore = null;
+}
 
 // Initial seed flowers for demonstration and verification
 export const DEFAULT_SEED_PLACEMENTS: FlowerPlacementRecord[] = [
@@ -89,14 +97,16 @@ export const DEFAULT_SEED_PLACEMENTS: FlowerPlacementRecord[] = [
 let memoryPlacementsStore: FlowerPlacementRecord[] | null = null;
 
 export async function loadFlowerPlacements(): Promise<FlowerPlacementRecord[]> {
+  const key = STORAGE_KEY;
   try {
     {
       const stored = typeof window !== 'undefined' && window.localStorage
-        ? window.localStorage.getItem(STORAGE_KEY)
-        : await AsyncStorage.getItem(STORAGE_KEY);
+        ? window.localStorage.getItem(key)
+        : await AsyncStorage.getItem(key);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
+          if (key !== STORAGE_KEY) return [];
           memoryPlacementsStore = parsed;
           return parsed;
         }
@@ -119,13 +129,14 @@ export async function loadFlowerPlacements(): Promise<FlowerPlacementRecord[]> {
 export async function saveFlowerPlacements(
   placements: FlowerPlacementRecord[]
 ): Promise<void> {
+  const key = STORAGE_KEY;
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(placements));
+      window.localStorage.setItem(key, JSON.stringify(placements));
     } else {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(placements));
+      await AsyncStorage.setItem(key, JSON.stringify(placements));
     }
-    memoryPlacementsStore = placements;
+    if (key === STORAGE_KEY) memoryPlacementsStore = placements;
   } catch (err) {
     console.warn('[plantingPersistence] Failed to write to localStorage:', err);
     throw err;
@@ -135,7 +146,9 @@ export async function saveFlowerPlacements(
 export async function addOrUpdateFlowerPlacement(
   placement: FlowerPlacementRecord
 ): Promise<FlowerPlacementRecord[]> {
+  const key = STORAGE_KEY;
   const current = await loadFlowerPlacements();
+  if (key !== STORAGE_KEY) throw new Error("Your account changed. Please try again.");
   const existingIdx = current.findIndex(
     (p) => p.flowerId === placement.flowerId || p.id === placement.id
   );
@@ -159,7 +172,9 @@ export async function addOrUpdateFlowerPlacement(
 export async function removeFlowerPlacement(
   flowerId: string
 ): Promise<FlowerPlacementRecord[]> {
+  const key = STORAGE_KEY;
   const current = await loadFlowerPlacements();
+  if (key !== STORAGE_KEY) throw new Error("Your account changed. Please try again.");
   const updated = current.filter((p) => p.flowerId !== flowerId && p.id !== flowerId);
   await saveFlowerPlacements(updated);
   return updated;

@@ -45,7 +45,7 @@ function memoryStorage(initial = {}) {
 }
 
 // Stable hooks execute source callbacks and effect cleanup without a native renderer.
-function hookHarness(context = () => null) {
+export function hookHarness(context = () => null) {
   const slots = [];
   let cursor = 0, dirty = false, renderSource, latest;
   const pending = [];
@@ -304,12 +304,13 @@ test('API reuses the existing token and sends no caller supporter/date or local 
       return { ok: true, json: async () => source };
     },
   })('flowerDetailApi');
+  api.configureFlowerSession({ apiBaseUrl: '', getAccessToken: async () => 'existing-session-token' });
   await api.giveFlowerSupport('owner /1', 'flower/2', { supporterUserId: 'forged', localDate: '1900-01-01' });
   assert.equal(requests[0].url, '/users/owner%20%2F1/flowers/flower%2F2/support');
   assert.equal(requests[0].options.method, 'POST');
   assert.equal(requests[0].options.headers.Authorization, 'Bearer existing-session-token');
   assert.equal(requests[0].options.body, undefined);
-  assert.ok(storage.reads.includes('petalPalAccessToken'));
+  assert.equal(storage.reads.includes('petalPalAccessToken'), false);
   assert.deepEqual(storage.writes, []);
   await api.loadFlowerSource('owner', placement.flowerId);
   assert.equal(requests[1].options.method, 'GET');
@@ -342,8 +343,9 @@ test('API fails closed without a token and preserves backend errors and native t
       return { ok: false, json: async () => ({ error: 'The server rejected this Support' }) };
     },
   })('flowerDetailApi');
+  nativeApi.configureFlowerSession({ apiBaseUrl: '', getAccessToken: async () => 'native-session-token' });
   await assert.rejects(nativeApi.giveFlowerSupport('owner', placement.flowerId), /server rejected/);
-  assert.deepEqual(nativeKeys, ['petalPalAccessToken']);
+  assert.deepEqual(nativeKeys, []);
 });
 
 test('authenticated socket subscription filters owner/flower events and disconnects on cleanup', async () => {
@@ -362,10 +364,13 @@ test('authenticated socket subscription filters owner/flower events and disconne
         },
       },
     })('flowerDetailApi');
+  api.configureFlowerSession({ apiBaseUrl: '', getAccessToken: async () => 'existing-token' });
   const unsubscribe = api.subscribeToFlowerUpdates('owner', placement.flowerId, (flower) => received.push(flower));
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(connections.length, 1);
-  assert.equal(connections[0].options.auth.token, 'existing-token');
+  let handshake; connections[0].options.auth((value) => { handshake = value; });
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(handshake.token, 'existing-token');
   events.connect();
   assert.deepEqual(emitted, [['join-garden', 'owner']]);
   events.supportUpdated({ gardenOwnerId: 'somebody-else', flowerId: placement.flowerId, flower: source });

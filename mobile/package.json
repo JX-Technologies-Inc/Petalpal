@@ -19,6 +19,7 @@
     "expo-symbols": "~57.0.2",
     "expo-system-ui": "~57.0.3",
     "expo-web-browser": "~57.0.2",
+    "firebase": "^12.19.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
@@ -42,7 +43,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "node ./test/plantingSystem.test.mjs && node ./test/plantingMaskRefinement.test.mjs && node ./test/flowerDetail.test.mjs"
+    "test": "node ./test/plantingSystem.test.mjs && node ./test/plantingMaskRefinement.test.mjs && node ./test/flowerDetail.test.mjs",
+    "test:integration": "node --test test/applicationIntegration.test.mjs"
   },
   "private": true
 }

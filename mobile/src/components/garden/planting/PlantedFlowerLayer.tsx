@@ -1,3 +1,4 @@
+import { CanonicalFlowerArt } from './CanonicalFlowerArt';
 import React, { useMemo } from 'react';
 import {
   Circle,
@@ -66,6 +67,7 @@ export function LegacyPlantedFlowerLayer({ depthPass = 'all' }: { depthPass?: Fl
           return null;
         }
 
+        if (flower.sourceEventId) return <CanonicalFlowerArt key={flower.id} flower={flower} />;
         const def = getFlowerPlacementDefinition(flower.flowerName, flower.speciesCode);
         const img = getImageForFlower(flower.flowerName);
         if (!img) return null;
@@ -168,7 +170,7 @@ export function LegacyPlantedFlowerLayer({ depthPass = 'all' }: { depthPass?: Fl
                 />
 
                 {/* Preview flower image (slightly translucent) */}
-                {img && (
+                {targetFlower.sourceEventId ? <CanonicalFlowerArt flower={{ ...targetFlower, ...previewCoords }} /> : img && (
                   <Group opacity={isValid ? 0.92 : 0.65}>
                     <Image
                       image={img}

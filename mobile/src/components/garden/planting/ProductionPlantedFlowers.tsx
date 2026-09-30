@@ -1,3 +1,4 @@
+import { CanonicalFlowerEffects } from './CanonicalFlowerArt';
 import { Circle, Group } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { usePlanting } from './PlantingContext';
@@ -30,6 +31,7 @@ export function ProductionPlantedFlowers({depthPass='all'}:{depthPass?:FlowerDep
       <ProductionGrowthLayer growth={{...s.growth,pieces:s.growth.primary,companions:[],filler:[]}}/>
       {__DEV__&&s.unresolved.map(p=><Circle key={p.id} cx={p.worldX} cy={p.worldY} r={4} color="#a6643c" style="stroke" strokeWidth={1.5}/>)}
     </Group>)}
+    {parents.filter(p => p.sourceEventId && flowerInDepthPass(p.month,depthPass)).map(p => <CanonicalFlowerEffects key={`effect-${p.id}`} flower={p} />)}
     {active&&<Group>
       <Circle cx={previewCoords.worldX} cy={previewCoords.worldY} r={getFlowerPlacementDefinition(targetFlower.flowerName, targetFlower.speciesCode).footprintRadius+4} color={color} opacity={.2}/>
       <Circle cx={previewCoords.worldX} cy={previewCoords.worldY} r={getFlowerPlacementDefinition(targetFlower.flowerName, targetFlower.speciesCode).footprintRadius} color={color} style="stroke" strokeWidth={2.5}/>

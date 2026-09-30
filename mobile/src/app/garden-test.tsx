@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { useAuth } from '../services/auth';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
@@ -8,20 +8,21 @@ import FlowerDensitySandbox from '@/components/garden/flower-density-sandbox/Flo
 import ProductionGrowthQA from '@/components/garden/planting/ProductionGrowthQA';
 
 export default function GardenTestScreen() {
+  const { session } = useAuth();
   const [showDensitySandbox, setShowDensitySandbox] = useState(false);
   const [showProductionQA,setShowProductionQA]=useState(false);
   useEffect(() => { if (__DEV__) void SplashScreen.hideAsync(); }, []);
-  if (!__DEV__) return <Redirect href="/" />;
+  if (!session) return null;
   if (showProductionQA) return <GestureHandlerRootView style={styles.root}><ProductionGrowthQA onClose={()=>setShowProductionQA(false)}/></GestureHandlerRootView>;
   return <GestureHandlerRootView style={styles.root}>
     {showDensitySandbox ? <FlowerDensitySandbox onClose={() => setShowDensitySandbox(false)} /> : <>
-      <GardenScene initialWaterfallVersion="v2" />
-      <Pressable accessibilityRole="button" style={styles.sandboxButton} onPress={() => setShowDensitySandbox(true)}>
+      <GardenScene initialWaterfallVersion="v2" session={session} backendMode />
+      {__DEV__ && <Pressable accessibilityRole="button" style={styles.sandboxButton} onPress={() => setShowDensitySandbox(true)}>
         <Text style={styles.sandboxLabel}>Flower Density Sandbox</Text>
-      </Pressable>
-      <Pressable accessibilityRole="button" style={[styles.sandboxButton,{top:58}]} onPress={()=>setShowProductionQA(true)}>
+      </Pressable>}
+      {__DEV__ && <Pressable accessibilityRole="button" style={[styles.sandboxButton,{top:58}]} onPress={()=>setShowProductionQA(true)}>
         <Text style={styles.sandboxLabel}>Production Growth QA</Text>
-      </Pressable>
+      </Pressable>}
     </>}
   </GestureHandlerRootView>;
 }

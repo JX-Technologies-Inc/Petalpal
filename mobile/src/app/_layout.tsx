@@ -1,3 +1,5 @@
+import { AuthProvider, useAuth } from "../services/auth";
+import { AuthGate } from "../components/AuthGate";
 import { DarkTheme, DefaultTheme, Slot, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from 'react-native';
@@ -8,7 +10,12 @@ import { WorldTimeProvider } from '@/components/garden/world-time';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
+export default function Layout() {
+  return <AuthProvider><AuthGate><TabLayout /></AuthGate></AuthProvider>;
+}
+
+function TabLayout() {
+  const { session } = useAuth();
   const colorScheme = useColorScheme();
   const pathname = usePathname();
 
@@ -40,5 +47,5 @@ export default function TabLayout() {
     );
   }
 
-  return <WorldTimeProvider>{content}</WorldTimeProvider>;
+  return <WorldTimeProvider key={session?.user.id}>{content}</WorldTimeProvider>;
 }

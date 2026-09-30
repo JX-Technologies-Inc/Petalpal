@@ -1,3 +1,4 @@
+import type { FlowerSession } from './planting/flowerDetailApi';
 import { Canvas, Circle, Group, Image, Path, Rect, useImage } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
 import { useFocusEffect } from 'expo-router';
@@ -183,6 +184,8 @@ const MIN_CAMERA_ZOOM = 0.8;
 const MAX_CAMERA_ZOOM = 3;
 
 export type GardenSceneProps = {
+  session?: FlowerSession;
+  backendMode?: boolean;
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
   gardenOwnerUserId?: string;
@@ -995,6 +998,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
         setViewport({ width: layout.width, height: layout.height })
       }
     >
+      {planting.detailError && <Text accessibilityRole="alert" style={{ position: "absolute", bottom: 90, left: 16, right: 16, zIndex: 30, backgroundColor: "white", padding: 12 }}>{planting.detailError}</Text>}
       {/* Direct Waterfall gestures remain disabled while the stable numeric editor is active. */}
       {fit > 0 && (
         <GestureDetector gesture={cameraGesture}>
@@ -1757,7 +1761,7 @@ function WaterfallImpactDebugShape({ placement }: { placement: WaterfallImpactPl
 export default function GardenScene(props: GardenSceneProps = {}) {
   const detailParams = useLocalSearchParams<{ ownerId?: string }>();
   return (
-    <PlantingProvider gardenOwnerUserId={props.gardenOwnerUserId || detailParams.ownerId}>
+    <PlantingProvider gardenOwnerUserId={props.gardenOwnerUserId || detailParams.ownerId} session={props.session} backendMode={props.backendMode}>
       <GardenSceneContent {...props} />
     </PlantingProvider>
   );

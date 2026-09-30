@@ -1,71 +1,56 @@
 # Frontend V1 integration review
 
-Date: 2026-09-29 (America/Vancouver)
+Updated 2026-09-29 (America/Vancouver). Production remains `client/`; `mobile/` stays separate.
 
-## Scope and branches
+## Baseline
 
-Production continues to serve `client/`; the user explicitly chose to retain `mobile/` as a separate prototype.
+Main is unchanged at `bd4697180871e96f8d277f4f413a9e3c064eff84`. Frontend source is `origin/frontend-V1` at `280b6d759fd92bfadc82f6d7b57ceb7b84c75d4b`. Initial merge commit: `5726ce04dc29592f5cd4cdf00dde855e7460a7ab`; five conflicts resolved. Its visitor Journal privacy fix is retained.
 
-- Main baseline: `bd4697180871e96f8d277f4f413a9e3c064eff84` (local main, origin/main, personal/main).
-- Frontend source: `origin/frontend-V1`, `280b6d759fd92bfadc82f6d7b57ceb7b84c75d4b`.
-- Integration: `integration/frontend-v1`, based on current origin/main; normal merge, no rebase.
-- Main worktree: `/Users/xingranma/Desktop/PetalPal_JX` (filesystem displays Petalpal_JX).
-- Integration worktree: `/Users/xingranma/Desktop/PetalPal_JX-integration`.
+Work only continues on `integration/frontend-v1` in `/Users/xingranma/Desktop/PetalPal_JX-integration`. No main-worktree/research files were edited.
 
-## Merge and fixes
+## Application integration
 
-Five conflicts resolved: `.gitignore`, `client/src/Garden/GardenScene.jsx`, its test, `prisma/schema.prisma`, `server.js`. Combined ignore rules and Prisma relations; retained main's Event/AI imports, private/social garden serialization and emotion modifiers; added V1 Support state and tests. No unresolved conflicts.
-
-The incoming Support helper returned raw Flower relations including Journal content to visitors. Visitor detail and Support responses now use main's social allowlist. Owner detail retains private Journal access. Broadcasts contain neither private content nor a different viewer's Support state. Garden responses retain viewer-specific Support state after privacy filtering. Preserved main's avatar size validation and safe error logging. Added privacy tests and enabled pgvector in the incoming PGlite test fixture so migrations run against current main.
-
-## Findings
-
-| Area | Status | Finding | Fix / remaining work |
+| Area | Before | After | Remaining |
 |---|---|---|---|
-| API | Integrated for live client | Existing same-origin paths are retained. Added authenticated GET /users/:userId/flowers/:flowerId; POST support returns authoritative count/state and is idempotent per viewer/flower/local day. | Preserved main validation; privacy allowlist applied. Prototype has only partial social API wiring. |
-| Auth | Live client preserved; prototype incomplete | Live client obtains refreshed Firebase ID tokens and sends Bearer headers; session, login/logout and unauthorized handling remain. Prototype reads petalPalAccessToken, but configureFlowerSession has no app caller or login flow. | No backend auth redesign. Prototype needs an actual refreshed-token/session provider before promotion. |
-| Event creation | Backend preserved; prototype not connected | POST /events retains inference, transaction/persistence and durable AiJob dispatch; EmotionLab uses it. Live daily bloom is the separate private-Journal flow. Prototype Journal lists SAMPLE_ENTRIES and plants locally. | No mock path introduced into live client or backend. Do not treat prototype planting as saved Event creation. |
-| Emotion | Live semantics preserved | Product-18 selection and Primary redundancy rules remain in main helpers. Prototype moods such as Grateful/Contemplative are sample labels, not canonical Primary values. | Retained authoritative Primary and ordered 0–2 secondary output. Prototype requires canonical backend records before promotion. |
-| Flower rendering | Live semantics preserved; prototype static | Main species stays Primary-selected; secondary #1 controls accent/default effect and #2 may supply effect. Kept existing client modifier tests. Prototype samples assign species explicitly and compositions have empty secondary arrays. | Combined main modifier rendering with V1 Support UI. Prototype needs adapters for backend species/modifiers. |
-| Consent/privacy | Regression fixed | Incoming visitor flower detail included private Journal content. Main AI consent, owner-scoped Event memory and revocation protections remain. Social actions do not enqueue AI jobs. | Visitor detail/support/garden and broadcasts filter private relations/text; regression tests added. |
-| RAG/Fairy | Backend real; V1 surface absent | Main EventMemory/BGE/pgvector and Fairy runtime remain. Live onboarding/progression APIs remain; no V1 memory-retrieval UI found. | Preserved backend. No invented retrieval API or Journal-memory ingestion. |
-| Weekly Garden | V1 not implemented | Backend has durable weekly report trigger/read endpoints; no prototype weekly report API surface found. | Future UI integration using existing contract. |
-| Monthly Bouquet | V1 not implemented | Prototype monthly growth is geometric garden expansion, not an AI Bouquet report. | Do not present geometric growth as backend memory/RAG output. |
-| Monthly Reflection | V1 not implemented | No corresponding V1 API surface found. | No API invented. |
-| Async states | Backend preserved; V1 AI UX absent | AiJob → Cloudflare Queue → private executor → runJob → EventMemory → BGE → pgvector remains. Social detail has loading/error/retry states; prototype has no Event job polling. | No synchronous AI completion assumption added. Pending/refetch/retry UI needed before V1 Event integration. |
-| Environment | Scan passed | Prototype uses EXPO_PUBLIC_API_BASE_URL; live client uses VITE_API_BASE_URL and public Firebase config. No added private credentials or dataset files detected. | No .env copied; generated builds and dependencies excluded. |
-| Routing/deployment | Live deployment preserved | Root build still builds client/dist, Express serves public assets/client output and SPA fallback. Prototype Expo web export builds separately and is not served by Render. | Kept client live per user decision. No production prototype/mock route enabled. |
+| Auth | Stored token fallback, no login | Firebase email/password sign-in, verified backend session, existing profile completion, refreshed bearer tokens, bounded 401 retry, sign-out and stale-response rejection. Native uses Firebase AsyncStorage persistence; web uses Firebase browser persistence. | Configure public client settings and API origin; real-account/native-device sign-in not exercised here. Additional production sign-in methods remain outside this pass. |
+| Event/planting | Sample Journal entries and local flowers | Events screen POSTs /events with stable retry idempotency key; owner flowers come from GET /users/:id/garden. Planting checks owner flower and GET /events/:id, and validates flower existence before committing local coordinates. Deleted backend flowers are excluded on reload. No sample Events are used in this flow. | Backend has no V1 coordinate-update API. Layout is explicitly device-local, scoped by backend user ID; canonical Event/Flower data remains server-owned. |
+| Emotion | Static prototype mood labels | User selects canonical Primary; backend secondary/status fields are displayed. No local classifier or duplicated redundancy rules. | None for the supported Event contract. |
+| Flower | Sample species assumptions | Backend species/name/image/accent/effect retained; canonical artwork in legacy renderer and visual overlays in V1 growth renderer do not replace species. Friend-created assets remain. | Some backend species have no approved V1 collision class/art composition; planting is blocked rather than assigning another species or guessing geometry. |
+| Async AI | No AI state UX | Event saving, pending/success/failed/skipped emotion state, manual refetch and bounded pending-only polling (10 seconds, then 15 seconds; four requests maximum). Memory state comes only from the POST response, including terminal states on idempotent replay. Refresh errors preserve saved Event/flower state. | Current client API has no durable memory-job status endpoint, so later completion/failure cannot be refetched by this frontend. No fake status or new job system added. |
+| Fairy/RAG | No corresponding V1 screen | No new feature built; existing backend remains. | Product UI task. |
+| Weekly | No corresponding V1 report screen | No new feature built; existing backend remains. | Product UI task. |
+| Monthly | Geometric garden growth only | Geometric growth remains distinct from Bouquet/Reflection AI reports. | Product UI task. |
 
-## Files changed
+## Changes
 
-Incoming merge includes 846 Resources files, 783 mobile files plus the added CSS declarations, 18 client files, 44 existing docs additions, implementation documentation, ignore rules, Support migration/schema, server/helper and tests. These are tracked source-branch assets, not local research files.
+- Frontend: auth gate and provider; existing navigation/Home/Journal-to-Events screens; planting canonical-data adaptation and account scope; canonical artwork/modifier overlays; social API uses the same refreshed auth transport, including socket reconnect authentication.
+- Backend: none. Existing Firebase/session/Event/garden/detail contracts were read and reused, without changing production API behavior or deployment.
+- Shared: lightweight typed mobile API and Event/Flower contracts in `mobile/src/services/`; Firebase client dependency added to the mobile lockfile. Existing client modules use Vite/browser globals, so they were not imported into Expo; the same Firebase project/session contract is used.
+- Tests: application auth/API/ownership/consent/status/account-switch tests; existing flower-detail tests adapted to refreshed Firebase token injection. `npm run test:integration --prefix mobile` bypasses the known unrelated checkpoint dependency.
 
-- Frontend: V1 `mobile/` app/assets/tests; `client/` flower Support/detail behavior, styling and public garden assets.
-- Backend: `server.js`, `lib/flower-support.js`, `lib/garden-response.js`; Prisma Flower/VisitRecord relations and daily Support migration.
-- Shared contracts: backend flower Support/detail response and viewer Support state; no new shared-contract package.
-- Tests/config: client GardenScene tests, backend Support persistence/privacy and garden privacy tests, `mobile/src/css.d.ts`, combined `.gitignore`.
+## Configuration
+
+Set `EXPO_PUBLIC_FIREBASE_API_KEY` to the Firebase public client API key used by production. Optional public overrides: `EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN`, `EXPO_PUBLIC_FIREBASE_PROJECT_ID`, `EXPO_PUBLIC_FIREBASE_APP_ID`. No private Firebase credentials are used.
+
+Set `EXPO_PUBLIC_API_BASE_URL` to the existing backend origin for native clients and separate web hosting. Development web defaults to the same host on port 3000; same-origin web can use an empty base URL. Backend CORS and Firebase authorized domains must allow the actual prototype web origin. No backend secret, database URL, signing key or worker token belongs in these variables. No .env file was copied or committed.
+
+Long-term AI requests use explicitly entered Event text only. Existing Journal data is not converted into Events. Session/profile sync does not grant AI consent; new profiles default to aiConsent=false. Existing backend consent and Event-only privacy gates remain authoritative. Social responses still exclude other users' private content. Private API responses already in flight are discarded when the auth connection changes; logout unmounts account screens and clears in-memory layout scope.
 
 ## Validation
 
-- Client production build: PASS.
-- Client ESLint: PASS.
-- Client tests: 50/50 PASS.
-- Focused backend run: 60/60 PASS (auth, Event, async dispatch/routes, emotion, flower, privacy/social and semantic retrieval).
-- Follow-up backend run after final validation/logging changes: 22/22 PASS (Support persistence/privacy, garden responses and HTTP security inventory/matrix).
-- Prisma schema validation and generation: PASS; server syntax: PASS.
-- Expo web export: PASS. Native iOS/Android device builds not run.
-- Prototype TypeScript: PASS after adding CSS module/import declarations.
-- Prototype flower-detail tests: 20/20 PASS.
-- Prototype mask refinement: 57/57 assertions PASS.
-- Full prototype npm test: FAIL because output/planting-mask-checkpoints/20260928-approved/browser-planting-storage.json is absent from the published branch. It reaches the approved-mask checkpoint audit after earlier planting assertions. No checkpoint fabricated or test disabled.
-- Prototype lint: unavailable in CI because eslint/eslint-config-expo are absent from its lockfile; The configured Expo lint command fails with Cannot find module eslint. No auto-install or lockfile rewrite performed.
-- Existing incoming documentation/source has whitespace warnings; left unrelated formatting intact.
-- Secret/privacy scan: exact staged text/diff reviewed; no added secrets, .env content, raw user Event/Journal data, reviewer/annotation datasets detected. Journal sample records and test fixtures are explicitly synthetic/sample data. This is a pattern/file review, not a guarantee about all historical commits or binary assets.
-- graphify update unavailable: executable and integration graph absent. Main graph/research files untouched.
-- No live production, real credentials, Cloudflare Queue, Render executor, or external BGE calls exercised. Focused tests exercise contracts with test doubles/disposable PGlite.
+- Mobile typecheck: PASS.
+- Mobile Expo web export: PASS.
+- Application + flower-detail tests: 28/28 PASS, including token refresh, no 403 retry, logout/in-flight private-response rejection, Event payload/idempotency, canonical species/modifiers, account-scoped storage and delayed auth-session restoration, explicit Primary selection and UI retry idempotency.
+- Focused production growth and rendering tests: PASS.
+- Backend tests: not rerun; no backend/shared-production contract code changed.
+- Client regression: not rerun; client and deployment configuration unchanged.
+- Known full prototype test checkpoint failure and missing ESLint dependencies remain as recorded in the initial review; not rerun or altered in this pass.
+- Staged secret/privacy scan: passed for changed source/lockfile/report; no private credentials, .env contents, raw user data or research/reviewer datasets added. Test content/tokens are synthetic.
+- Graphify: no existing integration artifacts; no regeneration needed.
+- Real Firebase accounts, native devices and production Cloudflare/Render services were not exercised. Unit tests use auth/HTTP doubles; Event pipeline remains backend-owned.
 
-## Readiness
+## Verdict
 
-NEEDS INTEGRATION FIXES
+NEEDS PRODUCT WORK
 
-The live client/backend merge passes focused checks. The separate prototype retains sample data and incomplete auth/Event/report wiring and its full test command depends on an unpublished checkpoint. Keep it separate until those gaps are resolved. This branch is for review; main was not merged or modified.
+The existing application APIs are connected. Remaining work requires approved planting geometry, a supported cross-device layout contract, a supported durable-job status contract, or new Fairy/Weekly/Monthly product UI. No unsupported API was invented. The known unpublished planting checkpoint and missing prototype lint dependencies are separate validation limitations.

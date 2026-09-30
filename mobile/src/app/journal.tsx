@@ -1,181 +1,113 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Button, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import {
-  FlowerPlacementRecord,
-  loadFlowerPlacements,
-} from '@/components/garden/planting/plantingPersistence';
-import { MONTH_REGION_METAS } from '@/components/garden/planting/plantingRegionData';
-import { SAMPLE_ENTRIES, type JournalEntry } from '@/data/journalEntries';
-
-const FLOWER_ASSETS: Record<string, any> = {
-  pink: require('../../assets/garden/flowers/pink.png'),
-  purple: require('../../assets/garden/flowers/purple.png'),
-  blue: require('../../assets/garden/flowers/blue.png'),
-  sunflower: require('../../assets/garden/flowers/sunflower.png'),
-  tulip: require('../../assets/garden/flowers/tulip.png'),
-};
-
+import { router, useFocusEffect } from 'expo-router';
+import { useAuth } from '../services/auth';
+import { createEvent, emotionMessage, memoryMessage, eventFlowers, plantingRecord, PRIMARY_MOODS, readEvent,
+  type BackendFlower, type EventResponse, type PrimaryMood } from '../services/events';
+import { loadFlowerPlacements, type FlowerPlacementRecord } from '../components/garden/planting/plantingPersistence';
+import { sourceFlowerImageUri } from '../components/garden/planting/flowerDetailApi';
 export default function JournalScreen() {
+  const { session } = useAuth();
+  const [flowers, setFlowers] = useState<BackendFlower[]>([]);
   const [placements, setPlacements] = useState<FlowerPlacementRecord[]>([]);
-
-  const refreshPlacements = useCallback(() => {
-    loadFlowerPlacements().then(setPlacements);
-  }, []);
-
+  const [content, setContent] = useState('');
+  const [mood, setMood] = useState<PrimaryMood | null>(null);
+  const [result, setResult] = useState<EventResponse | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [pollError, setPollError] = useState('');
+  const pending = useRef<{ content: string; mood: PrimaryMood; key: string } | null>(null);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const refresh = useCallback(async () => {
+    if (!session) return;
+    setLoading(true); setError('');
+    try {
+      const [remote, layout] = await Promise.all([eventFlowers(session.user.id), loadFlowerPlacements()]);
+      if (mounted.current) { setFlowers(remote); setPlacements(layout); }
+    } catch (err) { if (mounted.current) setError((err as Error).message); }
+    finally { if (mounted.current) setLoading(false); }
+  }, [session]);
+  useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  async function saveEvent() {
+    if (busy || !content.trim() || !session || !mood) return;
+    setBusy(true); setError('');
+    const draft = pending.current;
+    // Keep the same key after transport failure; a retry cannot duplicate an Event.
+    if (!draft || draft.content !== content.trim() || draft.mood !== mood) pending.current = {
+      content: content.trim(), mood, key: `mobile-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    };
+    try {
+      const created = await createEvent(pending.current!.content, mood, pending.current!.key);
+      if (!mounted.current) return;
+      pending.current = null; setResult(created); setContent('');
+      if (created.flower) setFlowers((items) => [created.flower!, ...items.filter((item) => item.id !== created.flower!.id)]);
+    } catch (err) { if (mounted.current) setError((err as Error).message); }
+    finally { if (mounted.current) setBusy(false); }
+  }
   useEffect(() => {
-    refreshPlacements();
-  }, [refreshPlacements]);
-
-  const getImage = (name?: string) => {
-    if (!name) return FLOWER_ASSETS.pink;
-    const lower = name.toLowerCase();
-    if (lower.includes('sunflower')) return FLOWER_ASSETS.sunflower;
-    if (lower.includes('tulip')) return FLOWER_ASSETS.tulip;
-    if (lower.includes('purple')) return FLOWER_ASSETS.purple;
-    if (lower.includes('blue')) return FLOWER_ASSETS.blue;
-    return FLOWER_ASSETS.pink;
-  };
-
-  const handlePlantFlower = (entry: JournalEntry) => {
-    router.push({
-      pathname: '/garden-test',
-      params: {
-        mode: 'plant',
-        flowerId: entry.flowerId,
-        journalEntryId: entry.id,
-        plantedDate: entry.date,
-        month: entry.month.toString(),
-        flowerName: entry.flowerName,
-        speciesCode: entry.speciesCode,
-        mood: entry.mood,
-      },
-    });
-  };
-
-  const handleAdjustPosition = (flowerId: string) => {
-    router.push({
-      pathname: '/garden-test',
-      params: {
-        mode: 'adjust',
-        flowerId: flowerId,
-      },
-    });
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/garden-test')}
-          style={styles.gardenButton}
-        >
-          <Text style={styles.gardenButtonText}>🌸 Open Garden</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>PetalPal Journal</Text>
-        <Text style={styles.headerSubtitle}>
-          Daily reflections blossomed into living garden flowers
-        </Text>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {SAMPLE_ENTRIES.map((entry) => {
-          const plantedFlower = placements.find(
-            (p) => p.flowerId === entry.flowerId || p.id === entry.flowerId
-          );
-          const isPlanted = !!plantedFlower;
-          const meta = MONTH_REGION_METAS[entry.month];
-          const monthName = meta?.monthName || `Month ${entry.month}`;
-          const formattedDate = new Date(entry.date).toLocaleDateString(
-            undefined,
-            { month: 'short', day: 'numeric', year: 'numeric' }
-          );
-
-          return (
-            <View key={entry.id} style={styles.entryCard}>
-              <View style={styles.cardHeader}>
-                <View>
-                  <Text style={styles.entryDate}>{formattedDate}</Text>
-                  <Text style={styles.entryTitle}>{entry.title}</Text>
-                </View>
-                <View style={styles.moodPill}>
-                  <Text style={styles.moodText}>{entry.mood}</Text>
-                </View>
-              </View>
-
-              <Text style={styles.reflectionText}>{entry.reflection}</Text>
-
-              {/* Flower Status Banner */}
-              <View style={styles.flowerStatusRow}>
-                <Image
-                  source={getImage(entry.flowerName)}
-                  style={styles.flowerThumb}
-                  resizeMode="contain"
-                />
-                <View style={styles.flowerInfoCol}>
-                  <Text style={styles.flowerSpeciesText}>
-                    {entry.flowerName.toUpperCase()} BLOOM
-                  </Text>
-                  <Text style={styles.regionConstraintText}>
-                    Assigned Region: {monthName} ({meta?.landId || 'Land'})
-                  </Text>
-                  {isPlanted ? (
-                    <Text style={styles.plantedBadgeText}>
-                      ✓ Planted at ({Math.round(plantedFlower.worldX)},{' '}
-                      {Math.round(plantedFlower.worldY)}) • 💗 {plantedFlower.supportCount || 0}
-                    </Text>
-                  ) : (
-                    <Text style={styles.unplantedBadgeText}>
-                      ⏳ Ready to be planted
-                    </Text>
-                  )}
-                </View>
-
-                {/* Action button */}
-                <View style={styles.actionCol}>
-                  {isPlanted ? (
-                    <Pressable
-                      accessibilityRole="button"
-                      onPress={() => handleAdjustPosition(entry.flowerId)}
-                      style={({ pressed }) => [
-                        styles.adjustButton,
-                        pressed && styles.buttonPressed,
-                      ]}
-                    >
-                      <Text style={styles.adjustButtonText}>🔄 Adjust</Text>
-                    </Pressable>
-                  ) : (
-                    <Pressable
-                      accessibilityRole="button"
-                      onPress={() => handlePlantFlower(entry)}
-                      style={({ pressed }) => [
-                        styles.plantButton,
-                        pressed && styles.buttonPressed,
-                      ]}
-                    >
-                      <Text style={styles.plantButtonText}>🌱 Plant</Text>
-                    </Pressable>
-                  )}
-                </View>
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
-    </SafeAreaView>
-  );
+    if (!result || !['PENDING','RUNNING'].includes(result.event.emotionStatus)) return;
+    let cancelled = false; let timer: ReturnType<typeof setTimeout>; let attempts = 0;
+    async function poll() {
+      try {
+        const event = await readEvent(result!.event.id);
+        if (cancelled) return;
+        setPollError('');
+        if (!['PENDING','RUNNING'].includes(event.emotionStatus)) {
+          setResult((current) => current ? { ...current, event } : null); void refresh(); return;
+        }
+      } catch (err) { if (!cancelled) setPollError((err as Error).message); }
+      if (!cancelled && ++attempts < 4) timer = setTimeout(poll, 15000);
+    }
+    timer = setTimeout(poll, 10000);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [result?.event.id, result?.event.emotionStatus, refresh]);
+  function plant(flower: BackendFlower) {
+    const record = plantingRecord(flower, session?.user.timezone, result?.flower?.id === flower.id ? result.event.localDate : undefined);
+    router.push({ pathname: '/garden-test', params: { mode: 'plant', flowerId: record.flowerId,
+      journalEntryId: '', plantedDate: record.plantedDate, month: String(record.month),
+      flowerName: record.flowerName, speciesCode: record.speciesCode, mood: record.mood } });
+  }
+  return <SafeAreaView style={styles.container}><ScrollView contentContainerStyle={styles.scrollContent}>
+    <Text style={styles.headerTitle}>PetalPal Events</Text>
+    <Text>Save an Event with your Primary Mood. AI processing follows your account consent settings.</Text>
+    <TextInput accessibilityLabel="Event" placeholder="What happened?" multiline maxLength={4000}
+      value={content} editable={!busy} onChangeText={setContent} style={{ minHeight: 90, borderWidth: 1, padding: 12 }} />
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      {PRIMARY_MOODS.map((choice) => <Pressable key={choice} disabled={busy} accessibilityRole="radio"
+        accessibilityState={{ selected: choice === mood }} onPress={() => setMood(choice)}>
+        <Text style={{ padding: 8, backgroundColor: choice === mood ? '#cde5d4' : '#eee' }}>{choice.replace('_BLOOM','').replace('_',' ')}</Text>
+      </Pressable>)}
+    </View>
+    <Button title={busy ? 'Saving Event…' : 'Save Event'} disabled={busy || !content.trim() || !mood} onPress={saveEvent} />
+    {result ? <View><Text>{emotionMessage(result.event.emotionStatus)}</Text>
+      <Text>Secondary emotions: {result.event.secondaryEmotions.join(', ') || 'None'}</Text>
+      <Text>{memoryMessage(result.memoryJob)}</Text>
+      {pollError ? <Text accessibilityRole="alert">{pollError}</Text> : null}
+      <Button title="Refresh Event status" onPress={async () => {
+        try { const event = await readEvent(result.event.id); if (mounted.current) { setResult({ ...result, event }); setPollError(''); await refresh(); } }
+        catch (err) { if (mounted.current) setPollError((err as Error).message); }
+      }} />
+    </View> : null}
+    {error ? <Text accessibilityRole="alert">{error}</Text> : null}
+    <Button title="Refresh flowers" onPress={() => void refresh()} />
+    <Button title="Open Garden" onPress={() => router.push('/garden-test')} />
+    {loading ? <ActivityIndicator /> : null}
+    {!loading && flowers.length === 0 ? <Text>No Event flowers yet.</Text> : null}
+    {flowers.map((flower) => {
+      const placed = placements.some((item) => item.flowerId === flower.id);
+      return <View key={flower.id} style={styles.entryCard}>
+        <Image source={{ uri: sourceFlowerImageUri(flower.img) }} style={{ width: 72, height: 72 }} resizeMode="contain" />
+        <Text>{flower.name} · {flower.mood}</Text><Text>{flower.event || ''}</Text>
+        <Text>Secondary emotions: {flower.sourceEvent?.secondaryEmotions.join(', ') || 'None'}</Text>
+        <Button title={placed ? 'Adjust position' : 'Plant flower'} onPress={() => placed
+          ? router.push({ pathname: '/garden-test', params: { mode: 'adjust', flowerId: flower.id } }) : plant(flower)} />
+      </View>;
+    })}
+    <Text>Flower coordinates are saved on this device. Your Events and canonical flowers are saved on the backend.</Text>
+  </ScrollView></SafeAreaView>;
 }
 
 const styles = StyleSheet.create({
