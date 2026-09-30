@@ -1,67 +1,208 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { apiRequest, configureApi } from './api';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification,
+  signInWithEmailAndPassword, signOut, type User } from 'firebase/auth';
+import { apiBaseUrl, apiRequest, configureApi } from './api';
 import { firebaseAuth } from './firebase';
+import { loadSessionExperience, type SessionExperience, type SessionUser } from './sessionExperience';
+import { authErrorMessage, profileError, registrationError, type ProfileInput } from './auth/registrationValidation';
 import { scopeFlowerPlacements } from '../components/garden/planting/plantingPersistence';
 import type { FlowerSession } from '../components/garden/planting/flowerDetailApi';
-interface SessionResponse { user: FlowerSession['user'] | null; needsProfile?: boolean }
-interface AuthState {
-  session: FlowerSession | null; loading: boolean; needsProfile: boolean; error: string;
-  login: (email: string, password: string) => Promise<void>;
-  completeProfile: (name: string) => Promise<void>;
-  logout: () => Promise<void>; retry: () => Promise<void>;
+
+export type AuthPhase = 'initializing' | 'signedOut' | 'registering' | 'verificationPending' | 'profileRequired' | 'signedIn';
+interface AuthSnapshot {
+  phase: AuthPhase;
+  session: FlowerSession | null;
+  experience: SessionExperience | null;
+  identity: { uid: string; email: string } | null;
+  error: string;
+  message: string;
 }
+interface AuthState extends AuthSnapshot {
+  loading: boolean;
+  needsProfile: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, confirmation: string) => Promise<void>;
+  resendVerification: () => Promise<void>;
+  checkVerification: () => Promise<void>;
+  completeProfile: (profile: ProfileInput | string) => Promise<void>;
+  logout: () => Promise<void>;
+  retry: () => Promise<void>;
+}
+const emptyState = (phase: AuthPhase = 'initializing', error = ''): AuthSnapshot => ({
+  phase, session: null, experience: null, identity: null, error, message: '',
+});
 const Context = createContext<AuthState | null>(null);
-export function useAuth() { const value = useContext(Context); if (!value) throw new Error('AuthProvider required'); return value; }
+export function useAuth() {
+  const value = useContext(Context);
+  if (!value) throw new Error('AuthProvider required');
+  return value;
+}
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<FlowerSession | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [needsProfile, setNeedsProfile] = useState(false);
-  const [error, setError] = useState('');
+  const [state, setState] = useState<AuthSnapshot>(() => emptyState());
   const version = useRef(0);
-  async function sync(name?: string) {
-    const generation = ++version.current;
-    setLoading(true); setError('');
+  const invalidatedUid = useRef<string | null>(null);
+  const signedOutError = useRef('');
+
+  function clearAccount(phase: AuthPhase = 'initializing', error = '') {
+    version.current++;
+    configureApi(null);
+    scopeFlowerPlacements(null);
+    setState(emptyState(phase, error));
+  }
+  const isCurrent = (user: User, generation: number) =>
+    generation === version.current && firebaseAuth().currentUser?.uid === user.uid;
+
+  async function logout(error = '') {
+    const auth = firebaseAuth();
+    // Reject late requests immediately, even if Firebase sign-out is delayed or
+    // fails. That same identity cannot restore a backend-rejected session.
+    invalidatedUid.current = auth.currentUser?.uid || null;
+    signedOutError.current = error;
+    clearAccount('initializing');
+    const generation = version.current;
+    try { await signOut(auth); }
+    catch { signedOutError.current = 'Your session is closed. Please try signing out again before signing in.'; }
+    if (generation === version.current) setState(emptyState('signedOut', signedOutError.current));
+  }
+
+  async function sync(profile?: ProfileInput) {
+    clearAccount();
+    const generation = version.current;
+    let user: User | null = null;
     try {
       const auth = firebaseAuth();
       await auth.authStateReady();
-      if (!auth.currentUser) { setSession(null); setNeedsProfile(false); return; }
-      configureApi({ apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ||
-        (typeof window !== 'undefined' && __DEV__ ? `${window.location.protocol}//${window.location.hostname}:3000` : ''),
-        getAccessToken: async (force) => { await auth.authStateReady(); return auth.currentUser?.getIdToken(force) || null; } });
-      const result = await apiRequest<SessionResponse>('/auth/session', 'POST', name
-        ? { name: name.trim(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, aiConsent: false }
-        : { deferProfileCreation: true });
       if (generation !== version.current) return;
-      setNeedsProfile(Boolean(result.needsProfile));
-      scopeFlowerPlacements(result.user?.id || null);
-      setSession(result.user ? { user: result.user } : null);
-    } catch (err) {
-      if (generation === version.current) { setSession(null); setError(err instanceof Error ? err.message : 'Unable to sign in.'); }
-    } finally { if (generation === version.current) setLoading(false); }
+      user = auth.currentUser;
+      if (!user || invalidatedUid.current === user.uid) {
+        setState(emptyState('signedOut', signedOutError.current));
+        return;
+      }
+      const identity = { uid: user.uid, email: user.email || '' };
+      if (!user.emailVerified) {
+        try { await user.reload(); }
+        catch (error) {
+          if (isCurrent(user, generation)) setState({ ...emptyState('verificationPending', authErrorMessage(error)), identity });
+          return;
+        }
+        if (!isCurrent(user, generation)) return;
+        if (!user.emailVerified) {
+          setState({ ...emptyState('verificationPending'), identity });
+          return; // Never call the backend with an unverified identity.
+        }
+      }
+      // Reload recovery can discover verification completed in another tab.
+      // Refresh claims before the backend verifies email_verified.
+      await user.getIdToken(true);
+      if (!isCurrent(user, generation)) return;
+      const capturedUser = user;
+      configureApi({ apiBaseUrl: apiBaseUrl(),
+        getAccessToken: async (force) => {
+          await auth.authStateReady();
+          if (!isCurrent(capturedUser, generation)) return null;
+          return capturedUser.getIdToken(force);
+        },
+        onUnauthorized: () => { if (isCurrent(capturedUser, generation)) void logout('Your session expired. Please sign in again.'); },
+      });
+      const result = await apiRequest<{ user: SessionUser | null; needsProfile?: boolean }>('/auth/session', 'POST', profile
+        ? { name: profile.name.trim(), avatar: profile.avatar || '🦋',
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+          preferredLocale: profile.preferredLocale || 'en', aiConsent: profile.aiConsent === true }
+        : { deferProfileCreation: true });
+      if (!isCurrent(user, generation)) return;
+      if (result.needsProfile) {
+        setState({ ...emptyState('profileRequired'), identity });
+        return;
+      }
+      if (!result.user?.id) throw new Error('Missing backend profile');
+      const experience = await loadSessionExperience();
+      if (!isCurrent(user, generation)) return;
+      if (experience.user.id !== result.user.id) throw new Error('Backend identity changed');
+      scopeFlowerPlacements(experience.user.id);
+      setState({ ...emptyState('signedIn'), identity, experience, session: { user: experience.user } });
+    } catch (error) {
+      if (generation !== version.current) return;
+      configureApi(null); scopeFlowerPlacements(null);
+      setState({ ...emptyState('signedOut', authErrorMessage(error)),
+        identity: user ? { uid: user.uid, email: user.email || '' } : null });
+    }
   }
+
   useEffect(() => {
     try {
-      const unsubscribe = onAuthStateChanged(firebaseAuth(), () => {
-        // Unmount private screens immediately when the Firebase identity changes.
-        setSession(null); setNeedsProfile(false); scopeFlowerPlacements(null); configureApi(null); void sync();
-      });
-      return () => { version.current++; unsubscribe(); configureApi(null); };
-    } catch (err) { setLoading(false); setError((err as Error).message); }
+      // Firebase's existing persisted identity is sufficient pending-registration
+      // recovery. No extra email marker, password, token or profile cache is stored.
+      const unsubscribe = onAuthStateChanged(firebaseAuth(), () => { void sync(); });
+      return () => { version.current++; unsubscribe(); configureApi(null); scopeFlowerPlacements(null); };
+    } catch (error) { setState(emptyState('signedOut', authErrorMessage(error))); }
   }, []);
-  const value: AuthState = { session, loading, needsProfile, error,
-    login: async (email, password) => {
-      setError('');
-      try { await signInWithEmailAndPassword(firebaseAuth(), email.trim(), password); }
-      catch (err) { setError((err as Error).message); }
+
+  async function login(email: string, password: string) {
+    invalidatedUid.current = null; signedOutError.current = '';
+    clearAccount();
+    const generation = version.current;
+    try {
+      await signInWithEmailAndPassword(firebaseAuth(), email.trim(), password);
+      // Firebase need not emit a UID change when retrying the same identity.
+      if (generation === version.current) await sync();
+    }
+    catch (error) { if (generation === version.current) setState(emptyState('signedOut', authErrorMessage(error))); }
+    // The Firebase identity observer performs the one session initialization.
+  }
+  async function register(email: string, password: string, confirmation: string) {
+    const validation = registrationError(email, password, confirmation);
+    if (validation) { setState((current) => ({ ...current, error: validation, message: '' })); return; }
+    invalidatedUid.current = null; signedOutError.current = '';
+    clearAccount('registering');
+    const generation = version.current;
+    try {
+      const { user } = await createUserWithEmailAndPassword(firebaseAuth(), email.trim(), password);
+      // Identity observer owns recovery; only this newly created user receives
+      // the email and feedback. A switch/logout while sending cannot alter it.
+      if (firebaseAuth().currentUser?.uid !== user.uid) return;
+      const sendingGeneration = version.current;
+      try {
+        await sendEmailVerification(user);
+        if (isCurrent(user, sendingGeneration)) setState((current) => ({ ...current,
+          message: 'Verification email sent. Check your inbox and spam folder.' }));
+      } catch (error) {
+        if (isCurrent(user, sendingGeneration)) setState((current) => ({ ...current, error: authErrorMessage(error) }));
+      }
+    } catch (error) { if (generation === version.current) setState(emptyState('signedOut', authErrorMessage(error))); }
+  }
+  async function verification(resend: boolean) {
+    if (state.phase !== 'verificationPending') return;
+    const user = firebaseAuth().currentUser;
+    if (!user || state.identity?.uid !== user.uid || invalidatedUid.current === user.uid) return;
+    const generation = version.current;
+    setState((current) => ({ ...current, error: '', message: '' }));
+    try {
+      await user.reload();
+      if (!isCurrent(user, generation)) return;
+      if (user.emailVerified) {
+        await user.getIdToken(true); // The backend must see the refreshed email_verified claim.
+        if (isCurrent(user, generation)) await sync();
+      } else if (resend) {
+        await sendEmailVerification(user);
+        if (isCurrent(user, generation)) setState((current) => ({ ...current,
+          message: 'Verification email sent. Check your inbox and spam folder.' }));
+      } else {
+        setState((current) => ({ ...current, message: 'Your email isn’t verified yet. Open the link in your inbox, then check again.' }));
+      }
+    } catch (error) { if (isCurrent(user, generation)) setState((current) => ({ ...current, error: authErrorMessage(error) })); }
+  }
+  const value: AuthState = { ...state,
+    loading: state.phase === 'initializing' || state.phase === 'registering',
+    needsProfile: state.phase === 'profileRequired',
+    login, register, resendVerification: () => verification(true), checkVerification: () => verification(false),
+    completeProfile: async (input) => {
+      if (state.phase !== 'profileRequired' || state.identity?.uid !== firebaseAuth().currentUser?.uid) return;
+      const profile = typeof input === 'string' ? { name: input } : input;
+      const error = profileError(profile);
+      if (error) { setState((current) => ({ ...current, error })); return; }
+      await sync(profile);
     },
-    completeProfile: (name) => sync(name), retry: () => sync(),
-    logout: async () => {
-      // In-flight requests are invalidated before Firebase sign-out resolves.
-      version.current++; scopeFlowerPlacements(null); configureApi(null); setSession(null); setNeedsProfile(false); setError('');
-      try { await signOut(firebaseAuth()); }
-      catch (err) { setError((err as Error).message); }
-    },
+    logout: () => logout(), retry: () => sync(),
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

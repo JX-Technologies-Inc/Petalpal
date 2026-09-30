@@ -1,6 +1,7 @@
 export interface ApiConnection {
   apiBaseUrl: string;
   getAccessToken: (forceRefresh?: boolean) => Promise<string | null>;
+  onUnauthorized?: () => void;
 }
 let connection: ApiConnection | null = null;
 export function configureApi(next: ApiConnection | null) { connection = next; }
@@ -17,19 +18,46 @@ export async function accessToken(forceRefresh = false) {
 export class ApiError extends Error {
   constructor(message: string, public status: number, public code?: string) { super(message); }
 }
+function invalidateUnauthorized(current: ApiConnection | null): never {
+  if (current && connection === current) {
+    // Invalidate once, before notifying the provider. Concurrent requests cannot
+    // restore this connection or invalidate a subsequently signed-in account.
+    configureApi(null);
+    current.onUnauthorized?.();
+  }
+  throw new ApiError('Your session expired. Please sign in again.', 401);
+}
+function invalidCredential(error: unknown) {
+  const code = (error as { code?: string })?.code;
+  return ['auth/user-disabled', 'auth/user-not-found', 'auth/user-token-expired',
+    'auth/invalid-user-token'].includes(code || '');
+}
 export async function apiRequest<T>(path: string, method = 'GET', body?: object,
   options: { headers?: Record<string, string>; signal?: AbortSignal } = {}): Promise<T> {
   const current = connection;
   for (let attempt = 0; attempt < 2; attempt++) {
-    const token = await accessToken(attempt === 1);
     if (connection !== current) throw new ApiError('Your session changed. Please try again.', 401);
-    if (!token) throw new ApiError('Sign in to PetalPal to continue.', 401);
+    let token: string | null;
+    try { token = current ? await current.getAccessToken(attempt === 1) : null; }
+    catch (error) {
+      if (connection !== current) throw new ApiError('Your session changed. Please try again.', 401);
+      if (!invalidCredential(error)) throw error; // Network errors are retryable, not logout signals.
+      if (attempt === 0) continue;
+      return invalidateUnauthorized(current);
+    }
+    if (connection !== current) throw new ApiError('Your session changed. Please try again.', 401);
+    if (!token) {
+      if (current) return invalidateUnauthorized(current);
+      throw new ApiError('Sign in to PetalPal to continue.', 401);
+    }
     const response = await fetch(`${apiBaseUrl()}${path}`, {
       method, signal: options.signal,
       headers: { ...options.headers, 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
+    if (connection !== current) throw new ApiError('Your session changed. Please try again.', 401);
     if (response.status === 401 && attempt === 0) continue;
+    if (response.status === 401) return invalidateUnauthorized(current);
     const data = await response.json().catch(() => null);
     if (connection !== current) throw new ApiError('Your session changed. Please try again.', 401);
     if (!response.ok) throw new ApiError(data?.error || `Request failed (${response.status}).`, response.status, data?.code);
