@@ -20,14 +20,18 @@ function TabLayout() {
   const pathname = usePathname();
 
   // DEV previews need a stable parent navigator outside NativeTabs' route list.
-  // Production keeps the existing tab flow; development still starts at Home.
+  // Functional Garden routes also need this navigator in exported builds.
+  // Other existing preview/tab routes retain their current presentation.
   let content;
-  if (__DEV__) {
+  if (__DEV__ || pathname === '/' || pathname === '/journal' || pathname === '/garden-history' || pathname.startsWith('/feature/')) {
     content = (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AnimatedSplashOverlay />
         <Stack>
-          <Stack.Screen name="index" options={{ title: 'Home' }} />
+          <Stack.Screen name="index" options={{ title: 'Garden', headerShown: false }} />
+          <Stack.Screen name="journal" options={{ title: 'Events / Flowers' }} />
+          <Stack.Screen name="garden-history" options={{ title: 'Garden history' }} />
+          <Stack.Screen name="feature/[feature]" options={{ title: 'PetalPal' }} />
           <Stack.Screen name="garden-test" options={{ title: 'Garden preview' }} />
           <Stack.Screen name="treehouse-test" options={{ title: 'Treehouse preview' }} />
           <Stack.Screen name="swing-test" options={{ title: 'Swing preview' }} />

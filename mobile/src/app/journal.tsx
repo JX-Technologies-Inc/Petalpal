@@ -66,7 +66,7 @@ export default function JournalScreen() {
   }, [result?.event.id, result?.event.emotionStatus, refresh]);
   function plant(flower: BackendFlower) {
     const record = plantingRecord(flower, session?.user.timezone, result?.flower?.id === flower.id ? result.event.localDate : undefined);
-    router.push({ pathname: '/garden-test', params: { mode: 'plant', flowerId: record.flowerId,
+    router.navigate({ pathname: '/', params: { mode: 'plant', flowerId: record.flowerId,
       journalEntryId: '', plantedDate: record.plantedDate, month: String(record.month),
       flowerName: record.flowerName, speciesCode: record.speciesCode, mood: record.mood } });
   }
@@ -93,7 +93,7 @@ export default function JournalScreen() {
     </View> : null}
     {error ? <Text accessibilityRole="alert">{error}</Text> : null}
     <Button title="Refresh flowers" onPress={() => void refresh()} />
-    <Button title="Open Garden" onPress={() => router.push('/garden-test')} />
+    <Button title="Open Garden" onPress={() => router.dismissTo('/')} />
     {loading ? <ActivityIndicator /> : null}
     {!loading && flowers.length === 0 ? <Text>No Event flowers yet.</Text> : null}
     {flowers.map((flower) => {
@@ -103,7 +103,7 @@ export default function JournalScreen() {
         <Text>{flower.name} · {flower.mood}</Text><Text>{flower.event || ''}</Text>
         <Text>Secondary emotions: {flower.sourceEvent?.secondaryEmotions.join(', ') || 'None'}</Text>
         <Button title={placed ? 'Adjust position' : 'Plant flower'} onPress={() => placed
-          ? router.push({ pathname: '/garden-test', params: { mode: 'adjust', flowerId: flower.id } }) : plant(flower)} />
+          ? router.navigate({ pathname: '/', params: { mode: 'adjust', flowerId: flower.id } }) : plant(flower)} />
       </View>;
     })}
     <Text>Your Events are saved to your account. Garden positions stay on this device.</Text>

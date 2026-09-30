@@ -71,7 +71,7 @@ export function ownsFlower(flower: FlowerPlacementRecord, access: FlowerAccess):
 
 export function resolveFlowerDetail(flower: FlowerPlacementRecord, source?: FlowerSourceDetail | null) {
   if (source?.id !== flower.flowerId) source = null;
-  const entry = findJournalEntry(flower.flowerId, flower.journalEntryId);
+  const entry = flower.sourceType || flower.sourceEventId ? undefined : findJournalEntry(flower.flowerId, flower.journalEntryId);
   return {
     name: source?.name || flower.flowerName || entry?.flowerName || 'Garden Flower',
     mood: source?.mood || entry?.mood || flower.mood || 'Unknown',

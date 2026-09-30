@@ -1,14 +1,17 @@
-import { Button, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { useEffect } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import GardenScene from '../components/garden/GardenScene';
+import { GardenHud } from '../components/garden/GardenHud';
 import { useAuth } from '../services/auth';
+
 export default function HomeScreen() {
-  const { session, logout, error } = useAuth();
-  return <View style={{ flex: 1, justifyContent: 'center', padding: 24, gap: 16 }}>
-    <Text style={{ fontSize: 26 }}>PetalPal</Text>
-    <Text>Welcome, {session?.user.name}</Text>
-    <Button title="Events and flowers" onPress={() => router.push('/journal')} />
-    <Button title="Open Garden" onPress={() => router.push('/garden-test')} />
-    {error ? <Text accessibilityRole="alert">{error}</Text> : null}
-    <Button title="Sign out" onPress={() => void logout()} />
-  </View>;
+  const { session } = useAuth();
+  useEffect(() => { void SplashScreen.hideAsync(); }, []);
+  if (!session) return null;
+  return <GestureHandlerRootView style={{ flex: 1 }}>
+    <GardenScene key={session.user.id} initialWaterfallVersion="v2" session={session} gardenOwnerUserId={session.user.id} backendMode showDevControls={false}>
+      <GardenHud />
+    </GardenScene>
+  </GestureHandlerRootView>;
 }

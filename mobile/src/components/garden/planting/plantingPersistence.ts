@@ -4,6 +4,13 @@ import type { FlowerMessage } from './flowerDetailData';
 
 export interface FlowerPlacementRecord extends FlowerPlacement {
   supportCount: number;
+  sourceType?: import('../../../services/garden').FlowerSource;
+  dailyCheckInId?: string;
+  placementOrigin?: 'LOCAL' | 'FALLBACK';
+  variant?: string;
+  rarity?: string;
+  growthState?: string;
+  season?: string;
   sourceEventId?: string;
   secondaryEmotions?: string[];
   colorAccent?: string;

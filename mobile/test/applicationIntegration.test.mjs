@@ -122,7 +122,7 @@ test('Event screen requires a user-selected Primary and retries a failed save wi
     'react-native': { ActivityIndicator: 'ActivityIndicator', Button: 'Button', Image: 'Image', Pressable: 'Pressable',
       ScrollView: 'ScrollView', Text: 'Text', TextInput: 'TextInput', View: 'View', StyleSheet: { create: (styles) => styles } },
     'react-native-safe-area-context': { SafeAreaView: 'SafeAreaView' },
-    'expo-router': { router: { push() {} }, useFocusEffect() {} },
+    'expo-router': { router: { push() {}, navigate() {}, dismissTo() {} }, useFocusEffect() {} },
     '../services/auth': { useAuth: () => ({ session: { user: { id: 'owner' } } }) },
     '../services/events': {
       PRIMARY_MOODS: ['SUNNY_BLOOM','QUIET_BLOOM'], memoryMessage: () => 'Memory pending', emotionMessage: () => 'Event saved with safe fallback',

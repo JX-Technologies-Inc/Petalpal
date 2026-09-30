@@ -21,6 +21,7 @@ export function loadPlantingModules(storage, react, nativeStorage, web = true, d
     const requireLocal = (request) => {
       if (request in dependencies) return dependencies[request];
       if (request === 'react' && react) return react;
+      if (request === 'expo-router' && react) return { useFocusEffect: (fn) => react.useEffect(fn, [fn]) };
       if (request === '@react-native-async-storage/async-storage') return nativeStorage ?? {};
       if (request.startsWith('@/assets/') || request.endsWith('.png')) return request;
       if (request.startsWith('.')) {

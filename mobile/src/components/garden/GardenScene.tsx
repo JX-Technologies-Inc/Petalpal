@@ -184,6 +184,8 @@ const MIN_CAMERA_ZOOM = 0.8;
 const MAX_CAMERA_ZOOM = 3;
 
 export type GardenSceneProps = {
+  children?: import('react').ReactNode;
+  showDevControls?: boolean;
   session?: FlowerSession;
   backendMode?: boolean;
   initialPreviewMode?: boolean;
@@ -191,7 +193,7 @@ export type GardenSceneProps = {
   gardenOwnerUserId?: string;
 };
 
-function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion = 'legacy' }: GardenSceneProps = {}) {
+function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, children }: GardenSceneProps = {}) {
   const planting = usePlanting();
   const [useMonthlyGrowth, setUseMonthlyGrowth] = useState(USE_MONTHLY_GARDEN_GROWTH_V1_1);
   const {
@@ -994,11 +996,13 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
     <View
       style={styles.scene}
       onPointerMove={handlePointerMove}
-      onLayout={({ nativeEvent: { layout } }) =>
-        setViewport({ width: layout.width, height: layout.height })
-      }
+      onLayout={({ nativeEvent: { layout } }) => {
+        // Hidden stack screens report zero size. Keep the existing Skia canvas
+        // alive while away instead of destroying and recreating its GPU surface.
+        if (layout.width > 0 && layout.height > 0) setViewport({ width: layout.width, height: layout.height });
+      }}
     >
-      {planting.detailError && <Text accessibilityRole="alert" style={{ position: "absolute", bottom: 90, left: 16, right: 16, zIndex: 30, backgroundColor: "white", padding: 12 }}>{planting.detailError}</Text>}
+      {planting.detailError ? <Text accessibilityRole="alert" style={{ position: "absolute", bottom: 90, left: 16, right: 16, zIndex: 30, backgroundColor: "white", padding: 12 }}>{planting.detailError}</Text> : null}
       {/* Direct Waterfall gestures remain disabled while the stable numeric editor is active. */}
       {fit > 0 && (
         <GestureDetector gesture={cameraGesture}>
@@ -1148,8 +1152,10 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       {/* Flower Detail Modal */}
       <FlowerDetailModal />
 
+      {children}
+
       {/* Floating button when in Preview Mode */}
-      {__DEV__ && previewMode && (
+      {__DEV__ && showDevControls && previewMode && (
         <Pressable
           accessibilityRole="button"
           onPress={() => setPreviewMode(false)}
