@@ -62,9 +62,10 @@ export default function FlowerDetailModal() {
   };
 
   const existingImage = detail.image.split('/').pop()?.toLowerCase().replace('.png', '');
+  const imageUri = sourceFlowerImageUri(detail.image);
   const flowerImg = existingImage && FLOWER_ASSETS[existingImage]
     ? FLOWER_ASSETS[existingImage]
-    : detail.image ? { uri: sourceFlowerImageUri(detail.image) } : getImage(detail.name);
+    : imageUri ? { uri: imageUri } : getImage(detail.name);
 
   const plantedDate = new Date(selectedFlower.plantedDate);
   const formattedDate = Number.isNaN(plantedDate.getTime()) ? '' : plantedDate.toLocaleDateString(

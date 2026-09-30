@@ -1,0 +1,90 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { router } from 'expo-router';
+import { useAuth } from '../services/auth';
+import { createEvent, eventFlowers, plantingRecord, readEvent,
+  type BackendFlower, type EventResponse, type PrimaryMood } from '../services/events';
+import { loadFlowerPlacements, type FlowerPlacementRecord } from '../components/garden/planting/plantingPersistence';
+
+// Existing Event orchestration, kept independent of the replaceable panel.
+export function useEventJournal(onGardenChanged?: () => void) {
+  const { session } = useAuth();
+  const [flowers, setFlowers] = useState<BackendFlower[]>([]);
+  const [placements, setPlacements] = useState<FlowerPlacementRecord[]>([]);
+  const [content, setContent] = useState('');
+  const [mood, setMood] = useState<PrimaryMood | null>(null);
+  const [result, setResult] = useState<EventResponse | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [pollError, setPollError] = useState('');
+  const pending = useRef<{ content: string; mood: PrimaryMood; key: string } | null>(null);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const refresh = useCallback(async () => {
+    if (!session) return;
+    setLoading(true); setError('');
+    try {
+      const [remote, layout] = await Promise.all([eventFlowers(session.user.id), loadFlowerPlacements()]);
+      if (mounted.current) { setFlowers(remote); setPlacements(layout); }
+    } catch (err) { if (mounted.current) setError((err as Error).message); }
+    finally { if (mounted.current) setLoading(false); }
+  }, [session]);
+  useEffect(() => { void refresh(); }, [refresh]);
+  async function saveEvent() {
+    if (busy || !content.trim() || !session || !mood) return;
+    setBusy(true); setError('');
+    const draft = pending.current;
+    // Keep the same key after transport failure; a retry cannot duplicate an Event.
+    if (!draft || draft.content !== content.trim() || draft.mood !== mood) pending.current = {
+      content: content.trim(), mood, key: `mobile-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    };
+    try {
+      const created = await createEvent(pending.current!.content, mood, pending.current!.key);
+      if (!mounted.current) return;
+      pending.current = null; setResult(created); setContent('');
+      // POST can omit sourceEvent. Read the owner Garden projection before showing
+      // the new Flower, including already-completed emotion enrichment.
+      await refresh();
+      if (!mounted.current) return;
+      onGardenChanged?.();
+    } catch (err) { if (mounted.current) setError((err as Error).message); }
+    finally { if (mounted.current) setBusy(false); }
+  }
+  useEffect(() => {
+    if (!result || !['PENDING','RUNNING'].includes(result.event.emotionStatus)) return;
+    let cancelled = false; let timer: ReturnType<typeof setTimeout>; let attempts = 0;
+    async function poll() {
+      try {
+        const event = await readEvent(result!.event.id);
+        if (cancelled) return;
+        setPollError('');
+        if (!['PENDING','RUNNING'].includes(event.emotionStatus)) {
+          setResult((current) => current ? { ...current, event } : null); void refresh(); onGardenChanged?.(); return;
+        }
+      } catch (err) { if (!cancelled) setPollError((err as Error).message); }
+      if (!cancelled && ++attempts < 4) timer = setTimeout(poll, 15000);
+    }
+    timer = setTimeout(poll, 10000);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [result?.event.id, result?.event.emotionStatus, refresh, onGardenChanged]);
+  function plant(flower: BackendFlower) {
+    const record = plantingRecord(flower, session?.user.timezone, result?.flower?.id === flower.id ? result.event.localDate : undefined);
+    router.navigate({ pathname: '/', params: { mode: 'plant', flowerId: record.flowerId,
+      journalEntryId: '', plantedDate: record.plantedDate, month: String(record.month),
+      flowerName: record.flowerName, speciesCode: record.speciesCode, mood: record.mood } });
+  }
+  async function refreshEventStatus() {
+    if (!result) return;
+    try {
+      const event = await readEvent(result.event.id);
+      if (mounted.current) { setResult({ ...result, event }); setPollError(''); await refresh(); onGardenChanged?.(); }
+    } catch (err) { if (mounted.current) setPollError((err as Error).message); }
+  }
+  function placeFlower(flower: BackendFlower) {
+    if (placements.some(item => item.flowerId === flower.id)) {
+      router.navigate({ pathname: '/', params: { mode: 'adjust', flowerId: flower.id } });
+    } else plant(flower);
+  }
+  return { flowers, placements, content, setContent, mood, setMood, result, busy, loading,
+    error, pollError, refresh, saveEvent, refreshEventStatus, placeFlower };
+}

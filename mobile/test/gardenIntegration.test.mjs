@@ -144,12 +144,15 @@ test('Garden hydration saves and deletes one flower without dropping unplaced ba
   assert.equal(await current.deleteSelectedFlower(), true); current = await state.hooks.flush();
   assert.deepEqual(plain(current.placements.map(p => p.flowerId)), ['daily', 'historical']);
 });
-test('Garden HUD uses accurate statuses, real route dispatch, and hides controls during placement/detail', () => {
+test('Garden HUD opens local overlays without navigation/refresh and closes to the same Garden', async () => {
+  const hooks = hookHarness();
   let planting = { activeMode: 'normal', selectedFlower: null, isGardenLoading: false, gardenError: '', refreshGarden() { calls.push('refresh'); } };
   const calls = [];
-  const load = loadPlantingModules(undefined, undefined, undefined, true, {
-    'expo-router': { router: { push: route => calls.push(route) } },
+  const load = loadPlantingModules(undefined, hooks.react, undefined, true, {
+    'expo-router': { router: { push: route => calls.push(route), setParams: params => calls.push(params) }, useLocalSearchParams: () => ({}) },
     'expo-symbols': { SymbolView: 'Symbol' },
+    '../features/FeatureOverlay': { FeatureOverlay: 'FeatureOverlay' },
+    '../features/FeatureUI': { FEATURE_COLORS: { ink: '#253C40' } },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) },
     'react-native': { View: 'View', Pressable: 'Pressable', Text: 'Text', ActivityIndicator: 'ActivityIndicator', StyleSheet: { create: x => x, absoluteFill: {} } },
     './planting/PlantingContext': { usePlanting: () => planting },
@@ -157,15 +160,23 @@ test('Garden HUD uses accurate statuses, real route dispatch, and hides controls
   const { GardenHud } = load('../GardenHud');
   const nodes = tree => Array.isArray(tree) ? tree.flatMap(nodes) : tree && typeof tree === 'object'
     ? [tree, ...nodes(tree.props?.children)] : [];
-  const buttons = nodes(GardenHud()).filter(n => n.props?.testID?.startsWith('hud-'));
+  let tree = hooks.mount(() => GardenHud());
+  const buttons = nodes(tree).filter(n => n.props?.testID?.startsWith('hud-'));
   assert.equal(buttons.length, 10);
   assert.equal(buttons[0].props.accessibilityLabel, 'Garden, REAL');
   assert.equal(buttons[1].props.accessibilityLabel, 'Events / Flowers, REAL');
-  for (const button of buttons) button.props.onPress();
-  assert.deepEqual(calls, ['refresh', '/journal', '/feature/daily', '/feature/friends', '/feature/visit', '/feature/fairy', '/feature/profile', '/feature/weekly', '/feature/monthly', '/feature/settings']);
-  planting = { ...planting, activeMode: 'planting' }; assert.equal(GardenHud(), null);
-  planting = { ...planting, activeMode: 'normal', selectedFlower: {} }; assert.equal(GardenHud(), null);
+  for (const button of buttons.slice(1)) {
+    button.props.onPress(); tree = await hooks.flush();
+    const overlay = nodes(tree).find(n => n.type === 'FeatureOverlay');
+    assert.equal(overlay.props.feature.id, button.props.testID.replace('hud-', ''));
+    overlay.props.onClose(); tree = await hooks.flush();
+    assert.equal(nodes(tree).find(n => n.type === 'FeatureOverlay').props.feature, undefined);
+  }
+  buttons[0].props.onPress(); await hooks.flush(); assert.deepEqual(calls, []);
+  planting = { ...planting, activeMode: 'planting' }; assert.equal(hooks.render(), null);
+  planting = { ...planting, activeMode: 'normal', selectedFlower: {} }; assert.equal(hooks.render(), null);
 });
+
 test('Garden hydration failure is retryable without substituting mock flowers', async () => {
   let fail = true;
   const state = providerSetup(async () => fail ? response({ error: 'Unreachable' }, 503) : response(fixture()));

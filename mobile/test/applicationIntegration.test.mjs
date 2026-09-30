@@ -4,7 +4,7 @@ import { loadPlantingModules } from './loadPlantingModules.mjs';
 import { hookHarness } from './flowerDetail.test.mjs';
 const response = (data, status = 200) => ({ ok: status < 400, status, json: async () => data });
 function setup(fetch, extras = {}, react) {
-  const load = loadPlantingModules(undefined, react, {}, false, { fetch, ...extras });
+  const load = loadPlantingModules(undefined, react, { getItem: async () => null }, false, { fetch, ...extras });
   return { api: load('../../../services/api'), events: load('../../../services/events'), load };
 }
 test('authenticated requests refresh once on 401, preserve idempotency and reject anonymous requests', async () => {
@@ -115,17 +115,18 @@ test('Firebase auth lifecycle syncs backend identity, signs out, and prevents la
   assert.equal(signedOut, true); assert.equal(state.session, null);
 });
 
-test('Event screen requires a user-selected Primary and retries a failed save without duplicating its key', async () => {
+test('Event panel controller requires a user-selected Primary and retries a failed save without duplicating its key', async () => {
   const hooks = hookHarness(); const calls = [];
+  const eventSession = { user: { id: 'owner' } }; let gardenRefreshes = 0;
   const fakeEvent = { id: 'event-ui', primaryGardenMood: 'SUNNY_BLOOM', secondaryEmotions: [], emotionStatus: 'FAILED' };
   const { load } = setup(async () => response({}), {
     'react-native': { ActivityIndicator: 'ActivityIndicator', Button: 'Button', Image: 'Image', Pressable: 'Pressable',
       ScrollView: 'ScrollView', Text: 'Text', TextInput: 'TextInput', View: 'View', StyleSheet: { create: (styles) => styles } },
     'react-native-safe-area-context': { SafeAreaView: 'SafeAreaView' },
     'expo-router': { router: { push() {}, navigate() {}, dismissTo() {} }, useFocusEffect() {} },
-    '../services/auth': { useAuth: () => ({ session: { user: { id: 'owner' } } }) },
+    '../services/auth': { useAuth: () => ({ session: eventSession }) },
     '../services/events': {
-      PRIMARY_MOODS: ['SUNNY_BLOOM','QUIET_BLOOM'], memoryMessage: () => 'Memory pending', emotionMessage: () => 'Event saved with safe fallback',
+      eventFlowers: async () => [],
       createEvent: async (content, mood, key) => {
         calls.push({ content, mood, key }); if (calls.length === 1) throw new Error('Temporary network failure');
         return { event: fakeEvent, flower: null, memoryJob: { id: 'job-ui', status: 'PENDING' } };
@@ -133,19 +134,92 @@ test('Event screen requires a user-selected Primary and retries a failed save wi
     },
     '../components/garden/planting/flowerDetailApi': { sourceFlowerImageUri: (path) => path },
   }, hooks.react);
-  const screen = load('../../../app/journal');
-  const nodes = (tree) => Array.isArray(tree) ? tree.flatMap(nodes) : tree && typeof tree === 'object'
-    ? [tree, ...nodes(tree.props?.children)] : [];
-  let tree = hooks.mount(() => screen.default());
-  nodes(tree).find((n) => n.type === 'TextInput').props.onChangeText('Explicit owner Event'); tree = await hooks.flush();
-  assert.equal(nodes(tree).find((n) => n.props.title === 'Save Event').props.disabled, true);
-  nodes(tree).find((n) => n.props.accessibilityRole === 'radio').props.onPress(); tree = await hooks.flush();
-  assert.equal(nodes(tree).find((n) => n.props.title === 'Save Event').props.disabled, false);
-  await nodes(tree).find((n) => n.props.title === 'Save Event').props.onPress(); tree = await hooks.flush();
-  await nodes(tree).find((n) => n.props.title === 'Save Event').props.onPress(); tree = await hooks.flush();
+  const { useEventJournal } = load('../../../hooks/useEventJournal');
+  let state = hooks.mount(() => useEventJournal(() => { gardenRefreshes++; }));
+  state.setContent('Explicit owner Event'); state = await hooks.flush();
+  await state.saveEvent(); assert.equal(calls.length, 0);
+  state.setMood('SUNNY_BLOOM'); state = await hooks.flush();
+  await state.saveEvent(); state = await hooks.flush();
+  assert.equal(state.error, 'Temporary network failure');
+  await state.saveEvent(); state = await hooks.flush();
   assert.equal(calls.length, 2); assert.equal(calls[0].key, calls[1].key);
   assert.equal(calls[1].mood, 'SUNNY_BLOOM'); assert.equal(calls[1].content, 'Explicit owner Event');
-  assert.equal(nodes(tree).find((n) => n.type === 'TextInput').props.value, '');
+  assert.equal(state.content, ''); assert.equal(state.result.event.emotionStatus, 'FAILED');
+  assert.equal(gardenRefreshes, 1);
+
+});
+
+test('completed Event reconciles its incomplete POST Flower with canonical Garden data before displaying secondaries', async () => {
+  const hooks = hookHarness();
+  const session = { user: { id: 'owner' } };
+  const event = { id: 'event-new', primaryGardenMood: 'FIRE_BLOOM', localDate: '2026-09-30',
+    secondaryEmotions: ['fear', 'disappointment'], emotionStatus: 'SUCCESS' };
+  const flower = { id: 'flower-new', userId: 'owner', sourceEventId: event.id, name: 'Tulip',
+    mood: 'FIRE_BLOOM', speciesCode: 'TULIP', img: '🌷', createdAt: '2026-09-30T12:00:00Z', supportCount: 0 };
+  const canonical = { ...flower, sourceEvent: { secondaryEmotions: event.secondaryEmotions } };
+  let gardenReads = 0, reconcile, reconciliationStarted;
+  const started = new Promise(resolve => { reconciliationStarted = resolve; });
+  const { api, load } = setup(async (url, options) => {
+    if (url === '/events') {
+      assert.equal(JSON.parse(options.body).primaryGardenMood, 'FIRE_BLOOM');
+      return response({ event, flower, memoryJob: null }, 201);
+    }
+    assert.equal(url, '/users/owner/garden');
+    if (++gardenReads === 1) return response({ flowers: [] });
+    if (gardenReads === 2) {
+      reconciliationStarted();
+      return new Promise(resolve => { reconcile = () => resolve(response({ flowers: [canonical] })); });
+    }
+    return response({ flowers: [canonical] });
+  }, {
+    '../services/auth': { useAuth: () => ({ session }) },
+    'expo-router': { router: { navigate() {} } },
+  }, hooks.react);
+  api.configureApi({ apiBaseUrl: '', getAccessToken: async () => 'test-token' });
+  const { useEventJournal } = load('../../../hooks/useEventJournal');
+  let state = hooks.mount(() => useEventJournal());
+  state = await hooks.flush();
+  state.setContent('Synthetic verification Event'); state.setMood('FIRE_BLOOM');
+  state = await hooks.flush();
+  const saving = state.saveEvent(); await started;
+  state = await hooks.flush();
+  assert.equal(state.result.event.secondaryEmotions.join(', '), 'fear, disappointment');
+  assert.equal(state.flowers.length, 0, 'Do not insert the incomplete POST Flower as None');
+  reconcile(); await saving; state = await hooks.flush();
+  assert.equal(gardenReads, 2, 'Canonical reconciliation is automatic, without manual Refresh');
+  assert.equal(state.flowers[0].sourceEvent.secondaryEmotions.join(', '), 'fear, disappointment');
+
+  const { load: panelLoad } = setup(async () => { throw Error('Unexpected artwork request'); }, {
+    '../../hooks/useEventJournal': { useEventJournal: () => state },
+    'react-native': { ActivityIndicator: 'ActivityIndicator', Image: 'Image', Pressable: 'Pressable',
+      Text: 'Text', TextInput: 'TextInput', View: 'View', StyleSheet: { create: styles => styles } },
+    './FeatureUI': { FEATURE_COLORS: {}, FeatureActionButton: 'Action', FeatureSection: 'Section', ui: {} },
+  });
+  const panel = panelLoad('../../features/EventsPanel').EventsPanel({ onClose() {} });
+  const nodes = [];
+  function visit(node) {
+    if (Array.isArray(node)) node.forEach(visit);
+    else if (node && typeof node === 'object') { nodes.push(node); visit(node.props?.children); }
+  }
+  visit(panel);
+  const labels = nodes.filter(node => node.type === 'Text' && Array.isArray(node.props.children) &&
+    node.props.children[0] === 'Secondary emotions: ').map(node => node.props.children[1]);
+  assert.deepEqual(labels, ['fear, disappointment', 'fear, disappointment']);
+  assert.equal(nodes.some(node => node.type === 'Image'), false, 'Backend emoji is artwork, not a URL');
+  assert.equal(nodes.some(node => node.type === 'Text' && node.props.children === '🌷'), true);
+
+  await state.refresh(); state = await hooks.flush();
+  assert.equal(state.flowers[0].sourceEvent.secondaryEmotions.join(', '), labels[1], 'Later Garden refresh stays consistent');
+});
+
+test('Flower artwork adapter rejects emoji URLs while preserving public image paths without auth material', () => {
+  const { api, load } = setup(async () => { throw Error('Artwork must not request a private API'); });
+  api.configureApi({ apiBaseUrl: 'http://localhost:3107', getAccessToken: async () => 'test-token' });
+  const { sourceFlowerImageUri } = load('flowerDetailApi');
+  for (const image of ['🌷', '🥀', '🪻', '🌻', '🌼', '🌸', '🪷', '']) assert.equal(sourceFlowerImageUri(image), null);
+  assert.equal(sourceFlowerImageUri('/flowers/tulip.png'), 'http://localhost:3107/flowers/tulip.png');
+  assert.equal(sourceFlowerImageUri('https://art.example/tulip.webp'), 'https://art.example/tulip.webp');
+  assert.equal(sourceFlowerImageUri('data:image/png;base64,test'), 'data:image/png;base64,test');
 });
 
 test('unsupported explicit species are safely unplantable without being reinterpreted', () => {

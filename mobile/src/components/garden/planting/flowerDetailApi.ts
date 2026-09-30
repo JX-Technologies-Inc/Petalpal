@@ -8,7 +8,13 @@ export interface FlowerSession {
 
 export function configureFlowerSession(next: ApiConnection | null): void { configureApi(next); }
 
-export function sourceFlowerImageUri(image: string): string {
+// The backend flower catalog also uses emoji artwork, which is not a URL.
+function isFlowerImagePath(image: string): boolean {
+  return /^(https?:|data:)/i.test(image) || /\.(png|jpe?g|gif|webp|svg|avif)(?:[?#].*)?$/i.test(image);
+}
+
+export function sourceFlowerImageUri(image: string): string | null {
+  if (!isFlowerImagePath(image)) return null;
   if (/^(https?:|data:)/i.test(image)) return image;
   return `${apiBaseUrl()}/${image.replace(/^\//, '')}`;
 }
