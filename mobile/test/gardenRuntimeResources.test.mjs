@@ -159,7 +159,7 @@ test('Web surface context keeps its identity and receives a bounded texture budg
   assert.equal(kit.MakeWebGLContext(42), context);
   assert.equal(kit.MakeWebGLContext(0), null);
   assert.deepEqual(handles, [42, 0]);
-  assert.deepEqual(limits, [608 * 1024 * 1024]);
+  assert.deepEqual(limits, [384 * 1024 * 1024]);
   assert.equal(GARDEN_WEB_TEXTURE_CACHE_BYTES, limits[0]);
 });
 

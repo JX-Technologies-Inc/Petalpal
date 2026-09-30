@@ -1,10 +1,10 @@
 import type { CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
 
-// Measured development artwork represents ~552 MiB of RGBA pixels.
-// 384/512/576 MiB budgets caused repeated uploads and elevated GPU CPU.
-// 608 MiB is the lowest tested stable budget, including repeated pans.
+// Lossless transparent-border copies reduce decoded Garden artwork from
+// ~552 MiB to ~278 MiB. 384 MiB leaves headroom for render intermediates and
+// repeated pans; the old full-world artwork needed a 608 MiB ceiling.
 // This is a demand-filled ceiling, not an allocation or an image-retention cache.
-export const GARDEN_WEB_TEXTURE_CACHE_BYTES = 608 * 1024 * 1024;
+export const GARDEN_WEB_TEXTURE_CACHE_BYTES = 384 * 1024 * 1024;
 
 type WebCanvasKit = CanvasKit & {
   // CanvasKit's WebGL registry cleanup (present in the bundled runtime).
