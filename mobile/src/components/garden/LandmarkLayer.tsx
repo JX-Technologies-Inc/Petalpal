@@ -217,11 +217,11 @@ export default function LandmarkLayer({
       )}
       </Group>}
       <TreehouseEntity x={x} y={y} scale={scale}
-        animationEnabled lightingEnabled={treehouseLightingEnabled} onDebugStatus={onDebugStatus} />
+        animationEnabled={waterfallActive} lightingEnabled={treehouseLightingEnabled} onDebugStatus={onDebugStatus} />
       {/* Map-level landmark order: Treehouse, then Swing. Internal Swing stacking is untouched. */}
       <Group origin={swingCenter} transform={swingMapTransform}>
         <SwingEntity x={swing.x} y={swing.y} scale={swing.scale}
-          animationEnabled occupied={false} ribbonAnimationEnabled
+          animationEnabled={waterfallActive} occupied={false} ribbonAnimationEnabled={waterfallActive}
           lanternLightingEnabled={swingLightingEnabled} />
       </Group>
       {/* Moon Bed is a separate map landmark above the land layer. */}
@@ -233,7 +233,7 @@ export default function LandmarkLayer({
             <MoonBedIntegrationShadow opacity={moonBedShadowOpacity} />
           </Group>
         )}
-        <MoonBedEntity x={moonBed.x} y={moonBed.y} scale={moonBed.scale} animationEnabled />
+        <MoonBedEntity x={moonBed.x} y={moonBed.y} scale={moonBed.scale} animationEnabled={waterfallActive} />
       </Group>
       <Group origin={gardenArchCenter}
         transform={[{ rotate: gardenArchPlacement.rotation * Math.PI / 180 }]}>

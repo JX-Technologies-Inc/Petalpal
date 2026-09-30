@@ -1,5 +1,32 @@
 import { LoadSkiaWeb } from '@shopify/react-native-skia/lib/module/web/LoadSkiaWeb';
+import { configureGardenWebCanvasCache, isOwnedGardenWebView } from './src/components/garden/webCanvasCache';
+import { configureGardenWebNativeOwnership, configureGardenWebRootCleanup } from './src/components/garden/webNativeHandles';
 
 LoadSkiaWeb({ locateFile: () => '/canvaskit.wasm' })
-  .then(() => require('expo-router/entry'))
+  .then(() => {
+    configureGardenWebCanvasCache(globalThis.CanvasKit);
+    // Configure before the public entry binds useImage's encoded-image factory.
+    const { Skia } = require('@shopify/react-native-skia/lib/module/skia/Skia');
+    // Exact Web classes from the pinned Skia 2.6.2 dependency.
+    const { JsiSkPaint } = require('@shopify/react-native-skia/lib/module/skia/web/JsiSkPaint');
+    const { JsiSkPictureRecorder } = require('@shopify/react-native-skia/lib/module/skia/web/JsiSkPictureRecorder');
+    const { JsiSkRuntimeEffect } = require('@shopify/react-native-skia/lib/module/skia/web/JsiSkRuntimeEffect');
+    const { JsiSkImage } = require('@shopify/react-native-skia/lib/module/skia/web/JsiSkImage');
+    configureGardenWebNativeOwnership(JsiSkPaint.prototype, [
+      [Skia, ['Paint', 'PictureRecorder']],
+      [JsiSkPictureRecorder.prototype, ['finishRecordingAsPicture']],
+      [JsiSkPaint.prototype, ['copy']],
+      [Skia.Path, ['MakeFromSVGString']],
+      [Skia.Image, ['MakeImageFromEncoded']],
+      [Skia.MaskFilter, ['MakeBlur']],
+      [Skia.Shader, ['MakeLinearGradient', 'MakeRadialGradient', 'MakeSweepGradient', 'MakeTwoPointConicalGradient', 'MakeBlend']],
+      [Skia.ColorFilter, ['MakeMatrix', 'MakeCompose', 'MakeBlend']],
+      [Skia.ImageFilter, ['MakeBlur', 'MakeDropShadow', 'MakeCompose']],
+      [JsiSkRuntimeEffect.prototype, ['makeShader', 'makeShaderWithChildren']],
+      [JsiSkImage.prototype, ['makeShaderOptions', 'makeShaderCubic']],
+    ]);
+    const { SkiaSGRoot } = require('@shopify/react-native-skia/lib/module/sksg/Reconciler');
+    configureGardenWebRootCleanup(SkiaSGRoot.prototype, nativeId => isOwnedGardenWebView(globalThis.SkiaViewApi, nativeId));
+    return require('expo-router/entry');
+  })
   .catch(error => console.error('Garden graphics initialization failed', error));
