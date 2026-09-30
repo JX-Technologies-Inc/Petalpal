@@ -106,7 +106,7 @@ export default function JournalScreen() {
           ? router.push({ pathname: '/garden-test', params: { mode: 'adjust', flowerId: flower.id } }) : plant(flower)} />
       </View>;
     })}
-    <Text>Flower coordinates are saved on this device. Your Events and canonical flowers are saved on the backend.</Text>
+    <Text>Your Events are saved to your account. Garden positions stay on this device.</Text>
   </ScrollView></SafeAreaView>;
 }
 

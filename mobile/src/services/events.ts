@@ -47,5 +47,5 @@ export function memoryMessage(job: EventResponse['memoryJob']) {
   if (job.status === 'SUCCEEDED') return 'Memory processing completed.';
   if (job.status === 'FAILED') return 'Memory processing failed. Your Event remains saved.';
   if (job.status === 'CANCELLED') return 'Memory processing was cancelled. Your Event remains saved.';
-  return 'Memory work is pending. Its updated status is not exposed by the current read API.';
+  return 'Memory processing is pending. Your Event is saved.';
 }

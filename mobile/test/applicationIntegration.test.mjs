@@ -146,3 +146,22 @@ test('Event screen requires a user-selected Primary and retries a failed save wi
   assert.equal(calls[1].mood, 'SUNNY_BLOOM'); assert.equal(calls[1].content, 'Explicit owner Event');
   assert.equal(nodes(tree).find((n) => n.type === 'TextInput').props.value, '');
 });
+
+test('unsupported explicit species are safely unplantable without being reinterpreted', () => {
+  const { load } = setup(async () => response({}));
+  const collision = load('parentCollision').resolveParentCollision('UNAPPROVED_SPECIES', 'Sunflower');
+  assert.equal(collision.status, 'UNRESOLVED'); assert.equal(collision.speciesCode, 'UNAPPROVED_SPECIES');
+  const result = load('placementValidator').validateFlowerPlacement({ flowerId: 'unknown', month: 9,
+    worldX: 100, worldY: 100, speciesCode: 'UNAPPROVED_SPECIES', existingPlacements: [] });
+  assert.equal(result.isValid, false); assert.equal(result.reason, 'COLLISION_CLASS_UNRESOLVED');
+});
+test('missing artwork for unsupported species renders a safe placeholder', () => {
+  const { load } = setup(async () => response({}), { '@shopify/react-native-skia': {
+    Circle: 'Circle', Group: 'Group', Image: 'Image', useImage: () => null,
+  } });
+  const art = load('CanonicalFlowerArt');
+  const rendered = art.CanonicalFlowerArt({ flower: { id: 'unknown', speciesCode: 'UNAPPROVED_SPECIES',
+    worldX: 100, worldY: 100, flowerName: 'Unknown', supportCount: 0 } });
+  assert.equal(rendered.props.children[0].type, 'Circle');
+  assert.equal(art.CanonicalFlowerEffects({ flower: { worldX: 100, worldY: 100 } }), null);
+});
