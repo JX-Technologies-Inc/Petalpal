@@ -12,7 +12,7 @@ import {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
 import PlantingRegionOverlay from './planting/PlantingRegionOverlay';
 import PlantingRegionCalibrationEditor, {
   type CalDisplayMode,
@@ -356,6 +356,13 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   const [underlayDebugMode, setUnderlayDebugMode] = useState<'off' | 'current-z' | 'top-z'>('off');
   const [runtimeUnderlayStrength, setRuntimeUnderlayStrength] = useState(1.5);
   const [gardenActive, setGardenActive] = useState(true);
+  const [foreground, setForeground] = useState(AppState.currentState === 'active');
+  const worldActive = gardenActive && foreground;
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', state => setForeground(state === 'active'));
+    return () => subscription.remove();
+  }, []);
 
   // Approved Water System integration states
   const [waterBaseVisible, setWaterBaseVisible] = useState(true);
@@ -997,8 +1004,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       style={styles.scene}
       onPointerMove={handlePointerMove}
       onLayout={({ nativeEvent: { layout } }) => {
-        // Hidden stack screens report zero size. Keep the existing Skia canvas
-        // alive while away instead of destroying and recreating its GPU surface.
+        // Preserve camera framing through hidden stack screens' zero layouts.
         if (layout.width > 0 && layout.height > 0) setViewport({ width: layout.width, height: layout.height });
       }}
     >
@@ -1015,12 +1021,12 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
 
             {/* 2. Calm water base */}
             {waterBaseVisible && calmBaseImage && (
-              <GardenWaterField image={calmBaseImage} active={gardenActive} animated={waterRipplesVisible} />
+              <GardenWaterField image={calmBaseImage} active={worldActive} animated={waterRipplesVisible} />
             )}
 
             {/* 3. Fish (below ripples & surface disturbance) */}
             <FishLayer
-              active={gardenActive}
+              active={worldActive}
               enabled={fishVisible}
               opacity={1.0}
               density={fishDensity}
@@ -1030,7 +1036,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             {/* 4. Surface ripples */}
             <SurfaceRippleLayer
               softWorldEdges
-              active={gardenActive}
+              active={worldActive}
               enabled={waterRipplesVisible}
               opacity={waterRippleOpacity}
             />
@@ -1038,7 +1044,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             {/* 5. Waterfall Impact Underlay (disturbed turquoise water & wake, above fish/ripples, below lotus/land/landmarks) */}
             <WaterfallImpactUnderlay
               strength={__DEV__ ? impactWaterStrength : 1.0}
-              active={gardenActive}
+              active={worldActive}
               enabled={foamVisible && waterfallVersion === 'legacy'}
               opacity={1.0}
               placement={waterfallImpactPlacement}
@@ -1050,7 +1056,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
 
             {/* 6. Lotus */}
             <LotusLayer
-              active={gardenActive}
+              active={worldActive}
               visible={lotusVisible}
               opacity={1.0}
               mode={lotusMode}
@@ -1058,7 +1064,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
 
             {/* V2 is one independent terrain; islands and treehouse occlude it naturally. */}
             {showLandmarks && waterfallVersion === 'v2' && (
-              <WaterfallV2Entity active={gardenActive} animated={topWaterMotionMode === 'animate'} />
+              <WaterfallV2Entity active={worldActive} animated={topWaterMotionMode === 'animate'} />
             )}
             {/* 7. LandLayer */}
             <LandLayer layout={__DEV__ ? calibrationLayout : undefined}
@@ -1113,7 +1119,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
                 pavilionPlacement={pavilionPlacement}
                 teaSetPlacement={teaSetPlacement}
                 waterfallPlacement={waterfallPlacement}
-                waterfallActive={gardenActive}
+                waterfallActive={worldActive}
                 moonBedIntegrationEnabled={moonBedIntegrationEnabled}
                 moonBedShadowOpacity={moonBedShadowOpacity}
                 treehouseLightingEnabled={worldTime.isTreehouseLightingTime}

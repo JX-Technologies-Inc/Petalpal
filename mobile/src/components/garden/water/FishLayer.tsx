@@ -322,13 +322,18 @@ function FishLayer({
   // Never resets, never snaps, never loops back
   const animTime = useSharedValue(0);
 
-  useFrameCallback((frameInfo) => {
+  const frame = useFrameCallback((frameInfo) => {
     if (!isActive) return;
     const dt = (frameInfo.timeSincePreviousFrame ?? 16.667) / 1000;
     // Guard against backgrounding leaps (clamp to max 100ms)
     const safeDt = Math.min(Math.max(dt, 0), 0.1);
     animTime.value += safeDt * speedMultiplier;
-  });
+  }, false);
+
+  useEffect(() => {
+    frame.setActive(enabled && isActive);
+    return () => frame.setActive(false);
+  }, [enabled, isActive, frame]);
 
   const visibleFish = useMemo(() => getFishForDensity(density), [density]);
 
