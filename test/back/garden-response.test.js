@@ -100,3 +100,13 @@ test("social garden response retains normal Flower display metadata", () => {
   assert.equal(flower.colorAccent, "WARM_GOLD");
   assert.equal(flower.visualEffect, "SOFT_SPARKLE");
 });
+
+
+test("social garden preserves viewer Support state while stripping private content", () => {
+  const garden = { flowers: [{ event: "Private", dailyCheckIn: { journal: { content: "Private" } },
+    supportState: { supportedToday: true, canSupport: false }, messages: [] }], visitRecords: [] };
+  const flower = serializeGardenResponse({ owner: { id: "owner" }, garden, includePrivate: false }).flowers[0];
+  assert.deepEqual(flower.supportState, { supportedToday: true, canSupport: false });
+  assert.equal(Object.hasOwn(flower, "event"), false);
+  assert.equal(Object.hasOwn(flower, "dailyCheckIn"), false);
+});

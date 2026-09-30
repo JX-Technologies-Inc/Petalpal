@@ -1,0 +1,39 @@
+{
+  "implementationTestsAndDocumentation": [
+    "mobile/src/components/garden/flower-density-sandbox/mixedNeighborhoods.ts",
+    "mobile/src/components/garden/flower-density-sandbox/mixedV2Composition.ts",
+    "mobile/src/components/garden/flower-density-sandbox/mixedV2ReviewModel.ts",
+    "mobile/src/components/garden/flower-density-sandbox/MixedNeighborhoodLayer.tsx",
+    "mobile/src/components/garden/flower-density-sandbox/FlowerDensitySandbox.tsx",
+    "mobile/test/mixedCompositionV2.test.mjs",
+    "mobile/test/speciesSandboxRendering.test.mjs",
+    "mobile/test/flowerOcclusion.test.mjs",
+    "docs/flower-visuals/MIXED_V2_PROTECTED_BASELINE.json",
+    "docs/flower-visuals/MIXED_V2_REVIEW_COUNTS.json",
+    "docs/flower-visuals/MIXED_COMPOSITION_V2_REVIEW.md",
+    "docs/flower-visuals/MIXED_V2_CHANGED_FILES.json",
+    "docs/flower-visuals/BATCH_INTEGRATION_STATUS.json",
+    "docs/flower-visuals/BATCH_INTEGRATION_REVIEW.md"
+  ],
+  "testLogs": [
+    "output/mixed-v2-test-batchFlowerIntegration.log",
+    "output/mixed-v2-test-chamomileComposition.log",
+    "output/mixed-v2-test-flowerDensitySandbox.log",
+    "output/mixed-v2-test-flowerDetail.log",
+    "output/mixed-v2-test-flowerOcclusion.log",
+    "output/mixed-v2-test-flowerVisualSystem.log",
+    "output/mixed-v2-test-hydrangeaComposition.log",
+    "output/mixed-v2-test-hydrangeaMixedSandbox.log",
+    "output/mixed-v2-test-hydrangeaV2Replacement.log",
+    "output/mixed-v2-test-mixedCompositionV2.log",
+    "output/mixed-v2-test-mixedSpeciesSandbox.log",
+    "output/mixed-v2-test-plantingMaskRefinement.log",
+    "output/mixed-v2-test-plantingSystem.log",
+    "output/mixed-v2-test-speciesSandboxRendering.log",
+    "output/mixed-v2-test-tulipAreaProfiles.log",
+    "output/mixed-v2-test-tulipClusterVisualScale.log",
+    "output/mixed-v2-test-tulipComponentComposition.log",
+    "output/mixed-v2-test-tulipGardenReview.log"
+  ],
+  "artworkFilesChanged": []
+}

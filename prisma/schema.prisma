@@ -102,6 +102,7 @@ model Flower {
   messages     Message[]
 
   @@unique([sourceEventId, userId])
+  visitRecords VisitRecord[]
 }
 
 model Message {
@@ -128,9 +129,17 @@ model VisitRecord {
 
   gardenId String
   userId   String?
+  // Only daily flower Support records populate these fields. Other visits and
+  // pre-existing aggregate Support history remain unchanged.
+  flowerId String?
+  localDate String? @db.VarChar(10)
+  timezone String? @db.VarChar(64)
 
   garden Garden @relation(fields: [gardenId], references: [id])
   user   User?  @relation(fields: [userId], references: [id])
+  flower Flower? @relation(fields: [flowerId], references: [id], onDelete: SetNull)
+
+  @@unique([visitorId, flowerId, localDate])
 }
 
 model Friendship {

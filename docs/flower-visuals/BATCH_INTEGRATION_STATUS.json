@@ -1,0 +1,433 @@
+{
+  "status": "READY_FOR_REVIEW",
+  "scope": "DEV Flower Density Sandbox only",
+  "hydrangeaStatus": "APPROVED_L_CLASS_REFERENCE",
+  "SUCCESSFUL": [
+    {
+      "speciesCode": "COREOPSIS",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "airy branching yellow flowers",
+      "sourcePath": "Resources/Garden Flowers/Coreopsis/coreopsis.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "DAISY",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "small irregular white flowering stems",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "GERBERA_DAISY",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "broad pink focal blooms",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "SUNFLOWER",
+      "flowerClass": "L",
+      "footprintRadius": 16,
+      "baseVisualScale": 1,
+      "morphology": "tall focal yellow heads",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "ANEMONE",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "open flowers on light stems",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "BLUEBELL",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "drooping bell stems",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "HEATHER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "fine vertical branching spikes",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "SNOWDROP",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "small downward white bells",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "GENTIAN",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "upright trumpet flowers",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "PETUNIA",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "open asymmetric pink trumpets",
+      "sourcePath": "Resources/Garden Flowers/59ec5368-7656-4110-9742-d3b36213429e.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "POPPY",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "delicate papery bloom stems",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "BIRD_OF_PARADISE",
+      "flowerClass": "L",
+      "footprintRadius": 16,
+      "baseVisualScale": 1,
+      "morphology": "architectural leaves and angular blooms",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 2,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "WHITE_ROSE",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "compact layered white blooms and foliage",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "YELLOW_DAFFODIL",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 1,
+      "morphology": "upright yellow trumpets and narrow leaves",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "ASTER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "small purple daisy-like stems",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "DANDELION",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "yellow blooms and occasional seed heads",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "YELLOW_RAPESEED_FLOWER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "airy yellow flowering branches",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "CHINESE_VIOLET_CRESS",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "light purple open stems",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "LAVENDER",
+      "flowerClass": "S",
+      "footprintRadius": 9,
+      "baseVisualScale": 1,
+      "morphology": "narrow vertical purple spikes",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 2,
+        "full": 3
+      },
+      "extractionStatus": "SUCCESSFUL"
+    },
+    {
+      "speciesCode": "OLIVE",
+      "flowerClass": "M",
+      "footprintRadius": 12,
+      "baseVisualScale": 0.9,
+      "morphology": "foliage/branch form, not a flower bush",
+      "sourcePath": "Resources/Garden Flowers/121213a0-fabc-42af-9580-3f7383f17583.png",
+      "status": "READY_FOR_REVIEW",
+      "componentCount": 3,
+      "pieceCounts": {
+        "sparse": 1,
+        "normal": 1,
+        "full": 2
+      },
+      "extractionStatus": "SUCCESSFUL"
+    }
+  ],
+  "SKIPPED_INVALID_SOURCE": [
+    {
+      "speciesCode": "ROSE",
+      "sourcePath": "Resources/Garden Flowers/Rose/rose_garden_abc_candidate.png",
+      "reason": "RGB candidate has an opaque baked checkerboard; decoded alpha is 255 everywhere. Not repaired."
+    }
+  ],
+  "MISSING_SOURCE": [
+    "TUMI",
+    "WHITE_MAGNOLIA",
+    "BLUE_ROSE",
+    "LOTUS",
+    "CHERRY_BLOSSOM"
+  ],
+  "PROTECTED_REFERENCE": [
+    "CHAMOMILE",
+    "HYDRANGEA",
+    "TULIP"
+  ],
+  "mixedPresets": [
+    {
+      "month": 6,
+      "placed": 30,
+      "profile": "SMALL",
+      "speciesCounts": {
+        "BIRD_OF_PARADISE": 1,
+        "HYDRANGEA": 1,
+        "SUNFLOWER": 1,
+        "ANEMONE": 1,
+        "TULIP": 3,
+        "OLIVE": 1,
+        "GENTIAN": 1,
+        "WHITE_ROSE": 1,
+        "YELLOW_DAFFODIL": 1,
+        "POPPY": 1,
+        "COREOPSIS": 2,
+        "BLUEBELL": 1,
+        "CHAMOMILE": 2,
+        "YELLOW_RAPESEED_FLOWER": 2,
+        "ASTER": 2,
+        "DAISY": 3,
+        "SNOWDROP": 2,
+        "HEATHER": 2,
+        "CHINESE_VIOLET_CRESS": 1,
+        "DANDELION": 1
+      }
+    },
+    {
+      "month": 10,
+      "placed": 30,
+      "profile": "LARGE",
+      "speciesCounts": {
+        "BIRD_OF_PARADISE": 1,
+        "HYDRANGEA": 1,
+        "SUNFLOWER": 1,
+        "GENTIAN": 1,
+        "PETUNIA": 2,
+        "POPPY": 1,
+        "OLIVE": 2,
+        "ANEMONE": 2,
+        "TULIP": 1,
+        "ASTER": 1,
+        "CHINESE_VIOLET_CRESS": 3,
+        "COREOPSIS": 1,
+        "DAISY": 1,
+        "BLUEBELL": 2,
+        "LAVENDER": 1,
+        "CHAMOMILE": 5,
+        "HEATHER": 2,
+        "DANDELION": 1,
+        "YELLOW_RAPESEED_FLOWER": 1
+      }
+    },
+    {
+      "month": 4,
+      "placed": 30,
+      "profile": "MEDIUM",
+      "speciesCounts": {
+        "SUNFLOWER": 1,
+        "BIRD_OF_PARADISE": 1,
+        "HYDRANGEA": 1,
+        "GERBERA_DAISY": 2,
+        "PETUNIA": 1,
+        "POPPY": 4,
+        "YELLOW_DAFFODIL": 1,
+        "TULIP": 1,
+        "HEATHER": 2,
+        "LAVENDER": 2,
+        "BLUEBELL": 4,
+        "CHINESE_VIOLET_CRESS": 2,
+        "CHAMOMILE": 3,
+        "SNOWDROP": 1,
+        "COREOPSIS": 2,
+        "DANDELION": 2
+      }
+    }
+  ],
+  "monthlyCompositionReview": {
+    "mixedV1": "LEGACY_DEV_QA",
+    "mixedV2": "LEGACY_DEV_QA",
+    "monthlyGardenGrowthV1": "LEGACY_DEV_QA",
+    "monthlyGardenGrowthV1_1": "MONTHLY_GARDEN_GROWTH_V1_1_APPROVED",
+    "approvedOn": "2026-09-29",
+    "scope": "Approved initial production visual direction; June Day 30 reference. Existing DEV implementation preserved; production integration deferred. All legacy modes retained.",
+    "checkpoint": "docs/flower-visuals/MONTHLY_GARDEN_GROWTH_V1_1_APPROVED.md"
+  }
+}

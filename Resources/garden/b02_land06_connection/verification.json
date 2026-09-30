@@ -1,0 +1,32 @@
+{
+  "baseline_files_checked": 381,
+  "changed_existing_files": [
+    "mobile\\src\\components\\garden\\GardenInfrastructureLayer.tsx"
+  ],
+  "all_existing_asset_files_unchanged": true,
+  "central_side_foreground_pixels_identical": true,
+  "land06_new_opaque_overlap_pixels": 3811,
+  "bridge_new_opaque_overlap_pixels": 2293,
+  "walking_corridor_polygon": [
+    [
+      1764,
+      514
+    ],
+    [
+      1778,
+      548
+    ],
+    [
+      1855,
+      510
+    ],
+    [
+      1841,
+      476
+    ]
+  ],
+  "walking_corridor_pixels": 3222,
+  "walking_corridor_gap_pixels": 0,
+  "bridge_restored": true,
+  "checkpoint_created": false
+}

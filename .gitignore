@@ -308,3 +308,82 @@ experiments/emotion-classifier-v2/v4/aligned-supervision-v1/external-dataset-sea
 /experiments/emotion-classifier-v2/v4/selective-supervision-v1/target-first-v1/work/train-p0-expansion-36-semantic-qa.json
 /experiments/emotion-classifier-v2/v4/selective-supervision-v1/target-first-v1/work/train-p0-expansion-last-2-semantic-qa.json
 /experiments/emotion-classifier-v2/v4/selective-supervision-v1/target-first-v1/work/validation-report.json
+# Local QA, exports, profiles and checkpoint archives (keep on disk).
+# Some regression tests require local output fixtures; see pre-push review.
+/output/
+/Resources/garden/checkpoints/
+/Resources/garden/visual_checkpoint_current/
+/Resources/road/.tools/
+
+# Generated review images, not the runtime art or authored Blender sources.
+/mobile/qa_*.png
+/mobile/shot.png
+/Resources/garden/flower_planting_v1/review/
+/Resources/road/placement_preview/
+/Resources/decorations/bridge/B01/placement_preview/
+/Resources/decorations/bridge/rendered/orbit_verification/
+/Resources/water/blender/review/
+/Resources/water/blender/review_v*/
+/Resources/garden/circulation_final/inspection_base.png
+/Resources/garden/circulation_final/working_composite.png
+/Resources/garden/infrastructure_candidate/00_before.png
+/Resources/garden/infrastructure_candidate/08_infrastructure_debug.png
+/Resources/garden/infrastructure_corrected/02_current_vs_corrected.png
+/Resources/decorations/bridge/B01/landing_correction/B01_corrected_garden_preview.png
+/Resources/water/masks/water_mask_validation_overlay.png
+
+# Dependency, build and tool caches.
+.expo/
+.cache/
+.parcel-cache/
+.turbo/
+dist/
+dist-ssr/
+build/
+web-build/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.tsbuildinfo
+
+# Local backups, scratch work and temporary diagnostics.
+scratch/
+before/
+backup/
+backups/
+*.bak
+*.before.*
+*.blend[0-9]*
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.log
+*.cpuprofile
+*.heapprofile
+*.heapsnapshot
+
+# OS/editor-local state. Shared editor configuration remains reviewable.
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/*.local.json
+.claude/settings.local.json
+
+# Private keys and credential bundles; never ignore public runtime artwork.
+*.pem
+*.key
+*.p12
+*.pfx
+*.p8
+*.jks
+*.keystore
+*.mobileprovision
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+service_account*.json

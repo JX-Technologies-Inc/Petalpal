@@ -1,0 +1,10 @@
+{
+  "opaque_paving_overlap_pixels": 4251,
+  "lower_neck_overlap_pixels": 2249,
+  "landing_bounds": [
+    1572,
+    1412,
+    1671,
+    1556
+  ]
+}

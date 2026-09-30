@@ -1,0 +1,338 @@
+{
+  "description": "V2 observed deterministic sandbox packing; visual grouping only, not capacity optimization or a mathematical maximum.",
+  "reproduce": "From mobile: node ./test/flowerDensitySandbox.test.mjs --report",
+  "method": {
+    "candidates": "Fixed-seed 64 × 64 jittered candidates; loose 2–4-object groups with variable neighbor gaps and occasional singles. Continuous interior clearance from the same 2 px Final Mask samples ranks candidates only; canonical full-circle validation decides acceptance.",
+    "containment": "Canonical isFootprintInApprovedMonthMaskWorld; full reserved circles, unchanged approved masks.",
+    "mixedClassOrder": [
+      "S",
+      "M",
+      "L"
+    ],
+    "area": "Approximate final-mask world area in px², sampled at 2 px cell centers.",
+    "variation": "Visual scale 0.9–1.1, rotation ±12°, five ID-selected V2 compositions per species; original V1 composition toggle does not move anchors. No footprint shrinking.",
+    "interpretation": "placedAt30 and placedAt40 are accepted objects for the corresponding requested count. Failed = requested minus placed."
+  },
+  "tuning": {
+    "S": {
+      "visualScale": 1,
+      "footprintRadius": 9,
+      "anchorX": 0.5,
+      "anchorY": 0.94
+    },
+    "M": {
+      "visualScale": 1,
+      "footprintRadius": 12,
+      "anchorX": 0.5,
+      "anchorY": 0.95
+    },
+    "L": {
+      "visualScale": 1,
+      "footprintRadius": 16,
+      "anchorX": 0.5,
+      "anchorY": 0.96
+    }
+  },
+  "visualBounds": {
+    "chamomileHeightRatio": 0.807641194407548,
+    "hydrangeaEquivalentLinearSizeRatio": 0.8303115391613496
+  },
+  "grouping": [
+    {
+      "month": 6,
+      "mode": "mixed",
+      "placed": 26,
+      "medianNearestGap": 1.0592373854049448,
+      "nearbyObjects": 24,
+      "interiorObjects": 13,
+      "looseGroups": 0,
+      "singles": 2
+    },
+    {
+      "month": 10,
+      "mode": "mixed",
+      "placed": 30,
+      "medianNearestGap": 4.261379619624478,
+      "nearbyObjects": 23,
+      "interiorObjects": 29,
+      "looseGroups": 7,
+      "singles": 7
+    },
+    {
+      "month": 10,
+      "mode": "M",
+      "placed": 30,
+      "medianNearestGap": 2.9579064767745997,
+      "nearbyObjects": 21,
+      "interiorObjects": 30,
+      "looseGroups": 8,
+      "singles": 9
+    }
+  ],
+  "report": [
+    {
+      "month": 1,
+      "monthName": "January",
+      "landId": "Land01",
+      "estimatedArea": 38504,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 36
+      },
+      "L": {
+        "placedAt30": 19,
+        "placedAt40": 19
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 37
+      }
+    },
+    {
+      "month": 2,
+      "monthName": "February",
+      "landId": "Land02",
+      "estimatedArea": 41818,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 38
+      },
+      "L": {
+        "placedAt30": 21,
+        "placedAt40": 21
+      },
+      "mixed": {
+        "placedAt30": 29,
+        "placedAt40": 36
+      }
+    },
+    {
+      "month": 3,
+      "monthName": "March",
+      "landId": "Land03",
+      "estimatedArea": 40120,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 36
+      },
+      "L": {
+        "placedAt30": 19,
+        "placedAt40": 19
+      },
+      "mixed": {
+        "placedAt30": 28,
+        "placedAt40": 35
+      }
+    },
+    {
+      "month": 4,
+      "monthName": "April",
+      "landId": "Land04",
+      "estimatedArea": 53976,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 29,
+        "placedAt40": 29
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    },
+    {
+      "month": 5,
+      "monthName": "May",
+      "landId": "Land05",
+      "estimatedArea": 34572,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 31
+      },
+      "L": {
+        "placedAt30": 16,
+        "placedAt40": 16
+      },
+      "mixed": {
+        "placedAt30": 29,
+        "placedAt40": 36
+      }
+    },
+    {
+      "month": 6,
+      "monthName": "June",
+      "landId": "Land06",
+      "estimatedArea": 33020,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 24,
+        "placedAt40": 24
+      },
+      "L": {
+        "placedAt30": 11,
+        "placedAt40": 11
+      },
+      "mixed": {
+        "placedAt30": 26,
+        "placedAt40": 31
+      }
+    },
+    {
+      "month": 7,
+      "monthName": "July",
+      "landId": "Land07",
+      "estimatedArea": 84312,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    },
+    {
+      "month": 8,
+      "monthName": "August",
+      "landId": "Land08",
+      "estimatedArea": 84184,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    },
+    {
+      "month": 9,
+      "monthName": "September",
+      "landId": "Land09",
+      "estimatedArea": 90340,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    },
+    {
+      "month": 10,
+      "monthName": "October",
+      "landId": "Land10",
+      "estimatedArea": 104592,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    },
+    {
+      "month": 11,
+      "monthName": "November",
+      "landId": "Land11",
+      "estimatedArea": 99474,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    },
+    {
+      "month": 12,
+      "monthName": "December",
+      "landId": "Land12",
+      "estimatedArea": 78280,
+      "S": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "M": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "L": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      },
+      "mixed": {
+        "placedAt30": 30,
+        "placedAt40": 40
+      }
+    }
+  ]
+}

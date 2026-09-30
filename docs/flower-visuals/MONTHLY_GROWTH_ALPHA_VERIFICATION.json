@@ -1,0 +1,17 @@
+[
+  {
+    "month": 6,
+    "fullResolutionAlphaCoverage": 0.7641429436705027,
+    "runtimeEstimate": 0.757359176256814
+  },
+  {
+    "month": 4,
+    "fullResolutionAlphaCoverage": 0.7588557877575218,
+    "runtimeEstimate": 0.7656736327256558
+  },
+  {
+    "month": 10,
+    "fullResolutionAlphaCoverage": 0.8002141655193514,
+    "runtimeEstimate": 0.7768089337616644
+  }
+]

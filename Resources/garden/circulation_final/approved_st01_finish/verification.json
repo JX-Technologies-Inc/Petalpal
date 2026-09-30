@@ -1,0 +1,15 @@
+{
+  "protectedAssetHashesMatch": {
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\Resources\\decorations\\stair\\ST01\\ST01_master.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\SS01_stepping_stones.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B01_bridge.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B02_bridge.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B01_foreground.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B02_foreground.png": true,
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\Road_grounded_connection.png": true
+  },
+  "captureSource": "Actual localhost:8082/garden-test; camera-only DEV focus controls; screenshots cropped, no offline scene reconstruction",
+  "typeScript": "npx tsc --noEmit passed",
+  "infrastructureToggle": "OFF and ON verified; restored ON",
+  "sourceMasterRegenerated": false
+}

@@ -1,0 +1,1191 @@
+[
+  {
+    "speciesCode": "COREOPSIS",
+    "displayName": "Coreopsis",
+    "sourceReference": "Resources/Happy/Coreopsis.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/coreopsis/base/coreopsis_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/coreopsis/base/coreopsis_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/coreopsis/base/coreopsis_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "DAISY",
+    "displayName": "Daisy",
+    "sourceReference": "Resources/Happy/Daisy.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/daisy/base/daisy_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/daisy/base/daisy_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/daisy/base/daisy_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "GERBERA_DAISY",
+    "displayName": "Gerbera Daisy",
+    "sourceReference": "Resources/Happy/Gerbera Daisy.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/gerbera_daisy/base/gerbera_daisy_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/gerbera_daisy/base/gerbera_daisy_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/gerbera_daisy/base/gerbera_daisy_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "SUNFLOWER",
+    "displayName": "Sunflower",
+    "sourceReference": "Resources/Happy/Sunflower.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/sunflower/base/sunflower_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/sunflower/base/sunflower_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/sunflower/base/sunflower_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "HYDRANGEA",
+    "displayName": "Hydrangea",
+    "sourceReference": "Resources/Love & Caring & Gratitude/Hydrangea.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/hydrangea/base/hydrangea_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/hydrangea/base/hydrangea_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/hydrangea/base/hydrangea_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "ROSE",
+    "displayName": "Rose",
+    "sourceReference": "Resources/Love & Caring & Gratitude/Rose.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/rose/base/rose_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/rose/base/rose_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/rose/base/rose_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "ANEMONE",
+    "displayName": "Anemone",
+    "sourceReference": "Resources/Sadness & Loneliness/Anemone.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/anemone/base/anemone_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/anemone/base/anemone_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/anemone/base/anemone_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "BLUEBELL",
+    "displayName": "Bluebell",
+    "sourceReference": "Resources/Sadness & Loneliness/Bluebell.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/bluebell/base/bluebell_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/bluebell/base/bluebell_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/bluebell/base/bluebell_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "HEATHER",
+    "displayName": "Heather",
+    "sourceReference": "Resources/Sadness & Loneliness/Heather.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/heather/base/heather_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/heather/base/heather_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/heather/base/heather_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "TUMI",
+    "displayName": "Tumi",
+    "sourceReference": "Resources/Sadness & Loneliness/Tumi.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/tumi/base/tumi_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/tumi/base/tumi_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/tumi/base/tumi_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "CHAMOMILE",
+    "displayName": "Chamomile",
+    "sourceReference": "Resources/Anxiety & Stress & Fear/Chamomile.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/chamomile/base/chamomile_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/chamomile/base/chamomile_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/chamomile/base/chamomile_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "SNOWDROP",
+    "displayName": "Snowdrop",
+    "sourceReference": "Resources/Anxiety & Stress & Fear/Snowdrop.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/snowdrop/base/snowdrop_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/snowdrop/base/snowdrop_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/snowdrop/base/snowdrop_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "GENTIAN",
+    "displayName": "Gentian",
+    "sourceReference": "Resources/Anger & Frustration/Gentian.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/gentian/base/gentian_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/gentian/base/gentian_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/gentian/base/gentian_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "PETUNIA",
+    "displayName": "Petunia",
+    "sourceReference": "Resources/Anger & Frustration/Petunia.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/petunia/base/petunia_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/petunia/base/petunia_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/petunia/base/petunia_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "POPPY",
+    "displayName": "Poppy",
+    "sourceReference": "Resources/Anger & Frustration/Poppy.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/poppy/base/poppy_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/poppy/base/poppy_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/poppy/base/poppy_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "BIRD_OF_PARADISE",
+    "displayName": "Bird of Paradise",
+    "sourceReference": "Resources/Surprise & Excitement & Curiosity/Bird of Paradise.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/bird_of_paradise/base/bird_of_paradise_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/bird_of_paradise/base/bird_of_paradise_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/bird_of_paradise/base/bird_of_paradise_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "TULIP",
+    "displayName": "Tulip",
+    "sourceReference": "Resources/Surprise & Excitement & Curiosity/Tulip.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/tulip/base/tulip_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.443296,
+        "anchorY": 0.872168,
+        "visualScale": 1,
+        "status": "READY_FOR_REVIEW",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/tulip/base/tulip_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.470313,
+        "anchorY": 0.902662,
+        "visualScale": 1,
+        "status": "READY_FOR_REVIEW",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/tulip/base/tulip_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.523643,
+        "anchorY": 0.889761,
+        "visualScale": 1,
+        "status": "READY_FOR_REVIEW",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "WHITE_ROSE",
+    "displayName": "White Rose",
+    "sourceReference": "Resources/Surprise & Excitement & Curiosity/White-Rose.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/white_rose/base/white_rose_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/white_rose/base/white_rose_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/white_rose/base/white_rose_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "YELLOW_DAFFODIL",
+    "displayName": "Yellow Daffodil",
+    "sourceReference": "Resources/Surprise & Excitement & Curiosity/Yellow-Daffodil.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/yellow_daffodil/base/yellow_daffodil_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/yellow_daffodil/base/yellow_daffodil_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/yellow_daffodil/base/yellow_daffodil_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "ASTER",
+    "displayName": "Aster",
+    "sourceReference": "Resources/Tiredness, Numbness, Confusion/Aster.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/aster/base/aster_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/aster/base/aster_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/aster/base/aster_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "DANDELION",
+    "displayName": "Dandelion",
+    "sourceReference": "Resources/Tiredness, Numbness, Confusion/Dandelion.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/dandelion/base/dandelion_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/dandelion/base/dandelion_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/dandelion/base/dandelion_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "YELLOW_RAPESEED_FLOWER",
+    "displayName": "Yellow Rapeseed Flower",
+    "sourceReference": "Resources/Tiredness, Numbness, Confusion/Yellow-Rapeseed-Flower.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/yellow_rapeseed_flower/base/yellow_rapeseed_flower_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/yellow_rapeseed_flower/base/yellow_rapeseed_flower_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/yellow_rapeseed_flower/base/yellow_rapeseed_flower_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "CHINESE_VIOLET_CRESS",
+    "displayName": "Chinese Violet Cress",
+    "sourceReference": "Resources/Calm & Peace/Chinese-Violet-Cress.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/chinese_violet_cress/base/chinese_violet_cress_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/chinese_violet_cress/base/chinese_violet_cress_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/chinese_violet_cress/base/chinese_violet_cress_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "LAVENDER",
+    "displayName": "Lavender",
+    "sourceReference": "Resources/Calm & Peace/Lavender.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/lavender/base/lavender_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/lavender/base/lavender_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/lavender/base/lavender_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "OLIVE",
+    "displayName": "Olive",
+    "sourceReference": "Resources/Calm & Peace/Olive.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/olive/base/olive_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/olive/base/olive_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/olive/base/olive_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "WHITE_MAGNOLIA",
+    "displayName": "white Magnolia",
+    "sourceReference": "Resources/Calm & Peace/white-Magnolia.png",
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/white_magnolia/base/white_magnolia_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/white_magnolia/base/white_magnolia_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/white_magnolia/base/white_magnolia_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "NEEDS_GARDEN_ART_ADAPTATION",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "BLUE_ROSE",
+    "displayName": "Blue Rose",
+    "sourceReference": null,
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/blue_rose/base/blue_rose_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/blue_rose/base/blue_rose_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/blue_rose/base/blue_rose_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "LOTUS",
+    "displayName": "Lotus",
+    "sourceReference": null,
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/lotus/base/lotus_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/lotus/base/lotus_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/lotus/base/lotus_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  },
+  {
+    "speciesCode": "CHERRY_BLOSSOM",
+    "displayName": "Cherry Blossom",
+    "sourceReference": null,
+    "sizeClass": "UNRESOLVED",
+    "gardenAssets": {
+      "sparse": {
+        "asset": "mobile/assets/garden/flowers/species/cherry_blossom/base/cherry_blossom_garden_sparse.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "normal": {
+        "asset": "mobile/assets/garden/flowers/species/cherry_blossom/base/cherry_blossom_garden_normal.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      },
+      "full": {
+        "asset": "mobile/assets/garden/flowers/species/cherry_blossom/base/cherry_blossom_garden_full.png",
+        "canvasWidth": 512,
+        "canvasHeight": 512,
+        "anchorX": 0.5,
+        "anchorY": 0.84,
+        "visualScale": 1,
+        "status": "MISSING",
+        "anchorStatus": "PROVISIONAL",
+        "reviewedSha256": null
+      }
+    }
+  }
+]

@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "source": "approved-detail.png",
+  "pieces": [
+    {
+      "id": "central-land08-stair",
+      "file": "central-land08-stair.png",
+      "x": 1380,
+      "y": 785,
+      "width": 530,
+      "height": 390,
+      "start": [
+        1490,
+        895
+      ],
+      "end": [
+        1797,
+        1048
+      ],
+      "walkingWidth": 122
+    },
+    {
+      "id": "land08-main-bridge",
+      "file": "land08-main-bridge.png",
+      "x": 1545,
+      "y": 1185,
+      "width": 365,
+      "height": 310,
+      "start": [
+        1638,
+        1408
+      ],
+      "end": [
+        1809,
+        1289
+      ],
+      "walkingWidth": 88
+    },
+    {
+      "id": "main-road",
+      "file": "main-road.png",
+      "x": 1300,
+      "y": 1370,
+      "width": 700,
+      "height": 2930,
+      "centerline": [
+        [
+          1608,
+          1620
+        ],
+        [
+          1600,
+          1750
+        ],
+        [
+          1640,
+          2200
+        ],
+        [
+          1700,
+          2900
+        ],
+        [
+          1710,
+          4300
+        ]
+      ],
+      "walkingWidth": 182.16
+    },
+    {
+      "id": "land09-road-transition",
+      "file": "land09-road-transition.png",
+      "x": 1250,
+      "y": 1250,
+      "width": 620,
+      "height": 520,
+      "centerline": [
+        [
+          1398,
+          1457
+        ],
+        [
+          1502,
+          1494
+        ],
+        [
+          1623,
+          1540
+        ]
+      ],
+      "walkingWidth": 115.5
+    },
+    {
+      "id": "central-entry",
+      "file": "central-entry.png",
+      "x": 1410,
+      "y": 800,
+      "width": 160,
+      "height": 185,
+      "role": "landing"
+    },
+    {
+      "id": "land08-stair-entry",
+      "file": "land08-stair-entry.png",
+      "x": 1700,
+      "y": 960,
+      "width": 220,
+      "height": 190,
+      "role": "landing"
+    },
+    {
+      "id": "land08-bridge-entry",
+      "file": "land08-bridge-entry.png",
+      "x": 1730,
+      "y": 1200,
+      "width": 180,
+      "height": 180,
+      "role": "landing"
+    },
+    {
+      "id": "approved-road-junction",
+      "file": "approved-road-junction.png",
+      "x": 1250,
+      "y": 1260,
+      "width": 620,
+      "height": 520,
+      "controls": [
+        [
+          310,
+          1030,
+          1400,
+          1460
+        ],
+        [
+          535,
+          860,
+          1638,
+          1408
+        ],
+        [
+          481,
+          1180,
+          1600,
+          1670
+        ]
+      ]
+    },
+    {
+      "id": "main-road-connected",
+      "file": "main-road-connected.png",
+      "x": 1300,
+      "y": 1350,
+      "width": 680,
+      "height": 2950,
+      "walkingWidth": 182,
+      "land09": [
+        1398,
+        1457
+      ],
+      "archFeet": [
+        [
+          1500,
+          1755
+        ],
+        [
+          1710,
+          1755
+        ]
+      ],
+      "offMap": [
+        1710,
+        4300
+      ]
+    }
+  ],
+  "openings": [
+    {
+      "id": "central-entry",
+      "land": "central",
+      "path": "M 1431.8987060646668 934.2658780728218 L 1488.1012939353332 823.7341219271782 L 1547.1012939353332 853.7341219271782 L 1490.8987060646668 964.2658780728218 Z",
+      "centerline": [
+        [
+          1460,
+          879
+        ],
+        [
+          1519,
+          909
+        ]
+      ],
+      "width": 124
+    },
+    {
+      "id": "land08-stair-entry",
+      "land": "08",
+      "path": "M 1741.5778659845323 1089.6059939758093 L 1796.4221340154677 978.3940060241907 L 1869.4221340154677 1014.3940060241907 L 1814.5778659845323 1125.6059939758093 Z",
+      "centerline": [
+        [
+          1769,
+          1034
+        ],
+        [
+          1842,
+          1070
+        ]
+      ],
+      "width": 124
+    },
+    {
+      "id": "land08-bridge-entry",
+      "land": "08",
+      "path": "M 1810.2323431519865 1342.0462045028378 L 1759.7676568480135 1269.9537954971622 L 1819.7676568480135 1227.9537954971622 L 1870.2323431519865 1300.0462045028378 Z",
+      "centerline": [
+        [
+          1785,
+          1306
+        ],
+        [
+          1845,
+          1264
+        ]
+      ],
+      "width": 88
+    }
+  ]
+}

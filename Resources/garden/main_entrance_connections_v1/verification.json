@@ -1,0 +1,52 @@
+{
+  "baseline_files_checked": 376,
+  "changed_existing_files": [
+    "mobile\\src\\components\\garden\\GardenInfrastructureLayer.tsx"
+  ],
+  "all_preexisting_artwork_unchanged": true,
+  "new_layers": {
+    "land09-transition": {
+      "path": "mobile\\assets\\garden\\infrastructure\\entrance-connections\\land09-transition.png",
+      "canvas": [
+        2400,
+        1800
+      ],
+      "world_transform": {
+        "x": 0,
+        "y": 0,
+        "width": 2400,
+        "height": 1800,
+        "rotation": 0
+      },
+      "alpha_bounds": [
+        1347,
+        1397,
+        1497,
+        1526
+      ],
+      "sha256": "13f40b7d9ce22e40180e61e10fceef422e786cf032250fc6c4380af411106e93"
+    },
+    "b01-foot-landing": {
+      "path": "mobile\\assets\\garden\\infrastructure\\entrance-connections\\b01-foot-landing.png",
+      "canvas": [
+        2400,
+        1800
+      ],
+      "world_transform": {
+        "x": 0,
+        "y": 0,
+        "width": 2400,
+        "height": 1800,
+        "rotation": 0
+      },
+      "alpha_bounds": [
+        1575,
+        1413,
+        1669,
+        1511
+      ],
+      "sha256": "7cb7f06b07c7bbeae2bd114668459be54cc7dcb41f4c77790b31fbf5cbb19ad0"
+    }
+  },
+  "review_count": 7
+}

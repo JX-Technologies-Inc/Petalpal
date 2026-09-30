@@ -1,0 +1,918 @@
+{
+  "artVersion": 2,
+  "source": "Resources/Garden Flowers/Hydrangea/hydrangea_garden_abc_candidate.png",
+  "sourceSha256": "54db3ac0ac344c24d44cdad6b0cf007ff578daedab4cd81606760030ccdd661a",
+  "alphaIsolation": {
+    "supportThreshold": 8,
+    "originalEdgePaddingPixels": 3,
+    "noColorKey": true
+  },
+  "excluded": [
+    {
+      "sheetLocation": "bottom Full Variations and largest complete top-row heads",
+      "reason": "Reference only; excluded from routine Journal recipes to avoid repeated spherical bushes"
+    }
+  ],
+  "components": [
+    {
+      "componentId": "head/blue_compact_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "head",
+      "colorFamily": "blue",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.482421875,
+      "anchorY": 0.94140625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/head/blue_compact_v2.png",
+      "sourceRect": [
+        965,
+        6,
+        1168,
+        197
+      ],
+      "canvasOffset": [
+        154,
+        309
+      ],
+      "sourceGroundPoint": [
+        1058,
+        179
+      ],
+      "contentBounds": [
+        160,
+        318,
+        354,
+        487
+      ],
+      "sha256": "b84d77e841d77653af6b247e084c64d9106f87cc2ab0b7cab78856898b044bbf"
+    },
+    {
+      "componentId": "head/pink_compact_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "head",
+      "colorFamily": "pink",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.955078125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/head/pink_compact_v2.png",
+      "sourceRect": [
+        1171,
+        18,
+        1359,
+        196
+      ],
+      "canvasOffset": [
+        162,
+        322
+      ],
+      "sourceGroundPoint": [
+        1270,
+        185
+      ],
+      "contentBounds": [
+        167,
+        330,
+        350,
+        491
+      ],
+      "sha256": "53c919841d15f961a6db5544daea510f5a71a0a47a7d06ec14ce7e1342231421"
+    },
+    {
+      "componentId": "head/lavender_side_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "head",
+      "colorFamily": "lavender",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.404296875,
+      "anchorY": 0.935546875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/head/lavender_side_v2.png",
+      "sourceRect": [
+        1364,
+        4,
+        1507,
+        202
+      ],
+      "canvasOffset": [
+        184,
+        302
+      ],
+      "sourceGroundPoint": [
+        1387,
+        181
+      ],
+      "contentBounds": [
+        184,
+        308,
+        313,
+        500
+      ],
+      "sha256": "8124bd2ac3c8c8838708062e7ac67962ef948bffadcc8f1250f631972a054511"
+    },
+    {
+      "componentId": "partial/blue_side_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "partial",
+      "colorFamily": "blue",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.470703125,
+      "anchorY": 0.955078125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/partial/blue_side_v2.png",
+      "sourceRect": [
+        22,
+        188,
+        164,
+        329
+      ],
+      "canvasOffset": [
+        185,
+        359
+      ],
+      "sourceGroundPoint": [
+        78,
+        318
+      ],
+      "contentBounds": [
+        195,
+        362,
+        326,
+        498
+      ],
+      "sha256": "b57ebccaee9cbab3f87a799d9de9e42bb566d4832a83e78cf441ddd4d26d2623"
+    },
+    {
+      "componentId": "partial/lavender_side_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "partial",
+      "colorFamily": "lavender",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51953125,
+      "anchorY": 0.943359375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/partial/lavender_side_v2.png",
+      "sourceRect": [
+        158,
+        198,
+        275,
+        326
+      ],
+      "canvasOffset": [
+        197,
+        372
+      ],
+      "sourceGroundPoint": [
+        227,
+        309
+      ],
+      "contentBounds": [
+        197,
+        378,
+        312,
+        494
+      ],
+      "sha256": "8be92f762a8083aff15d5aa7c371c75fe3180bfdbf60fefd189b83a9f449ec94"
+    },
+    {
+      "componentId": "partial/lavender_open_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "partial",
+      "colorFamily": "lavender",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.484375,
+      "anchorY": 0.95703125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/partial/lavender_open_v2.png",
+      "sourceRect": [
+        402,
+        193,
+        548,
+        333
+      ],
+      "canvasOffset": [
+        183,
+        360
+      ],
+      "sourceGroundPoint": [
+        467,
+        323
+      ],
+      "contentBounds": [
+        192,
+        364,
+        319,
+        497
+      ],
+      "sha256": "b864aabf6b2ef8b766f06c795c588e5aa5547c17b84d94694aaac0d39897bb8e"
+    },
+    {
+      "componentId": "partial/pink_budding_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "partial",
+      "colorFamily": "pink",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.46875,
+      "anchorY": 0.9453125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/partial/pink_budding_v2.png",
+      "sourceRect": [
+        925,
+        182,
+        1046,
+        313
+      ],
+      "canvasOffset": [
+        195,
+        369
+      ],
+      "sourceGroundPoint": [
+        970,
+        297
+      ],
+      "contentBounds": [
+        196,
+        371,
+        311,
+        492
+      ],
+      "sha256": "c08be03ee36674ab4ce113a8e45f44bdf0ba9b180178ecfa40748a756305ff7a"
+    },
+    {
+      "componentId": "partial/blue_budding_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "partial",
+      "colorFamily": "blue",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.443359375,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/partial/blue_budding_v2.png",
+      "sourceRect": [
+        1135,
+        195,
+        1258,
+        332
+      ],
+      "canvasOffset": [
+        194,
+        363
+      ],
+      "sourceGroundPoint": [
+        1168,
+        319
+      ],
+      "contentBounds": [
+        200,
+        363,
+        308,
+        494
+      ],
+      "sha256": "b582e0be15079a19a0b9c645184820fafffda5172f8780f462909ebcf312e14f"
+    },
+    {
+      "componentId": "bud/cream_side_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "bud",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.421875,
+      "anchorY": 0.94921875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/bud/cream_side_v2.png",
+      "sourceRect": [
+        270,
+        184,
+        406,
+        331
+      ],
+      "canvasOffset": [
+        188,
+        353
+      ],
+      "sourceGroundPoint": [
+        298,
+        317
+      ],
+      "contentBounds": [
+        191,
+        360,
+        322,
+        493
+      ],
+      "sha256": "b95373501d52b8a28040a870643d31672f403f4335470d31150d019a932a3f81"
+    },
+    {
+      "componentId": "bud/cream_branch_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "bud",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.416015625,
+      "anchorY": 0.939453125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/bud/cream_branch_v2.png",
+      "sourceRect": [
+        544,
+        175,
+        693,
+        332
+      ],
+      "canvasOffset": [
+        181,
+        343
+      ],
+      "sourceGroundPoint": [
+        576,
+        313
+      ],
+      "contentBounds": [
+        182,
+        350,
+        322,
+        492
+      ],
+      "sha256": "21f2e9ad7782b62f47a5bb6774837a63ebe47462c41aae5b5af0b8a59d2dc1ac"
+    },
+    {
+      "componentId": "bud/green_side_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "bud",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.48828125,
+      "anchorY": 0.94921875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/bud/green_side_v2.png",
+      "sourceRect": [
+        696,
+        187,
+        838,
+        326
+      ],
+      "canvasOffset": [
+        185,
+        361
+      ],
+      "sourceGroundPoint": [
+        761,
+        312
+      ],
+      "contentBounds": [
+        185,
+        365,
+        324,
+        498
+      ],
+      "sha256": "cc604385a18d1564ba7919e061a6b0051b7c70078635b5180b3cd72c23d7b20f"
+    },
+    {
+      "componentId": "bud/green_upright_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "bud",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.478515625,
+      "anchorY": 0.958984375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/bud/green_upright_v2.png",
+      "sourceRect": [
+        832,
+        209,
+        930,
+        333
+      ],
+      "canvasOffset": [
+        207,
+        376
+      ],
+      "sourceGroundPoint": [
+        870,
+        324
+      ],
+      "contentBounds": [
+        207,
+        383,
+        305,
+        496
+      ],
+      "sha256": "dc08400ec19642760693c4536e2c1726c6cae3cc53453517ac149c7aa17a7c91"
+    },
+    {
+      "componentId": "bud/green_branch_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "bud",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.443359375,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/bud/green_branch_v2.png",
+      "sourceRect": [
+        1035,
+        188,
+        1148,
+        334
+      ],
+      "canvasOffset": [
+        199,
+        354
+      ],
+      "sourceGroundPoint": [
+        1063,
+        321
+      ],
+      "contentBounds": [
+        202,
+        358,
+        309,
+        493
+      ],
+      "sha256": "f2fa32d8fc826506eba8301251f94784e5335fccf1fda6ecadd7139000e5bd3f"
+    },
+    {
+      "componentId": "bud/cream_upright_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "bud",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.505859375,
+      "anchorY": 0.951171875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/bud/cream_upright_v2.png",
+      "sourceRect": [
+        1247,
+        186,
+        1407,
+        335
+      ],
+      "canvasOffset": [
+        176,
+        351
+      ],
+      "sourceGroundPoint": [
+        1330,
+        322
+      ],
+      "contentBounds": [
+        182,
+        356,
+        328,
+        493
+      ],
+      "sha256": "8194346b4712339992f8d33ae885cc2c11c34879985560f98508186b3bcd03c6"
+    },
+    {
+      "componentId": "foliage/bud_branch_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.451171875,
+      "anchorY": 0.94921875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/bud_branch_v2.png",
+      "sourceRect": [
+        303,
+        325,
+        450,
+        482
+      ],
+      "canvasOffset": [
+        182,
+        343
+      ],
+      "sourceGroundPoint": [
+        352,
+        468
+      ],
+      "contentBounds": [
+        182,
+        343,
+        329,
+        496
+      ],
+      "sha256": "f07bdc0a42ce7e41327939ea531b4751c16a28fd95b679eab232556319b3a8e3"
+    },
+    {
+      "componentId": "foliage/tall_leaf_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.47265625,
+      "anchorY": 0.947265625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/tall_leaf_v2.png",
+      "sourceRect": [
+        459,
+        311,
+        563,
+        481
+      ],
+      "canvasOffset": [
+        204,
+        330
+      ],
+      "sourceGroundPoint": [
+        497,
+        466
+      ],
+      "contentBounds": [
+        210,
+        335,
+        306,
+        492
+      ],
+      "sha256": "d6e1846b96bcde36a143f7655cefcafac72b57e2c5e6ad6d6fb97a925cf0a82a"
+    },
+    {
+      "componentId": "foliage/side_leaves_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.427734375,
+      "anchorY": 0.921875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/side_leaves_v2.png",
+      "sourceRect": [
+        556,
+        319,
+        674,
+        491
+      ],
+      "canvasOffset": [
+        197,
+        328
+      ],
+      "sourceGroundPoint": [
+        578,
+        463
+      ],
+      "contentBounds": [
+        208,
+        336,
+        308,
+        496
+      ],
+      "sha256": "abe43771bfb26b8d69169a340b3e430e638c8fe8d8a710144a0f2e82bcda888f"
+    },
+    {
+      "componentId": "foliage/flowering_branch_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.5703125,
+      "anchorY": 0.931640625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/flowering_branch_v2.png",
+      "sourceRect": [
+        765,
+        308,
+        979,
+        489
+      ],
+      "canvasOffset": [
+        149,
+        319
+      ],
+      "sourceGroundPoint": [
+        908,
+        466
+      ],
+      "contentBounds": [
+        150,
+        319,
+        349,
+        496
+      ],
+      "sha256": "72852ffabc97c462cddf8a30926e08392841a1c62d8e03eedad58014f196af54"
+    },
+    {
+      "componentId": "foliage/wide_branch_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.544921875,
+      "anchorY": 0.947265625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/wide_branch_v2.png",
+      "sourceRect": [
+        949,
+        312,
+        1142,
+        483
+      ],
+      "canvasOffset": [
+        159,
+        329
+      ],
+      "sourceGroundPoint": [
+        1069,
+        468
+      ],
+      "contentBounds": [
+        165,
+        338,
+        349,
+        496
+      ],
+      "sha256": "9a1ebd98e26476aeb8bbce1d5b007be5f51ef426fb4d52215973c4279176c106"
+    },
+    {
+      "componentId": "foliage/leaning_leaf_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494140625,
+      "anchorY": 0.939453125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/leaning_leaf_v2.png",
+      "sourceRect": [
+        1146,
+        332,
+        1240,
+        475
+      ],
+      "canvasOffset": [
+        209,
+        357
+      ],
+      "sourceGroundPoint": [
+        1190,
+        456
+      ],
+      "contentBounds": [
+        221,
+        357,
+        297,
+        490
+      ],
+      "sha256": "986a420b117813b76a51e903a90cb2d798afbdfb696bb393ef2dd09f80c84cc7"
+    },
+    {
+      "componentId": "foliage/tall_branch_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51171875,
+      "anchorY": 0.94921875,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/tall_branch_v2.png",
+      "sourceRect": [
+        1243,
+        321,
+        1396,
+        493
+      ],
+      "canvasOffset": [
+        179,
+        328
+      ],
+      "sourceGroundPoint": [
+        1326,
+        479
+      ],
+      "contentBounds": [
+        180,
+        337,
+        329,
+        495
+      ],
+      "sha256": "e3689a9f987d9a0d41e5fa8b17364773dca204d53106c87a21856c273cec87ee"
+    },
+    {
+      "componentId": "foliage/bud_fan_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "foliage",
+      "colorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.947265625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/foliage/bud_fan_v2.png",
+      "sourceRect": [
+        1387,
+        371,
+        1528,
+        486
+      ],
+      "canvasOffset": [
+        185,
+        385
+      ],
+      "sourceGroundPoint": [
+        1463,
+        471
+      ],
+      "contentBounds": [
+        186,
+        396,
+        315,
+        485
+      ],
+      "sha256": "46d6f2e16c935b27cad8d1cf9750f75fc762d2c992bd14143e0f8ecaad670e77"
+    },
+    {
+      "componentId": "asymmetric/blue_pink_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "asymmetric",
+      "colorFamily": "mixed",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.466796875,
+      "anchorY": 0.92578125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/asymmetric/blue_pink_v2.png",
+      "sourceRect": [
+        20,
+        477,
+        289,
+        690
+      ],
+      "canvasOffset": [
+        121,
+        287
+      ],
+      "sourceGroundPoint": [
+        138,
+        664
+      ],
+      "contentBounds": [
+        136,
+        295,
+        373,
+        494
+      ],
+      "sha256": "17164031df9b3ebd0bdf0a95a5799eb05009fb210e5c206c6278f0154bc7f0e0"
+    },
+    {
+      "componentId": "asymmetric/lavender_companion_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "asymmetric",
+      "colorFamily": "lavender",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.509765625,
+      "anchorY": 0.939453125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/asymmetric/lavender_companion_v2.png",
+      "sourceRect": [
+        813,
+        480,
+        1003,
+        682
+      ],
+      "canvasOffset": [
+        161,
+        298
+      ],
+      "sourceGroundPoint": [
+        913,
+        663
+      ],
+      "contentBounds": [
+        166,
+        298,
+        345,
+        492
+      ],
+      "sha256": "b3129df59b5ba4f85dedbbfd7f7e32e0d8630e838d747f0004690186bc35ccc2"
+    },
+    {
+      "componentId": "asymmetric/blue_pink_side_v2",
+      "speciesCode": "HYDRANGEA",
+      "category": "asymmetric",
+      "colorFamily": "mixed",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.51171875,
+      "anchorY": 0.92578125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.18,
+      "status": "APPROVED_L_CLASS_REFERENCE",
+      "asset": "mobile/assets/garden/flowers/species/hydrangea/components/asymmetric/blue_pink_side_v2.png",
+      "sourceRect": [
+        999,
+        455,
+        1243,
+        691
+      ],
+      "canvasOffset": [
+        134,
+        264
+      ],
+      "sourceGroundPoint": [
+        1127,
+        665
+      ],
+      "contentBounds": [
+        138,
+        272,
+        377,
+        485
+      ],
+      "sha256": "6025069201dd8832b8579ab644bf21b71ef2e46566f501cbc3fcca34e637d965"
+    }
+  ]
+}

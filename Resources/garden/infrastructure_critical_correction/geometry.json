@@ -1,0 +1,43 @@
+{
+  "start": [
+    1570,
+    600
+  ],
+  "end": [
+    1790,
+    540
+  ],
+  "scale": 0.1539148955417234,
+  "angle": -15.255118703057777,
+  "bridge_0405_alpha_overlap": 0,
+  "bridge_0405_7px_clearance_overlap": 0,
+  "central_path_pixels_19px": 229,
+  "land06_path_pixels_19px": 398,
+  "bounds": [
+    1534,
+    466,
+    1824,
+    658
+  ],
+  "stair": {
+    "start": [
+      1530,
+      860
+    ],
+    "end": [
+      1770,
+      1010
+    ],
+    "treads": 4,
+    "stair_run_px": 136,
+    "nominal_width_px": 39,
+    "central_path_pixels_20px": 1022,
+    "land08_path_pixels_20px": 480,
+    "bounds": [
+      1517,
+      842,
+      1782,
+      1030
+    ]
+  }
+}

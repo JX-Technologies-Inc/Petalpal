@@ -1,0 +1,31 @@
+{
+  "source": "Actual localhost:8082/garden-test browser screenshots",
+  "normal_camera": {
+    "zoom": 1,
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "closeup_zoom": 3,
+  "medium_zoom": 1.65,
+  "clean_crop": [
+    190,
+    63,
+    1105,
+    720
+  ],
+  "outputs": [
+    "01_complete_road_runtime.png",
+    "02_referenceB_vs_runtime.png",
+    "03_road_topology_overlay.png",
+    "04_all_road_junctions.png",
+    "05_treehouse_road_closeup.png",
+    "06_west_central_road_closeup.png",
+    "07_central_land0405_closeup.png",
+    "08_central_land09_closeup.png",
+    "09_land09_entrance_closeup.png",
+    "10_complete_circulation_clean.png"
+  ],
+  "note": "Captions and topology IDs appear only in review composites; no runtime debug artwork added."
+}

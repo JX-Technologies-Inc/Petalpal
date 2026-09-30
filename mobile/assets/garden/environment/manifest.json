@@ -1,0 +1,8805 @@
+{
+  "world": [
+    2400,
+    1800
+  ],
+  "placement": "Deterministic hand-selected planting zones plus sparse edge-biased supporting sprigs; all sprites validated against original Land grass and circulation exclusion mask.",
+  "runtime_layer": "GardenEnvironmentLayer",
+  "draw_order": "After LandLayer, before Main Entrance, infrastructure and landmarks; seven tightly cropped RGBA Land overlays.",
+  "source_atlas": "Resources/garden/environment_v1/source/vegetation_atlas.png",
+  "generation": "Built-in image_gen; prompt archived in source/prompt.txt",
+  "reusable_assets": [
+    {
+      "path": "mobile/assets/garden/environment/flowers/crocus_lavender.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/ivory_wildflowers.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/crocus_ivory.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/pale_blue.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/foliage/fern_groundcover.png",
+      "category": "foliage"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/crocus_crescent.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/ivory_sage.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/pale_pink.png",
+      "category": "flowers"
+    },
+    {
+      "path": "mobile/assets/garden/environment/foliage/leaf_tuft.png",
+      "category": "foliage"
+    },
+    {
+      "path": "mobile/assets/garden/environment/shoreline/crocus_pebble.png",
+      "category": "shoreline"
+    },
+    {
+      "path": "mobile/assets/garden/environment/shoreline/fern_pebble.png",
+      "category": "shoreline"
+    },
+    {
+      "path": "mobile/assets/garden/environment/flowers/sparse_sprig.png",
+      "category": "flowers"
+    }
+  ],
+  "layers": [
+    {
+      "land": "central",
+      "asset": "layers/land_central_environment.png",
+      "x": 798,
+      "y": 359,
+      "width": 605,
+      "height": 663,
+      "rotation": 0,
+      "scale": 1
+    },
+    {
+      "land": "101112",
+      "asset": "layers/land_101112_environment.png",
+      "x": 59,
+      "y": 499,
+      "width": 787,
+      "height": 822,
+      "rotation": 0,
+      "scale": 1
+    },
+    {
+      "land": "0405",
+      "asset": "layers/land_0405_environment.png",
+      "x": 1163,
+      "y": 51,
+      "width": 520,
+      "height": 290,
+      "rotation": 0,
+      "scale": 1
+    },
+    {
+      "land": "06",
+      "asset": "layers/land_06_environment.png",
+      "x": 1732,
+      "y": 275,
+      "width": 414,
+      "height": 294,
+      "rotation": 0,
+      "scale": 1
+    },
+    {
+      "land": "07",
+      "asset": "layers/land_07_environment.png",
+      "x": 1851,
+      "y": 595,
+      "width": 502,
+      "height": 326,
+      "rotation": 0,
+      "scale": 1
+    },
+    {
+      "land": "08",
+      "asset": "layers/land_08_environment.png",
+      "x": 1779,
+      "y": 1134,
+      "width": 474,
+      "height": 433,
+      "rotation": 0,
+      "scale": 1
+    },
+    {
+      "land": "09",
+      "asset": "layers/land_09_environment.png",
+      "x": 1000,
+      "y": 1075,
+      "width": 407,
+      "height": 501,
+      "rotation": 0,
+      "scale": 1
+    }
+  ],
+  "coverage": {
+    "central": {
+      "clusters": 86,
+      "grass_pixels": 217671,
+      "decorated_grass_pixels": 25819,
+      "grass_coverage_percent": 11.86,
+      "protected_overlap_pixels": 0
+    },
+    "101112": {
+      "clusters": 144,
+      "grass_pixels": 395160,
+      "decorated_grass_pixels": 43125,
+      "grass_coverage_percent": 10.91,
+      "protected_overlap_pixels": 0
+    },
+    "0405": {
+      "clusters": 53,
+      "grass_pixels": 115585,
+      "decorated_grass_pixels": 14350,
+      "grass_coverage_percent": 12.42,
+      "protected_overlap_pixels": 0
+    },
+    "06": {
+      "clusters": 36,
+      "grass_pixels": 63457,
+      "decorated_grass_pixels": 6861,
+      "grass_coverage_percent": 10.81,
+      "protected_overlap_pixels": 0
+    },
+    "07": {
+      "clusters": 60,
+      "grass_pixels": 116906,
+      "decorated_grass_pixels": 15803,
+      "grass_coverage_percent": 13.52,
+      "protected_overlap_pixels": 0
+    },
+    "08": {
+      "clusters": 61,
+      "grass_pixels": 118118,
+      "decorated_grass_pixels": 16359,
+      "grass_coverage_percent": 13.85,
+      "protected_overlap_pixels": 0
+    },
+    "09": {
+      "clusters": 67,
+      "grass_pixels": 125939,
+      "decorated_grass_pixels": 17902,
+      "grass_coverage_percent": 14.21,
+      "protected_overlap_pixels": 0
+    }
+  },
+  "placements": [
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1122,
+        455
+      ],
+      "world_bbox": [
+        1092,
+        417,
+        60,
+        54
+      ],
+      "width": 54,
+      "rotation": -7.84
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1235,
+        485
+      ],
+      "world_bbox": [
+        1202,
+        442,
+        67,
+        62
+      ],
+      "width": 63,
+      "rotation": 3.79
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1147,
+        448
+      ],
+      "world_bbox": [
+        1118,
+        412,
+        58,
+        52
+      ],
+      "width": 50,
+      "rotation": -9.1
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1190,
+        436
+      ],
+      "world_bbox": [
+        1171,
+        412,
+        38,
+        34
+      ],
+      "width": 36,
+      "rotation": 1.35
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1201,
+        472
+      ],
+      "world_bbox": [
+        1180,
+        444,
+        43,
+        40
+      ],
+      "width": 39,
+      "rotation": -4.7
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1097,
+        485
+      ],
+      "world_bbox": [
+        1073,
+        456,
+        48,
+        41
+      ],
+      "width": 44,
+      "rotation": 4.19
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1148,
+        474
+      ],
+      "world_bbox": [
+        1130,
+        452,
+        35,
+        32
+      ],
+      "width": 29,
+      "rotation": 13.1
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1121,
+        488
+      ],
+      "world_bbox": [
+        1100,
+        461,
+        42,
+        38
+      ],
+      "width": 34,
+      "rotation": 13.91
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1175,
+        443
+      ],
+      "world_bbox": [
+        1156,
+        421,
+        37,
+        32
+      ],
+      "width": 31,
+      "rotation": -10.22
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1180,
+        515
+      ],
+      "world_bbox": [
+        1163,
+        493,
+        34,
+        31
+      ],
+      "width": 30,
+      "rotation": 8.99
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1228,
+        450
+      ],
+      "world_bbox": [
+        1202,
+        416,
+        53,
+        48
+      ],
+      "width": 45,
+      "rotation": -10.91
+    },
+    {
+      "land": "central",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1168,
+        490
+      ],
+      "world_bbox": [
+        1145,
+        461,
+        46,
+        41
+      ],
+      "width": 40,
+      "rotation": -7.65
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1278,
+        473
+      ],
+      "world_bbox": [
+        1258,
+        447,
+        41,
+        37
+      ],
+      "width": 35,
+      "rotation": -9.53
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1296,
+        472
+      ],
+      "world_bbox": [
+        1274,
+        446,
+        44,
+        37
+      ],
+      "width": 42,
+      "rotation": 1.02
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1287,
+        506
+      ],
+      "world_bbox": [
+        1262,
+        475,
+        49,
+        44
+      ],
+      "width": 45,
+      "rotation": 4.97
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        1307,
+        464
+      ],
+      "world_bbox": [
+        1290,
+        444,
+        33,
+        29
+      ],
+      "width": 27,
+      "rotation": -11.59
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1313,
+        509
+      ],
+      "world_bbox": [
+        1292,
+        484,
+        41,
+        35
+      ],
+      "width": 39,
+      "rotation": -1.15
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1336,
+        475
+      ],
+      "world_bbox": [
+        1318,
+        454,
+        35,
+        30
+      ],
+      "width": 29,
+      "rotation": -11.4
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1270,
+        492
+      ],
+      "world_bbox": [
+        1246,
+        462,
+        47,
+        43
+      ],
+      "width": 39,
+      "rotation": 13.44
+    },
+    {
+      "land": "central",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        1249,
+        469
+      ],
+      "world_bbox": [
+        1226,
+        441,
+        46,
+        40
+      ],
+      "width": 42,
+      "rotation": -5.52
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        976,
+        650
+      ],
+      "world_bbox": [
+        942,
+        604,
+        69,
+        65
+      ],
+      "width": 57,
+      "rotation": 12.96
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1006,
+        661
+      ],
+      "world_bbox": [
+        978,
+        625,
+        56,
+        52
+      ],
+      "width": 50,
+      "rotation": 8.22
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1024,
+        673
+      ],
+      "world_bbox": [
+        1004,
+        648,
+        40,
+        36
+      ],
+      "width": 36,
+      "rotation": -6.31
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        990,
+        655
+      ],
+      "world_bbox": [
+        976,
+        638,
+        29,
+        25
+      ],
+      "width": 27,
+      "rotation": 0.22
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        969,
+        679
+      ],
+      "world_bbox": [
+        945,
+        647,
+        48,
+        46
+      ],
+      "width": 40,
+      "rotation": 13.98
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1006,
+        712
+      ],
+      "world_bbox": [
+        983,
+        683,
+        46,
+        41
+      ],
+      "width": 42,
+      "rotation": 4.66
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        972,
+        737
+      ],
+      "world_bbox": [
+        950,
+        710,
+        43,
+        39
+      ],
+      "width": 37,
+      "rotation": 10.06
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        998,
+        640
+      ],
+      "world_bbox": [
+        982,
+        620,
+        31,
+        28
+      ],
+      "width": 27,
+      "rotation": -8.77
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        967,
+        708
+      ],
+      "world_bbox": [
+        939,
+        672,
+        56,
+        51
+      ],
+      "width": 48,
+      "rotation": 9.15
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1012,
+        629
+      ],
+      "world_bbox": [
+        981,
+        590,
+        62,
+        56
+      ],
+      "width": 54,
+      "rotation": -9.01
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        955,
+        629
+      ],
+      "world_bbox": [
+        927,
+        594,
+        56,
+        50
+      ],
+      "width": 48,
+      "rotation": -11.35
+    },
+    {
+      "land": "central",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        981,
+        611
+      ],
+      "world_bbox": [
+        964,
+        591,
+        33,
+        29
+      ],
+      "width": 27,
+      "rotation": 13.54
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        1354,
+        810
+      ],
+      "world_bbox": [
+        1327,
+        775,
+        54,
+        50
+      ],
+      "width": 46,
+      "rotation": -10.94
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1375,
+        770
+      ],
+      "world_bbox": [
+        1351,
+        740,
+        48,
+        43
+      ],
+      "width": 46,
+      "rotation": -1.47
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1345,
+        759
+      ],
+      "world_bbox": [
+        1325,
+        735,
+        40,
+        34
+      ],
+      "width": 38,
+      "rotation": -2.86
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1342,
+        783
+      ],
+      "world_bbox": [
+        1314,
+        747,
+        55,
+        51
+      ],
+      "width": 47,
+      "rotation": 12.2
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1322,
+        743
+      ],
+      "world_bbox": [
+        1298,
+        714,
+        47,
+        42
+      ],
+      "width": 43,
+      "rotation": -4.96
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1341,
+        733
+      ],
+      "world_bbox": [
+        1318,
+        705,
+        45,
+        40
+      ],
+      "width": 41,
+      "rotation": 3.75
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1333,
+        807
+      ],
+      "world_bbox": [
+        1316,
+        786,
+        35,
+        30
+      ],
+      "width": 33,
+      "rotation": -0.97
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1305,
+        791
+      ],
+      "world_bbox": [
+        1279,
+        760,
+        52,
+        44
+      ],
+      "width": 48,
+      "rotation": 4.47
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1370,
+        789
+      ],
+      "world_bbox": [
+        1352,
+        767,
+        35,
+        32
+      ],
+      "width": 31,
+      "rotation": -6.93
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1307,
+        818
+      ],
+      "world_bbox": [
+        1289,
+        796,
+        36,
+        32
+      ],
+      "width": 32,
+      "rotation": 5.5
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1367,
+        758
+      ],
+      "world_bbox": [
+        1350,
+        737,
+        33,
+        30
+      ],
+      "width": 27,
+      "rotation": -13.49
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "shoreline/fern_pebble.png",
+      "planting_anchor": [
+        1321,
+        827
+      ],
+      "world_bbox": [
+        1293,
+        792,
+        56,
+        50
+      ],
+      "width": 52,
+      "rotation": -2.92
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1359,
+        712
+      ],
+      "world_bbox": [
+        1334,
+        680,
+        50,
+        45
+      ],
+      "width": 44,
+      "rotation": 6.31
+    },
+    {
+      "land": "central",
+      "zone": 3,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1377,
+        735
+      ],
+      "world_bbox": [
+        1352,
+        706,
+        49,
+        42
+      ],
+      "width": 47,
+      "rotation": 1.99
+    },
+    {
+      "land": "central",
+      "zone": 4,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1075,
+        854
+      ],
+      "world_bbox": [
+        1044,
+        816,
+        62,
+        55
+      ],
+      "width": 56,
+      "rotation": 6.16
+    },
+    {
+      "land": "central",
+      "zone": 4,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1081,
+        831
+      ],
+      "world_bbox": [
+        1058,
+        801,
+        46,
+        43
+      ],
+      "width": 38,
+      "rotation": -11.63
+    },
+    {
+      "land": "central",
+      "zone": 4,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1110,
+        824
+      ],
+      "world_bbox": [
+        1090,
+        797,
+        41,
+        38
+      ],
+      "width": 39,
+      "rotation": -3.04
+    },
+    {
+      "land": "central",
+      "zone": 4,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1053,
+        852
+      ],
+      "world_bbox": [
+        1032,
+        826,
+        41,
+        37
+      ],
+      "width": 37,
+      "rotation": -3.87
+    },
+    {
+      "land": "central",
+      "zone": 4,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1066,
+        836
+      ],
+      "world_bbox": [
+        1048,
+        812,
+        35,
+        34
+      ],
+      "width": 29,
+      "rotation": 13.45
+    },
+    {
+      "land": "central",
+      "zone": 4,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1039,
+        820
+      ],
+      "world_bbox": [
+        1019,
+        795,
+        40,
+        36
+      ],
+      "width": 34,
+      "rotation": 10.88
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1043,
+        370
+      ],
+      "world_bbox": [
+        1032,
+        356,
+        23,
+        20
+      ],
+      "width": 21,
+      "rotation": 0.0
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1042,
+        801
+      ],
+      "world_bbox": [
+        1028,
+        783,
+        28,
+        26
+      ],
+      "width": 24,
+      "rotation": 12.46
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1298,
+        885
+      ],
+      "world_bbox": [
+        1284,
+        867,
+        28,
+        26
+      ],
+      "width": 22,
+      "rotation": 13.92
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1058,
+        762
+      ],
+      "world_bbox": [
+        1044,
+        744,
+        28,
+        26
+      ],
+      "width": 24,
+      "rotation": -7.56
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        962,
+        663
+      ],
+      "world_bbox": [
+        952,
+        650,
+        20,
+        19
+      ],
+      "width": 18,
+      "rotation": 4.41
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1379,
+        608
+      ],
+      "world_bbox": [
+        1366,
+        590,
+        27,
+        25
+      ],
+      "width": 23,
+      "rotation": -12.58
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        979,
+        659
+      ],
+      "world_bbox": [
+        970,
+        648,
+        18,
+        16
+      ],
+      "width": 16,
+      "rotation": -5.37
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1312,
+        528
+      ],
+      "world_bbox": [
+        1302,
+        515,
+        21,
+        18
+      ],
+      "width": 17,
+      "rotation": -12.01
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1156,
+        415
+      ],
+      "world_bbox": [
+        1144,
+        400,
+        24,
+        22
+      ],
+      "width": 22,
+      "rotation": 3.29
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1208,
+        453
+      ],
+      "world_bbox": [
+        1200,
+        442,
+        17,
+        15
+      ],
+      "width": 15,
+      "rotation": 5.71
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1111,
+        460
+      ],
+      "world_bbox": [
+        1098,
+        443,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": 10.13
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1177,
+        456
+      ],
+      "world_bbox": [
+        1166,
+        442,
+        23,
+        20
+      ],
+      "width": 21,
+      "rotation": -4.3
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        930,
+        677
+      ],
+      "world_bbox": [
+        922,
+        665,
+        17,
+        17
+      ],
+      "width": 15,
+      "rotation": 9.78
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1286,
+        533
+      ],
+      "world_bbox": [
+        1276,
+        521,
+        20,
+        17
+      ],
+      "width": 18,
+      "rotation": -0.62
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1327,
+        767
+      ],
+      "world_bbox": [
+        1314,
+        750,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": -8.48
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        979,
+        395
+      ],
+      "world_bbox": [
+        969,
+        382,
+        20,
+        18
+      ],
+      "width": 16,
+      "rotation": 13.38
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1050,
+        763
+      ],
+      "world_bbox": [
+        1042,
+        752,
+        17,
+        15
+      ],
+      "width": 15,
+      "rotation": -0.59
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        917,
+        459
+      ],
+      "world_bbox": [
+        904,
+        442,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": 8.96
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1034,
+        762
+      ],
+      "world_bbox": [
+        1022,
+        746,
+        24,
+        23
+      ],
+      "width": 20,
+      "rotation": -8.33
+    },
+    {
+      "land": "central",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1394,
+        673
+      ],
+      "world_bbox": [
+        1383,
+        658,
+        22,
+        21
+      ],
+      "width": 20,
+      "rotation": -3.57
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        931,
+        462
+      ],
+      "world_bbox": [
+        912,
+        437,
+        38,
+        36
+      ],
+      "width": 34,
+      "rotation": -7.6
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        809,
+        656
+      ],
+      "world_bbox": [
+        792,
+        634,
+        34,
+        32
+      ],
+      "width": 28,
+      "rotation": 10.07
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        886,
+        488
+      ],
+      "world_bbox": [
+        872,
+        470,
+        28,
+        26
+      ],
+      "width": 24,
+      "rotation": -6.42
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        955,
+        589
+      ],
+      "world_bbox": [
+        935,
+        562,
+        40,
+        38
+      ],
+      "width": 32,
+      "rotation": 13.8
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        885,
+        500
+      ],
+      "world_bbox": [
+        866,
+        477,
+        37,
+        33
+      ],
+      "width": 33,
+      "rotation": 6.22
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        959,
+        571
+      ],
+      "world_bbox": [
+        947,
+        556,
+        24,
+        21
+      ],
+      "width": 22,
+      "rotation": -1.3
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        824,
+        575
+      ],
+      "world_bbox": [
+        811,
+        558,
+        26,
+        24
+      ],
+      "width": 24,
+      "rotation": 3.76
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1077,
+        987
+      ],
+      "world_bbox": [
+        1065,
+        972,
+        24,
+        22
+      ],
+      "width": 22,
+      "rotation": -0.41
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1072,
+        1016
+      ],
+      "world_bbox": [
+        1056,
+        994,
+        32,
+        31
+      ],
+      "width": 30,
+      "rotation": -3.99
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1121,
+        899
+      ],
+      "world_bbox": [
+        1102,
+        877,
+        37,
+        32
+      ],
+      "width": 35,
+      "rotation": 0.51
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1008,
+        975
+      ],
+      "world_bbox": [
+        992,
+        955,
+        33,
+        28
+      ],
+      "width": 31,
+      "rotation": -3.8
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1151,
+        1010
+      ],
+      "world_bbox": [
+        1131,
+        983,
+        40,
+        38
+      ],
+      "width": 34,
+      "rotation": -12.73
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1052,
+        880
+      ],
+      "world_bbox": [
+        1034,
+        857,
+        36,
+        33
+      ],
+      "width": 30,
+      "rotation": -12.5
+    },
+    {
+      "land": "central",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1122,
+        983
+      ],
+      "world_bbox": [
+        1104,
+        960,
+        36,
+        33
+      ],
+      "width": 30,
+      "rotation": -12.65
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        221,
+        623
+      ],
+      "world_bbox": [
+        195,
+        590,
+        52,
+        47
+      ],
+      "width": 46,
+      "rotation": 9.15
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        263,
+        565
+      ],
+      "world_bbox": [
+        236,
+        533,
+        54,
+        46
+      ],
+      "width": 52,
+      "rotation": -0.13
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        259,
+        515
+      ],
+      "world_bbox": [
+        242,
+        493,
+        35,
+        32
+      ],
+      "width": 29,
+      "rotation": -11.15
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        278,
+        606
+      ],
+      "world_bbox": [
+        259,
+        582,
+        38,
+        34
+      ],
+      "width": 32,
+      "rotation": 10.99
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        226,
+        579
+      ],
+      "world_bbox": [
+        200,
+        544,
+        53,
+        50
+      ],
+      "width": 45,
+      "rotation": 12.5
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        239,
+        552
+      ],
+      "world_bbox": [
+        212,
+        518,
+        55,
+        48
+      ],
+      "width": 47,
+      "rotation": -9.76
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        234,
+        599
+      ],
+      "world_bbox": [
+        212,
+        570,
+        45,
+        41
+      ],
+      "width": 41,
+      "rotation": 6.24
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        293,
+        542
+      ],
+      "world_bbox": [
+        260,
+        499,
+        66,
+        62
+      ],
+      "width": 56,
+      "rotation": 12.4
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        347,
+        563
+      ],
+      "world_bbox": [
+        317,
+        524,
+        60,
+        56
+      ],
+      "width": 54,
+      "rotation": -7.3
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        246,
+        619
+      ],
+      "world_bbox": [
+        229,
+        597,
+        34,
+        31
+      ],
+      "width": 28,
+      "rotation": 11.17
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        307,
+        579
+      ],
+      "world_bbox": [
+        282,
+        545,
+        51,
+        48
+      ],
+      "width": 43,
+      "rotation": -10.4
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        322,
+        532
+      ],
+      "world_bbox": [
+        299,
+        504,
+        46,
+        40
+      ],
+      "width": 38,
+      "rotation": 13.05
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        213,
+        595
+      ],
+      "world_bbox": [
+        191,
+        567,
+        44,
+        40
+      ],
+      "width": 36,
+      "rotation": 13.9
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        216,
+        643
+      ],
+      "world_bbox": [
+        194,
+        616,
+        45,
+        39
+      ],
+      "width": 41,
+      "rotation": -4.99
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        269,
+        586
+      ],
+      "world_bbox": [
+        253,
+        566,
+        32,
+        28
+      ],
+      "width": 30,
+      "rotation": -2.86
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        247,
+        578
+      ],
+      "world_bbox": [
+        224,
+        549,
+        47,
+        41
+      ],
+      "width": 41,
+      "rotation": 7.38
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        258,
+        595
+      ],
+      "world_bbox": [
+        242,
+        575,
+        31,
+        28
+      ],
+      "width": 27,
+      "rotation": -6.43
+    },
+    {
+      "land": "101112",
+      "zone": 0,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        337,
+        610
+      ],
+      "world_bbox": [
+        314,
+        581,
+        46,
+        42
+      ],
+      "width": 44,
+      "rotation": -2.89
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        629,
+        673
+      ],
+      "world_bbox": [
+        614,
+        653,
+        31,
+        28
+      ],
+      "width": 29,
+      "rotation": -1.71
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        507,
+        714
+      ],
+      "world_bbox": [
+        490,
+        694,
+        33,
+        29
+      ],
+      "width": 31,
+      "rotation": 2.69
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        577,
+        725
+      ],
+      "world_bbox": [
+        555,
+        696,
+        44,
+        41
+      ],
+      "width": 42,
+      "rotation": 2.79
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        545,
+        733
+      ],
+      "world_bbox": [
+        523,
+        706,
+        44,
+        39
+      ],
+      "width": 42,
+      "rotation": -1.28
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        567,
+        770
+      ],
+      "world_bbox": [
+        545,
+        742,
+        44,
+        40
+      ],
+      "width": 36,
+      "rotation": -13.23
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        597,
+        750
+      ],
+      "world_bbox": [
+        570,
+        715,
+        54,
+        50
+      ],
+      "width": 48,
+      "rotation": 6.56
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        540,
+        778
+      ],
+      "world_bbox": [
+        522,
+        755,
+        35,
+        33
+      ],
+      "width": 31,
+      "rotation": 7.98
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        653,
+        787
+      ],
+      "world_bbox": [
+        635,
+        764,
+        36,
+        33
+      ],
+      "width": 34,
+      "rotation": 3.84
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        627,
+        745
+      ],
+      "world_bbox": [
+        602,
+        712,
+        50,
+        47
+      ],
+      "width": 42,
+      "rotation": -10.43
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        572,
+        835
+      ],
+      "world_bbox": [
+        548,
+        805,
+        48,
+        43
+      ],
+      "width": 44,
+      "rotation": -4.63
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        520,
+        774
+      ],
+      "world_bbox": [
+        492,
+        737,
+        57,
+        53
+      ],
+      "width": 53,
+      "rotation": -4.87
+    },
+    {
+      "land": "101112",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        548,
+        822
+      ],
+      "world_bbox": [
+        523,
+        792,
+        50,
+        43
+      ],
+      "width": 48,
+      "rotation": 0.22
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        233,
+        990
+      ],
+      "world_bbox": [
+        206,
+        956,
+        53,
+        49
+      ],
+      "width": 45,
+      "rotation": -13.45
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        240,
+        960
+      ],
+      "world_bbox": [
+        210,
+        924,
+        59,
+        51
+      ],
+      "width": 51,
+      "rotation": -9.48
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        277,
+        947
+      ],
+      "world_bbox": [
+        256,
+        921,
+        42,
+        37
+      ],
+      "width": 36,
+      "rotation": -8.65
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        337,
+        895
+      ],
+      "world_bbox": [
+        316,
+        868,
+        41,
+        38
+      ],
+      "width": 35,
+      "rotation": 13.13
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        183,
+        1011
+      ],
+      "world_bbox": [
+        159,
+        982,
+        48,
+        41
+      ],
+      "width": 46,
+      "rotation": -1.17
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        259,
+        969
+      ],
+      "world_bbox": [
+        242,
+        948,
+        33,
+        30
+      ],
+      "width": 31,
+      "rotation": -3.12
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        377,
+        1095
+      ],
+      "world_bbox": [
+        352,
+        1065,
+        50,
+        43
+      ],
+      "width": 42,
+      "rotation": 11.35
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        211,
+        985
+      ],
+      "world_bbox": [
+        190,
+        958,
+        43,
+        38
+      ],
+      "width": 39,
+      "rotation": 4.6
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        270,
+        985
+      ],
+      "world_bbox": [
+        252,
+        964,
+        35,
+        30
+      ],
+      "width": 33,
+      "rotation": 1.95
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        219,
+        961
+      ],
+      "world_bbox": [
+        200,
+        937,
+        38,
+        34
+      ],
+      "width": 36,
+      "rotation": 3.15
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        275,
+        908
+      ],
+      "world_bbox": [
+        259,
+        888,
+        32,
+        28
+      ],
+      "width": 28,
+      "rotation": 6.5
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        227,
+        931
+      ],
+      "world_bbox": [
+        202,
+        901,
+        49,
+        43
+      ],
+      "width": 43,
+      "rotation": 7.64
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        192,
+        974
+      ],
+      "world_bbox": [
+        176,
+        955,
+        31,
+        27
+      ],
+      "width": 27,
+      "rotation": -7.18
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        257,
+        953
+      ],
+      "world_bbox": [
+        242,
+        933,
+        30,
+        28
+      ],
+      "width": 28,
+      "rotation": 4.56
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        298,
+        892
+      ],
+      "world_bbox": [
+        273,
+        859,
+        50,
+        47
+      ],
+      "width": 44,
+      "rotation": -9.26
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "shoreline/fern_pebble.png",
+      "planting_anchor": [
+        202,
+        936
+      ],
+      "world_bbox": [
+        182,
+        909,
+        41,
+        39
+      ],
+      "width": 35,
+      "rotation": -11.36
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        200,
+        997
+      ],
+      "world_bbox": [
+        181,
+        974,
+        38,
+        33
+      ],
+      "width": 32,
+      "rotation": 11.11
+    },
+    {
+      "land": "101112",
+      "zone": 2,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        222,
+        894
+      ],
+      "world_bbox": [
+        202,
+        868,
+        39,
+        37
+      ],
+      "width": 33,
+      "rotation": -13.76
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        564,
+        1139
+      ],
+      "world_bbox": [
+        532,
+        1098,
+        63,
+        59
+      ],
+      "width": 53,
+      "rotation": -12.2
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        607,
+        1181
+      ],
+      "world_bbox": [
+        586,
+        1154,
+        41,
+        39
+      ],
+      "width": 35,
+      "rotation": 12.36
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        548,
+        1173
+      ],
+      "world_bbox": [
+        525,
+        1143,
+        46,
+        43
+      ],
+      "width": 42,
+      "rotation": 6.58
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        518,
+        1157
+      ],
+      "world_bbox": [
+        502,
+        1136,
+        31,
+        30
+      ],
+      "width": 27,
+      "rotation": 10.3
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        590,
+        1136
+      ],
+      "world_bbox": [
+        568,
+        1110,
+        43,
+        37
+      ],
+      "width": 39,
+      "rotation": -4.42
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        557,
+        1196
+      ],
+      "world_bbox": [
+        534,
+        1168,
+        46,
+        40
+      ],
+      "width": 40,
+      "rotation": -7.58
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        649,
+        1126
+      ],
+      "world_bbox": [
+        624,
+        1095,
+        49,
+        44
+      ],
+      "width": 45,
+      "rotation": 3.68
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        577,
+        1201
+      ],
+      "world_bbox": [
+        558,
+        1179,
+        38,
+        32
+      ],
+      "width": 36,
+      "rotation": -1.4
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        499,
+        1171
+      ],
+      "world_bbox": [
+        471,
+        1135,
+        56,
+        52
+      ],
+      "width": 48,
+      "rotation": -11.25
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        537,
+        1191
+      ],
+      "world_bbox": [
+        516,
+        1164,
+        42,
+        38
+      ],
+      "width": 36,
+      "rotation": 8.68
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        514,
+        1134
+      ],
+      "world_bbox": [
+        498,
+        1114,
+        31,
+        28
+      ],
+      "width": 29,
+      "rotation": 1.74
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        564,
+        1107
+      ],
+      "world_bbox": [
+        538,
+        1074,
+        52,
+        47
+      ],
+      "width": 46,
+      "rotation": -9.52
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        530,
+        1102
+      ],
+      "world_bbox": [
+        512,
+        1078,
+        36,
+        34
+      ],
+      "width": 32,
+      "rotation": -8.48
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        588,
+        1150
+      ],
+      "world_bbox": [
+        574,
+        1132,
+        29,
+        26
+      ],
+      "width": 27,
+      "rotation": -1.57
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        474,
+        1144
+      ],
+      "world_bbox": [
+        446,
+        1108,
+        56,
+        51
+      ],
+      "width": 46,
+      "rotation": -13.56
+    },
+    {
+      "land": "101112",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        598,
+        1115
+      ],
+      "world_bbox": [
+        572,
+        1083,
+        51,
+        46
+      ],
+      "width": 43,
+      "rotation": 11.67
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        197,
+        818
+      ],
+      "world_bbox": [
+        173,
+        789,
+        48,
+        42
+      ],
+      "width": 46,
+      "rotation": -2.28
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        174,
+        835
+      ],
+      "world_bbox": [
+        144,
+        796,
+        60,
+        56
+      ],
+      "width": 50,
+      "rotation": -13.32
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        157,
+        847
+      ],
+      "world_bbox": [
+        136,
+        821,
+        43,
+        37
+      ],
+      "width": 39,
+      "rotation": 5.25
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        212,
+        809
+      ],
+      "world_bbox": [
+        196,
+        788,
+        32,
+        30
+      ],
+      "width": 28,
+      "rotation": -9.95
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        166,
+        862
+      ],
+      "world_bbox": [
+        150,
+        842,
+        33,
+        29
+      ],
+      "width": 29,
+      "rotation": 5.58
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        183,
+        693
+      ],
+      "world_bbox": [
+        158,
+        662,
+        49,
+        44
+      ],
+      "width": 45,
+      "rotation": -3.46
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        193,
+        798
+      ],
+      "world_bbox": [
+        170,
+        769,
+        45,
+        41
+      ],
+      "width": 37,
+      "rotation": 12.06
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        193,
+        853
+      ],
+      "world_bbox": [
+        166,
+        819,
+        53,
+        48
+      ],
+      "width": 45,
+      "rotation": -10.31
+    },
+    {
+      "land": "101112",
+      "zone": 4,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        161,
+        890
+      ],
+      "world_bbox": [
+        140,
+        864,
+        41,
+        37
+      ],
+      "width": 37,
+      "rotation": -4.17
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        478,
+        899
+      ],
+      "world_bbox": [
+        462,
+        879,
+        32,
+        28
+      ],
+      "width": 30,
+      "rotation": 3.88
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        449,
+        938
+      ],
+      "world_bbox": [
+        433,
+        918,
+        32,
+        29
+      ],
+      "width": 30,
+      "rotation": 1.73
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        443,
+        910
+      ],
+      "world_bbox": [
+        414,
+        874,
+        58,
+        52
+      ],
+      "width": 56,
+      "rotation": -0.29
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        509,
+        983
+      ],
+      "world_bbox": [
+        486,
+        954,
+        45,
+        42
+      ],
+      "width": 41,
+      "rotation": 6.43
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        464,
+        904
+      ],
+      "world_bbox": [
+        450,
+        884,
+        29,
+        28
+      ],
+      "width": 27,
+      "rotation": -4.59
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        434,
+        888
+      ],
+      "world_bbox": [
+        410,
+        857,
+        47,
+        44
+      ],
+      "width": 41,
+      "rotation": 10.12
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        565,
+        993
+      ],
+      "world_bbox": [
+        550,
+        974,
+        31,
+        27
+      ],
+      "width": 27,
+      "rotation": -5.27
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        543,
+        970
+      ],
+      "world_bbox": [
+        526,
+        950,
+        34,
+        29
+      ],
+      "width": 30,
+      "rotation": -6.0
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        411,
+        881
+      ],
+      "world_bbox": [
+        394,
+        860,
+        35,
+        30
+      ],
+      "width": 29,
+      "rotation": 11.18
+    },
+    {
+      "land": "101112",
+      "zone": 5,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        381,
+        909
+      ],
+      "world_bbox": [
+        364,
+        888,
+        34,
+        30
+      ],
+      "width": 32,
+      "rotation": 2.14
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        424,
+        591
+      ],
+      "world_bbox": [
+        400,
+        560,
+        49,
+        44
+      ],
+      "width": 45,
+      "rotation": 4.6
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        511,
+        572
+      ],
+      "world_bbox": [
+        484,
+        538,
+        55,
+        49
+      ],
+      "width": 49,
+      "rotation": 6.91
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        454,
+        604
+      ],
+      "world_bbox": [
+        428,
+        570,
+        53,
+        49
+      ],
+      "width": 45,
+      "rotation": 13.4
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        448,
+        568
+      ],
+      "world_bbox": [
+        423,
+        536,
+        50,
+        45
+      ],
+      "width": 46,
+      "rotation": 2.96
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        480,
+        589
+      ],
+      "world_bbox": [
+        450,
+        549,
+        61,
+        57
+      ],
+      "width": 51,
+      "rotation": -13.15
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        394,
+        562
+      ],
+      "world_bbox": [
+        375,
+        538,
+        38,
+        35
+      ],
+      "width": 34,
+      "rotation": -8.16
+    },
+    {
+      "land": "101112",
+      "zone": 6,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        394,
+        634
+      ],
+      "world_bbox": [
+        369,
+        601,
+        50,
+        47
+      ],
+      "width": 46,
+      "rotation": -5.21
+    },
+    {
+      "land": "101112",
+      "zone": 7,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        616,
+        632
+      ],
+      "world_bbox": [
+        596,
+        608,
+        40,
+        34
+      ],
+      "width": 38,
+      "rotation": 1.49
+    },
+    {
+      "land": "101112",
+      "zone": 7,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        618,
+        611
+      ],
+      "world_bbox": [
+        598,
+        586,
+        41,
+        35
+      ],
+      "width": 37,
+      "rotation": 4.53
+    },
+    {
+      "land": "101112",
+      "zone": 7,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        637,
+        626
+      ],
+      "world_bbox": [
+        616,
+        602,
+        41,
+        35
+      ],
+      "width": 39,
+      "rotation": -2.43
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        647,
+        877
+      ],
+      "world_bbox": [
+        635,
+        861,
+        24,
+        23
+      ],
+      "width": 20,
+      "rotation": -6.5
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        382,
+        529
+      ],
+      "world_bbox": [
+        374,
+        518,
+        17,
+        16
+      ],
+      "width": 15,
+      "rotation": -0.02
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        636,
+        924
+      ],
+      "world_bbox": [
+        623,
+        908,
+        26,
+        23
+      ],
+      "width": 22,
+      "rotation": -9.45
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        278,
+        665
+      ],
+      "world_bbox": [
+        268,
+        652,
+        21,
+        19
+      ],
+      "width": 17,
+      "rotation": -13.23
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        316,
+        757
+      ],
+      "world_bbox": [
+        307,
+        746,
+        18,
+        16
+      ],
+      "width": 16,
+      "rotation": 5.15
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        484,
+        1038
+      ],
+      "world_bbox": [
+        472,
+        1022,
+        25,
+        23
+      ],
+      "width": 23,
+      "rotation": -5.56
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        401,
+        535
+      ],
+      "world_bbox": [
+        390,
+        522,
+        21,
+        19
+      ],
+      "width": 19,
+      "rotation": 0.06
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        570,
+        927
+      ],
+      "world_bbox": [
+        558,
+        913,
+        23,
+        20
+      ],
+      "width": 21,
+      "rotation": 1.22
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        556,
+        599
+      ],
+      "world_bbox": [
+        546,
+        587,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": -11.62
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        593,
+        915
+      ],
+      "world_bbox": [
+        578,
+        896,
+        29,
+        27
+      ],
+      "width": 23,
+      "rotation": -12.91
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        275,
+        530
+      ],
+      "world_bbox": [
+        262,
+        513,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": 9.34
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        541,
+        608
+      ],
+      "world_bbox": [
+        530,
+        595,
+        21,
+        19
+      ],
+      "width": 19,
+      "rotation": 3.1
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        248,
+        567
+      ],
+      "world_bbox": [
+        236,
+        552,
+        24,
+        21
+      ],
+      "width": 22,
+      "rotation": 1.68
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        357,
+        1171
+      ],
+      "world_bbox": [
+        346,
+        1158,
+        21,
+        19
+      ],
+      "width": 19,
+      "rotation": -1.97
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        253,
+        722
+      ],
+      "world_bbox": [
+        244,
+        710,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": 11.74
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        415,
+        1041
+      ],
+      "world_bbox": [
+        406,
+        1029,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": -12.8
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        724,
+        906
+      ],
+      "world_bbox": [
+        714,
+        894,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": -11.2
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        334,
+        682
+      ],
+      "world_bbox": [
+        321,
+        665,
+        26,
+        24
+      ],
+      "width": 24,
+      "rotation": 4.7
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        661,
+        1130
+      ],
+      "world_bbox": [
+        648,
+        1112,
+        27,
+        25
+      ],
+      "width": 23,
+      "rotation": -8.93
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        523,
+        1006
+      ],
+      "world_bbox": [
+        514,
+        995,
+        18,
+        16
+      ],
+      "width": 16,
+      "rotation": -7.07
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        648,
+        1041
+      ],
+      "world_bbox": [
+        634,
+        1023,
+        27,
+        26
+      ],
+      "width": 23,
+      "rotation": -12.39
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        383,
+        1120
+      ],
+      "world_bbox": [
+        372,
+        1107,
+        21,
+        19
+      ],
+      "width": 17,
+      "rotation": -9.76
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        736,
+        840
+      ],
+      "world_bbox": [
+        726,
+        827,
+        20,
+        18
+      ],
+      "width": 18,
+      "rotation": -1.29
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        517,
+        867
+      ],
+      "world_bbox": [
+        508,
+        856,
+        17,
+        15
+      ],
+      "width": 15,
+      "rotation": 3.44
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        313,
+        823
+      ],
+      "world_bbox": [
+        299,
+        806,
+        28,
+        25
+      ],
+      "width": 24,
+      "rotation": -6.92
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        744,
+        1035
+      ],
+      "world_bbox": [
+        734,
+        1022,
+        20,
+        18
+      ],
+      "width": 16,
+      "rotation": 13.37
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        286,
+        853
+      ],
+      "world_bbox": [
+        274,
+        838,
+        25,
+        22
+      ],
+      "width": 21,
+      "rotation": 11.83
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        492,
+        1135
+      ],
+      "world_bbox": [
+        482,
+        1122,
+        21,
+        19
+      ],
+      "width": 19,
+      "rotation": -0.63
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        236,
+        808
+      ],
+      "world_bbox": [
+        226,
+        795,
+        20,
+        18
+      ],
+      "width": 18,
+      "rotation": -3.79
+    },
+    {
+      "land": "101112",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        372,
+        1107
+      ],
+      "world_bbox": [
+        360,
+        1092,
+        25,
+        22
+      ],
+      "width": 23,
+      "rotation": 2.78
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        90,
+        959
+      ],
+      "world_bbox": [
+        73,
+        937,
+        34,
+        32
+      ],
+      "width": 30,
+      "rotation": -4.58
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        88,
+        766
+      ],
+      "world_bbox": [
+        75,
+        749,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": 9.34
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        84,
+        845
+      ],
+      "world_bbox": [
+        69,
+        826,
+        30,
+        27
+      ],
+      "width": 24,
+      "rotation": 13.02
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        71,
+        893
+      ],
+      "world_bbox": [
+        54,
+        871,
+        34,
+        31
+      ],
+      "width": 28,
+      "rotation": -11.9
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        90,
+        787
+      ],
+      "world_bbox": [
+        74,
+        767,
+        31,
+        29
+      ],
+      "width": 27,
+      "rotation": -10.13
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        81,
+        879
+      ],
+      "world_bbox": [
+        67,
+        862,
+        28,
+        25
+      ],
+      "width": 26,
+      "rotation": 1.13
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        77,
+        951
+      ],
+      "world_bbox": [
+        59,
+        927,
+        36,
+        34
+      ],
+      "width": 32,
+      "rotation": 4.51
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        399,
+        1312
+      ],
+      "world_bbox": [
+        379,
+        1287,
+        40,
+        36
+      ],
+      "width": 36,
+      "rotation": 5.06
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        323,
+        1273
+      ],
+      "world_bbox": [
+        306,
+        1250,
+        34,
+        33
+      ],
+      "width": 30,
+      "rotation": -9.03
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        548,
+        1306
+      ],
+      "world_bbox": [
+        530,
+        1284,
+        35,
+        31
+      ],
+      "width": 31,
+      "rotation": -6.71
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        386,
+        1305
+      ],
+      "world_bbox": [
+        374,
+        1290,
+        25,
+        21
+      ],
+      "width": 23,
+      "rotation": -4.89
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        413,
+        1305
+      ],
+      "world_bbox": [
+        400,
+        1290,
+        25,
+        22
+      ],
+      "width": 23,
+      "rotation": -1.87
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        531,
+        1309
+      ],
+      "world_bbox": [
+        513,
+        1285,
+        36,
+        34
+      ],
+      "width": 32,
+      "rotation": 7.36
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        334,
+        1270
+      ],
+      "world_bbox": [
+        321,
+        1252,
+        26,
+        25
+      ],
+      "width": 22,
+      "rotation": -13.76
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        831,
+        1107
+      ],
+      "world_bbox": [
+        812,
+        1082,
+        37,
+        36
+      ],
+      "width": 31,
+      "rotation": -13.73
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        804,
+        1165
+      ],
+      "world_bbox": [
+        788,
+        1145,
+        31,
+        29
+      ],
+      "width": 29,
+      "rotation": -2.67
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        757,
+        1200
+      ],
+      "world_bbox": [
+        737,
+        1173,
+        40,
+        38
+      ],
+      "width": 36,
+      "rotation": 7.75
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        751,
+        1211
+      ],
+      "world_bbox": [
+        738,
+        1194,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": -7.88
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        708,
+        1242
+      ],
+      "world_bbox": [
+        692,
+        1222,
+        31,
+        29
+      ],
+      "width": 27,
+      "rotation": -10.13
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        808,
+        1152
+      ],
+      "world_bbox": [
+        794,
+        1134,
+        29,
+        25
+      ],
+      "width": 27,
+      "rotation": 1.48
+    },
+    {
+      "land": "101112",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        691,
+        1252
+      ],
+      "world_bbox": [
+        677,
+        1235,
+        28,
+        24
+      ],
+      "width": 24,
+      "rotation": -8.85
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1354,
+        101
+      ],
+      "world_bbox": [
+        1331,
+        71,
+        46,
+        43
+      ],
+      "width": 42,
+      "rotation": 6.3
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1319,
+        149
+      ],
+      "world_bbox": [
+        1289,
+        110,
+        60,
+        56
+      ],
+      "width": 54,
+      "rotation": -6.8
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1323,
+        93
+      ],
+      "world_bbox": [
+        1306,
+        70,
+        35,
+        33
+      ],
+      "width": 31,
+      "rotation": 9.17
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1402,
+        123
+      ],
+      "world_bbox": [
+        1377,
+        92,
+        50,
+        44
+      ],
+      "width": 48,
+      "rotation": 1.68
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1331,
+        120
+      ],
+      "world_bbox": [
+        1308,
+        91,
+        47,
+        42
+      ],
+      "width": 45,
+      "rotation": 1.3
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1408,
+        91
+      ],
+      "world_bbox": [
+        1392,
+        71,
+        32,
+        29
+      ],
+      "width": 28,
+      "rotation": -6.37
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1431,
+        79
+      ],
+      "world_bbox": [
+        1412,
+        56,
+        37,
+        33
+      ],
+      "width": 35,
+      "rotation": 0.11
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        1382,
+        119
+      ],
+      "world_bbox": [
+        1362,
+        94,
+        39,
+        35
+      ],
+      "width": 37,
+      "rotation": -1.26
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1373,
+        67
+      ],
+      "world_bbox": [
+        1354,
+        44,
+        38,
+        33
+      ],
+      "width": 34,
+      "rotation": -5.53
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1379,
+        103
+      ],
+      "world_bbox": [
+        1363,
+        81,
+        32,
+        31
+      ],
+      "width": 28,
+      "rotation": -8.87
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1385,
+        83
+      ],
+      "world_bbox": [
+        1365,
+        58,
+        40,
+        36
+      ],
+      "width": 38,
+      "rotation": 1.32
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1362,
+        129
+      ],
+      "world_bbox": [
+        1335,
+        95,
+        54,
+        48
+      ],
+      "width": 48,
+      "rotation": -8.59
+    },
+    {
+      "land": "0405",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1352,
+        115
+      ],
+      "world_bbox": [
+        1337,
+        96,
+        30,
+        27
+      ],
+      "width": 28,
+      "rotation": 0.72
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1412,
+        318
+      ],
+      "world_bbox": [
+        1388,
+        288,
+        48,
+        43
+      ],
+      "width": 44,
+      "rotation": -4.47
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1381,
+        272
+      ],
+      "world_bbox": [
+        1366,
+        253,
+        30,
+        27
+      ],
+      "width": 28,
+      "rotation": -1.5
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1502,
+        298
+      ],
+      "world_bbox": [
+        1478,
+        266,
+        49,
+        45
+      ],
+      "width": 43,
+      "rotation": 9.18
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1471,
+        256
+      ],
+      "world_bbox": [
+        1449,
+        229,
+        44,
+        38
+      ],
+      "width": 40,
+      "rotation": -4.89
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1486,
+        279
+      ],
+      "world_bbox": [
+        1464,
+        250,
+        44,
+        41
+      ],
+      "width": 42,
+      "rotation": 2.86
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1518,
+        290
+      ],
+      "world_bbox": [
+        1501,
+        269,
+        34,
+        30
+      ],
+      "width": 32,
+      "rotation": 0.99
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1507,
+        320
+      ],
+      "world_bbox": [
+        1480,
+        286,
+        53,
+        48
+      ],
+      "width": 45,
+      "rotation": -12.65
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1502,
+        265
+      ],
+      "world_bbox": [
+        1486,
+        246,
+        31,
+        27
+      ],
+      "width": 29,
+      "rotation": -4.07
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        1487,
+        262
+      ],
+      "world_bbox": [
+        1470,
+        242,
+        33,
+        29
+      ],
+      "width": 27,
+      "rotation": 11.98
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1529,
+        267
+      ],
+      "world_bbox": [
+        1510,
+        244,
+        37,
+        33
+      ],
+      "width": 33,
+      "rotation": -5.22
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1384,
+        291
+      ],
+      "world_bbox": [
+        1364,
+        264,
+        41,
+        39
+      ],
+      "width": 37,
+      "rotation": 6.88
+    },
+    {
+      "land": "0405",
+      "zone": 1,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1391,
+        311
+      ],
+      "world_bbox": [
+        1365,
+        278,
+        52,
+        47
+      ],
+      "width": 48,
+      "rotation": 4.66
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1298,
+        200
+      ],
+      "world_bbox": [
+        1270,
+        164,
+        56,
+        51
+      ],
+      "width": 46,
+      "rotation": 13.73
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1322,
+        205
+      ],
+      "world_bbox": [
+        1292,
+        168,
+        59,
+        53
+      ],
+      "width": 49,
+      "rotation": -12.86
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1291,
+        222
+      ],
+      "world_bbox": [
+        1266,
+        187,
+        51,
+        50
+      ],
+      "width": 43,
+      "rotation": 12.3
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1266,
+        226
+      ],
+      "world_bbox": [
+        1236,
+        187,
+        60,
+        56
+      ],
+      "width": 52,
+      "rotation": -10.62
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1270,
+        205
+      ],
+      "world_bbox": [
+        1251,
+        180,
+        38,
+        36
+      ],
+      "width": 34,
+      "rotation": -7.22
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1293,
+        178
+      ],
+      "world_bbox": [
+        1270,
+        149,
+        47,
+        42
+      ],
+      "width": 45,
+      "rotation": -3.03
+    },
+    {
+      "land": "0405",
+      "zone": 2,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1253,
+        209
+      ],
+      "world_bbox": [
+        1236,
+        188,
+        34,
+        30
+      ],
+      "width": 32,
+      "rotation": -1.0
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1660,
+        234
+      ],
+      "world_bbox": [
+        1647,
+        217,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": 9.24
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1340,
+        281
+      ],
+      "world_bbox": [
+        1326,
+        265,
+        27,
+        23
+      ],
+      "width": 23,
+      "rotation": -9.91
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1557,
+        241
+      ],
+      "world_bbox": [
+        1548,
+        230,
+        19,
+        16
+      ],
+      "width": 17,
+      "rotation": -4.0
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1311,
+        162
+      ],
+      "world_bbox": [
+        1300,
+        149,
+        22,
+        19
+      ],
+      "width": 20,
+      "rotation": -0.45
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1301,
+        104
+      ],
+      "world_bbox": [
+        1292,
+        92,
+        19,
+        17
+      ],
+      "width": 17,
+      "rotation": 3.59
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1420,
+        143
+      ],
+      "world_bbox": [
+        1406,
+        126,
+        27,
+        24
+      ],
+      "width": 23,
+      "rotation": -8.68
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1296,
+        297
+      ],
+      "world_bbox": [
+        1282,
+        278,
+        28,
+        27
+      ],
+      "width": 24,
+      "rotation": 12.16
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1451,
+        128
+      ],
+      "world_bbox": [
+        1440,
+        114,
+        23,
+        20
+      ],
+      "width": 21,
+      "rotation": 3.8
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1339,
+        247
+      ],
+      "world_bbox": [
+        1329,
+        234,
+        20,
+        18
+      ],
+      "width": 18,
+      "rotation": -1.47
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1464,
+        63
+      ],
+      "world_bbox": [
+        1452,
+        48,
+        24,
+        22
+      ],
+      "width": 20,
+      "rotation": -8.26
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1610,
+        161
+      ],
+      "world_bbox": [
+        1598,
+        146,
+        23,
+        21
+      ],
+      "width": 19,
+      "rotation": -10.54
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1266,
+        246
+      ],
+      "world_bbox": [
+        1255,
+        231,
+        22,
+        21
+      ],
+      "width": 18,
+      "rotation": 9.8
+    },
+    {
+      "land": "0405",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1582,
+        336
+      ],
+      "world_bbox": [
+        1571,
+        323,
+        22,
+        19
+      ],
+      "width": 20,
+      "rotation": 0.09
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1210,
+        111
+      ],
+      "world_bbox": [
+        1198,
+        96,
+        25,
+        21
+      ],
+      "width": 23,
+      "rotation": -0.4
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1174,
+        156
+      ],
+      "world_bbox": [
+        1156,
+        132,
+        37,
+        35
+      ],
+      "width": 31,
+      "rotation": -9.11
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1204,
+        122
+      ],
+      "world_bbox": [
+        1190,
+        104,
+        27,
+        25
+      ],
+      "width": 23,
+      "rotation": -6.4
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1270,
+        66
+      ],
+      "world_bbox": [
+        1257,
+        50,
+        26,
+        23
+      ],
+      "width": 24,
+      "rotation": -0.8
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1221,
+        107
+      ],
+      "world_bbox": [
+        1202,
+        84,
+        38,
+        33
+      ],
+      "width": 32,
+      "rotation": 9.57
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1638,
+        315
+      ],
+      "world_bbox": [
+        1624,
+        297,
+        28,
+        26
+      ],
+      "width": 22,
+      "rotation": -13.83
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1668,
+        286
+      ],
+      "world_bbox": [
+        1650,
+        264,
+        37,
+        32
+      ],
+      "width": 33,
+      "rotation": -4.98
+    },
+    {
+      "land": "0405",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1672,
+        303
+      ],
+      "world_bbox": [
+        1658,
+        285,
+        28,
+        26
+      ],
+      "width": 24,
+      "rotation": -10.08
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1829,
+        365
+      ],
+      "world_bbox": [
+        1807,
+        339,
+        44,
+        37
+      ],
+      "width": 42,
+      "rotation": -0.31
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1856,
+        371
+      ],
+      "world_bbox": [
+        1837,
+        347,
+        38,
+        34
+      ],
+      "width": 36,
+      "rotation": 0.22
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1919,
+        356
+      ],
+      "world_bbox": [
+        1895,
+        326,
+        48,
+        43
+      ],
+      "width": 44,
+      "rotation": -5.19
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1894,
+        329
+      ],
+      "world_bbox": [
+        1876,
+        307,
+        35,
+        31
+      ],
+      "width": 33,
+      "rotation": 0.48
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1894,
+        358
+      ],
+      "world_bbox": [
+        1872,
+        331,
+        44,
+        38
+      ],
+      "width": 36,
+      "rotation": 13.62
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1905,
+        349
+      ],
+      "world_bbox": [
+        1890,
+        329,
+        29,
+        28
+      ],
+      "width": 27,
+      "rotation": 5.0
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1872,
+        348
+      ],
+      "world_bbox": [
+        1850,
+        321,
+        44,
+        38
+      ],
+      "width": 40,
+      "rotation": 5.3
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1956,
+        355
+      ],
+      "world_bbox": [
+        1937,
+        331,
+        38,
+        34
+      ],
+      "width": 32,
+      "rotation": -10.93
+    },
+    {
+      "land": "06",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1874,
+        370
+      ],
+      "world_bbox": [
+        1856,
+        346,
+        37,
+        34
+      ],
+      "width": 31,
+      "rotation": 11.95
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1792,
+        347
+      ],
+      "world_bbox": [
+        1784,
+        336,
+        17,
+        15
+      ],
+      "width": 15,
+      "rotation": 7.58
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2055,
+        325
+      ],
+      "world_bbox": [
+        2042,
+        309,
+        25,
+        23
+      ],
+      "width": 21,
+      "rotation": 10.78
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1925,
+        302
+      ],
+      "world_bbox": [
+        1916,
+        291,
+        17,
+        16
+      ],
+      "width": 15,
+      "rotation": 3.83
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2073,
+        369
+      ],
+      "world_bbox": [
+        2060,
+        354,
+        26,
+        22
+      ],
+      "width": 24,
+      "rotation": -3.06
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1866,
+        324
+      ],
+      "world_bbox": [
+        1852,
+        307,
+        27,
+        24
+      ],
+      "width": 23,
+      "rotation": 6.94
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1848,
+        295
+      ],
+      "world_bbox": [
+        1839,
+        282,
+        18,
+        18
+      ],
+      "width": 16,
+      "rotation": -8.78
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2081,
+        351
+      ],
+      "world_bbox": [
+        2072,
+        340,
+        17,
+        16
+      ],
+      "width": 15,
+      "rotation": 0.46
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1975,
+        351
+      ],
+      "world_bbox": [
+        1965,
+        338,
+        20,
+        18
+      ],
+      "width": 16,
+      "rotation": 12.31
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1741,
+        418
+      ],
+      "world_bbox": [
+        1730,
+        404,
+        21,
+        20
+      ],
+      "width": 19,
+      "rotation": -2.34
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2069,
+        425
+      ],
+      "world_bbox": [
+        2058,
+        411,
+        22,
+        20
+      ],
+      "width": 20,
+      "rotation": 5.11
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2070,
+        344
+      ],
+      "world_bbox": [
+        2058,
+        328,
+        24,
+        23
+      ],
+      "width": 22,
+      "rotation": -5.92
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1994,
+        285
+      ],
+      "world_bbox": [
+        1981,
+        268,
+        26,
+        25
+      ],
+      "width": 22,
+      "rotation": -14.0
+    },
+    {
+      "land": "06",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2034,
+        357
+      ],
+      "world_bbox": [
+        2021,
+        341,
+        26,
+        23
+      ],
+      "width": 24,
+      "rotation": -4.26
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1787,
+        375
+      ],
+      "world_bbox": [
+        1773,
+        357,
+        28,
+        26
+      ],
+      "width": 24,
+      "rotation": -11.47
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1750,
+        388
+      ],
+      "world_bbox": [
+        1732,
+        365,
+        37,
+        33
+      ],
+      "width": 31,
+      "rotation": -10.83
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1855,
+        345
+      ],
+      "world_bbox": [
+        1836,
+        320,
+        39,
+        36
+      ],
+      "width": 33,
+      "rotation": -13.31
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1804,
+        334
+      ],
+      "world_bbox": [
+        1790,
+        316,
+        29,
+        26
+      ],
+      "width": 27,
+      "rotation": -3.3
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1848,
+        318
+      ],
+      "world_bbox": [
+        1832,
+        296,
+        33,
+        32
+      ],
+      "width": 31,
+      "rotation": -4.22
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1795,
+        354
+      ],
+      "world_bbox": [
+        1782,
+        338,
+        26,
+        23
+      ],
+      "width": 22,
+      "rotation": -10.95
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1768,
+        417
+      ],
+      "world_bbox": [
+        1751,
+        395,
+        34,
+        31
+      ],
+      "width": 28,
+      "rotation": 13.51
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2105,
+        454
+      ],
+      "world_bbox": [
+        2090,
+        436,
+        29,
+        26
+      ],
+      "width": 23,
+      "rotation": 13.43
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1999,
+        566
+      ],
+      "world_bbox": [
+        1981,
+        544,
+        36,
+        32
+      ],
+      "width": 32,
+      "rotation": -4.33
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2086,
+        442
+      ],
+      "world_bbox": [
+        2070,
+        421,
+        33,
+        30
+      ],
+      "width": 31,
+      "rotation": 2.9
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2133,
+        478
+      ],
+      "world_bbox": [
+        2120,
+        462,
+        27,
+        23
+      ],
+      "width": 23,
+      "rotation": 9.64
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        2106,
+        436
+      ],
+      "world_bbox": [
+        2093,
+        420,
+        26,
+        23
+      ],
+      "width": 24,
+      "rotation": -4.36
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1992,
+        555
+      ],
+      "world_bbox": [
+        1979,
+        538,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": 8.4
+    },
+    {
+      "land": "06",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2079,
+        528
+      ],
+      "world_bbox": [
+        2066,
+        513,
+        25,
+        21
+      ],
+      "width": 23,
+      "rotation": 3.24
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2040,
+        804
+      ],
+      "world_bbox": [
+        2015,
+        774,
+        50,
+        43
+      ],
+      "width": 46,
+      "rotation": -3.78
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2023,
+        829
+      ],
+      "world_bbox": [
+        1990,
+        788,
+        66,
+        59
+      ],
+      "width": 56,
+      "rotation": 12.26
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        2074,
+        808
+      ],
+      "world_bbox": [
+        2052,
+        780,
+        45,
+        40
+      ],
+      "width": 41,
+      "rotation": -5.23
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        2019,
+        810
+      ],
+      "world_bbox": [
+        2002,
+        788,
+        33,
+        32
+      ],
+      "width": 29,
+      "rotation": 9.34
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2000,
+        761
+      ],
+      "world_bbox": [
+        1982,
+        739,
+        36,
+        32
+      ],
+      "width": 32,
+      "rotation": -4.37
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1987,
+        812
+      ],
+      "world_bbox": [
+        1958,
+        775,
+        59,
+        53
+      ],
+      "width": 55,
+      "rotation": 2.48
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1997,
+        794
+      ],
+      "world_bbox": [
+        1980,
+        772,
+        34,
+        31
+      ],
+      "width": 30,
+      "rotation": 9.51
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        2026,
+        788
+      ],
+      "world_bbox": [
+        2002,
+        756,
+        49,
+        46
+      ],
+      "width": 41,
+      "rotation": 13.73
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2045,
+        825
+      ],
+      "world_bbox": [
+        2022,
+        796,
+        47,
+        42
+      ],
+      "width": 43,
+      "rotation": 3.32
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2061,
+        796
+      ],
+      "world_bbox": [
+        2041,
+        771,
+        40,
+        36
+      ],
+      "width": 34,
+      "rotation": -10.68
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2069,
+        779
+      ],
+      "world_bbox": [
+        2051,
+        757,
+        36,
+        31
+      ],
+      "width": 32,
+      "rotation": -5.05
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        2009,
+        780
+      ],
+      "world_bbox": [
+        1988,
+        752,
+        42,
+        40
+      ],
+      "width": 36,
+      "rotation": -10.76
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        2106,
+        805
+      ],
+      "world_bbox": [
+        2084,
+        776,
+        44,
+        42
+      ],
+      "width": 40,
+      "rotation": 6.69
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1988,
+        780
+      ],
+      "world_bbox": [
+        1964,
+        749,
+        49,
+        44
+      ],
+      "width": 43,
+      "rotation": -10.5
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2065,
+        834
+      ],
+      "world_bbox": [
+        2040,
+        803,
+        50,
+        44
+      ],
+      "width": 42,
+      "rotation": 11.96
+    },
+    {
+      "land": "07",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2003,
+        810
+      ],
+      "world_bbox": [
+        1988,
+        790,
+        31,
+        29
+      ],
+      "width": 27,
+      "rotation": 9.45
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2269,
+        680
+      ],
+      "world_bbox": [
+        2246,
+        651,
+        46,
+        41
+      ],
+      "width": 40,
+      "rotation": -7.9
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2235,
+        681
+      ],
+      "world_bbox": [
+        2212,
+        650,
+        47,
+        44
+      ],
+      "width": 41,
+      "rotation": 10.48
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2248,
+        694
+      ],
+      "world_bbox": [
+        2228,
+        669,
+        41,
+        36
+      ],
+      "width": 35,
+      "rotation": 10.12
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2253,
+        757
+      ],
+      "world_bbox": [
+        2224,
+        720,
+        57,
+        53
+      ],
+      "width": 55,
+      "rotation": 2.27
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2245,
+        610
+      ],
+      "world_bbox": [
+        2230,
+        590,
+        31,
+        28
+      ],
+      "width": 29,
+      "rotation": 2.23
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2237,
+        719
+      ],
+      "world_bbox": [
+        2216,
+        692,
+        42,
+        38
+      ],
+      "width": 38,
+      "rotation": 6.69
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2254,
+        724
+      ],
+      "world_bbox": [
+        2238,
+        703,
+        33,
+        30
+      ],
+      "width": 29,
+      "rotation": 7.88
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        2287,
+        685
+      ],
+      "world_bbox": [
+        2264,
+        656,
+        45,
+        41
+      ],
+      "width": 37,
+      "rotation": 13.7
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2215,
+        713
+      ],
+      "world_bbox": [
+        2190,
+        681,
+        51,
+        46
+      ],
+      "width": 45,
+      "rotation": -7.62
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        2224,
+        672
+      ],
+      "world_bbox": [
+        2208,
+        652,
+        32,
+        29
+      ],
+      "width": 28,
+      "rotation": 7.65
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2276,
+        747
+      ],
+      "world_bbox": [
+        2259,
+        727,
+        34,
+        29
+      ],
+      "width": 32,
+      "rotation": -1.18
+    },
+    {
+      "land": "07",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        2238,
+        641
+      ],
+      "world_bbox": [
+        2218,
+        616,
+        39,
+        36
+      ],
+      "width": 33,
+      "rotation": -13.93
+    },
+    {
+      "land": "07",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1903,
+        753
+      ],
+      "world_bbox": [
+        1874,
+        717,
+        58,
+        52
+      ],
+      "width": 54,
+      "rotation": -3.56
+    },
+    {
+      "land": "07",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1925,
+        773
+      ],
+      "world_bbox": [
+        1905,
+        748,
+        40,
+        36
+      ],
+      "width": 36,
+      "rotation": 6.64
+    },
+    {
+      "land": "07",
+      "zone": 2,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        1886,
+        753
+      ],
+      "world_bbox": [
+        1869,
+        732,
+        34,
+        30
+      ],
+      "width": 32,
+      "rotation": -0.32
+    },
+    {
+      "land": "07",
+      "zone": 2,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        1907,
+        771
+      ],
+      "world_bbox": [
+        1888,
+        748,
+        37,
+        33
+      ],
+      "width": 31,
+      "rotation": -10.97
+    },
+    {
+      "land": "07",
+      "zone": 2,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1871,
+        744
+      ],
+      "world_bbox": [
+        1848,
+        715,
+        46,
+        42
+      ],
+      "width": 38,
+      "rotation": 11.95
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2157,
+        770
+      ],
+      "world_bbox": [
+        2147,
+        757,
+        20,
+        18
+      ],
+      "width": 18,
+      "rotation": 3.97
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1930,
+        676
+      ],
+      "world_bbox": [
+        1917,
+        660,
+        26,
+        23
+      ],
+      "width": 22,
+      "rotation": 7.62
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2237,
+        779
+      ],
+      "world_bbox": [
+        2228,
+        768,
+        18,
+        16
+      ],
+      "width": 16,
+      "rotation": -4.91
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2057,
+        816
+      ],
+      "world_bbox": [
+        2044,
+        800,
+        25,
+        23
+      ],
+      "width": 23,
+      "rotation": 5.94
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2129,
+        738
+      ],
+      "world_bbox": [
+        2116,
+        720,
+        26,
+        26
+      ],
+      "width": 22,
+      "rotation": -11.69
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2283,
+        627
+      ],
+      "world_bbox": [
+        2274,
+        616,
+        17,
+        15
+      ],
+      "width": 15,
+      "rotation": 4.36
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2250,
+        743
+      ],
+      "world_bbox": [
+        2239,
+        730,
+        22,
+        19
+      ],
+      "width": 20,
+      "rotation": -2.71
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1923,
+        707
+      ],
+      "world_bbox": [
+        1911,
+        692,
+        24,
+        21
+      ],
+      "width": 22,
+      "rotation": 2.11
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2138,
+        693
+      ],
+      "world_bbox": [
+        2126,
+        677,
+        25,
+        23
+      ],
+      "width": 21,
+      "rotation": 11.61
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2157,
+        704
+      ],
+      "world_bbox": [
+        2148,
+        691,
+        18,
+        18
+      ],
+      "width": 16,
+      "rotation": 8.65
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2055,
+        828
+      ],
+      "world_bbox": [
+        2046,
+        815,
+        18,
+        18
+      ],
+      "width": 16,
+      "rotation": -8.58
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2050,
+        748
+      ],
+      "world_bbox": [
+        2038,
+        733,
+        23,
+        22
+      ],
+      "width": 19,
+      "rotation": 13.56
+    },
+    {
+      "land": "07",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2210,
+        754
+      ],
+      "world_bbox": [
+        2198,
+        739,
+        23,
+        21
+      ],
+      "width": 19,
+      "rotation": 11.72
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        2341,
+        627
+      ],
+      "world_bbox": [
+        2327,
+        610,
+        28,
+        25
+      ],
+      "width": 26,
+      "rotation": 1.75
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2260,
+        624
+      ],
+      "world_bbox": [
+        2244,
+        603,
+        31,
+        30
+      ],
+      "width": 27,
+      "rotation": -9.18
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2316,
+        763
+      ],
+      "world_bbox": [
+        2299,
+        742,
+        34,
+        30
+      ],
+      "width": 28,
+      "rotation": -13.21
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2327,
+        637
+      ],
+      "world_bbox": [
+        2310,
+        616,
+        33,
+        30
+      ],
+      "width": 31,
+      "rotation": 2.91
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2241,
+        792
+      ],
+      "world_bbox": [
+        2222,
+        767,
+        38,
+        36
+      ],
+      "width": 34,
+      "rotation": -6.67
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2291,
+        752
+      ],
+      "world_bbox": [
+        2276,
+        733,
+        29,
+        27
+      ],
+      "width": 25,
+      "rotation": -6.27
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2246,
+        844
+      ],
+      "world_bbox": [
+        2231,
+        826,
+        30,
+        26
+      ],
+      "width": 26,
+      "rotation": -5.98
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1971,
+        875
+      ],
+      "world_bbox": [
+        1954,
+        854,
+        33,
+        30
+      ],
+      "width": 29,
+      "rotation": 7.8
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2039,
+        914
+      ],
+      "world_bbox": [
+        2024,
+        894,
+        31,
+        28
+      ],
+      "width": 29,
+      "rotation": 4.54
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1863,
+        833
+      ],
+      "world_bbox": [
+        1851,
+        818,
+        24,
+        21
+      ],
+      "width": 22,
+      "rotation": 1.08
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1947,
+        757
+      ],
+      "world_bbox": [
+        1930,
+        735,
+        34,
+        31
+      ],
+      "width": 30,
+      "rotation": -5.86
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1884,
+        844
+      ],
+      "world_bbox": [
+        1871,
+        826,
+        26,
+        25
+      ],
+      "width": 24,
+      "rotation": -5.09
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1976,
+        764
+      ],
+      "world_bbox": [
+        1962,
+        747,
+        27,
+        24
+      ],
+      "width": 23,
+      "rotation": 10.41
+    },
+    {
+      "land": "07",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1919,
+        874
+      ],
+      "world_bbox": [
+        1898,
+        846,
+        43,
+        40
+      ],
+      "width": 35,
+      "rotation": 13.33
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1956,
+        1350
+      ],
+      "world_bbox": [
+        1918,
+        1302,
+        75,
+        68
+      ],
+      "width": 65,
+      "rotation": -9.24
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1988,
+        1343
+      ],
+      "world_bbox": [
+        1958,
+        1304,
+        60,
+        56
+      ],
+      "width": 50,
+      "rotation": -13.1
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1936,
+        1331
+      ],
+      "world_bbox": [
+        1916,
+        1305,
+        41,
+        37
+      ],
+      "width": 39,
+      "rotation": 2.73
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        2006,
+        1362
+      ],
+      "world_bbox": [
+        1979,
+        1326,
+        54,
+        51
+      ],
+      "width": 48,
+      "rotation": -8.02
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1949,
+        1319
+      ],
+      "world_bbox": [
+        1932,
+        1299,
+        34,
+        29
+      ],
+      "width": 32,
+      "rotation": -2.08
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1909,
+        1327
+      ],
+      "world_bbox": [
+        1882,
+        1293,
+        53,
+        48
+      ],
+      "width": 47,
+      "rotation": -7.64
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2019,
+        1391
+      ],
+      "world_bbox": [
+        1990,
+        1353,
+        58,
+        54
+      ],
+      "width": 48,
+      "rotation": -13.49
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1954,
+        1296
+      ],
+      "world_bbox": [
+        1929,
+        1266,
+        50,
+        43
+      ],
+      "width": 46,
+      "rotation": -5.08
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1958,
+        1334
+      ],
+      "world_bbox": [
+        1941,
+        1313,
+        34,
+        30
+      ],
+      "width": 28,
+      "rotation": 11.66
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1933,
+        1351
+      ],
+      "world_bbox": [
+        1912,
+        1326,
+        42,
+        36
+      ],
+      "width": 40,
+      "rotation": -2.88
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        2041,
+        1372
+      ],
+      "world_bbox": [
+        2022,
+        1346,
+        39,
+        37
+      ],
+      "width": 35,
+      "rotation": 7.35
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1990,
+        1319
+      ],
+      "world_bbox": [
+        1968,
+        1289,
+        45,
+        43
+      ],
+      "width": 39,
+      "rotation": 10.98
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1914,
+        1295
+      ],
+      "world_bbox": [
+        1890,
+        1265,
+        48,
+        43
+      ],
+      "width": 44,
+      "rotation": -4.26
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2006,
+        1334
+      ],
+      "world_bbox": [
+        1988,
+        1313,
+        35,
+        30
+      ],
+      "width": 33,
+      "rotation": 1.61
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2014,
+        1346
+      ],
+      "world_bbox": [
+        1998,
+        1326,
+        31,
+        28
+      ],
+      "width": 27,
+      "rotation": -9.1
+    },
+    {
+      "land": "08",
+      "zone": 0,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2030,
+        1322
+      ],
+      "world_bbox": [
+        2001,
+        1286,
+        58,
+        52
+      ],
+      "width": 54,
+      "rotation": 3.41
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2183,
+        1293
+      ],
+      "world_bbox": [
+        2165,
+        1271,
+        36,
+        31
+      ],
+      "width": 34,
+      "rotation": -0.54
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/pale_pink.png",
+      "planting_anchor": [
+        2163,
+        1229
+      ],
+      "world_bbox": [
+        2146,
+        1207,
+        34,
+        31
+      ],
+      "width": 30,
+      "rotation": 6.41
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        2136,
+        1272
+      ],
+      "world_bbox": [
+        2117,
+        1248,
+        38,
+        34
+      ],
+      "width": 36,
+      "rotation": 0.83
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2183,
+        1221
+      ],
+      "world_bbox": [
+        2164,
+        1197,
+        38,
+        34
+      ],
+      "width": 34,
+      "rotation": -6.2
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2159,
+        1248
+      ],
+      "world_bbox": [
+        2142,
+        1226,
+        35,
+        31
+      ],
+      "width": 29,
+      "rotation": 12.86
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        2193,
+        1235
+      ],
+      "world_bbox": [
+        2172,
+        1208,
+        42,
+        38
+      ],
+      "width": 38,
+      "rotation": -6.53
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2126,
+        1250
+      ],
+      "world_bbox": [
+        2104,
+        1222,
+        44,
+        40
+      ],
+      "width": 38,
+      "rotation": -11.56
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        2167,
+        1261
+      ],
+      "world_bbox": [
+        2150,
+        1239,
+        34,
+        31
+      ],
+      "width": 30,
+      "rotation": -4.68
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        2179,
+        1246
+      ],
+      "world_bbox": [
+        2163,
+        1226,
+        32,
+        29
+      ],
+      "width": 30,
+      "rotation": -3.75
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        2138,
+        1198
+      ],
+      "world_bbox": [
+        2110,
+        1163,
+        55,
+        50
+      ],
+      "width": 47,
+      "rotation": -11.37
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        2154,
+        1307
+      ],
+      "world_bbox": [
+        2136,
+        1285,
+        37,
+        32
+      ],
+      "width": 35,
+      "rotation": -1.92
+    },
+    {
+      "land": "08",
+      "zone": 1,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        2135,
+        1230
+      ],
+      "world_bbox": [
+        2109,
+        1197,
+        52,
+        47
+      ],
+      "width": 46,
+      "rotation": -6.34
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        2047,
+        1161
+      ],
+      "world_bbox": [
+        2023,
+        1130,
+        48,
+        45
+      ],
+      "width": 44,
+      "rotation": 5.89
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2024,
+        1164
+      ],
+      "world_bbox": [
+        1999,
+        1131,
+        50,
+        47
+      ],
+      "width": 46,
+      "rotation": -4.64
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1988,
+        1154
+      ],
+      "world_bbox": [
+        1972,
+        1134,
+        33,
+        28
+      ],
+      "width": 29,
+      "rotation": 7.91
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2067,
+        1174
+      ],
+      "world_bbox": [
+        2044,
+        1145,
+        46,
+        42
+      ],
+      "width": 40,
+      "rotation": 9.81
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2006,
+        1156
+      ],
+      "world_bbox": [
+        1984,
+        1129,
+        43,
+        39
+      ],
+      "width": 39,
+      "rotation": -6.36
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2047,
+        1178
+      ],
+      "world_bbox": [
+        2030,
+        1157,
+        33,
+        30
+      ],
+      "width": 29,
+      "rotation": 7.96
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2023,
+        1182
+      ],
+      "world_bbox": [
+        2005,
+        1160,
+        36,
+        32
+      ],
+      "width": 32,
+      "rotation": -7.03
+    },
+    {
+      "land": "08",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1972,
+        1169
+      ],
+      "world_bbox": [
+        1952,
+        1144,
+        39,
+        35
+      ],
+      "width": 37,
+      "rotation": -2.6
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1959,
+        1306
+      ],
+      "world_bbox": [
+        1948,
+        1291,
+        22,
+        22
+      ],
+      "width": 20,
+      "rotation": -6.68
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2102,
+        1384
+      ],
+      "world_bbox": [
+        2090,
+        1369,
+        23,
+        21
+      ],
+      "width": 19,
+      "rotation": -8.95
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1945,
+        1230
+      ],
+      "world_bbox": [
+        1936,
+        1217,
+        19,
+        19
+      ],
+      "width": 17,
+      "rotation": -7.34
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2047,
+        1395
+      ],
+      "world_bbox": [
+        2034,
+        1378,
+        27,
+        24
+      ],
+      "width": 23,
+      "rotation": 6.2
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2160,
+        1382
+      ],
+      "world_bbox": [
+        2152,
+        1372,
+        17,
+        15
+      ],
+      "width": 15,
+      "rotation": -1.62
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2135,
+        1238
+      ],
+      "world_bbox": [
+        2126,
+        1226,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": -10.06
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2042,
+        1385
+      ],
+      "world_bbox": [
+        2032,
+        1372,
+        21,
+        18
+      ],
+      "width": 17,
+      "rotation": -10.96
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1939,
+        1290
+      ],
+      "world_bbox": [
+        1930,
+        1279,
+        18,
+        16
+      ],
+      "width": 16,
+      "rotation": 5.18
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2183,
+        1352
+      ],
+      "world_bbox": [
+        2173,
+        1339,
+        20,
+        19
+      ],
+      "width": 18,
+      "rotation": 4.46
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        2101,
+        1463
+      ],
+      "world_bbox": [
+        2090,
+        1449,
+        23,
+        20
+      ],
+      "width": 21,
+      "rotation": -4.53
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2063,
+        1202
+      ],
+      "world_bbox": [
+        2050,
+        1186,
+        26,
+        23
+      ],
+      "width": 22,
+      "rotation": 10.89
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2100,
+        1284
+      ],
+      "world_bbox": [
+        2090,
+        1273,
+        19,
+        16
+      ],
+      "width": 17,
+      "rotation": -5.96
+    },
+    {
+      "land": "08",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        2109,
+        1409
+      ],
+      "world_bbox": [
+        2097,
+        1393,
+        24,
+        23
+      ],
+      "width": 20,
+      "rotation": -9.41
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1824,
+        1195
+      ],
+      "world_bbox": [
+        1806,
+        1171,
+        37,
+        34
+      ],
+      "width": 31,
+      "rotation": 9.69
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1801,
+        1235
+      ],
+      "world_bbox": [
+        1783,
+        1212,
+        36,
+        33
+      ],
+      "width": 32,
+      "rotation": -9.23
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1829,
+        1182
+      ],
+      "world_bbox": [
+        1816,
+        1165,
+        26,
+        24
+      ],
+      "width": 24,
+      "rotation": -4.97
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1813,
+        1245
+      ],
+      "world_bbox": [
+        1798,
+        1225,
+        30,
+        28
+      ],
+      "width": 28,
+      "rotation": -1.3
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1790,
+        1163
+      ],
+      "world_bbox": [
+        1777,
+        1147,
+        26,
+        23
+      ],
+      "width": 22,
+      "rotation": -6.7
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2197,
+        1499
+      ],
+      "world_bbox": [
+        2184,
+        1484,
+        25,
+        21
+      ],
+      "width": 23,
+      "rotation": -2.24
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        2230,
+        1464
+      ],
+      "world_bbox": [
+        2218,
+        1449,
+        25,
+        22
+      ],
+      "width": 23,
+      "rotation": -1.44
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2080,
+        1561
+      ],
+      "world_bbox": [
+        2066,
+        1545,
+        27,
+        23
+      ],
+      "width": 23,
+      "rotation": -10.83
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2158,
+        1522
+      ],
+      "world_bbox": [
+        2143,
+        1504,
+        30,
+        26
+      ],
+      "width": 24,
+      "rotation": -13.51
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2241,
+        1472
+      ],
+      "world_bbox": [
+        2228,
+        1457,
+        26,
+        22
+      ],
+      "width": 24,
+      "rotation": -1.87
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2195,
+        1512
+      ],
+      "world_bbox": [
+        2178,
+        1491,
+        35,
+        30
+      ],
+      "width": 33,
+      "rotation": -3.36
+    },
+    {
+      "land": "08",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        2088,
+        1547
+      ],
+      "world_bbox": [
+        2075,
+        1530,
+        26,
+        25
+      ],
+      "width": 22,
+      "rotation": -12.87
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/pale_blue.png",
+      "planting_anchor": [
+        1173,
+        1227
+      ],
+      "world_bbox": [
+        1153,
+        1202,
+        40,
+        35
+      ],
+      "width": 36,
+      "rotation": -6.37
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1189,
+        1213
+      ],
+      "world_bbox": [
+        1162,
+        1178,
+        55,
+        50
+      ],
+      "width": 47,
+      "rotation": 10.74
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1129,
+        1205
+      ],
+      "world_bbox": [
+        1113,
+        1186,
+        32,
+        27
+      ],
+      "width": 30,
+      "rotation": 1.85
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1143,
+        1277
+      ],
+      "world_bbox": [
+        1125,
+        1255,
+        36,
+        32
+      ],
+      "width": 30,
+      "rotation": -10.42
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1181,
+        1258
+      ],
+      "world_bbox": [
+        1162,
+        1235,
+        37,
+        33
+      ],
+      "width": 33,
+      "rotation": 6.86
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1149,
+        1234
+      ],
+      "world_bbox": [
+        1132,
+        1212,
+        35,
+        31
+      ],
+      "width": 33,
+      "rotation": 1.16
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1170,
+        1206
+      ],
+      "world_bbox": [
+        1154,
+        1185,
+        33,
+        30
+      ],
+      "width": 31,
+      "rotation": 3.8
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1211,
+        1235
+      ],
+      "world_bbox": [
+        1188,
+        1205,
+        47,
+        43
+      ],
+      "width": 39,
+      "rotation": 11.56
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1149,
+        1206
+      ],
+      "world_bbox": [
+        1126,
+        1178,
+        46,
+        40
+      ],
+      "width": 42,
+      "rotation": 4.8
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1129,
+        1189
+      ],
+      "world_bbox": [
+        1111,
+        1167,
+        36,
+        32
+      ],
+      "width": 30,
+      "rotation": 10.46
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1115,
+        1216
+      ],
+      "world_bbox": [
+        1092,
+        1189,
+        45,
+        38
+      ],
+      "width": 43,
+      "rotation": -1.97
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1200,
+        1135
+      ],
+      "world_bbox": [
+        1176,
+        1105,
+        48,
+        43
+      ],
+      "width": 44,
+      "rotation": -3.08
+    },
+    {
+      "land": "09",
+      "zone": 0,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1161,
+        1247
+      ],
+      "world_bbox": [
+        1144,
+        1225,
+        35,
+        32
+      ],
+      "width": 29,
+      "rotation": -13.32
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1186,
+        1454
+      ],
+      "world_bbox": [
+        1168,
+        1430,
+        37,
+        34
+      ],
+      "width": 31,
+      "rotation": 10.09
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1221,
+        1367
+      ],
+      "world_bbox": [
+        1195,
+        1333,
+        52,
+        48
+      ],
+      "width": 48,
+      "rotation": 5.05
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        1194,
+        1383
+      ],
+      "world_bbox": [
+        1166,
+        1348,
+        55,
+        50
+      ],
+      "width": 47,
+      "rotation": 10.18
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1153,
+        1430
+      ],
+      "world_bbox": [
+        1132,
+        1403,
+        41,
+        38
+      ],
+      "width": 35,
+      "rotation": 11.94
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1191,
+        1470
+      ],
+      "world_bbox": [
+        1174,
+        1448,
+        35,
+        31
+      ],
+      "width": 33,
+      "rotation": -0.8
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1178,
+        1391
+      ],
+      "world_bbox": [
+        1162,
+        1369,
+        32,
+        31
+      ],
+      "width": 28,
+      "rotation": 9.76
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1163,
+        1405
+      ],
+      "world_bbox": [
+        1142,
+        1378,
+        42,
+        38
+      ],
+      "width": 38,
+      "rotation": -4.28
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1213,
+        1470
+      ],
+      "world_bbox": [
+        1192,
+        1444,
+        41,
+        37
+      ],
+      "width": 35,
+      "rotation": 9.17
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/crocus_crescent.png",
+      "planting_anchor": [
+        1207,
+        1397
+      ],
+      "world_bbox": [
+        1188,
+        1372,
+        38,
+        36
+      ],
+      "width": 34,
+      "rotation": -7.69
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1203,
+        1343
+      ],
+      "world_bbox": [
+        1182,
+        1315,
+        43,
+        40
+      ],
+      "width": 41,
+      "rotation": 3.28
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1183,
+        1408
+      ],
+      "world_bbox": [
+        1165,
+        1386,
+        36,
+        32
+      ],
+      "width": 34,
+      "rotation": 0.2
+    },
+    {
+      "land": "09",
+      "zone": 1,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1140,
+        1409
+      ],
+      "world_bbox": [
+        1118,
+        1380,
+        45,
+        41
+      ],
+      "width": 37,
+      "rotation": 13.82
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1329,
+        1178
+      ],
+      "world_bbox": [
+        1309,
+        1153,
+        40,
+        36
+      ],
+      "width": 36,
+      "rotation": 5.67
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1345,
+        1234
+      ],
+      "world_bbox": [
+        1321,
+        1205,
+        48,
+        42
+      ],
+      "width": 40,
+      "rotation": 11.85
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1365,
+        1168
+      ],
+      "world_bbox": [
+        1342,
+        1140,
+        47,
+        40
+      ],
+      "width": 43,
+      "rotation": -3.8
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1329,
+        1199
+      ],
+      "world_bbox": [
+        1308,
+        1173,
+        42,
+        37
+      ],
+      "width": 38,
+      "rotation": -5.42
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        1345,
+        1218
+      ],
+      "world_bbox": [
+        1330,
+        1198,
+        31,
+        28
+      ],
+      "width": 29,
+      "rotation": -3.15
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1362,
+        1197
+      ],
+      "world_bbox": [
+        1336,
+        1163,
+        53,
+        48
+      ],
+      "width": 45,
+      "rotation": 10.5
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1325,
+        1246
+      ],
+      "world_bbox": [
+        1301,
+        1214,
+        48,
+        45
+      ],
+      "width": 42,
+      "rotation": -8.97
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1328,
+        1221
+      ],
+      "world_bbox": [
+        1304,
+        1190,
+        47,
+        44
+      ],
+      "width": 39,
+      "rotation": -13.58
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "flowers/crocus_ivory.png",
+      "planting_anchor": [
+        1311,
+        1184
+      ],
+      "world_bbox": [
+        1292,
+        1162,
+        37,
+        32
+      ],
+      "width": 35,
+      "rotation": 0.0
+    },
+    {
+      "land": "09",
+      "zone": 2,
+      "asset": "shoreline/fern_pebble.png",
+      "planting_anchor": [
+        1355,
+        1255
+      ],
+      "world_bbox": [
+        1332,
+        1227,
+        45,
+        40
+      ],
+      "width": 41,
+      "rotation": -5.71
+    },
+    {
+      "land": "09",
+      "zone": 3,
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1270,
+        1344
+      ],
+      "world_bbox": [
+        1247,
+        1315,
+        46,
+        41
+      ],
+      "width": 44,
+      "rotation": 2.38
+    },
+    {
+      "land": "09",
+      "zone": 3,
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1255,
+        1334
+      ],
+      "world_bbox": [
+        1236,
+        1311,
+        37,
+        33
+      ],
+      "width": 35,
+      "rotation": -0.47
+    },
+    {
+      "land": "09",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1259,
+        1390
+      ],
+      "world_bbox": [
+        1243,
+        1370,
+        32,
+        28
+      ],
+      "width": 30,
+      "rotation": -3.34
+    },
+    {
+      "land": "09",
+      "zone": 3,
+      "asset": "shoreline/crocus_pebble.png",
+      "planting_anchor": [
+        1238,
+        1373
+      ],
+      "world_bbox": [
+        1220,
+        1350,
+        37,
+        33
+      ],
+      "width": 35,
+      "rotation": -3.07
+    },
+    {
+      "land": "09",
+      "zone": 3,
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1243,
+        1405
+      ],
+      "world_bbox": [
+        1222,
+        1378,
+        43,
+        38
+      ],
+      "width": 39,
+      "rotation": 5.25
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1240,
+        1126
+      ],
+      "world_bbox": [
+        1229,
+        1112,
+        22,
+        20
+      ],
+      "width": 18,
+      "rotation": 11.63
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1346,
+        1249
+      ],
+      "world_bbox": [
+        1335,
+        1234,
+        22,
+        21
+      ],
+      "width": 20,
+      "rotation": -5.32
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1158,
+        1312
+      ],
+      "world_bbox": [
+        1147,
+        1297,
+        22,
+        21
+      ],
+      "width": 18,
+      "rotation": -10.87
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1141,
+        1368
+      ],
+      "world_bbox": [
+        1131,
+        1355,
+        20,
+        18
+      ],
+      "width": 16,
+      "rotation": -10.51
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1131,
+        1422
+      ],
+      "world_bbox": [
+        1122,
+        1410,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": -10.78
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1340,
+        1334
+      ],
+      "world_bbox": [
+        1328,
+        1320,
+        23,
+        20
+      ],
+      "width": 21,
+      "rotation": -4.44
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1137,
+        1395
+      ],
+      "world_bbox": [
+        1124,
+        1378,
+        25,
+        24
+      ],
+      "width": 21,
+      "rotation": -12.64
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1342,
+        1345
+      ],
+      "world_bbox": [
+        1332,
+        1331,
+        21,
+        20
+      ],
+      "width": 19,
+      "rotation": 1.89
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1273,
+        1147
+      ],
+      "world_bbox": [
+        1264,
+        1136,
+        18,
+        16
+      ],
+      "width": 16,
+      "rotation": -2.91
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1225,
+        1197
+      ],
+      "world_bbox": [
+        1216,
+        1185,
+        19,
+        17
+      ],
+      "width": 17,
+      "rotation": 0.36
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1295,
+        1356
+      ],
+      "world_bbox": [
+        1282,
+        1339,
+        25,
+        24
+      ],
+      "width": 23,
+      "rotation": -5.22
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "flowers/crocus_lavender.png",
+      "planting_anchor": [
+        1229,
+        1146
+      ],
+      "world_bbox": [
+        1220,
+        1134,
+        19,
+        17
+      ],
+      "width": 15,
+      "rotation": 12.39
+    },
+    {
+      "land": "09",
+      "zone": "isolated",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1382,
+        1282
+      ],
+      "world_bbox": [
+        1372,
+        1269,
+        21,
+        19
+      ],
+      "width": 17,
+      "rotation": -13.99
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "foliage/leaf_tuft.png",
+      "planting_anchor": [
+        1053,
+        1204
+      ],
+      "world_bbox": [
+        1036,
+        1182,
+        35,
+        31
+      ],
+      "width": 33,
+      "rotation": -2.48
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_sage.png",
+      "planting_anchor": [
+        1069,
+        1176
+      ],
+      "world_bbox": [
+        1052,
+        1154,
+        35,
+        32
+      ],
+      "width": 31,
+      "rotation": 5.08
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1088,
+        1143
+      ],
+      "world_bbox": [
+        1068,
+        1118,
+        41,
+        36
+      ],
+      "width": 35,
+      "rotation": -8.86
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1142,
+        1088
+      ],
+      "world_bbox": [
+        1130,
+        1073,
+        24,
+        21
+      ],
+      "width": 22,
+      "rotation": 4.78
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1013,
+        1247
+      ],
+      "world_bbox": [
+        997,
+        1228,
+        32,
+        27
+      ],
+      "width": 30,
+      "rotation": 1.2
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1017,
+        1265
+      ],
+      "world_bbox": [
+        1004,
+        1248,
+        26,
+        24
+      ],
+      "width": 22,
+      "rotation": -10.93
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/sparse_sprig.png",
+      "planting_anchor": [
+        1107,
+        1137
+      ],
+      "world_bbox": [
+        1094,
+        1119,
+        26,
+        26
+      ],
+      "width": 22,
+      "rotation": 12.39
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1245,
+        1562
+      ],
+      "world_bbox": [
+        1232,
+        1546,
+        26,
+        23
+      ],
+      "width": 24,
+      "rotation": 3.63
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1255,
+        1570
+      ],
+      "world_bbox": [
+        1240,
+        1552,
+        29,
+        25
+      ],
+      "width": 25,
+      "rotation": 6.69
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1366,
+        1524
+      ],
+      "world_bbox": [
+        1352,
+        1506,
+        29,
+        25
+      ],
+      "width": 25,
+      "rotation": 8.71
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "foliage/fern_groundcover.png",
+      "planting_anchor": [
+        1196,
+        1554
+      ],
+      "world_bbox": [
+        1178,
+        1532,
+        35,
+        32
+      ],
+      "width": 29,
+      "rotation": 11.82
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1192,
+        1568
+      ],
+      "world_bbox": [
+        1174,
+        1546,
+        37,
+        32
+      ],
+      "width": 33,
+      "rotation": -6.81
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1312,
+        1539
+      ],
+      "world_bbox": [
+        1298,
+        1523,
+        27,
+        23
+      ],
+      "width": 23,
+      "rotation": 7.47
+    },
+    {
+      "land": "09",
+      "zone": "shoreline",
+      "asset": "flowers/ivory_wildflowers.png",
+      "planting_anchor": [
+        1395,
+        1515
+      ],
+      "world_bbox": [
+        1380,
+        1497,
+        30,
+        26
+      ],
+      "width": 26,
+      "rotation": 7.85
+    }
+  ]
+}
