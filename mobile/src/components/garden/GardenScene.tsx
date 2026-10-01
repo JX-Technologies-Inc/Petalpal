@@ -1,5 +1,5 @@
 import type { FlowerSession } from './planting/flowerDetailApi';
-import { Canvas, Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
+import { Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -13,7 +13,7 @@ import {
   withTiming,
 } from 'react-native-reanimated';
 import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import { ownGardenWebView } from './webCanvasCache';
+import Canvas from './GardenCanvas';
 import PlantingRegionOverlay from './planting/PlantingRegionOverlay';
 import PlantingRegionCalibrationEditor, {
   type CalDisplayMode,
@@ -358,10 +358,6 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   const [runtimeUnderlayStrength, setRuntimeUnderlayStrength] = useState(1.5);
   const [gardenActive, setGardenActive] = useState(true);
   const canvasRef = useCanvasRef();
-  useEffect(() => {
-    if (Platform.OS !== 'web' || !canvasRef.current) return;
-    return ownGardenWebView((globalThis as { SkiaViewApi?: unknown }).SkiaViewApi, canvasRef.current.getNativeId());
-  }, [canvasRef, viewport.width > 0 && viewport.height > 0]);
   const [foreground, setForeground] = useState(AppState.currentState === 'active');
   const worldActive = gardenActive && foreground;
 
@@ -1018,7 +1014,7 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       {/* Direct Waterfall gestures remain disabled while the stable numeric editor is active. */}
       {fit > 0 && (
         <GestureDetector gesture={cameraGesture}>
-        <Canvas ref={canvasRef} style={styles.scene}>
+        <Canvas ref={canvasRef} style={styles.scene} active={worldActive}>
           <PlantingProvider value={planting}>
           {/* Shared camera only. Neither sibling inherits an individual land transform. */}
           <Group transform={cameraTransform}>
