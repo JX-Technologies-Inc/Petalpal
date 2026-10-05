@@ -15,7 +15,7 @@ export default function GardenTestScreen() {
   if (showProductionQA) return <GestureHandlerRootView style={styles.root}><ProductionGrowthQA onClose={()=>setShowProductionQA(false)}/></GestureHandlerRootView>;
   return <GestureHandlerRootView style={styles.root}>
     {showDensitySandbox ? <FlowerDensitySandbox onClose={() => setShowDensitySandbox(false)} /> : <>
-      <GardenScene initialWaterfallVersion="v2" />
+      <GardenScene initialWaterfallVersion="v2" enableFairyWalk />
       <Pressable accessibilityRole="button" style={styles.sandboxButton} onPress={() => setShowDensitySandbox(true)}>
         <Text style={styles.sandboxLabel}>Flower Density Sandbox</Text>
       </Pressable>
