@@ -85,6 +85,7 @@ export function useEventJournal(onGardenChanged?: () => void) {
       router.navigate({ pathname: '/', params: { mode: 'adjust', flowerId: flower.id } });
     } else plant(flower);
   }
-  return { flowers, placements, content, setContent, mood, setMood, result, busy, loading,
+  const currentFlowers = result ? flowers.filter(flower => flower.sourceEventId === result.event.id) : [];
+  return { flowers: currentFlowers, placements, content, setContent, mood, setMood, result, busy, loading,
     error, pollError, refresh, saveEvent, refreshEventStatus, placeFlower };
 }

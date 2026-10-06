@@ -62,12 +62,42 @@ test('native platforms retain the original full-world artwork', () => {
     const { registeredArtwork } = loadPlantingModules(undefined, undefined, undefined, false,
       { 'react-native': { Platform: { OS } } })('../registeredArtwork');
     assert.deepEqual(JSON.parse(JSON.stringify(registeredArtwork(1, 2, 31, 47, 101, 203))),
-      { source: 1, x: 0, y: 0, width: 2400, height: 1800 });
+      { source: 1, x: 0, y: 0, width: 2400, height: 1800,
+        clip: { x: 31, y: 47, width: 101, height: 203 } });
   }
 });
 
+test('native static artwork reuses its recording until an image resource changes', () => {
+  const images = new Map(), hooks = [];
+  let cursor = 0, recordings = 0;
+  const react = { memo: fn => fn, useMemo(fn, deps) {
+    const index = cursor++, previous = hooks[index];
+    if (previous && deps.every((value, i) => Object.is(value, previous.deps[i]))) return previous.value;
+    const value = fn(); hooks[index] = { value, deps }; return value;
+  } };
+  const image = () => ({ width: () => 2400, height: () => 1800 });
+  const canvas = { save() {}, restore() {}, clipRect() {}, drawImageRectOptions() {} };
+  const load = loadPlantingModules(undefined, react, undefined, false, {
+    'react-native': { Platform: { OS: 'ios' } },
+    '@shopify/react-native-skia': {
+      ClipOp: { Intersect: 0 }, FilterMode: { Linear: 1 }, MipmapMode: { None: 0 }, Picture: 'Picture',
+      Skia: { Paint: () => ({ setAntiAlias() {}, dispose() {} }), XYWHRect: (x, y, width, height) => ({ x, y, width, height }) },
+      useImage(source) { if (!images.has(source)) images.set(source, image()); return images.get(source); },
+      createPicture(draw) { draw(canvas); return { recording: ++recordings }; },
+    },
+  });
+  const Layer = load('../GardenInfrastructureLayer').default;
+  const render = () => { cursor = 0; return Layer().props.picture; };
+  const first = render();
+  assert.equal(render(), first); assert.equal(render(), first); assert.equal(recordings, 1);
+  images.set(images.keys().next().value, image());
+  const replacement = render();
+  assert.notEqual(replacement, first); assert.equal(recordings, 2);
+  assert.equal(render(), replacement); assert.equal(recordings, 2);
+});
 
-test('CanvasKit linear sampling renders original and cropped artwork equivalently', async () => {
+
+test('CanvasKit preserves original pixels in cropped and clipped static-picture artwork', async () => {
   const initialize = createRequire(import.meta.url)('canvaskit-wasm');
   const kit = await initialize({ wasmBinary: fs.readFileSync(new URL('../public/canvaskit.wasm', import.meta.url)) });
   const surface = kit.MakeSurface(420, 420), paint = new kit.Paint();
@@ -75,15 +105,24 @@ test('CanvasKit linear sampling renders original and cropped artwork equivalentl
     for (const { original, web, bounds: [x, y, width, height] } of pairs) {
       const full = kit.MakeImageFromEncoded(fs.readFileSync(new URL('../' + original.replace('@/', ''), import.meta.url)));
       const trim = kit.MakeImageFromEncoded(fs.readFileSync(new URL('../' + web.replace('@/', ''), import.meta.url)));
+      const recorder = new kit.PictureRecorder();
+      const recorded = recorder.beginRecording(kit.XYWHRect(0, 0, 2400, 1800));
+      recorded.save(); recorded.clipRect(kit.XYWHRect(x, y, width, height), kit.ClipOp.Intersect, false);
+      recorded.drawImageRectOptions(full, kit.XYWHRect(0, 0, full.width(), full.height()),
+        kit.XYWHRect(0, 0, 2400, 1800), kit.FilterMode.Linear, kit.MipmapMode.None, paint);
+      recorded.restore();
+      const picture = recorder.finishRecordingAsPicture(); recorder.delete();
       try {
         for (const scale of [0.2341666667, 0.6083333333, 1.825]) {
           const canvas = surface.getCanvas();
-          const render = (image, rect) => {
+          const render = (image, rect, cachedPicture) => {
             canvas.clear(kit.Color(0, 0, 0, 0)); canvas.save();
             canvas.translate(210 - (x + width / 2) * scale, 210 - (y + height / 2) * scale);
             canvas.scale(scale, scale);
-            canvas.drawImageRectOptions(image, kit.XYWHRect(0, 0, image.width(), image.height()), rect,
-              kit.FilterMode.Linear, kit.MipmapMode.None, paint); canvas.restore();
+            if (cachedPicture) canvas.drawPicture(cachedPicture);
+            else canvas.drawImageRectOptions(image, kit.XYWHRect(0, 0, image.width(), image.height()), rect,
+              kit.FilterMode.Linear, kit.MipmapMode.None, paint);
+            canvas.restore();
             const snapshot = surface.makeImageSnapshot();
             try { return snapshot.readPixels(0, 0, { width: 420, height: 420, colorType: kit.ColorType.RGBA_8888,
               alphaType: kit.AlphaType.Premul, colorSpace: kit.ColorSpace.SRGB }); }
@@ -91,6 +130,8 @@ test('CanvasKit linear sampling renders original and cropped artwork equivalentl
           };
           const before = render(full, kit.XYWHRect(0, 0, 2400, 1800));
           const after = render(trim, kit.XYWHRect(x, y, width, height));
+          const clipped = render(null, null, picture);
+          assert.deepEqual(clipped, before, original + ': clipping/picture changed visible pixels');
           let difference = 0, large = 0;
           for (let i = 0; i < before.length; i++) {
             const error = Math.abs(before[i] - after[i]); difference += error; if (error > 2) large++;
@@ -98,7 +139,7 @@ test('CanvasKit linear sampling renders original and cropped artwork equivalentl
           assert.ok(difference / before.length < 0.01, original + ': sampling registration differs');
           assert.ok(large / before.length < 0.0001, original + ': visible sampling regression');
         }
-      } finally { full.delete(); trim.delete(); }
+      } finally { picture.delete(); full.delete(); trim.delete(); }
     }
   } finally { paint.delete(); surface.delete(); }
 });

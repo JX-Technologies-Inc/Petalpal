@@ -1,3 +1,4 @@
+import { usePanelTheme } from './PanelTheme';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { FeatureStatus } from '../../services/featureCatalog';
@@ -8,9 +9,10 @@ export const FEATURE_COLORS = {
 };
 
 export function StatusChip({ status }: { status: FeatureStatus }) {
+  const { theme } = usePanelTheme();
   return <View style={[ui.chip, status === 'REAL' ? ui.tealWash : ui.purpleWash]}>
     <View style={[ui.dot, { backgroundColor: status === 'REAL' ? FEATURE_COLORS.primary : FEATURE_COLORS.secondary }]} />
-    <Text style={ui.chipText}>{status}</Text>
+    <Text style={[ui.chipText, { color: theme.text }]}>{status}</Text>
   </View>;
 }
 
@@ -25,7 +27,8 @@ export function FeatureActionButton({ title, onPress, disabled = false, secondar
 }
 
 export function FeatureSection({ title, children }: { title?: string; children: ReactNode }) {
-  return <View style={ui.section}>{title ? <Text style={ui.sectionTitle}>{title}</Text> : null}{children}</View>;
+  const { theme } = usePanelTheme();
+  return <View style={[ui.section, { backgroundColor: theme.surface, borderColor: theme.border }]}>{title ? <Text style={[ui.sectionTitle, { color: theme.text }]}>{title}</Text> : null}{children}</View>;
 }
 
 export const ui = StyleSheet.create({

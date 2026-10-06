@@ -8,7 +8,23 @@ export function configureApi(next: ApiConnection | null) { connection = next; }
 export function apiBaseUrl() {
   if (connection) return connection.apiBaseUrl.replace(/\/$/, '');
   const configured = process.env.EXPO_PUBLIC_API_BASE_URL;
-  if (configured) return configured.replace(/\/$/, '');
+  if (configured) {
+    // Native development devices reach the Mac through the Expo LAN host.
+    // Web, simulators using localhost, and production keep their configured URL.
+    if (__DEV__ && require('react-native').Platform.OS !== 'web') {
+      const host = require('expo-constants').default.expoConfig?.hostUri?.split(':')[0];
+      if (host) {
+        try {
+          const url = new URL(configured);
+          if (['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+            url.hostname = host;
+            return url.toString().replace(/\/$/, '');
+          }
+        } catch { /* Preserve existing handling of an invalid configured URL. */ }
+      }
+    }
+    return configured.replace(/\/$/, '');
+  }
   if (typeof window !== 'undefined' && __DEV__) return `${window.location.protocol}//${window.location.hostname}:3000`;
   return '';
 }

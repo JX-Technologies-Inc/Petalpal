@@ -78,6 +78,7 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
   setEventEmotionClassifierForTests(async () => assert.fail("Social content must never call Event emotion AI"));
   const originals = {
     userFindUnique: prisma.user.findUnique,
+    friendshipFindUnique: prisma.friendship.findUnique,
     flowerFindFirst: prisma.flower.findFirst,
     flowerUpdate: prisma.flower.update,
     flowerFindUnique: prisma.flower.findUnique,
@@ -86,7 +87,8 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
   };
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? { id: "visitor-1" }
-    : { id: "visitor-1", name: "Visitor", avatar: "🦋" };
+    : { id: where.id, name: "Visitor", avatar: "🦋", allowGardenVisits: true };
+  prisma.friendship.findUnique = async () => ({ id: "confirmed-friendship" });
   prisma.flower.findFirst = async () => ({ id: "flower-1", gardenId: "garden-1" });
   prisma.flower.update = async () => privateFlower;
   prisma.flower.findUnique = async () => privateFlower;
@@ -119,6 +121,7 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
       update: originals.flowerUpdate,
       findUnique: originals.flowerFindUnique
     });
+    prisma.friendship.findUnique = originals.friendshipFindUnique;
     prisma.message.create = originals.messageCreate;
     prisma.visitRecord.create = originals.visitCreate;
     setFirebaseTokenVerifierForTests();

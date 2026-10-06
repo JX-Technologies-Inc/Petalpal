@@ -1,10 +1,12 @@
 import GardenFairy, { type FairyHandle } from './fairy/GardenFairy';
+import { GardenCalendar } from './GardenCalendar';
 import type { FlowerSession } from './planting/flowerDetailApi';
 import { Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import {
+import Animated, {
+  useAnimatedStyle,
   cancelAnimation,
   Easing,
   useDerivedValue,
@@ -194,9 +196,13 @@ export type GardenSceneProps = {
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
   gardenOwnerUserId?: string;
+  readOnly?: boolean;
+  onOpenBookhouse?: () => void;
+  onOpenReflection?: () => void;
+  showCalendar?: boolean;
 };
 
-function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, children }: GardenSceneProps = {}) {
+function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, readOnly = false, onOpenBookhouse, onOpenReflection, showCalendar = false, children }: GardenSceneProps = {}) {
   const planting = usePlanting();
   const [useMonthlyGrowth, setUseMonthlyGrowth] = useState(USE_MONTHLY_GARDEN_GROWTH_V1_1);
   const {
@@ -410,6 +416,21 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     { translateY: baseY + cameraY.value },
     { scale: fit * cameraZoom.value },
   ]);
+  // Hit area follows the existing landmark and camera; the painted scene is unchanged.
+  const [pavilionSelected, setPavilionSelected] = useState(false);
+  const pavilionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (pavilionTimer.current) clearTimeout(pavilionTimer.current); }, []);
+  const pavilionEntryStyle = useAnimatedStyle(() => ({
+    left: baseX + cameraX.value + pavilionPlacement.x * fit * cameraZoom.value,
+    top: baseY + cameraY.value + pavilionPlacement.y * fit * cameraZoom.value,
+    width: Math.max(44, 1214 * pavilionPlacement.scale * fit * cameraZoom.value),
+    height: Math.max(44, 1295 * pavilionPlacement.scale * fit * cameraZoom.value),
+  }));
+  const treehouseEntryStyle = useAnimatedStyle(() => ({
+    left: baseX + cameraX.value + (treehousePlacement.x + 870 * treehousePlacement.scale) * fit * cameraZoom.value - 28,
+    top: baseY + cameraY.value + (treehousePlacement.y + 690 * treehousePlacement.scale) * fit * cameraZoom.value - 28,
+    width: 56, height: 56,
+  }));
   const focusCoords = useCallback((worldX: number, worldY: number, targetZoom = 1.8) => {
     if (viewport.width === 0 || viewport.height === 0 || fit <= 0) return;
     cameraZoom.value = targetZoom;
@@ -417,6 +438,23 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     cameraY.value = viewport.height / 2 - baseY - worldY * fit * targetZoom;
   }, [baseX, baseY, fit, viewport.width, viewport.height, cameraX, cameraY, cameraZoom]);
 
+  const calendarHighlight = useSharedValue(0);
+  const calendarPoint = useSharedValue({ x: 0, y: 0 });
+  const calendarReducedMotion = useReducedMotion();
+  const calendarHighlightStyle = useAnimatedStyle(() => ({
+    left: baseX + cameraX.value + calendarPoint.value.x * fit * cameraZoom.value - 22,
+    top: baseY + cameraY.value + calendarPoint.value.y * fit * cameraZoom.value - 22,
+    opacity: calendarHighlight.value,
+  }));
+  const focusCalendarFlower = (flower: typeof placements[number]) => {
+    const duration = calendarReducedMotion ? 0 : 500;
+    cameraZoom.value = withTiming(1.8, { duration });
+    cameraX.value = withTiming(viewport.width / 2 - baseX - flower.worldX * fit * 1.8, { duration });
+    cameraY.value = withTiming(viewport.height / 2 - baseY - flower.worldY * fit * 1.8, { duration });
+    calendarPoint.value = { x: flower.worldX, y: flower.worldY };
+    calendarHighlight.value = .45;
+    calendarHighlight.value = withTiming(0, { duration: calendarReducedMotion ? 400 : 1700 });
+  };
   const focusCalMonth = useCallback((month: number) => {
     if (fit <= 0) return;
     const centroid = getCalibratedCentroid(month, plantingCalibrationMap, calibrationLayout);
@@ -424,7 +462,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   }, [fit, plantingCalibrationMap, calibrationLayout, focusCoords]);
 
   useEffect(() => {
-    if (!searchParams.mode && !searchParams.calMode) return;
+    if (readOnly || (!searchParams.mode && !searchParams.calMode)) return;
     const paramKey = `${searchParams.mode || ''}-${searchParams.flowerId || ''}-${searchParams.calMode || ''}`;
     if (handledParamRef.current === paramKey) return;
     handledParamRef.current = paramKey;
@@ -460,7 +498,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         setPreviewMode(true);
       }
     }
-  }, [searchParams, placements, startPlanting, startAdjusting, focusCoords, focusCalMonth]);
+  }, [readOnly, searchParams, placements, startPlanting, startAdjusting, focusCoords, focusCalMonth]);
 
   const handleCalibrationNudge = useCallback((field: keyof MonthRegionCalibration, delta: number) => {
     setPlantingCalibrationMap((prev) => {
@@ -674,7 +712,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   );
 
   const handleGardenTap = useCallback((screenX: number, screenY: number) => {
-    if (fit <= 0) return;
+    if (readOnly || fit <= 0) return;
     const currentZoom = cameraZoom.value;
     const currentCamX = cameraX.value;
     const currentCamY = cameraY.value;
@@ -723,7 +761,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         fairyRef.current?.move({ x: worldX, y: worldY });
       }
     }
-  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk]);
+  }, [readOnly, fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk]);
 
   const startMaskPos = useRef({ localX: 0, localY: 0 });
 
@@ -1178,9 +1216,31 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       <PlantingPlacementControls />
 
       {/* Flower Detail Modal */}
-      <FlowerDetailModal />
+      {!readOnly && <FlowerDetailModal />}
 
+      {!readOnly && onOpenReflection && activeMode === 'normal' && !selectedFlower && (
+        <Animated.View style={[{ position: 'absolute' }, pavilionEntryStyle]}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Enter Reflection pavilion"
+            onPress={() => {
+              if (pavilionTimer.current) return;
+              setPavilionSelected(true);
+              pavilionTimer.current = setTimeout(() => {
+                setPavilionSelected(false); pavilionTimer.current = null; onOpenReflection();
+              }, 160);
+            }} style={{ flex: 1, borderRadius: 28, backgroundColor: pavilionSelected ? '#FFE8AF22' : 'transparent',
+              borderWidth: pavilionSelected ? 1 : 0, borderColor: '#F4D59277' }} />
+        </Animated.View>
+      )}
+      {!readOnly && onOpenBookhouse && activeMode === 'normal' && !selectedFlower && (
+        <Animated.View style={[{ position: 'absolute' }, treehouseEntryStyle]}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Enter Treehouse Bookhouse"
+            accessibilityHint="Open your private journals and flower history" onPress={onOpenBookhouse}
+            style={({ pressed }) => ({ flex: 1, borderRadius: 28, backgroundColor: pressed ? '#FFF4DC22' : 'transparent' })} />
+        </Animated.View>
+      )}
       {children}
+      {showCalendar && !readOnly && activeMode === 'normal' && !selectedFlower && <GardenCalendar onFocusFlower={focusCalendarFlower} />}
+      {showCalendar && <Animated.View pointerEvents="none" style={[{ position: 'absolute', width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: '#F5E8B3', backgroundColor: '#FFF2C518' }, calendarHighlightStyle]} />}
 
       {/* Floating button when in Preview Mode */}
       {enableFairyWalk && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>

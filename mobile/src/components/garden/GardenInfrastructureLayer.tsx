@@ -1,5 +1,8 @@
-import { Group, Image, useImage } from '@shopify/react-native-skia';
+import { ClipOp, createPicture, FilterMode, Group, Image, MipmapMode, Picture, Skia, useImage } from '@shopify/react-native-skia';
+import { memo, useMemo } from 'react';
+import { Platform } from 'react-native';
 import { registeredArtwork } from './registeredArtwork';
+import { GARDEN_WORLD_HEIGHT, GARDEN_WORLD_WIDTH } from './gardenMapLayout';
 
 // Web copies retain the complete-world registration of each original PNG.
 // The unchanged entrance road is drawn by GardenConnectionLayer before this group.
@@ -35,8 +38,10 @@ const sources = [
   registeredArtwork(require('@/assets/garden/infrastructure/b02-land06-connection/land06-approach.png'),
     require('@/assets/garden/runtime/infrastructure/b02-land06-connection/land06-approach.png'), 1735, 477, 131, 107),
 ] as const;
+const artwork = [sources[1], sources[9], sources[8], sources[0], sources[15], sources[2], sources[6],
+  sources[4], sources[7], sources[12], sources[14], sources[13], sources[3], sources[5]];
 
-export default function GardenInfrastructureLayer() {
+function GardenInfrastructureLayer() {
   const stones = useImage(sources[0].source);
   const road = useImage(sources[1].source);
   const b02 = useImage(sources[2].source);
@@ -53,13 +58,39 @@ export default function GardenInfrastructureLayer() {
   const land06Approach = useImage(sources[15].source);
   // The connected B01 paving replaces the two legacy foot patches. Draw the
   // unchanged bridge above it; GardenScene draws the entrance arch afterward.
-  const images = [road, groundJunctions, roadForeground, stones, land06Approach, b02, st01,
-    b02Foreground, st01Foreground, land09Transition, land09InterfaceForeground, b01FootLanding, b01, b01Foreground];
-  const artwork = [sources[1], sources[9], sources[8], sources[0], sources[15], sources[2], sources[6],
-    sources[4], sources[7], sources[12], sources[14], sources[13], sources[3], sources[5]];
+  const images = useMemo(() => [road, groundJunctions, roadForeground, stones, land06Approach, b02, st01,
+    b02Foreground, st01Foreground, land09Transition, land09InterfaceForeground, b01FootLanding, b01, b01Foreground],
+  [road, groundJunctions, roadForeground, stones, land06Approach, b02, st01,
+    b02Foreground, st01Foreground, land09Transition, land09InterfaceForeground, b01FootLanding, b01, b01Foreground]);
+
+  // A vector recording, not a raster snapshot: the original textures are still
+  // sampled at the current camera scale/DPR. Only image arrivals rebuild it.
+  const picture = useMemo(() => {
+    if (Platform.OS === 'web') return null;
+    return createPicture(canvas => {
+      const paint = Skia.Paint();
+      paint.setAntiAlias(true);
+      images.forEach((image, index) => {
+        if (!image) return;
+        const item = artwork[index];
+        canvas.save();
+        if (item.clip) canvas.clipRect(item.clip, ClipOp.Intersect, false);
+        canvas.drawImageRectOptions(image,
+          Skia.XYWHRect(0, 0, image.width(), image.height()),
+          Skia.XYWHRect(item.x, item.y, item.width, item.height),
+          FilterMode.Linear, MipmapMode.None, paint);
+        canvas.restore();
+      });
+      paint.dispose();
+    }, { width: GARDEN_WORLD_WIDTH, height: GARDEN_WORLD_HEIGHT });
+  }, [images]);
+
+  if (picture) return <Picture picture={picture} />;
 
   return <Group>
     {images.map((image, index) => image && <Image key={index} image={image} x={artwork[index].x} y={artwork[index].y}
       width={artwork[index].width} height={artwork[index].height} fit="fill" />)}
   </Group>;
 }
+
+export default memo(GardenInfrastructureLayer);

@@ -1,5 +1,7 @@
+import { validateJournalCover } from './lib/journal-cover.js';
 import "dotenv/config";
 import express from "express";
+import { speechTranscriptionHandler } from "./lib/speech-transcription.js";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
@@ -9,6 +11,7 @@ import { fileURLToPath } from "url";
 import { createHash } from "crypto";
 
 import prisma from "./lib/prisma.js";
+import { canVisitGarden } from "./lib/garden-access.js";
 import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
@@ -197,20 +200,17 @@ io.on("connection", (socket) => {
       );
     });
 
-    socket.on("join-garden", (gardenOwnerId) => {
+    socket.on("join-garden", async (gardenOwnerId) => {
       if (!validId(gardenOwnerId)) return;
-  
-      if (socket.data.currentGarden) {
-        socket.leave(`garden:${socket.data.currentGarden}`);
-      }
-  
-      socket.data.currentGarden = gardenOwnerId;
-  
-      socket.join(`garden:${gardenOwnerId}`);
-  
-      console.log(
-        `${socket.id} joined garden:${gardenOwnerId}`
-      );
+      try {
+        const owner = await prisma.user.findUnique({
+          where: { id: gardenOwnerId }, select: { id: true, allowGardenVisits: true }
+        });
+        if (!await canVisitGarden(prisma, owner, socket.data.currentUserId)) return;
+        if (socket.data.currentGarden) socket.leave(`garden:${socket.data.currentGarden}`);
+        socket.data.currentGarden = gardenOwnerId;
+        socket.join(`garden:${gardenOwnerId}`);
+      } catch (err) { logServerError("Garden socket authorization error", err); }
     });
     socket.on("move-avatar", async (data) => {
         const {
@@ -227,26 +227,32 @@ io.on("connection", (socket) => {
           return;
         }
       
-        const visitor = await prisma.user.findUnique({
-          where: { id: visitorId },
-          select: { name: true, avatar: true }
-        });
+        try {
+          const owner = await prisma.user.findUnique({
+            where: { id: gardenOwnerId }, select: { id: true, allowGardenVisits: true }
+          });
+          if (!await canVisitGarden(prisma, owner, visitorId)) return;
+          const visitor = await prisma.user.findUnique({
+            where: { id: visitorId },
+            select: { name: true, avatar: true }
+          });
 
-        if (!visitor) return;
+          if (!visitor) return;
 
-        io.to(`garden:${gardenOwnerId}`).emit(
-          "avatarMoved",
-          {
-            visitorId,
-            userId: visitorId,
-            gardenOwnerId,
-            ownerId: gardenOwnerId,
-            name: visitor.name,
-            avatar: visitor.avatar,
-            x,
-            y
-          }
-        );
+          io.to(`garden:${gardenOwnerId}`).emit(
+            "avatarMoved",
+            {
+              visitorId,
+              userId: visitorId,
+              gardenOwnerId,
+              ownerId: gardenOwnerId,
+              name: visitor.name,
+              avatar: visitor.avatar,
+              x,
+              y
+            }
+          );
+        } catch (err) { logServerError("Garden movement authorization error", err); }
       });
   
     socket.on("disconnect", () => {
@@ -265,6 +271,22 @@ app.use(cors({
   origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
+// Authenticate and rate-limit before accepting the larger voice-only body.
+app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit,
+  express.json({ limit: "12mb" }), speechTranscriptionHandler());
+// This owner-only photo route is the sole Journal path accepting a larger body.
+app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  express.json({ limit: "700kb" }), requireJsonObject, async (req, res) => {
+    let coverImage;
+    try { coverImage = validateJournalCover(req.body.coverImage); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+    const result = await prisma.journal.updateMany({
+      where: { id: req.params.journalId, userId: req.auth.userId }, data: { coverImage }
+    });
+    if (!result.count) return res.status(404).json({ error: "Journal not found" });
+    res.json({ coverImage });
+  });
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
 app.use(express.static(path.join(__dirname, "public")));
@@ -729,15 +751,16 @@ app.get("/users/search", async (req, res) => {
             not: currentUserId
           },
   
-          name: {
-            contains: name,
-            mode: "insensitive"
-          }
+          OR: [
+            { name: { contains: name, mode: "insensitive" } },
+            { accountId: { contains: name.replace(/^@/, ""), mode: "insensitive" } }
+          ]
         },
   
         select: {
           id: true,
           name: true,
+          accountId: true,
           avatar: true
         },
   
@@ -758,6 +781,60 @@ app.get("/users/search", async (req, res) => {
       });
     }
   });
+
+app.get("/users/me/garden-privacy", async (req, res) => {
+  try {
+    const settings = await prisma.user.findUnique({
+      where: { id: req.auth.userId }, select: { allowGardenVisits: true }
+    });
+    if (!settings) return res.status(404).json({ error: "User not found" });
+    res.json(settings);
+  } catch (err) {
+    logServerError("GET garden privacy error", err);
+    res.status(500).json({ error: "Failed to load Garden privacy" });
+  }
+});
+
+app.patch("/users/me/garden-privacy", async (req, res) => {
+  if (typeof req.body?.allowGardenVisits !== "boolean") {
+    return res.status(400).json({ error: "allowGardenVisits must be a boolean" });
+  }
+  try {
+    const settings = await prisma.user.update({
+      where: { id: req.auth.userId },
+      data: { allowGardenVisits: req.body.allowGardenVisits },
+      select: { allowGardenVisits: true }
+    });
+    if (!settings.allowGardenVisits) {
+      const garden = await prisma.garden.findUnique({ where: { ownerId: req.auth.userId }, select: { id: true } });
+      if (garden) setActiveVisitors(garden.id, []);
+      // Revoke existing visitor subscriptions as well as rejecting new requests.
+      const subscribers = await io.in(`garden:${req.auth.userId}`).fetchSockets();
+      for (const subscriber of subscribers) {
+        if (subscriber.data.currentUserId === req.auth.userId) continue;
+        subscriber.leave(`garden:${req.auth.userId}`);
+        subscriber.data.currentGarden = undefined;
+      }
+    }
+    res.json(settings);
+  } catch (err) {
+    logServerError("PATCH garden privacy error", err);
+    res.status(500).json({ error: "Failed to save Garden privacy" });
+  }
+});
+
+app.get("/users/:userId/garden-access", async (req, res) => {
+  try {
+    const owner = await prisma.user.findUnique({
+      where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
+    });
+    if (!owner) return res.status(404).json({ error: "User not found" });
+    res.json({ allowGardenVisits: owner.allowGardenVisits, canVisit: await canVisitGarden(prisma, owner, req.auth.userId) });
+  } catch (err) {
+    logServerError("GET Garden access error", err);
+    res.status(500).json({ error: "Failed to load Garden access" });
+  }
+});
 
 app.get("/users/:userId", async (req, res) => {
   try {
@@ -810,6 +887,8 @@ app.get("/users/:userId/friends", async (req, res) => {
           select: {
             id: true,
             name: true,
+            accountId: true,
+            allowGardenVisits: true,
             avatar: true,
           },
         },
@@ -826,6 +905,13 @@ app.get("/users/:userId/friends", async (req, res) => {
 
 app.get("/users/:userId/garden", async (req, res) => {
   try {
+    const owner = await prisma.user.findUnique({
+      where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
+    });
+    if (!owner) return res.status(404).json({ error: "User not found" });
+    if (!await canVisitGarden(prisma, owner, req.auth.userId)) {
+      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
+    }
     const gardenResponse = await getGardenResponse(req.params.userId, {
       includePrivate: req.auth.userId === req.params.userId,
       viewerUserId: req.auth.userId
@@ -1380,6 +1466,50 @@ app.get("/session", async (req, res) => {
   });
 });
 
+// Private journals never enter Daily Grow, Events, or AI processing.
+app.post("/users/:userId/journals", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+  const content = req.body?.content;
+  if (typeof content !== "string" || !content.trim()) {
+    return res.status(400).json({ error: "Write something before saving your journal" });
+  }
+  if (content.length > 2000) return res.status(413).json({ error: "Journal must be 2000 characters or fewer" });
+  const journal = await prisma.journal.create({
+    data: { userId: req.auth.userId, content: content.trim() }
+  });
+  res.status(201).json(journal);
+});
+
+app.get("/users/:userId/journals/:journalId/cover", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+  const journal = await prisma.journal.findFirst({
+    where: { id: req.params.journalId, userId: req.auth.userId }, select: { coverImage: true }
+  });
+  if (!journal) return res.status(404).json({ error: "Journal not found" });
+  res.set("Cache-Control", "no-store").json(journal);
+});
+
+app.get("/users/:userId/journals", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+  const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
+  const timezone = normalizeTimezone(user?.timezone) || "UTC";
+  const journals = await prisma.journal.findMany({
+    where: { userId: req.auth.userId },
+    select: { id: true, content: true, createdAt: true, dailyCheckIn: { include: { emotionResult: true, flower: { include: { messages: true } } } } },
+    orderBy: { createdAt: "desc" }
+  });
+  res.json(journals.map(journal => ({
+    id: journal.id,
+    createdAt: journal.createdAt,
+    localDate: journal.dailyCheckIn?.localDate || new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit"
+    }).format(journal.createdAt),
+    journal: { id: journal.id, content: journal.content },
+    emotionResult: journal.dailyCheckIn?.emotionResult || null,
+    flower: journal.dailyCheckIn?.flower || null
+  })));
+});
+
 app.get("/users/:userId/check-ins", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
 
@@ -1894,6 +2024,32 @@ app.get("/ai/memories/:memoryId", async (req, res) => {
   return res.json(memory);
 });
 
+// Metadata discovery only. Detail reads and generation keep their existing routes.
+app.get("/ai/reports", async (req, res) => {
+  if (Object.keys(req.query).some(key => !["limit", "cursor"].includes(key))) {
+    return res.status(400).json({ error: "Only limit and cursor are supported; owner comes from authentication" });
+  }
+  const rawLimit = req.query.limit ?? "20";
+  if (typeof rawLimit !== "string" || !/^[1-9]\d?$/.test(rawLimit) || Number(rawLimit) > 50) {
+    return res.status(400).json({ error: "limit must be an integer from 1 to 50" });
+  }
+  let cursor = null;
+  if (req.query.cursor !== undefined) {
+    try {
+      if (typeof req.query.cursor !== "string" || req.query.cursor.length > 512 || !/^[A-Za-z0-9_-]+$/.test(req.query.cursor)) throw Error();
+      cursor = JSON.parse(Buffer.from(req.query.cursor, "base64url").toString("utf8"));
+      if (!cursor || !["weekly", "monthly"].includes(cursor.type) || !validId(cursor.id)
+        || typeof cursor.start !== "string" || new Date(cursor.start).toISOString() !== cursor.start) throw Error();
+    } catch { return res.status(400).json({ error: "Invalid report cursor" }); }
+  }
+  try {
+    return res.json(await new PrivateReportRepository(prisma).listSavedReports({ identity: req.auth, limit: Number(rawLimit), cursor }));
+  } catch (error) {
+    logServerError("GET /ai/reports error", error);
+    return res.status(500).json({ error: "Unable to load saved reports" });
+  }
+});
+
 app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
   const reports = new PrivateReportRepository(prisma);
   const input = { identity: req.auth, reportId: req.params.reportId };
@@ -2209,6 +2365,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               },
@@ -2216,6 +2373,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               }
@@ -2234,6 +2392,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               },
@@ -2241,6 +2400,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               }
@@ -2308,6 +2468,7 @@ app.post("/friends/request", async (req, res) => {
                   select: {
                     id: true,
                     name: true,
+                    accountId: true,
                     avatar: true
                   }
                 }
@@ -2328,6 +2489,7 @@ app.post("/friends/request", async (req, res) => {
                   select: {
                     id: true,
                     name: true,
+                    accountId: true,
                     avatar: true
                   }
                 }
@@ -3131,6 +3293,9 @@ app.post("/visit", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    if (!await canVisitGarden(prisma, host, visitorUserId)) {
+      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
+    }
     const hostGarden = await ensureGarden(host.id);
 
     const visitors = getActiveVisitors(hostGarden.id);
@@ -3224,6 +3389,9 @@ app.post("/visit/move", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    if (!await canVisitGarden(prisma, host, visitorUserId)) {
+      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
+    }
     const hostGarden = await ensureGarden(host.id);
     const visitors = getActiveVisitors(hostGarden.id);
 

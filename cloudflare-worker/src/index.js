@@ -1,3 +1,4 @@
+import { validSpeechAudio, MAX_AUDIO_JSON_BYTES, SPEECH_MODEL } from '../../lib/speech-audio.js';
 import {
   CANONICAL_PRIMARY_GARDEN_MOODS,
   EXCLUDED_SECONDARY_EMOTIONS,
@@ -348,16 +349,46 @@ async function generateEmbedding(request, env) {
   return json({ vector, model: EMBEDDING_MODEL, pooling: "mean", dimensions: 384 });
 }
 
+async function transcribeSpeech(request, env) {
+  // Bound even chunked requests before JSON decoding.
+  const reader = request.body?.getReader();
+  if (!reader) return json({ error: 'Audio required' }, 400);
+  let total = 0;
+  const chunks = [];
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > MAX_AUDIO_JSON_BYTES) {
+        await reader.cancel();
+        return json({ error: 'Audio too large' }, 413);
+      }
+      chunks.push(value);
+    }
+    let body;
+    try { body = JSON.parse(await new Blob(chunks).text()); }
+    catch { return json({ error: 'Invalid audio request' }, 400); }
+    if (!validSpeechAudio(body)) return json({ error: 'Invalid audio' }, 400);
+    const result = await env.AI.run(SPEECH_MODEL, { audio: body.audio, task: 'transcribe', vad_filter: true });
+    if (typeof result?.text !== 'string' || result.text.length > 20000) throw new Error('Invalid transcript');
+    return json({ text: result.text.trim() });
+  } catch {
+    return json({ error: 'Transcription failed' }, 502);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (request.method === "POST" && url.pathname === "/v1/ai-jobs/dispatch") {
       return dispatchAiJob(request, env);
     }
-    if (request.method !== "POST" || !["/v1/emotion", "/v1/event-emotion", "/v1/report-narrative", "/v1/embedding"].includes(url.pathname)) {
+    if (request.method !== "POST" || !["/v1/speech/transcribe", "/v1/emotion", "/v1/event-emotion", "/v1/report-narrative", "/v1/embedding"].includes(url.pathname)) {
       return json({ error: "Not found" }, 404);
     }
     if (!authorized(request, env)) return json({ error: "Unauthorized" }, 401);
+    if (url.pathname === "/v1/speech/transcribe") return transcribeSpeech(request, env);
     if (url.pathname === "/v1/embedding") return generateEmbedding(request, env);
     if (url.pathname === "/v1/report-narrative") return generateReportNarrative(request, env);
     if (url.pathname === "/v1/event-emotion") return generateEventEmotions(request, env);

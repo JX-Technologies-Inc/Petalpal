@@ -1,0 +1,23 @@
+import { apiRequest } from './api';
+import type { BackendFlower } from './events';
+
+export interface JournalCheckIn {
+  id: string; localDate: string; createdAt: string;
+  journal: { id: string; content: string } | null;
+  emotionResult: { label: string; secondaryEmotions?: string[]; inferencePath?: string } | null;
+  flower: BackendFlower | null;
+}
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export function daysInMonth(year: number, month: number) { return new Date(Date.UTC(year, month, 0)).getUTCDate(); }
+export function monthKey(year: number, month: number) { return `${year}-${String(month).padStart(2, '0')}`; }
+export function journalYears(entries: JournalCheckIn[]) {
+  return [...new Set([2026, 2027, 2028, 2029, 2030, ...entries.filter(e => e.journal).map(e => Number(e.localDate.slice(0, 4)))])].sort((a, b) => a - b);
+}
+export const readJournals = (userId: string) => apiRequest<JournalCheckIn[]>(`/users/${encodeURIComponent(userId)}/journals`);
+export const savePrivateJournal = (userId: string, content: string) =>
+  apiRequest<{ id: string; content: string }>(`/users/${encodeURIComponent(userId)}/journals`, 'POST', { content: content.trim() });
+
+export const readJournalCover = (userId: string, journalId: string) =>
+  apiRequest<{ coverImage: string | null }>(`/users/${encodeURIComponent(userId)}/journals/${encodeURIComponent(journalId)}/cover`);
+export const saveJournalCover = (userId: string, journalId: string, coverImage: string | null) =>
+  apiRequest<{ coverImage: string | null }>(`/users/${encodeURIComponent(userId)}/journals/${encodeURIComponent(journalId)}/cover`, 'PUT', { coverImage });
