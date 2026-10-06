@@ -80,7 +80,7 @@ test("Socket.IO authenticated handler inventory and identity guards are explicit
   assert.match(source, /socket\.join\(\s*`user:\$\{normalizedUserId\}`\s*\)/);
   assert.match(source, /visitorId = String\(socket\.data\.currentUserId\)/);
   assert.match(source, /socket\.data\.currentGarden !== gardenOwnerId/);
-  assert.match(source, /io\.to\(`garden:\$\{gardenOwnerId\}`\)\.emit/);
+  assert.match(source, /realtime\.broadcast\(\[`garden:\$\{gardenOwnerId\}`\]/);
   for (const field of injectedFields) assert.equal(typeof field, "string");
 });
 

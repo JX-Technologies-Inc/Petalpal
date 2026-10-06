@@ -80,9 +80,11 @@ import { Server } from "socket.io";
 import {
   authenticateRequest,
   authenticateSocket,
+  revalidateSocketIdentity,
   authenticateFirebaseIdentity,
   requireOwnUser
 } from "./lib/auth.js";
+import { createRealtimeSecurity, SOCKET_MAX_PACKET_BYTES } from "./lib/socket-security.js";
 import { rateLimiters } from "./lib/rate-limit.js";
 import { deleteFirebaseUser } from "./lib/firebase-admin.js";
 import { assertDevelopmentDatabase } from "./lib/database-isolation.js";
@@ -151,6 +153,7 @@ export function setAiJobDispatcherForTests(dispatcher) {
 }
 
 const io = new Server(server, {
+  maxHttpBufferSize: SOCKET_MAX_PACKET_BYTES,
   cors: {
     origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
     methods: ["GET", "POST"]
@@ -159,106 +162,59 @@ const io = new Server(server, {
 
 io.use(authenticateSocket);
 
-//ROS
+const realtime = createRealtimeSecurity({ io, db: prisma, authenticate: revalidateSocketIdentity, logger: logServerError });
+
 io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
-  
-    socket.on("join-user", () => {
-      const normalizedUserId = String(socket.data.currentUserId);
-
-      if (
-        socket.data.currentUserId &&
-        socket.data.currentUserId !==
-          normalizedUserId
-      ) {
-        socket.leave(
-          `user:${socket.data.currentUserId}`
-        );
+  if (!realtime.connection(socket)) return;
+  socket.on("join-user", (payload, ack) => realtime.run(socket, payload, ack, async (_payload, version) => {
+    const normalizedUserId = String(socket.data.currentUserId);
+    await socket.join(`user:${normalizedUserId}`);
+    if (!realtime.current(socket, version)) { await socket.leave(`user:${normalizedUserId}`); return false; }
+    return true;
+  }));
+  socket.on("leave-user", (payload, ack) => realtime.run(socket, payload, ack, async () => {
+    await socket.leave(`user:${socket.data.currentUserId}`);
+    return true;
+  }));
+  socket.on("join-garden", (payload, ack) => realtime.run(socket, payload, ack, async (gardenOwnerId, version) => {
+    const sequence = (socket.data.gardenJoinSequence || 0) + 1;
+    socket.data.gardenJoinSequence = sequence;
+    socket.data.pendingGarden = gardenOwnerId;
+    try {
+      if (!await realtime.gardenAllowed(socket, gardenOwnerId, version) || socket.data.gardenJoinSequence !== sequence) return false;
+      if (socket.data.currentGarden) await socket.leave(`garden:${socket.data.currentGarden}`);
+      socket.data.currentGarden = gardenOwnerId;
+      socket.data.currentGardenJoinSequence = sequence;
+      await socket.join(`garden:${gardenOwnerId}`);
+      const allowed = await realtime.gardenAllowed(socket, gardenOwnerId, version);
+      if (socket.data.gardenJoinSequence !== sequence || !allowed) {
+        if (socket.data.currentGardenJoinSequence === sequence) {
+          socket.data.currentGarden = undefined;
+          await socket.leave(`garden:${gardenOwnerId}`);
+        } else if (socket.data.currentGarden !== gardenOwnerId) await socket.leave(`garden:${gardenOwnerId}`);
+        return false;
       }
-
-      socket.data.currentUserId =
-        normalizedUserId;
-
-      socket.join(
-        `user:${normalizedUserId}`
-      );
-
-      console.log(
-        `${socket.id} joined user:${normalizedUserId}`
-      );
-    });
-
-    socket.on("leave-user", () => {
-      const normalizedUserId = String(socket.data.currentUserId);
-
-      socket.leave(
-        `user:${normalizedUserId}`
-      );
-
-      console.log(
-        `${socket.id} left user:${normalizedUserId}`
-      );
-    });
-
-    socket.on("join-garden", async (gardenOwnerId) => {
-      if (!validId(gardenOwnerId)) return;
-      try {
-        const owner = await prisma.user.findUnique({
-          where: { id: gardenOwnerId }, select: { id: true, allowGardenVisits: true }
-        });
-        if (!await canVisitGarden(prisma, owner, socket.data.currentUserId)) return;
-        if (socket.data.currentGarden) socket.leave(`garden:${socket.data.currentGarden}`);
-        socket.data.currentGarden = gardenOwnerId;
-        socket.join(`garden:${gardenOwnerId}`);
-      } catch (err) { logServerError("Garden socket authorization error", err); }
-    });
-    socket.on("move-avatar", async (data) => {
-        const {
-          gardenOwnerId,
-          x,
-          y
-        } = data || {};
-
-        const visitorId = String(socket.data.currentUserId);
-      
-        if (!validId(gardenOwnerId) ||
-            socket.data.currentGarden !== gardenOwnerId ||
-            !validCoordinate(x) || !validCoordinate(y)) {
-          return;
-        }
-      
-        try {
-          const owner = await prisma.user.findUnique({
-            where: { id: gardenOwnerId }, select: { id: true, allowGardenVisits: true }
-          });
-          if (!await canVisitGarden(prisma, owner, visitorId)) return;
-          const visitor = await prisma.user.findUnique({
-            where: { id: visitorId },
-            select: { name: true, avatar: true }
-          });
-
-          if (!visitor) return;
-
-          io.to(`garden:${gardenOwnerId}`).emit(
-            "avatarMoved",
-            {
-              visitorId,
-              userId: visitorId,
-              gardenOwnerId,
-              ownerId: gardenOwnerId,
-              name: visitor.name,
-              avatar: visitor.avatar,
-              x,
-              y
-            }
-          );
-        } catch (err) { logServerError("Garden movement authorization error", err); }
-      });
-  
-    socket.on("disconnect", () => {
-      console.log("Socket disconnected:", socket.id);
-    });
-  });
+      return true;
+    } finally {
+      if (socket.data.gardenJoinSequence === sequence) socket.data.pendingGarden = undefined;
+    }
+  }));
+  socket.on("move-avatar", (payload, ack) => realtime.run(socket, payload, ack, async (data, version) => {
+    const { gardenOwnerId, x, y } = data;
+    const visitorId = String(socket.data.currentUserId);
+    if (socket.data.currentGarden !== gardenOwnerId || !socket.rooms.has(`garden:${gardenOwnerId}`) ||
+        !await realtime.gardenAllowed(socket, gardenOwnerId, version)) {
+      await realtime.leaveGarden(socket, gardenOwnerId); return false;
+    }
+    const visitor = await prisma.user.findUnique({ where: { id: visitorId }, select: { name: true, avatar: true } });
+    if (!visitor || !realtime.current(socket, version, gardenOwnerId)) return false;
+    const published = await realtime.broadcast([`garden:${gardenOwnerId}`], "avatarMoved", {
+      visitorId, userId: visitorId, gardenOwnerId, ownerId: gardenOwnerId,
+      name: visitor.name, avatar: visitor.avatar, x, y
+    }, { socket, version, ownerId: gardenOwnerId });
+    return published !== false && realtime.current(socket, version, gardenOwnerId);
+  }));
+});
 
 
 app.use((req, res, next) => {
@@ -800,21 +756,16 @@ app.patch("/users/me/garden-privacy", async (req, res) => {
     return res.status(400).json({ error: "allowGardenVisits must be a boolean" });
   }
   try {
-    const settings = await prisma.user.update({
+    const update = () => prisma.user.update({
       where: { id: req.auth.userId },
       data: { allowGardenVisits: req.body.allowGardenVisits },
       select: { allowGardenVisits: true }
     });
+    const settings = req.body.allowGardenVisits ? await update()
+      : await realtime.withRevocation({ gardenOwnerId: req.auth.userId }, update);
     if (!settings.allowGardenVisits) {
       const garden = await prisma.garden.findUnique({ where: { ownerId: req.auth.userId }, select: { id: true } });
       if (garden) setActiveVisitors(garden.id, []);
-      // Revoke existing visitor subscriptions as well as rejecting new requests.
-      const subscribers = await io.in(`garden:${req.auth.userId}`).fetchSockets();
-      for (const subscriber of subscribers) {
-        if (subscriber.data.currentUserId === req.auth.userId) continue;
-        subscriber.leave(`garden:${req.auth.userId}`);
-        subscriber.data.currentGarden = undefined;
-      }
     }
     res.json(settings);
   } catch (err) {
@@ -2409,7 +2360,7 @@ app.post("/friends/request", async (req, res) => {
       }
   
       // Optional real-time notification for the receiver
-      io
+      realtime
   .to(`user:${senderId}`)
   .to(`user:${receiverId}`)
   .emit("friendRequestUpdated", {
@@ -2608,7 +2559,7 @@ app.post("/friends/request", async (req, res) => {
           })
         ]);
   
-        io
+        realtime
           .to(`user:${senderId}`)
           .to(`user:${receiverId}`)
           .emit("friendRequestUpdated", {
@@ -2616,7 +2567,7 @@ app.post("/friends/request", async (req, res) => {
             senderId,
             receiverId
           });
-          io
+          realtime
           .to(`user:${senderId}`)
           .to(`user:${receiverId}`)
           .emit("friendListUpdated", {
@@ -2679,7 +2630,7 @@ app.post("/friends/request", async (req, res) => {
           }
         });
   
-        io
+        realtime
   .to(`user:${friendRequest.senderId}`)
   .to(`user:${friendRequest.receiverId}`)
   .emit("friendRequestUpdated", {
@@ -2715,16 +2666,16 @@ app.post("/friends/remove", async (req, res) => {
       return res.status(400).json({ error: "Invalid friend" });
     }
 
-    await prisma.friendship.deleteMany({
+    await realtime.withRevocation({ friends: [userId, friendId] }, () => prisma.friendship.deleteMany({
       where: {
         OR: [
           { userId, friendId },
           { userId: friendId, friendId: userId },
         ],
       },
-    });
+    }));
 
-    io
+    realtime
   .to(`user:${userId}`)
   .to(`user:${friendId}`)
   .emit("friendListUpdated", {
@@ -3055,13 +3006,13 @@ app.post("/users/:userId/flowers/:flowerId/support", async (req, res) => {
       // same-day calls return the authoritative count without duplicate events.
       // Support state belongs to the initiating viewer, not every socket peer.
       const { supportState: _viewerState, ...sharedFlower } = result.flower;
-      io.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
+      realtime.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
         .emit("supportUpdated", {
           gardenOwnerId: req.params.userId,
           flowerId: result.flower.id,
           flower: sharedFlower
         });
-      io.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
+      realtime.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
         .emit("visitRecordAdded", result.visitRecord);
     }
     res.json(result.flower);
@@ -3163,7 +3114,7 @@ app.post("/users/:userId/flowers/:flowerId/support", async (req, res) => {
           flower: socialFlower
         };
   
-        io
+        realtime
           .to(`garden:${userId}`)
           .to(`user:${userId}`)
           .emit("messageAdded", messagePayload);
@@ -3184,7 +3135,7 @@ app.post("/users/:userId/flowers/:flowerId/support", async (req, res) => {
               }
             });
   
-          io
+          realtime
             .to(`garden:${userId}`)
             .to(`user:${userId}`)
             .emit("visitRecordAdded", {
@@ -3332,7 +3283,7 @@ app.post("/visit", async (req, res) => {
       },
     });
 
-    io
+    realtime
       .to(`garden:${host.id}`)
       .to(`user:${host.id}`)
       .emit("visitRecordAdded", {
@@ -3420,7 +3371,7 @@ const movedVisitor = {
   y: activeVisitor.y,
 };
 
-io.to(`garden:${hostUserId}`).emit(
+realtime.to(`garden:${hostUserId}`).emit(
   "avatarMoved",
   movedVisitor
 );
@@ -3522,7 +3473,7 @@ app.post("/leave", async (req, res) => {
           remainingVisitors
       };
   
-      io
+      realtime
         .to(`garden:${host.id}`)
         .to(`user:${host.id}`)
         .emit(
@@ -3530,7 +3481,7 @@ app.post("/leave", async (req, res) => {
           payload
         );
   
-      io
+      realtime
         .to(`garden:${host.id}`)
         .to(`user:${host.id}`)
         .emit(
@@ -3614,12 +3565,12 @@ app.delete("/users/:id", async (req, res) => {
         return res.status(503).json({ error: "Account deletion is temporarily unavailable" });
       }
 
-      const deleted = await prisma.$transaction(async (tx) => {
+      const deleted = await realtime.withRevocation({ userId: id }, () => prisma.$transaction(async (tx) => {
         const user = await deleteAccountDataInTransaction(tx, { id });
         if (!user) return false;
         if (user.firebaseUid) await firebaseUserDeleter(user.firebaseUid);
         return true;
-      });
+      }));
 
       if (!deleted) {
         return res.status(404).json({ error: "User not found" });

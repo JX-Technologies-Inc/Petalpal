@@ -72,7 +72,7 @@ function assertSocialFlower(flower) {
   });
 }
 
-test("support and message HTTP/socket payloads expose only social Flower data", async (t) => {
+test("support and message HTTP/socket payloads expose only social Flower data", { timeout: 10000 }, async (t) => {
   const previousFlag = process.env.EMOTION_CLASSIFIER_ENABLED;
   process.env.EMOTION_CLASSIFIER_ENABLED = "true";
   setEventEmotionClassifierForTests(async () => assert.fail("Social content must never call Event emotion AI"));
@@ -83,17 +83,21 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
     flowerUpdate: prisma.flower.update,
     flowerFindUnique: prisma.flower.findUnique,
     messageCreate: prisma.message.create,
-    visitCreate: prisma.visitRecord.create
+    visitCreate: prisma.visitRecord.create,
+    visitFindFirst: prisma.visitRecord.findFirst,
+    transaction: prisma.$transaction
   };
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? { id: "visitor-1" }
     : { id: where.id, name: "Visitor", avatar: "🦋", allowGardenVisits: true };
   prisma.friendship.findUnique = async () => ({ id: "confirmed-friendship" });
-  prisma.flower.findFirst = async () => ({ id: "flower-1", gardenId: "garden-1" });
+  prisma.flower.findFirst = async () => privateFlower;
   prisma.flower.update = async () => privateFlower;
   prisma.flower.findUnique = async () => privateFlower;
   prisma.message.create = async () => message;
   prisma.visitRecord.create = async () => ({ id: "visit-1" });
+  prisma.visitRecord.findFirst = async () => null;
+  prisma.$transaction = async (callback) => callback(prisma);
   setFirebaseTokenVerifierForTests(async () => ({ uid: "visitor-firebase", email_verified: true }));
 
   server.listen(0, "127.0.0.1");
@@ -124,6 +128,8 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
     prisma.friendship.findUnique = originals.friendshipFindUnique;
     prisma.message.create = originals.messageCreate;
     prisma.visitRecord.create = originals.visitCreate;
+    prisma.visitRecord.findFirst = originals.visitFindFirst;
+    prisma.$transaction = originals.transaction;
     setFirebaseTokenVerifierForTests();
     await new Promise((resolve) => server.close(resolve));
   });
