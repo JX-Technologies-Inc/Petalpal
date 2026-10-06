@@ -256,6 +256,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   }>();
 
   const fairyRef = useRef<FairyHandle>(null);
+  const fairyPress = useRef<{ x: number; y: number; pointerId: number } | null>(null);
   const [fairyDebug, setFairyDebug] = useState(false);
   const [fairyStatus, setFairyStatus] = useState("Tap a path to walk");
   const handledParamRef = useRef<string | null>(null);
@@ -964,6 +965,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         cameraY.value = event.focalY - baseY - focalWorldY.value * fit * nextZoom;
       });
     const tap = Gesture.Tap()
+      .enabled(!(enableFairyWalk && Platform.OS === 'web'))
       .maxDuration(250)
       .runOnJS(true)
       .onEnd((event) => {
@@ -984,7 +986,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     }
     return Gesture.Simultaneous(effectivePan, pinch, tap);
   }, [baseX, baseY, fit, cameraX, cameraY, cameraZoom, focalWorldX, focalWorldY,
-    startX, startY, startZoom, handleGardenTap, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan, moveMaskPan]);
+    startX, startY, startZoom, handleGardenTap, enableFairyWalk, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan, moveMaskPan]);
   const resetView = useCallback(() => {
     cameraX.value = 0;
     cameraY.value = 0;
@@ -1049,7 +1051,27 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   return (
     <View
       style={styles.scene}
+      // Web Fairy taps should not expire with the shared camera gesture's
+      // 250ms timer. Only canvas presses qualify; controls, drags and pinches do not.
+      onPointerDown={(event) => {
+        if (!enableFairyWalk || Platform.OS !== 'web') return;
+        const e = event.nativeEvent;
+        fairyPress.current = e.isPrimary && e.button === 0 &&
+          (event.target as unknown as { tagName?: string }).tagName === 'CANVAS'
+          ? { x: e.clientX, y: e.clientY, pointerId: e.pointerId } : null;
+      }}
+      onPointerUp={(event) => {
+        const press = fairyPress.current;
+        fairyPress.current = null;
+        const e = event.nativeEvent;
+        if (!press || press.pointerId !== e.pointerId || Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) return;
+        const bounds = (event.currentTarget as unknown as { getBoundingClientRect: () => { left: number; top: number } }).getBoundingClientRect();
+        handleGardenTap(e.clientX - bounds.left, e.clientY - bounds.top);
+      }}
+      onPointerCancel={() => { fairyPress.current = null; }}
       onPointerMove={(event) => {
+        const press = fairyPress.current;
+        if (press && Math.hypot(event.nativeEvent.clientX - press.x, event.nativeEvent.clientY - press.y) > 8) fairyPress.current = null;
         handlePointerMove(event);
         if (!enableFairyWalk || !fairyDebug || fit <= 0) return;
         const e = event.nativeEvent;

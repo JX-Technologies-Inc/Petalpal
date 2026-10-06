@@ -43,7 +43,9 @@ for (const line of lines) {
     const key = `${sx},${sy}`;
     let id = ids.get(key);
     if (id === undefined) { id = nodes.length; ids.set(key, id); nodes.push({x:(sx-76)/.52,y:(sy-64)/.52}); }
-    if (last !== undefined) edges.push({a:last,b:id,width:6});
+    // Destination taps have a small paving corridor; the foot still follows
+    // the exact centerline (route starts retain their .05-unit tolerance).
+    if (last !== undefined) edges.push({a:last,b:id,width:8});
     last = id;
   }
 }

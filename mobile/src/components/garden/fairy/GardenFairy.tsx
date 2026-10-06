@@ -37,9 +37,9 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
       if(!config.current.active)return false;
       const points=route(position.current,p,config.current.blocked);
       if(!points){config.current.onStatus('Not a reachable path');return false;}
-      remaining.current=points.slice(1);target.current=points.at(-1)!;elapsed.current=0;
-      setRouteDrawing(polyline(points));setTargetDrawing(target.current);
-      config.current.onStatus('Walking on the path');return true;
+      remaining.current=points.slice(1);target.current=remaining.current.length?points.at(-1)!:null;elapsed.current=0;
+      setRouteDrawing(remaining.current.length?polyline(points):'');setTargetDrawing(target.current);
+      config.current.onStatus(remaining.current.length?'Walking on the path':'Resting on the path');return true;
     },
     pointer(p){if(!config.current.debug)return;const valid=!config.current.blocked(p)&&!!nearest(p);
       setPointerDrawing({p,valid});config.current.onStatus(`Pointer: ${valid?'path':'not walkable'} · ${Math.round(p.x)}, ${Math.round(p.y)}`);},
@@ -52,13 +52,13 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
       const dt=previous===undefined?0:Math.min(50,now-previous);previous=now;
       if(config.current.active&&remaining.current.length){
         const old=position.current;
-        const result=advance(old,remaining.current,dt*.085,config.current.blocked);
+        const result=advance(old,remaining.current,dt*.110,config.current.blocked);
         position.current=result.point;remaining.current=result.remaining;
         if(Math.abs(result.point.x-old.x)>.001)facing.value=result.point.x>old.x?1:-1;
         x.value=result.point.x;y.value=result.point.y;
         elapsed.current+=dt;frame.value=walkFrame(elapsed.current,result.remaining.length>0);
         if(config.current.debug&&result.moved){trace.current.push(result.point);if(trace.current.length>20000)trace.current.shift();}
-        if(!result.remaining.length){setRouteDrawing('');config.current.onStatus('Resting on the path');}
+        if(!result.remaining.length){target.current=null;setTargetDrawing(null);setRouteDrawing('');config.current.onStatus('Resting on the path');}
       }else frame.value=3;
       request=requestAnimationFrame(tick);
     };request=requestAnimationFrame(tick);return()=>cancelAnimationFrame(request);
