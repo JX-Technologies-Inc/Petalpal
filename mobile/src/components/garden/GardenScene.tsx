@@ -1,3 +1,4 @@
+import GardenFairy, { type FairyHandle } from './fairy/GardenFairy';
 import type { FlowerSession } from './planting/flowerDetailApi';
 import { Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
@@ -189,12 +190,13 @@ export type GardenSceneProps = {
   showDevControls?: boolean;
   session?: FlowerSession;
   backendMode?: boolean;
+  enableFairyWalk?: boolean;
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
   gardenOwnerUserId?: string;
 };
 
-function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, children }: GardenSceneProps = {}) {
+function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, children }: GardenSceneProps = {}) {
   const planting = usePlanting();
   const [useMonthlyGrowth, setUseMonthlyGrowth] = useState(USE_MONTHLY_GARDEN_GROWTH_V1_1);
   const {
@@ -247,6 +249,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
     subMode?: string;
   }>();
 
+  const fairyRef = useRef<FairyHandle>(null);
+  const [fairyDebug, setFairyDebug] = useState(false);
+  const [fairyStatus, setFairyStatus] = useState("Tap a path to walk");
   const handledParamRef = useRef<string | null>(null);
 
   const [waterfallVersion, setWaterfallVersion] = useState<WaterfallVersion>(initialWaterfallVersion);
@@ -714,9 +719,11 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       }
       if (hitFlower) {
         openFlowerDetail(hitFlower);
+      } else if (enableFairyWalk) {
+        fairyRef.current?.move({ x: worldX, y: worldY });
       }
     }
-  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth]);
+  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk]);
 
   const startMaskPos = useRef({ localX: 0, localY: 0 });
 
@@ -1004,7 +1011,17 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
   return (
     <View
       style={styles.scene}
-      onPointerMove={handlePointerMove}
+      onPointerMove={(event) => {
+        handlePointerMove(event);
+        if (!enableFairyWalk || !fairyDebug || fit <= 0) return;
+        const e = event.nativeEvent;
+        const element = event.currentTarget as unknown as { getBoundingClientRect?: () => { left: number; top: number } };
+        const bounds = element.getBoundingClientRect?.();
+        const px = bounds ? e.clientX - bounds.left : e.offsetX;
+        const py = bounds ? e.clientY - bounds.top : e.offsetY;
+        fairyRef.current?.pointer({ x: (px - baseX - cameraX.value) / (fit * cameraZoom.value),
+          y: (py - baseY - cameraY.value) / (fit * cameraZoom.value) });
+      }}
       onLayout={({ nativeEvent: { layout } }) => {
         // Preserve camera framing through hidden stack screens' zero layouts.
         if (layout.width > 0 && layout.height > 0) setViewport({ width: layout.width, height: layout.height });
@@ -1106,6 +1123,9 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
             {__DEV__ && (waterfallFocus ? waterfallReferenceOpacity : referenceOpacity) > 0 && (
               <GardenReferenceLayer opacity={waterfallFocus ? waterfallReferenceOpacity : referenceOpacity} />
             )}
+            {enableFairyWalk && <GardenFairy ref={fairyRef} debug={fairyDebug} onStatus={setFairyStatus}
+              active={worldActive && infrastructureEnabled && activeMode === 'normal' && !selectedFlower && previewMode}
+              blocked={() => false} />}
             {showLandmarks && (
               <LandmarkLayer
                 behindTeaSet={<PlantedFlowerLayer depthPass="behind-tea-set" useMonthlyGrowth={useMonthlyGrowth} />}
@@ -1163,6 +1183,12 @@ function GardenSceneContent({ initialPreviewMode = true, initialWaterfallVersion
       {children}
 
       {/* Floating button when in Preview Mode */}
+      {enableFairyWalk && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
+        <Text style={{ color: '#365b42', fontSize: 12 }}>{fairyStatus}</Text>
+        {__DEV__ && <Pressable accessibilityRole="button" accessibilityLabel="Toggle fairy path debug" onPress={() => { setFairyDebug(v => !v); setFairyStatus("Tap a path to walk"); }}>
+          <Text style={{ color: '#365b42', fontSize: 12, marginTop: 6 }}>Path debug: {fairyDebug ? 'ON' : 'OFF'}</Text>
+        </Pressable>}
+      </View>}
       {__DEV__ && showDevControls && previewMode && (
         <Pressable
           accessibilityRole="button"
