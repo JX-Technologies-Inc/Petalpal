@@ -759,7 +759,8 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       if (hitFlower) {
         openFlowerDetail(hitFlower);
       } else if (enableFairyWalk) {
-        fairyRef.current?.move({ x: worldX, y: worldY });
+        const accepted = fairyRef.current?.move({ x: worldX, y: worldY });
+        if (accepted && Platform.OS === 'web') canvasRef.current?.redraw();
       }
     }
   }, [readOnly, fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk]);

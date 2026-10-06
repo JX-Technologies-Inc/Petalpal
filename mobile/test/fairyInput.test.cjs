@@ -63,14 +63,23 @@ test('controls, right clicks, cancelled presses, drags and multi-touch never sel
   garden.handlers.onPointerDown(canvas); garden.handlers.onPointerUp(canvas);
   assert.equal(garden.calls.length, 0, 'Ordinary Garden retains its existing gesture handler');
 });
-test('destination tolerance admits a small paving margin, rejects adjacent grass and never moves the foot off the graph', () => {
+test('measured paving destinations accept first try while lawns, water and narrow-path constraints remain intact', () => {
   const world = (x, y) => ({ x: (x - 202.6666667) / .3644444444, y: (y - 64) / .3644444444 });
-  const paving = world(544, 387), grass = world(578, 407);
-  assert.equal(nearest(paving, WALK_NETWORK, 6), null, 'Old two-pixel corridor rejected this paving tap');
-  const points = route(WALK_START, paving); assert.ok(points);
-  assert.ok(nearest(points.at(-1), WALK_NETWORK, .001));
-  assert.equal(route(WALK_START, grass), null);
-  assert.equal(route(WALK_START, world(680, 330)), null);
+  // Observed normal clicks in the 1280×720 browser, including points that
+  // the old 8-world-unit corridor silently rejected on visible paving.
+  const points = [[639,210],[746,303],[676,423],[521,321],[479,344],[448,357],[418,382],
+    [639,420],[544,387],[593,415],[263,340],[356,320],[772,125],[803,268],[805,412],
+    [837,560],[276,453],[751,333],[741,230],[631,618]];
+  let foot = WALK_START;
+  for (const [x,y] of points) {
+    const path = route(foot, world(x,y)); assert.ok(path, `${x},${y}`);
+    foot = path.at(-1); assert.ok(nearest(foot, WALK_NETWORK, .001));
+  }
+  assert.equal(nearest(world(639,210), WALK_NETWORK, 8), null, 'Previous hit corridor missed ordinary paving');
+  for (const [x,y] of [[680,330],[400,380],[680,120],[900,540],[100,300]])
+    assert.equal(route(foot,world(x,y)), null, `Terrain ${x},${y} stays rejected`);
+  assert.ok(WALK_NETWORK.edges.some(edge => edge.width === 8), 'Stepping stones keep their narrow restriction');
+  assert.ok(WALK_NETWORK.edges.some(edge => edge.width === 12), 'Internal paths stay narrow');
 });
 
 function fairyHarness() {
@@ -90,7 +99,7 @@ function fairyHarness() {
   const jsx = (type, props) => ({ type, props });
   const module = { exports: {} };
   vm.runInNewContext(compile(fs.readFileSync(path.join(directory, 'fairy/GardenFairy.tsx'), 'utf8')), {
-    module, exports: module.exports, __DEV__: true, window: host,
+    module, exports: module.exports, __DEV__: true, window: host, performance: { now: () => now },
     requestAnimationFrame: fn => { queue.set(++request, fn); return request; },
     cancelAnimationFrame: id => queue.delete(id),
     require: name => name === 'react' ? react : name === './walkNetwork' ? networkModule.exports
@@ -104,6 +113,8 @@ function fairyHarness() {
   const harness = {
     move: p => { const accepted = ref.current.move(p); render(); return accepted; },
     state: () => host.__fairyDebug.getState(),
+    clockAdvance: ms => { now += ms; },
+    frameAt: timestamp => { const callbacks = [...queue.values()]; queue.clear(); callbacks.forEach(fn => fn(timestamp)); render(); },
     step: () => { now += 50; const callbacks = [...queue.values()]; queue.clear(); callbacks.forEach(fn => fn(now)); render(); },
     finish: () => { let frames = 0; while (harness.state().remaining.length) {
       harness.step(); assert.ok(nearest(harness.state().position, WALK_NETWORK, .001)); assert.ok(++frames < 5000);
@@ -140,4 +151,35 @@ test('actual animation advances at 110 world units per second without teleportin
   assert.ok(Math.abs(distance(WALK_START, fairy.state().position) - 110) < .001);
   assert.ok(fairy.state().remaining.length > 0);
   fairy.finish();
+});
+
+test('input accounts for elapsed time immediately without counting it again in an older queued frame', () => {
+  const fairy = fairyHarness();
+  fairy.move(WALK_NETWORK.nodes[1]);
+  fairy.clockAdvance(20); fairy.move(WALK_NETWORK.nodes[1]);
+  const immediately = fairy.state().position;
+  assert.ok(Math.abs(distance(WALK_START, immediately) - 2.2) < .001);
+  fairy.frameAt(60);
+  assert.deepEqual(fairy.state().position, immediately, 'An older RAF timestamp cannot rewind movement time');
+  fairy.clockAdvance(30); fairy.frameAt(100);
+  assert.ok(Math.abs(distance(WALK_START, fairy.state().position) - 5.5) < .001, 'Exactly 50ms of movement was accounted for');
+});
+
+test('registered B01 bridge foot chords stay on the actual integrated deck image', async () => {
+  const initialize = require('canvaskit-wasm');
+  const kit = await initialize({ wasmBinary: fs.readFileSync(path.join(__dirname, '../public/canvaskit.wasm')) });
+  const image = kit.MakeImageFromEncoded(fs.readFileSync(path.join(__dirname, '../assets/garden/runtime/infrastructure/final/B01_bridge.png')));
+  try {
+    const width = image.width(), height = image.height();
+    const pixels = image.readPixels(0, 0, { width, height, colorType: kit.ColorType.RGBA_8888,
+      alphaType: kit.AlphaType.Premul, colorSpace: kit.ColorSpace.SRGB });
+    const deck = [[923,814],[952,790],[982,768],[1015,744]].map(([x,y]) => ({x:(x-76)/.52,y:(y-64)/.52}));
+    for (const point of deck) assert.ok(WALK_NETWORK.nodes.some(node => distance(node, point) < .001));
+    for (let i = 1; i < deck.length; i++) for (let step = 0; step <= 10; step++) {
+      const t = step / 10, a = deck[i-1], b = deck[i];
+      const x = Math.floor(a.x + (b.x-a.x)*t - 1571), y = Math.floor(a.y + (b.y-a.y)*t - 1236);
+      assert.ok(x >= 0 && x < width && y >= 0 && y < height);
+      assert.ok(pixels[(y*width+x)*4+3] >= 250, `Foot is on the deck, not transparent water: ${x},${y}`);
+    }
+  } finally { image.delete(); }
 });

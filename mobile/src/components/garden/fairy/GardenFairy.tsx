@@ -30,7 +30,8 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
   const [routeDrawing,setRouteDrawing]=useState(''),[targetDrawing,setTargetDrawing]=useState<Point|null>(null);
   const [pointerDrawing,setPointerDrawing]=useState<{p:Point;valid:boolean}|null>(null);
   const trace=useRef<Point[]>([]);
-  const transform=useDerivedValue(()=>[{translateX:x.value},{translateY:y.value},{scaleX:facing.value}]);
+  const transform=useSharedValue([{translateX:WALK_START.x},{translateY:WALK_START.y},{scaleX:1}]);
+  const step=useRef<(now:number)=>void>(()=>{});
   const controls=useRef<FairyHandle>(null);
   if(!controls.current)controls.current={
     move(p){
@@ -38,8 +39,11 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
       const points=route(position.current,p,config.current.blocked);
       if(!points){config.current.onStatus('Not a reachable path');return false;}
       remaining.current=points.slice(1);target.current=remaining.current.length?points.at(-1)!:null;elapsed.current=0;
-      setRouteDrawing(remaining.current.length?polyline(points):'');setTargetDrawing(target.current);
-      config.current.onStatus(remaining.current.length?'Walking on the path':'Resting on the path');return true;
+      if(config.current.debug){setRouteDrawing(remaining.current.length?polyline(points):'');setTargetDrawing(target.current);}
+      config.current.onStatus(remaining.current.length?'Walking on the path':'Resting on the path');
+      // Account for elapsed time immediately on input, then resume the same RAF
+      // loop. The next frame starts at this timestamp, so time is never counted twice.
+      step.current(performance.now());return true;
     },
     pointer(p){if(!config.current.debug)return;const valid=!config.current.blocked(p)&&!!nearest(p);
       setPointerDrawing({p,valid});config.current.onStatus(`Pointer: ${valid?'path':'not walkable'} · ${Math.round(p.x)}, ${Math.round(p.y)}`);},
@@ -48,22 +52,34 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
   useImperativeHandle(ref,()=>controls.current!,[]);
   useEffect(()=>{
     let previous:number|undefined,request:number;
-    const tick=(now:number)=>{
-      const dt=previous===undefined?0:Math.min(50,now-previous);previous=now;
+    const advanceAt=(now:number)=>{
+      const dt=previous===undefined?0:Math.max(0,Math.min(50,now-previous));
+      previous=Math.max(previous??now,now);
       if(config.current.active&&remaining.current.length){
         const old=position.current;
         const result=advance(old,remaining.current,dt*.110,config.current.blocked);
         position.current=result.point;remaining.current=result.remaining;
         if(Math.abs(result.point.x-old.x)>.001)facing.value=result.point.x>old.x?1:-1;
         x.value=result.point.x;y.value=result.point.y;
+        // Publish the transform together with the foot update. A derived web
+        // mapper otherwise defers this transform for another animation frame.
+        transform.value=[{translateX:result.point.x},{translateY:result.point.y},{scaleX:facing.value}];
         elapsed.current+=dt;frame.value=walkFrame(elapsed.current,result.remaining.length>0);
         if(config.current.debug&&result.moved){trace.current.push(result.point);if(trace.current.length>20000)trace.current.shift();}
-        if(!result.remaining.length){target.current=null;setTargetDrawing(null);setRouteDrawing('');config.current.onStatus('Resting on the path');}
+        if(!result.remaining.length){target.current=null;if(config.current.debug){setTargetDrawing(null);setRouteDrawing('');}config.current.onStatus('Resting on the path');}
       }else frame.value=3;
-      request=requestAnimationFrame(tick);
-    };request=requestAnimationFrame(tick);return()=>cancelAnimationFrame(request);
-  },[x,y,frame,facing]);
+    };
+    step.current=advanceAt;
+    const tick=(now:number)=>{advanceAt(now);request=requestAnimationFrame(tick);};
+    request=requestAnimationFrame(tick);return()=>{step.current=()=>{};cancelAnimationFrame(request);};
+  },[x,y,frame,facing,transform]);
   useEffect(()=>{if(!active)controls.current?.stop();},[active]);
+  useEffect(()=>{
+    // Debug drawings are React state; normal retargeting only changes refs and
+    // shared animation values. Populate the overlay when it is switched on.
+    setRouteDrawing(debug&&remaining.current.length?polyline([position.current,...remaining.current]):'');
+    setTargetDrawing(debug?target.current:null);
+  },[debug]);
   useEffect(()=>{
     if(!__DEV__||typeof window==='undefined')return;
     const host=window as unknown as {__fairyDebug?:unknown};

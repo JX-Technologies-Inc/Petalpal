@@ -9,7 +9,7 @@ type Method = (this: NativeOwner, ...args: unknown[]) => unknown;
 const configured = new WeakSet<object>();
 const rootsConfigured = new WeakSet<object>();
 
-type ImageNode = { props?: { image?: unknown }; children?: ImageNode[] };
+type ImageNode = { props?: { image?: unknown; gardenImageReferences?: readonly unknown[] }; children?: ImageNode[] };
 type GardenRoot = { container: {
   nativeId: number; root: ImageNode[]; unmounted?: boolean;
   mapperId?: number | null; redraw?(): void;
@@ -30,8 +30,13 @@ export function configureGardenWebRootCleanup(
     const handles = new Set<NativeHandle>();
     const visit = (nodes: ImageNode[]) => {
       for (const node of nodes) {
-        const image = node.props?.image as { __typename__?: string; ref?: NativeHandle } | undefined;
-        if (image?.__typename__ === 'Image' && image.ref) handles.add(image.ref);
+        // Cached vector pictures retain the same decoded sources without
+        // individual image nodes. Retire those sources with their owning root.
+        const images = [node.props?.image, ...(node.props?.gardenImageReferences ?? [])];
+        for (const value of images) {
+          const image = value as { __typename__?: string; ref?: NativeHandle } | undefined;
+          if (image?.__typename__ === 'Image' && image.ref) handles.add(image.ref);
+        }
         if (node.children) visit(node.children);
       }
     };

@@ -26,7 +26,9 @@ const lines: number[][][] = [
   [[820,530],[851,533],[901,556],[956,581],[1006,605],[1033,625],[1057,650],[1070,678],[1050,709],[1035,742],[1036,778],[1052,808],[1087,832],[1139,842],[1189,834],[1227,812],[1250,785],[1257,752],[1249,718],[1230,690],[1198,671],[1160,650],[1127,641],[1094,651],[1070,678]],
   // Land09 and the entrance branch. B01 closes the lower circulation loop.
   [[700,575],[680,608],[648,653],[628,703],[619,751],[627,800],[650,835],[688,854],[728,850],[759,831],[769,809],[760,787],[780,784],[810,804],[821,835],[865,867],[910,891],[913,940],[916,980]],
-  [[910,891],[932,851],[956,819],[982,791],[1009,769],[1036,756],[1035,742]],
+  // B01's integrated deck sits northwest of the old review trace. Keep its
+  // entrance/Land08 junctions, but register the intervening foot points on wood.
+  [[910,891],[914,851],[923,814],[952,790],[982,768],[1015,744],[1035,742]],
   // Land07 paved perimeter; six stepping stones connect its southern landing.
   [[1200,516],[1177,516],[1138,506],[1098,492],[1062,474],[1037,452],[1024,432],[1020,412],[1030,403],[1052,401],[1090,407],[1130,409],[1176,403],[1204,385],[1217,357],[1223,338],[1235,330],[1254,339],[1274,365],[1291,391],[1304,419],[1309,446],[1299,473],[1277,492],[1247,508],[1200,516]],
   [[1200,516],[1206,544],[1197,559],[1187,576],[1173,595],[1162,617],[1160,650]],
@@ -37,15 +39,22 @@ const lines: number[][][] = [
 ];
 const nodes: Point[] = [], edges: Edge[] = [];
 const ids = new Map<string, number>();
-for (const line of lines) {
+for (const [lineIndex, line] of lines.entries()) {
   let last: number | undefined;
-  for (const [sx, sy] of line) {
+  for (const [vertex, [sx, sy]] of line.entries()) {
     const key = `${sx},${sy}`;
     let id = ids.get(key);
     if (id === undefined) { id = nodes.length; ids.set(key, id); nodes.push({x:(sx-76)/.52,y:(sy-64)/.52}); }
-    // Destination taps have a small paving corridor; the foot still follows
-    // the exact centerline (route starts retain their .05-unit tolerance).
-    if (last !== undefined) edges.push({a:last,b:id,width:8});
+    // Measured on the rendered 1280×720 web map: ordinary paving taps
+    // 18–23 world units from the trace were silently rejected at width 8.
+    // Bridges have wider wooden decks; internal paths and stones stay narrow.
+    // Only destination selection uses these margins. Feet follow exact chords.
+    // Registered deck widths are roughly 96 (ST01) and 64 (B01) world
+    // units across. Select inside those decks, rather than reaching water.
+    const deckWidth = lineIndex === 10 && vertex <= 5 ? 48
+      : lineIndex === 12 && vertex >= 2 && vertex <= 5 ? 32 : 24;
+    const width = lineIndex === 14 ? 8 : lineIndex >= 15 ? 12 : deckWidth;
+    if (last !== undefined) edges.push({a:last,b:id,width});
     last = id;
   }
 }
@@ -64,7 +73,7 @@ export function safeSegment(a: Point,b: Point,blocked: (p:Point)=>boolean) {
   for(let i=0;i<=n;i++)if(blocked(interpolate(a,b,i/n)))return false;
   return true;
 }
-export function nearest(p: Point,network=WALK_NETWORK,tolerance=12) {
+export function nearest(p: Point,network=WALK_NETWORK,tolerance=Infinity) {
   if(!Number.isFinite(p.x)||!Number.isFinite(p.y))return null;
   let best: (ReturnType<typeof project>&{edge:number})|null=null;
   for(let edge=0;edge<network.edges.length;edge++){const e=network.edges[edge];const hit=project(p,network.nodes[e.a],network.nodes[e.b]);

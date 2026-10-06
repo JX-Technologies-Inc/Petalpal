@@ -1,5 +1,6 @@
 import { Group, Image, useImage, type SkImage } from '@shopify/react-native-skia';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import GardenStaticPicture from '../GardenStaticPicture';
 import { growthCatalog } from '../flower-density-sandbox/monthly-growth/growthCatalog';
 import { growthDrawOrder } from '../flower-density-sandbox/monthly-growth/MonthlyGrowthLayer';
 import type { GrowthPiece } from '../flower-density-sandbox/monthly-growth/growthCoverage';
@@ -27,15 +28,20 @@ const BotanicalPiece = memo(function BotanicalPiece({ piece, image }: {
 
 /** Release-capable neutral drawing of the approved pieces. No placement,
  * persistence, interaction identity, emotion effect or botanical mask clip. */
-export const ProductionGrowthLayer = memo(function ProductionGrowthLayer({ growth }: { growth: MonthlyGrowth }) {
+export const ProductionGrowthLayer = memo(function ProductionGrowthLayer({ growth, cacheStatic = false }: { growth: MonthlyGrowth; cacheStatic?: boolean }) {
   const [images, setImages] = useState<Record<string, SkImage>>({});
   const onLoad = useCallback((key: string, image: SkImage) =>
     setImages(previous => previous[key] === image ? previous : { ...previous, [key]: image }), []);
+  const imageReferences = useMemo(() => Object.values(images), [images]);
   const pieces = useMemo(() => growthDrawOrder(growth), [growth]);
   const requests = useMemo(() => new Map(pieces.map(piece => [`${piece.speciesCode}:${piece.componentId}`, piece])), [pieces]);
-  return <Group>
-    {Array.from(requests, ([key, piece]) => <AssetLoader key={key} piece={piece} onLoad={onLoad} />)}
+  const drawing = useMemo(() => <Group>
     {pieces.map(piece => <BotanicalPiece key={piece.id} piece={piece}
       image={images[`${piece.speciesCode}:${piece.componentId}`]} />)}
+  </Group>, [pieces, images]);
+  return <Group>
+    {Array.from(requests, ([key, piece]) => <AssetLoader key={key} piece={piece} onLoad={onLoad} />)}
+    {cacheStatic && Array.from(requests.keys()).every(key => images[key])
+      ? <GardenStaticPicture images={imageReferences}>{drawing}</GardenStaticPicture> : drawing}
   </Group>;
 });

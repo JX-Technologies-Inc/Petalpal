@@ -6,10 +6,11 @@ test('Garden root releases unique image handles only after successful reconciler
   const { configureGardenWebRootCleanup } = loadPlantingModules()('../webNativeHandles');
   const deleted = [];
   const handle = name => ({ isDeleted() { return deleted.includes(name); }, delete() { deleted.push(name); } });
-  const shared = handle('image'), disposed = handle('already-disposed'); disposed.delete();
+  const shared = handle('image'), cachedOnly = handle('cached-only'), disposed = handle('already-disposed'); disposed.delete();
   const nodes = [{ props: { image: { __typename__: 'Image', ref: shared } }, children: [
     { props: { image: { __typename__: 'Image', ref: shared } } },
     { props: { image: { __typename__: 'Image', ref: disposed } } },
+    { props: { gardenImageReferences: [{ __typename__: 'Image', ref: shared }, { __typename__: 'Image', ref: cachedOnly }, { __typename__: 'Image', ref: disposed }] } },
   ] }];
   let finish;
   const teardown = [];
@@ -26,7 +27,7 @@ test('Garden root releases unique image handles only after successful reconciler
   } });
   const result = garden.unmount(); assert.deepEqual(deleted, ['already-disposed']);
   assert.deepEqual(teardown, ['mapper stopped']); assert.equal(garden.container.mapperId, null);
-  finish(true); assert.equal(await result, true); assert.deepEqual(deleted, ['already-disposed', 'image']);
+  finish(true); assert.equal(await result, true); assert.deepEqual(deleted, ['already-disposed', 'image', 'cached-only']);
   const otherHandle = handle('other');
   const other = Object.assign(Object.create(prototype), { container: { nativeId: 2, root: [{ props: { image: { __typename__: 'Image', ref: otherHandle } } }] } });
   const unrelated = other.unmount(); finish(true); await unrelated; assert.equal(otherHandle.isDeleted(), false);

@@ -11,6 +11,7 @@ import { ownGardenWebView } from './webCanvasCache';
 
 type WebApi = {
   registerView(id: string, view: unknown): void;
+  setJsiProperty(id: number, name: string, value: SkPicture): void;
   makeImageSnapshot(id: number, rect?: SkRect): SkImage;
   makeImageSnapshotAsync(id: number, rect?: SkRect): Promise<SkImage>;
 };
@@ -44,7 +45,7 @@ export default function GardenCanvas({ children, style, ref, active }: GardenCan
     const kit = (globalThis as unknown as { CanvasKit: CanvasKit }).CanvasKit;
     const renderer = new GardenWebRenderer(kit, canvas);
     const api = viewApi();
-    let picture: SkPicture | null = null, dirty = true, disposed = false;
+    let picture: SkPicture | null = null, dirty = true, disposed = false, drawQueued = false;
     let request = 0, previous = 0, windowStart = performance.now();
     let frames: number[] = [], draws: number[] = [];
     const pointers = new Set<number>();
@@ -58,8 +59,30 @@ export default function GardenCanvas({ children, style, ref, active }: GardenCan
       memoryGB: (navigator as Navigator & { deviceMemory?: number }).deviceMemory,
     });
     const redraw = () => { dirty = true; };
-    redrawRef.current = redraw;
-    api.registerView(String(nativeId), { setPicture(value: SkPicture) { picture = value; redraw(); },
+    // Explicit input redraws sample the current shared values immediately.
+    // The animation mapper continues to record at its existing RAF cadence.
+    redrawRef.current = () => {
+      if (!disposed && picture && activeRef.current) {
+        api.setJsiProperty(nativeId, 'picture', root.getPicture() as unknown as SkPicture);
+      }
+    };
+    const drawLatest = () => {
+      if (disposed || !dirty || !picture || !activeRef.current || document.visibilityState !== 'visible') return;
+      const start = performance.now();
+      const painted = renderer.draw(picture);
+      if (!painted) return;
+      dirty = false;
+      if (!pointers.size) draws.push(performance.now() - start);
+    };
+    api.registerView(String(nativeId), { setPicture(value: SkPicture) { picture = value; redraw();
+      // Skia's web animation mapper already runs on RAF. Paint its newest
+      // recording in this turn instead of displaying it one RAF later. Coalesce
+      // synchronous commits without dropping animation frames or changing cadence.
+      if (!drawQueued) {
+        drawQueued = true;
+        queueMicrotask(() => { drawQueued = false; drawLatest(); });
+      }
+    },
       getSize: () => ({ width: canvas.clientWidth, height: canvas.clientHeight }), redraw,
       makeImageSnapshot: (rect?: SkRect) => { if (picture) renderer.draw(picture); return renderer.makeImageSnapshot(rect); } });
     const releaseView = ownGardenWebView(api, nativeId);
@@ -81,11 +104,7 @@ export default function GardenCanvas({ children, style, ref, active }: GardenCan
         if (!pointers.size && renderer.resize(tier, signals())) dirty = true;
         if (previous && !pointers.size) frames.push(now - previous);
         previous = now;
-        if (dirty && picture) {
-          const start = performance.now();
-          renderer.draw(picture); dirty = false;
-          if (!pointers.size) draws.push(performance.now() - start);
-        }
+        drawLatest();
         if (now - windowStart >= 2500) {
           const sample = frameSample(frames, draws);
           if (mode === 'AUTO' && draws.length >= 10) {

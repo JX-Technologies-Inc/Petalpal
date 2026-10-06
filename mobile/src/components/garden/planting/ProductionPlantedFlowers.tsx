@@ -24,7 +24,7 @@ export function ProductionPlantedFlowers({depthPass='all'}:{depthPass?:FlowerDep
   const color=validationResult?.isValid?'#22c55e':'#ef4444';
   return <Group>
     {scenes.filter(s=>flowerInDepthPass(s.month,depthPass)).map(scene=><Group key={scene.month}>
-      <ProductionGrowthLayer growth={scene.growth}/>
+      <ProductionGrowthLayer growth={scene.growth} cacheStatic/>
       {scene.unresolved.map(p => p.sourceType || p.sourceEventId ? <CanonicalFlowerArt key={p.id} flower={p} />
         : __DEV__ ? <Circle key={p.id} cx={p.worldX} cy={p.worldY} r={4} color="#a6643c" style="stroke" strokeWidth={1.5}/> : null)}
     </Group>)}

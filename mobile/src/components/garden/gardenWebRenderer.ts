@@ -28,7 +28,7 @@ export class GardenWebRenderer {
     return true;
   }
   draw(picture: SkPicture) {
-    if (!this.surface) return;
+    if (!this.surface) return false;
     const canvas = this.surface.getCanvas();
     canvas.clear(this.kit.TRANSPARENT);
     canvas.save();
@@ -38,6 +38,7 @@ export class GardenWebRenderer {
       canvas.drawPicture((picture as SkPicture & { ref: Parameters<typeof canvas.drawPicture>[0] }).ref);
     } finally { canvas.restore(); }
     this.surface.flush();
+    return true;
   }
   makeImageSnapshot(rect?: SkRect) {
     if (!this.surface) throw new Error('Garden surface is unavailable');
