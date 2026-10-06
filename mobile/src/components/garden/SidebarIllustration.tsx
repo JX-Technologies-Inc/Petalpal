@@ -7,6 +7,9 @@ export function SidebarIllustration({ id, active, size = 30 }: { id: string; act
   if (id === 'garden') return <Image accessible={false}
     source={require('../../../assets/friends/visitor-home-transparent.png')}
     resizeMode="contain" style={{ width: size, height: size }} />;
+  if (id === 'fairy') return <Image accessible={false}
+    source={require('../../../assets/garden/fairy/walk-v2/walk_04.png')}
+    resizeMode="contain" style={{ width: size, height: size }} />;
   const cell = cells[id];
   if (cell === undefined) return null;
   return <View accessible={false} pointerEvents="none" style={{ width: size, height: size, overflow: 'hidden',

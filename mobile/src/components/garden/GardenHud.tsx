@@ -23,6 +23,11 @@ export function GardenHud() {
   const { feature: entryFeature } = useLocalSearchParams<{ feature?: string }>();
   useEffect(() => {
     if (!entryFeature) return;
+    if (entryFeature === 'fairy') {
+      router.setParams({ feature: undefined });
+      router.push('/feature/fairy');
+      return;
+    }
     if (gardenFeature(entryFeature)?.id !== 'garden') setOpenFeature(gardenFeature(entryFeature)?.id);
     router.setParams({ feature: undefined });
   }, [entryFeature]);
@@ -33,7 +38,12 @@ export function GardenHud() {
       accessibilityLabel={`${feature.label}, ${feature.status}`} accessibilityState={{ selected }} testID={`hud-${feature.id}`}
       onHoverIn={() => setHighlightedFeature(feature.id)} onHoverOut={() => setHighlightedFeature(undefined)}
       onFocus={() => setHighlightedFeature(feature.id)} onBlur={() => setHighlightedFeature(undefined)}
-      onPress={() => setOpenFeature(feature.id === 'garden' ? undefined : feature.id)}
+      onPress={() => {
+        if (feature.id === 'fairy') {
+          setOpenFeature(undefined);
+          router.push(feature.route);
+        } else setOpenFeature(feature.id === 'garden' ? undefined : feature.id);
+      }}
       style={({ pressed }) => [styles.bottomItem,
         (selected || highlightedFeature === feature.id) && [styles.selected, { backgroundColor: light ? '#D6E5DCD9' : theme.input, borderColor: theme.gold }],
         pressed && styles.pressed]}>
@@ -49,7 +59,7 @@ export function GardenHud() {
       bottom: insets.bottom + (phone ? 8 : 24), padding: phone ? 3 : 4, gap: phone ? 3 : 5,
       borderRadius: phone ? 24 : 26, backgroundColor: theme.background, borderColor: theme.gold,
     }]}>
-      {GARDEN_FEATURES.filter(feature => ['garden', 'events', 'friends', 'profile'].includes(feature.id)).map(navigationItem)}
+      {GARDEN_FEATURES.filter(feature => ['garden', 'events', 'friends', 'fairy', 'profile'].includes(feature.id)).map(navigationItem)}
     </View>
     <View style={[styles.info, { top: insets.top + 8, left: insets.left + 8, maxWidth: Math.max(100, width - insets.left - insets.right - 100) }]}>
       {isGardenLoading ? <ActivityIndicator accessibilityLabel="Loading Garden" size="small" color="#365b42" /> : null}

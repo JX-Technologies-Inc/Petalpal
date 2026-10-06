@@ -5,7 +5,7 @@ export const GARDEN_FEATURES = [
   { id: 'daily', label: 'Daily', status: 'COMING SOON', route: '/feature/daily', backend: 'Not connected', icon: { ios: 'sun.max.fill', android: 'wb_sunny', web: 'wb_sunny' } },
   { id: 'friends', label: 'Friends', status: 'REAL', route: '/feature/friends', backend: 'Existing friend search, lists, requests and removal APIs', icon: { ios: 'person.2.fill', android: 'group', web: 'group' } },
   { id: 'visit', label: 'Visit', status: 'COMING SOON', route: '/feature/visit', backend: 'Not connected', icon: { ios: 'house.fill', android: 'home', web: 'home' } },
-  { id: 'fairy', label: 'Fairy', status: 'COMING SOON', route: '/feature/fairy', backend: 'Not connected', icon: { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' } },
+  { id: 'fairy', label: 'Fairy', status: 'REAL', route: '/feature/fairy', backend: 'Garden companion with V2 path movement', icon: { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' } },
   { id: 'profile', label: 'Profile', status: 'PREVIEW', route: '/feature/profile', backend: 'Hydrated GET /session (read only)', icon: { ios: 'person.crop.circle.fill', android: 'account_circle', web: 'account_circle' } },
   { id: 'weekly', label: 'Weekly', status: 'COMING SOON', route: '/feature/weekly', backend: 'Not connected', icon: { ios: 'calendar', android: 'date_range', web: 'date_range' } },
   { id: 'monthly', label: 'Monthly', status: 'COMING SOON', route: '/feature/monthly', backend: 'Not connected', icon: { ios: 'calendar.circle.fill', android: 'calendar_month', web: 'calendar_month' } },

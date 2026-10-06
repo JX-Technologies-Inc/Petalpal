@@ -387,6 +387,7 @@ test('Friends sidebar opens the native panel, deep links reuse it, and Return to
     './planting/PlantingContext': { usePlanting: () => planting },
     '../../services/auth': { useAuth: () => ({ session: { user: { id: 'owner' } } }) },
     './EventsPanel': { EventsPanel: 'EventsPanel' },
+    '../garden-test': { __esModule: true, default: 'FairyScreen' },
   }, hooks.react);
   const { GardenHud } = load('../GardenHud');
   let hud = hooks.mount(GardenHud);
@@ -396,7 +397,7 @@ test('Friends sidebar opens the native panel, deep links reuse it, and Return to
     assert.ok(bar);
     assert.equal(featureNodes(hud).some(node => node.props?.testID?.startsWith('desktop-navigation')), false);
     if (bar) assert.deepEqual(featureNodes(bar).filter(node => node.type === 'Pressable').map(node => node.props.testID),
-      ['hud-garden', 'hud-events', 'hud-friends', 'hud-profile']);
+      ['hud-garden', 'hud-events', 'hud-friends', 'hud-fairy', 'hud-profile']);
     for (const id of ['garden', 'events', 'friends', 'profile']) {
       featureNodes(hud).find(node => node.props?.testID === `hud-${id}`).props.onPress();
       hud = await hooks.flush();
@@ -447,6 +448,16 @@ test('Friends sidebar opens the native panel, deep links reuse it, and Return to
   assert.equal(params.feature, undefined);
   params = { feature: 'friends' };
   assert.equal(load('../../../app/feature/[feature]').default().props.href.params.feature, 'friends');
+  params = { feature: 'fairy' };
+  assert.equal(load('../../../app/feature/[feature]').default().type, 'FairyScreen');
+  params = {}; hud = hooks.render();
+  featureNodes(hud).find(node => node.props?.testID === 'hud-fairy').props.onPress();
+  hud = await hooks.flush();
+  assert.deepEqual(navigation, ['/feature/fairy']);
+  assert.equal(featureNodes(hud).find(node => node.type === overlay.type).props.feature, undefined);
+  params = { feature: 'fairy' }; hooks.render(); await hooks.flush();
+  assert.deepEqual(navigation, ['/feature/fairy', '/feature/fairy']);
+  assert.equal(params.feature, undefined);
 });
 
 test('confirmed Friends retain visible Home icons and use persisted privacy metadata without probing Garden contents', async () => {
