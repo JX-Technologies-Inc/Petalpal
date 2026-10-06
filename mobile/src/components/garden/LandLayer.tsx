@@ -1,12 +1,14 @@
+import { Platform } from 'react-native';
 import { Group, Image, Rect, useImage } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import GardenStaticPicture from './GardenStaticPicture';
 import { GARDEN_LANDS, type GardenLand, type GardenLandLayout } from './gardenMapLayout';
-import GardenShoreContact from './water/GardenShoreContact';
+import GardenShoreContact, { makeShoreCoverage } from './water/GardenShoreContact';
 
 function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
   const image = useImage(land.source);
-  const images = useMemo(() => image ? [image] : [], [image]);
+  const coverage = useMemo(() => Platform.OS === 'web' && image ? makeShoreCoverage(image,land.width) : null, [image,land.width]);
+  const images = useMemo(() => image ? coverage ? [image,coverage] : [image] : [], [image,coverage]);
   const drawing = useMemo(() => {
     if (!image) return null;
     // Keep the exact original alpha-contact shader and source sampling.
@@ -17,14 +19,14 @@ function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
       { rotate: land.rotation * Math.PI / 180 },
       { translateX: -centerX }, { translateY: -centerY },
     ]}>
-      <GardenShoreContact image={image} x={land.x} y={land.y} width={land.width} height={height} />
+      <GardenShoreContact coverage={coverage} image={image} x={land.x} y={land.y} width={land.width} height={height} />
       <Image image={image} x={land.x} y={land.y} width={land.width} height={height} fit="contain" />
       {__DEV__ && selected && <Group>
         <Rect x={land.x} y={land.y} width={land.width} height={height}
           color="#FFE36E" style="stroke" strokeWidth={6} />
       </Group>}
     </Group>;
-  }, [image, land, selected]);
+  }, [image, land, selected, coverage]);
   return drawing ? <GardenStaticPicture images={images}>{drawing}</GardenStaticPicture> : null;
 }
 
