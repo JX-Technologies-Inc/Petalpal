@@ -2,7 +2,7 @@
 
 ## Security Status
 
-Last updated: 2026-09-16
+Last updated: 2026-10-06
 
 This file is the canonical implementation record for **PetalPal Security
 Threat Model & Remediation Backlog — v2**. Every P0/P1/P2 item is retained as
@@ -123,7 +123,7 @@ what was inspected or tested; “manual” means platform/account action remains
 | SQL / ORM Logic Injection | ✅ TESTED | Structured Prisma filters and one parameterized tagged advisory-lock query; no unsafe raw SQL helper found. Add dedicated filter-injection negatives. |
 | API Flood / DoS | 🟡 PARTIAL | In-process general/AI limits and body bounds exist; route-specific concurrency, universal timeouts, and shared enforcement are missing. |
 | Database Connection Exhaustion | 🟡 PARTIAL | Prisma PostgreSQL pool exists; query timeouts, concurrency controls, and pool monitoring are not evidenced. |
-| Race Conditions | 🟡 PARTIAL | Daily uniqueness and transaction conflict handling exist. Sequential replay and a true 20-concurrent-request Daily Grow runtime test pass in the local test harness with one success, 19 expected conflicts, one final flower/check-in, and no orphaned records; production database/version and multi-instance concurrency verification remain. |
+| Race Conditions | 🟡 PARTIAL | Existing Daily Grow 20-request evidence retained; production/multi-instance verification remains. DELTA-P1-2 report final-write source/consent-epoch/lease fencing now has deterministic + in-memory PostgreSQL SQL coverage; independent PostgreSQL concurrency not verified. |
 | XSS / HTML / URL Injection | 🟡 PARTIAL | React escapes text and no raw HTML feature was found; no explicit sanitizer or URL-scheme allowlist for future WebView/link rendering. |
 | CORS Misconfiguration | ✅ TESTED | Explicit `CORS_ALLOWED_ORIGINS` allowlist protects HTTP and Socket.IO; evidence: `lib/security-config.js`, `server.js`, `test/back/security-config.test.js`. Production origin list requires review. |
 | Cache / CDN Cross-User Leakage | 🟡 PARTIAL | Worker uses no-store; private API/CDN end-to-end `Cache-Control` audit and replay test remain. |
@@ -279,3 +279,9 @@ remain documented.
 - AuditEvent Level 2: **PROVIDER-LIMITED / NOT VERIFIED**. Historical `DATABASE_URL`: **ACTION REQUIRED / UNCERTAIN**.
 - True remaining repo P0 blockers: **NONE**. Remaining items are provider/manual unresolved work or optional compliance hardening, not repo P0 blockers.
 - Final classification: **P0 CLOSED WITH DOCUMENTED LIMITATIONS**.
+
+## 2026-10 Feature Security Delta Review
+
+| ID / priority | Finding and evidence | Exact next code/test action |
+| --- | --- | --- |
+| DELTA-P1-2 | **TESTED follow-up: atomic report final-write fencing implemented (2026-10-06).** `lib/report-write-fence.js` locks the consent epoch, current RUNNING claim (owner/type/period/version + worker/attempt/claim timestamp + live DB-clock lease), source Events/memories and owner period settings. Current/prior-period source snapshots and selected evidence are rechecked; report/evidence writes and guarded SUCCEEDED completion share one transaction. Final lease expiry rolls everything back. `lib/ai-events.js` takes the same owner/source locks before report discovery/deletion; worker heartbeat/failure/cancellation also carry claim generation. No schema migration, provider call or local DB/container change. | **98 unique scoped tests PASS; 33 added tests.** `test/back/report-worker.test.js` covers Weekly/Monthly revoke/regrant, deletion/revision/ineligibility/period changes, expired/reclaimed/same-ID leases, competing paused workers, rollback, retry/replay and forged owners. `test/back/report-write-fence.test.js` executes fence SQL in fresh in-memory PGlite tables and checks DB-clock expiry/atomic rollback and delete-lock ordering. AI foundation/lifecycle, async dispatch, Event/private report routes and account deletion regressions pass; changed JS syntax/diff checks pass. **Not VERIFIED:** no isolated `REAL_POSTGRES_DATABASE_URL` configured; independent-connection PostgreSQL contention, deployed triggers and deadlock/retry behavior remain untested. Next: run those isolated interleavings without accessing development/production data. |

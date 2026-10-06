@@ -650,7 +650,10 @@ test("Weekly and Monthly report inputs reuse period aggregates and semantic retr
     { id: "event-1", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-03"), memory: { id: "memory-1", topics: ["career"], importanceScore: 0.8 } },
     { id: "event-2", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-10"), memory: { id: "memory-2", topics: ["study"], importanceScore: 0.6 } },
     { id: "event-3", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-20"), memory: { id: "memory-3", topics: ["career"], importanceScore: 0.9 } }
-  ];
+  ].map((event) => ({ ...event, updatedAt: new Date("2026-09-21"), memory: {
+    ...event.memory, ownerId: alice.userId, sourceEventId: event.id, memoryType: "EVENT",
+    summary: `Evidence ${event.id}`, updatedAt: new Date("2026-09-21"), embeddingInputRevision: 1
+  } }));
   const prisma = {
     user: { async findUnique() { return { timezone: "UTC" }; } },
     aiConsent: { async findUnique() { return { aiProcessing: true, personalization: true, memoryEnabled: true, updatedAt: new Date() }; } },
