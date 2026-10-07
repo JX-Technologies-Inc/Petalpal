@@ -7,6 +7,8 @@ import { app } from '../../server.js';
 test('saved report discovery is authenticated, owner-only, bounded and metadata-only', async t => {
   const restore = [];
   const stub = (object, key, fn) => { const original = object[key]; restore.push(() => object[key] = original); object[key] = fn; };
+  stub(prisma, '$transaction', async fn => fn(prisma));
+  stub(prisma, '$queryRawUnsafe', async (_sql, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }]);
   const rows = Array.from({ length: 27 }, (_, i) => ({
     id: `report-${String(i).padStart(2, '0')}`, ownerId: 'owner',
     periodKey: '2026-09', periodStartUtc: new Date(Date.UTC(2026, 8, 27 - i)),

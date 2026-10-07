@@ -14,14 +14,14 @@ async function fixture(t, env = {}) {
   const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); t.after(() => pg.close());
   await pg.exec(`
     CREATE TABLE "User" ("id" text PRIMARY KEY);
-    CREATE TABLE "AiConsent" ("userId" text PRIMARY KEY, "aiProcessing" boolean, "personalization" boolean, "memoryEnabled" boolean);
+    CREATE TABLE "AiConsent" ("userId" text PRIMARY KEY, "aiProcessing" boolean, "personalization" boolean, "memoryEnabled" boolean, "updatedAt" timestamp(3) DEFAULT '2000-01-01');
     CREATE TABLE "AuditEvent" ("id" text PRIMARY KEY, "createdAt" timestamp NOT NULL DEFAULT now(), "eventType" varchar(64),
       "outcome" varchar(32), "actorUserId" varchar(128), "targetClass" varchar(64), "actionCode" varchar(64), "reasonCode" varchar(64));
     CREATE TABLE "AIJob" ("id" text PRIMARY KEY, "ownerId" text, "jobType" text, "resourceId" text, "eventId" text,
       "idempotencyKey" varchar(191), "status" text DEFAULT 'PENDING', "attemptCount" integer DEFAULT 0, "maxAttempts" integer DEFAULT 3,
       "lockedBy" text, "lockedAt" timestamp(3), "leaseExpiresAt" timestamp(3), UNIQUE ("ownerId", "idempotencyKey"));
     INSERT INTO "User" VALUES ('alice'), ('bob');
-    INSERT INTO "AiConsent" VALUES ('alice',true,true,true),('bob',true,true,true);
+    INSERT INTO "AiConsent" ("userId","aiProcessing","personalization","memoryEnabled") VALUES ('alice',true,true,true),('bob',true,true,true);
   `);
   function adapt(db) {
     return {
@@ -178,4 +178,20 @@ test("paid embedding quota denial happens before provider invocation", async t =
   await assert.rejects(service.generate({ identity: { userId: "alice" }, memoryId: "memory-1",
     beforeInference: () => f.gate.reserve({ identity: { userId: "alice" }, action: job.jobType, key: job.idempotencyKey, job, workerId: "worker-1" }) }), { code: "AI_QUOTA_EXCEEDED" });
   assert.equal(calls, 0); assert.equal(failed, true); assert.equal((await f.rows()).length, 0);
+});
+
+test('revoked AI-processing consent blocks speech/emotion before quota reservation or provider work',async t=>{
+ const f=await fixture(t);await f.db.$transaction(tx=>tx.$queryRawUnsafe(`UPDATE "AiConsent" SET "aiProcessing"=false WHERE "userId"='alice'`));
+ for(const action of ['SPEECH_TRANSCRIPTION','EVENT_EMOTION'])await assert.rejects(f.gate.reserve({identity:{userId:'alice'},action}),{code:'AI_FORBIDDEN'});
+ assert.equal((await f.rows()).length,0);
+});
+test('speech finishing across revoke/regrant rejects old epoch and clears audio, without provider replay',async t=>{
+ const f=await fixture(t);let calls=0,status,response;
+ const req={auth:{userId:'alice'},body:{mimeType:'audio/webm',audio:Buffer.from([0x1a,0x45,0xdf,0xa3,1,2,3,4,5,6,7,8]).toString('base64')}};
+ const res={set(){},status(value){status=value;return this;},json(value){response=value;return this;}};
+ const handler=speechTranscriptionHandler({costGate:f.gate,env:{CLOUDFLARE_WORKER_AI_URL:'https://worker.invalid',CLOUDFLARE_WORKER_AI_TOKEN:'synthetic'},fetchImpl:async()=>{
+  calls++;await f.db.$transaction(tx=>tx.$queryRawUnsafe(`UPDATE "AiConsent" SET "updatedAt"='2000-01-02' WHERE "userId"='alice'`));
+  return Response.json({text:'synthetic private transcript'});
+ }});
+ await handler(req,res);assert.equal(calls,1);assert.equal(status,403);assert.equal(response.code,'AI_FORBIDDEN');assert.equal(JSON.stringify(response).includes('private transcript'),false);assert.equal(req.body,undefined);assert.equal((await f.rows()).length,1);
 });

@@ -107,6 +107,8 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     const key = where.ownerId_periodKey;
     return key ? finalizedReports.get(`${key.ownerId}:${key.periodKey}`) || null : null;
   };
+  state.tx.eventMemory = prisma.eventMemory;
+  state.tx.weeklyReport = prisma.weeklyReport;
   prisma.aiJob.findUnique = async ({ where }) => {
     const key = where.ownerId_idempotencyKey;
     return key ? state.jobs.find((job) => job.ownerId === key.ownerId && job.idempotencyKey === key.idempotencyKey) || null : null;
@@ -227,9 +229,9 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
 
   assert.equal((await request(baseUrl, "/events/event-1", { token: "bob-token" })).status, 404);
   assert.equal((await request(baseUrl, "/events/event-1")).status, 200);
-  assert.equal((await request(baseUrl, "/ai/memories/memory-alice", { token: "bob-token" })).status, 404);
+  assert.equal((await request(baseUrl, "/ai/memories/memory-alice", { token: "bob-token" })).status, 403);
   assert.equal((await request(baseUrl, "/ai/memories/memory-alice")).status, 200);
-  assert.equal((await request(baseUrl, "/ai/reports/weekly/report-alice", { token: "bob-token" })).status, 404);
+  assert.equal((await request(baseUrl, "/ai/reports/weekly/report-alice", { token: "bob-token" })).status, 403);
   assert.equal((await request(baseUrl, "/ai/reports/weekly/report-alice")).status, 200);
 
   const unauthenticated = await request(baseUrl, "/ai/reports/weekly/trigger", {

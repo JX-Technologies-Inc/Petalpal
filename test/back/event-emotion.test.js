@@ -158,8 +158,8 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   let responseProbabilities = { gratitude: 0.9 };
   let failNextPersistence = false;
   const users = {
-    alice: { id: "alice", timezone: "UTC", aiConsent: { aiProcessing: false, personalization: false, memoryEnabled: false } },
-    bob: { id: "bob", timezone: "UTC", aiConsent: { aiProcessing: false, personalization: false, memoryEnabled: false } }
+    alice: { id: "alice", timezone: "UTC", aiConsent: { updatedAt: new Date("2000-01-01"), aiProcessing: false, personalization: false, memoryEnabled: false } },
+    bob: { id: "bob", timezone: "UTC", aiConsent: { updatedAt: new Date("2000-01-01"), aiProcessing: false, personalization: false, memoryEnabled: false } }
   };
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? users[where.firebaseUid === "firebase-alice" ? "alice" : "bob"] : users[where.id] || null;
@@ -353,6 +353,8 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   assert.equal(extracted.emotionModelStatus, "production");
   let savedMemory;
   const memoryRepository = new PrismaMemoryRepository({
+    async $transaction(fn) { return fn(this); },
+    async $queryRawUnsafe() { return [{ userId: "alice", aiProcessing: true, personalization: true, memoryEnabled: true }]; },
     event: { findFirst: async () => events[1] },
     eventMemory: {
       findFirst: async () => null,

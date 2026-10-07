@@ -1,3 +1,4 @@
+import { updateAiConsent } from "./lib/ai-consent.js";
 import { validateJournalCover } from './lib/journal-cover.js';
 import "dotenv/config";
 import express from "express";
@@ -1703,45 +1704,8 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
   const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
   const now = new Date();
 
-  const consent = await prisma.$transaction(async (tx) => {
-    const updated = await tx.aiConsent.upsert({
-      where: { userId: req.auth.userId },
-      update: {
-        termsVersion: AI_TERMS_VERSION,
-        aiProcessing,
-        personalization,
-        memoryEnabled,
-        grantedAt: aiProcessing ? now : null,
-        revokedAt: aiProcessing ? null : now
-      },
-      create: {
-        userId: req.auth.userId,
-        termsVersion: AI_TERMS_VERSION,
-        aiProcessing,
-        personalization,
-        memoryEnabled,
-        grantedAt: aiProcessing ? now : null,
-        revokedAt: aiProcessing ? null : now
-      }
-    });
-    if (!memoryEnabled) {
-      await tx.aiJob.updateMany({
-        where: {
-          ownerId: req.auth.userId,
-          status: { in: ["PENDING", "RUNNING"] }
-        },
-        data: {
-          status: "CANCELLED",
-          completedAt: now,
-          lockedAt: null,
-          lockedBy: null,
-          leaseExpiresAt: null,
-          lastError: "Memory processing consent was disabled"
-        }
-      });
-    }
-    return updated;
-  });
+  const consent = await updateAiConsent(prisma, { identity: req.auth, termsVersion: AI_TERMS_VERSION,
+    aiProcessing, personalization, memoryEnabled, now });
 
   try {
     await createAuditEvent({
@@ -1783,10 +1747,11 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
   let result;
   let inferenceStarted = false;
   try {
-    await aiCostGate.reserve({ identity: { userId }, action: "EVENT_EMOTION", key: eventId ? `${eventId}:${EVENT_SECONDARY_MODEL_VERSION}` : null });
+    const reservation = await aiCostGate.reserve({ identity: { userId }, action: "EVENT_EMOTION", key: eventId ? `${eventId}:${EVENT_SECONDARY_MODEL_VERSION}` : null });
     inferenceStarted = true;
     result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood,
       ...(includeDiagnostics ? { includeDiagnostics: true } : {}) });
+    await aiCostGate.checkProcessingConsent({ identity: { userId }, consentUpdatedAt: reservation.consentUpdatedAt });
   } catch (error) {
     return withEmotionLabDiagnostics(
       { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: isAiCostError(error) ? error.code : "RUNTIME_UNAVAILABLE" }, includeDiagnostics,
@@ -1972,12 +1937,17 @@ app.delete("/events/:eventId", async (req, res) => {
 });
 
 app.get("/ai/memories/:memoryId", async (req, res) => {
-  const memory = await new PrismaMemoryRepository(prisma).getMemoryById({
-    identity: req.auth,
-    memoryId: req.params.memoryId
-  });
-  if (!memory) return res.status(404).json({ error: "Event memory not found" });
-  return res.json(memory);
+  try {
+    const memory = await new PrismaMemoryRepository(prisma).getMemoryById({
+      identity: req.auth,
+      memoryId: req.params.memoryId
+    });
+    if (!memory) return res.status(404).json({ error: "Event memory not found" });
+    return res.json(memory);
+  } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });
+    throw error;
+  }
 });
 
 // Metadata discovery only. Detail reads and generation keep their existing routes.
@@ -2001,6 +1971,7 @@ app.get("/ai/reports", async (req, res) => {
   try {
     return res.json(await new PrivateReportRepository(prisma).listSavedReports({ identity: req.auth, limit: Number(rawLimit), cursor }));
   } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });
     logServerError("GET /ai/reports error", error);
     return res.status(500).json({ error: "Unable to load saved reports" });
   }
@@ -2016,9 +1987,14 @@ app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
   };
   const read = readers[req.params.reportType];
   if (!read) return res.status(400).json({ error: "Unsupported AI report type" });
-  const report = await read();
-  if (!report) return res.status(404).json({ error: "AI report not found" });
-  return res.json(report);
+  try {
+    const report = await read();
+    if (!report) return res.status(404).json({ error: "AI report not found" });
+    return res.json(report);
+  } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });
+    throw error;
+  }
 });
 
 app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
