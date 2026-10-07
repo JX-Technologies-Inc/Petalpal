@@ -1,5 +1,6 @@
 import { PanelThemeProvider } from '../components/features/PanelTheme';
 import { AuthProvider, useAuth } from "../services/auth";
+import { ProductionRouteGate } from "../components/ProductionRouteGate";
 import { AuthGate } from "../components/AuthGate";
 import { DarkTheme, DefaultTheme, Slot, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -12,7 +13,12 @@ import { WorldTimeProvider } from '@/components/garden/world-time';
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
-  return <AuthProvider><AuthGate><TabLayout /></AuthGate></AuthProvider>;
+  return <AuthProvider><AuthGate><RoutedContent /></AuthGate></AuthProvider>;
+}
+
+function RoutedContent() {
+  const pathname = usePathname();
+  return <ProductionRouteGate pathname={pathname}><TabLayout /></ProductionRouteGate>;
 }
 
 function TabLayout() {
@@ -37,10 +43,10 @@ function TabLayout() {
           <Stack.Screen name="feature/[feature]" options={{ title: 'PetalPal' }} />
           <Stack.Screen name="visit/[ownerId]" options={{ title: 'Friend Garden', headerShown: false }} />
           <Stack.Screen name="garden-test" options={{ title: 'Garden preview' }} />
-          <Stack.Screen name="treehouse-test" options={{ title: 'Treehouse preview' }} />
-          <Stack.Screen name="swing-test" options={{ title: 'Swing preview' }} />
-          <Stack.Screen name="moon-bed-test" options={{ title: 'Moon Bed preview' }} />
-          <Stack.Screen name="water-test" options={{ title: 'Water preview' }} />
+          {__DEV__ && <Stack.Screen name="treehouse-test" options={{ title: 'Treehouse preview' }} />}
+          {__DEV__ && <Stack.Screen name="swing-test" options={{ title: 'Swing preview' }} />}
+          {__DEV__ && <Stack.Screen name="moon-bed-test" options={{ title: 'Moon Bed preview' }} />}
+          {__DEV__ && <Stack.Screen name="water-test" options={{ title: 'Water preview' }} />}
         </Stack>
       </ThemeProvider>
     );

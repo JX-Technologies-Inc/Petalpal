@@ -23,13 +23,13 @@ export default function AppTabs() {
       <NativeTabs.Trigger name="journal"><NativeTabs.Trigger.Label>Events</NativeTabs.Trigger.Label></NativeTabs.Trigger>
       <NativeTabs.Trigger name="garden-test"><NativeTabs.Trigger.Label>Garden</NativeTabs.Trigger.Label></NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore">
+      {__DEV__ && <NativeTabs.Trigger name="explore">
         <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           src={require('@/assets/images/tabIcons/explore.png')}
           renderingMode="template"
         />
-      </NativeTabs.Trigger>
+      </NativeTabs.Trigger>}
     </NativeTabs>
   );
 }

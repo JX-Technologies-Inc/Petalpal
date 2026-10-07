@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
-export function loadPlantingModules(storage, react, nativeStorage, web = true, dependencies = {}) {
+export function loadPlantingModules(storage, react, nativeStorage, web = true, dependencies = {}, development = false) {
   const cache = new Map();
   const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
     '../src/components/garden/planting');
@@ -37,7 +37,7 @@ export function loadPlantingModules(storage, react, nativeStorage, web = true, d
     });
     const run = vm.runInNewContext('(function(exports, require, module) {\n' + outputText + '\n})', {
       ...(web ? { localStorage: storage, window: { localStorage: storage } } : {}), console, Uint8Array,
-      process: { env: {} }, __DEV__: false, fetch: dependencies.fetch ?? globalThis.fetch,
+      process: { env: {} }, __DEV__: development, fetch: dependencies.fetch ?? globalThis.fetch,
     }, { filename: file });
     run(module.exports, requireLocal, module);
     return module.exports;
