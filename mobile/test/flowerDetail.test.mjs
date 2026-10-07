@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { loadPlantingModules } from './loadPlantingModules.mjs';
 
-const placementKey = 'petalpal_flower_placements_v1';
+const placementKey = 'petalpal_flower_placements_v1:visitor';
 const placement = {
   id: 'placement-jan', flowerId: 'fl-jan-01', journalEntryId: 'entry-fl-jan-01',
   ownerUserId: 'owner', plantedDate: '2026-01-15T10:00:00.000Z', month: 1,
@@ -38,6 +38,8 @@ function memoryStorage(initial = {}) {
   const reads = [], writes = [];
   return {
     items, reads, writes,
+    get length() { return items.size; },
+    key(index) { return [...items.keys()][index] ?? null; },
     getItem(key) { reads.push(key); return items.get(key) ?? null; },
     setItem(key, value) { writes.push({ key, value }); items.set(key, value); },
     removeItem(key) { writes.push({ key, removed: true }); items.delete(key); },
@@ -45,64 +47,8 @@ function memoryStorage(initial = {}) {
 }
 
 // Stable hooks execute source callbacks and effect cleanup without a native renderer.
-export function hookHarness(context = () => null) {
-  const slots = [];
-  let cursor = 0, dirty = false, renderSource, latest;
-  const pending = [];
-  const changed = (before, after) => !before || !after || before.length !== after.length ||
-    before.some((value, i) => !Object.is(value, after[i]));
-  const react = {
-    createContext: () => ({ Provider: 'Provider' }),
-    useContext: () => context(),
-    useState(initial) {
-      const i = cursor++;
-      if (!slots[i]) {
-        slots[i] = { value: typeof initial === 'function' ? initial() : initial };
-        slots[i].set = (next) => {
-          const value = typeof next === 'function' ? next(slots[i].value) : next;
-          if (!Object.is(value, slots[i].value)) { slots[i].value = value; dirty = true; }
-        };
-      }
-      return [slots[i].value, slots[i].set];
-    },
-    useRef(initial) {
-      const i = cursor++;
-      if (!slots[i]) slots[i] = { current: initial };
-      return slots[i];
-    },
-    useCallback(fn, deps) {
-      const i = cursor++;
-      if (!slots[i] || changed(slots[i].deps, deps)) slots[i] = { value: fn, deps };
-      return slots[i].value;
-    },
-    useEffect(fn, deps) {
-      const i = cursor++;
-      const previous = slots[i];
-      if (!previous || changed(previous.deps, deps)) {
-        const slot = slots[i] = { deps, cleanup: previous?.cleanup };
-        pending.push(() => { slot.cleanup?.(); slot.cleanup = fn(); });
-      }
-    },
-  };
-  const harness = {
-    react,
-    mount(fn) { renderSource = fn; return harness.render(); },
-    render() {
-      cursor = 0; dirty = false; latest = renderSource();
-      while (pending.length) pending.shift()();
-      return latest;
-    },
-    async flush() {
-      for (let i = 0; i < 20; i++) {
-        if (dirty) harness.render();
-        await new Promise((resolve) => setImmediate(resolve));
-        if (!dirty) return latest;
-      }
-      throw new Error('Source hooks did not settle');
-    },
-  };
-  return harness;
-}
+export { hookHarness } from './hookHarness.mjs';
+import { hookHarness } from './hookHarness.mjs';
 
 function elements(tree) {
   if (Array.isArray(tree)) return tree.flatMap(elements);
@@ -161,6 +107,10 @@ async function providerHarness({ userId = 'visitor', flower = placement, api = {
     './placementValidator': { validateFlowerPlacement: () => ({ isValid: true }) },
     './plantingRegionData': monthData,
   });
+  const persistence = load('plantingPersistence');
+  await persistence.scopeFlowerPlacements(userId);
+  if (userId) await persistence.saveFlowerPlacements([flower]);
+  storage.reads.length = 0; storage.writes.length = 0;
   const Provider = load('PlantingContext').PlantingProvider;
   const props = {
     children: null, gardenOwnerUserId: 'owner',
@@ -171,7 +121,7 @@ async function providerHarness({ userId = 'visitor', flower = placement, api = {
     return wrapper.type(wrapper.props).props.value;
   });
   await hooks.flush();
-  return { hooks, calls, storage };
+  return { hooks, calls, storage, persistence };
 }
 
 test('detail data resolves the existing journal and legacy journal ID without inventing content', () => {
@@ -640,4 +590,16 @@ test('a failed message removes only its own pending item and preserves live sock
   assert.ok(flow.flowerDetailSource.messages.some((message) => message.id === 'live-during-send'));
   assert.ok(flow.flowerDetailSource.messages.some((message) => message.id === 'message-2' && message.pending));
   assert.deepEqual(provider.storage.writes, []);
+});
+
+test('DELTA-P2-2 delayed provider Delete cannot remove the next account cache', async () => {
+  const pending = deferred();
+  const provider = await providerHarness({ userId: 'owner', api: { deleteSourceFlower: () => pending.promise } });
+  let flow = provider.hooks.render(); flow.openFlowerDetail(placement); flow = await provider.hooks.flush();
+  const deleting = flow.deleteSelectedFlower();
+  await provider.persistence.scopeFlowerPlacements('bob');
+  await provider.persistence.saveFlowerPlacements([{ ...placement, id: 'bob-placement' }]);
+  pending.resolve(); await deleting;
+  assert.equal(JSON.parse(provider.storage.items.get('petalpal_flower_placements_v1:bob'))[0].id, 'bob-placement');
+  assert.equal(provider.storage.items.has('petalpal_flower_placements_v1:owner'), false);
 });

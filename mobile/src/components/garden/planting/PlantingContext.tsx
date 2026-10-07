@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import {
   FlowerPlacementRecord,
+  capturePlacementSession,
   addOrUpdateFlowerPlacement,
   removeFlowerPlacement,
   loadFlowerPlacements,
@@ -354,6 +355,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
     }
     if (!ownsFlower(targetFlower, access)) return false;
 
+    const cacheSession = capturePlacementSession();
     const version = gardenVersion.current;
     setIsSaving(true);
     try {
@@ -376,7 +378,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
 
       if (backendMode && session) await loadFlowerSource(session.user.id, committed.flowerId);
       if (version !== gardenVersion.current) return false;
-      const updated = await addOrUpdateFlowerPlacement(committed);
+      const updated = await addOrUpdateFlowerPlacement(committed, cacheSession);
       if (version !== gardenVersion.current) return false;
       if (backendMode) setPlacements(current => current.some(p => p.flowerId === committed.flowerId)
         ? current.map(p => p.flowerId === committed.flowerId ? committed : p) : [...current, committed]);
@@ -387,7 +389,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
       setValidationResult(null);
       return true;
     } catch (err) {
-      console.error('[PlantingContext] Failed to commit placement:', err);
+      console.error('[PlantingContext] Unable to save placement.');
       return false;
     } finally {
       setIsSaving(false);
@@ -475,6 +477,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
 
   const deleteSelectedFlower = useCallback(async (): Promise<boolean> => {
     if (!selectedFlower || !selectedFlowerIsOwner || detailWorking.current) return false;
+    const cacheSession = capturePlacementSession();
     const version = detailVersion.current;
     detailWorking.current = true; setIsDetailWorking(true); setDetailError('');
     try {
@@ -485,7 +488,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
         if (!session || session.user.id !== ownerId) throw new Error('Only this flower’s owner can delete it.');
         await deleteSourceFlower(ownerId, selectedFlower.flowerId);
       }
-      const updated = await removeFlowerPlacement(selectedFlower.flowerId);
+      const updated = await removeFlowerPlacement(selectedFlower.flowerId, cacheSession);
       if (version !== detailVersion.current) return true;
       if (backendMode) setPlacements(current => current.filter(p => p.flowerId !== selectedFlower.flowerId));
       else setPlacements(updated);
@@ -501,7 +504,9 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
 
   const resetAllPlacements = useCallback(async () => {
     if (backendMode) return;
-    const defaults = await resetFlowerPlacements();
+    const version = gardenVersion.current;
+    const defaults = await resetFlowerPlacements(capturePlacementSession());
+    if (version !== gardenVersion.current) return;
     setPlacements(defaults);
     cancelPlacement();
   }, [cancelPlacement, backendMode]);

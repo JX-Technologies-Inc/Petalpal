@@ -22,10 +22,60 @@ export interface FlowerPlacementRecord extends FlowerPlacement {
   messages?: FlowerMessage[];
 }
 
-let STORAGE_KEY = 'petalpal_flower_placements_v1';
-export function scopeFlowerPlacements(userId: string | null) {
-  STORAGE_KEY = userId ? `petalpal_flower_placements_v1:${encodeURIComponent(userId)}` : 'petalpal_flower_placements_v1';
-  memoryPlacementsStore = null;
+// PetalPal private-store registry: placements include derived emotions/details.
+// Theme/background, calibration/masks and Firebase SDK persistence are excluded.
+const LEGACY_KEY = 'petalpal_flower_placements_v1';
+const ownerKey = (owner: string) => `${LEGACY_KEY}:${encodeURIComponent(owner)}`;
+let activeOwner: string | null = null;
+let generation = 0;
+let storageReady = false;
+let storageQueue: Promise<unknown> = Promise.resolve();
+const pendingErasure = new Set<string>();
+export interface PlacementSession { owner: string | null; generation: number }
+export const capturePlacementSession = (): PlacementSession => ({ owner: activeOwner, generation });
+const current = (session: PlacementSession) => session.owner !== null &&
+  session.owner === activeOwner && session.generation === generation;
+const cacheError = () => new Error('Private device cache is unavailable. Please sign in again.');
+function enqueue<T>(action: () => Promise<T>): Promise<T> {
+  const result = storageQueue.then(action);
+  storageQueue = result.catch(() => {});
+  return result;
+}
+async function eraseKey(key: string) {
+  if (typeof window !== 'undefined' && window.localStorage) window.localStorage.removeItem(key);
+  else await AsyncStorage.removeItem(key);
+}
+// Invalidate synchronously; physical erasure follows any already-started write.
+// Each activation starts fresh, including after process restart/failed cleanup.
+export function scopeFlowerPlacements(owner: string | null): Promise<boolean> {
+  const outgoing = activeOwner;
+  activeOwner = owner; generation++; storageReady = false; memoryPlacementsStore = null;
+  const session = capturePlacementSession();
+  pendingErasure.add(LEGACY_KEY);
+  if (outgoing) pendingErasure.add(ownerKey(outgoing));
+  if (owner) pendingErasure.add(ownerKey(owner));
+  return enqueue(async () => {
+    try {
+      // Recover orphaned owner caches from earlier processes/accounts, using
+      // only the PetalPal placement namespace. Never clear the storage adapter.
+      const browser = typeof window !== 'undefined' ? window.localStorage : null;
+      const persistedKeys = browser
+        ? Array.from({ length: browser.length }, (_, index) => browser.key(index))
+        : await AsyncStorage.getAllKeys();
+      for (const key of persistedKeys) {
+        if (key === LEGACY_KEY || key?.startsWith(`${LEGACY_KEY}:`)) pendingErasure.add(key);
+      }
+      for (const key of pendingErasure) {
+        await eraseKey(key);
+        pendingErasure.delete(key);
+      }
+      if (session.generation === generation) storageReady = true;
+      return true;
+    } catch {
+      // Never log storage errors: adapters can embed private payloads in errors.
+      return false; // Reads/writes remain closed until a successful activation.
+    }
+  });
 }
 
 // Initial seed flowers for demonstration and verification
@@ -103,92 +153,78 @@ export const DEFAULT_SEED_PLACEMENTS: FlowerPlacementRecord[] = [
 // Cache only; browser and native storage remain the durable source of truth.
 let memoryPlacementsStore: FlowerPlacementRecord[] | null = null;
 
-export async function loadFlowerPlacements(): Promise<FlowerPlacementRecord[]> {
-  const key = STORAGE_KEY;
-  try {
-    {
+export async function loadFlowerPlacements(
+  session = capturePlacementSession()
+): Promise<FlowerPlacementRecord[]> {
+  return enqueue(async () => {
+    if (!current(session)) return [];
+    if (!storageReady) throw cacheError();
+    try {
+      const key = ownerKey(session.owner!);
       const stored = typeof window !== 'undefined' && window.localStorage
-        ? window.localStorage.getItem(key)
-        : await AsyncStorage.getItem(key);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          if (key !== STORAGE_KEY) return [];
-          memoryPlacementsStore = parsed;
-          return parsed;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('[plantingPersistence] Failed to read localStorage:', err);
-  }
-
-  if (memoryPlacementsStore !== null) {
-    return memoryPlacementsStore;
-  }
-
-  // An empty installation starts empty. Loading must never create or commit
-  // unconfirmed flower coordinates; existing saved records are retained above.
-  memoryPlacementsStore = [];
-  return memoryPlacementsStore;
+        ? window.localStorage.getItem(key) : await AsyncStorage.getItem(key);
+      if (!current(session)) return [];
+      const parsed = stored ? JSON.parse(stored) : [];
+      memoryPlacementsStore = Array.isArray(parsed) ? parsed : [];
+      return memoryPlacementsStore;
+    } catch { storageReady = false; memoryPlacementsStore = null; throw cacheError(); }
+  });
 }
 
 export async function saveFlowerPlacements(
-  placements: FlowerPlacementRecord[]
+  placements: FlowerPlacementRecord[], session = capturePlacementSession()
 ): Promise<void> {
-  const key = STORAGE_KEY;
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem(key, JSON.stringify(placements));
-    } else {
-      await AsyncStorage.setItem(key, JSON.stringify(placements));
-    }
-    if (key === STORAGE_KEY) memoryPlacementsStore = placements;
-  } catch (err) {
-    console.warn('[plantingPersistence] Failed to write to localStorage:', err);
-    throw err;
-  }
+  return enqueue(async () => {
+    if (!current(session)) return;
+    if (!storageReady) throw cacheError();
+    try {
+      const key = ownerKey(session.owner!);
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, JSON.stringify(placements));
+      } else await AsyncStorage.setItem(key, JSON.stringify(placements));
+      if (current(session)) memoryPlacementsStore = placements;
+      // A transition during setItem queued erasure behind this write.
+    } catch { storageReady = false; memoryPlacementsStore = null; throw cacheError(); }
+  });
 }
 
 export async function addOrUpdateFlowerPlacement(
-  placement: FlowerPlacementRecord
+  placement: FlowerPlacementRecord, session = capturePlacementSession()
 ): Promise<FlowerPlacementRecord[]> {
-  const key = STORAGE_KEY;
-  const current = await loadFlowerPlacements();
-  if (key !== STORAGE_KEY) throw new Error("Your account changed. Please try again.");
-  const existingIdx = current.findIndex(
+  const loaded = await loadFlowerPlacements(session);
+  if (!current(session)) return [];
+  const existingIdx = loaded.findIndex(
     (p) => p.flowerId === placement.flowerId || p.id === placement.id
   );
 
   let updated: FlowerPlacementRecord[];
   if (existingIdx >= 0) {
-    updated = [...current];
+    updated = [...loaded];
     updated[existingIdx] = {
-      ...current[existingIdx],
+      ...loaded[existingIdx],
       ...placement,
       placementVersion: 1,
     };
   } else {
-    updated = [...current, { ...placement, placementVersion: 1 }];
+    updated = [...loaded, { ...placement, placementVersion: 1 }];
   }
 
-  await saveFlowerPlacements(updated);
-  return updated;
+  await saveFlowerPlacements(updated, session);
+  return current(session) ? updated : [];
 }
 
 export async function removeFlowerPlacement(
-  flowerId: string
+  flowerId: string, session = capturePlacementSession()
 ): Promise<FlowerPlacementRecord[]> {
-  const key = STORAGE_KEY;
-  const current = await loadFlowerPlacements();
-  if (key !== STORAGE_KEY) throw new Error("Your account changed. Please try again.");
-  const updated = current.filter((p) => p.flowerId !== flowerId && p.id !== flowerId);
-  await saveFlowerPlacements(updated);
-  return updated;
+  const loaded = await loadFlowerPlacements(session);
+  if (!current(session)) return [];
+  const updated = loaded.filter((p) => p.flowerId !== flowerId && p.id !== flowerId);
+  await saveFlowerPlacements(updated, session);
+  return current(session) ? updated : [];
 }
 
-export async function resetFlowerPlacements(): Promise<FlowerPlacementRecord[]> {
-  memoryPlacementsStore = [...DEFAULT_SEED_PLACEMENTS];
-  await saveFlowerPlacements(memoryPlacementsStore);
-  return memoryPlacementsStore;
+export async function resetFlowerPlacements(session = capturePlacementSession()): Promise<FlowerPlacementRecord[]> {
+  const defaults = [...DEFAULT_SEED_PLACEMENTS];
+  await saveFlowerPlacements(defaults, session);
+  return current(session) ? defaults : [];
 }

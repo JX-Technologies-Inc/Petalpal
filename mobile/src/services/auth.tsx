@@ -26,6 +26,7 @@ interface AuthState extends AuthSnapshot {
   checkVerification: () => Promise<void>;
   completeProfile: (profile: ProfileInput | string) => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   retry: () => Promise<void>;
 }
 const emptyState = (phase: AuthPhase = 'initializing', error = ''): AuthSnapshot => ({
@@ -46,8 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function clearAccount(phase: AuthPhase = 'initializing', error = '') {
     version.current++;
     configureApi(null);
-    scopeFlowerPlacements(null);
+    const cleanup = scopeFlowerPlacements(null);
     setState(emptyState(phase, error));
+    return cleanup;
   }
   const isCurrent = (user: User, generation: number) =>
     generation === version.current && firebaseAuth().currentUser?.uid === user.uid;
@@ -58,15 +60,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // fails. That same identity cannot restore a backend-rejected session.
     invalidatedUid.current = auth.currentUser?.uid || null;
     signedOutError.current = error;
-    clearAccount('initializing');
+    const cleanup = clearAccount('initializing');
     const generation = version.current;
     try { await signOut(auth); }
     catch { signedOutError.current = 'Your session is closed. Please try signing out again before signing in.'; }
-    if (generation === version.current) setState(emptyState('signedOut', signedOutError.current));
+    const erased = await cleanup;
+    if (!erased) signedOutError.current = 'Your session is closed. Private device cache cleanup failed; please sign in again to retry.';
+    if (!firebaseAuth().currentUser || generation === version.current) setState(emptyState('signedOut', signedOutError.current));
+  }
+
+  async function deleteAccount() {
+    const user = firebaseAuth().currentUser;
+    const owner = state.session?.user.id;
+    const generation = version.current;
+    if (!user || !owner || state.identity?.uid !== user.uid || !isCurrent(user, generation)) throw new Error('Sign in to delete your account.');
+    // Backend owns remote/Firebase deletion. Failure must not claim deletion.
+    const result = await apiRequest<{ success: boolean }>(`/users/${encodeURIComponent(owner)}`, 'DELETE');
+    if (!result.success) throw new Error('Account deletion was not confirmed.');
+    if (isCurrent(user, generation)) await logout();
   }
 
   async function sync(profile?: ProfileInput) {
-    clearAccount();
+    const cleanup = clearAccount();
     const generation = version.current;
     let user: User | null = null;
     try {
@@ -75,6 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (generation !== version.current) return;
       user = auth.currentUser;
       if (!user || invalidatedUid.current === user.uid) {
+        if (!await cleanup) signedOutError.current = 'Private device cache cleanup failed. Please retry.';
+        if (generation !== version.current) return;
         setState(emptyState('signedOut', signedOutError.current));
         return;
       }
@@ -118,7 +135,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const experience = await loadSessionExperience();
       if (!isCurrent(user, generation)) return;
       if (experience.user.id !== result.user.id) throw new Error('Backend identity changed');
-      scopeFlowerPlacements(experience.user.id);
+      if (!await scopeFlowerPlacements(experience.user.id)) throw new Error('Private device cache cleanup failed. Please retry.');
+      if (!isCurrent(user, generation)) return;
       setState({ ...emptyState('signedIn'), identity, experience, session: { user: experience.user } });
     } catch (error) {
       if (generation !== version.current) return;
@@ -202,7 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) { setState((current) => ({ ...current, error })); return; }
       await sync(profile);
     },
-    logout: () => logout(), retry: () => sync(),
+    logout: () => logout(), deleteAccount, retry: () => sync(),
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

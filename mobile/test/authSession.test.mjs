@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { loadPlantingModules } from './loadPlantingModules.mjs';
-import { hookHarness } from './flowerDetail.test.mjs';
+import { hookHarness } from './hookHarness.mjs';
 const response = (data, status = 200) => ({ ok: status < 400, status, json: async () => data });
 const deferred = () => { let resolve, reject; const promise = new Promise((done, fail) => { resolve = done; reject = fail; }); return { promise, resolve, reject }; };
 const plain = (value) => JSON.parse(JSON.stringify(value));
@@ -12,7 +12,7 @@ function user(uid = 'alice', verified = true) {
 function setup(initial = null) {
   const hooks = hookHarness(); const requests = [], emails = [], tokens = [], writes = [];
   const auth = { currentUser: initial, authStateReady: async () => {} };
-  let changed, handler, emailError, registrationError, signOutError;
+  let changed, handler, emailError, registrationError, signOutError, storageError;
   let needsProfile = false;
   const instrument = (value) => {
     if (!value || value.instrumented) return value;
@@ -33,7 +33,10 @@ function setup(initial = null) {
     sendEmailVerification: async (value) => { emails.push(value.uid); if (emailError) throw emailError; },
     signOut: async () => { if (signOutError) throw signOutError; emit(null); },
   };
-  const storage = { getItem: async () => null, setItem: async (key, value) => writes.push({ key, value }) };
+  const items = new Map();
+  const storage = { getAllKeys: async () => [...items.keys()], getItem: async key => items.get(key) ?? null,
+    setItem: async (key, value) => { writes.push({ key, value }); items.set(key, value); },
+    removeItem: async key => { if (storageError) throw storageError; items.delete(key); } };
   const load = loadPlantingModules(undefined, hooks.react, storage, false, {
     'firebase/auth': firebase, './firebase': { firebaseAuth: () => auth },
     fetch: async (path, options) => {
@@ -43,7 +46,7 @@ function setup(initial = null) {
         const payload = JSON.parse(options.body);
         return response(needsProfile && payload.deferProfileCreation ? { user: null, needsProfile: true } : { user: backendUser() });
       }
-      if (path === '/session') return response({ user: backendUser(), fairyState: {
+      if (path === '/session?view=metadata') return response({ user: backendUser(), fairyState: {
         onboardingStep: 'MOOD_SELECTION', onboardingCompleted: false, unlockedFeatures: ['garden'] },
         todayCheckIn: { id: 'checkin', localDate: '2026-09-29', journal: { content: 'Synthetic private Journal' } },
         hasCheckedInToday: true, dailyGrowLimitEnabled: true, garden: { owner: { id: backendUser().id }, flowers: [] } });
@@ -52,10 +55,11 @@ function setup(initial = null) {
   });
   const provider = load('../../../services/auth');
   hooks.mount(() => provider.AuthProvider({ children: 'app' }).props.value);
-  return { hooks, auth, requests, emails, tokens, writes, emit, load,
+  return { hooks, auth, requests, emails, tokens, writes, items, emit, load,
     api: load('../../../services/api'), storage: load('plantingPersistence'),
     setHandler: (value) => { handler = value; }, setNeedsProfile: () => { needsProfile = true; },
     setEmailError: (value) => { emailError = value; }, setRegistrationError: (value) => { registrationError = value; },
+    setStorageError: value => { storageError = value; },
     setSignOutError: (value) => { signOutError = value; },
     ready: async () => { emit(auth.currentUser); return hooks.flush(); } };
 }
@@ -69,7 +73,7 @@ test('Phase 1 existing login hydrates owner experience only after both backend r
   assert.equal(state.experience.hasCheckedInToday, true);
   assert.equal(state.experience.fairyState.onboardingStep, 'MOOD_SELECTION');
   assert.deepEqual(plain(state.experience.todayCheckIn), { id: 'checkin', localDate: '2026-09-29' });
-  assert.deepEqual(s.requests.map((r) => r.path), ['/auth/session', '/session']);
+  assert.deepEqual(s.requests.map((r) => r.path), ['/auth/session', '/session?view=metadata']);
   assert.deepEqual(s.writes, []); // App auth stores no password, token, user or pending-registration cache.
 });
 test('Phase 1 refresh-first transport succeeds after one 401 without invalidation', async () => {
@@ -89,7 +93,8 @@ test('Phase 1 terminal 401 clears provider, experience, placement scope and Fire
   assert.equal(signedOut.phase, 'signedOut'); assert.equal(signedOut.session, null); assert.equal(signedOut.experience, null);
   assert.equal(s.auth.currentUser, null); assert.equal((await s.storage.loadFlowerPlacements()).length, 0);
   assert.equal(s.requests.filter((r) => r.path === '/owner').length, 2);
-  assert.equal(s.writes.length, 1); // Invalidation clears references; it does not erase saved layout or server data.
+  assert.equal(s.writes.length, 1); // Erasure removes durable layout without writing other private data.
+  assert.equal(s.items.size, 0);
   assert.equal(state.session.user.id, 'owner-alice');
   await assert.rejects(s.api.apiRequest('/owner'), /Sign in/);
   assert.equal(s.requests.filter((r) => r.path === '/owner').length, 2);
@@ -187,7 +192,7 @@ test('Phase 1 delayed verification cannot publish state or authenticate the wron
 test('Phase 1 stale hydration after account switching or logout never restores private experience', async () => {
   for (const switchAccount of [true, false]) {
     const s = setup(user()); const hydration = deferred();
-    s.setHandler(async (path) => path === '/session' ? hydration.promise : response({ user: { id: 'owner-alice' } }));
+    s.setHandler(async (path) => path === '/session?view=metadata' ? hydration.promise : response({ user: { id: 'owner-alice' } }));
     s.emit(s.auth.currentUser); let state = await s.hooks.flush();
     assert.equal(state.phase, 'initializing'); assert.equal(state.session, null);
     s.setHandler(null);
@@ -202,7 +207,7 @@ test('Phase 1 stale hydration after account switching or logout never restores p
 });
 test('Phase 1 session hydration failure keeps app gated and retry hydrates the same Firebase account', async () => {
   const s = setup(user());
-  s.setHandler(async (path) => path === '/session' ? response({ error: 'synthetic outage' }, 503) : response({ user: { id: 'owner-alice' } }));
+  s.setHandler(async (path) => path === '/session?view=metadata' ? response({ error: 'synthetic outage' }, 503) : response({ user: { id: 'owner-alice' } }));
   let state = await s.ready(); assert.equal(state.phase, 'signedOut'); assert.equal(state.session, null);
   s.setHandler(null); await state.retry(); state = await s.hooks.flush();
   assert.equal(state.phase, 'signedIn'); assert.equal(state.experience.user.id, 'owner-alice');
@@ -284,4 +289,51 @@ test('Phase 1 stale verification control cannot send email for another account',
   s.emit(user('bob', false)); await s.hooks.flush();
   await previous.resendVerification();
   assert.equal(s.emails.length, 0);
+});
+
+test('DELTA-P2-2 logout erases durable private cache, preserves globals/SDK and reloads empty', async () => {
+  const s = setup(user()); let state = await s.ready();
+  s.items.set('theme', 'dark'); s.items.set('firebase:authUser:synthetic', 'SDK-owned');
+  await s.storage.saveFlowerPlacements([{ id: 'private' }]);
+  await state.logout(); state = await s.hooks.flush();
+  assert.equal(state.phase, 'signedOut');
+  assert.deepEqual([...s.items.keys()].sort(), ['firebase:authUser:synthetic', 'theme']);
+  const reloaded = loadPlantingModules(undefined, undefined, { getAllKeys: async () => [...s.items.keys()],
+    removeItem: async key => s.items.delete(key), getItem: async key => s.items.get(key) ?? null }, false)('plantingPersistence');
+  await reloaded.scopeFlowerPlacements('owner-alice'); assert.equal((await reloaded.loadFlowerPlacements()).length, 0);
+});
+test('DELTA-P2-2 confirmed account deletion erases cache; failed deletion preserves current session/cache', async () => {
+  for (const success of [true, false]) {
+    const s = setup(user()); const state = await s.ready();
+    await s.storage.saveFlowerPlacements([{ id: 'private' }]);
+    s.setHandler(async (path, options) => {
+      assert.equal(path, '/users/owner-alice'); assert.equal(options.method, 'DELETE'); return response({ success });
+    });
+    if (success) await state.deleteAccount(); else await assert.rejects(state.deleteAccount(), /not confirmed/);
+    const result = await s.hooks.flush();
+    assert.equal(result.phase, success ? 'signedOut' : 'signedIn');
+    assert.equal(s.items.has('petalpal_flower_placements_v1:owner-alice'), !success);
+  }
+});
+test('DELTA-P2-2 stale deletion control cannot delete the new account', async () => {
+  const s = setup(user()); const old = await s.ready(); s.emit(user('bob')); await s.hooks.flush();
+  await assert.rejects(old.deleteAccount(), /Sign in/);
+  assert.equal(s.requests.filter(r => r.options.method === 'DELETE').length, 0);
+});
+test('DELTA-P2-2 account switch erases A and late placement writes cannot pollute B', async () => {
+  const s = setup(user()); await s.ready(); const old = s.storage.capturePlacementSession();
+  await s.storage.saveFlowerPlacements([{ id: 'private' }], old);
+  s.emit(user('bob')); const state = await s.hooks.flush();
+  await s.storage.saveFlowerPlacements([{ id: 'late' }], old);
+  assert.equal(state.session.user.id, 'owner-bob'); assert.equal(s.items.size, 0);
+});
+test('DELTA-P2-2 cleanup failure closes auth and API; retry erases retained owner cache', async () => {
+  const s = setup(user()); let state = await s.ready();
+  await s.storage.saveFlowerPlacements([{ id: 'private' }]); s.setStorageError(new Error('private payload'));
+  await state.logout(); state = await s.hooks.flush();
+  assert.equal(state.phase, 'signedOut'); assert.equal(state.session, null); assert.equal(state.experience, null);
+  assert.match(state.error, /cache cleanup failed/); assert.doesNotMatch(state.error, /private payload/);
+  await assert.rejects(s.api.apiRequest('/owner'), /Sign in/);
+  s.setStorageError(null); await state.login('bob@example.test', 'synthetic password'); state = await s.hooks.flush();
+  assert.equal(state.session.user.id, 'owner-bob'); assert.equal(s.items.size, 0);
 });
