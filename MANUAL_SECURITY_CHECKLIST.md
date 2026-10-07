@@ -272,3 +272,9 @@ Exact implementation `187701de1fd810127b4b25b998af3a23bf0c8a3c` confirmed Deploy
 
 - [ ] With an existing safe authenticated session, inspect metadata response keys only for both metadata modes: HTTP 200, no-store, required IDs/dates/display fields, absent raw text/private inference/details. Do not log private values.
 - [ ] Check owner Calendar/history navigation and full-detail screen behavior with that session; retain separate cross-account/CDN acceptance limits.
+
+### Manual production session metadata evidence — 2026-10-07
+
+User-reported authenticated `GET /session?view=metadata`: HTTP 200, `Cache-Control: no-store` PASS, required session metadata present. Raw Journal text, AI inference/evidence and private messages absent; no unnecessary internal/account IDs observed. `CF-Cache-Status: DYNAMIC` observed for this response only. Production metadata-shape verification PASS for this session metadata route; its earlier runtime NOT VERIFIED status is superseded by this evidence. No response values, credentials or private content recorded; no requests or tests repeated.
+
+Owner Garden `GET /users/:userId/garden?view=metadata` production shape/cache acceptance, Calendar/history screen loading and intended-item navigation remain NOT VERIFIED. Overall DELTA-P2-4 production acceptance remains PARTIAL. Global CDN behavior, cross-account cache isolation and unrelated routes remain unverified. No production data modified; no implementation/configuration change. Documentation only; not staged, committed or pushed.
