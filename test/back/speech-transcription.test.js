@@ -35,6 +35,7 @@ test('speech API route rejects anonymous uploads and proxies authenticated audio
   const app = express();
   app.post('/speech/transcribe', (req, res, next) => req.get('Authorization') === 'Bearer user'
     ? next() : res.sendStatus(401), express.json({ limit: '12mb' }), speechTranscriptionHandler({
+      costGate: { async reserve({ action }) { assert.equal(action, 'SPEECH_TRANSCRIPTION'); } },
       env: { CLOUDFLARE_WORKER_AI_URL: 'https://worker.test/', CLOUDFLARE_WORKER_AI_TOKEN: 'server-only' },
       fetchImpl: async (url, options) => {
         calls++; assert.equal(url, 'https://worker.test/v1/speech/transcribe');

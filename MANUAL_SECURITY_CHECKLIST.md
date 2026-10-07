@@ -91,3 +91,7 @@ Optional/compliance hardening:
 - AuditEvent Level 1: `PASS`; Level 2: `PROVIDER-LIMITED / NOT VERIFIED`.
 - Historical `DATABASE_URL`: `ACTION REQUIRED / UNCERTAIN`.
 - Final Security P0 classification: `P0 CLOSED WITH DOCUMENTED LIMITATIONS`.
+
+## AI cost/shared-limit deployment verification
+
+- [ ] Verify paid-AI gate deployment: all Render/worker instances use the same PostgreSQL primary and identical server-side `AI_*_DAILY_LIMIT` / `AI_*_DAILY_CALL_LIMIT` values; runtime roles may reserve/read but cannot erase the durable AI-cost ledger. Exercise isolated multi-connection duplicate/reclaim/quota cases and live-provider latency; verify provider account-wide billing ceilings/alerts separately, since application call ceilings are not currency limits and do not cover direct credential use. Confirm retention does not prune operation tombstones or reset usage. Evidence: non-secret policy/grant review and test outcomes only. Status: `NOT VERIFIED`

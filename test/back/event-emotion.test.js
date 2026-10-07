@@ -152,6 +152,7 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   };
   const events = [];
   const flowers = [];
+  const reservations = [];
   let calls = 0;
   let responseLabels = ["gratitude"];
   let responseProbabilities = { gratitude: 0.9 };
@@ -163,7 +164,12 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? users[where.firebaseUid === "firebase-alice" ? "alice" : "bob"] : users[where.id] || null;
   prisma.$transaction = async (callback) => callback({
-    $queryRawUnsafe: async (_query, ownerId) => {
+    $queryRawUnsafe: async (_query, ownerId, ...args) => {
+      if (_query.includes("ai-cost:lock") || _query.includes("ai-cost:clock")) return [{ now: new Date() }];
+      if (_query.includes("ai-cost:owner")) return users[ownerId] ? [{ id: ownerId }] : [];
+      if (_query.includes("ai-cost:duplicate")) return reservations.filter(row => row.id === ownerId);
+      if (_query.includes("ai-cost:usage")) return [{ action: reservations.length, user: reservations.length, global: reservations.length, provider: reservations.length }];
+      if (_query.includes("ai-cost:reserve")) { reservations.push({ id: ownerId }); return [{ id: ownerId }]; }
       const consent = users[ownerId]?.aiConsent;
       return consent ? [{ ...consent }] : [];
     },
@@ -371,6 +377,16 @@ test("Event save and dev preview share adapter, preserve ownership, and never du
   assert.equal(productionEvent.status, 201);
   assert.equal(productionEvent.data.event.emotionOutcome, "INFERRED_1");
   assert.equal(productionEvent.data.event.primaryGardenMood, "SUNNY_BLOOM");
+  const previousLimit = process.env.AI_EVENT_EMOTION_DAILY_LIMIT;
+  t.after(() => { if (previousLimit === undefined) delete process.env.AI_EVENT_EMOTION_DAILY_LIMIT; else process.env.AI_EVENT_EMOTION_DAILY_LIMIT = previousLimit; });
+  process.env.AI_EVENT_EMOTION_DAILY_LIMIT = "0";
+  setEventEmotionClassifierForTests(async () => { calls++; throw Error("private provider detail"); });
+  const beforeQuota = calls;
+  const quotaEvent = await request("/events", { key: "quota-event-1", body: eventBody });
+  assert.equal(quotaEvent.status, 201, "source Event still saves when AI is unavailable");
+  assert.equal(quotaEvent.data.emotion.fallbackReason, "AI_QUOTA_EXCEEDED");
+  assert.equal(calls, beforeQuota, "no provider call after shared quota denial");
+  assert.equal(JSON.stringify(quotaEvent.data).includes("private provider detail"), false);
 });
 
 test("dev client routes through authenticated API only and has no model credentials", async () => {

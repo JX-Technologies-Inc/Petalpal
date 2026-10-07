@@ -46,6 +46,7 @@ function createReportPrisma() {
     consentUpdatedAt: new Date("2026-09-01"),
     now: new Date("2026-09-22"),
     job: null,
+    costReservations: [],
     queries: [],
     expireBeforeCompletion: false
   };
@@ -118,6 +119,21 @@ function createReportPrisma() {
     },
     async $queryRawUnsafe(query, ...args) {
       state.queries.push(query);
+      if (query.includes("ai-cost:lock") || query.includes("ai-cost:clock")) return [{ now: state.now }];
+      if (query.includes("ai-cost:owner")) return args[0] === ownerId ? [{ id: ownerId }] : [];
+      if (query.includes("ai-cost:duplicate")) return state.costReservations.filter(row => row.id === args[0]);
+      if (query.includes("ai-cost:usage")) {
+        const rows = state.costReservations.filter(row => row.createdAt >= args[0]);
+        const sum = selected => selected.reduce((total, row) => total + Number(row.reasonCode), 0);
+        return [{ action: rows.filter(row => row.actorUserId === args[1] && row.actionCode === args[2]).length,
+          user: sum(rows.filter(row => row.actorUserId === args[1])), global: sum(rows),
+          provider: sum(rows.filter(row => row.targetClass === args[3])) }];
+      }
+      if (query.includes("ai-cost:reserve")) {
+        const [id, createdAt, eventType, actorUserId, targetClass, actionCode, reasonCode] = args;
+        state.costReservations.push({ id, createdAt, eventType, actorUserId, targetClass, actionCode, reasonCode });
+        return [{ id }];
+      }
       if (query.includes('FROM "AiConsent"')) return args[0] === ownerId
         ? [{ userId: ownerId, aiProcessing: state.memoryConsent, personalization: state.memoryConsent,
           memoryEnabled: state.memoryConsent, updatedAt: state.consentUpdatedAt }] : [];
@@ -533,7 +549,7 @@ test("persistence failure rolls back report status, claims, and provenance toget
   assert.equal(prisma.state.evidence.length, 0);
 });
 
-test("job retry and replay are idempotent and do not duplicate report claims or provenance", async () => {
+test("ambiguous provider failure cannot buy another inference on job retry", async () => {
   const prisma = createReportPrisma();
   let providerCalls = 0;
   const job = reportJob(AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14", { maxAttempts: 2 });
@@ -550,17 +566,28 @@ test("job retry and replay are idempotent and do not duplicate report claims or 
   });
   const now = new Date("2026-09-22T00:00:00Z");
   assert.equal((await worker.runOnce({ now })).succeeded, false);
-  assert.equal((await worker.runOnce({ now })).succeeded, true);
+  const retry = await worker.runOnce({ now });
+  assert.equal(retry.succeeded, false);
+  assert.equal(retry.error.code, "AI_INFERENCE_ALREADY_RESERVED");
   assert.equal(job.attemptCount, 2);
-  assert.equal(prisma.state.weeklyReports.length, 1);
-  assert.equal(prisma.state.evidence.length, 3);
+  assert.equal(providerCalls, 1);
+  assert.equal(job.status, "FAILED");
+  assert.equal(prisma.state.weeklyReports.length, 0);
+  assert.equal(prisma.state.evidence.length, 0);
+});
 
+test("pre-inference failure still retries and finalized replay avoids another paid call", async () => {
+  const prisma = createReportPrisma(), job = reportJob(AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14");
+  const now = new Date("2026-09-22"); let calls = 0;
+  const unavailable = reportWorker({ prisma, job, provider: null });
+  assert.equal((await unavailable.runOnce({ now })).succeeded, false);
+  assert.equal(prisma.state.costReservations.length, 0);
+  const worker = reportWorker({ prisma, job, provider: { async generateNarrative(input) { calls++; return validProviderOutput(input.report.reportType); } } });
+  assert.equal((await worker.runOnce({ now })).succeeded, true);
   job.status = "PENDING";
-  const replay = (await worker.runOnce({ now })).result;
-  assert.equal(replay.skipped, true);
-  assert.equal(providerCalls, 2);
+  assert.equal((await worker.runOnce({ now })).result.skipped, true);
+  assert.equal(calls, 1);
   assert.equal(prisma.state.weeklyReports.length, 1);
-  assert.equal(prisma.state.weeklyReports[0].narrativeSections.length, 1);
   assert.equal(prisma.state.evidence.length, 3);
 });
 
@@ -649,7 +676,7 @@ for (const [name, mutate, code] of [
   });
 }
 
-test("competing provider results: only the reclaimed lease owner can finalize", async () => {
+test("lease reclaim cannot launch competing inference; old result remains fenced", async () => {
   const prisma = createReportPrisma(), job = reportJob(AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14");
   let releaseOld, entered;
   const oldPaused = new Promise((resolve) => { releaseOld = resolve; });
@@ -663,21 +690,21 @@ test("competing provider results: only the reclaimed lease owner can finalize", 
   // stable worker ID intentionally to exercise the claim-generation/ABA fence.
   job.status = "PENDING";
   const current = reportWorker({ prisma, job, provider: { async generateNarrative(input) {
-    return validProviderOutput(input.report.reportType);
+    assert.fail("reclaimed worker must not launch duplicate inference");
   } } });
   current.workerId = old.workerId;
   const currentResult = await current.runOnce({ now: new Date("2026-09-22T00:01:01Z") });
   releaseOld();
   const oldResult = await oldRun;
-  assert.equal(currentResult.succeeded, true, currentResult.error?.stack);
+  assert.equal(currentResult.succeeded, false);
+  assert.equal(currentResult.error.code, "AI_INFERENCE_ALREADY_RESERVED");
   assert.equal(oldResult.succeeded, false);
   assert.equal(oldResult.error.code, "AI_JOB_LEASE_LOST");
-  assert.equal(job.status, "SUCCEEDED");
-  assert.equal(prisma.state.weeklyReports.length, 1);
-  assert.equal(prisma.state.evidence.length, 3);
+  assert.equal(prisma.state.weeklyReports.length, 0);
+  assert.equal(prisma.state.evidence.length, 0);
 });
 
-test("failed evidence write retries atomically and then completes exactly once", async () => {
+test("failed evidence write rolls back atomically; job retry cannot repeat paid inference", async () => {
   const prisma = createReportPrisma(), job = reportJob(AI_JOB_TYPES.WEEKLY_REPORT, "2026-09-14");
   let calls = 0;
   const worker = reportWorker({ prisma, job, provider: { async generateNarrative(input) {
@@ -688,11 +715,14 @@ test("failed evidence write retries atomically and then completes exactly once",
   assert.equal(prisma.state.weeklyReports.length, 0);
   assert.equal(job.status, "PENDING");
   prisma.state.failEvidence = false;
-  assert.equal((await worker.runOnce({ now: new Date("2026-09-22") })).succeeded, true);
+  const retry = await worker.runOnce({ now: new Date("2026-09-22") });
+  assert.equal(retry.succeeded, false);
+  assert.equal(retry.error.code, "AI_INFERENCE_ALREADY_RESERVED");
+  await worker.runOnce({ now: new Date("2026-09-22") });
   assert.deepEqual(await worker.runOnce(), { claimed: false });
-  assert.equal(calls, 2);
-  assert.equal(prisma.state.weeklyReports.length, 1);
-  assert.equal(job.status, "SUCCEEDED");
+  assert.equal(calls, 1);
+  assert.equal(prisma.state.weeklyReports.length, 0);
+  assert.equal(job.status, "FAILED");
 });
 
 test("finalized replay cannot bypass revoked consent or lease expiry", async () => {

@@ -2,6 +2,7 @@ import { validateJournalCover } from './lib/journal-cover.js';
 import "dotenv/config";
 import express from "express";
 import { speechTranscriptionHandler } from "./lib/speech-transcription.js";
+import { PrismaAiCostGate, aiCostHttpStatus, isAiCostError } from "./lib/ai-cost-gate.js";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
@@ -120,6 +121,7 @@ app.use((req, res, next) => {
 app.set("trust proxy", trustProxySetting());
 let emotionClassifier = classifyEmotion;
 let eventEmotionClassifier = classifyEventSecondaryEmotions;
+const aiCostGate = new PrismaAiCostGate(prisma);
 let firebaseUserDeleter = deleteFirebaseUser;
 const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
   prisma,
@@ -1779,13 +1781,16 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
     { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, includeDiagnostics,
     { attempted: false, status: "SKIPPED", fallbackReason: "FEATURE_DISABLED" });
   let result;
+  let inferenceStarted = false;
   try {
+    await aiCostGate.reserve({ identity: { userId }, action: "EVENT_EMOTION", key: eventId ? `${eventId}:${EVENT_SECONDARY_MODEL_VERSION}` : null });
+    inferenceStarted = true;
     result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood,
       ...(includeDiagnostics ? { includeDiagnostics: true } : {}) });
-  } catch {
+  } catch (error) {
     return withEmotionLabDiagnostics(
-      { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: "RUNTIME_UNAVAILABLE" }, includeDiagnostics,
-      { attempted: true, status: "PROVIDER_ERROR", fallbackReason: "RUNTIME_UNAVAILABLE" });
+      { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: isAiCostError(error) ? error.code : "RUNTIME_UNAVAILABLE" }, includeDiagnostics,
+      { attempted: inferenceStarted, status: "PROVIDER_ERROR", fallbackReason: isAiCostError(error) ? error.code : "RUNTIME_UNAVAILABLE" });
   }
   const labels = canonicalEventLabels(result, primaryGardenMood);
   if (labels === null) return withEmotionLabDiagnostics(
@@ -2101,6 +2106,9 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
         : "ALREADY_RUNNING_OR_FINALIZED"
     };
     if (execution.claimed && !execution.succeeded) {
+      if (["AI_QUOTA_EXCEEDED", "AI_INFERENCE_ALREADY_RESERVED", "AI_BUDGET_UNAVAILABLE"].includes(execution.error?.code)) {
+        return res.status(aiCostHttpStatus(execution.error.code)).json({ ...payload, errorCode: execution.error.code });
+      }
       return res.status(502).json({ ...payload, errorCode: execution.error?.code || "WEEKLY_REPORT_JOB_FAILED" });
     }
     if (storedJob?.status === "FAILED") {
