@@ -3,7 +3,7 @@
 Provider and production-control-plane actions only. Never record passwords,
 tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 
-Last reconciled: 2026-10-06. Existing checked provider evidence is retained; this documentation update performed no new provider or deployment verification.
+Last reconciled: 2026-10-07. Existing checked provider evidence is retained; production exact-code rollout/migration verification and the scoped read-only shared-ledger follow-up below add new evidence. Deployment presence is distinct from live runtime/provider certification.
 
 ## 1. Database / Prisma provider
 
@@ -127,3 +127,78 @@ Migration gate follow-up (2026-10-06): **SAFE TO DEPLOY for the migration gate**
 - [x] Approved production read-only migration precheck PASS: one Direct pg session confirmed default_transaction_read_only=on before SELECT/SHOW. PostgreSQL 17.2; latest successful `202609280001_multi_profile_event_memory_embeddings`; all four targets pending, no failed/incomplete migrations, matching applied checksums and valid prerequisites/order. No target-schema conflict; pending additions/defaults and nullable relaxation are compatible. Touched tables under 107 KB; full statistics visibility, zero >60-second transactions, zero blocked sessions and no other-session target-table locks at observation. Existing EventMemoryEmbedding.updatedAt CURRENT_TIMESTAMP default difference is unrelated/non-blocking; no new target-migration drift. Status: `PASS FOR POINT-IN-TIME PRECHECK ONLY`; at precheck time no migrations applied, deployment performed, private rows returned or production data modified. Subsequent rollout/postcheck passed as recorded below; locks may change.
 
 Approved rollout/postcheck PASS (2026-10-06): Render Deploy succeeded/Live, active service commit `68dfd98da5b98de06005bcba8a724b7d0156ec3a`. Normal startup applied Daily Flower, Garden privacy, standalone Journal and Journal cover migrations; independent production read-only postcheck confirms all successful, latest `202610020002_private_journal_cover`, no failed/incomplete migration. Root HTTP 200 and anonymous AI reports HTTP 401 PASS for response/auth boundary only. Exact code proves consent lifecycle, durable cost gate, report fencing and Socket hardening are deployed; no unsafe/paid/user-mutating smoke test performed. Private-cache/web-header omissions, shared-primary/policy and multi-instance runtime certification, live Firebase propagation, distributed Socket, billing/retention/residency, backup/client-copy, grant/credential and monitoring limitations remain open. No provider configuration change or intentional production data change outside approved migrations.
+
+### Production shared-ledger follow-up — 2026-10-06
+
+- [x] Confirm deployed backend policy/order and durable ledger shape. Current Render has one instance/autoscaling off; no daily quota override keys or linked environment groups, so exact deployed gate defaults apply consistently to its HTTP/in-process executor. Same imported Prisma singleton serves those reservation paths. Read-only Direct SQL confirms permanent AuditEvent storage, valid primary key/required columns and zero current cost reservations. Backend retrieval/narrative/embedding/emotion/speech reserve before provider calls. Status: `PASS FOR INSPECTED BACKEND POLICY/DEPLOYED ORDER/STORAGE`; no live paid call or reservation race exercised.
+- [ ] Establish current Cloudflare Queue/reconciler/executor destinations and all paid callers, compare runtime/inspection primary and identity without disclosing credentials, and confirm any other executor's policy. Cloudflare control plane requires authentication; a separate c-lite benchmark appears in Render inventory. Status: `NOT VERIFIED`; repo dispatcher intent and one Prisma singleton do not prove all production callers/shared-primary identity.
+- [ ] Verify actual runtime ledger privileges and external retention. Inspection identity can SELECT/INSERT/DELETE/TRUNCATE and execute the advisory-lock function, but runtime identity equivalence is unproven. No owner FK, table trigger, pg_cron or targeted application reservation-pruning path was observed; external/operator cleanup remains unverified. Status: `PARTIAL / NOT VERIFIED`; retain AuditEvent Level 2 and direct credential/provider bypass limitations.
+
+Overall certification `PARTIAL`; deployed fail-closed controls present, not live outage/quota/provider certification. Defaults are intentional and not a failure. One inspected application instance; multi-instance live certification NOT VERIFIED. No paid AI, production mutation or provider configuration change. Existing billing/retention/residency, Firebase/Socket, cache/headers, credential/grant, backup/client-copy and monitoring checks remain open.
+
+
+### Targeted caller/runtime continuation — 2026-10-06
+
+- [x] Classify inspected paths: Render backend/in-process executor reserves/checks and invokes inference; Worker inference invokes AI without DB access; Queue delegates opaque IDs to backend execution; reconciliation Cron discovers/enqueues IDs without direct provider calls or tombstone pruning. Source equivalence across application revision/HEAD checked only for these Worker/benchmark files. Separately deployed Worker version is unverified.
+- [x] Inspect c-lite without invoking it: separate deployed Image web service/public address; no configured environment variables, secret files or linked groups. Source is local ONNX, outside customer integration, manual POST /benchmark and default startup run; no paid-provider/DB client. Deployed image contents/baked credentials, external scheduling and actual HTTP reachability remain unverified. Paid-quota bypass absent in inspected source; runtime bypass risk NOT VERIFIED.
+- [ ] Obtain live Cloudflare metadata: dashboard requires sign-in; existing Wrangler credential returns HTTP 403 for read-only account metadata. Actual Worker callers/version, Queue/Cron configuration and executor destination remain NOT VERIFIED; Queue gating PARTIAL based on source. Worker DB access is unnecessary if all normal traffic reserves at backend first.
+- [ ] Establish all reservation-capable components share the production PostgreSQL primary and verify Render runtime identity/primary without disclosing connection values: NOT VERIFIED. Prior single-Prisma backend evidence retained; no DB checks repeated. Runtime least-privilege grants PARTIAL; no grant changes.
+- [ ] Exclude active external reservation-tombstone pruning: PARTIAL; inspected Queue/Cron contains none, accepted backend evidence retained, live external inventory unavailable.
+- [x] Record current one-instance/autoscaling-off topology from accepted evidence. Multi-instance certification NOT VERIFIED and N/A for current topology; verify before scaling. Overall shared-ledger certification PARTIAL.
+
+No production data/config/provider changes, tests, benchmark invocation or paid AI calls. Only the two security documents edited; recovery stash retained. Next blocker: authenticated read-only Cloudflare topology/caller metadata and safe runtime DB identity/primary comparison.
+
+
+### Read-only Cloudflare topology audit attempt — 2026-10-06
+
+**Certification remains PARTIAL.** The authorized Keychain lookup for service `PetalPal Cloudflare Readonly Audit` returned no nonempty credential (exit status 0, empty output); the exact-service fallback also returned no credential. No credential value was printed, logged or persisted. No authenticated Cloudflare inventory could be obtained. This does not establish token validity, scope or live component topology.
+
+Live versions/bindings/callers of `petalpal-ai-dispatch-production` and `petalpal-emotion-ai`, producers/consumers of `petalpal-ai-jobs-production`, active reconciliation/cleanup triggers and other production AI callers remain NOT VERIFIED. Previously inspected source delegation to the gated Render executor, inference-only Worker design and local-ONNX c-lite isolation evidence are retained without repeating code/test/DB/Render checks. Queue gating and c-lite deployed-image isolation remain PARTIAL; same-ledger requirement and normal production gate bypass remain NOT VERIFIED; tombstone retention remains PARTIAL. Pure inference/transport Workers do not need PostgreSQL access when the Render executor reserves before provider calls; the live destination must still be established.
+
+Next blocker: make a nonempty temporary read-only credential retrievable by the current macOS user, then obtain authenticated Worker/Queue/Cron metadata and executor destination. No external configuration, production data, provider, deployment or secret changes were made. Only the two security documents were edited; recovery stash retained.
+
+
+### Authenticated Cloudflare retry — 2026-10-06
+
+The temporary Keychain credential is now nonempty and Cloudflare token verification succeeds with status `active`. The earlier empty-credential blocker is resolved. Account discovery (`GET /accounts`) returns HTTP 403 / error 9109; targeted local deployment metadata supplies no account ID. No account-scoped Worker/Queue/Cron inventory was reached, so this denial does not establish whether those read permissions work when the correct account ID is supplied. The non-secret PetalPal Cloudflare account ID has been requested; no permission expansion is required merely to bypass account discovery.
+
+Certification remains PARTIAL. Active production AI caller/binding inventory, Queue producers/consumers, reconciliation/cleanup triggers and executor destination remain NOT VERIFIED. Prior source-only Queue gating and c-lite isolation are retained as PARTIAL; same-ledger requirement/normal production bypass remain NOT VERIFIED and tombstone retention remains PARTIAL. No repo analysis, tests, deployment/Render/DB checks or paid AI calls were repeated. No token value was printed or persisted; no production configuration/data changed. Only these security documents were updated.
+
+Next blocker: supply the non-secret Cloudflare account ID, then retry account-scoped read-only topology endpoints with the existing active token.
+
+
+### Account-scoped Cloudflare retry — 2026-10-06
+
+The supplied account ID resolves the account-discovery prerequisite. Using the nonempty temporary Keychain credential, account-scoped Worker inventory and Queue inventory both return HTTP 401. Direct settings reads for `petalpal-ai-dispatch-production` and `petalpal-emotion-ai` also return HTTP 401 / Cloudflare error 10000. Token verification concurrently succeeds with status `active`: token validity is established, but authorization to the supplied account's topology metadata is not. No token value was printed or persisted, and permissions/configuration were not changed.
+
+**Shared-ledger certification remains PARTIAL.** No live Worker/Queue topology metadata was returned; production callers/bindings, Queue consumers/producers, Cron/cleanup inventory and executor destination remain NOT VERIFIED. Prior source evidence is unchanged: Render backend/executor reserves; inference Worker invokes Workers AI; source Queue delegates to backend. Queue gating, c-lite deployed-image isolation and tombstone retention remain PARTIAL; normal production bypass and same-ledger requirement remain NOT VERIFIED. No repo analysis, tests, deployment checks, Render/DB checks or paid inference were repeated. Only the two security documents were updated.
+
+**Next blocker:** an existing read-only credential authorized to read Worker/Queue/Cron metadata for the supplied account, or correction of the account/credential pairing. The agent made no token-permission or production configuration changes. The earlier missing account ID and empty credential blockers are resolved.
+
+
+### Live Cloudflare shared-ledger certification — 2026-10-07
+
+**Decision: PASS FOR CURRENT PRODUCTION TOPOLOGY.** This supersedes the earlier Cloudflare-access/topology PARTIAL decisions. Read-only authenticated account-scoped metadata and live deployed Worker source are now accessible. Accepted backend rollout, reservation-before-provider, policy, durable ledger and single-instance evidence were not repeated. No paid inference, tests, Render/DB checks or production changes occurred.
+
+| Live component | PostgreSQL reservation capability | Paid-provider capability | Production boundary |
+| --- | --- | --- | --- |
+| Render backend / in-process job executor | Create/check via accepted shared Prisma ledger | Invokes inference Worker | Sole reservation-capable production executor |
+| petalpal-emotion-ai | Neither; no DB/Hyperdrive binding | Workers AI binding present | Fetch-only; live source denies inference unless server bearer matches configured RENDER_SHARED_SECRET; no Cron/Queue |
+| petalpal-ai-dispatch-production | Neither directly | No active AI binding; no inference shared secret | Queue and Cron delegate to the existing gated Render backend |
+| petalpal-ai-jobs-production | Neither | Neither | Sole listed producer and consumer are production dispatcher |
+| petalpal-ai-dispatch-staging / staging Queue | Neither directly | No AI binding | Separate staging Queue; no active Cron; outside normal production flow |
+| c-lite benchmark | Neither in accepted inspected source | No Cloudflare Worker/provider binding in this account inventory | Separate local-ONNX benchmark, outside normal customer integration; accepted startup/manual behavior retained |
+
+**Live topology PASS:** the account Worker inventory contains exactly the production dispatcher, staging dispatcher and inference Worker. Queue inventory is complete (two queues, one page): production Queue producer/consumer both use petalpal-ai-dispatch-production; consumer batch size 1, concurrency 1, three retries. Staging Queue uses only staging dispatcher. Production reconciliation has one active */20 * * * * Cron; inference and staging Workers have no Cron schedules. No additional Cloudflare Worker AI caller or c-lite Worker is listed.
+
+**Queue/executor gating PASS:** production dispatcher binds only its dispatch/executor secrets, executor URL and production Queue. Its live configured HTTPS executor exactly matches the previously inspected production Render deployment target (comparison only; no URL recorded). Live Queue source sends opaque job IDs to authenticated /internal/ai-jobs/{jobId}/execute; Cron only discovers /internal/ai-jobs/dispatchable and enqueues IDs. Neither Queue nor Cron directly invokes AI or accesses PostgreSQL. Although the dispatcher bundle retains inference code, missing AI and inference bearer-secret bindings make that code unavailable as a production paid-provider path.
+
+**Normal customer bypass: NO in the inspected current topology. Same-ledger requirement: PASS.** Accepted normal backend paths reserve before invoking the inference Worker, and all live Queue work returns to that same gated backend/in-process executor. Only that backend creates/checks reservations; pure inference/transport Workers do not need DB access. The inference Worker requires its server-only bearer before provider invocation. Direct invocation by a bearer/provider-credential holder remains a credential-access boundary outside normal customer flow; this certification does not claim a cryptographic reservation proof at the inference endpoint.
+
+**c-lite production isolation PASS for normal customer flow:** accepted separate Render/local-ONNX benchmark evidence plus complete Cloudflare inventory shows no c-lite Worker, provider binding, Queue or Cron integration. Accepted startup/manual benchmark triggering is not a customer production paid-AI path. Deployed benchmark image equivalence/baked credentials and external manual/operator scheduling remain unverified; no benchmark was invoked or re-inspected.
+
+**Tombstone retention PASS for active inspected application/Cloudflare cleanup paths:** the only active Cloudflare Cron performs job discovery/enqueue, with no reservation/tombstone deletion. Queue execution uses backend gating; accepted backend no-pruning evidence remains. This does not certify operator deletion prevention, external retention policies or least-privilege grants.
+
+**Limits retained:** exact Render-runtime-to-inspection DB identity/primary equivalence remains NOT VERIFIED; runtime least-privilege grants remain PARTIAL. Same-ledger PASS concerns the sole reservation-capable production execution boundary, not a new SQL identity/grant check. Accepted current topology is one Render instance/autoscaling off. Multi-instance live certification remains NOT VERIFIED and N/A for current topology; verify before scaling. Broader security/provider issues retain their existing statuses.
+
+Only SECURITY.md and MANUAL_SECURITY_CHECKLIST.md changed. No token value was printed/persisted; no provider/configuration/secret/grant/deployment/production-data changes. Recovery stash retained. Next blocker for this topology certification: none; future scaling and independent runtime identity/grant verification remain separate follow-ups.
