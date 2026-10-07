@@ -758,3 +758,22 @@ test("report persistence rejects forged owner identity before any database write
     assert.equal(prisma.state.queries.length, 0);
   }
 });
+
+test('deterministic contradiction fails Weekly/Monthly before report or evidence persistence', async () => {
+  for (const type of [AI_JOB_TYPES.WEEKLY_REPORT, AI_JOB_TYPES.MONTHLY_REPORT]) {
+    const prisma = createReportPrisma();
+    const job = reportJob(type, type === AI_JOB_TYPES.WEEKLY_REPORT ? '2026-09-14' : '2026-09', { maxAttempts: 1 });
+    let calls = 0;
+    const worker = reportWorker({ prisma, job, provider: { async generateNarrative(input) {
+      calls++;
+      const output = validProviderOutput(input.report.reportType);
+      output.sections[0].claim = 'There were 9999 Events.';
+      output.sections[0].aggregateRefs = ['eventCount', 'topTopics'];
+      return output;
+    } } });
+    const result = await worker.runOnce({ now: new Date('2026-10-02T00:00:00Z') });
+    assert.equal(result.succeeded, false); assert.equal(result.error.code, 'REPORT_NARRATIVE_GROUNDING_FAILED');
+    assert.equal(calls, 1); assert.equal(job.status, 'FAILED');
+    assert.equal(prisma.state.weeklyReports.length, 0); assert.equal(prisma.state.monthlyReports.length, 0); assert.equal(prisma.state.evidence.length, 0);
+  }
+});
