@@ -3,6 +3,8 @@
 Provider and production-control-plane actions only. Never record passwords,
 tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 
+Last reconciled: 2026-10-06. Existing checked provider evidence is retained; this documentation update performed no new provider or deployment verification.
+
 ## 1. Database / Prisma provider
 
 - [ ] Verify the historical `DATABASE_URL` credential is revoked. Evidence: provider confirmation or non-secret credential status. Status: `ACTION REQUIRED`
@@ -69,7 +71,7 @@ tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 
 ## 8. Final Security P0 closure
 
-Repo Security P0 code work: `COMPLETE`. No remaining repo-level P0 blocker.
+Historical 2026-09-16 repository P0 closure: `COMPLETE WITH DOCUMENTED LIMITATIONS`. No new P0 identified in the reviewed delta; current feature P1/P2 and deployment checks remain open. This is not current release approval.
 
 Provider/manual unresolved:
 
@@ -84,7 +86,7 @@ Optional/compliance hardening:
 
 ## 9. Final global checkpoint
 
-- Repository P0 code status: `PASS`; true remaining repo P0 blockers: `NONE`.
+- Historical repository P0 checkpoint: `PASS (2026-09-16 scope)`; no new P0 identified in the reviewed delta. October report/Socket/AI-cost fixes are locally `TESTED`, not newly production/provider verified.
 - GitHub: `PASS`; Render: `PARTIAL / PLAN-LIMITED`; Cloudflare: `PASS`; Firebase/Google: `PASS`.
 - Backup/restore: `PARTIAL` (backup existence and isolated restore drill PASS; provider retention/encryption/access metadata not fully verified).
 - Workers AI data handling/DPA: `PASS`; inference retention: `PARTIAL / EXACT INFERENCE RETENTION NOT SPECIFIED`; data residency: `NOT VERIFIED / OPTIONAL HARDENING`.
@@ -92,6 +94,17 @@ Optional/compliance hardening:
 - Historical `DATABASE_URL`: `ACTION REQUIRED / UNCERTAIN`.
 - Final Security P0 classification: `P0 CLOSED WITH DOCUMENTED LIMITATIONS`.
 
-## AI cost/shared-limit deployment verification
+## 10. 2026-10 feature release provider checks
 
-- [ ] Verify paid-AI gate deployment: all Render/worker instances use the same PostgreSQL primary and identical server-side `AI_*_DAILY_LIMIT` / `AI_*_DAILY_CALL_LIMIT` values; runtime roles may reserve/read but cannot erase the durable AI-cost ledger. Exercise isolated multi-connection duplicate/reclaim/quota cases and live-provider latency; verify provider account-wide billing ceilings/alerts separately, since application call ceilings are not currency limits and do not cover direct credential use. Confirm retention does not prune operation tombstones or reset usage. Evidence: non-secret policy/grant review and test outcomes only. Status: `NOT VERIFIED`
+Canonical findings/actions: [Feature Security Delta Review](SECURITY.md#2026-10-feature-security-delta-review). These are pending checks, not deployment attestations; prior PASS evidence is not refreshed by this code review.
+
+- [ ] Verify exported web/native production preview/test-route behavior, intentional Fairy alias, release flags, approved Firebase domains and deep-link redirects. Evidence: release artifact route/negative-link matrix. Status: `NOT VERIFIED`
+- [ ] Confirm native Firebase persistence/backup policy; evaluate App Check/device attestation rollout and server enforcement for HTTP/Socket abuse signals. Evidence: SDK/provider configuration and replay negatives. Status: `NOT VERIFIED`; existing authentication still required.
+- [ ] Verify production Render/PostgreSQL pool limits, statement/query deadlines, worker concurrency, lease/inference duration alerts and AI spend thresholds. Evidence: non-secret configuration plus isolated load metrics. Status: `NOT VERIFIED / PLAN-LIMITED WHERE APPLICABLE`
+- [ ] Verify shared paid-AI enforcement at the backend/executor before retrieval, narrative, remote embedding, Event emotion/preview and speech calls; the inference Worker does not independently implement the PostgreSQL gate. Verify private-route cache bypass and hosted-web CSP/HSTS/nosniff/frame protection separately. Evidence: non-secret deployed boundary/header/cache checks. Status: `NOT VERIFIED`
+- [ ] Verify paid-AI gate deployment: all Render/worker instances use the same PostgreSQL primary and identical server-side `AI_*_DAILY_LIMIT` / `AI_*_DAILY_CALL_LIMIT` values; runtime roles may reserve/read but cannot erase the durable AI-cost ledger. Verify deployed multi-instance duplicate/reclaim/quota behavior, reservation-before-provider failures and fail-closed DB/config outages without using private production data; verify provider account-wide billing ceilings/alerts separately, since application call ceilings are not currency limits and do not cover direct credential use. Confirm retention does not prune operation tombstones or reset usage. Document controlled recovery for an ambiguous paid attempt: do not delete reservations to replay inference; crashes can leave reports unavailable without provider idempotency/durable results. Evidence: non-secret policy/grant review and test outcomes only. Status: `NOT VERIFIED`
+- [ ] Reconfirm Workers AI/embedding/report inference retention, logs, subprocessors and residency against the new selected-Event evidence data flow; use existing §7 provider records rather than recording private examples. Status: `NOT VERIFIED FOR NEW FLOW`; exact retention remains unspecified unless newly evidenced.
+
+- [ ] Verify deployed Firebase disabled/revoked/expired-session propagation, idle Socket eviction and privacy/unfriend/account-delete revocation; confirm single-instance/adapter assumptions and process-local movement/control budgets match deployment. Evidence: non-secret authorized/revoked delivery and normal-cadence outcomes. Status: `NOT VERIFIED`; distributed Socket revocation is not implemented/certified.
+- [x] Retain the 2026-09-29 production Queue cutover evidence. Evidence: [LONG_TERM_AI.md — Production Queue cutover and observation](LONG_TERM_AI.md#production-queue-cutover-and-observation--2026-09-29) records private authenticated execution, opaque IDs, duplicate/revoke/reconciliation and owner-scoped embedding/retrieval smoke. Status: `PASS FOR RECORDED SCOPE`; not evidence for later October fences/quotas.
+- [ ] Complete the recorded Queue observation and deployment verification of October report-final-write fencing/shared AI limits. Verify worker/backend policy alignment, active production reconciler and disabled staging Cron; monitor backlog/lease/attempt/cost alerts and sufficient-evidence report-provider behavior. Evidence: non-secret operational outcomes only. Status: `NOT VERIFIED`; no new provider action performed during reconciliation.
