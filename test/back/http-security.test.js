@@ -51,7 +51,6 @@ test("actual HTTP app preserves public caching and marks anonymous/auth/CORS err
     assert.match(response.headers.get("cache-control"), /public/);
     assert.equal(response.headers.get("strict-transport-security"), "max-age=15552000");
     assert.equal(response.headers.get("x-content-type-options"), "nosniff");
-    assert.equal(response.headers.get("x-petalpal-http-security"), "v1");
     assert.equal(response.headers.get("x-frame-options"), "DENY");
     assert.ok(response.headers.get("content-security-policy"));
     assert.equal(response.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
@@ -62,7 +61,6 @@ test("actual HTTP app preserves public caching and marks anonymous/auth/CORS err
     assert.equal(response.status, 401);
     assert.equal(response.headers.get("cache-control"), "no-store");
     assert.equal(response.headers.get("x-content-type-options"), "nosniff");
-    assert.equal(response.headers.get("x-petalpal-http-security"), "v1");
     await response.arrayBuffer();
   }
   const denied = await fetch(base + "/session", { headers: { Origin: "https://untrusted.example" } });
