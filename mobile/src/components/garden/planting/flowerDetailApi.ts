@@ -22,7 +22,7 @@ export function sourceFlowerImageUri(image: string): string | null {
 const request = apiRequest;
 export async function loadFlowerSession(): Promise<FlowerSession | null> {
   if (!await accessToken()) return null;
-  return request<FlowerSession>('/session');
+  return request<FlowerSession>('/session?view=metadata');
 }
 
 function flowerPath(ownerId: string, flowerId: string): string {

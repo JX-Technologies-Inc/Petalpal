@@ -101,6 +101,7 @@ import { requestId, emitSecurityEvent } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
 import { httpSecurity, securityHeaders } from "./lib/http-security.js";
+import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./lib/history-metadata.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -864,6 +865,22 @@ app.get("/users/:userId/friends", async (req, res) => {
 });
 
 app.get("/users/:userId/garden", async (req, res) => {
+  if (req.query.view !== undefined) {
+    if (req.query.view !== "metadata" || Object.keys(req.query).some(key => key !== "view")) {
+      return res.status(400).json({ error: "Invalid Garden view" });
+    }
+    if (!requireOwnUser(req, res, req.params.userId)) return;
+    try {
+      const flowers = await prisma.flower.findMany({
+        where: { userId: req.auth.userId }, select: historyFlowerSelect,
+        orderBy: { createdAt: "desc" }
+      });
+      return res.json({ owner: { id: req.auth.userId }, flowers: flowers.map(historyFlowerMetadata) });
+    } catch (error) {
+      logServerError("GET Garden metadata error", error);
+      return res.status(500).json({ error: "Unable to load Garden metadata" });
+    }
+  }
   try {
     const owner = await prisma.user.findUnique({
       where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
@@ -1375,6 +1392,10 @@ app.post("/users", (_req, res) => {
 });
 
 app.get("/session", async (req, res) => {
+  const metadata = req.query.view === "metadata";
+  if (req.query.view !== undefined && (!metadata || Object.keys(req.query).some(key => key !== "view"))) {
+    return res.status(400).json({ error: "Invalid session view" });
+  }
   const user = await prisma.user.findUnique({
     where: { id: req.auth.userId },
     select: {
@@ -1396,7 +1417,10 @@ app.get("/session", async (req, res) => {
   const localDate = getLocalDate(timezone);
 
   const [fairyState, todayCheckIn, garden] = await Promise.all([
-    prisma.fairyState.upsert({
+    metadata ? prisma.fairyState.findUnique({
+      where: { userId: user.id },
+      select: { onboardingStep: true, onboardingCompleted: true, lastEvent: true, unlockedFeatures: true }
+    }) : prisma.fairyState.upsert({
       where: { userId: user.id },
       update: {},
       create: { userId: user.id }
@@ -1407,14 +1431,17 @@ app.get("/session", async (req, res) => {
         localDate
       },
       orderBy: { createdAt: "desc" },
-      include: {
+      ...(metadata ? { select: { id: true, localDate: true } } : { include: {
         journal: true,
         emotionResult: true,
         flower: { include: { messages: true } }
-      }
+      } })
     }),
-    getGardenResponse(user.id, { includePrivate: true })
+    metadata ? Promise.resolve(null) : getGardenResponse(user.id, { includePrivate: true })
   ]);
+
+  if (metadata) return res.json(sessionMetadata({ user, fairyState, todayCheckIn,
+    dailyGrowLimitEnabled: isDailyGrowLimitEnabled() }));
 
   res.json({
     user,

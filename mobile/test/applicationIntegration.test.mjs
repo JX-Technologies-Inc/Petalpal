@@ -134,7 +134,7 @@ test('Firebase auth lifecycle syncs backend identity, signs out, and prevents la
   let calls = 0, finish, started;
   const ready = new Promise((resolve) => { started = resolve; });
   const { load } = setup(async (url, options) => {
-    if (url === '/session') return response({ user: { id: 'owner' }, fairyState: null });
+    if (url === '/session?view=metadata') return response({ user: { id: 'owner' }, fairyState: null });
     assert.equal(url, '/auth/session');
     assert.deepEqual(JSON.parse(options.body), { deferProfileCreation: true });
     if (++calls === 2) { started(); return new Promise((resolve) => { finish = resolve; }); }

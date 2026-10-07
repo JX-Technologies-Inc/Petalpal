@@ -320,7 +320,7 @@ test('API reuses the existing token and sends no caller supporter/date or local 
   assert.throws(() => api.leaveFlowerMessage('owner', placement.flowerId, 'x'.repeat(301)), /300/);
   api.configureFlowerSession({ apiBaseUrl: 'https://petalpal.example/', getAccessToken: async () => 'refreshed-token' });
   await api.loadFlowerSession();
-  assert.equal(requests[3].url, 'https://petalpal.example/session');
+  assert.equal(requests[3].url, 'https://petalpal.example/session?view=metadata');
   assert.equal(requests[3].options.headers.Authorization, 'Bearer refreshed-token');
 });
 

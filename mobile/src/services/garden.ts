@@ -27,7 +27,7 @@ export function flowerSecondaryEmotions(flower: GardenResponse['flowers'][number
 }
 export async function loadGarden(ownerId: string, viewerId: string): Promise<GardenFlower[]> {
   if (!ownerId || !viewerId) throw new Error('Sign in to load your Garden.');
-  const data = await apiRequest<GardenResponse>(`/users/${encodeURIComponent(ownerId)}/garden`);
+  const data = await apiRequest<GardenResponse>(`/users/${encodeURIComponent(ownerId)}/garden${ownerId === viewerId ? "?view=metadata" : ""}`);
   if (data.owner?.id !== ownerId || !Array.isArray(data.flowers)) throw new Error('Unable to load this Garden. Try again.');
   const privateView = ownerId === viewerId;
   return data.flowers.map((flower) => {

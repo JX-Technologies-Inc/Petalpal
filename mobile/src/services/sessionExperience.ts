@@ -19,7 +19,7 @@ interface SessionResponse extends Omit<SessionExperience, 'gardenOwnerId'> {
   garden?: { owner?: { id: string } };
 }
 export async function loadSessionExperience(): Promise<SessionExperience> {
-  const data = await apiRequest<SessionResponse>('/session');
+  const data = await apiRequest<SessionResponse>('/session?view=metadata');
   if (!data.user?.id) throw new Error('Missing authenticated profile');
   // Keep only the experience metadata needed by the app. No Journal text,
   // flowers or visitor records become an additional auth cache.
