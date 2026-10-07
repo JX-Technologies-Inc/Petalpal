@@ -136,6 +136,7 @@ async function api(baseUrl, path, { token = "owner-token", method = "GET", body 
     },
     ...(body ? { body: JSON.stringify(body) } : {})
   });
+  assert.equal(response.headers.get("cache-control"), "no-store");
   return { status: response.status, body: await response.json() };
 }
 

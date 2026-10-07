@@ -100,6 +100,7 @@ import { logServerError } from "./lib/security-log.js";
 import { requestId, emitSecurityEvent } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
+import { httpSecurity, securityHeaders } from "./lib/http-security.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -109,6 +110,7 @@ const openapiDocument = YAML.parse(
 );
 
 const app = express();
+app.use(httpSecurity);
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rateLimiters();
@@ -161,6 +163,10 @@ const io = new Server(server, {
     origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
     methods: ["GET", "POST"]
   }
+});
+
+io.engine.on("headers", (headers, req) => {
+  Object.assign(headers, securityHeaders(req), { "Cache-Control": "no-store" });
 });
 
 io.use(authenticateSocket);

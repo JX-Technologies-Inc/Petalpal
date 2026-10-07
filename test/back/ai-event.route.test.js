@@ -70,6 +70,7 @@ async function request(baseUrl, path, { token = "alice-token", method = "GET", b
     },
     ...(body ? { body: JSON.stringify(body) } : {})
   });
+  assert.equal(response.headers.get("cache-control"), "no-store");
   return { status: response.status, body: await response.json() };
 }
 
