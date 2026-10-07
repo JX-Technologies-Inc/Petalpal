@@ -94,7 +94,7 @@ import { deleteAccountDataInTransaction } from "./lib/account-deletion.js";
 import {
   endpointNotFound,
   handleHttpError,
-  requireJsonObject
+  requireJsonObject, allowBodyFields
 } from "./lib/http-errors.js";
 import { logServerError } from "./lib/security-log.js";
 import { requestId, emitSecurityEvent } from "./lib/security-events.js";
@@ -239,11 +239,11 @@ app.use(cors({
 }));
 // Authenticate and rate-limit before accepting the larger voice-only body.
 app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit,
-  express.json({ limit: "12mb" }), speechTranscriptionHandler());
+  express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
 app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
-  express.json({ limit: "700kb" }), requireJsonObject, async (req, res) => {
+  express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
     let coverImage;
     try { coverImage = validateJournalCover(req.body.coverImage); }
     catch (error) { return res.status(400).json({ error: error.message }); }
@@ -761,7 +761,7 @@ app.get("/users/me/garden-privacy", async (req, res) => {
   }
 });
 
-app.patch("/users/me/garden-privacy", async (req, res) => {
+app.patch("/users/me/garden-privacy", allowBodyFields(["allowGardenVisits"]), async (req, res) => {
   if (typeof req.body?.allowGardenVisits !== "boolean") {
     return res.status(400).json({ error: "allowGardenVisits must be a boolean" });
   }
@@ -1360,8 +1360,9 @@ app.post("/legacy-register-disabled", async (req, res) => {
     }
   });
 
-app.put("/users/:userId/profile", async (req, res) => {
-  if (!requireOwnUser(req, res, req.params.userId)) return;
+app.put("/users/:userId/profile",
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  allowBodyFields(["preferredLocale"]), async (req, res) => {
 
   const preferredLocale = normalizeLocale(req.body?.preferredLocale);
   if (!preferredLocale) {
@@ -1454,8 +1455,9 @@ app.get("/session", async (req, res) => {
 });
 
 // Private journals never enter Daily Grow, Events, or AI processing.
-app.post("/users/:userId/journals", async (req, res) => {
-  if (!requireOwnUser(req, res, req.params.userId)) return;
+app.post("/users/:userId/journals",
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  allowBodyFields(["content"]), async (req, res) => {
   const content = req.body?.content;
   if (typeof content !== "string" || !content.trim()) {
     return res.status(400).json({ error: "Write something before saving your journal" });
@@ -1725,8 +1727,9 @@ app.get("/users/:userId/ai-consent", async (req, res) => {
   res.json(consent);
 });
 
-app.put("/users/:userId/ai-consent", async (req, res) => {
-  if (!requireOwnUser(req, res, req.params.userId)) return;
+app.put("/users/:userId/ai-consent",
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  allowBodyFields(["aiProcessing", "personalization", "memoryEnabled"]), async (req, res) => {
 
   if (!hasOnlyBooleans(req.body, ["aiProcessing", "personalization", "memoryEnabled"])) {
     return res.status(400).json({ error: "AI consent fields must be booleans" });

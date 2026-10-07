@@ -61,7 +61,8 @@ test('private Journal routes isolate persistence and preserve historical shelf e
   for (const content of ['', '  ', 12, null]) assert.equal((await request('POST', { content })).status, 400);
   assert.equal((await request('POST', { content: 'x'.repeat(2001) })).status, 413);
   for (const content of [' Typed entry ', 'Dictated entry', 'x'.repeat(2000)]) {
-    const response = await request('POST', { content, mood: 'FIRE_BLOOM', dailyCheckInId: 'must-not-link' });
+    assert.equal((await request('POST', { content, mood: 'FIRE_BLOOM', dailyCheckInId: 'must-not-link' })).status, 400);
+    const response = await request('POST', { content });
     assert.equal(response.status, 201); const row = await response.json();
     assert.equal(row.dailyCheckInId, null); assert.equal(row.content, content.trim());
   }
