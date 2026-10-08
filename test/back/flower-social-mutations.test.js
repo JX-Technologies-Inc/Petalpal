@@ -85,6 +85,7 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
     messageCreate: prisma.message.create,
     visitCreate: prisma.visitRecord.create,
     visitFindFirst: prisma.visitRecord.findFirst,
+    queryRaw: prisma.$queryRawUnsafe,
     transaction: prisma.$transaction
   };
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
@@ -97,6 +98,7 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
   prisma.message.create = async () => message;
   prisma.visitRecord.create = async () => ({ id: "visit-1" });
   prisma.visitRecord.findFirst = async () => null;
+  prisma.$queryRawUnsafe = async () => [];
   prisma.$transaction = async (callback) => callback(prisma);
   setFirebaseTokenVerifierForTests(async () => ({ uid: "visitor-firebase", email_verified: true }));
 
@@ -129,6 +131,7 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
     prisma.message.create = originals.messageCreate;
     prisma.visitRecord.create = originals.visitCreate;
     prisma.visitRecord.findFirst = originals.visitFindFirst;
+    prisma.$queryRawUnsafe = originals.queryRaw;
     prisma.$transaction = originals.transaction;
     setFirebaseTokenVerifierForTests();
     await new Promise((resolve) => server.close(resolve));

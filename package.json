@@ -11,6 +11,7 @@
         "test": "npm run test:backend && npm run test:client",
         "test:backend": "DEV_DATABASE_URL=postgresql://test:test@localhost:5432/petalpal_test node --test test/back/*.test.js",
         "test:dast": "node scripts/api-security-fuzz.js",
+        "test:social-atomic": "node scripts/api-security-fuzz.js --atomic",
         "test:postgres": "node --test test/back/ai-p0.postgres.test.js",
         "test:client": "npm test --prefix client",
         "test:auth:e2e": "node --env-file-if-exists=.env --env-file-if-exists=.env.auth-e2e.local client/scripts/auth-e2e.mjs",

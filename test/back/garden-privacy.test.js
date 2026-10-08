@@ -49,6 +49,11 @@ test('persisted privacy enforces confirmed-friend reads, visits, direct access a
     const original = prisma[model][method]; restore.push(() => { prisma[model][method] = original; });
     prisma[model][method] = implementation;
   }
+  const transaction = prisma.$transaction, raw = prisma.$queryRawUnsafe;
+  restore.push(() => { prisma.$transaction = transaction; prisma.$queryRawUnsafe = raw; });
+  // Single-connection fixture; independent PostgreSQL tests prove lock behavior.
+  prisma.$transaction = async operation => operation(prisma);
+  prisma.$queryRawUnsafe = async () => [];
   const project = (value, select) => select ? Object.fromEntries(Object.keys(select).map(key => [key, value[key]])) : value;
   stub('user', 'findUnique', async ({ where, select, include }) => {
     const id = where.firebaseUid || where.id;
@@ -122,7 +127,8 @@ test('persisted privacy enforces confirmed-friend reads, visits, direct access a
     await delivered; await delay(20);
   }
   await moveOwner(); assert.equal(friendMoves, 1); assert.equal(outsiderMoves, 0);
-  assert.equal((await call('/users/me/garden-privacy', 'owner', 'PATCH', { allowGardenVisits: false, userId: 'friend' })).status, 200);
+  assert.equal((await call('/users/me/garden-privacy', 'owner', 'PATCH', { allowGardenVisits: false, userId: 'friend' })).status, 400);
+  assert.equal((await call('/users/me/garden-privacy', 'owner', 'PATCH', { allowGardenVisits: false })).status, 200);
   assert.equal((await call('/users/me/garden-privacy', 'owner')).body.allowGardenVisits, false);
   assert.equal((await call('/users/me/garden-privacy', 'friend')).body.allowGardenVisits, true, 'Body identity cannot change another account');
   assert.equal((await call('/users/friend/friends')).body[0].allowGardenVisits, false);

@@ -52,6 +52,10 @@ export async function socialCorpus(t, { prisma, replace, send, rawSend }) {
   replace(prisma.friendRequest, 'findMany', async ({ where, include }) => pending.filter(row => matches(row, where)).map(row => project(row, undefined, include)));
   replace(prisma.friendRequest, 'create', async ({ data, include }) => { writes.push({ model: 'request', data }); const row = { id: 'created-' + writes.length, ...data }; pending.push(row); return project(row, undefined, include); });
   for (const method of ['delete', 'deleteMany']) replace(prisma.friendRequest, method, async ({ where }) => { writes.push({ model: 'request-delete', where }); pending = pending.filter(row => !matches(row, where)); return { count: 1 }; });
+  replace(prisma, '$queryRawUnsafe', async (sql, ...ids) => {
+    assert.ok(sql.includes("set_config('lock_timeout'") || sql.includes('FOR NO KEY UPDATE') || sql.includes('FROM "FriendRequest"'));
+    return sql.includes('FOR NO KEY UPDATE') ? ids.filter(id => users[id]).map(id => ({ id })) : [];
+  });
   replace(prisma, '$transaction', async work => Array.isArray(work) ? Promise.all(work) : work(prisma));
   replace(prisma.garden, 'findUnique', async ({ where, include }) => {
     const owner = Object.values(users).find(row => row.garden.id === where.id || row.id === where.ownerId);

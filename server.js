@@ -13,7 +13,7 @@ import { fileURLToPath } from "url";
 import { createHash } from "crypto";
 
 import prisma from "./lib/prisma.js";
-import { canVisitGarden } from "./lib/garden-access.js";
+import { canVisitGarden, SocialAccessError, withSocialLocks, withSocialAuthorization, sendSocialError } from "./lib/garden-access.js";
 import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
@@ -75,6 +75,7 @@ import {
   FlowerSupportError,
   getFlowerDetail,
   giveFlowerSupport,
+  sendFlowerMessage,
   withGardenFlowerSupportState
 } from "./lib/flower-support.js";
 import http from "http";
@@ -559,8 +560,8 @@ async function syncMonthlyFairyProgress(tx, userId, month) {
   };
 }
 
-async function getUser(userId) {
-  return prisma.user.findUnique({
+async function getUser(userId, database = prisma) {
+  return database.user.findUnique({
     where: { id: userId },
     include: {
       garden: {
@@ -585,13 +586,13 @@ async function getUser(userId) {
   });
 }
 
-async function ensureGarden(userId) {
-  let garden = await prisma.garden.findUnique({
+async function ensureGarden(userId, database = prisma) {
+  let garden = await database.garden.findUnique({
     where: { ownerId: userId },
   });
 
   if (!garden) {
-    garden = await prisma.garden.create({
+    garden = await database.garden.create({
       data: {
         ownerId: userId,
         year: new Date().getFullYear(),
@@ -633,16 +634,16 @@ function getNonOverlappingPosition(existingFlowers) {
   }
   
 
-async function getGardenResponse(userId, { includePrivate = false, viewerUserId = userId } = {}) {
-  const user = await getUser(userId);
+async function getGardenResponse(userId, { includePrivate = false, viewerUserId = userId, database = prisma } = {}) {
+  const user = await getUser(userId, database);
 
   if (!user) {
     return null;
   }
 
-  const garden = user.garden || (await ensureGarden(user.id));
+  const garden = user.garden || (await ensureGarden(user.id, database));
 
-  const fullGarden = await prisma.garden.findUnique({
+  const fullGarden = await database.garden.findUnique({
     where: { id: garden.id },
     include: {
       flowers: {
@@ -683,7 +684,7 @@ async function getGardenResponse(userId, { includePrivate = false, viewerUserId 
 
   return serializeGardenResponse({
     owner: user,
-    garden: { ...fullGarden, flowers: await withGardenFlowerSupportState(prisma, fullGarden.flowers, viewerUserId) },
+    garden: { ...fullGarden, flowers: await withGardenFlowerSupportState(database, fullGarden.flowers, viewerUserId) },
     activeVisitors: getActiveVisitors(fullGarden.id),
     includePrivate
   });
@@ -782,19 +783,20 @@ app.patch("/users/me/garden-privacy", allowBodyFields(["allowGardenVisits"]), as
     return res.status(400).json({ error: "allowGardenVisits must be a boolean" });
   }
   try {
-    const update = () => prisma.user.update({
-      where: { id: req.auth.userId },
-      data: { allowGardenVisits: req.body.allowGardenVisits },
-      select: { allowGardenVisits: true }
+    const update = () => withSocialLocks(prisma, [req.auth.userId], async tx => {
+      const settings = await tx.user.update({ where: { id: req.auth.userId },
+        data: { allowGardenVisits: req.body.allowGardenVisits }, select: { allowGardenVisits: true } });
+      if (!settings.allowGardenVisits) {
+        const garden = await tx.garden.findUnique({ where: { ownerId: req.auth.userId }, select: { id: true } });
+        if (garden) setActiveVisitors(garden.id, []);
+      }
+      return settings;
     });
     const settings = req.body.allowGardenVisits ? await update()
       : await realtime.withRevocation({ gardenOwnerId: req.auth.userId }, update);
-    if (!settings.allowGardenVisits) {
-      const garden = await prisma.garden.findUnique({ where: { ownerId: req.auth.userId }, select: { id: true } });
-      if (garden) setActiveVisitors(garden.id, []);
-    }
     res.json(settings);
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("PATCH garden privacy error", err);
     res.status(500).json({ error: "Failed to save Garden privacy" });
   }
@@ -802,12 +804,14 @@ app.patch("/users/me/garden-privacy", allowBodyFields(["allowGardenVisits"]), as
 
 app.get("/users/:userId/garden-access", async (req, res) => {
   try {
-    const owner = await prisma.user.findUnique({
-      where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
+    const access = await withSocialLocks(prisma, [req.params.userId, req.auth.userId], async tx => {
+      const owner = await tx.user.findUnique({ where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true } });
+      if (!owner) throw new SocialAccessError("User not found", 404);
+      return { allowGardenVisits: owner.allowGardenVisits, canVisit: await canVisitGarden(tx, owner, req.auth.userId) };
     });
-    if (!owner) return res.status(404).json({ error: "User not found" });
-    res.json({ allowGardenVisits: owner.allowGardenVisits, canVisit: await canVisitGarden(prisma, owner, req.auth.userId) });
+    res.json(access);
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("GET Garden access error", err);
     res.status(500).json({ error: "Failed to load Garden access" });
   }
@@ -898,17 +902,10 @@ app.get("/users/:userId/garden", async (req, res) => {
     }
   }
   try {
-    const owner = await prisma.user.findUnique({
-      where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
-    });
-    if (!owner) return res.status(404).json({ error: "User not found" });
-    if (!await canVisitGarden(prisma, owner, req.auth.userId)) {
-      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
-    }
-    const gardenResponse = await getGardenResponse(req.params.userId, {
-      includePrivate: req.auth.userId === req.params.userId,
-      viewerUserId: req.auth.userId
-    });
+    const gardenResponse = await withSocialAuthorization(prisma, req.params.userId, req.auth.userId,
+      tx => getGardenResponse(req.params.userId, {
+        includePrivate: req.auth.userId === req.params.userId, viewerUserId: req.auth.userId, database: tx
+      }));
 
     if (!gardenResponse) {
       return res.status(404).json({ error: "User not found" });
@@ -916,6 +913,7 @@ app.get("/users/:userId/garden", async (req, res) => {
 
     res.json(gardenResponse);
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("GET /users/:userId/garden error", err);
     res.status(500).json({ error: "Failed to get garden" });
   }
@@ -2550,8 +2548,13 @@ app.post("/friends/request", async (req, res) => {
         const receiverId =
           friendRequest.receiverId;
   
-        await prisma.$transaction([
-          prisma.friendship.upsert({
+        await withSocialLocks(prisma, [senderId, receiverId], async tx => {
+          await tx.$queryRawUnsafe('SELECT id FROM "FriendRequest" WHERE id=$1 FOR UPDATE', friendRequest.id);
+          const current = await tx.friendRequest.findUnique({ where: { id: friendRequest.id } });
+          if (!current || current.status !== "pending" || current.senderId !== senderId || current.receiverId !== receiverId) {
+            throw new SocialAccessError("Friend request not found or no longer pending", 404);
+          }
+          await tx.friendship.upsert({
             where: {
               userId_friendId: {
                 userId: senderId,
@@ -2563,9 +2566,9 @@ app.post("/friends/request", async (req, res) => {
               userId: senderId,
               friendId: receiverId
             }
-          }),
+          });
   
-          prisma.friendship.upsert({
+          await tx.friendship.upsert({
             where: {
               userId_friendId: {
                 userId: receiverId,
@@ -2577,9 +2580,9 @@ app.post("/friends/request", async (req, res) => {
               userId: receiverId,
               friendId: senderId
             }
-          }),
+          });
   
-          prisma.friendRequest.deleteMany({
+          await tx.friendRequest.deleteMany({
             where: {
               OR: [
                 {
@@ -2592,8 +2595,8 @@ app.post("/friends/request", async (req, res) => {
                 }
               ]
             }
-          })
-        ]);
+          });
+        });
   
         realtime
           .to(`user:${senderId}`)
@@ -2617,6 +2620,7 @@ app.post("/friends/request", async (req, res) => {
           message: "Friend request accepted"
         });
       } catch (err) {
+    if (sendSocialError(res, err)) return;
         logServerError("POST /friends/requests/:requestId/accept error", err);
   
         res.status(500).json({
@@ -2702,14 +2706,14 @@ app.post("/friends/remove", async (req, res) => {
       return res.status(400).json({ error: "Invalid friend" });
     }
 
-    await realtime.withRevocation({ friends: [userId, friendId] }, () => prisma.friendship.deleteMany({
-      where: {
-        OR: [
-          { userId, friendId },
-          { userId: friendId, friendId: userId },
-        ],
-      },
-    }));
+    await realtime.withRevocation({ friends: [userId, friendId] }, () =>
+      withSocialLocks(prisma, [userId, friendId], async tx => {
+        await tx.friendship.deleteMany({ where: { OR: [{ userId, friendId }, { userId: friendId, friendId: userId }] } });
+        for (const [ownerId, visitorId] of [[userId, friendId], [friendId, userId]]) {
+          const garden = await tx.garden.findUnique({ where: { ownerId }, select: { id: true } });
+          if (garden) setActiveVisitors(garden.id, getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorId));
+        }
+      }));
 
     realtime
   .to(`user:${userId}`)
@@ -2727,6 +2731,7 @@ app.post("/friends/remove", async (req, res) => {
       friendFriends: [],
     });
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("POST /friends/remove error", err);
     res.status(500).json({ error: "Failed to remove friend" });
   }
@@ -3035,6 +3040,7 @@ app.get("/users/:userId/flowers/:flowerId", requireSocialGardenAccess, async (re
     if (error instanceof FlowerSupportError) {
       return res.status(error.status).json({ error: error.message, code: error.code });
     }
+    if (sendSocialError(res, error)) return;
     logServerError("GET /users/:userId/flowers/:flowerId error", error);
     res.status(500).json({ error: "Failed to get flower details" });
   }
@@ -3070,6 +3076,7 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
     if (error instanceof FlowerSupportError) {
       return res.status(error.status).json({ error: error.message, code: error.code });
     }
+    if (sendSocialError(res, error)) return;
     logServerError("POST /users/:userId/flowers/:flowerId/support error", error);
     res.status(500).json({ error: "Failed to support flower" });
   }
@@ -3110,90 +3117,17 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
           });
         }
   
-        const flower =
-          await prisma.flower.findFirst({
-            where: {
-              id: flowerId,
-              userId
-            },
-            select: {
-              id: true,
-              gardenId: true
-            }
-          });
-  
-        if (!flower) {
-          return res.status(404).json({
-            error: "Flower not found"
-          });
-        }
-  
-        const visitor = await prisma.user.findUnique({
-          where: { id: visitorUserId },
-          select: { id: true, name: true, avatar: true }
+        const result = await sendFlowerMessage(prisma, {
+          ownerUserId: userId, flowerId, viewerUserId: visitorUserId, text: trimmedText, visitorAvatar
+        });
+        const socialFlower = result.flower;
+        realtime.to(`garden:${userId}`).to(`user:${userId}`).emit("messageAdded", {
+          gardenOwnerId: userId, flowerId, message: toSocialMessage(result.message), flower: socialFlower
+        });
+        realtime.to(`garden:${userId}`).to(`user:${userId}`).emit("visitRecordAdded", {
+          gardenOwnerId: userId, record: result.visitRecord
         });
 
-        if (!visitor) {
-          return res.status(401).json({ error: "Authenticated user not found" });
-        }
-
-        const newMessage = await prisma.message.create({
-          data: {
-            author: visitor.name,
-            text: trimmedText,
-            flowerId: flower.id,
-            userId: visitor.id
-          }
-        });
-  
-        const updatedFlower =
-          await prisma.flower.findUnique({
-            where: {
-              id: flower.id
-            },
-            include: {
-              messages: true
-            }
-          });
-  
-        const socialFlower = toSocialFlower(updatedFlower);
-        const messagePayload = {
-          gardenOwnerId: userId,
-          flowerId: updatedFlower.id,
-          message: toSocialMessage(newMessage),
-          flower: socialFlower
-        };
-  
-        realtime
-          .to(`garden:${userId}`)
-          .to(`user:${userId}`)
-          .emit("messageAdded", messagePayload);
-  
-        if (visitor) {
-          const newVisitRecord =
-            await prisma.visitRecord.create({
-              data: {
-                visitorId: visitor.id,
-                visitorName: visitor.name,
-                visitorAvatar:
-                  visitorAvatar ||
-                  visitor.avatar ||
-                  "🦋",
-                action: "message",
-                gardenId: flower.gardenId,
-                userId: visitor.id
-              }
-            });
-  
-          realtime
-            .to(`garden:${userId}`)
-            .to(`user:${userId}`)
-            .emit("visitRecordAdded", {
-              gardenOwnerId: userId,
-              record: newVisitRecord
-            });
-        }
-  
         console.log(
           `message completed in ${Date.now() - startTime}ms`
         );
@@ -3201,6 +3135,8 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
         res.json(socialFlower);
   
       } catch (err) {
+        if (err instanceof FlowerSupportError) return res.status(err.status).json({ error: err.message });
+    if (sendSocialError(res, err)) return;
         logServerError("POST /users/:userId/flowers/:flowerId/message error", err, {
           latencyMs: Date.now() - startTime
         });
@@ -3262,6 +3198,7 @@ app.delete("/users/:userId/flowers/:flowerId", async (req, res) => {
 });
 
 app.post("/visit", async (req, res) => {
+  let publishedGardenId;
   try {
     const {
       hostUserId,
@@ -3278,91 +3215,77 @@ app.post("/visit", async (req, res) => {
       return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
     }
 
-    const host = await prisma.user.findUnique({
-      where: {
-        id: hostUserId,
-      },
-    });
-
-    const visitor = await prisma.user.findUnique({
-      where: {
-        id: visitorUserId,
-      },
-    });
-
-    if (!host || !visitor) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (!await canVisitGarden(prisma, host, visitorUserId)) {
-      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
-    }
-    const hostGarden = await ensureGarden(host.id);
-
-    const visitors = getActiveVisitors(hostGarden.id);
-    const existing = visitors.find((item) => item.visitorId === visitor.id);
-
-    if (existing) {
-      existing.x = x;
-      existing.y = y;
-      existing.avatar = visitorAvatar || visitor.avatar;
-      existing.name = visitor.name;
-    } else {
-      visitors.push({
-        visitorId: visitor.id,
-        name: visitor.name,
-        avatar: visitorAvatar || visitor.avatar,
-        x,
-        y,
+    const result = await withSocialAuthorization(prisma, hostUserId, visitorUserId, async tx => {
+      const host = await tx.user.findUnique({ where: { id: hostUserId } });
+      const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
+      if (!visitor) throw new SocialAccessError("User not found", 404);
+      const hostGarden = await ensureGarden(host.id, tx);
+      const newVisitRecord = await tx.visitRecord.create({
+        data: {
+          visitorId: visitor.id,
+          visitorName: visitor.name,
+          visitorAvatar:
+            visitorAvatar ||
+            visitor.avatar ||
+            "🦋",
+          action: "started visiting your garden",
+          gardenId: hostGarden.id,
+          userId: visitor.id,
+        },
       });
-    }
 
-    setActiveVisitors(hostGarden.id, visitors);
+      const visitRecords = await tx.visitRecord.findMany({
+        where: {
+          gardenId: hostGarden.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 30,
+      });
 
-    const newVisitRecord = await prisma.visitRecord.create({
-      data: {
-        visitorId: visitor.id,
-        visitorName: visitor.name,
-        visitorAvatar:
-          visitorAvatar ||
-          visitor.avatar ||
-          "🦋",
-        action: "started visiting your garden",
-        gardenId: hostGarden.id,
-        userId: visitor.id,
-      },
+      const visitors = getActiveVisitors(hostGarden.id).map(v => ({ ...v }));
+      const existing = visitors.find((item) => item.visitorId === visitor.id);
+
+      if (existing) {
+        existing.x = x;
+        existing.y = y;
+        existing.avatar = visitorAvatar || visitor.avatar;
+        existing.name = visitor.name;
+      } else {
+        visitors.push({
+          visitorId: visitor.id,
+          name: visitor.name,
+          avatar: visitorAvatar || visitor.avatar,
+          x,
+          y,
+        });
+      }
+
+      setActiveVisitors(hostGarden.id, visitors);
+      publishedGardenId = hostGarden.id;
+
+      return { newVisitRecord, hostId: host.id, activeVisitors: visitors, visitRecords };
     });
-
     realtime
-      .to(`garden:${host.id}`)
-      .to(`user:${host.id}`)
+      .to(`garden:${result.hostId}`)
+      .to(`user:${result.hostId}`)
       .emit("visitRecordAdded", {
-        gardenOwnerId: host.id,
-        record: newVisitRecord
+        gardenOwnerId: result.hostId,
+        record: result.newVisitRecord
       });
 
-    const visitRecords = await prisma.visitRecord.findMany({
-      where: {
-        gardenId: hostGarden.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 30,
-    });
-
-    res.json({
-      success: true,
-      activeVisitors: getActiveVisitors(hostGarden.id),
-      visitRecords,
-    });
+    res.json({ success: true, activeVisitors: result.activeVisitors, visitRecords: result.visitRecords });
   } catch (err) {
+    if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
+    if (sendSocialError(res, err)) return;
     logServerError("POST /visit error", err);
     res.status(500).json({ error: "Failed to visit garden" });
   }
 });
 
 app.post("/visit/move", async (req, res) => {
+  let publishedGardenId;
   try {
     const { hostUserId, x, y, visitorAvatar } = req.body;
     const visitorUserId = req.auth.userId;
@@ -3374,64 +3297,45 @@ app.post("/visit/move", async (req, res) => {
       return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
     }
 
-    const host = await prisma.user.findUnique({
-      where: {
-        id: hostUserId,
-      },
+    const result = await withSocialAuthorization(prisma, hostUserId, visitorUserId, async tx => {
+      const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
+      if (!visitor) throw new SocialAccessError("User not found", 404);
+      const hostGarden = await ensureGarden(hostUserId, tx);
+      const visitors = getActiveVisitors(hostGarden.id).map(v => ({ ...v }));
+      const activeVisitor = visitors.find(
+        (item) => item.visitorId === visitorUserId
+      );
+
+      if (!activeVisitor) {
+        throw new SocialAccessError("Visitor not active in this garden", 404);
+      }
+
+      activeVisitor.x = x;
+      activeVisitor.y = y;
+
+      if (visitorAvatar) {
+        activeVisitor.avatar = visitorAvatar;
+      }
+
+      setActiveVisitors(hostGarden.id, visitors);
+      publishedGardenId = hostGarden.id;
+
+      const movedVisitor = {
+        visitorId: activeVisitor.visitorId,
+        name: activeVisitor.name,
+        avatar: activeVisitor.avatar,
+        x: activeVisitor.x,
+        y: activeVisitor.y,
+      };
+
+      return { movedVisitor, visitors };
     });
-
-    const visitor = await prisma.user.findUnique({
-      where: {
-        id: visitorUserId,
-      },
-    });
-
-    if (!host || !visitor) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    if (!await canVisitGarden(prisma, host, visitorUserId)) {
-      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
-    }
-    const hostGarden = await ensureGarden(host.id);
-    const visitors = getActiveVisitors(hostGarden.id);
-
-    const activeVisitor = visitors.find(
-      (item) => item.visitorId === visitorUserId
-    );
-
-    if (!activeVisitor) {
-      return res.status(404).json({ error: "Visitor not active in this garden" });
-    }
-
-    activeVisitor.x = x;
-    activeVisitor.y = y;
-
-    if (visitorAvatar) {
-      activeVisitor.avatar = visitorAvatar;
-    }
-
-    setActiveVisitors(hostGarden.id, visitors);
-
-const movedVisitor = {
-  visitorId: activeVisitor.visitorId,
-  name: activeVisitor.name,
-  avatar: activeVisitor.avatar,
-  x: activeVisitor.x,
-  y: activeVisitor.y,
-};
-
-realtime.to(`garden:${hostUserId}`).emit(
-  "avatarMoved",
-  movedVisitor
-);
-
-res.json({
-  success: true,
-  activeVisitors: getActiveVisitors(hostGarden.id),
-});
+    realtime.to(`garden:${hostUserId}`).emit("avatarMoved", result.movedVisitor);
+    res.json({ success: true, activeVisitors: result.visitors });
 
   } catch (err) {
+    if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
+    if (sendSocialError(res, err)) return;
     logServerError("POST /visit/move error", err);
     res.status(500).json({ error: "Failed to move visitor" });
   }

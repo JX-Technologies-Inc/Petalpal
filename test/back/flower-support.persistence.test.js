@@ -6,6 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
+import { sendSocialError } from "../../lib/garden-access.js";
 import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite/vector";
 import {
@@ -38,6 +39,8 @@ function prismaAdapter(database, fault = { failIncrement: false }) {
     return { ...flower, messages, dailyCheckIn };
   }
   return {
+    $queryRawUnsafe: async (sql, ...params) => (await database.query(sql, params)).rows,
+    friendship: { findUnique: ({ where }) => first('SELECT id FROM "Friendship" WHERE "userId"=$1 AND "friendId"=$2', [where.userId_friendId.userId, where.userId_friendId.friendId]) },
     user: {
       findUnique: ({ where }) => first('SELECT * FROM "User" WHERE "id" = $1', [where.id])
     },
@@ -88,11 +91,11 @@ async function routeHandlers(database, events) {
   const io = { to() { return this; }, emit(name, payload) { events.push({ name, payload }); } };
   vm.runInNewContext(source.slice(start, end), {
     app: {
-      get(route, handler) { handlers.set(`GET ${route}`, handler); },
-      post(route, handler) { handlers.set(`POST ${route}`, handler); }
+      get(route, ...handlersList) { handlers.set(`GET ${route}`, handlersList.at(-1)); },
+      post(route, ...handlersList) { handlers.set(`POST ${route}`, handlersList.at(-1)); }
     },
     prisma: database,
-    io,
+    io, realtime: io, requireSocialGardenAccess: (_req, _res, next) => next(), sendSocialError,
     getFlowerDetail,
     giveFlowerSupport,
     FlowerSupportError,
@@ -132,6 +135,9 @@ test("a competing committed record returns its current count rather than the ear
   const database = {
     user: { findUnique: async () => ({ id: "visitor", timezone: "UTC", name: "Visitor" }) },
     $transaction: async (callback) => callback({
+      $queryRawUnsafe: async () => [],
+      user: { findUnique: async () => ({ id: "owner", allowGardenVisits: true }) },
+      friendship: { findUnique: async () => ({ id: "confirmed" }) },
       flower: { findFirst: async () => ({
         id: "flower-x", userId: "owner", gardenId: "garden-owner",
         supportCount: ++flowerReads === 1 ? 7 : 8
@@ -165,13 +171,16 @@ test("Daily Support reuses persisted visit history with atomic counts and author
   )).rows;
   try {
     const migrationRoot = path.join(projectRoot, "prisma", "migrations");
-    for (const name of (await readdir(migrationRoot)).filter((name) => /^\d/.test(name)).sort()) {
+    for (const name of (await readdir(migrationRoot)).filter((name) => /^\d+_[a-z0-9_]+$/.test(name)).sort()) {
       await database.exec(await readFile(path.join(migrationRoot, name, "migration.sql"), "utf8"));
     }
     await database.exec(`
       INSERT INTO "User" ("id", "name", "timezone") VALUES
         ('owner', 'Owner', 'UTC'), ('visitor', 'Visitor', 'America/Vancouver'),
         ('other-visitor', 'Other Visitor', 'UTC');
+      INSERT INTO "Friendship" (id, "userId", "friendId") VALUES
+        ('friend-a', 'owner', 'visitor'), ('friend-b', 'visitor', 'owner'),
+        ('friend-c', 'owner', 'other-visitor'), ('friend-d', 'other-visitor', 'owner');
       INSERT INTO "Garden" ("id", "ownerId") VALUES ('garden-owner', 'owner');
       INSERT INTO "DailyCheckIn" ("id", "userId", "localDate", "timezone", "updatedAt")
         VALUES ('check-in-x', 'owner', '2026-09-27', 'UTC', CURRENT_TIMESTAMP);
@@ -317,9 +326,12 @@ test("Daily Support reuses persisted visit history with atomic counts and author
     await t.test("a database uniqueness race rolls back the loser and reads the winning count", async () => {
       const raceDay = new Date("2026-10-02T20:00:00Z");
       const priorCount = await count();
+      let rejected = false;
       const racedClient = {
         ...client,
-        $transaction: async () => {
+        $transaction: async (callback, options) => {
+          if (rejected) return client.$transaction(callback, options);
+          rejected = true;
           // Commit the competing request through the actual helper/database,
           // then model PostgreSQL rejecting the loser's concurrent insertion.
           await support("flower-x", raceDay);
