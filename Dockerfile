@@ -5,7 +5,7 @@ WORKDIR /app/client
 ARG VITE_FIREBASE_API_KEY
 
 COPY client/package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY client/ ./
 RUN test -n "$VITE_FIREBASE_API_KEY" && npm run build
@@ -23,8 +23,9 @@ COPY package*.json ./
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 COPY lib/database-isolation.js ./lib/database-isolation.js
+COPY lib/native-security.js ./lib/native-security.js
 
-RUN NODE_ENV=production DATABASE_URL=postgresql://build:build@localhost:5432/petalpal_build npm install --include=dev
+RUN NODE_ENV=production DATABASE_URL=postgresql://build:build@localhost:5432/petalpal_build npm ci --include=dev
 
 COPY . .
 
