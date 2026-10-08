@@ -20,7 +20,7 @@ let fixtureId;
 const canary = 'private-batches2to5-' + randomUUID();
 let stage = 'owned ignored configuration', app, auth, db, prisma, server, privateCwd;
 let owner, visitor, tokens = {}, fixtureAttempted = false, baseline, port, requests = 0, cleanupConfirmed = false;
-let profileBaseline, gardenBaseline, friendshipIds = [], activeBatch, batchStartRequests;
+let firebaseMetadata, profileBaseline, gardenBaseline, friendshipIds = [], activeBatch, batchStartRequests;
 function local(name, json = false) {
   const path = resolve(root, name), stat = lstatSync(path);
   assert.ok(stat.isFile() && stat.uid === process.getuid() && (stat.mode & 0o777) === 0o600, 'Owned regular 0600 file required');
@@ -33,7 +33,7 @@ async function fixtureState() {
     (SELECT count(*)::int FROM "VisitRecord" WHERE "gardenId"=$2) AS visits
     FROM "Flower" f WHERE f.id=$1 AND f."userId"=$3`, [fixtureId, owner.gardenId, owner.id])).rows;
 }
-async function setup() {
+async function setup({ authenticateExisting = true } = {}) {
   try {
     const config = local('.env.native-security.local');
     const allowed = ['NODE_ENV','PORT','DEV_DATABASE_URL','FIREBASE_PROJECT_ID','NATIVE_SECURITY_TEST','API_DOCS_ENABLED','AI_USER_DAILY_CALL_LIMIT','AI_GLOBAL_DAILY_CALL_LIMIT','AI_ASYNC_EXECUTION_MODE'];
@@ -49,7 +49,7 @@ async function setup() {
     const saved = ['A','B'].map(label => ({ email: accounts[`NATIVE_TEST_${label}_EMAIL`]?.trim().toLowerCase(), password: accounts[`NATIVE_TEST_${label}_PASSWORD`] }));
     assert.ok(saved.every(a => a.email && a.password) && saved[0].email !== saved[1].email, 'Existing distinct A/B credentials required');
     // C is neither queried nor used. Do not invoke native harness provisioning.
-    for (const key of Object.keys(process.env)) if (!['PATH','HOME','TMPDIR','LANG','TERM','USER','PETALPAL_SOCIAL_CHECKPOINT','PETALPAL_REALTIME_CHECKPOINT'].includes(key)) delete process.env[key];
+    for (const key of Object.keys(process.env)) if (!['PATH','HOME','TMPDIR','LANG','TERM','USER','PETALPAL_SOCIAL_CHECKPOINT','PETALPAL_REALTIME_CHECKPOINT','PETALPAL_REVOCATION_CHECKPOINT'].includes(key)) delete process.env[key];
     Object.assign(process.env, config, { DOTENV_CONFIG_PATH: join(root, '.env.native-security.local') });
     privateCwd = mkdtempSync(join(tmpdir(), 'petalpal-social-batches2to5-')); process.chdir(privateCwd);
     stage = 'isolated PostgreSQL identity/profile gate';
@@ -77,11 +77,13 @@ async function setup() {
     assert.ok(registered.ok, 'Registered isolated Firebase app unavailable');
     const metadata = await registered.json();
     assert.ok(metadata.projectId === project && metadata.appId === client.EXPO_PUBLIC_FIREBASE_APP_ID && metadata.apiKey === client.EXPO_PUBLIC_FIREBASE_API_KEY && metadata.authDomain === client.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN, 'Registered app/API-key identity mismatch');
+    firebaseMetadata = metadata;
     stage = 'existing verified A/B Firebase authentication';
     for (let i = 0; i < saved.length; i++) {
       const profile = i === 0 ? owner : visitor;
       const existing = await auth.getUserByEmail(saved[i].email);
       assert.ok(existing.uid === profile.firebaseUid && existing.emailVerified === true && !existing.disabled, 'Existing Firebase/profile linkage rejected');
+      if (!authenticateExisting) continue; // Read-only A/B preservation for disposable D acceptance.
       const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(metadata.apiKey)}`, {
         method: 'POST', redirect: 'error', signal: AbortSignal.timeout(15000), headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...saved[i], returnSecureToken: true })
@@ -314,6 +316,8 @@ if (resolve(process.argv[1] || '') === fileURLToPath(import.meta.url)) test('Iso
 // no completed acceptance tests and performs no authentication or database work.
 export const isolatedSocial = {
   setup, identity, startBatch, cleanupBatch, request, friend, privacy, removeFriend, fixtureState,
+  get providerAuth() { return auth; }, get firebaseMetadata() { return firebaseMetadata; },
+  async preserved() { return JSON.stringify(await profilesState()) === JSON.stringify(profileBaseline) && JSON.stringify(await gardensState()) === JSON.stringify(gardenBaseline); },
   get root() { return root; }, get owner() { return owner; }, get visitor() { return visitor; },
   get tokens() { return tokens; }, get prisma() { return prisma; }, get canary() { return canary; },
   get fixtureId() { return fixtureId; }, get port() { return port; }, get stage() { return stage; },
