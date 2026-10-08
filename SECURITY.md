@@ -296,11 +296,47 @@ Three defects were reproduced before correction: dotted private API paths skippe
 
 **Mutation / cleanup evidence:** one uniquely identified synthetic Flower was created only after isolation/provider/profile gates. Every acceptance read preserved its complete persisted row, message count and owner-Garden visit count. Cleanup reverified database identity and deleted only that batch ID + owner + synthetic marker; absence confirmed PASS. No profile/Garden/friendship/account was created, edited or deleted. A/B accounts were preserved; C was neither queried nor recreated/deleted. Existing containers/databases/services were not restarted or removed. Real isolated sign-in may update normal provider sign-in metadata; no production target, authenticated production request, paid AI, migration, provider-setting change, deployment or native scenario occurred. No code defect was confirmed; added only this focused acceptance test and checklist. The prior 34 concurrency tests / 14 regressions / 102 DAST requests were not rerun. Test syntax and documentation diff checks PASS; canonical P0/P1/P2 statuses/counts unchanged; manual checklist/mobile documentation unchanged.
 
-**Remaining acceptance (not executed in Batch 1):**
-- [ ] Next batch: legitimate confirmed-friend Flower/Garden reads and revoked-friend read denial, using separately scoped disposable isolated relationships.
-- [ ] Later batch: isolated authenticated privacy OFF / support / message acceptance and cleanup; no production concurrent/runtime certification is inferred.
+**Historical Batch 1 handoff (not executed then; completed by Batches 2–5 below):**
+- [x] Subsequent Batch 2: legitimate confirmed-friend Flower/Garden reads and revoked-friend read denial using disposable isolated relationships — PASS below.
+- [x] Subsequent Batches 3–5: isolated authenticated privacy OFF / support / message / Garden visit acceptance and cleanup — PASS below; no production concurrent/runtime certification is inferred.
 
 Production remains exact Live `d510b1ff97902704721060b4c1261657be3e4b76`; this isolated evidence does not upgrade authenticated production Flower/privacy/Garden or distributed realtime status. Batch 1 stops here.
+
+## Authenticated Social Acceptance — Remaining Isolated Matrix — 2026-10-08
+
+Batch 1 4/4 remains accepted. Nonfriend Flower/Garden denial and owner/privacy-ON reads are reused, not rerun. Production remains Live `d510b1ff97902704721060b4c1261657be3e4b76`; production authenticated behavior remains NOT VERIFIED. Prior 34 real PostgreSQL concurrency tests / 14 regressions / 102 DAST requests / native 7/7 are reused without reruns.
+
+- [x] Batch 2: Confirmed-friend Garden read with private fields excluded.
+- [x] Batch 2: Confirmed-friend direct Flower read with private fields excluded.
+- [x] Batch 2: Friendship removal revokes Garden access.
+- [x] Batch 2: Previously authorized Firebase token cannot read revoked Flower.
+
+**Batch 2 evidence:** PASS; 4/4 new cases, 5 authenticated loopback requests. Real isolated Firebase A/B tokens and PostgreSQL identity gates passed; owned fixture cleanup PASS. Same real tokens were retained across revocation; no mocked auth or concurrency rerun. Production authenticated status remains NOT VERIFIED.
+
+- [x] Batch 3: Privacy OFF denies confirmed-friend Garden access.
+- [x] Batch 3: Privacy OFF denies previously authorized direct Flower access.
+- [x] Batch 3: Privacy OFF preserves owner Garden access.
+- [x] Batch 3: Privacy ON restores confirmed-friend sanitized Garden access.
+
+**Batch 3 evidence:** PASS; 4/4 new cases, 6 authenticated loopback requests. Real isolated Firebase A/B tokens and PostgreSQL identity gates passed; owned fixture cleanup PASS. Same real tokens were retained across revocation; no mocked auth or concurrency rerun. Production authenticated status remains NOT VERIFIED.
+
+- [x] Batch 4: Cross-owner Flower identity mismatch denied without disclosure.
+- [x] Batch 4: Friend Support commits once and repeated same-day Support is idempotent.
+- [x] Batch 4: Friend Message persists token-derived author and one history row.
+- [x] Batch 4: Friendship and privacy revocation reject Support and Message without writes.
+
+**Batch 4 evidence:** PASS; 4/4 new cases, 11 authenticated loopback requests. Real isolated Firebase A/B tokens and PostgreSQL identity gates passed; owned fixture cleanup PASS. Same real tokens were retained across revocation; no mocked auth or concurrency rerun. Production authenticated status remains NOT VERIFIED.
+
+- [x] Batch 5: Confirmed friend can visit and move with token-derived identity.
+- [x] Batch 5: Friendship revocation denies new visit and stale visitor movement.
+- [x] Batch 5: Privacy revocation denies new visit and previously active movement.
+- [x] Batch 5: Privacy regrant cannot resurrect a stale visitor without a new visit.
+
+**Batch 5 evidence:** PASS; 4/4 new cases, 11 authenticated loopback requests. Real isolated Firebase A/B tokens and PostgreSQL identity gates passed; owned fixture cleanup PASS. Same real tokens were retained across revocation; no mocked auth or concurrency rerun. Production authenticated status remains NOT VERIFIED.
+
+**Completed isolated matrix:** Batches 2–5 each 4/4 PASS; 16 new acceptance cases / 33 authenticated loopback requests in one focused run (Node reports 17 tests including the orchestration wrapper). Batch 1 remains 4/4 from its separate accepted run: total 20/20 isolated cases. Batch checkpoints were written immediately after each batch passed and its cleanup succeeded; no accepted batch was rerun. Zero confirmed app-controlled defects; no application changes. Full A/B profile and Garden rows matched pre-run snapshots after every cleanup; all batch Flower/message/visit/friendship rows were removed with owned identifiers/markers, and original privacy was restored. No active unchecked cases remain. Future command execution skips completed cases before authentication/setup. Syntax and diff checks PASS. Next security scope: distributed realtime revocation/visitor consistency; authenticated production behavior requires separate authorization.
+
+Repeatable missing-case command: `PETALPAL_SOCIAL_CHECKPOINT=1 node --test test/security/authenticated-social-remaining.test.mjs`. Fixed isolated project/database only; one fresh ephemeral loopback backend and one real A/B authentication setup across batches. Each batch independently rechecks READ ONLY/database identity before its disposable fixture and before mutations, requires absent pre-existing A/B friendship and empty owner Garden, and restores original privacy/profile state. Cleanup is limited to randomly identified batch Flowers/relationships and exact matching synthetic message/visit markers. C is neither queried nor used. No production request, provider setting, account creation/deletion, migration, native rerun, container restart or deployment. Single-process HTTP revocation acceptance does not certify production or distributed realtime behavior; accepted concurrency evidence is separate. Canonical statuses/counts and manual/mobile requirements unchanged.
 
 ## P1 Static Security Analysis — 2026-10-08
 
