@@ -8,6 +8,7 @@ assert.equal(process.env.PETALPAL_DAST_ISOLATED, '1', 'Use npm run test:dast');
 assert.equal(process.env.DOTENV_CONFIG_PATH, '/dev/null');
 assert.equal(process.env.DEV_DATABASE_URL, 'postgresql://fixture:fixture@127.0.0.1:1/petalpal_test');
 
+const socialOnly = process.env.PETALPAL_DAST_SCOPE === 'social';
 let port, requests = 0, blockedNetwork = 0;
 const connect = net.Socket.prototype.connect;
 const realFetch = globalThis.fetch;
@@ -63,22 +64,38 @@ setFirebaseTokenVerifierForTests(async token => {
   return { uid: token, email: 'fixture@example.test', email_verified: token !== 'unverified', auth_time: 1 };
 });
 
-async function send(path, { method = 'GET', token = 'owner', body, raw, ip, expected } = {}) {
+async function send(path, { method = 'GET', token = 'owner', body, raw, ip, expected, contentType = 'application/json', headers = {} } = {}) {
   assert.ok(path.startsWith('/') && !path.startsWith('//'));
-  assert.ok(++requests <= 256, 'finite request budget');
+  assert.ok(++requests <= 512, 'finite request budget');
   const encoded = raw ?? (body === undefined ? undefined : JSON.stringify(body));
   assert.ok(encoded === undefined || Buffer.byteLength(encoded) <= 65536, 'finite payload budget');
   const response = await fetch(`http://127.0.0.1:${port}${path}`, {
     method, redirect: 'error', signal: AbortSignal.timeout(3000),
-    headers: { 'X-Forwarded-For': ip ?? `192.0.2.${requests}`, ...(token === null ? {} : { Authorization: 'Bearer ' + token }), ...(encoded === undefined ? {} : { 'Content-Type': 'application/json' }) },
-    ...(encoded === undefined ? {} : { body: encoded }),
+    headers: { 'X-Forwarded-For': ip ?? `192.0.${2 + Math.floor((requests - 1) / 254)}.${(requests - 1) % 254 + 1}`, ...(token === null ? {} : { Authorization: 'Bearer ' + token }), ...(encoded === undefined || contentType === null ? {} : { 'Content-Type': contentType }), ...headers },
+    ...(encoded === undefined ? {} : { body: Buffer.from(encoded) }),
   });
   const text = await response.text();
-  assert.doesNotMatch(text, /other-private-canary|Synthetic verification failure|Unexpected fixture|\bat .*server\.js|private_key|postgresql:\/\//);
+  assert.doesNotMatch(text, /social-private-canary|other-private-canary|Synthetic verification failure|Unexpected fixture|\bat .*server\.js|private_key|postgresql:\/\//);
   assert.equal(response.headers.get('cache-control'), 'no-store');
   if (expected !== undefined) assert.equal(response.status, expected, `${method} ${path}: ${text}`);
   assert.ok(response.status < 500, `${path}: unhandled/server error ${response.status}`);
   return { status: response.status, body: JSON.parse(text), response };
+}
+
+
+async function rawSend(headers, body = '{}') {
+  assert.ok(++requests <= 512);
+  const wire = `PATCH /users/me/garden-privacy HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nAuthorization: Bearer headers\r\nConnection: close\r\n${headers}\r\n\r\n${body}`;
+  assert.ok(Buffer.byteLength(wire) <= 65536);
+  return new Promise((resolve, reject) => {
+    const socket = net.createConnection({ host: '127.0.0.1', port }); let text = '';
+    socket.setTimeout(3000, () => socket.destroy(new Error('Raw fixture deadline')));
+    socket.on('connect', () => socket.write(wire));
+    socket.on('data', chunk => { text += chunk; }); socket.on('error', reject);
+    socket.on('end', () => {
+      try { assert.doesNotMatch(text, /social-private-canary/); resolve(Number(text.match(/^HTTP\/1\.1 (\d+)/)?.[1])); } catch (error) { reject(error); }
+    });
+  });
 }
 
 // Real Express middleware/router/parsers; only identity and persistence are mocks.
@@ -89,9 +106,10 @@ test('bounded isolated API DAST corpus', { timeout: 25000 }, async t => {
     setFirebaseTokenVerifierForTests(); originals.reverse().forEach(restore => restore());
     net.Socket.prototype.connect = connect; globalThis.fetch = realFetch; syncBuiltinESMExports();
     assert.equal(blockedNetwork, 0); assert.deepEqual(unexpectedDb, []);
-    assert.deepEqual(mutations, [{ where: { id: 'owner' }, data: { preferredLocale: 'en' } }, { data: { userId: 'owner', content: 'constructor prototype __proto__ are text' } }]);
+    assert.deepEqual(mutations, socialOnly ? [] : [{ where: { id: 'owner' }, data: { preferredLocale: 'en' } }, { data: { userId: 'owner', content: 'constructor prototype __proto__ are text' } }]);
     console.log(`DAST corpus: ${requests} loopback requests; zero external attempts/unexpected DB calls`);
   });
+  if (!socialOnly) {
   await t.test('anonymous and invalid credentials cannot reach private/dotted resources or service jobs', async () => {
     const paths = ['/session', '/users/other/journals', '/events/other-event', '/events/other-event.json', '/ai/memories/other-event', '/ai/memories/other-event.json', '/ai/reports/weekly/other-event.json', '/users/other/garden.json', '/internal/ai-jobs/dispatchable'];
     for (const token of [null, 'invalid']) for (const path of paths) await send(path, { token, expected: 401 });
@@ -151,4 +169,7 @@ test('bounded isolated API DAST corpus', { timeout: 25000 }, async t => {
       const result = await send(path, { expected: 200 }); assert.equal(result.body.content, 'owner-private');
     }
   });
+  }
+  const { socialCorpus } = await import('./social-content-fuzz.mjs');
+  await socialCorpus(t, { prisma, replace, send, rawSend });
 });

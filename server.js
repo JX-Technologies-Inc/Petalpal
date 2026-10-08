@@ -97,7 +97,7 @@ import { deleteAccountDataInTransaction } from "./lib/account-deletion.js";
 import {
   endpointNotFound,
   handleHttpError,
-  requireJsonObject, allowBodyFields
+  requireJsonObject, requireJsonContentType, allowBodyFields
 } from "./lib/http-errors.js";
 import { logServerError } from "./lib/security-log.js";
 import { requestId, emitSecurityEvent } from "./lib/security-events.js";
@@ -248,11 +248,11 @@ app.use(cors({
 }));
 // Authenticate and rate-limit before accepting the larger voice-only body.
 app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit,
-  express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
+  requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
 app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
-  express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
+  requireJsonContentType, express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
     let coverImage;
     try { coverImage = validateJournalCover(req.body.coverImage); }
     catch (error) { return res.status(400).json({ error: error.message }); }
@@ -264,6 +264,7 @@ app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, general
   });
 // Bound session probes before body parsing or Firebase token verification.
 app.use(["/auth", "/session"], authRateLimit);
+app.use(requireJsonContentType);
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
 if (process.env.NATIVE_SECURITY_TEST === '1') {
@@ -3008,7 +3009,21 @@ const createdFlower = await prisma.$transaction(async (tx) => {
   }
 });
 
-app.get("/users/:userId/flowers/:flowerId", async (req, res) => {
+// Direct Flower URLs/actions must enforce the same access policy as the Garden.
+async function requireSocialGardenAccess(req, res, next) {
+  try {
+    const owner = await prisma.user.findUnique({
+      where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
+    });
+    if (!owner) return res.status(404).json({ error: "User not found" });
+    if (!await canVisitGarden(prisma, owner, req.auth.userId)) {
+      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
+    }
+    return next();
+  } catch (error) { return next(error); }
+}
+
+app.get("/users/:userId/flowers/:flowerId", requireSocialGardenAccess, async (req, res) => {
   try {
     const flower = await getFlowerDetail(prisma, {
       ownerUserId: req.params.userId,
@@ -3025,7 +3040,7 @@ app.get("/users/:userId/flowers/:flowerId", async (req, res) => {
   }
 });
 
-app.post("/users/:userId/flowers/:flowerId/support", async (req, res) => {
+app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, async (req, res) => {
   try {
     if (!validOptionalString(req.body?.visitorAvatar, MAX_AVATAR_LENGTH)) {
       return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
@@ -3061,7 +3076,7 @@ app.post("/users/:userId/flowers/:flowerId/support", async (req, res) => {
 });
   
   app.post(
-    "/users/:userId/flowers/:flowerId/message",
+    "/users/:userId/flowers/:flowerId/message", requireSocialGardenAccess,
     async (req, res) => {
       const startTime = Date.now();
   
