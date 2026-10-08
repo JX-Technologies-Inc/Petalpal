@@ -34,6 +34,9 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 - [x] Review PAT and deploy credentials. Evidence: credential review completed; no further non-secret action recorded. Status: `PASS`
 - [x] Verify branch and release protection if applicable. Evidence: repository security controls reviewed; no additional finding recorded. Status: `PASS`
 
+- [ ] Cut over scoped CodeQL only when authorized: origin Settings → Advanced Security → Code scanning → CodeQL analysis → Switch to advanced / disable default setup; then Settings → Secrets and variables → Actions → Variables: set `PETALPAL_CODEQL_ADVANCED=true`. Do not enable the variable while managed default setup is active. Existing managed main scan (run 37264614823) passed JS/TS/Python; new scoped integration workflow has only local syntax/config validation. Status: `PARTIAL / ACTIVATION REQUIRED`; no settings changed on 2026-10-08.
+- [ ] After cutover, push a relevant source/config change on integration and verify “PetalPal static security” → “CodeQL JS/TS” completes and uploads results; inspect Security → Code scanning findings and classify severity/reachability without silent suppression. Validate a relevant PR after the workflow is present on its target branch. Only after proven runs, consider a required check; no branch-protection change is authorized here. Status: `NOT VERIFIED`; finding count/severity unknown for integration.
+
 ## 3. Render
 
 - [x] Review environment secrets. Evidence: production secrets confirmed as Render environment variables; no unexpected Secret Files. Status: `PASS`

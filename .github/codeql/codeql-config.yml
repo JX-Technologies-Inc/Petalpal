@@ -1,0 +1,32 @@
+name: PetalPal maintained JS/TS
+# Retain default security queries and add the official extended security suite.
+queries:
+  - uses: security-extended
+paths:
+  - '*.js'
+  - '*.mjs'
+  - '*.ts'
+  - lib
+  - data
+  - scripts
+  - client/src
+  - mobile/src
+  - 'mobile/*.js'
+  - cloudflare-worker/src
+paths-ignore:
+  # Test fixtures, archived experiments/assets and generated outputs are not runtime source.
+  - '**/node_modules/**'
+  - '**/generated/**'
+  - '**/build/**'
+  - '**/dist/**'
+  - '**/.expo/**'
+  - '**/coverage/**'
+  - '**/*.min.js'
+  - '**/*.d.ts'
+  - '**/*.test.js'
+  - '**/*.test.jsx'
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - client/src/test
+  - testMoodModel.js
+  - trainMoodModel.js
