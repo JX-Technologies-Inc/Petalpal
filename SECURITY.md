@@ -285,6 +285,23 @@ Three defects were reproduced before correction: dotted private API paths skippe
 
 **Presence / remaining limits:** exact Live SHA plus successful production build/start proves the atomic HTTP social locking correction is deployed. The accepted 34 independent PostgreSQL tests, 14 affected regressions and previous 102 social DAST requests were reused, not rerun. Authenticated production Flower/privacy/Garden behavior, production concurrent interleavings and distributed realtime revocation remain NOT VERIFIED; anonymous rejection is not atomicity certification. Canonical statuses/counts remain unchanged. No rollback was needed or attempted; rollback to `db933de78a91ba505b06016db716bbf710530d7f` is schema-compatible but restores the old social race and requires further approval. Historical rollout/predeployment evidence remains intact. This follow-up changes only security documentation; its separate documentation commit must not be deployed. Next acceptance gate is separately authorized isolated authenticated social verification; next code-security scope is distributed realtime revocation/visitor consistency.
 
+## Authenticated Social Acceptance — Batch 1 — 2026-10-08
+
+**Isolated Batch 1 PASS; production-authenticated status remains NOT VERIFIED.** One targeted run of `node --test test/security/authenticated-social-batch1.test.mjs`: 4 tests / 4 authenticated loopback GET requests PASS. Reused existing isolated Firebase A/B in `petalpal-native-security-test` and existing loopback PostgreSQL `petalpal_native_security_test` on 5433. Owned, Git-ignored 0600 configuration/Admin/account files passed the existing isolation guard; a READ ONLY transaction confirmed read-only mode before checking exact live database identity, existing A/B profiles/Gardens, privacy ON, absent bilateral friendship and empty owner Garden. Live registered Firebase app/project/API-key/auth-domain matching preceded sign-in; real Admin verification checked issuer/audience, verified email, UID/profile linkage and revocation. No mocked authentication was used. Backend ran current social code from a private empty temporary cwd on an ephemeral loopback listener; post-import guard and actual Prisma database identity passed before writes.
+
+- [x] Owner A Flower read: 200, own disposable fixture/private canary and owner state present; no-store PASS.
+- [x] Owner A Garden read: 200, exactly the disposable Flower under its existing owner Garden; no-store PASS.
+- [x] Nonfriend B Flower read: 403 safe denial, no private canary/fixture response leakage; no-store PASS.
+- [x] Nonfriend B Garden read: 403 safe denial, no private canary/fixture response leakage; no-store PASS.
+
+**Mutation / cleanup evidence:** one uniquely identified synthetic Flower was created only after isolation/provider/profile gates. Every acceptance read preserved its complete persisted row, message count and owner-Garden visit count. Cleanup reverified database identity and deleted only that batch ID + owner + synthetic marker; absence confirmed PASS. No profile/Garden/friendship/account was created, edited or deleted. A/B accounts were preserved; C was neither queried nor recreated/deleted. Existing containers/databases/services were not restarted or removed. Real isolated sign-in may update normal provider sign-in metadata; no production target, authenticated production request, paid AI, migration, provider-setting change, deployment or native scenario occurred. No code defect was confirmed; added only this focused acceptance test and checklist. The prior 34 concurrency tests / 14 regressions / 102 DAST requests were not rerun. Test syntax and documentation diff checks PASS; canonical P0/P1/P2 statuses/counts unchanged; manual checklist/mobile documentation unchanged.
+
+**Remaining acceptance (not executed in Batch 1):**
+- [ ] Next batch: legitimate confirmed-friend Flower/Garden reads and revoked-friend read denial, using separately scoped disposable isolated relationships.
+- [ ] Later batch: isolated authenticated privacy OFF / support / message acceptance and cleanup; no production concurrent/runtime certification is inferred.
+
+Production remains exact Live `d510b1ff97902704721060b4c1261657be3e4b76`; this isolated evidence does not upgrade authenticated production Flower/privacy/Garden or distributed realtime status. Batch 1 stops here.
+
 ## P1 Static Security Analysis — 2026-10-08
 
 - **Current accepted setup:** CodeQL Default remains active; Advanced cutover is deferred. Keep `PETALPAL_CODEQL_ADVANCED` unset/false; do not disable Default setup or change branch protection. Historical main JS/TS/Python PASS below is retained; current integration coverage/results are not newly verified by this reconciliation.
