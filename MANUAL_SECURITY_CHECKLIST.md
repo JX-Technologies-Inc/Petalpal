@@ -302,7 +302,9 @@ Temporary isolated HTTPS and separate Expo 8108 are active; Mac TLS and effectiv
 
 **USER-OBSERVED PASS:** the user confirms all three isolated health fields match and there is no certificate warning on the intended iPhone/network. This supersedes the preceding NOT CHECKED phone-transport status and closes the final environment-preparation gate: **environment READY**. Anonymous Mac HTTPS identity/session-401 and listener rechecks PASS; no credentials/account actions or tests repeated. Seven native lifecycle scenarios, native persistence/backup/attestation and production/provider acceptance remain NOT VERIFIED; storage fault/hold/sentinel hooks remain unarmed. No production configuration/data mutation or service restart. Canonical SECURITY statuses/counts unchanged; current workflow in MOBILE.md N.
 
-## Isolated native scenario-1 incident follow-up — 2026-10-07
+## HISTORICAL / SUPERSEDED — Isolated native scenario-1 incident follow-up — 2026-10-07
+
+**Historical record only:** this incident follow-up and the automated workflow/Scenario-1 failure entries below are superseded by persisted Scenario-1 logout witness PASS and isolated physical-iPhone scenarios 1–7 PASS. Only authorized disposable C was deleted; A/B were preserved, failure injection was disarmed and production was untouched. Original evidence, checkbox states and point-in-time instructions are retained; no crash/sysdiagnose investigation or rerun remains active.
 
 - [ ] Retrieve read-only iPhone diagnostic evidence for the USER-OBSERVED runtime/DevTools disconnect after the exact-A scenario-1 runner invocation: matching Expo Go/Exponent crash or JetsamEvent report timestamp, exception/termination type/reason and top crashed-thread function names. Do not record account/device identifiers, credentials or private payload. Apple reference: https://developer.apple.com/documentation/xcode/acquiring-crash-reports-and-diagnostic-logs.
 - Current state: isolated 8108 alone reopened; USER-OBSERVED signed-out cache snapshot has zero durable keys/records and no memory cache, ready/successful startup cleanup, no pending erasure, fault null and hold false. Startup cleanup prevents treating this as proof of the original logout result. Scenario 1 remains INCONCLUSIVE / POSSIBLE RUNTIME FAILURE; no native acceptance/status upgrade.
@@ -313,7 +315,7 @@ Follow-up result: the user checked and found no matching Expo Go/Exponent/Jetsam
 Incident clarification — 2026-10-07: iPhone Home Screen appeared and Expo Go exited (USER-OBSERVED); cause remains F / insufficient evidence. Next manual diagnostic: capture iPhone sysdiagnose using https://developer.apple.com/bug-reporting/profiles-and-logs/ while staying signed out, without reproducing logout. Inspect only a retained incident-time Expo Go/Exponent process-exit record; report timestamp and termination reason/subsystem only. Do not upload the full archive/private identifiers. No native security/platform verification status changes; C and later scenarios remain untouched.
 
 
-## Automated isolated native workflow replaces incident follow-up — 2026-10-07
+## HISTORICAL / SUPERSEDED — Automated isolated native workflow replaces incident follow-up — 2026-10-07
 
 The user closes historical crash investigation and authorizes a separate automated test-only run. The preceding sysdiagnose/crash follow-up is no longer an active task; no retained sysdiagnose finding has been supplied. Historical scenario 1 remains INCONCLUSIVE / F: insufficient evidence. This is a workflow change, not native/provider acceptance; prior evidence and canonical counts are preserved.
 
@@ -323,7 +325,7 @@ The user closes historical crash investigation and authorizes a separate automat
 Nineteen targeted mocked harness/bridge tests and changed-scope type/syntax checks PASS; live isolated HTTPS bridge denies anonymous access with no-store. The seven new physical-device scenarios remain unexecuted, C is not deleted, fault injection is prepared/unarmed, and production/provider/platform storage/backup verification statuses are unchanged. One initial A sign-in is required to authorize safe access to saved test credentials. The planned app reload resumes automatically; the only manual recovery action is reopening isolated 8108. No production request/data/configuration change, stash/ref change or commit/push.
 
 
-### Automated Scenario-1 phone result — 2026-10-07
+### HISTORICAL / SUPERSEDED — Automated Scenario-1 phone result — 2026-10-07
 
 The user reports the first automated isolated-phone run ended **Scenario 1 FAIL** after `ready`, the one-record fixture, and `logout-pending`; no `logout-completed` checkpoint was recorded. Scenarios 2–7 did not start; A/B/C were not deleted and C remains untouched. The failure row contained synthetic empty defaults and did not preserve the failed native-state subproperty. This is a real manual runtime result, not a provider-status change.
 
