@@ -49,7 +49,7 @@ async function setup() {
     const saved = ['A','B'].map(label => ({ email: accounts[`NATIVE_TEST_${label}_EMAIL`]?.trim().toLowerCase(), password: accounts[`NATIVE_TEST_${label}_PASSWORD`] }));
     assert.ok(saved.every(a => a.email && a.password) && saved[0].email !== saved[1].email, 'Existing distinct A/B credentials required');
     // C is neither queried nor used. Do not invoke native harness provisioning.
-    for (const key of Object.keys(process.env)) if (!['PATH','HOME','TMPDIR','LANG','TERM','USER','PETALPAL_SOCIAL_CHECKPOINT'].includes(key)) delete process.env[key];
+    for (const key of Object.keys(process.env)) if (!['PATH','HOME','TMPDIR','LANG','TERM','USER','PETALPAL_SOCIAL_CHECKPOINT','PETALPAL_REALTIME_CHECKPOINT'].includes(key)) delete process.env[key];
     Object.assign(process.env, config, { DOTENV_CONFIG_PATH: join(root, '.env.native-security.local') });
     privateCwd = mkdtempSync(join(tmpdir(), 'petalpal-social-batches2to5-')); process.chdir(privateCwd);
     stage = 'isolated PostgreSQL identity/profile gate';
@@ -194,7 +194,7 @@ async function visit() {
   assert.ok(r.body.activeVisitors.some(v => v.visitorId === visitor.id));
   assert.equal((await fixtureState())[0].visits, before + 1);
 }
-async function cleanupBatch() {
+async function cleanupBatch({ actors = [visitor.id] } = {}) {
   if (!fixtureAttempted) return;
   await identity();
   const current = await links(); assert.ok(current.every(link => friendshipIds.includes(link.id)), 'Unowned relationship appeared');
@@ -203,12 +203,12 @@ async function cleanupBatch() {
   if (setting.allowGardenVisits !== owner.allowGardenVisits) await privacy(owner.allowGardenVisits);
   // Capture exact row IDs and markers; never remove another batch's rows.
   const visits = await prisma.visitRecord.findMany({ where: { gardenId: owner.gardenId } });
-  assert.ok(visits.every(v => v.visitorId === visitor.id && v.userId === visitor.id && v.visitorAvatar === canary));
+  assert.ok(visits.every(v => actors.includes(v.visitorId) && v.userId === v.visitorId && v.visitorAvatar === canary));
   const messages = await prisma.message.findMany({ where: { flowerId: fixtureId } });
-  assert.ok(messages.every(m => m.userId === visitor.id && m.text === canary + '-message'));
+  assert.ok(messages.every(m => actors.includes(m.userId) && m.text === canary + '-message'));
   await prisma.$transaction([
-    prisma.visitRecord.deleteMany({ where: { id: { in: visits.map(v => v.id) }, gardenId: owner.gardenId, visitorAvatar: canary, visitorId: visitor.id } }),
-    prisma.message.deleteMany({ where: { id: { in: messages.map(m => m.id) }, flowerId: fixtureId, userId: visitor.id, text: canary + '-message' } }),
+    prisma.visitRecord.deleteMany({ where: { id: { in: visits.map(v => v.id) }, gardenId: owner.gardenId, visitorAvatar: canary, visitorId: { in: actors } } }),
+    prisma.message.deleteMany({ where: { id: { in: messages.map(m => m.id) }, flowerId: fixtureId, userId: { in: actors }, text: canary + '-message' } }),
     prisma.flower.deleteMany({ where: { id: fixtureId, userId: owner.id, event: canary, generationSeed: canary } })
   ]);
   assert.equal((await fixtureState()).length, 0);
@@ -271,7 +271,7 @@ function checkpoint(number, passed, outcome, count) {
 
 const checklist = readFileSync(join(root, 'SECURITY.md'), 'utf8');
 const complete = batches.every(([number, cases]) => cases.every(([name]) => checklist.includes(`- [x] Batch ${number}: ${name}.`)));
-test('Isolated authenticated social acceptance: missing Batches 2–5 only', { skip: complete }, async t => {
+if (resolve(process.argv[1] || '') === fileURLToPath(import.meta.url)) test('Isolated authenticated social acceptance: missing Batches 2–5 only', { skip: complete }, async t => {
   // Deliberately opt-in: never write checklist without the documented explicit flag.
   const checkpointEnabled = process.env.PETALPAL_SOCIAL_CHECKPOINT;
   let failed = false;
@@ -309,3 +309,18 @@ test('Isolated authenticated social acceptance: missing Batches 2–5 only', { s
     console.log(`Missing batches only: ${requests} loopback requests; A/B preserved; C untouched; no production target`);
   }
 });
+
+// Shared opt-in isolated fixture, not an application hook. Importing it registers
+// no completed acceptance tests and performs no authentication or database work.
+export const isolatedSocial = {
+  setup, identity, startBatch, cleanupBatch, request, friend, privacy, removeFriend, fixtureState,
+  get root() { return root; }, get owner() { return owner; }, get visitor() { return visitor; },
+  get tokens() { return tokens; }, get prisma() { return prisma; }, get canary() { return canary; },
+  get fixtureId() { return fixtureId; }, get port() { return port; }, get stage() { return stage; },
+  get requests() { return requests; }, get cleanupConfirmed() { return cleanupConfirmed; },
+  async finish() {
+    if (server?.listening) await new Promise(resolve => server.close(resolve));
+    await prisma?.$disconnect(); await db?.end(); if (app) await deleteApp(app);
+    tokens = {}; process.chdir(initialCwd); if (privateCwd) rmSync(privateCwd, { recursive: true });
+  }
+};
