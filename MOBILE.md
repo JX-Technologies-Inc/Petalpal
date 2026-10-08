@@ -69,6 +69,8 @@ Expo Go includes the native AsyncStorage dependency used here. Browser localStor
 
 **Historical port bug:** a process-level `EXPO_PUBLIC_API_BASE_URL` override used port **3000** while the backend used **3107**. Editing `mobile/.env` did not remove that override. Expo 8107 was subsequently configured with the production HTTPS API; leave the working instance alone. Check port occupancy, process configuration and the Mac's current interface/IP each time; never reuse an old PID or IP blindly.
 
+**SDK 57 decoder backport (2026-10-08):** keep `mobile/vendor/decode-uri-component` with the manifest/lockfile; normal `npm ci` installs its CommonJS security backport. Valid components retain decoding, including long values. Malformed components exceeding 4096 UTF-16 code units remain encoded literals after plus-to-space normalization, bounding fallback work. Garden/Fairy navigation and production route policy are unchanged. See SECURITY.md and the vendor README for provenance and targeted regressions.
+
 # C. Architecture and Authentication Flow
 
 ```text
