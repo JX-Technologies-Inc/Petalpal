@@ -3,7 +3,7 @@
 Provider and production-control-plane actions only. Never record passwords,
 tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 
-Last reconciled: 2026-10-07. Existing checked provider evidence is retained; production exact-code rollout/migration verification and the scoped read-only shared-ledger follow-up below add new evidence. Deployment presence is distinct from live runtime/provider certification.
+Last reconciled: 2026-10-08. Existing checked provider evidence is retained; production exact-code rollout/migration verification and the scoped read-only shared-ledger follow-up below add new evidence. Deployment presence is distinct from live runtime/provider certification.
 
 
 ## Current accepted production/manual evidence — reconciled 2026-10-07
@@ -59,6 +59,7 @@ Last reconciled: 2026-10-07. Existing checked provider evidence is retained; pro
 - [x] Verify MFA/passkey protection on administrator accounts. Evidence: Firebase project administrator review completed. Status: `PASS`
 - [x] Review project members and permissions. Evidence: only intended Firebase human member found. Status: `PASS`
 - [x] Verify Firebase Web config is treated as public, not secret. Evidence: configuration classification review. Status: `PASS`
+- [x] Confirm production Firebase Email Enumeration Protection is enabled. Evidence: user-observed Firebase Console screenshot, 2026-10-08. Status: `USER-OBSERVED PASS — SETTING ONLY`; no agent Console access or setting change. Direct signup `EMAIL_EXISTS` and signup success/failure differences remain; live login/reset/signup behavior is not verified. Account Enumeration remains `PARTIAL`.
 - [ ] Review authentication abuse and security visibility where available. Evidence: non-secret monitoring configuration summary. Status: `ACTION REQUIRED`
 
 ## 6. Backup / Restore

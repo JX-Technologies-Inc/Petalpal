@@ -134,11 +134,17 @@ test('Phase 1 registration validates confirmation/minimum before Firebase and se
   assert.deepEqual(s.emails, ['new']); assert.equal(s.requests.length, 0); assert.deepEqual(s.writes, []);
 });
 test('Phase 1 registration errors are readable and create no backend session', async () => {
-  const s = setup(); const state = await s.ready();
-  s.setRegistrationError(Object.assign(new Error('private provider diagnostic'), { code: 'auth/email-already-in-use' }));
-  await state.register('new@example.test', 'synthetic password', 'synthetic password'); const result = await s.hooks.flush();
-  assert.equal(result.phase, 'signedOut'); assert.equal(result.error, 'We couldn’t connect to your account. Please try again.');
-  assert.doesNotMatch(result.error, /private provider diagnostic/); assert.equal(s.requests.length, 0);
+  for (const code of ['auth/email-already-in-use', 'auth/internal-error', undefined]) {
+    const s = setup(); const state = await s.ready();
+    s.setRegistrationError(Object.assign(new Error('EMAIL_EXISTS private@example.test provider diagnostic'), { code }));
+    await state.register('known@example.test', 'synthetic password', 'synthetic password');
+    const result = await s.hooks.flush();
+    assert.equal(result.phase, 'signedOut');
+    assert.equal(result.error, 'We couldn’t connect to your account. Please try again.');
+    assert.doesNotMatch(result.error, /EMAIL_EXISTS|private@example.test|provider diagnostic/);
+    assert.equal(result.identity, null); assert.equal(result.session, null); assert.equal(result.message, '');
+    assert.equal(s.auth.currentUser, null); assert.equal(s.requests.length, 0); assert.equal(s.emails.length, 0);
+  }
 });
 test('Phase 1 reload recovers unverified registration solely from the current Firebase identity', async () => {
   const first = setup(user('new', false)); let state = await first.ready();
