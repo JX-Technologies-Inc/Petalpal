@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlowerPlacement } from './placementValidator';
 import type { FlowerMessage } from './flowerDetailData';
+import { nativeSecurityEnabled } from '../../../services/nativeSecurity';
+import { createReloadObservation } from '../../../services/nativeSecurityHarness/reloadObservation';
 
 export interface FlowerPlacementRecord extends FlowerPlacement {
   supportCount: number;
@@ -24,13 +26,99 @@ export interface FlowerPlacementRecord extends FlowerPlacement {
 
 // PetalPal private-store registry: placements include derived emotions/details.
 // Theme/background, calibration/masks and Firebase SDK persistence are excluded.
-const LEGACY_KEY = 'petalpal_flower_placements_v1';
+const LEGACY_KEY = nativeSecurityEnabled ? 'petalpal_native_security_test_placements_v1' : 'petalpal_flower_placements_v1';
 const ownerKey = (owner: string) => `${LEGACY_KEY}:${encodeURIComponent(owner)}`;
 let activeOwner: string | null = null;
 let generation = 0;
 let storageReady = false;
 let storageQueue: Promise<unknown> = Promise.resolve();
 const pendingErasure = new Set<string>();
+type StorageOperation = 'read' | 'write' | 'remove' | 'keys';
+let injectedFailure: StorageOperation | null = null;
+let holdNextWrite = false;
+let releaseWrite: (() => void) | null = null;
+let expectedOwner: string | null = null;
+let cleanupResult: boolean | null = null;
+let bootNamespaceKeyCount: number | null = null;
+const observation=nativeSecurityEnabled?createReloadObservation(AsyncStorage):null;
+const observationRuntime=nativeSecurityEnabled?`${Date.now().toString(36)}:${Math.random().toString(36).slice(2)}`:'';
+let sequence = 0;
+const milestones: { sequence: number; operation: StorageOperation; stage: string; generation: number }[] = [];
+function milestone(operation: StorageOperation, stage: string) {
+  if (!nativeSecurityEnabled) return;
+  milestones.push({ sequence: ++sequence, operation, stage, generation });
+  if (milestones.length > 32) milestones.shift();
+}
+async function nativeOperation<T>(operation: StorageOperation, action: () => Promise<T>): Promise<T> {
+  milestone(operation, 'started');
+  if (nativeSecurityEnabled && injectedFailure === operation) {
+    injectedFailure = null; milestone(operation, 'injected-failure'); throw cacheError();
+  }
+  try {
+    const pending = action();
+    if (nativeSecurityEnabled && operation === 'write' && holdNextWrite) {
+      holdNextWrite = false;
+      // Dispatch the real native write first; hold its completion in the queue.
+      // Attach both handlers immediately so a held rejection stays handled.
+      pending.then(() => milestone(operation, 'adapter-completed'), () => milestone(operation, 'adapter-failed'));
+      await new Promise<void>(resolve => {
+        releaseWrite = () => { releaseWrite = null; milestone(operation, 'released'); resolve(); };
+        milestone(operation, 'held');
+      });
+      releaseWrite = null;
+    }
+    const result = await pending; milestone(operation, 'completed'); return result;
+  }
+  catch { milestone(operation, 'failed'); throw cacheError(); }
+}
+export function setNativeSecurityExpectedOwner(owner: string | null) {
+  if (nativeSecurityEnabled) expectedOwner = owner;
+}
+
+// In-memory hooks wrap only the application's isolated placement operations.
+// Firebase's adapter and normal placement namespace are never modified.
+if (__DEV__ && nativeSecurityEnabled) {
+  const preferenceKey = 'petalpal_native_security_test_global_preference_v1';
+  const requireNative = () => {
+    if (typeof window !== 'undefined' && window.localStorage) throw new Error('Use the isolated native runtime');
+  };
+  const diagnostics = {
+    async inspect() {
+      requireNative();
+      try {
+        const keys = await AsyncStorage.getAllKeys();
+        const scoped = keys.filter(key => key === LEGACY_KEY || key.startsWith(`${LEGACY_KEY}:`));
+        const stored = activeOwner ? await AsyncStorage.getItem(ownerKey(activeOwner)) : null;
+        const records = stored ? JSON.parse(stored) : [];
+        return { available: true, namespaceKeyCount: scoped.length,
+          ownerCachePresent: !!activeOwner && scoped.includes(ownerKey(activeOwner)),
+          scopedRecordCount: Array.isArray(records) ? records.length : 0,
+          memoryCachePresent: memoryPlacementsStore !== null,
+          memoryRecordCount: memoryPlacementsStore?.length ?? 0,
+          bootNamespaceKeyCount,
+          activeOwnerMatchesExpected: activeOwner === expectedOwner,
+          ownerActive: activeOwner !== null, generation, storageReady,
+          pendingErasureCount: pendingErasure.size, cleanupResult,
+          globalPreferencePreserved: (await AsyncStorage.getItem(preferenceKey)) === 'safe-test-preference',
+          failureArmed: injectedFailure, writeHeld: releaseWrite !== null,
+          milestones: milestones.map(item => ({ ...item })) };
+      } catch { return { available: false }; }
+    },
+    failNext(operation: StorageOperation) {
+      requireNative();
+      if (!['read', 'write', 'remove', 'keys'].includes(operation)) throw new Error('Unknown placement operation');
+      injectedFailure = operation;
+    },
+    holdNextWrite() { requireNative(); holdNextWrite = true; },
+    releaseWrite() { releaseWrite?.(); },
+    resetHooks() { injectedFailure = null; holdNextWrite = false; releaseWrite?.(); milestones.length = 0; },
+    async prepareGlobalPreference() { requireNative(); await AsyncStorage.setItem(preferenceKey, 'safe-test-preference'); },
+    async removeGlobalPreference() { requireNative(); await AsyncStorage.removeItem(preferenceKey); },
+    async armReloadObservation(){requireNative();await observation!.arm(observationRuntime)},
+    async reloadObservationPassed(){requireNative();return observation!.passed(observationRuntime)},
+  };
+  (globalThis as typeof globalThis & { __PETALPAL_NATIVE_SECURITY__?: typeof diagnostics }).__PETALPAL_NATIVE_SECURITY__ = diagnostics;
+}
 export interface PlacementSession { owner: string | null; generation: number }
 export const capturePlacementSession = (): PlacementSession => ({ owner: activeOwner, generation });
 const current = (session: PlacementSession) => session.owner !== null &&
@@ -43,13 +131,14 @@ function enqueue<T>(action: () => Promise<T>): Promise<T> {
 }
 async function eraseKey(key: string) {
   if (typeof window !== 'undefined' && window.localStorage) window.localStorage.removeItem(key);
-  else await AsyncStorage.removeItem(key);
+  else await nativeOperation('remove', () => AsyncStorage.removeItem(key));
 }
 // Invalidate synchronously; physical erasure follows any already-started write.
 // Each activation starts fresh, including after process restart/failed cleanup.
 export function scopeFlowerPlacements(owner: string | null): Promise<boolean> {
   const outgoing = activeOwner;
   activeOwner = owner; generation++; storageReady = false; memoryPlacementsStore = null;
+  if (nativeSecurityEnabled) cleanupResult = null;
   const session = capturePlacementSession();
   pendingErasure.add(LEGACY_KEY);
   if (outgoing) pendingErasure.add(ownerKey(outgoing));
@@ -61,7 +150,11 @@ export function scopeFlowerPlacements(owner: string | null): Promise<boolean> {
       const browser = typeof window !== 'undefined' ? window.localStorage : null;
       const persistedKeys = browser
         ? Array.from({ length: browser.length }, (_, index) => browser.key(index))
-        : await AsyncStorage.getAllKeys();
+        : await nativeOperation('keys', () => AsyncStorage.getAllKeys());
+      if (nativeSecurityEnabled && bootNamespaceKeyCount === null) {
+        bootNamespaceKeyCount = persistedKeys.filter(key => key === LEGACY_KEY || key?.startsWith(`${LEGACY_KEY}:`)).length;
+      }
+      if(observation&&!browser)await observation.observe(observationRuntime,bootNamespaceKeyCount!);
       for (const key of persistedKeys) {
         if (key === LEGACY_KEY || key?.startsWith(`${LEGACY_KEY}:`)) pendingErasure.add(key);
       }
@@ -69,9 +162,13 @@ export function scopeFlowerPlacements(owner: string | null): Promise<boolean> {
         await eraseKey(key);
         pendingErasure.delete(key);
       }
-      if (session.generation === generation) storageReady = true;
+      if (session.generation === generation) {
+        storageReady = true;
+        if (nativeSecurityEnabled) cleanupResult = true;
+      }
       return true;
     } catch {
+      if (nativeSecurityEnabled && session.generation === generation) cleanupResult = false;
       // Never log storage errors: adapters can embed private payloads in errors.
       return false; // Reads/writes remain closed until a successful activation.
     }
@@ -162,7 +259,7 @@ export async function loadFlowerPlacements(
     try {
       const key = ownerKey(session.owner!);
       const stored = typeof window !== 'undefined' && window.localStorage
-        ? window.localStorage.getItem(key) : await AsyncStorage.getItem(key);
+        ? window.localStorage.getItem(key) : await nativeOperation('read', () => AsyncStorage.getItem(key));
       if (!current(session)) return [];
       const parsed = stored ? JSON.parse(stored) : [];
       memoryPlacementsStore = Array.isArray(parsed) ? parsed : [];
@@ -181,7 +278,7 @@ export async function saveFlowerPlacements(
       const key = ownerKey(session.owner!);
       if (typeof window !== 'undefined' && window.localStorage) {
         window.localStorage.setItem(key, JSON.stringify(placements));
-      } else await AsyncStorage.setItem(key, JSON.stringify(placements));
+      } else await nativeOperation('write', () => AsyncStorage.setItem(key, JSON.stringify(placements)));
       if (current(session)) memoryPlacementsStore = placements;
       // A transition during setItem queued erasure behind this write.
     } catch { storageReady = false; memoryPlacementsStore = null; throw cacheError(); }

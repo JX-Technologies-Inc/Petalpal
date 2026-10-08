@@ -289,3 +289,71 @@ Exact implementation `187701de1fd810127b4b25b998af3a23bf0c8a3c` confirmed Deploy
 User-reported authenticated `GET /session?view=metadata`: HTTP 200, `Cache-Control: no-store` PASS, required session metadata present. Raw Journal text, AI inference/evidence and private messages absent; no unnecessary internal/account IDs observed. `CF-Cache-Status: DYNAMIC` observed for this response only. Production metadata-shape verification PASS for this session metadata route; its earlier runtime NOT VERIFIED status is superseded by this evidence. No response values, credentials or private content recorded; no requests or tests repeated.
 
 Owner Garden `GET /users/:userId/garden?view=metadata` production shape/cache acceptance, Calendar/history screen loading and intended-item navigation remain NOT VERIFIED. Overall DELTA-P2-4 production acceptance remains PARTIAL. Global CDN behavior, cross-account cache isolation and unrelated routes remain unverified. No production data modified; no implementation/configuration change. Documentation only; not staged, committed or pushed.
+
+
+### Isolated native-security provider/access readiness — 2026-10-07
+
+**Isolated provider/account preparation PASS; intended-device readiness PARTIAL.** The user provided an authorized test-project Admin credential through the existing owner-only/Git-ignored mechanism. Exact `petalpal-native-security-test` project/type checks, live Admin/Auth reads, enabled Email/Password provider and registered client-app field provenance PASS. A/B/C were provisioned only in that project and mapped to empty profiles/gardens in the dedicated isolated PostgreSQL DB. Saved credential authentication/test token identity and HTTPS backend session/metadata linkage PASS for all three; no private fixtures and C remains undeleted. No production Firebase account/credential inventory, project membership, MFA, key revocation, production DB/provider configuration or billing action was changed.
+
+Temporary isolated HTTPS and separate Expo 8108 are active; Mac TLS and effective isolated client/backend configuration PASS. Intended iPhone/network anonymous health is **NOT CHECKED**, per the user's reply; see MOBILE.md N for the single remaining check and current endpoint. This is new test-project access/provisioning/readiness evidence, not native persistence/backup/attestation, production auth/cache/CDN or seven-scenario acceptance. All seven scenarios remain NOT EXECUTED; test failure/hold/sentinel hooks remain unarmed. Historical production/manual statuses and SECURITY canonical counts are unchanged.
+
+
+### Isolated intended-iPhone HTTPS readiness confirmation — 2026-10-07
+
+**USER-OBSERVED PASS:** the user confirms all three isolated health fields match and there is no certificate warning on the intended iPhone/network. This supersedes the preceding NOT CHECKED phone-transport status and closes the final environment-preparation gate: **environment READY**. Anonymous Mac HTTPS identity/session-401 and listener rechecks PASS; no credentials/account actions or tests repeated. Seven native lifecycle scenarios, native persistence/backup/attestation and production/provider acceptance remain NOT VERIFIED; storage fault/hold/sentinel hooks remain unarmed. No production configuration/data mutation or service restart. Canonical SECURITY statuses/counts unchanged; current workflow in MOBILE.md N.
+
+## Isolated native scenario-1 incident follow-up — 2026-10-07
+
+- [ ] Retrieve read-only iPhone diagnostic evidence for the USER-OBSERVED runtime/DevTools disconnect after the exact-A scenario-1 runner invocation: matching Expo Go/Exponent crash or JetsamEvent report timestamp, exception/termination type/reason and top crashed-thread function names. Do not record account/device identifiers, credentials or private payload. Apple reference: https://developer.apple.com/documentation/xcode/acquiring-crash-reports-and-diagnostic-logs.
+- Current state: isolated 8108 alone reopened; USER-OBSERVED signed-out cache snapshot has zero durable keys/records and no memory cache, ready/successful startup cleanup, no pending erasure, fault null and hold false. Startup cleanup prevents treating this as proof of the original logout result. Scenario 1 remains INCONCLUSIVE / POSSIBLE RUNTIME FAILURE; no native acceptance/status upgrade.
+- Keep signed out; do not rerun the runner or advance to scenario 2/C deletion while the incident is unresolved. C deletion was not attempted; other scenarios remain unexecuted. No provider/platform storage/backup verification status changed. This new manual follow-up is limited to the actual native runtime interruption; prior provider evidence and limitations are retained.
+
+Follow-up result: the user checked and found no matching Expo Go/Exponent/JetsamEvent report; timestamp, termination metadata and crashed-thread functions are unavailable. Report absence is not a PASS. Clarify only the destination screen already observed at disconnect; do not reproduce the incident or advance to C deletion while this diagnosis is pending.
+
+Incident clarification — 2026-10-07: iPhone Home Screen appeared and Expo Go exited (USER-OBSERVED); cause remains F / insufficient evidence. Next manual diagnostic: capture iPhone sysdiagnose using https://developer.apple.com/bug-reporting/profiles-and-logs/ while staying signed out, without reproducing logout. Inspect only a retained incident-time Expo Go/Exponent process-exit record; report timestamp and termination reason/subsystem only. Do not upload the full archive/private identifiers. No native security/platform verification status changes; C and later scenarios remain untouched.
+
+
+## Automated isolated native workflow replaces incident follow-up — 2026-10-07
+
+The user closes historical crash investigation and authorizes a separate automated test-only run. The preceding sysdiagnose/crash follow-up is no longer an active task; no retained sysdiagnose finding has been supplied. Historical scenario 1 remains INCONCLUSIVE / F: insufficient evidence. This is a workflow change, not native/provider acceptance; prior evidence and canonical counts are preserved.
+
+- [ ] Open isolated Expo 8108, sign in as saved isolated A once, and tap **Run native security verification** once (MOBILE.md P). The persistent test screen executes/resumes all seven scenarios, including authorized normal product deletion of disposable isolated C only. If the app closes, reopen 8108; no repeated DevTools pasting is needed.
+- [ ] Read only the sanitized final on-device scenario statuses. FAIL/BLOCKED stops without destructive retry. Startup cleanup is not logout proof; absent C without its original local cleanup checkpoint is not a PASS. Do not substitute A/B or recreate C to continue.
+
+Nineteen targeted mocked harness/bridge tests and changed-scope type/syntax checks PASS; live isolated HTTPS bridge denies anonymous access with no-store. The seven new physical-device scenarios remain unexecuted, C is not deleted, fault injection is prepared/unarmed, and production/provider/platform storage/backup verification statuses are unchanged. One initial A sign-in is required to authorize safe access to saved test credentials. The planned app reload resumes automatically; the only manual recovery action is reopening isolated 8108. No production request/data/configuration change, stash/ref change or commit/push.
+
+
+### Automated Scenario-1 phone result — 2026-10-07
+
+The user reports the first automated isolated-phone run ended **Scenario 1 FAIL** after `ready`, the one-record fixture, and `logout-pending`; no `logout-completed` checkpoint was recorded. Scenarios 2–7 did not start; A/B/C were not deleted and C remains untouched. The failure row contained synthetic empty defaults and did not preserve the failed native-state subproperty. This is a real manual runtime result, not a provider-status change.
+
+A focused native-adapter regression reproduces a harness timing race when Firebase's sign-out observer queues a second placement-scope cleanup before the original logout witness inspects state. It leaves storage unready, cleanup result unset and erasure pending during that inspection. The harness now waits boundedly for native cleanup quiescence inside the original logout callback and records only allowlisted failed checks. Product logout/cache behavior is unchanged. Classification B is most likely; the phone's exact failed subproperty remains unavailable. The historical DevTools exit remains INCONCLUSIVE and was not reinvestigated.
+
+One isolated-button action is prepared for a Scenario-1-only rerun. It uses a separate sanitized journal, terminates after Scenario 1, and cannot start scenario 2 or delete C. It has not been triggered. Seven directly relevant tests and changed-scope TypeScript checks PASS. No provider/manual verification or canonical security status/count changed.
+
+### Identified Scenario-1 physical acceptance — 2026-10-07
+
+- [x] USER-OBSERVED isolated 8108 generation-1 Scenario-1 PASS, independently verified by the agent from the persisted native journal. Its sequence includes preparing, ready, one-record fixture, logout-pending, clean logout-completed, verification and PASS. The logout callback's witness precedes verification/PASS; startup cannot supply it. Final PASS timestamp: 2026-10-08T04:39:18.659Z.
+- Historical manual INCONCLUSIVE and original automated FAIL remain retained as superseded evidence; they are not retrospectively upgraded.
+- [ ] Scenarios 2–7: newly authorized for automatic sequential continuation, with deletion of only isolated disposable C. They remain unstarted at this entry because native authorization handoff is blocked by the connection. A/B/C are preserved so far; production untouched. Reopening/keeping isolated 8108 awake is the only connection-recovery action; no Scenario-1 rerun or manual DevTools JavaScript is required.
+
+This is native Scenario-1 runtime acceptance only. Provider configuration, Firebase SDK credential-store/backup/root/release claims and canonical security counts are unchanged.
+
+### Isolated physical continuation acceptance — 2026-10-07
+
+- [x] Scenario 2: persisted native account-delete erasure PASS, including clean original logout witness and remote-deleted before PASS (2026-10-08T06:19:13.698Z). Only disposable isolated C was deleted; provider and database independently confirm its absence.
+- [x] Scenario 3: persisted A → B isolation PASS (06:19:15.762Z).
+- [x] Scenario 4: persisted late-write fencing PASS (06:19:16.901Z).
+- [x] A and B independently confirmed present in the isolated provider and database after C deletion.
+- [ ] Scenarios 5–7 remain unaccepted. Original Scenario 5 BLOCKED after planned reload/service authorization invalidation is retained. Separate 5–7 recovery is active; native Expo bootstrap failure currently prevents reading its result.
+
+Earlier entries describe their historical point in time and remain unchanged. Production/provider configuration and canonical counts are unchanged. No Scenario-1 rerun or C recreation/repeated deletion is authorized by recovery.
+
+### Remaining physical acceptance completed — 2026-10-07
+
+- [x] Scenario 5 reload persistence: persisted recovery PASS at 2026-10-08T06:32:31.817Z, with original pre-reload logout witness and independent durable first-startup pre-cleanup observation true. Original blocked attempt remains historical.
+- [x] Scenario 6 global preference preservation: original logout witness retains the preference; test preference subsequently removed; PASS at 06:32:33.416Z.
+- [x] Scenario 7 storage-failure fail-closed: failure-observed → failure-safe → recovered → PASS at 06:32:35.270Z. Final native inspection independently confirms fault injection disarmed, no held write and clean durable/memory caches.
+- [x] Final isolated provider/database checks: A/B present in both, disposable C absent in both. No production activity.
+
+Together with accepted Scenario 1 and scenarios 2–4 above, all seven isolated Expo Go physical-runtime scenarios PASS. The user fully closed/reopened Expo Go to restore missing native modules; saved recovery resumed without manual JavaScript/account switching or repeated deletion. Earlier snapshots remain historical. Secure credential-store, backup/root and production-release claims remain open; canonical security counts are unchanged.

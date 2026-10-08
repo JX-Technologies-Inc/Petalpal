@@ -5,7 +5,8 @@ import { apiBaseUrl, apiRequest, configureApi } from './api';
 import { firebaseAuth } from './firebase';
 import { loadSessionExperience, type SessionExperience, type SessionUser } from './sessionExperience';
 import { authErrorMessage, profileError, registrationError, type ProfileInput } from './auth/registrationValidation';
-import { scopeFlowerPlacements } from '../components/garden/planting/plantingPersistence';
+import { scopeFlowerPlacements, setNativeSecurityExpectedOwner } from '../components/garden/planting/plantingPersistence';
+import { recordNativeLogoutWitness } from './nativeSecurityLogoutWitness';
 import type { FlowerSession } from '../components/garden/planting/flowerDetailApi';
 
 export type AuthPhase = 'initializing' | 'signedOut' | 'registering' | 'verificationPending' | 'profileRequired' | 'signedIn';
@@ -40,6 +41,7 @@ export function useAuth() {
 }
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthSnapshot>(() => emptyState());
+  useEffect(() => { setNativeSecurityExpectedOwner(state.session?.user.id || null); }, [state.session?.user.id]);
   const version = useRef(0);
   const invalidatedUid = useRef<string | null>(null);
   const signedOutError = useRef('');
@@ -65,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try { await signOut(auth); }
     catch { signedOutError.current = 'Your session is closed. Please try signing out again before signing in.'; }
     const erased = await cleanup;
+    await recordNativeLogoutWitness(erased);
     if (!erased) signedOutError.current = 'Your session is closed. Private device cache cleanup failed; please sign in again to retry.';
     if (!firebaseAuth().currentUser || generation === version.current) setState(emptyState('signedOut', signedOutError.current));
   }

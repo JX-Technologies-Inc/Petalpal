@@ -89,6 +89,8 @@ import {
 import { createRealtimeSecurity, SOCKET_MAX_PACKET_BYTES } from "./lib/socket-security.js";
 import { rateLimiters } from "./lib/rate-limit.js";
 import { deleteFirebaseUser } from "./lib/firebase-admin.js";
+import { verifyFirebaseIdToken, findFirebaseUserByEmail } from './lib/firebase-admin.js';
+import { createNativeSecurityHarnessBridge, nativeSecurityHarnessRouter, assertNativeTestDeletion } from './lib/native-security-harness.js';
 import { assertDevelopmentDatabase } from "./lib/database-isolation.js";
 import { deleteAccountDataInTransaction } from "./lib/account-deletion.js";
 import {
@@ -112,6 +114,12 @@ const openapiDocument = YAML.parse(
 
 const app = express();
 app.use(httpSecurity);
+if (process.env.NATIVE_SECURITY_TEST === '1') {
+  app.get('/', (_req, res) => res.set('Cache-Control', 'no-store').json({
+    environment: 'native-security-test', firebaseProject: 'petalpal-native-security-test',
+    database: 'petalpal_native_security_test'
+  }));
+}
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
 const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rateLimiters();
@@ -255,6 +263,11 @@ app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, general
   });
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
+if (process.env.NATIVE_SECURITY_TEST === '1') {
+  app.use('/native-security/harness', generalRateLimit, nativeSecurityHarnessRouter(createNativeSecurityHarnessBridge({
+    prisma, verifyToken: verifyFirebaseIdToken, findUser: findFirebaseUserByEmail
+  })));
+}
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/internal/ai-jobs", (req, res, next) => {
   if (!aiJobServiceAuthorized(req.get("Authorization"))) return res.status(401).json({ error: "Unauthorized" });
@@ -3578,6 +3591,12 @@ app.delete("/users/:id", async (req, res) => {
 
       if (!requireOwnUser(req, res, id)) return;
 
+      if (process.env.NATIVE_SECURITY_TEST === '1') {
+        const target = await prisma.user.findUnique({ where: { id }, select: { email: true, firebaseUid: true } });
+        try { assertNativeTestDeletion(target); }
+        catch { return res.status(403).json({ error: 'Only disposable isolated C deletion is authorized' }); }
+      }
+
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_REQUESTED", outcome: "REQUESTED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch (auditError) {
@@ -3651,7 +3670,7 @@ app.use(endpointNotFound);
 app.use(handleHttpError);
 
 if (isDirectRun) {
-  server.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, process.env.NATIVE_SECURITY_TEST === '1' ? '127.0.0.1' : '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }

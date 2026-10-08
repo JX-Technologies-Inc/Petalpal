@@ -36,8 +36,10 @@ export function loadPlantingModules(storage, react, nativeStorage, web = true, d
         jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
     });
     const run = vm.runInNewContext('(function(exports, require, module) {\n' + outputText + '\n})', {
-      ...(web ? { localStorage: storage, window: { localStorage: storage } } : {}), console, Uint8Array,
-      process: { env: {} }, __DEV__: development, fetch: dependencies.fetch ?? globalThis.fetch,
+      ...(web ? { localStorage: storage, window: { localStorage: storage } } : {}), console, Uint8Array, URL,
+      process: { env: dependencies.env ?? {} }, __DEV__: development, fetch: dependencies.fetch ?? globalThis.fetch,
+      ...(dependencies.globalThis ? { globalThis: dependencies.globalThis } : {}),
+      ...(dependencies.runtimeGlobals ?? {}),
     }, { filename: file });
     run(module.exports, requireLocal, module);
     return module.exports;

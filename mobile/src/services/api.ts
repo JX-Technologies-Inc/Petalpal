@@ -1,11 +1,16 @@
+import { assertNativeSecurityClient } from './nativeSecurity';
 export interface ApiConnection {
   apiBaseUrl: string;
   getAccessToken: (forceRefresh?: boolean) => Promise<string | null>;
   onUnauthorized?: () => void;
 }
 let connection: ApiConnection | null = null;
-export function configureApi(next: ApiConnection | null) { connection = next; }
+export function configureApi(next: ApiConnection | null) {
+  if (next) assertNativeSecurityClient(next.apiBaseUrl);
+  connection = next;
+}
 export function apiBaseUrl() {
+  assertNativeSecurityClient(connection?.apiBaseUrl || process.env.EXPO_PUBLIC_API_BASE_URL);
   if (connection) return connection.apiBaseUrl.replace(/\/$/, '');
   const configured = process.env.EXPO_PUBLIC_API_BASE_URL;
   if (configured) {

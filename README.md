@@ -65,6 +65,7 @@ npm run start:ai-worker
 
 Detailed engineering documentation is maintained separately:
 
+- [`MOBILE.md`](./MOBILE.md) — Physical-iPhone setup, mobile authentication, and isolated native testing runbook
 - [`LONG_TERM_AI.md`](./LONG_TERM_AI.md) — Long-term AI, memory, reports, and retrieval architecture
 - [`SECURITY.md`](./SECURITY.md) — Security architecture and backend hardening
 - [`experiments/emotion-classifier-v2/ML_PROGRESS.md`](./experiments/emotion-classifier-v2/ML_PROGRESS.md) — Machine learning experiments and evaluation

@@ -2,6 +2,7 @@ import { PanelThemeProvider } from '../components/features/PanelTheme';
 import { AuthProvider, useAuth } from "../services/auth";
 import { ProductionRouteGate } from "../components/ProductionRouteGate";
 import { AuthGate } from "../components/AuthGate";
+import { nativeSecurityEnabled } from '../services/nativeSecurity';
 import { DarkTheme, DefaultTheme, Slot, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from 'react-native';
@@ -13,6 +14,10 @@ import { WorldTimeProvider } from '@/components/garden/world-time';
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
+  if (__DEV__ && nativeSecurityEnabled) {
+    const HarnessScreen = require('../components/NativeSecurityHarnessScreen').default;
+    return <AuthProvider><HarnessScreen /></AuthProvider>;
+  }
   return <AuthProvider><AuthGate><RoutedContent /></AuthGate></AuthProvider>;
 }
 
