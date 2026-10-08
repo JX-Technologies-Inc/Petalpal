@@ -42,6 +42,7 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 - [x] Review members and permissions. Evidence: no unexpected workspace team member found. Status: `PASS`
 - [x] Verify production/development separation. Evidence: current production configuration reviewed; no additional workspace finding recorded. Status: `PASS`
 - [ ] Configure relevant Render monitoring, alerting, and retention where available. Evidence: non-secret configuration summary. Status: `PARTIAL / PLAN-LIMITED`
+- [ ] Verify deployed auth proxy topology and effective `TRUST_PROXY`, `RATE_LIMIT_AUTH_MAX`, `RATE_LIMIT_AUTH_ACCOUNT_MAX` and `RATE_LIMIT_WINDOW_MS`; use isolated IPv6/shared-NAT/concurrency checks to validate fair temporary throttling. Confirm singleton/restart limits or a shared store before scaling. Status: `NOT VERIFIED FOR NEW AUTH LIMITS`; local tests do not certify deployed configuration.
 
 ## 4. Cloudflare
 
@@ -61,6 +62,8 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 - [x] Verify Firebase Web config is treated as public, not secret. Evidence: configuration classification review. Status: `PASS`
 - [x] Confirm production Firebase Email Enumeration Protection is enabled. Evidence: user-observed Firebase Console screenshot, 2026-10-08. Status: `USER-OBSERVED PASS — SETTING ONLY`; no agent Console access or setting change. Direct signup `EMAIL_EXISTS` and signup success/failure differences remain; live login/reset/signup behavior is not verified. Account Enumeration remains `PARTIAL`.
 - [ ] Review authentication abuse and security visibility where available. Evidence: non-secret monitoring configuration summary. Status: `ACTION REQUIRED`
+- [ ] Credential stuffing: verify effective Firebase password/signup quotas, quota overrides, abuse/throttling metrics and alerts, legitimate recovery and high-risk re-auth in an authorized isolated environment. Published signup limit is 100 accounts/hour/IP; project-specific and distributed protection are not verified. Status: `NOT VERIFIED`; no live attempts or provider changes authorized by this record.
+- [ ] Evaluate Identity Platform eligibility and App Check/reCAPTCHA email-password enforcement for all shipped web/native clients, with isolated missing/invalid-token negatives and legitimate sign-in/signup recovery. Record audit versus enforcement mode, client compatibility and cost before any separately authorized rollout. Status: `NOT VERIFIED`; client integration alone is not provider enforcement.
 
 ## 6. Backup / Restore
 

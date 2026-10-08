@@ -356,3 +356,23 @@ test('Account enumeration: unknown, wrong-password and disabled login share safe
   }
   assert.deepEqual(errors, Array(4).fill('Check your email and password, then try again.'));
 });
+
+test('Brute force: provider throttling shows safe wait feedback and creates no backend session', async () => {
+  const s = setup(); const state = await s.ready();
+  s.setLoginError(Object.assign(new Error('private provider throttle'), { code: 'auth/too-many-requests' }));
+  await state.login('known@example.test', 'synthetic-password');
+  const result = await s.hooks.flush();
+  assert.equal(result.error, 'Too many attempts. Please wait before trying again.');
+  assert.equal(result.phase, 'signedOut'); assert.equal(s.auth.currentUser, null); assert.equal(s.requests.length, 0);
+});
+test('Brute force: backend 429 does not retry, refresh credentials or close an authenticated session', async () => {
+  const s = setup(user()); await s.ready();
+  const beforeRequests = s.requests.length, beforeTokens = s.tokens.length;
+  s.setHandler(async () => response({ error: 'Too many requests. Try again later.' }, 429));
+  await assert.rejects(s.api.apiRequest('/session?view=metadata'), error => error.status === 429);
+  const state = await s.hooks.flush();
+  assert.equal(s.requests.length, beforeRequests + 1); assert.equal(s.tokens.length, beforeTokens + 1);
+  assert.equal(s.tokens.at(-1).force, false);
+  assert.equal(state.phase, 'signedIn'); assert.equal(state.session.user.id, 'owner-alice');
+  assert.equal(s.auth.currentUser.uid, 'alice');
+});

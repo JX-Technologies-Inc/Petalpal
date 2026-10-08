@@ -122,7 +122,7 @@ if (process.env.NATIVE_SECURITY_TEST === '1') {
 }
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
-const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rateLimiters();
+const { general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
 
 app.use((req, res, next) => {
   req.requestId = requestId();
@@ -261,6 +261,8 @@ app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, general
     if (!result.count) return res.status(404).json({ error: "Journal not found" });
     res.json({ coverImage });
   });
+// Bound session probes before body parsing or Firebase token verification.
+app.use(["/auth", "/session"], authRateLimit);
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
 if (process.env.NATIVE_SECURITY_TEST === '1') {
@@ -299,7 +301,6 @@ app.post("/internal/ai-jobs/:id/execute", async (req, res) => {
 if (apiDocsEnabled()) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiDocument));
 }
-app.use("/auth", authRateLimit);
 
 app.use((req, res, next) => {
   const isPublicPage =
@@ -308,7 +309,7 @@ app.use((req, res, next) => {
       req.path === "/finish-sign-in" ||
       Boolean(path.extname(req.path)));
   const isFirebaseSession =
-    req.method === "POST" && req.path === "/auth/session";
+    req.method === "POST" && /^\/auth\/session\/?$/i.test(req.path);
   const isRemovedLegacyAuth =
     req.method === "POST" &&
     [
@@ -917,7 +918,7 @@ app.get("/users/:userId/garden", async (req, res) => {
     res.status(500).json({ error: "Failed to get garden" });
   }
 });
-app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
+app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, async (req, res) => {
   try {
     const identity = req.firebase;
     if (!identity.email || !identity.emailVerified) {

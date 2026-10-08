@@ -55,4 +55,16 @@ describe("LoginForm", () => {
     expect(onVerificationRequired).toHaveBeenCalledWith('known@example.test');
   });
 
+  it('honors provider throttling without retrying or routing to verification', async () => {
+    const onLogin = vi.fn(), onVerificationRequired = vi.fn();
+    loginWithPassword.mockRejectedValue(Object.assign(new Error('private provider throttle'), { code: 'auth/too-many-requests' }));
+    render(<LoginForm onLogin={onLogin} onVerificationRequired={onVerificationRequired} />);
+    await userEvent.type(screen.getByLabelText('Email'), 'known@example.test');
+    await userEvent.type(screen.getByLabelText(/petalpal password/i), 'synthetic-password');
+    await userEvent.click(screen.getByRole('button', { name: /sign in with password/i }));
+    expect(await screen.findByText('Too many attempts. Please wait before trying again.')).toBeInTheDocument();
+    expect(loginWithPassword).toHaveBeenCalledOnce();
+    expect(onLogin).not.toHaveBeenCalled(); expect(onVerificationRequired).not.toHaveBeenCalled();
+  });
+
 });
