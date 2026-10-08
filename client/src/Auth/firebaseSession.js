@@ -26,12 +26,7 @@ async function syncUser(user, profile = {}, refreshedIdToken) {
   });
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const detail = data?.firebaseErrorCode && data?.firebaseErrorMessage
-      ? ` (${data.firebaseErrorCode}: ${data.firebaseErrorMessage})`
-      : "";
-    const error = new Error(`${data?.error || "Unable to start PetalPal session"}${detail}`);
-    error.code = data?.firebaseErrorCode || null;
-    throw error;
+    throw new Error("Unable to start PetalPal session. Please try again.");
   }
 
   localStorage.setItem("petalPalCurrentUser", JSON.stringify(data.user));

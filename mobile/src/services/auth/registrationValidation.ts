@@ -19,14 +19,12 @@ export function profileError(profile: ProfileInput): string {
 
 export function authErrorMessage(error: unknown): string {
   const code = (error as { code?: string })?.code;
-  if (code === 'auth/email-already-in-use') return 'This email already has an account. Sign in to continue.';
   if (code === 'auth/invalid-email') return 'Enter a valid email address.';
   if (code === 'auth/weak-password') return 'Choose a stronger password and try again.';
-  if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(code || '')) {
+  if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/user-disabled'].includes(code || '')) {
     return 'Check your email and password, then try again.';
   }
   if (code === 'auth/too-many-requests') return 'Too many attempts. Please wait before trying again.';
-  if (code === 'auth/user-disabled') return 'This account is unavailable. Please contact support.';
   if (code === 'auth/network-request-failed') return 'Check your connection and try again.';
   return 'We couldn’t connect to your account. Please try again.';
 }

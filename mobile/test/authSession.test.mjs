@@ -12,7 +12,7 @@ function user(uid = 'alice', verified = true) {
 function setup(initial = null) {
   const hooks = hookHarness(); const requests = [], emails = [], tokens = [], writes = [];
   const auth = { currentUser: initial, authStateReady: async () => {} };
-  let changed, handler, emailError, registrationError, signOutError, storageError;
+  let changed, handler, emailError, registrationError, loginError, signOutError, storageError;
   let needsProfile = false;
   const instrument = (value) => {
     if (!value || value.instrumented) return value;
@@ -25,7 +25,7 @@ function setup(initial = null) {
   const backendUser = () => ({ id: `owner-${auth.currentUser.uid}`, name: 'Petal', email: auth.currentUser.email, timezone: 'UTC' });
   const firebase = {
     onAuthStateChanged: (_auth, callback) => { changed = callback; return () => {}; },
-    signInWithEmailAndPassword: async (_auth, email) => { emit(user(email.split('@')[0])); },
+    signInWithEmailAndPassword: async (_auth, email) => { if (loginError) throw loginError; emit(user(email.split('@')[0])); },
     createUserWithEmailAndPassword: async (_auth, email) => {
       if (registrationError) throw registrationError;
       const value = user(email.split('@')[0], false); emit(value); return { user: value };
@@ -58,6 +58,7 @@ function setup(initial = null) {
   return { hooks, auth, requests, emails, tokens, writes, items, emit, load,
     api: load('../../../services/api'), storage: load('plantingPersistence'),
     setHandler: (value) => { handler = value; }, setNeedsProfile: () => { needsProfile = true; },
+    setLoginError: (value) => { loginError = value; },
     setEmailError: (value) => { emailError = value; }, setRegistrationError: (value) => { registrationError = value; },
     setStorageError: value => { storageError = value; },
     setSignOutError: (value) => { signOutError = value; },
@@ -136,7 +137,7 @@ test('Phase 1 registration errors are readable and create no backend session', a
   const s = setup(); const state = await s.ready();
   s.setRegistrationError(Object.assign(new Error('private provider diagnostic'), { code: 'auth/email-already-in-use' }));
   await state.register('new@example.test', 'synthetic password', 'synthetic password'); const result = await s.hooks.flush();
-  assert.equal(result.phase, 'signedOut'); assert.match(result.error, /already has an account/);
+  assert.equal(result.phase, 'signedOut'); assert.equal(result.error, 'We couldn’t connect to your account. Please try again.');
   assert.doesNotMatch(result.error, /private provider diagnostic/); assert.equal(s.requests.length, 0);
 });
 test('Phase 1 reload recovers unverified registration solely from the current Firebase identity', async () => {
@@ -336,4 +337,16 @@ test('DELTA-P2-2 cleanup failure closes auth and API; retry erases retained owne
   await assert.rejects(s.api.apiRequest('/owner'), /Sign in/);
   s.setStorageError(null); await state.login('bob@example.test', 'synthetic password'); state = await s.hooks.flush();
   assert.equal(state.session.user.id, 'owner-bob'); assert.equal(s.items.size, 0);
+});
+
+test('Account enumeration: unknown, wrong-password and disabled login share safe feedback', async () => {
+  const errors = [];
+  for (const [email, code] of [['unknown@example.test', 'auth/user-not-found'], ['alice@example.test', 'auth/wrong-password'], ['alice@example.test', 'auth/invalid-credential'], ['disabled@example.test', 'auth/user-disabled']]) {
+    const s = setup(); const state = await s.ready();
+    s.setLoginError(Object.assign(new Error('private provider diagnostic ' + email), { code }));
+    await state.login(email, 'wrong password'); const result = await s.hooks.flush();
+    errors.push(result.error); assert.equal(result.phase, 'signedOut');
+    assert.equal(s.requests.length, 0); assert.equal(s.auth.currentUser, null);
+  }
+  assert.deepEqual(errors, Array(4).fill('Check your email and password, then try again.'));
 });

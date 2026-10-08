@@ -114,4 +114,10 @@ describe("verified registration synchronization", () => {
     await expect(resendRegistrationVerificationEmail()).resolves.toBe(false);
     expect(sendEmailVerification).not.toHaveBeenCalled();
   });
+  it.each([401, 403, 500, 503])('does not echo session diagnostics at status %s', async (status) => {
+    mocks.user.emailVerified = true;
+    fetch.mockResolvedValue({ ok: false, status, json: async () => ({ error: 'private user-not-found detail', firebaseErrorCode: 'auth/user-not-found', firebaseErrorMessage: mocks.user.email }) });
+    await expect(completeVerifiedRegistration()).rejects.toThrow('Unable to start PetalPal session. Please try again.');
+  });
+
 });

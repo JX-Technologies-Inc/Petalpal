@@ -63,10 +63,7 @@ test("Firebase verification failures identify missing Admin credentials without 
     const response = await runIdentityAuthentication(`Bearer ${token}`);
     assert.equal(response.statusCode, 503);
     assert.deepEqual(response.body, {
-      error: "Authentication service unavailable",
-      firebaseErrorCode: "app/invalid-credential",
-      firebaseErrorMessage: "credential unavailable",
-      reason: "admin_credential_unavailable"
+      error: "Authentication service unavailable"
     });
     assert.equal(logs[0][1].issuer, claims.iss);
     assert.equal(logs[0][1].audience, claims.aud);
@@ -95,8 +92,7 @@ test("invalid Firebase user tokens remain 401 rather than Admin configuration fa
     const invalidToken = `header.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.bad-signature`;
     const response = await runIdentityAuthentication(`Bearer ${invalidToken}`);
     assert.equal(response.statusCode, 401);
-    assert.equal(response.body.firebaseErrorCode, "auth/invalid-id-token");
-    assert.equal(response.body.reason, "invalid_token");
+    assert.deepEqual(response.body, { error: "Invalid or expired Firebase token" });
   } finally {
     if (originalDiagnostics === undefined) delete process.env.FIREBASE_AUTH_DIAGNOSTICS;
     else process.env.FIREBASE_AUTH_DIAGNOSTICS = originalDiagnostics;
@@ -104,7 +100,10 @@ test("invalid Firebase user tokens remain 401 rather than Admin configuration fa
   }
 });
 
-test("Firebase token failures distinguish revoked, expired, and wrong-project tokens", async () => {
+test("Firebase token failures keep revoked, expired, and wrong-project details private", async () => {
+  const originalLog = console.info;
+  const logs = [];
+  console.info = (...args) => logs.push(args);
   const originalDiagnostics = process.env.FIREBASE_AUTH_DIAGNOSTICS;
   process.env.FIREBASE_AUTH_DIAGNOSTICS = "1";
   const baseClaims = { iss: "https://securetoken.google.com/petalpal-b212c", aud: "petalpal-b212c", exp: 2_000_000_000 };
@@ -120,10 +119,12 @@ test("Firebase token failures distinguish revoked, expired, and wrong-project to
       });
       const response = await runIdentityAuthentication(`Bearer ${tokenFor(claims)}`);
       assert.equal(response.statusCode, 401);
-      assert.equal(response.body.reason, expectedReason);
-      assert.equal(response.body.firebaseErrorCode, errorCode);
+      assert.deepEqual(response.body, { error: "Invalid or expired Firebase token" });
+      assert.equal(logs.at(-1)[1].reason, expectedReason);
+      assert.equal(logs.at(-1)[1].firebaseErrorCode, errorCode);
     }
   } finally {
+    console.info = originalLog;
     if (originalDiagnostics === undefined) delete process.env.FIREBASE_AUTH_DIAGNOSTICS;
     else process.env.FIREBASE_AUTH_DIAGNOSTICS = originalDiagnostics;
     setFirebaseTokenVerifierForTests();
@@ -140,4 +141,21 @@ test("resource ownership cannot be asserted for another PetalPal user", () => {
   assert.equal(requireOwnUser(request, response, "user-1"), true);
   assert.equal(requireOwnUser(request, response, "user-2"), false);
   assert.equal(statusCode, 403);
+});
+
+test("unknown, disabled, wrong-password and invalid-token failures never disclose provider detail, even with diagnostics enabled", async () => {
+  const originalDiagnostics = process.env.FIREBASE_AUTH_DIAGNOSTICS;
+  process.env.FIREBASE_AUTH_DIAGNOSTICS = "1";
+  try {
+    for (const code of ["auth/user-not-found", "auth/user-disabled", "auth/wrong-password", "auth/invalid-credential", "auth/invalid-id-token"]) {
+      setFirebaseTokenVerifierForTests(async () => { throw Object.assign(new Error("known@example.test private diagnostic"), { code }); });
+      assert.deepEqual(await runIdentityAuthentication("Bearer synthetic-invalid-token"), {
+        statusCode: 401, body: { error: "Invalid or expired Firebase token" }
+      });
+    }
+  } finally {
+    if (originalDiagnostics === undefined) delete process.env.FIREBASE_AUTH_DIAGNOSTICS;
+    else process.env.FIREBASE_AUTH_DIAGNOSTICS = originalDiagnostics;
+    setFirebaseTokenVerifierForTests();
+  }
 });

@@ -19,7 +19,7 @@ it("creates only Firebase credentials before verification", async () => {
   expect(onAccountCreated).toHaveBeenCalledWith("bloom@example.com");
 });
 
-it("maps Firebase EMAIL_EXISTS to a useful account message", async () => {
+it("does not disclose Firebase EMAIL_EXISTS or raw provider messages", async () => {
   registerWithPassword.mockRejectedValue(Object.assign(new Error("Firebase: Error (auth/email-already-in-use)."), {
     code: "auth/email-already-in-use"
   }));
@@ -28,5 +28,6 @@ it("maps Firebase EMAIL_EXISTS to a useful account message", async () => {
   await userEvent.type(screen.getByLabelText(/^petalpal password$/i), "secret12");
   await userEvent.type(screen.getByLabelText(/confirm password/i), "secret12");
   await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
-  expect(await screen.findByText(/EMAIL_EXISTS/)).toHaveTextContent(/sign in or use another email/i);
+  expect(await screen.findByText("We couldn’t connect to your account. Please try again.")).toBeInTheDocument();
+  expect(screen.queryByText(/EMAIL_EXISTS|already has an account|Firebase:/)).not.toBeInTheDocument();
 });

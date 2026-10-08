@@ -2,7 +2,7 @@
 
 ## Security Status
 
-Last updated: 2026-10-07
+Last updated: 2026-10-08
 
 This file is the canonical implementation record for **PetalPal Security
 Threat Model & Remediation Backlog — v2**. Every P0/P1/P2 item is retained as
@@ -13,7 +13,7 @@ Production exact-code rollout and migration verification occurred on 2026-10-06;
 | Priority | ✅ VERIFIED | ✅ TESTED | ✅ IMPLEMENTED | 🟡 PARTIAL | 🔒 MANUAL | ⬜ TODO | ⚪ N/A |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | P0 | 0 | 5 | 3 | 19 | 0 | 0 | 0 |
-| P1 | 0 | 5 | 1 | 8 | 5 | 4 | 0 |
+| P1 | 0 | 5 | 1 | 9 | 5 | 3 | 0 |
 | P2 | 0 | 0 | 0 | 8 | 2 | 2 | 5 |
 
 Counts cover canonical backlog rows only; delta findings are cross-references, not extra rows. `🔒 MANUAL` includes blocked/manual-action rows; `⚪ N/A` includes not-applicable rows.
@@ -125,7 +125,7 @@ what was inspected or tested; “manual” means platform/account action remains
 | Canonical item | Status | Evidence / finding / next action |
 | --- | --- | --- |
 | Credential Stuffing / Brute Force | 🟡 PARTIAL | Firebase handles authentication and auth limiting is IP-keyed. Verify Firebase anti-abuse and high-risk re-auth manually. |
-| Account Enumeration | ⬜ TODO | Uniform login/register/reset behavior has not been tested; Firebase and session setup responses need review. |
+| Account Enumeration | 🟡 PARTIAL | App-controlled web/mobile login and registration feedback is sanitized; unauthenticated session errors omit provider diagnostics even when the diagnostic flag is enabled. 70 targeted auth tests PASS (2026-10-08; evidence below). Firebase Email Enumeration Protection configuration is NOT VERIFIED; direct Firebase signup still exposes EMAIL_EXISTS even with protection enabled, and success/failure differences remain. No active reset or credential-linking UI/API; verified-own-email legacy profile linking remains authenticated. |
 | Account & Session Lifecycle Security | 🟡 PARTIAL | Prior production-login and owner-delete/Socket lifecycle evidence retained. Seven isolated physical-iPhone placement-cache scenarios PASS. PetalPal awaits Firebase JS signOut; successful SDK persistence removal clears the current local auth record, not provider-wide refresh sessions or historical backups. Failed storage/sign-out is not verified erasure. Deleted-user refresh tokens are invalidated; cached ID JWTs require relying-party revocation/account checks or expiry. Broader lifecycle/propagation and release restore remain unverified; see credential review below. |
 | SQL / ORM Logic Injection | ✅ TESTED | Structured Prisma filters; new pgvector/lease SQL uses constant statements with bound parameters despite `$queryRawUnsafe` naming. Owner/profile/revision predicates reviewed in `lib/semantic-retrieval.js`; real PostgreSQL isolation matrix not rerun in this delta. |
 | API Flood / DoS | 🟡 PARTIAL | Socket payload/action/user/inflight bounds and shared paid-AI call ceilings are TESTED (DELTA-P1-3/4). General HTTP limits remain process-local; historical queue/aggregate bounds and deployment capacity/deadlines remain incomplete. |
@@ -741,3 +741,18 @@ Setup reads native `RCTAsyncStorageExcludeFromBackup`, defaults to YES when abse
 **Compromised-device limit and next gate.** A rooted/jailbroken device or attacker controlling the running process can read accessible files/memory and use credentials; neither this adapter nor the accepted cache erasure provides rooted confidentiality or cryptographic deletion. [App Check](https://firebase.google.com/docs/app-check) can require attestation tokens at enforced endpoints and limit some stolen-token use outside attested clients; it does not encrypt local Firebase credentials, replace user authorization/revocation or prevent extraction/replay through a compromised legitimate runtime. No App Check/provider change was made.
 
 Next native-security gate: verify the intended shipped iOS artifact's effective library/Info.plist, directory exclusion and file-protection metadata, then isolated backup/restore/new-device behavior against the declared credential-extraction threat model. Retain only safe presence/status results, never auth files/tokens or a full backup. This task ran **7 focused existing auth/session regressions PASS** and **5 package/source verification checks PASS**, plus documentation diff checks. No product code, provider/config, phone scenarios, commit or push. Canonical statuses and P0/P1/P2 counts remain unchanged.
+
+
+### P1 Account Enumeration — 2026-10-08
+
+**PARTIAL; scoped app-controlled disclosures fixed.** Web password login previously echoed raw Firebase errors; web/mobile registration explicitly confirmed an existing email, and mobile login distinguished a disabled account. Public feedback now uses fixed allowlisted messages: unknown-user, wrong-password, invalid-credential and disabled-user login failures share the same text; duplicate registration uses the generic fallback without echoing provider codes, messages or email. Valid login, new registration, email verification/recovery and profile completion remain intact. Registration success versus failure still differs; message sanitization does not eliminate the direct Firebase signup oracle.
+
+PetalPal session routes authenticate before profile lookup. Missing/invalid-token probes for known/unknown supplied emails return identical responses without any profile lookup. Verified users may discover/create/recover their own profile; legacy email linking uses the verified token email/UID, not client-supplied identity. No unauthenticated app account-lookup disclosure was confirmed. The diagnostic flag previously exposed raw Firebase verification details; these are now server-only regardless of the flag. Service-unavailable remains 503 and token failures remain 401. Web session setup also stops echoing backend/provider diagnostic fields. Earlier diagnostic evidence is historical; authorization and internal diagnostic logging are preserved.
+
+**Firebase-controlled remainder / manual verification required:** no existing record establishes `emailPrivacyConfig.enableImprovedEmailPrivacy`, and no provider/production access was performed. An authorized operator must inspect Authentication → Settings → User account management → User actions → Email enumeration protection and record only enabled/disabled status (no change authorized here). If disabled, enabling it and isolated provider acceptance require separate authorization. Google's [Email Enumeration Protection documentation](https://docs.cloud.google.com/identity-platform/docs/admin/email-enumeration-protection) describes uniform invalid-login responses and non-disclosing password-reset responses, but signup continues returning `EMAIL_EXISTS` even with protection enabled. Direct signup abuse controls and success/failure/timing differences therefore remain unresolved; no provider-level or timing equivalence is certified.
+
+No active password-reset, sign-in-method lookup or Firebase credential-linking flow is present in the web/mobile app or backend. Reset known/unknown behavior consequently remains a provider-only acceptance gap; no reset email was sent or reset feature added. Retained Google/passwordless helper exports have no active sign-in UI/caller. Verified-token legacy profile linking is active and covered separately; it is not Firebase credential linking.
+
+**Validation:** 70 targeted tests PASS: 33 web auth UI/session/verification tests, 29 mobile auth/session tests, 6 backend identity middleware tests and 2 actual session-route tests with stubbed Firebase/Prisma. Coverage includes known/unknown invalid logins, wrong passwords, disabled identities, duplicate/new registration, verification resend/rate limits, session diagnostics/errors, own-profile setup and verified legacy linking. The changed TypeScript error helper passes strict scoped typecheck; syntax and diff checks PASS. These are local synthetic tests, not live provider/reset/native-runtime acceptance. No production access, provider mutation, deployment, broad audit or native scenario rerun occurred.
+
+Only Account Enumeration changes canonical status (TODO → PARTIAL): P1 PARTIAL 8 → 9, TODO 4 → 3; all other canonical statuses/counts and historical evidence remain unchanged. MANUAL_SECURITY_CHECKLIST.md is unchanged because no manual/provider action was performed or provider acceptance status changed; MOBILE.md is unchanged because no mobile operational workflow changed. Next blocker: verify Firebase Email Enumeration Protection and address the remaining direct signup enumeration boundary under separately authorized provider work.
