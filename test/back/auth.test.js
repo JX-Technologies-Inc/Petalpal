@@ -4,6 +4,7 @@ import test from "node:test";
 const {
   authenticateFirebaseIdentity,
   requireOwnUser,
+  requireRecentAuthentication,
   setFirebaseTokenVerifierForTests
 } = await import("../../lib/auth.js");
 
@@ -41,6 +42,7 @@ test("Firebase identity middleware trusts verified token claims only", async () 
         uid: "firebase-user-1",
         email: "petal@example.com",
         emailVerified: true,
+        authTime: null,
         name: null,
         picture: null,
         provider: "google.com"
@@ -157,5 +159,17 @@ test("unknown, disabled, wrong-password and invalid-token failures never disclos
     if (originalDiagnostics === undefined) delete process.env.FIREBASE_AUTH_DIAGNOSTICS;
     else process.env.FIREBASE_AUTH_DIAGNOSTICS = originalDiagnostics;
     setFirebaseTokenVerifierForTests();
+  }
+});
+
+test("recent authentication trusts only verified auth_time, not refreshed iat or submitted values", () => {
+  for (const authTime of [undefined, null, '1000', 0, -1, 1001, 699, 999.5, NaN, Infinity]) {
+    let result;
+    const res = { status(status) { result = { status }; return this; }, json(body) { result.body = body; } };
+    assert.equal(requireRecentAuthentication({ firebase: { authTime, iat: 1000 }, body: { auth_time: 1000 } }, res, 1000), false);
+    assert.deepEqual(result, { status: 403, body: { error: "Sign out and sign in again before deleting your account.", code: "auth/requires-recent-login" } });
+  }
+  for (const authTime of [700, 999, 1000]) {
+    assert.equal(requireRecentAuthentication({ firebase: { authTime } }, { status() { throw new Error('Unexpected rejection'); } }, 1000), true);
   }
 });

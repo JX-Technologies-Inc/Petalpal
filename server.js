@@ -84,7 +84,8 @@ import {
   authenticateSocket,
   revalidateSocketIdentity,
   authenticateFirebaseIdentity,
-  requireOwnUser
+  requireOwnUser,
+  requireRecentAuthentication
 } from "./lib/auth.js";
 import { createRealtimeSecurity, SOCKET_MAX_PACKET_BYTES } from "./lib/socket-security.js";
 import { rateLimiters } from "./lib/rate-limit.js";
@@ -3591,6 +3592,7 @@ app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
 
       if (!requireOwnUser(req, res, id)) return;
+      if (!requireRecentAuthentication(req, res)) return;
 
       if (process.env.NATIVE_SECURITY_TEST === '1') {
         const target = await prisma.user.findUnique({ where: { id }, select: { email: true, firebaseUid: true } });

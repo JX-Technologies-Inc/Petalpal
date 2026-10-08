@@ -43,7 +43,7 @@ async function fixture(t) {
   setFirebaseTokenVerifierForTests(async token => {
     const id = token?.replace(/-token$/, "");
     if (!state.users[id] || state.revoked.has(id)) throw Object.assign(new Error("private verifier detail"), { code: "auth/id-token-revoked" });
-    return { uid: `firebase-${id}`, email_verified: true, exp: Math.floor(Date.now()/1000)+3600 };
+    return { uid: `firebase-${id}`, email_verified: true, auth_time: Math.floor(Date.now()/1000), exp: Math.floor(Date.now()/1000)+3600 };
   });
   setFirebaseUserDeleterForTests(async uid => { state.revoked.add(uid.replace("firebase-", "")); });
   server.listen(0, "127.0.0.1"); await new Promise(resolve => server.once("listening", resolve));

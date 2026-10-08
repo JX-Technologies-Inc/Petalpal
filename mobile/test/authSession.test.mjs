@@ -376,3 +376,20 @@ test('Brute force: backend 429 does not retry, refresh credentials or close an a
   assert.equal(state.phase, 'signedIn'); assert.equal(state.session.user.id, 'owner-alice');
   assert.equal(s.auth.currentUser.uid, 'alice');
 });
+
+test('Recent-login rejection preserves the account/session/cache until explicit new sign-in and deletion retry', async () => {
+  const s = setup(user()); const state = await s.ready();
+  await s.storage.saveFlowerPlacements([{ id: 'private' }]);
+  const before = s.requests.length;
+  s.setHandler(async () => response({ error: 'Sign out and sign in again before deleting your account.', code: 'auth/requires-recent-login' }, 403));
+  await assert.rejects(state.deleteAccount(), error => error.status === 403 && error.code === 'auth/requires-recent-login' && /Sign out and sign in again/.test(error.message));
+  const retained = await s.hooks.flush();
+  assert.equal(s.requests.length, before + 1); assert.equal(retained.phase, 'signedIn');
+  assert.equal(s.auth.currentUser.uid, 'alice'); assert.equal((await s.storage.loadFlowerPlacements()).length, 1);
+  await retained.logout(); const signedOut = await s.hooks.flush(); s.setHandler(null);
+  await signedOut.login('alice@example.test', 'synthetic-password');
+  const fresh = await s.hooks.flush();
+  s.setHandler(async () => response({ success: true }));
+  await fresh.deleteAccount(); const deleted = await s.hooks.flush();
+  assert.equal(deleted.phase, 'signedOut'); assert.equal((await s.storage.loadFlowerPlacements()).length, 0);
+});
