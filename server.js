@@ -100,7 +100,7 @@ import {
   handleHttpError,
   requireJsonObject, requireJsonContentType, allowBodyFields
 } from "./lib/http-errors.js";
-import { logServerError } from "./lib/security-log.js";
+import { logServerError, startSecurityMetricsLogging } from "./lib/security-log.js";
 import { requestId, emitSecurityEvent } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
@@ -110,6 +110,7 @@ import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./l
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+startSecurityMetricsLogging();
 const openapiDocument = YAML.parse(
   fs.readFileSync(path.join(__dirname, "docs", "openapi.yaml"), "utf8")
 );

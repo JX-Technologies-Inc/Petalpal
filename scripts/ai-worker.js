@@ -1,8 +1,10 @@
 import prisma from "../lib/prisma.js";
+import { startSecurityMetricsLogging } from '../lib/security-log.js';
 import { createProductionAiWorker } from "../lib/ai-worker.js";
 import { configuredCloudflareReportNarrativeProvider } from "../lib/report-narrative.js";
 
 const controller = new AbortController();
+startSecurityMetricsLogging();
 for (const signal of ["SIGINT", "SIGTERM"]) {
   process.once(signal, () => controller.abort());
 }
