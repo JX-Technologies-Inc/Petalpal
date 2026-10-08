@@ -103,7 +103,7 @@ import { logServerError } from "./lib/security-log.js";
 import { requestId, emitSecurityEvent } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
-import { httpSecurity, securityHeaders } from "./lib/http-security.js";
+import { httpSecurity, securityHeaders, privateResponse } from "./lib/http-security.js";
 import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./lib/history-metadata.js";
 
 
@@ -308,7 +308,7 @@ app.use((req, res, next) => {
     req.method === "GET" &&
     (req.path === "/" ||
       req.path === "/finish-sign-in" ||
-      Boolean(path.extname(req.path)));
+      (Boolean(path.extname(req.path)) && !privateResponse(req)));
   const isFirebaseSession =
     req.method === "POST" && /^\/auth\/session\/?$/i.test(req.path);
   const isRemovedLegacyAuth =
@@ -2036,7 +2036,7 @@ app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
     monthly: () => reports.getMonthlyReportById(input),
     yearly: () => reports.getYearlyReportById(input)
   };
-  const read = readers[req.params.reportType];
+  const read = Object.hasOwn(readers, req.params.reportType) ? readers[req.params.reportType] : null;
   if (!read) return res.status(400).json({ error: "Unsupported AI report type" });
   try {
     const report = await read();
