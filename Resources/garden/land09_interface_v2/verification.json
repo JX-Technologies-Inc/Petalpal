@@ -1,0 +1,24 @@
+{
+  "baseline_files_checked": 378,
+  "changed_existing_files": [
+    "mobile\\src\\components\\garden\\GardenInfrastructureLayer.tsx",
+    "mobile\\src\\components\\garden\\GardenScene.tsx"
+  ],
+  "all_existing_art_assets_unchanged": true,
+  "new_overlay_bounds": [
+    1325,
+    1366,
+    1503,
+    1534
+  ],
+  "road_paving_overlap": 4498,
+  "land_paving_overlap": 8927,
+  "land09_opaque_corridor_gap_samples": 0,
+  "b01_overlap_preserved": 4251,
+  "b01_corridor_gap_pixels": 0,
+  "opaque_previously_visible_road_pixels_protected": true,
+  "arch_off_runtime_inspected": true,
+  "arch_restored": true,
+  "checkpoint_created": false,
+  "awaiting_visual_approval": true
+}

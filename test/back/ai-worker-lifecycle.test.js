@@ -45,3 +45,25 @@ test("consent cancellation during a heartbeat does not retry the job", async () 
   assert.equal(cancelled, true);
   assert.equal(failed, false);
 });
+
+test("atomic report completion wins over a late heartbeat without a second success write", async () => {
+  for (const transportError of [false, true]) {
+    const worker = new AiJobWorker({
+      repository: {
+        async claimNext() { return { id: "report-job", jobType: "WEEKLY_REPORT" }; },
+        async renewLease() {
+          if (transportError) throw new Error("synthetic heartbeat transport failure");
+          return { count: 0 }; // Job already completed by its guarded transaction.
+        },
+        async markSucceeded() { assert.fail("report completion must not be written twice"); },
+        async markFailed() { assert.fail("a committed report must not be rescheduled"); }
+      },
+      handlers: { WEEKLY_REPORT: async () => {
+        await new Promise((resolve) => setTimeout(resolve, 450));
+        return { status: "GENERATED", jobCompleted: true };
+      } },
+      leaseMs: 1_000, logger: { error() {} }
+    });
+    assert.equal((await worker.runOnce()).succeeded, true);
+  }
+});

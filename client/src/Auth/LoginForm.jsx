@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { authErrorMessage } from "./authErrors";
 import { loginWithPassword } from "./firebaseSession";
 
 function LoginForm({ onLogin, onVerificationRequired }) {
@@ -21,7 +22,7 @@ function LoginForm({ onLogin, onVerificationRequired }) {
       notifyLogin(data);
     } catch (error) {
       if (error.code === "email-not-verified") onVerificationRequired?.(email.trim());
-      else setMessage(error.message || "Unable to sign in with password.");
+      else setMessage(authErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

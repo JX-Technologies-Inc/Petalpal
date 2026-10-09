@@ -1,0 +1,228 @@
+import React from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { usePlanting } from './PlantingContext';
+import { MONTH_REGION_METAS } from './plantingRegionData';
+
+export default function PlantingPlacementControls() {
+  const {
+    activeMode,
+    targetFlower,
+    previewCoords,
+    validationResult,
+    isSaving,
+    confirmPlacement,
+    cancelPlacement,
+    showPlacementDebug,
+  } = usePlanting();
+
+  if (activeMode === 'normal' || !targetFlower) {
+    return null;
+  }
+
+  const meta = MONTH_REGION_METAS[targetFlower.month];
+  const monthName = meta?.monthName || `Month ${targetFlower.month}`;
+  const isAdjusting = activeMode === 'adjusting';
+
+  const isValid = validationResult?.isValid ?? false;
+  const feedback = validationResult?.userFeedback || (
+    isAdjusting ? 'Tap to choose a new spot.' : `Tap in the ${monthName} garden to place.`
+  );
+
+  return (
+    <View pointerEvents="box-none" style={styles.overlayContainer}>
+      {/* Top Guidance Banner */}
+      <View style={styles.topBanner}>
+        <View style={styles.badgeContainer}>
+          <Text style={styles.badgeText}>
+            {isAdjusting ? '🔄 ADJUST POSITION' : '🌱 PLANTING FLOWER'}
+          </Text>
+        </View>
+        <Text style={styles.titleText}>
+          {targetFlower.flowerName ? `${targetFlower.flowerName.toUpperCase()} — ` : ''}
+          {monthName} Garden
+        </Text>
+        <View
+          style={[
+            styles.feedbackPill,
+            isValid ? styles.feedbackValid : styles.feedbackInvalid,
+          ]}
+        >
+          <Text
+            style={[
+              styles.feedbackText,
+              isValid ? styles.feedbackTextValid : styles.feedbackTextInvalid,
+            ]}
+          >
+            {feedback}
+          </Text>
+        </View>
+
+        {showPlacementDebug && previewCoords && (
+          <Text style={styles.debugText}>
+            World: ({Math.round(previewCoords.worldX)}, {Math.round(previewCoords.worldY)}) |{' '}
+            Region: {validationResult?.detectedMonth ?? 'None'} | Reason: {validationResult?.reason || 'OK'}
+          </Text>
+        )}
+      </View>
+
+      {/* Bottom Action Bar */}
+      <View style={styles.bottomBar}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={cancelPlacement}
+          disabled={isSaving}
+          style={({ pressed }) => [
+            styles.cancelButton,
+            pressed && styles.buttonPressed,
+          ]}
+        >
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          onPress={confirmPlacement}
+          disabled={!isValid || isSaving}
+          style={({ pressed }) => [
+            styles.confirmButton,
+            (!isValid || isSaving) && styles.confirmButtonDisabled,
+            pressed && isValid && styles.buttonPressed,
+          ]}
+        >
+          {isSaving ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.confirmButtonText}>
+              {isAdjusting ? 'Confirm Move' : 'Plant Here'}
+            </Text>
+          )}
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  overlayContainer: {
+    ...StyleSheet.absoluteFill,
+    justifyContent: 'space-between',
+    zIndex: 1000,
+  },
+  topBanner: {
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  badgeContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    backgroundColor: '#E2E8F0',
+    marginBottom: 4,
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#475569',
+    letterSpacing: 0.5,
+  },
+  titleText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 6,
+  },
+  feedbackPill: {
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+  },
+  feedbackValid: {
+    backgroundColor: '#DCFCE7',
+  },
+  feedbackInvalid: {
+    backgroundColor: '#FEE2E2',
+  },
+  feedbackText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  feedbackTextValid: {
+    color: '#15803D',
+  },
+  feedbackTextInvalid: {
+    color: '#B91C1C',
+  },
+  debugText: {
+    marginTop: 4,
+    fontSize: 10,
+    fontFamily: 'monospace',
+    color: '#64748B',
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+    marginHorizontal: 20,
+    marginBottom: 28,
+  },
+  cancelButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cancelButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  confirmButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 28,
+    borderRadius: 24,
+    backgroundColor: '#16A34A',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  confirmButtonDisabled: {
+    backgroundColor: '#94A3B8',
+  },
+  confirmButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  buttonPressed: {
+    opacity: 0.75,
+    transform: [{ scale: 0.98 }],
+  },
+});

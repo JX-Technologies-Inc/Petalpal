@@ -1,0 +1,997 @@
+{
+  "source": "Resources/Garden Flowers/Tulip/tulip_garden_component_sheet_v2.png",
+  "sourceSha256": "b2bd167213c6d919dbe9f0187c2d19aa7ff7272759094ea2421c31e2ace79257",
+  "alphaIsolation": {
+    "supportThreshold": 8,
+    "originalEdgePaddingPixels": 3,
+    "noColorKey": true
+  },
+  "excluded": [
+    {
+      "sheetLocation": "D/full leftmost",
+      "reason": "Label text meets the left bloom; clean separate export required rather than risking petal damage"
+    }
+  ],
+  "components": [
+    {
+      "componentId": "single/pink_01",
+      "category": "single",
+      "dominantColorFamily": "pink",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.525391,
+      "anchorY": 0.949219,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/pink_01.png",
+      "sourceRect": [
+        180,
+        28,
+        354,
+        247
+      ],
+      "canvasOffset": [
+        169,
+        281
+      ],
+      "sourceGroundPoint": [
+        280,
+        233
+      ],
+      "contentBounds": [
+        169,
+        282,
+        339,
+        500
+      ],
+      "sha256": "4b2c72cca3232dea01fc29ec01c8ebd1310c74a5fb69863a1d5aac59af472ca2"
+    },
+    {
+      "componentId": "single/pink_02",
+      "category": "single",
+      "dominantColorFamily": "pink",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.507812,
+      "anchorY": 0.949219,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/pink_02.png",
+      "sourceRect": [
+        367,
+        30,
+        524,
+        247
+      ],
+      "canvasOffset": [
+        177,
+        283
+      ],
+      "sourceGroundPoint": [
+        450,
+        233
+      ],
+      "contentBounds": [
+        184,
+        285,
+        316,
+        500
+      ],
+      "sha256": "d0d381de2bc9883afa41022538c931add416e61c14a133fa0e52b208dc0479c7"
+    },
+    {
+      "componentId": "single/yellow_01",
+      "category": "single",
+      "dominantColorFamily": "yellow",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.492188,
+      "anchorY": 0.953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/yellow_01.png",
+      "sourceRect": [
+        526,
+        38,
+        679,
+        247
+      ],
+      "canvasOffset": [
+        179,
+        291
+      ],
+      "sourceGroundPoint": [
+        599,
+        235
+      ],
+      "contentBounds": [
+        197,
+        296,
+        324,
+        500
+      ],
+      "sha256": "7aedf1ba8c126314cb74e5ebb26f325d2fd9c150d237bc60905eed9aaa0d51da"
+    },
+    {
+      "componentId": "single/yellow_02",
+      "category": "single",
+      "dominantColorFamily": "yellow",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.472656,
+      "anchorY": 0.953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/yellow_02.png",
+      "sourceRect": [
+        684,
+        48,
+        863,
+        247
+      ],
+      "canvasOffset": [
+        166,
+        301
+      ],
+      "sourceGroundPoint": [
+        760,
+        235
+      ],
+      "contentBounds": [
+        174,
+        304,
+        339,
+        500
+      ],
+      "sha256": "a69d63bfa5270bab864642cd32e972ee6d17170954cf634bb1ac3b7dffd879b8"
+    },
+    {
+      "componentId": "single/bud_yellow_01",
+      "category": "single",
+      "dominantColorFamily": "yellow",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.486328,
+      "anchorY": 0.953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/bud_yellow_01.png",
+      "sourceRect": [
+        879,
+        70,
+        1051,
+        247
+      ],
+      "canvasOffset": [
+        170,
+        323
+      ],
+      "sourceGroundPoint": [
+        958,
+        235
+      ],
+      "contentBounds": [
+        177,
+        331,
+        334,
+        500
+      ],
+      "sha256": "d0079d1ef101a71b7767347a603c9aeb59c2ba5c04b753e1602c61367ab36878"
+    },
+    {
+      "componentId": "single/bud_pink_01",
+      "category": "single",
+      "dominantColorFamily": "pink",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.492188,
+      "anchorY": 0.953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/bud_pink_01.png",
+      "sourceRect": [
+        1070,
+        42,
+        1217,
+        247
+      ],
+      "canvasOffset": [
+        182,
+        295
+      ],
+      "sourceGroundPoint": [
+        1140,
+        235
+      ],
+      "contentBounds": [
+        193,
+        302,
+        314,
+        500
+      ],
+      "sha256": "5325aef594d2ed10c7a98f3b5173f3705cd275dacafa772c9328a2182e6c8752"
+    },
+    {
+      "componentId": "single/bud_pink_02",
+      "category": "single",
+      "dominantColorFamily": "pink",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.490234,
+      "anchorY": 0.953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/bud_pink_02.png",
+      "sourceRect": [
+        1221,
+        24,
+        1353,
+        247
+      ],
+      "canvasOffset": [
+        190,
+        277
+      ],
+      "sourceGroundPoint": [
+        1282,
+        235
+      ],
+      "contentBounds": [
+        194,
+        279,
+        322,
+        499
+      ],
+      "sha256": "396b1bb59d75a7e5e3877737dee1baf538f5f65c2cebeba7fb8561423597dcee"
+    },
+    {
+      "componentId": "single/bud_yellow_02",
+      "category": "single",
+      "dominantColorFamily": "yellow",
+      "bloomCount": 1,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.521484,
+      "anchorY": 0.953125,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/single/bud_yellow_02.png",
+      "sourceRect": [
+        1355,
+        44,
+        1527,
+        247
+      ],
+      "canvasOffset": [
+        170,
+        297
+      ],
+      "sourceGroundPoint": [
+        1452,
+        235
+      ],
+      "contentBounds": [
+        225,
+        307,
+        323,
+        500
+      ],
+      "sha256": "6191957b5436c2abdd59fd7e39ee18e7df266ab6b110612deb68ec9ea8095f7d"
+    },
+    {
+      "componentId": "small/pink_01",
+      "category": "small",
+      "dominantColorFamily": "pink",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.496094,
+      "anchorY": 0.943359,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/small/pink_01.png",
+      "sourceRect": [
+        205,
+        298,
+        379,
+        473
+      ],
+      "canvasOffset": [
+        169,
+        325
+      ],
+      "sourceGroundPoint": [
+        290,
+        456
+      ],
+      "contentBounds": [
+        172,
+        329,
+        337,
+        500
+      ],
+      "sha256": "caf40cd57590f76c964da40f8daaa2c482bd4182a2eaf30b6e23a0e0e8cf35b0"
+    },
+    {
+      "componentId": "small/yellow_01",
+      "category": "small",
+      "dominantColorFamily": "yellow",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.494141,
+      "anchorY": 0.939453,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/small/yellow_01.png",
+      "sourceRect": [
+        383,
+        276,
+        573,
+        473
+      ],
+      "canvasOffset": [
+        161,
+        303
+      ],
+      "sourceGroundPoint": [
+        475,
+        454
+      ],
+      "contentBounds": [
+        173,
+        308,
+        349,
+        500
+      ],
+      "sha256": "e2ae1e23f487e77e142d237096325ef1da69445d3b77b20742cefcc53aca4533"
+    },
+    {
+      "componentId": "small/mixed_01",
+      "category": "small",
+      "dominantColorFamily": "mixed",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.511719,
+      "anchorY": 0.939453,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/small/mixed_01.png",
+      "sourceRect": [
+        577,
+        286,
+        781,
+        475
+      ],
+      "canvasOffset": [
+        154,
+        311
+      ],
+      "sourceGroundPoint": [
+        685,
+        456
+      ],
+      "contentBounds": [
+        159,
+        316,
+        330,
+        498
+      ],
+      "sha256": "b8574e566c899ab9e48f1445ecbbbfa1362f23b00c7703afe080fc35fd907b1f"
+    },
+    {
+      "componentId": "small/pink_02",
+      "category": "small",
+      "dominantColorFamily": "pink",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.515625,
+      "anchorY": 0.9375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/small/pink_02.png",
+      "sourceRect": [
+        782,
+        310,
+        920,
+        474
+      ],
+      "canvasOffset": [
+        187,
+        336
+      ],
+      "sourceGroundPoint": [
+        859,
+        454
+      ],
+      "contentBounds": [
+        189,
+        339,
+        323,
+        498
+      ],
+      "sha256": "9f521dc5569efa319cd43302530ae8d53b21f3584da62c642a86da7f4162cad1"
+    },
+    {
+      "componentId": "small/yellow_02",
+      "category": "small",
+      "dominantColorFamily": "yellow",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.496094,
+      "anchorY": 0.941406,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/small/yellow_02.png",
+      "sourceRect": [
+        925,
+        276,
+        1077,
+        473
+      ],
+      "canvasOffset": [
+        180,
+        303
+      ],
+      "sourceGroundPoint": [
+        999,
+        455
+      ],
+      "contentBounds": [
+        190,
+        304,
+        329,
+        499
+      ],
+      "sha256": "ba003fd84857688d848c3c52f0078e7b9a69bd98fcc8a67030dd51dd410d458d"
+    },
+    {
+      "componentId": "small/pink_03",
+      "category": "small",
+      "dominantColorFamily": "pink",
+      "bloomCount": 2,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.517578,
+      "anchorY": 0.935547,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/small/pink_03.png",
+      "sourceRect": [
+        1079,
+        281,
+        1270,
+        474
+      ],
+      "canvasOffset": [
+        160,
+        307
+      ],
+      "sourceGroundPoint": [
+        1184,
+        453
+      ],
+      "contentBounds": [
+        183,
+        312,
+        345,
+        491
+      ],
+      "sha256": "8c0045e59b72f6e5f2db33cdff912ac2d392bf699ad2676ae18c1dc8092e5c50"
+    },
+    {
+      "componentId": "medium/pink_dominant_01",
+      "category": "medium",
+      "dominantColorFamily": "pink-dominant",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.507812,
+      "anchorY": 0.925781,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/medium/pink_dominant_01.png",
+      "sourceRect": [
+        168,
+        519,
+        377,
+        717
+      ],
+      "canvasOffset": [
+        151,
+        302
+      ],
+      "sourceGroundPoint": [
+        277,
+        691
+      ],
+      "contentBounds": [
+        151,
+        302,
+        345,
+        495
+      ],
+      "sha256": "5c3616c4e37018ee41bd2f0377f7166707bf9e331d63bd179551ebf3f3eaed15"
+    },
+    {
+      "componentId": "medium/pink_dominant_02",
+      "category": "medium",
+      "dominantColorFamily": "pink-dominant",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.486328,
+      "anchorY": 0.925781,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/medium/pink_dominant_02.png",
+      "sourceRect": [
+        389,
+        504,
+        605,
+        717
+      ],
+      "canvasOffset": [
+        148,
+        287
+      ],
+      "sourceGroundPoint": [
+        490,
+        691
+      ],
+      "contentBounds": [
+        149,
+        290,
+        364,
+        496
+      ],
+      "sha256": "afe59423ca86aed21ee2c8fb2006d49bacbd9c3b6032290c3ecb7f81abaeea7c"
+    },
+    {
+      "componentId": "medium/yellow_dominant_01",
+      "category": "medium",
+      "dominantColorFamily": "yellow-dominant",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.503906,
+      "anchorY": 0.927734,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/medium/yellow_dominant_01.png",
+      "sourceRect": [
+        625,
+        506,
+        851,
+        717
+      ],
+      "canvasOffset": [
+        143,
+        289
+      ],
+      "sourceGroundPoint": [
+        740,
+        692
+      ],
+      "contentBounds": [
+        150,
+        293,
+        369,
+        500
+      ],
+      "sha256": "2dafbe3f0e7f045b0c376ba9434a423ba1d724cd6aa286a9c2b62509b6c0802d"
+    },
+    {
+      "componentId": "medium/yellow_dominant_02",
+      "category": "medium",
+      "dominantColorFamily": "yellow-dominant",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.503906,
+      "anchorY": 0.925781,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/medium/yellow_dominant_02.png",
+      "sourceRect": [
+        853,
+        523,
+        1060,
+        717
+      ],
+      "canvasOffset": [
+        152,
+        306
+      ],
+      "sourceGroundPoint": [
+        959,
+        691
+      ],
+      "contentBounds": [
+        153,
+        313,
+        356,
+        500
+      ],
+      "sha256": "e9fabb95d97999955cd1c86cce6a675527ca82432145baa0ebe50ae1b4ac593e"
+    },
+    {
+      "componentId": "medium/pink_dominant_03",
+      "category": "medium",
+      "dominantColorFamily": "pink-dominant",
+      "bloomCount": 3,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953,
+      "anchorY": 0.925781,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/medium/pink_dominant_03.png",
+      "sourceRect": [
+        1066,
+        506,
+        1271,
+        717
+      ],
+      "canvasOffset": [
+        153,
+        289
+      ],
+      "sourceGroundPoint": [
+        1170,
+        691
+      ],
+      "contentBounds": [
+        157,
+        294,
+        357,
+        500
+      ],
+      "sha256": "ec6ceff9119b56f63de4d3e9dd9bea51b81b43fa10b6bbbf4b3c34fde76b6dd2"
+    },
+    {
+      "componentId": "full/yellow_dominant_01",
+      "category": "full",
+      "dominantColorFamily": "yellow-dominant",
+      "bloomCount": 5,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.498047,
+      "anchorY": 0.908203,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/full/yellow_dominant_01.png",
+      "sourceRect": [
+        375,
+        739,
+        668,
+        1007
+      ],
+      "canvasOffset": [
+        109,
+        232
+      ],
+      "sourceGroundPoint": [
+        521,
+        972
+      ],
+      "contentBounds": [
+        109,
+        239,
+        401,
+        496
+      ],
+      "sha256": "eee1e6bcc4c8f7c6ef5db0025db93c73c31efbeeb152ef5b6fbfae7db96732c5"
+    },
+    {
+      "componentId": "full/pink_dominant_01",
+      "category": "full",
+      "dominantColorFamily": "pink-dominant",
+      "bloomCount": 5,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.486328,
+      "anchorY": 0.908203,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/full/pink_dominant_01.png",
+      "sourceRect": [
+        672,
+        738,
+        968,
+        1007
+      ],
+      "canvasOffset": [
+        108,
+        231
+      ],
+      "sourceGroundPoint": [
+        813,
+        972
+      ],
+      "contentBounds": [
+        108,
+        235,
+        389,
+        488
+      ],
+      "sha256": "f2d9e44edd6391c864320254953d876a9893fb4114c4019bdbd3d90ca4e7abcb"
+    },
+    {
+      "componentId": "full/pink_dominant_02",
+      "category": "full",
+      "dominantColorFamily": "pink-dominant",
+      "bloomCount": 5,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953,
+      "anchorY": 0.90625,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/full/pink_dominant_02.png",
+      "sourceRect": [
+        970,
+        741,
+        1268,
+        1007
+      ],
+      "canvasOffset": [
+        107,
+        234
+      ],
+      "sourceGroundPoint": [
+        1120,
+        971
+      ],
+      "contentBounds": [
+        107,
+        243,
+        390,
+        487
+      ],
+      "sha256": "ec50b64960b4381fb9f44ea4f37b2988006ab6574b6a9c8b597d4d086d5d5702"
+    },
+    {
+      "componentId": "foliage/leaves_01",
+      "category": "foliage",
+      "dominantColorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.490234,
+      "anchorY": 0.941406,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/foliage/leaves_01.png",
+      "sourceRect": [
+        1290,
+        268,
+        1499,
+        460
+      ],
+      "canvasOffset": [
+        151,
+        308
+      ],
+      "sourceGroundPoint": [
+        1390,
+        442
+      ],
+      "contentBounds": [
+        151,
+        313,
+        355,
+        500
+      ],
+      "sha256": "df9bd6e905c1efdb96bf36dec262ae6cd377779dc00971eed124373bbeae6d45"
+    },
+    {
+      "componentId": "foliage/ground_01",
+      "category": "foliage",
+      "dominantColorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953,
+      "anchorY": 0.949219,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/foliage/ground_01.png",
+      "sourceRect": [
+        1438,
+        395,
+        1525,
+        472
+      ],
+      "canvasOffset": [
+        212,
+        423
+      ],
+      "sourceGroundPoint": [
+        1483,
+        458
+      ],
+      "contentBounds": [
+        212,
+        423,
+        291,
+        499
+      ],
+      "sha256": "c54300559e36c440f2cbd4da93de6e7da8eae2a3e26c1a6ff7f41eb1996fc989"
+    },
+    {
+      "componentId": "foliage/ground_02",
+      "category": "foliage",
+      "dominantColorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.490234,
+      "anchorY": 0.925781,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/foliage/ground_02.png",
+      "sourceRect": [
+        1325,
+        472,
+        1526,
+        605
+      ],
+      "canvasOffset": [
+        155,
+        367
+      ],
+      "sourceGroundPoint": [
+        1421,
+        579
+      ],
+      "contentBounds": [
+        158,
+        367,
+        352,
+        499
+      ],
+      "sha256": "aa47a2ce1319f14b1baddfa6e0b12fb1f8c7057f08841e0fa98d714867ca6adc"
+    },
+    {
+      "componentId": "foliage/leaves_02",
+      "category": "foliage",
+      "dominantColorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.478516,
+      "anchorY": 0.9375,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/foliage/leaves_02.png",
+      "sourceRect": [
+        1291,
+        600,
+        1417,
+        716
+      ],
+      "canvasOffset": [
+        193,
+        384
+      ],
+      "sourceGroundPoint": [
+        1343,
+        696
+      ],
+      "contentBounds": [
+        199,
+        387,
+        312,
+        497
+      ],
+      "sha256": "adc477ae54b70bbd88d14f0b9ec26eac40d5641b821cf8fbbad31a9c62f60ba4"
+    },
+    {
+      "componentId": "foliage/ground_03",
+      "category": "foliage",
+      "dominantColorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953,
+      "anchorY": 0.947266,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/foliage/ground_03.png",
+      "sourceRect": [
+        1428,
+        641,
+        1525,
+        716
+      ],
+      "canvasOffset": [
+        207,
+        425
+      ],
+      "sourceGroundPoint": [
+        1478,
+        701
+      ],
+      "contentBounds": [
+        207,
+        425,
+        301,
+        499
+      ],
+      "sha256": "3886138518f081f7bcea701f0f22435c301183b41ca4228345df28f687f4a44b"
+    },
+    {
+      "componentId": "foliage/leaves_03",
+      "category": "foliage",
+      "dominantColorFamily": "green",
+      "bloomCount": 0,
+      "canvasWidth": 512,
+      "canvasHeight": 512,
+      "anchorX": 0.501953,
+      "anchorY": 0.935547,
+      "defaultVisualScale": 1,
+      "worldUnitsPerPixel": 0.16,
+      "status": "READY_FOR_REVIEW",
+      "asset": "mobile/assets/garden/flowers/species/tulip/components/foliage/leaves_03.png",
+      "sourceRect": [
+        1281,
+        818,
+        1503,
+        970
+      ],
+      "canvasOffset": [
+        145,
+        348
+      ],
+      "sourceGroundPoint": [
+        1393,
+        949
+      ],
+      "contentBounds": [
+        147,
+        348,
+        361,
+        493
+      ],
+      "sha256": "b684a421ef0dc28d7a57fc954bf8ad497fa867bd9bf183d93a0adf276d5f9667"
+    }
+  ]
+}

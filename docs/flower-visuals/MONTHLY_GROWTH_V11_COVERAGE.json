@@ -1,0 +1,12 @@
+[
+  {
+    "version": "V1",
+    "coverage": 0.7641429436705027,
+    "runtimeCoverage": 0.757359176256814
+  },
+  {
+    "version": "V1.1",
+    "coverage": 0.7408843125378558,
+    "runtimeCoverage": 0.7466989703210175
+  }
+]

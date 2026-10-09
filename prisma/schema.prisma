@@ -20,6 +20,7 @@ model User {
   avatar          String    @default("🦋")
   timezone        String    @default("UTC") @db.VarChar(64)
   preferredLocale String    @default("en") @db.VarChar(35)
+  allowGardenVisits Boolean @default(true)
   createdAt       DateTime  @default(now())
 
   garden       Garden?
@@ -102,6 +103,7 @@ model Flower {
   messages     Message[]
 
   @@unique([sourceEventId, userId])
+  visitRecords VisitRecord[]
 }
 
 model Message {
@@ -128,9 +130,17 @@ model VisitRecord {
 
   gardenId String
   userId   String?
+  // Only daily flower Support records populate these fields. Other visits and
+  // pre-existing aggregate Support history remain unchanged.
+  flowerId String?
+  localDate String? @db.VarChar(10)
+  timezone String? @db.VarChar(64)
 
   garden Garden @relation(fields: [gardenId], references: [id])
   user   User?  @relation(fields: [userId], references: [id])
+  flower Flower? @relation(fields: [flowerId], references: [id], onDelete: SetNull)
+
+  @@unique([visitorId, flowerId, localDate])
 }
 
 model Friendship {
@@ -180,13 +190,14 @@ model DailyCheckIn {
 model Journal {
   id             String   @id @default(cuid())
   userId         String
-  dailyCheckInId String   @unique
+  dailyCheckInId String?  @unique
   content        String   @db.Text
+  coverImage     String?  @db.Text
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dailyCheckIn DailyCheckIn @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
+  dailyCheckIn DailyCheckIn? @relation(fields: [dailyCheckInId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
 }

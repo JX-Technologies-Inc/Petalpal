@@ -56,12 +56,14 @@ test("account deletion is owner-only, deletes all related data and rolls back on
   const originalTransaction = prisma.$transaction;
   let current = deletionTransaction();
   let firebaseUid = null;
-  prisma.auditEvent.create = async () => ({ id: "audit-1" });
+  let audits = 0, transactions = 0;
+  prisma.auditEvent.create = async () => { audits++; return { id: "audit-1" }; };
 
   prisma.user.findUnique = async ({ where }) => ({
     id: where.firebaseUid === "firebase-owner" ? "owner-1" : "other-1"
   });
   prisma.$transaction = async (callback) => {
+    transactions++;
     const snapshot = structuredClone(current.state);
     try {
       return await callback(current.tx);
@@ -71,8 +73,12 @@ test("account deletion is owner-only, deletes all related data and rolls back on
     }
   };
   setFirebaseTokenVerifierForTests(async (token) => ({
-    uid: token === "owner-token" ? "firebase-owner" : "firebase-other",
-    email_verified: true
+    uid: token === "other-token" ? "firebase-other" : "firebase-owner",
+    email_verified: true,
+    iat: Math.floor(Date.now()/1000),
+    auth_time: token === "stale-token" ? Math.floor(Date.now()/1000)-600
+      : token === "missing-time" ? undefined : token === "bad-time" ? "bad"
+      : token === "future-time" ? Math.floor(Date.now()/1000)+60 : Math.floor(Date.now()/1000)
   }));
   setFirebaseUserDeleterForTests(async (uid) => { firebaseUid = uid; });
 
@@ -89,12 +95,21 @@ test("account deletion is owner-only, deletes all related data and rolls back on
   const url = `http://127.0.0.1:${server.address().port}/users/owner-1`;
   const remove = (token) => fetch(url, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ auth_time: Math.floor(Date.now()/1000) })
   });
 
   const forbidden = await remove("other-token");
   assert.equal(forbidden.status, 403);
   assert.equal(current.state.user, true);
+
+  for (const token of ["stale-token", "missing-time", "bad-time", "future-time"]) {
+    const rejected = await remove(token);
+    assert.equal(rejected.status, 403);
+    assert.equal((await rejected.json()).code, "auth/requires-recent-login");
+    assert.equal(audits, 0); assert.equal(transactions, 0); assert.equal(firebaseUid, null);
+    assert.deepEqual(current.state, deletionTransaction().state);
+  }
 
   const deleted = await remove("owner-token");
   assert.equal(deleted.status, 200);

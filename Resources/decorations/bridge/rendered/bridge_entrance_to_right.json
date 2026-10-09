@@ -1,0 +1,54 @@
+{
+  "cameraAzimuthDegrees": 322.0,
+  "angle": 0,
+  "canvas": {
+    "width": 1920,
+    "height": 1600
+  },
+  "anchor": {
+    "x": 959.9995994567871,
+    "y": 847.0630645751953
+  },
+  "projection": {
+    "along": {
+      "x": 623.942699432373,
+      "y": -399.3182182312012
+    },
+    "across": {
+      "x": -126.28950119018555,
+      "y": -132.41033554077148
+    },
+    "elevation": {
+      "x": 0.0,
+      "y": -135.30521392822266
+    }
+  },
+  "camera": {
+    "azimuth": 322.0,
+    "elevation": 55,
+    "orthographicScale": 7.8,
+    "sensorFit": "VERTICAL",
+    "target": [
+      0,
+      0,
+      0.4
+    ]
+  },
+  "sourceMasterSha256": "1d8889abb29e3d8d6adb21c914909999de01cd67b94833dd6aefb16613f11ef1",
+  "endPixels": {
+    "A": {
+      "x": 336.05695724487305,
+      "y": 1246.3812828063965
+    },
+    "B": {
+      "x": 1583.9422988891602,
+      "y": 447.74484634399414
+    }
+  },
+  "pathObjectsPresent": [],
+  "placement": {
+    "x": 1740,
+    "y": 1364,
+    "scale": 0.154
+  }
+}

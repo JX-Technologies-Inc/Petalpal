@@ -17,6 +17,68 @@
 
 ---
 
+## 🚀 Getting Started
+
+Clone the repository:
+
+```bash
+git clone https://github.com/starstarrr/PetalPal_v2.git
+cd PetalPal_v2
+```
+
+Install backend dependencies:
+
+```bash
+npm install
+```
+
+Install frontend dependencies:
+
+```bash
+cd client
+npm install
+cd ..
+```
+
+Generate Prisma Client and apply migrations:
+
+```bash
+npx prisma generate
+npx prisma migrate deploy
+```
+
+Start the backend:
+
+```bash
+npm start
+```
+
+Start the frontend:
+
+```bash
+cd client
+npm run dev
+```
+
+Start the AI worker:
+
+```bash
+npm run start:ai-worker
+```
+
+---
+
+## 📚 Technical Documentation
+
+Detailed engineering documentation is maintained separately:
+
+- [`MOBILE.md`](./MOBILE.md) — Physical-iPhone setup, mobile authentication, and isolated native testing runbook
+- [`LONG_TERM_AI.md`](./LONG_TERM_AI.md) — Long-term AI, memory, reports, and retrieval architecture
+- [`SECURITY.md`](./SECURITY.md) — Security architecture and backend hardening
+- [`experiments/emotion-classifier-v2/ML_PROGRESS.md`](./experiments/emotion-classifier-v2/ML_PROGRESS.md) — Machine learning experiments and evaluation
+
+---
+
 ## 🌱 Product
 
 PetalPal combines **personal reflection, interactive virtual environments, social connection, and AI** in one experience.

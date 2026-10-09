@@ -1,0 +1,8 @@
+{
+  "name": "decode-uri-component",
+  "version": "0.2.2",
+  "private": true,
+  "main": "index.cjs",
+  "type": "commonjs",
+  "license": "MIT"
+}

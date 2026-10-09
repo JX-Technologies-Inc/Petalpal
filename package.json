@@ -5,11 +5,13 @@
         "dev:emotion-lab": "node --env-file-if-exists=.env --env-file-if-exists=.env.auth-e2e.local scripts/start-emotion-lab.js",
         "start:ai-worker": "node scripts/ai-worker.js",
         "backfill:event-memory-embeddings": "node scripts/backfill-event-memory-embeddings.js",
-        "build": "npm install --include=dev --prefix client && npm run build --prefix client",
-        "build:client": "npm run build --prefix client -- --configLoader runner",
+        "build": "EXPO_NO_DOTENV=1 npm run build:web --prefix mobile && node --input-type=module -e \"import { rmSync, cpSync } from 'node:fs'; rmSync('client/dist', { recursive: true, force: true }); cpSync('mobile/dist', 'client/dist', { recursive: true });\"",
+        "build:client": "npm run build",
         "lint": "npm run lint --prefix client",
         "test": "npm run test:backend && npm run test:client",
         "test:backend": "DEV_DATABASE_URL=postgresql://test:test@localhost:5432/petalpal_test node --test test/back/*.test.js",
+        "test:dast": "node scripts/api-security-fuzz.js",
+        "test:social-atomic": "node scripts/api-security-fuzz.js --atomic",
         "test:postgres": "node --test test/back/ai-p0.postgres.test.js",
         "test:client": "npm test --prefix client",
         "test:auth:e2e": "node --env-file-if-exists=.env --env-file-if-exists=.env.auth-e2e.local client/scripts/auth-e2e.mjs",
@@ -19,7 +21,8 @@
         "benchmark:semantic:repair-dev": "node scripts/repair-dev-semantic-gold.js",
         "benchmark:embedding-candidates": "node scripts/benchmark-embedding-candidates.js",
         "check": "npm test && npm run lint && npm run build:client && npx prisma validate && node --check server.js && node --check lib/auth.js && node --check lib/firebase-admin.js",
-        "postinstall": "npx prisma generate"
+        "postinstall": "npx prisma generate",
+        "test:security:ci": "node scripts/security-ci.js"
     },
     "devDependencies": {
         "@electric-sql/pglite": "^0.3.16"

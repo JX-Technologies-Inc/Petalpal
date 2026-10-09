@@ -1,0 +1,126 @@
+{
+  "timestamp": "2026-09-25T14:21:00Z",
+  "description": "DEV baseline backup of approved 12-region planting calibrations before manual mask paint editor",
+  "calibrations": {
+    "1": {
+      "month": 1,
+      "landId": "Land01",
+      "parentLandAsset": "central",
+      "localX": 214.0,
+      "localY": 193.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "2": {
+      "month": 2,
+      "landId": "Land02",
+      "parentLandAsset": "central",
+      "localX": 114.0,
+      "localY": 329.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "3": {
+      "month": 3,
+      "landId": "Land03",
+      "parentLandAsset": "central",
+      "localX": 424.0,
+      "localY": 339.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "4": {
+      "month": 4,
+      "landId": "Land04",
+      "parentLandAsset": "0405",
+      "localX": 47.83,
+      "localY": 180.52,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "5": {
+      "month": 5,
+      "landId": "Land05",
+      "parentLandAsset": "0405",
+      "localX": 288.47,
+      "localY": 278.26,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "6": {
+      "month": 6,
+      "landId": "Land06",
+      "parentLandAsset": "06",
+      "localX": 73.57,
+      "localY": 42.73,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "7": {
+      "month": 7,
+      "landId": "Land07",
+      "parentLandAsset": "07",
+      "localX": 19.67,
+      "localY": 259.26,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "8": {
+      "month": 8,
+      "landId": "Land08",
+      "parentLandAsset": "08",
+      "localX": 107.9,
+      "localY": 332.27,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "9": {
+      "month": 9,
+      "landId": "Land09",
+      "parentLandAsset": "09",
+      "localX": 70.93,
+      "localY": 126.98,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "10": {
+      "month": 10,
+      "landId": "Land10",
+      "parentLandAsset": "101112",
+      "localX": 291.0,
+      "localY": 501.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "11": {
+      "month": 11,
+      "landId": "Land11",
+      "parentLandAsset": "101112",
+      "localX": 169.0,
+      "localY": 375.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    },
+    "12": {
+      "month": 12,
+      "landId": "Land12",
+      "parentLandAsset": "101112",
+      "localX": 187.0,
+      "localY": 105.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "rotation": 0.0
+    }
+  }
+}

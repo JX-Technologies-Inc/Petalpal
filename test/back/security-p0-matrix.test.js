@@ -12,12 +12,13 @@ test("production API docs are fail-closed and development docs remain enabled", 
   assert.equal(apiDocsEnabled({ NODE_ENV: "development" }), true);
 });
 
-test("owner-only matrix rejects forged path identity and ignores server-controlled mutation fields", async (t) => {
+test("owner-only matrix rejects forged path identity, rejects strict-body fields and contains legacy fields", async (t) => {
   const originals = {
     findUnique: prisma.user.findUnique,
     update: prisma.user.update,
     transaction: prisma.$transaction,
     aiUpsert: prisma.aiConsent.upsert,
+    auditCreate: prisma.auditEvent.create,
     fairyFind: prisma.fairyState.findUnique,
     fairyUpsert: prisma.fairyState.upsert
   };
@@ -32,7 +33,9 @@ test("owner-only matrix rejects forged path identity and ignores server-controll
     calls.push({ kind: "consent", where, update, create });
     return { userId: "user-a", ...update };
   };
+  prisma.auditEvent.create = async () => ({ id: "audit-fixture" });
   prisma.$transaction = async (callback) => callback({
+    $queryRawUnsafe: async (_sql, ownerId) => { assert.equal(ownerId, "user-a"); return []; },
     aiConsent: { upsert: prisma.aiConsent.upsert },
     aiJob: { updateMany: async () => ({ count: 0 }) }
   });
@@ -51,6 +54,7 @@ test("owner-only matrix rejects forged path identity and ignores server-controll
     prisma.user.update = originals.update;
     prisma.$transaction = originals.transaction;
     prisma.aiConsent.upsert = originals.aiUpsert;
+    prisma.auditEvent.create = originals.auditCreate;
     prisma.fairyState.findUnique = originals.fairyFind;
     prisma.fairyState.upsert = originals.fairyUpsert;
     setFirebaseTokenVerifierForTests();
@@ -61,12 +65,16 @@ test("owner-only matrix rejects forged path identity and ignores server-controll
   let response = await fetch(`${base}/users/user-b/profile`, { method: "PUT", headers, body: JSON.stringify({ preferredLocale: "en-CA", userId: "user-b", ownerId: "user-b", role: "admin", isAdmin: true, premium: true }) });
   assert.equal(response.status, 403);
   response = await fetch(`${base}/users/user-a/profile`, { method: "PUT", headers, body: JSON.stringify({ preferredLocale: "en-CA", userId: "user-b", ownerId: "user-b", role: "admin", isAdmin: true, vip: true, premium: true, owner: "user-b", admin: true }) });
+  assert.equal(response.status, 400);
+  response = await fetch(`${base}/users/user-a/profile`, { method: "PUT", headers, body: JSON.stringify({ preferredLocale: "en-CA" }) });
   assert.equal(response.status, 200);
   assert.deepEqual(calls.find((c) => c.kind === "user").data, { preferredLocale: "en-CA" });
 
   response = await fetch(`${base}/users/user-b/ai-consent`, { method: "PUT", headers, body: JSON.stringify({ aiProcessing: true, personalization: true, memoryEnabled: true, userId: "user-b", ownerId: "user-b", role: "admin", premium: true }) });
   assert.equal(response.status, 403);
   response = await fetch(`${base}/users/user-a/ai-consent`, { method: "PUT", headers, body: JSON.stringify({ aiProcessing: true, personalization: true, memoryEnabled: true, userId: "user-b", ownerId: "user-b", role: "admin", premium: true }) });
+  assert.equal(response.status, 400);
+  response = await fetch(`${base}/users/user-a/ai-consent`, { method: "PUT", headers, body: JSON.stringify({ aiProcessing: true, personalization: true, memoryEnabled: true }) });
   assert.equal(response.status, 200);
   const consent = calls.find((c) => c.kind === "consent");
   assert.equal(Object.hasOwn(consent.update, "userId"), false);

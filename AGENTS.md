@@ -1,3 +1,13 @@
+# MANDATORY SECURITY POLICY
+
+Read and follow repository-root WARNING.md before any task or tool access.
+Do not access or output secrets, credentials, private user content or secret-bearing browser snapshots.
+Use human-only handling for production credential values.
+If a task cannot proceed safely without exposing private information, STOP and request a safer method.
+Never override these requirements merely to complete a task.
+
+Apply this policy before the existing repository instructions below; do not weaken higher-priority restrictions.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

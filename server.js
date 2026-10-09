@@ -1,5 +1,11 @@
+import { isWebShellRequest } from "./lib/web-shell.js";
+import { parseJournalPage, journalPageCursor } from "./lib/journal-pagination.js";
+import { updateAiConsent } from "./lib/ai-consent.js";
+import { validateJournalCover } from './lib/journal-cover.js';
 import "dotenv/config";
 import express from "express";
+import { speechAdmission, speechTranscriptionHandler } from "./lib/speech-transcription.js";
+import { PrismaAiCostGate, aiCostHttpStatus, isAiCostError } from "./lib/ai-cost-gate.js";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
@@ -9,6 +15,7 @@ import { fileURLToPath } from "url";
 import { createHash } from "crypto";
 
 import prisma from "./lib/prisma.js";
+import { canVisitGarden, SocialAccessError, withSocialLocks, withSocialAuthorization, sendSocialError } from "./lib/garden-access.js";
 import flowerDB from "./data/flowerDB.js";
 import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
@@ -66,27 +73,41 @@ import {
   toSocialFlower,
   toSocialMessage
 } from "./lib/garden-response.js";
+import {
+  FlowerSupportError,
+  getFlowerDetail,
+  giveFlowerSupport,
+  sendFlowerMessage,
+  withGardenFlowerSupportState
+} from "./lib/flower-support.js";
 import http from "http";
 import { Server } from "socket.io";
 import {
   authenticateRequest,
   authenticateSocket,
+  revalidateSocketIdentity,
   authenticateFirebaseIdentity,
-  requireOwnUser
+  requireOwnUser,
+  requireRecentAuthentication
 } from "./lib/auth.js";
+import { createRealtimeSecurity, SOCKET_MAX_PACKET_BYTES } from "./lib/socket-security.js";
 import { rateLimiters } from "./lib/rate-limit.js";
 import { deleteFirebaseUser } from "./lib/firebase-admin.js";
+import { verifyFirebaseIdToken, findFirebaseUserByEmail } from './lib/firebase-admin.js';
+import { createNativeSecurityHarnessBridge, nativeSecurityHarnessRouter, assertNativeTestDeletion } from './lib/native-security-harness.js';
 import { assertDevelopmentDatabase } from "./lib/database-isolation.js";
 import { deleteAccountDataInTransaction } from "./lib/account-deletion.js";
 import {
   endpointNotFound,
   handleHttpError,
-  requireJsonObject
+  requireJsonObject, requireJsonContentType, allowBodyFields
 } from "./lib/http-errors.js";
 import { logServerError } from "./lib/security-log.js";
-import { requestId, emitSecurityEvent } from "./lib/security-events.js";
+import { requestId, emitSecurityEvent, securityRouteClass } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
+import { httpSecurity, securityHeaders, privateResponse } from "./lib/http-security.js";
+import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./lib/history-metadata.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -96,9 +117,16 @@ const openapiDocument = YAML.parse(
 );
 
 const app = express();
+app.use(httpSecurity);
+if (process.env.NATIVE_SECURITY_TEST === '1') {
+  app.get('/', (_req, res) => res.set('Cache-Control', 'no-store').json({
+    environment: 'native-security-test', firebaseProject: 'petalpal-native-security-test',
+    database: 'petalpal_native_security_test'
+  }));
+}
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
-const { general: generalRateLimit, auth: authRateLimit, ai: aiRateLimit } = rateLimiters();
+const { general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
 
 app.use((req, res, next) => {
   req.requestId = requestId();
@@ -109,6 +137,7 @@ app.use((req, res, next) => {
 app.set("trust proxy", trustProxySetting());
 let emotionClassifier = classifyEmotion;
 let eventEmotionClassifier = classifyEventSecondaryEmotions;
+const aiCostGate = new PrismaAiCostGate(prisma);
 let firebaseUserDeleter = deleteFirebaseUser;
 const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
   prisma,
@@ -142,111 +171,72 @@ export function setAiJobDispatcherForTests(dispatcher) {
 }
 
 const io = new Server(server, {
+  maxHttpBufferSize: SOCKET_MAX_PACKET_BYTES,
   cors: {
     origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
     methods: ["GET", "POST"]
   }
 });
 
+io.engine.on("headers", (headers, req) => {
+  Object.assign(headers, securityHeaders(req), { "Cache-Control": "no-store" });
+});
+
 io.use(authenticateSocket);
 
-//ROS
+const realtime = createRealtimeSecurity({ io, db: prisma, authenticate: revalidateSocketIdentity, logger: logServerError });
+
 io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
-  
-    socket.on("join-user", () => {
-      const normalizedUserId = String(socket.data.currentUserId);
-
-      if (
-        socket.data.currentUserId &&
-        socket.data.currentUserId !==
-          normalizedUserId
-      ) {
-        socket.leave(
-          `user:${socket.data.currentUserId}`
-        );
-      }
-
-      socket.data.currentUserId =
-        normalizedUserId;
-
-      socket.join(
-        `user:${normalizedUserId}`
-      );
-
-      console.log(
-        `${socket.id} joined user:${normalizedUserId}`
-      );
-    });
-
-    socket.on("leave-user", () => {
-      const normalizedUserId = String(socket.data.currentUserId);
-
-      socket.leave(
-        `user:${normalizedUserId}`
-      );
-
-      console.log(
-        `${socket.id} left user:${normalizedUserId}`
-      );
-    });
-
-    socket.on("join-garden", (gardenOwnerId) => {
-      if (!validId(gardenOwnerId)) return;
-  
-      if (socket.data.currentGarden) {
-        socket.leave(`garden:${socket.data.currentGarden}`);
-      }
-  
+  if (!realtime.connection(socket)) return;
+  socket.on("join-user", (payload, ack) => realtime.run(socket, payload, ack, async (_payload, version) => {
+    const normalizedUserId = String(socket.data.currentUserId);
+    await socket.join(`user:${normalizedUserId}`);
+    if (!realtime.current(socket, version)) { await socket.leave(`user:${normalizedUserId}`); return false; }
+    return true;
+  }));
+  socket.on("leave-user", (payload, ack) => realtime.run(socket, payload, ack, async () => {
+    await socket.leave(`user:${socket.data.currentUserId}`);
+    return true;
+  }));
+  socket.on("join-garden", (payload, ack) => realtime.run(socket, payload, ack, async (gardenOwnerId, version) => {
+    const sequence = (socket.data.gardenJoinSequence || 0) + 1;
+    socket.data.gardenJoinSequence = sequence;
+    socket.data.pendingGarden = gardenOwnerId;
+    try {
+      if (!await realtime.gardenAllowed(socket, gardenOwnerId, version) || socket.data.gardenJoinSequence !== sequence) return false;
+      if (socket.data.currentGarden) await socket.leave(`garden:${socket.data.currentGarden}`);
       socket.data.currentGarden = gardenOwnerId;
-  
-      socket.join(`garden:${gardenOwnerId}`);
-  
-      console.log(
-        `${socket.id} joined garden:${gardenOwnerId}`
-      );
-    });
-    socket.on("move-avatar", async (data) => {
-        const {
-          gardenOwnerId,
-          x,
-          y
-        } = data || {};
-
-        const visitorId = String(socket.data.currentUserId);
-      
-        if (!validId(gardenOwnerId) ||
-            socket.data.currentGarden !== gardenOwnerId ||
-            !validCoordinate(x) || !validCoordinate(y)) {
-          return;
-        }
-      
-        const visitor = await prisma.user.findUnique({
-          where: { id: visitorId },
-          select: { name: true, avatar: true }
-        });
-
-        if (!visitor) return;
-
-        io.to(`garden:${gardenOwnerId}`).emit(
-          "avatarMoved",
-          {
-            visitorId,
-            userId: visitorId,
-            gardenOwnerId,
-            ownerId: gardenOwnerId,
-            name: visitor.name,
-            avatar: visitor.avatar,
-            x,
-            y
-          }
-        );
-      });
-  
-    socket.on("disconnect", () => {
-      console.log("Socket disconnected:", socket.id);
-    });
-  });
+      socket.data.currentGardenJoinSequence = sequence;
+      await socket.join(`garden:${gardenOwnerId}`);
+      const allowed = await realtime.gardenAllowed(socket, gardenOwnerId, version);
+      if (socket.data.gardenJoinSequence !== sequence || !allowed) {
+        if (socket.data.currentGardenJoinSequence === sequence) {
+          socket.data.currentGarden = undefined;
+          await socket.leave(`garden:${gardenOwnerId}`);
+        } else if (socket.data.currentGarden !== gardenOwnerId) await socket.leave(`garden:${gardenOwnerId}`);
+        return false;
+      }
+      return true;
+    } finally {
+      if (socket.data.gardenJoinSequence === sequence) socket.data.pendingGarden = undefined;
+    }
+  }));
+  socket.on("move-avatar", (payload, ack) => realtime.run(socket, payload, ack, async (data, version) => {
+    const { gardenOwnerId, x, y } = data;
+    const visitorId = String(socket.data.currentUserId);
+    if (socket.data.currentGarden !== gardenOwnerId || !socket.rooms.has(`garden:${gardenOwnerId}`) ||
+        !await realtime.gardenAllowed(socket, gardenOwnerId, version)) {
+      await realtime.leaveGarden(socket, gardenOwnerId); return false;
+    }
+    const visitor = await prisma.user.findUnique({ where: { id: visitorId }, select: { name: true, avatar: true } });
+    if (!visitor || !realtime.current(socket, version, gardenOwnerId)) return false;
+    const published = await realtime.broadcast([`garden:${gardenOwnerId}`], "avatarMoved", {
+      visitorId, userId: visitorId, gardenOwnerId, ownerId: gardenOwnerId,
+      name: visitor.name, avatar: visitor.avatar, x, y
+    }, { socket, version, ownerId: gardenOwnerId });
+    return published !== false && realtime.current(socket, version, gardenOwnerId);
+  }));
+});
 
 
 app.use((req, res, next) => {
@@ -259,8 +249,32 @@ app.use(cors({
   origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
+// Authenticate and rate-limit before accepting the larger voice-only body.
+app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
+  requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
+// This owner-only photo route is the sole Journal path accepting a larger body.
+app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  requireJsonContentType, express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
+    let coverImage;
+    try { coverImage = validateJournalCover(req.body.coverImage); }
+    catch (error) { return res.status(400).json({ error: error.message }); }
+    const result = await prisma.journal.updateMany({
+      where: { id: req.params.journalId, userId: req.auth.userId }, data: { coverImage }
+    });
+    if (!result.count) return res.status(404).json({ error: "Journal not found" });
+    res.json({ coverImage });
+  });
+// Bound session probes before body parsing or Firebase token verification.
+app.use(["/auth", "/session"], authRateLimit);
+app.use(requireJsonContentType);
 app.use(express.json({ limit: "32kb" }));
 app.use(requireJsonObject);
+if (process.env.NATIVE_SECURITY_TEST === '1') {
+  app.use('/native-security/harness', generalRateLimit, nativeSecurityHarnessRouter(createNativeSecurityHarnessBridge({
+    prisma, verifyToken: verifyFirebaseIdToken, findUser: findFirebaseUserByEmail
+  })));
+}
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/internal/ai-jobs", (req, res, next) => {
   if (!aiJobServiceAuthorized(req.get("Authorization"))) return res.status(401).json({ error: "Unauthorized" });
@@ -292,16 +306,15 @@ app.post("/internal/ai-jobs/:id/execute", async (req, res) => {
 if (apiDocsEnabled()) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiDocument));
 }
-app.use("/auth", authRateLimit);
 
 app.use((req, res, next) => {
   const isPublicPage =
-    req.method === "GET" &&
-    (req.path === "/" ||
+    ["GET", "HEAD"].includes(req.method) &&
+    (isWebShellRequest(req) ||
       req.path === "/finish-sign-in" ||
-      Boolean(path.extname(req.path)));
+      (Boolean(path.extname(req.path)) && !privateResponse(req)));
   const isFirebaseSession =
-    req.method === "POST" && req.path === "/auth/session";
+    req.method === "POST" && /^\/auth\/session\/?$/i.test(req.path);
   const isRemovedLegacyAuth =
     req.method === "POST" &&
     [
@@ -549,8 +562,8 @@ async function syncMonthlyFairyProgress(tx, userId, month) {
   };
 }
 
-async function getUser(userId) {
-  return prisma.user.findUnique({
+async function getUser(userId, database = prisma) {
+  return database.user.findUnique({
     where: { id: userId },
     include: {
       garden: {
@@ -575,13 +588,13 @@ async function getUser(userId) {
   });
 }
 
-async function ensureGarden(userId) {
-  let garden = await prisma.garden.findUnique({
+async function ensureGarden(userId, database = prisma) {
+  let garden = await database.garden.findUnique({
     where: { ownerId: userId },
   });
 
   if (!garden) {
-    garden = await prisma.garden.create({
+    garden = await database.garden.create({
       data: {
         ownerId: userId,
         year: new Date().getFullYear(),
@@ -623,16 +636,16 @@ function getNonOverlappingPosition(existingFlowers) {
   }
   
 
-async function getGardenResponse(userId, { includePrivate = false } = {}) {
-  const user = await getUser(userId);
+async function getGardenResponse(userId, { includePrivate = false, viewerUserId = userId, database = prisma } = {}) {
+  const user = await getUser(userId, database);
 
   if (!user) {
     return null;
   }
 
-  const garden = user.garden || (await ensureGarden(user.id));
+  const garden = user.garden || (await ensureGarden(user.id, database));
 
-  const fullGarden = await prisma.garden.findUnique({
+  const fullGarden = await database.garden.findUnique({
     where: { id: garden.id },
     include: {
       flowers: {
@@ -673,7 +686,7 @@ async function getGardenResponse(userId, { includePrivate = false } = {}) {
 
   return serializeGardenResponse({
     owner: user,
-    garden: fullGarden,
+    garden: { ...fullGarden, flowers: await withGardenFlowerSupportState(database, fullGarden.flowers, viewerUserId) },
     activeVisitors: getActiveVisitors(fullGarden.id),
     includePrivate
   });
@@ -723,15 +736,16 @@ app.get("/users/search", async (req, res) => {
             not: currentUserId
           },
   
-          name: {
-            contains: name,
-            mode: "insensitive"
-          }
+          OR: [
+            { name: { contains: name, mode: "insensitive" } },
+            { accountId: { contains: name.replace(/^@/, ""), mode: "insensitive" } }
+          ]
         },
   
         select: {
           id: true,
           name: true,
+          accountId: true,
           avatar: true
         },
   
@@ -752,6 +766,58 @@ app.get("/users/search", async (req, res) => {
       });
     }
   });
+
+app.get("/users/me/garden-privacy", async (req, res) => {
+  try {
+    const settings = await prisma.user.findUnique({
+      where: { id: req.auth.userId }, select: { allowGardenVisits: true }
+    });
+    if (!settings) return res.status(404).json({ error: "User not found" });
+    res.json(settings);
+  } catch (err) {
+    logServerError("GET garden privacy error", err);
+    res.status(500).json({ error: "Failed to load Garden privacy" });
+  }
+});
+
+app.patch("/users/me/garden-privacy", allowBodyFields(["allowGardenVisits"]), async (req, res) => {
+  if (typeof req.body?.allowGardenVisits !== "boolean") {
+    return res.status(400).json({ error: "allowGardenVisits must be a boolean" });
+  }
+  try {
+    const update = () => withSocialLocks(prisma, [req.auth.userId], async tx => {
+      const settings = await tx.user.update({ where: { id: req.auth.userId },
+        data: { allowGardenVisits: req.body.allowGardenVisits }, select: { allowGardenVisits: true } });
+      if (!settings.allowGardenVisits) {
+        const garden = await tx.garden.findUnique({ where: { ownerId: req.auth.userId }, select: { id: true } });
+        if (garden) setActiveVisitors(garden.id, []);
+      }
+      return settings;
+    });
+    const settings = req.body.allowGardenVisits ? await update()
+      : await realtime.withRevocation({ gardenOwnerId: req.auth.userId }, update);
+    res.json(settings);
+  } catch (err) {
+    if (sendSocialError(res, err)) return;
+    logServerError("PATCH garden privacy error", err);
+    res.status(500).json({ error: "Failed to save Garden privacy" });
+  }
+});
+
+app.get("/users/:userId/garden-access", async (req, res) => {
+  try {
+    const access = await withSocialLocks(prisma, [req.params.userId, req.auth.userId], async tx => {
+      const owner = await tx.user.findUnique({ where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true } });
+      if (!owner) throw new SocialAccessError("User not found", 404);
+      return { allowGardenVisits: owner.allowGardenVisits, canVisit: await canVisitGarden(tx, owner, req.auth.userId) };
+    });
+    res.json(access);
+  } catch (err) {
+    if (sendSocialError(res, err)) return;
+    logServerError("GET Garden access error", err);
+    res.status(500).json({ error: "Failed to load Garden access" });
+  }
+});
 
 app.get("/users/:userId", async (req, res) => {
   try {
@@ -804,6 +870,8 @@ app.get("/users/:userId/friends", async (req, res) => {
           select: {
             id: true,
             name: true,
+            accountId: true,
+            allowGardenVisits: true,
             avatar: true,
           },
         },
@@ -819,10 +887,27 @@ app.get("/users/:userId/friends", async (req, res) => {
 });
 
 app.get("/users/:userId/garden", async (req, res) => {
+  if (req.query.view !== undefined) {
+    if (req.query.view !== "metadata" || Object.keys(req.query).some(key => key !== "view")) {
+      return res.status(400).json({ error: "Invalid Garden view" });
+    }
+    if (!requireOwnUser(req, res, req.params.userId)) return;
+    try {
+      const flowers = await prisma.flower.findMany({
+        where: { userId: req.auth.userId }, select: historyFlowerSelect,
+        orderBy: { createdAt: "desc" }
+      });
+      return res.json({ owner: { id: req.auth.userId }, flowers: flowers.map(historyFlowerMetadata) });
+    } catch (error) {
+      logServerError("GET Garden metadata error", error);
+      return res.status(500).json({ error: "Unable to load Garden metadata" });
+    }
+  }
   try {
-    const gardenResponse = await getGardenResponse(req.params.userId, {
-      includePrivate: req.auth.userId === req.params.userId
-    });
+    const gardenResponse = await withSocialAuthorization(prisma, req.params.userId, req.auth.userId,
+      tx => getGardenResponse(req.params.userId, {
+        includePrivate: req.auth.userId === req.params.userId, viewerUserId: req.auth.userId, database: tx
+      }));
 
     if (!gardenResponse) {
       return res.status(404).json({ error: "User not found" });
@@ -830,11 +915,12 @@ app.get("/users/:userId/garden", async (req, res) => {
 
     res.json(gardenResponse);
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("GET /users/:userId/garden error", err);
     res.status(500).json({ error: "Failed to get garden" });
   }
 });
-app.post("/auth/session", authenticateFirebaseIdentity, async (req, res) => {
+app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, async (req, res) => {
   try {
     const identity = req.firebase;
     if (!identity.email || !identity.emailVerified) {
@@ -1290,8 +1376,9 @@ app.post("/legacy-register-disabled", async (req, res) => {
     }
   });
 
-app.put("/users/:userId/profile", async (req, res) => {
-  if (!requireOwnUser(req, res, req.params.userId)) return;
+app.put("/users/:userId/profile",
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  allowBodyFields(["preferredLocale"]), async (req, res) => {
 
   const preferredLocale = normalizeLocale(req.body?.preferredLocale);
   if (!preferredLocale) {
@@ -1322,6 +1409,10 @@ app.post("/users", (_req, res) => {
 });
 
 app.get("/session", async (req, res) => {
+  const metadata = req.query.view === "metadata";
+  if (req.query.view !== undefined && (!metadata || Object.keys(req.query).some(key => key !== "view"))) {
+    return res.status(400).json({ error: "Invalid session view" });
+  }
   const user = await prisma.user.findUnique({
     where: { id: req.auth.userId },
     select: {
@@ -1343,7 +1434,10 @@ app.get("/session", async (req, res) => {
   const localDate = getLocalDate(timezone);
 
   const [fairyState, todayCheckIn, garden] = await Promise.all([
-    prisma.fairyState.upsert({
+    metadata ? prisma.fairyState.findUnique({
+      where: { userId: user.id },
+      select: { onboardingStep: true, onboardingCompleted: true, lastEvent: true, unlockedFeatures: true }
+    }) : prisma.fairyState.upsert({
       where: { userId: user.id },
       update: {},
       create: { userId: user.id }
@@ -1354,14 +1448,17 @@ app.get("/session", async (req, res) => {
         localDate
       },
       orderBy: { createdAt: "desc" },
-      include: {
+      ...(metadata ? { select: { id: true, localDate: true } } : { include: {
         journal: true,
         emotionResult: true,
         flower: { include: { messages: true } }
-      }
+      } })
     }),
-    getGardenResponse(user.id, { includePrivate: true })
+    metadata ? Promise.resolve(null) : getGardenResponse(user.id, { includePrivate: true })
   ]);
+
+  if (metadata) return res.json(sessionMetadata({ user, fairyState, todayCheckIn,
+    dailyGrowLimitEnabled: isDailyGrowLimitEnabled() }));
 
   res.json({
     user,
@@ -1371,6 +1468,70 @@ app.get("/session", async (req, res) => {
     dailyGrowLimitEnabled: isDailyGrowLimitEnabled(),
     garden
   });
+});
+
+// Private journals never enter Daily Grow, Events, or AI processing.
+app.post("/users/:userId/journals",
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  allowBodyFields(["content"]), async (req, res) => {
+  const content = req.body?.content;
+  if (typeof content !== "string" || !content.trim()) {
+    return res.status(400).json({ error: "Write something before saving your journal" });
+  }
+  if (content.length > 2000) return res.status(413).json({ error: "Journal must be 2000 characters or fewer" });
+  const journal = await prisma.journal.create({
+    data: { userId: req.auth.userId, content: content.trim() }
+  });
+  res.status(201).json(journal);
+});
+
+app.get("/users/:userId/journals/:journalId/cover", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+  const journal = await prisma.journal.findFirst({
+    where: { id: req.params.journalId, userId: req.auth.userId }, select: { coverImage: true }
+  });
+  if (!journal) return res.status(404).json({ error: "Journal not found" });
+  res.set("Cache-Control", "no-store").json(journal);
+});
+
+app.get("/users/:userId/journals", async (req, res) => {
+  if (!requireOwnUser(req, res, req.params.userId)) return;
+  let page;
+  try { page = parseJournalPage(req.query, req.auth.userId); }
+  catch { return res.status(400).json({ error: "Invalid Journal page" }); }
+  if (page?.cursor) {
+    // A cutoff is not an authorization grant. Verify its anchor in this owner's index.
+    const anchor = await prisma.journal.findFirst({
+      where: { userId: req.auth.userId, id: page.cursor.id, createdAt: new Date(page.cursor.createdAt) },
+      select: { id: true }
+    });
+    if (!anchor) return res.status(400).json({ error: "Invalid Journal page" });
+  }
+  const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
+  const timezone = normalizeTimezone(user?.timezone) || "UTC";
+  const journals = await prisma.journal.findMany({
+    where: { userId: req.auth.userId, ...(page?.cursor ? { OR: [
+      { createdAt: { lt: new Date(page.cursor.createdAt) } },
+      { createdAt: new Date(page.cursor.createdAt), id: { lt: page.cursor.id } }
+    ] } : {}) },
+    select: { id: true, content: true, createdAt: true, dailyCheckIn: { include: { emotionResult: true, flower: { include: { messages: true } } } } },
+    orderBy: page ? [{ createdAt: "desc" }, { id: "desc" }] : { createdAt: "desc" },
+    ...(page ? { take: page.limit + 1 } : {})
+  });
+  const visible = page ? journals.slice(0, page.limit) : journals;
+  const entries = visible.map(journal => ({
+    id: journal.id,
+    createdAt: journal.createdAt,
+    localDate: journal.dailyCheckIn?.localDate || new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit"
+    }).format(journal.createdAt),
+    journal: { id: journal.id, content: journal.content },
+    emotionResult: journal.dailyCheckIn?.emotionResult || null,
+    flower: journal.dailyCheckIn?.flower || null
+  }));
+  if (!page) return res.json(entries);
+  return res.json({ journals: entries, nextCursor: journals.length > page.limit
+    ? journalPageCursor(req.auth.userId, visible.at(-1)) : null });
 });
 
 app.get("/users/:userId/check-ins", async (req, res) => {
@@ -1601,8 +1762,9 @@ app.get("/users/:userId/ai-consent", async (req, res) => {
   res.json(consent);
 });
 
-app.put("/users/:userId/ai-consent", async (req, res) => {
-  if (!requireOwnUser(req, res, req.params.userId)) return;
+app.put("/users/:userId/ai-consent",
+  (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
+  allowBodyFields(["aiProcessing", "personalization", "memoryEnabled"]), async (req, res) => {
 
   if (!hasOnlyBooleans(req.body, ["aiProcessing", "personalization", "memoryEnabled"])) {
     return res.status(400).json({ error: "AI consent fields must be booleans" });
@@ -1613,45 +1775,8 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
   const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
   const now = new Date();
 
-  const consent = await prisma.$transaction(async (tx) => {
-    const updated = await tx.aiConsent.upsert({
-      where: { userId: req.auth.userId },
-      update: {
-        termsVersion: AI_TERMS_VERSION,
-        aiProcessing,
-        personalization,
-        memoryEnabled,
-        grantedAt: aiProcessing ? now : null,
-        revokedAt: aiProcessing ? null : now
-      },
-      create: {
-        userId: req.auth.userId,
-        termsVersion: AI_TERMS_VERSION,
-        aiProcessing,
-        personalization,
-        memoryEnabled,
-        grantedAt: aiProcessing ? now : null,
-        revokedAt: aiProcessing ? null : now
-      }
-    });
-    if (!memoryEnabled) {
-      await tx.aiJob.updateMany({
-        where: {
-          ownerId: req.auth.userId,
-          status: { in: ["PENDING", "RUNNING"] }
-        },
-        data: {
-          status: "CANCELLED",
-          completedAt: now,
-          lockedAt: null,
-          lockedBy: null,
-          leaseExpiresAt: null,
-          lastError: "Memory processing consent was disabled"
-        }
-      });
-    }
-    return updated;
-  });
+  const consent = await updateAiConsent(prisma, { identity: req.auth, termsVersion: AI_TERMS_VERSION,
+    aiProcessing, personalization, memoryEnabled, now });
 
   try {
     await createAuditEvent({
@@ -1660,9 +1785,9 @@ app.put("/users/:userId/ai-consent", async (req, res) => {
       targetClass: "ai_consent", actionCode: "AI_CONSENT"
     });
   } catch (auditError) {
-    emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
+    emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
   }
-  emitSecurityEvent({ eventType: "ai_consent_changed", outcome: "completed", correlationId: req.requestId, routeClass: req.path, resourceClass: "ai_consent", actorId: req.auth.userId, success: true });
+  emitSecurityEvent({ eventType: "ai_consent_changed", outcome: "completed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "ai_consent", actorId: req.auth.userId, success: true });
   res.json(consent);
 });
 
@@ -1691,13 +1816,17 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
     { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, includeDiagnostics,
     { attempted: false, status: "SKIPPED", fallbackReason: "FEATURE_DISABLED" });
   let result;
+  let inferenceStarted = false;
   try {
+    const reservation = await aiCostGate.reserve({ identity: { userId }, action: "EVENT_EMOTION", key: eventId ? `${eventId}:${EVENT_SECONDARY_MODEL_VERSION}` : null });
+    inferenceStarted = true;
     result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood,
       ...(includeDiagnostics ? { includeDiagnostics: true } : {}) });
-  } catch {
+    await aiCostGate.checkProcessingConsent({ identity: { userId }, consentUpdatedAt: reservation.consentUpdatedAt });
+  } catch (error) {
     return withEmotionLabDiagnostics(
-      { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: "RUNTIME_UNAVAILABLE" }, includeDiagnostics,
-      { attempted: true, status: "PROVIDER_ERROR", fallbackReason: "RUNTIME_UNAVAILABLE" });
+      { status: "FAILED", labels: [], latencyMs: 0, fallbackReason: isAiCostError(error) ? error.code : "RUNTIME_UNAVAILABLE" }, includeDiagnostics,
+      { attempted: inferenceStarted, status: "PROVIDER_ERROR", fallbackReason: isAiCostError(error) ? error.code : "RUNTIME_UNAVAILABLE" });
   }
   const labels = canonicalEventLabels(result, primaryGardenMood);
   if (labels === null) return withEmotionLabDiagnostics(
@@ -1879,12 +2008,44 @@ app.delete("/events/:eventId", async (req, res) => {
 });
 
 app.get("/ai/memories/:memoryId", async (req, res) => {
-  const memory = await new PrismaMemoryRepository(prisma).getMemoryById({
-    identity: req.auth,
-    memoryId: req.params.memoryId
-  });
-  if (!memory) return res.status(404).json({ error: "Event memory not found" });
-  return res.json(memory);
+  try {
+    const memory = await new PrismaMemoryRepository(prisma).getMemoryById({
+      identity: req.auth,
+      memoryId: req.params.memoryId
+    });
+    if (!memory) return res.status(404).json({ error: "Event memory not found" });
+    return res.json(memory);
+  } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });
+    throw error;
+  }
+});
+
+// Metadata discovery only. Detail reads and generation keep their existing routes.
+app.get("/ai/reports", async (req, res) => {
+  if (Object.keys(req.query).some(key => !["limit", "cursor"].includes(key))) {
+    return res.status(400).json({ error: "Only limit and cursor are supported; owner comes from authentication" });
+  }
+  const rawLimit = req.query.limit ?? "20";
+  if (typeof rawLimit !== "string" || !/^[1-9]\d?$/.test(rawLimit) || Number(rawLimit) > 50) {
+    return res.status(400).json({ error: "limit must be an integer from 1 to 50" });
+  }
+  let cursor = null;
+  if (req.query.cursor !== undefined) {
+    try {
+      if (typeof req.query.cursor !== "string" || req.query.cursor.length > 512 || !/^[A-Za-z0-9_-]+$/.test(req.query.cursor)) throw Error();
+      cursor = JSON.parse(Buffer.from(req.query.cursor, "base64url").toString("utf8"));
+      if (!cursor || !["weekly", "monthly"].includes(cursor.type) || !validId(cursor.id)
+        || typeof cursor.start !== "string" || new Date(cursor.start).toISOString() !== cursor.start) throw Error();
+    } catch { return res.status(400).json({ error: "Invalid report cursor" }); }
+  }
+  try {
+    return res.json(await new PrivateReportRepository(prisma).listSavedReports({ identity: req.auth, limit: Number(rawLimit), cursor }));
+  } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });
+    logServerError("GET /ai/reports error", error);
+    return res.status(500).json({ error: "Unable to load saved reports" });
+  }
 });
 
 app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
@@ -1895,11 +2056,16 @@ app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
     monthly: () => reports.getMonthlyReportById(input),
     yearly: () => reports.getYearlyReportById(input)
   };
-  const read = readers[req.params.reportType];
+  const read = Object.hasOwn(readers, req.params.reportType) ? readers[req.params.reportType] : null;
   if (!read) return res.status(400).json({ error: "Unsupported AI report type" });
-  const report = await read();
-  if (!report) return res.status(404).json({ error: "AI report not found" });
-  return res.json(report);
+  try {
+    const report = await read();
+    if (!report) return res.status(404).json({ error: "AI report not found" });
+    return res.json(report);
+  } catch (error) {
+    if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });
+    throw error;
+  }
 });
 
 app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
@@ -1987,6 +2153,9 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
         : "ALREADY_RUNNING_OR_FINALIZED"
     };
     if (execution.claimed && !execution.succeeded) {
+      if (["AI_QUOTA_EXCEEDED", "AI_INFERENCE_ALREADY_RESERVED", "AI_BUDGET_UNAVAILABLE"].includes(execution.error?.code)) {
+        return res.status(aiCostHttpStatus(execution.error.code)).json({ ...payload, errorCode: execution.error.code });
+      }
       return res.status(502).json({ ...payload, errorCode: execution.error?.code || "WEEKLY_REPORT_JOB_FAILED" });
     }
     if (storedJob?.status === "FAILED") {
@@ -2202,6 +2371,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               },
@@ -2209,6 +2379,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               }
@@ -2227,6 +2398,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               },
@@ -2234,6 +2406,7 @@ app.post("/friends/request", async (req, res) => {
                 select: {
                   id: true,
                   name: true,
+                  accountId: true,
                   avatar: true
                 }
               }
@@ -2242,7 +2415,7 @@ app.post("/friends/request", async (req, res) => {
       }
   
       // Optional real-time notification for the receiver
-      io
+      realtime
   .to(`user:${senderId}`)
   .to(`user:${receiverId}`)
   .emit("friendRequestUpdated", {
@@ -2301,6 +2474,7 @@ app.post("/friends/request", async (req, res) => {
                   select: {
                     id: true,
                     name: true,
+                    accountId: true,
                     avatar: true
                   }
                 }
@@ -2321,6 +2495,7 @@ app.post("/friends/request", async (req, res) => {
                   select: {
                     id: true,
                     name: true,
+                    accountId: true,
                     avatar: true
                   }
                 }
@@ -2394,8 +2569,13 @@ app.post("/friends/request", async (req, res) => {
         const receiverId =
           friendRequest.receiverId;
   
-        await prisma.$transaction([
-          prisma.friendship.upsert({
+        await withSocialLocks(prisma, [senderId, receiverId], async tx => {
+          await tx.$queryRawUnsafe('SELECT id FROM "FriendRequest" WHERE id=$1 FOR UPDATE', friendRequest.id);
+          const current = await tx.friendRequest.findUnique({ where: { id: friendRequest.id } });
+          if (!current || current.status !== "pending" || current.senderId !== senderId || current.receiverId !== receiverId) {
+            throw new SocialAccessError("Friend request not found or no longer pending", 404);
+          }
+          await tx.friendship.upsert({
             where: {
               userId_friendId: {
                 userId: senderId,
@@ -2407,9 +2587,9 @@ app.post("/friends/request", async (req, res) => {
               userId: senderId,
               friendId: receiverId
             }
-          }),
+          });
   
-          prisma.friendship.upsert({
+          await tx.friendship.upsert({
             where: {
               userId_friendId: {
                 userId: receiverId,
@@ -2421,9 +2601,9 @@ app.post("/friends/request", async (req, res) => {
               userId: receiverId,
               friendId: senderId
             }
-          }),
+          });
   
-          prisma.friendRequest.deleteMany({
+          await tx.friendRequest.deleteMany({
             where: {
               OR: [
                 {
@@ -2436,10 +2616,10 @@ app.post("/friends/request", async (req, res) => {
                 }
               ]
             }
-          })
-        ]);
+          });
+        });
   
-        io
+        realtime
           .to(`user:${senderId}`)
           .to(`user:${receiverId}`)
           .emit("friendRequestUpdated", {
@@ -2447,7 +2627,7 @@ app.post("/friends/request", async (req, res) => {
             senderId,
             receiverId
           });
-          io
+          realtime
           .to(`user:${senderId}`)
           .to(`user:${receiverId}`)
           .emit("friendListUpdated", {
@@ -2461,6 +2641,7 @@ app.post("/friends/request", async (req, res) => {
           message: "Friend request accepted"
         });
       } catch (err) {
+    if (sendSocialError(res, err)) return;
         logServerError("POST /friends/requests/:requestId/accept error", err);
   
         res.status(500).json({
@@ -2510,7 +2691,7 @@ app.post("/friends/request", async (req, res) => {
           }
         });
   
-        io
+        realtime
   .to(`user:${friendRequest.senderId}`)
   .to(`user:${friendRequest.receiverId}`)
   .emit("friendRequestUpdated", {
@@ -2546,16 +2727,16 @@ app.post("/friends/remove", async (req, res) => {
       return res.status(400).json({ error: "Invalid friend" });
     }
 
-    await prisma.friendship.deleteMany({
-      where: {
-        OR: [
-          { userId, friendId },
-          { userId: friendId, friendId: userId },
-        ],
-      },
-    });
+    await realtime.withRevocation({ friends: [userId, friendId] }, () =>
+      withSocialLocks(prisma, [userId, friendId], async tx => {
+        await tx.friendship.deleteMany({ where: { OR: [{ userId, friendId }, { userId: friendId, friendId: userId }] } });
+        for (const [ownerId, visitorId] of [[userId, friendId], [friendId, userId]]) {
+          const garden = await tx.garden.findUnique({ where: { ownerId }, select: { id: true } });
+          if (garden) setActiveVisitors(garden.id, getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorId));
+        }
+      }));
 
-    io
+    realtime
   .to(`user:${userId}`)
   .to(`user:${friendId}`)
   .emit("friendListUpdated", {
@@ -2571,6 +2752,7 @@ app.post("/friends/remove", async (req, res) => {
       friendFriends: [],
     });
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("POST /friends/remove error", err);
     res.status(500).json({ error: "Failed to remove friend" });
   }
@@ -2853,131 +3035,76 @@ const createdFlower = await prisma.$transaction(async (tx) => {
   }
 });
 
-app.post(
-    "/users/:userId/flowers/:flowerId/support",
-    async (req, res) => {
-      const startTime = Date.now();
-  
-      try {
-        const { userId, flowerId } = req.params;
-        const { visitorAvatar } = req.body;
-        const visitorUserId = req.auth.userId;
-
-        if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
-          return res.status(413).json({
-            error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer`
-          });
-        }
-  
-
-        const flower = await prisma.flower.findFirst({
-          where: {
-            id: flowerId,
-            userId
-          },
-          select: {
-            id: true,
-            gardenId: true
-          }
-        });
-  
-        if (!flower) {
-          return res.status(404).json({
-            error: "Flower not found"
-          });
-        }
-  
-        const [updatedFlower, visitor] = await Promise.all([
-          prisma.flower.update({
-            where: {
-              id: flower.id
-            },
-            data: {
-              supportCount: {
-                increment: 1
-              }
-            },
-            include: {
-              messages: true
-            }
-          }),
-  
-          visitorUserId
-            ? prisma.user.findUnique({
-                where: {
-                  id: visitorUserId
-                },
-                select: {
-                  id: true,
-                  name: true,
-                  avatar: true
-                }
-              })
-            : Promise.resolve(null)
-        ]);
-  
-        const socialFlower = toSocialFlower(updatedFlower);
-        const supportPayload = {
-          gardenOwnerId: userId,
-          flowerId: updatedFlower.id,
-          flower: socialFlower
-        };
-  
-      
-        io
-          .to(`garden:${userId}`)
-          .to(`user:${userId}`)
-          .emit("supportUpdated", supportPayload);
-  
-        let newVisitRecord = null;
-  
-        if (visitor) {
-          newVisitRecord = await prisma.visitRecord.create({
-            data: {
-              visitorId: visitor.id,
-              visitorName: visitor.name,
-              visitorAvatar:
-                visitorAvatar ||
-                visitor.avatar ||
-                "🦋",
-              action: "support",
-              gardenId: flower.gardenId,
-              userId: visitor.id
-            }
-          });
-  
-          io
-            .to(`garden:${userId}`)
-            .to(`user:${userId}`)
-            .emit(
-              "visitRecordAdded",
-              newVisitRecord
-            );
-        }
-  
-        console.log(
-          `support completed in ${Date.now() - startTime}ms`
-        );
-  
-        res.json(socialFlower);
-      } catch (err) {
-        logServerError("POST /users/:userId/flowers/:flowerId/support error", err, {
-          latencyMs: Date.now() - startTime
-        });
-  
-        console.log(
-          `support failed after ${Date.now() - startTime}ms`
-        );
-  
-        res.status(500).json({
-          error: "Failed to support flower"
-        });
-      }
+// Direct Flower URLs/actions must enforce the same access policy as the Garden.
+async function requireSocialGardenAccess(req, res, next) {
+  try {
+    const owner = await prisma.user.findUnique({
+      where: { id: req.params.userId }, select: { id: true, allowGardenVisits: true }
+    });
+    if (!owner) return res.status(404).json({ error: "User not found" });
+    if (!await canVisitGarden(prisma, owner, req.auth.userId)) {
+      return res.status(403).json({ error: "Garden visits require a confirmed friendship and the owner's permission" });
     }
-  );
+    return next();
+  } catch (error) { return next(error); }
+}
+
+app.get("/users/:userId/flowers/:flowerId", requireSocialGardenAccess, async (req, res) => {
+  try {
+    const flower = await getFlowerDetail(prisma, {
+      ownerUserId: req.params.userId,
+      flowerId: req.params.flowerId,
+      viewerUserId: req.auth.userId
+    });
+    res.json(flower);
+  } catch (error) {
+    if (error instanceof FlowerSupportError) {
+      return res.status(error.status).json({ error: error.message, code: error.code });
+    }
+    if (sendSocialError(res, error)) return;
+    logServerError("GET /users/:userId/flowers/:flowerId error", error);
+    res.status(500).json({ error: "Failed to get flower details" });
+  }
+});
+
+app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, async (req, res) => {
+  try {
+    if (!validOptionalString(req.body?.visitorAvatar, MAX_AVATAR_LENGTH)) {
+      return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
+    }
+    const result = await giveFlowerSupport(prisma, {
+      ownerUserId: req.params.userId,
+      flowerId: req.params.flowerId,
+      supporterUserId: req.auth.userId,
+      visitorAvatar: req.body?.visitorAvatar
+    });
+    if (result.visitRecord) {
+      // Only a newly committed social action emits notifications. Repeated
+      // same-day calls return the authoritative count without duplicate events.
+      // Support state belongs to the initiating viewer, not every socket peer.
+      const { supportState: _viewerState, ...sharedFlower } = result.flower;
+      realtime.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
+        .emit("supportUpdated", {
+          gardenOwnerId: req.params.userId,
+          flowerId: result.flower.id,
+          flower: sharedFlower
+        });
+      realtime.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
+        .emit("visitRecordAdded", result.visitRecord);
+    }
+    res.json(result.flower);
+  } catch (error) {
+    if (error instanceof FlowerSupportError) {
+      return res.status(error.status).json({ error: error.message, code: error.code });
+    }
+    if (sendSocialError(res, error)) return;
+    logServerError("POST /users/:userId/flowers/:flowerId/support error", error);
+    res.status(500).json({ error: "Failed to support flower" });
+  }
+});
   
   app.post(
-    "/users/:userId/flowers/:flowerId/message",
+    "/users/:userId/flowers/:flowerId/message", requireSocialGardenAccess,
     async (req, res) => {
       const startTime = Date.now();
   
@@ -3011,90 +3138,17 @@ app.post(
           });
         }
   
-        const flower =
-          await prisma.flower.findFirst({
-            where: {
-              id: flowerId,
-              userId
-            },
-            select: {
-              id: true,
-              gardenId: true
-            }
-          });
-  
-        if (!flower) {
-          return res.status(404).json({
-            error: "Flower not found"
-          });
-        }
-  
-        const visitor = await prisma.user.findUnique({
-          where: { id: visitorUserId },
-          select: { id: true, name: true, avatar: true }
+        const result = await sendFlowerMessage(prisma, {
+          ownerUserId: userId, flowerId, viewerUserId: visitorUserId, text: trimmedText, visitorAvatar
+        });
+        const socialFlower = result.flower;
+        realtime.to(`garden:${userId}`).to(`user:${userId}`).emit("messageAdded", {
+          gardenOwnerId: userId, flowerId, message: toSocialMessage(result.message), flower: socialFlower
+        });
+        realtime.to(`garden:${userId}`).to(`user:${userId}`).emit("visitRecordAdded", {
+          gardenOwnerId: userId, record: result.visitRecord
         });
 
-        if (!visitor) {
-          return res.status(401).json({ error: "Authenticated user not found" });
-        }
-
-        const newMessage = await prisma.message.create({
-          data: {
-            author: visitor.name,
-            text: trimmedText,
-            flowerId: flower.id,
-            userId: visitor.id
-          }
-        });
-  
-        const updatedFlower =
-          await prisma.flower.findUnique({
-            where: {
-              id: flower.id
-            },
-            include: {
-              messages: true
-            }
-          });
-  
-        const socialFlower = toSocialFlower(updatedFlower);
-        const messagePayload = {
-          gardenOwnerId: userId,
-          flowerId: updatedFlower.id,
-          message: toSocialMessage(newMessage),
-          flower: socialFlower
-        };
-  
-        io
-          .to(`garden:${userId}`)
-          .to(`user:${userId}`)
-          .emit("messageAdded", messagePayload);
-  
-        if (visitor) {
-          const newVisitRecord =
-            await prisma.visitRecord.create({
-              data: {
-                visitorId: visitor.id,
-                visitorName: visitor.name,
-                visitorAvatar:
-                  visitorAvatar ||
-                  visitor.avatar ||
-                  "🦋",
-                action: "message",
-                gardenId: flower.gardenId,
-                userId: visitor.id
-              }
-            });
-  
-          io
-            .to(`garden:${userId}`)
-            .to(`user:${userId}`)
-            .emit("visitRecordAdded", {
-              gardenOwnerId: userId,
-              record: newVisitRecord
-            });
-        }
-  
         console.log(
           `message completed in ${Date.now() - startTime}ms`
         );
@@ -3102,6 +3156,8 @@ app.post(
         res.json(socialFlower);
   
       } catch (err) {
+        if (err instanceof FlowerSupportError) return res.status(err.status).json({ error: err.message });
+    if (sendSocialError(res, err)) return;
         logServerError("POST /users/:userId/flowers/:flowerId/message error", err, {
           latencyMs: Date.now() - startTime
         });
@@ -3163,6 +3219,7 @@ app.delete("/users/:userId/flowers/:flowerId", async (req, res) => {
 });
 
 app.post("/visit", async (req, res) => {
+  let publishedGardenId;
   try {
     const {
       hostUserId,
@@ -3179,88 +3236,77 @@ app.post("/visit", async (req, res) => {
       return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
     }
 
-    const host = await prisma.user.findUnique({
-      where: {
-        id: hostUserId,
-      },
-    });
-
-    const visitor = await prisma.user.findUnique({
-      where: {
-        id: visitorUserId,
-      },
-    });
-
-    if (!host || !visitor) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const hostGarden = await ensureGarden(host.id);
-
-    const visitors = getActiveVisitors(hostGarden.id);
-    const existing = visitors.find((item) => item.visitorId === visitor.id);
-
-    if (existing) {
-      existing.x = x;
-      existing.y = y;
-      existing.avatar = visitorAvatar || visitor.avatar;
-      existing.name = visitor.name;
-    } else {
-      visitors.push({
-        visitorId: visitor.id,
-        name: visitor.name,
-        avatar: visitorAvatar || visitor.avatar,
-        x,
-        y,
+    const result = await withSocialAuthorization(prisma, hostUserId, visitorUserId, async tx => {
+      const host = await tx.user.findUnique({ where: { id: hostUserId } });
+      const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
+      if (!visitor) throw new SocialAccessError("User not found", 404);
+      const hostGarden = await ensureGarden(host.id, tx);
+      const newVisitRecord = await tx.visitRecord.create({
+        data: {
+          visitorId: visitor.id,
+          visitorName: visitor.name,
+          visitorAvatar:
+            visitorAvatar ||
+            visitor.avatar ||
+            "🦋",
+          action: "started visiting your garden",
+          gardenId: hostGarden.id,
+          userId: visitor.id,
+        },
       });
-    }
 
-    setActiveVisitors(hostGarden.id, visitors);
+      const visitRecords = await tx.visitRecord.findMany({
+        where: {
+          gardenId: hostGarden.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 30,
+      });
 
-    const newVisitRecord = await prisma.visitRecord.create({
-      data: {
-        visitorId: visitor.id,
-        visitorName: visitor.name,
-        visitorAvatar:
-          visitorAvatar ||
-          visitor.avatar ||
-          "🦋",
-        action: "started visiting your garden",
-        gardenId: hostGarden.id,
-        userId: visitor.id,
-      },
+      const visitors = getActiveVisitors(hostGarden.id).map(v => ({ ...v }));
+      const existing = visitors.find((item) => item.visitorId === visitor.id);
+
+      if (existing) {
+        existing.x = x;
+        existing.y = y;
+        existing.avatar = visitorAvatar || visitor.avatar;
+        existing.name = visitor.name;
+      } else {
+        visitors.push({
+          visitorId: visitor.id,
+          name: visitor.name,
+          avatar: visitorAvatar || visitor.avatar,
+          x,
+          y,
+        });
+      }
+
+      setActiveVisitors(hostGarden.id, visitors);
+      publishedGardenId = hostGarden.id;
+
+      return { newVisitRecord, hostId: host.id, activeVisitors: visitors, visitRecords };
     });
-
-    io
-      .to(`garden:${host.id}`)
-      .to(`user:${host.id}`)
+    realtime
+      .to(`garden:${result.hostId}`)
+      .to(`user:${result.hostId}`)
       .emit("visitRecordAdded", {
-        gardenOwnerId: host.id,
-        record: newVisitRecord
+        gardenOwnerId: result.hostId,
+        record: result.newVisitRecord
       });
 
-    const visitRecords = await prisma.visitRecord.findMany({
-      where: {
-        gardenId: hostGarden.id,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 30,
-    });
-
-    res.json({
-      success: true,
-      activeVisitors: getActiveVisitors(hostGarden.id),
-      visitRecords,
-    });
+    res.json({ success: true, activeVisitors: result.activeVisitors, visitRecords: result.visitRecords });
   } catch (err) {
+    if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
+    if (sendSocialError(res, err)) return;
     logServerError("POST /visit error", err);
     res.status(500).json({ error: "Failed to visit garden" });
   }
 });
 
 app.post("/visit/move", async (req, res) => {
+  let publishedGardenId;
   try {
     const { hostUserId, x, y, visitorAvatar } = req.body;
     const visitorUserId = req.auth.userId;
@@ -3272,61 +3318,45 @@ app.post("/visit/move", async (req, res) => {
       return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
     }
 
-    const host = await prisma.user.findUnique({
-      where: {
-        id: hostUserId,
-      },
+    const result = await withSocialAuthorization(prisma, hostUserId, visitorUserId, async tx => {
+      const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
+      if (!visitor) throw new SocialAccessError("User not found", 404);
+      const hostGarden = await ensureGarden(hostUserId, tx);
+      const visitors = getActiveVisitors(hostGarden.id).map(v => ({ ...v }));
+      const activeVisitor = visitors.find(
+        (item) => item.visitorId === visitorUserId
+      );
+
+      if (!activeVisitor) {
+        throw new SocialAccessError("Visitor not active in this garden", 404);
+      }
+
+      activeVisitor.x = x;
+      activeVisitor.y = y;
+
+      if (visitorAvatar) {
+        activeVisitor.avatar = visitorAvatar;
+      }
+
+      setActiveVisitors(hostGarden.id, visitors);
+      publishedGardenId = hostGarden.id;
+
+      const movedVisitor = {
+        visitorId: activeVisitor.visitorId,
+        name: activeVisitor.name,
+        avatar: activeVisitor.avatar,
+        x: activeVisitor.x,
+        y: activeVisitor.y,
+      };
+
+      return { movedVisitor, visitors };
     });
-
-    const visitor = await prisma.user.findUnique({
-      where: {
-        id: visitorUserId,
-      },
-    });
-
-    if (!host || !visitor) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const hostGarden = await ensureGarden(host.id);
-    const visitors = getActiveVisitors(hostGarden.id);
-
-    const activeVisitor = visitors.find(
-      (item) => item.visitorId === visitorUserId
-    );
-
-    if (!activeVisitor) {
-      return res.status(404).json({ error: "Visitor not active in this garden" });
-    }
-
-    activeVisitor.x = x;
-    activeVisitor.y = y;
-
-    if (visitorAvatar) {
-      activeVisitor.avatar = visitorAvatar;
-    }
-
-    setActiveVisitors(hostGarden.id, visitors);
-
-const movedVisitor = {
-  visitorId: activeVisitor.visitorId,
-  name: activeVisitor.name,
-  avatar: activeVisitor.avatar,
-  x: activeVisitor.x,
-  y: activeVisitor.y,
-};
-
-io.to(`garden:${hostUserId}`).emit(
-  "avatarMoved",
-  movedVisitor
-);
-
-res.json({
-  success: true,
-  activeVisitors: getActiveVisitors(hostGarden.id),
-});
+    realtime.to(`garden:${hostUserId}`).emit("avatarMoved", result.movedVisitor);
+    res.json({ success: true, activeVisitors: result.visitors });
 
   } catch (err) {
+    if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
+    if (sendSocialError(res, err)) return;
     logServerError("POST /visit/move error", err);
     res.status(500).json({ error: "Failed to move visitor" });
   }
@@ -3418,7 +3448,7 @@ app.post("/leave", async (req, res) => {
           remainingVisitors
       };
   
-      io
+      realtime
         .to(`garden:${host.id}`)
         .to(`user:${host.id}`)
         .emit(
@@ -3426,7 +3456,7 @@ app.post("/leave", async (req, res) => {
           payload
         );
   
-      io
+      realtime
         .to(`garden:${host.id}`)
         .to(`user:${host.id}`)
         .emit(
@@ -3502,20 +3532,27 @@ app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
 
       if (!requireOwnUser(req, res, id)) return;
+      if (!requireRecentAuthentication(req, res)) return;
+
+      if (process.env.NATIVE_SECURITY_TEST === '1') {
+        const target = await prisma.user.findUnique({ where: { id }, select: { email: true, firebaseUid: true } });
+        try { assertNativeTestDeletion(target); }
+        catch { return res.status(403).json({ error: 'Only disposable isolated C deletion is authorized' }); }
+      }
 
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_REQUESTED", outcome: "REQUESTED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch (auditError) {
-        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
+        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
         return res.status(503).json({ error: "Account deletion is temporarily unavailable" });
       }
 
-      const deleted = await prisma.$transaction(async (tx) => {
+      const deleted = await realtime.withRevocation({ userId: id }, () => prisma.$transaction(async (tx) => {
         const user = await deleteAccountDataInTransaction(tx, { id });
         if (!user) return false;
         if (user.firebaseUid) await firebaseUserDeleter(user.firebaseUid);
         return true;
-      });
+      }));
 
       if (!deleted) {
         return res.status(404).json({ error: "User not found" });
@@ -3528,7 +3565,7 @@ app.delete("/users/:id", async (req, res) => {
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_COMPLETED", outcome: "COMPLETED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch {
-        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "completed_audit_write_failed", fallbackUsed: true });
+        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "audit_event", safeReason: "completed_audit_write_failed", fallbackUsed: true });
       }
     } catch (err) {
       logServerError("DELETE /users/:id error", err);
@@ -3558,8 +3595,7 @@ if (isDirectRun) {
   
   app.use((req, res, next) => {
     if (
-      req.method !== "GET" ||
-      req.path.startsWith("/socket.io")
+      !isWebShellRequest(req)
     ) {
       return next();
     }
@@ -3576,7 +3612,7 @@ app.use(endpointNotFound);
 app.use(handleHttpError);
 
 if (isDirectRun) {
-  server.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, process.env.NATIVE_SECURITY_TEST === '1' ? '127.0.0.1' : '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }

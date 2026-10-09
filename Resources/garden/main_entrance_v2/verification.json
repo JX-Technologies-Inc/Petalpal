@@ -1,0 +1,21 @@
+{
+  "checked_files": 376,
+  "changed": [
+    "mobile\\assets\\garden\\bridges\\approved-circulation\\main-road-connected.png"
+  ],
+  "missing": [],
+  "only_main_entrance_changed": true,
+  "runtime_matches_source": true,
+  "review_files": [
+    "01_reference_B_entrance.png",
+    "02_main_entrance_before.png",
+    "03_main_entrance_after.png",
+    "04_arch_before_after.png",
+    "05_B01_junction_after.png",
+    "06_upper_connection_after.png",
+    "07_lower_entrance_after.png",
+    "08_full_garden_runtime.png",
+    "09_reference_B_vs_runtime.png",
+    "10_MAIN_ENTRANCE_FULL_CLOSEUP.png"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "R01": {
+    "centerline_cubics": [
+      [
+        [
+          703,
+          433
+        ],
+        [
+          690,
+          452
+        ],
+        [
+          690,
+          481
+        ],
+        [
+          653,
+          501
+        ]
+      ],
+      [
+        [
+          653,
+          501
+        ],
+        [
+          616,
+          521
+        ],
+        [
+          594,
+          550
+        ],
+        [
+          556,
+          529
+        ]
+      ]
+    ],
+    "ordinary_width": 39,
+    "endpoint_widths": [
+      48,
+      44
+    ],
+    "method": "Curve V2 rigid source stone stamps; short receiving-path paving blend",
+    "source": "Resources/decorations/road/road_straight_master.png",
+    "runtime_asset": "mobile\\assets\\garden\\roads\\complete\\R01_treehouse_path.png",
+    "canvas": [
+      2400,
+      1800
+    ],
+    "runtime_transform": {
+      "x": 0,
+      "y": 0,
+      "width": 2400,
+      "height": 1800,
+      "rotation": 0
+    },
+    "unsupported_pixels_before_clip": 138,
+    "visible_pixels_over_alpha_less_than_32": 0
+  }
+}

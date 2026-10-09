@@ -7,6 +7,8 @@ import { app, setEmotionClassifierForTests, setEventEmotionClassifierForTests } 
 
 const originals = {
   userFindUnique: prisma.user.findUnique,
+  visitRecordFindMany: prisma.visitRecord.findMany,
+  friendshipFindUnique: prisma.friendship.findUnique,
   gardenFindUnique: prisma.garden.findUnique,
   gardenCreate: prisma.garden.create,
   fairyStateUpsert: prisma.fairyState.upsert,
@@ -31,6 +33,7 @@ function resetState() {
 const owner = {
   id: "owner-1",
   name: "Bloom",
+  allowGardenVisits: true,
   avatar: "flower.png",
   timezone: "UTC",
   aiConsent: { aiProcessing: true },
@@ -79,9 +82,11 @@ const transaction = {
 };
 
 function installPrismaStub() {
+  prisma.visitRecord.findMany = async () => [];
+  prisma.friendship.findUnique = async () => ({ id: "confirmed-friendship" });
   prisma.user.findUnique = async ({ where }) => {
     if (where.firebaseUid) return { id: where.firebaseUid === "friend-firebase" ? "friend-1" : owner.id };
-    return where.id === owner.id ? owner : null;
+    return where.id === owner.id ? owner : where.id === "friend-1" ? { id: "friend-1", timezone: "UTC" } : null;
   };
   prisma.garden.findUnique = async ({ include }) => include
     ? {
@@ -108,6 +113,8 @@ function installPrismaStub() {
 }
 
 function restorePrisma() {
+  prisma.visitRecord.findMany = originals.visitRecordFindMany;
+  prisma.friendship.findUnique = originals.friendshipFindUnique;
   prisma.user.findUnique = originals.userFindUnique;
   prisma.garden.findUnique = originals.gardenFindUnique;
   prisma.garden.create = originals.gardenCreate;
@@ -129,6 +136,7 @@ async function api(baseUrl, path, { token = "owner-token", method = "GET", body 
     },
     ...(body ? { body: JSON.stringify(body) } : {})
   });
+  assert.equal(response.headers.get("cache-control"), "no-store");
   return { status: response.status, body: await response.json() };
 }
 

@@ -1,0 +1,19 @@
+{
+  "status": "MONTHLY_GARDEN_GROWTH_V1_1_APPROVED",
+  "approvedOn": "2026-09-29",
+  "approvalSource": "User manual review passed",
+  "scope": "Initial production visual direction; current DEV implementation checkpoint, no production integration",
+  "approvedReference": {"month": 6, "day": 30, "parents": 30, "primaryPieces": 57, "companions": 360, "filler": 174, "totalVisualPieces": 591},
+  "visualPieceSha256": "347f5a41794341e6032d88db308928a76e2e0b7e893010e776cbce2f2cec0f5c",
+  "footprintRadii": {"S": 9, "M": 12, "L": 16},
+  "model": ["PRIMARY_BLOOM", "COMPANION_GROWTH", "BED_FILLER"],
+  "legacyDevQaModes": ["Mixed V1", "Mixed V2", "Monthly Growth V1"],
+  "legacyModesRetained": true,
+  "finalMask": "Parent planting/footprint validity and existing origin generation; never botanical pixel clipping",
+  "land06": "Ground -> flower visuals -> Tea Set foreground/occlusion",
+  "children": "Deterministic, non-persisted, non-independent; Journal and Support attached only to the parent",
+  "emotionEffects": false,
+  "productionIntegrated": false,
+  "backupDirectory": "output/flower-visual-checkpoints/MONTHLY_GARDEN_GROWTH_V1_1_APPROVED",
+  "contract": "docs/flower-visuals/MONTHLY_GARDEN_GROWTH_V1_1_APPROVED.md"
+}

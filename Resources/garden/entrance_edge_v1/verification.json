@@ -1,0 +1,13 @@
+{
+  "removed_nontransparent_pixels": 6555,
+  "rgb_unchanged": true,
+  "protected_paving_unchanged": true,
+  "landing_unchanged": true,
+  "checked_files": 378,
+  "changed": [
+    "mobile\\assets\\garden\\bridges\\approved-circulation\\main-road-connected.png"
+  ],
+  "overlap_pixels_unchanged": 4251,
+  "connection_corridor_gap_pixels": 0,
+  "review_files": 7
+}

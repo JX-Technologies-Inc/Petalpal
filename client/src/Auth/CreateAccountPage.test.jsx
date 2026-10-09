@@ -19,14 +19,16 @@ it("creates only Firebase credentials before verification", async () => {
   expect(onAccountCreated).toHaveBeenCalledWith("bloom@example.com");
 });
 
-it("maps Firebase EMAIL_EXISTS to a useful account message", async () => {
-  registerWithPassword.mockRejectedValue(Object.assign(new Error("Firebase: Error (auth/email-already-in-use)."), {
-    code: "auth/email-already-in-use"
-  }));
-  render(<CreateAccountPage />);
+it.each(['auth/email-already-in-use', 'auth/internal-error', undefined])("keeps signup failure private for provider code %s", async (code) => {
+  registerWithPassword.mockRejectedValue(Object.assign(new Error('Firebase: EMAIL_EXISTS private@example.test'), { code }));
+  const onAccountCreated = vi.fn();
+  render(<CreateAccountPage onAccountCreated={onAccountCreated} />);
   await userEvent.type(screen.getByLabelText(/^email$/i), "bloom@example.com");
   await userEvent.type(screen.getByLabelText(/^petalpal password$/i), "secret12");
   await userEvent.type(screen.getByLabelText(/confirm password/i), "secret12");
   await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
-  expect(await screen.findByText(/EMAIL_EXISTS/)).toHaveTextContent(/sign in or use another email/i);
+  expect(await screen.findByText("We couldn’t connect to your account. Please try again.")).toBeInTheDocument();
+  expect(screen.queryByText(/EMAIL_EXISTS|already has an account|Firebase:|private@example.test/)).not.toBeInTheDocument();
+  expect(onAccountCreated).not.toHaveBeenCalled();
+  expect(screen.getByRole("button", { name: /^create account$/i })).toBeEnabled();
 });

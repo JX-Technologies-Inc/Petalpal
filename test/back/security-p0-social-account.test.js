@@ -17,11 +17,13 @@ async function call(base, path, { method = "GET", token = "a-token", body } = {}
 test("friends, requests, subscription and reports derive identity from the token", async (t) => {
   const originals = {
     userFindUnique: prisma.user.findUnique,
+    userFindMany: prisma.user.findMany,
     friendFindMany: prisma.friendRequest.findMany,
     friendFindUnique: prisma.friendRequest.findUnique,
     friendCreate: prisma.friendRequest.create,
     friendDelete: prisma.friendRequest.delete,
     friendshipFindFirst: prisma.friendship.findFirst,
+    friendshipFindMany: prisma.friendship.findMany,
     friendshipDeleteMany: prisma.friendship.deleteMany,
     subscriptionUpsert: prisma.subscriptionEntitlement.upsert,
     reportCreate: prisma.report.create,
@@ -32,7 +34,13 @@ test("friends, requests, subscription and reports derive identity from the token
     if (where.firebaseUid) return { id: where.firebaseUid === "a-firebase" ? "user-a" : "user-b" };
     return { id: where.id, name: where.id };
   };
-  prisma.friendRequest.findMany = async () => [];
+  const publicUser = { id: 'user-b', name: 'Amy', accountId: 'amy123', avatar: '🦋', email: 'private@example.test' };
+  const project = select => Object.fromEntries(Object.keys(select).filter(key => select[key]).map(key => [key, publicUser[key]]));
+  prisma.user.findMany = async ({ select, where }) => { calls.push({ kind: 'search', where }); return [project(select)]; };
+  prisma.friendship.findMany = async ({ include }) => [{ friend: project(include.friend.select) }];
+  prisma.friendRequest.findMany = async ({ include }) => include.sender
+    ? [{ id: 'incoming-a', senderId: 'user-b', receiverId: 'user-a', sender: project(include.sender.select) }]
+    : [{ id: 'outgoing-a', senderId: 'user-a', receiverId: 'user-b', receiver: project(include.receiver.select) }];
   prisma.friendRequest.findUnique = async ({ where }) => {
     if (where.id === "request-b") return { id: "request-b", senderId: "user-c", receiverId: "user-b", status: "pending" };
     return null;
@@ -52,12 +60,14 @@ test("friends, requests, subscription and reports derive identity from the token
     for (const [name, value] of Object.entries(originals)) {
       if (name === "reportedUserFind") continue;
       if (name === "userFindUnique") prisma.user.findUnique = value;
+      else if (name === "userFindMany") prisma.user.findMany = value;
       else if (name === "friendFindMany") prisma.friendRequest.findMany = value;
       else if (name === "friendFindUnique") prisma.friendRequest.findUnique = value;
       else if (name === "friendCreate") prisma.friendRequest.create = value;
       else if (name === "friendDelete") prisma.friendRequest.delete = value;
       else if (name === "friendshipDeleteMany") prisma.friendship.deleteMany = value;
       else if (name === "friendshipFindFirst") prisma.friendship.findFirst = value;
+      else if (name === "friendshipFindMany") prisma.friendship.findMany = value;
       else if (name === "subscriptionUpsert") prisma.subscriptionEntitlement.upsert = value;
       else if (name === "reportCreate") prisma.report.create = value;
     }
@@ -67,6 +77,18 @@ test("friends, requests, subscription and reports derive identity from the token
 
   assert.equal((await call(base, "/users/user-b/friends", { token: "a-token" })).status, 403);
   assert.equal((await call(base, "/friends/requests/user-b", { token: "a-token" })).status, 403);
+  const friends = await call(base, '/users/user-a/friends');
+  assert.equal(friends.status, 200); assert.equal(friends.body[0].accountId, 'amy123');
+  assert.equal(friends.body[0].email, undefined);
+  const search = await call(base, '/users/search?name=Amy');
+  assert.equal(search.body[0].accountId, 'amy123'); assert.equal(search.body[0].email, undefined);
+  await call(base, '/users/search?name=%40amy123');
+  assert.deepEqual(calls.filter(x => x.kind === 'search').at(-1).where, { id: { not: 'user-a' }, OR: [
+    { name: { contains: '@amy123', mode: 'insensitive' } }, { accountId: { contains: 'amy123', mode: 'insensitive' } }
+  ] });
+  const requests = await call(base, '/friends/requests/user-a');
+  assert.equal(requests.body.incoming[0].sender.accountId, 'amy123');
+  assert.equal(requests.body.outgoing[0].receiver.accountId, 'amy123');
   assert.equal((await call(base, "/friends/requests/request-b/accept", { token: "a-token", method: "POST", body: { userId: "user-b", ownerId: "user-b" } })).status, 403);
   assert.equal((await call(base, "/friends/requests/request-b/reject", { token: "a-token", method: "POST", body: { userId: "user-b", ownerId: "user-b" } })).status, 403);
 

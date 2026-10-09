@@ -1,0 +1,9 @@
+{
+  "mobile/src/components/garden/planting/parentCollision.ts": "340408f270fd0bf560700e547234f03ebe2fd20504f8bf61b8f4eea8fdcd2cbb",
+  "mobile/src/components/garden/planting/flowerFootprintConfig.ts": "d6ac5433868f2a19f8ce15a7a0c65d242a96df4b648dbab4d2e7c6d119e75cc7",
+  "mobile/src/components/garden/planting/placementValidator.ts": "41701575f96801f7511fe90145d4ba82302fb8ef10c5609d6edf138bc633f2e3",
+  "mobile/src/components/garden/planting/PlantingContext.tsx": "3d1b4dffb5fc6bf594a1c7a422e98c635d828d60e1628916dc145677aee1a81d",
+  "mobile/src/components/garden/planting/PlantedFlowerLayer.tsx": "9dd750789c3c022e008cd42346587c659850bc4041163efbc0464d333bc38e46",
+  "mobile/src/components/garden/planting/ProductionPlantedFlowers.tsx": "8f86791e1a431a20b73351b1dd17323abcfc56eba13b18fee5229551a41fdb86",
+  "mobile/src/components/garden/planting/fullnessDetector.ts": "980cace356838e48daa98c491432cb479eee3246f825ca83b7c6ab9e0d808dc4"
+}

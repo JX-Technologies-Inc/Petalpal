@@ -1,0 +1,81 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { loadPlantingModules } from './loadPlantingModules.mjs';
+
+function runtime(path, development = false, signedIn = true) {
+  let mounts = 0; const navigation = [];
+  const react = { useEffect() {}, useState: value => [value, () => {}], useRef: current => ({ current }) };
+  const Pass = ({ children }) => children;
+  const Stack = Object.assign(() => { mounts++; return 'ROUTED_SCREEN'; }, { Screen: () => null });
+  const NativeTabs = Object.assign(() => { mounts++; return 'ROUTED_SCREEN'; }, { Trigger: Object.assign(Pass, { Label: Pass, Icon: () => null }) });
+  const deps = {
+    'expo-router': { ThemeProvider: Pass, DarkTheme: {}, DefaultTheme: {}, Stack, Slot: Stack, usePathname: () => path, router: { dismissTo: to => navigation.push(to) }, useLocalSearchParams: () => ({ feature: 'fairy' }) },
+    'react-native': { Text: 'Text', View: 'View', Pressable: 'Pressable', ScrollView: 'ScrollView', TextInput: 'TextInput', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'ActivityIndicator', Platform: { OS: 'web' }, StyleSheet: { create: value => value }, AppState: {}, useColorScheme: () => 'light' },
+    'expo-splash-screen': { preventAutoHideAsync() {}, hideAsync: async () => {} },
+    '@react-navigation/native': {},
+    'expo-router/unstable-native-tabs': { NativeTabs },
+    '../services/auth': { AuthProvider: Pass, useAuth: () => ({ phase: signedIn ? 'signedIn' : 'signedOut', session: signedIn ? { user: { id: 'fixture' } } : null, loading: false }) },
+    '../components/features/PanelTheme': { PanelThemeProvider: Pass, usePanelTheme: () => ({ theme: 'light' }) },
+    '@/components/app-tabs': Stack,
+    '@/components/animated-icon': { AnimatedSplashOverlay: () => null },
+    '@/components/garden/world-time': { WorldTimeProvider: Pass },
+    '../constants/theme': { Fonts: {}, Spacing: { three: 3, four: 4, two: 2 } },
+    '@/constants/theme': { Colors: { light: {} } },
+    'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
+    'react-native-gesture-handler': { GestureHandlerRootView: 'GestureRoot' },
+    '@/components/garden/GardenScene': 'FairyGarden',
+    '@/components/garden/flower-density-sandbox/FlowerDensitySandbox': 'Sandbox',
+    '@/components/garden/planting/ProductionGrowthQA': 'QA',
+  };
+  const load = loadPlantingModules({}, react, null, true, deps, development);
+  const nodes = [];
+  function render(element) {
+    if (element == null || typeof element === 'boolean') return '';
+    if (typeof element !== 'object') return String(element);
+    if (Array.isArray(element)) return element.map(render).join(' ');
+    if (typeof element.type === 'function') return render(element.type(element.props));
+    nodes.push(element); return render(element.props?.children);
+  }
+  return { load, render, nodes, navigation, mounts: () => mounts };
+}
+const previews = ['/treehouse-test', '/swing-test', '/moon-bed-test', '/water-test', '/waterfall-test', '/tea-set-test', '/dev/backend-qa', '/explore'];
+for (const path of previews) test(`direct production path denied before routed content: ${path}`, () => {
+  const r = runtime(path); assert.match(r.render(r.load('../../../app/_layout').default()), /unavailable/); assert.equal(r.mounts(), 0);
+});
+test('development previews remain accessible behind AuthGate', () => {
+  for (const path of previews) { const r = runtime(path, true); assert.match(r.render(r.load('../../../app/_layout').default()), /ROUTED_SCREEN/); }
+});
+test('real Garden/Fairy/history/feature/visit routes remain production-accessible', () => {
+  for (const path of ['/', '/garden-test', '/feature/fairy', '/journal', '/garden-history', '/bookhouse', '/reflection', '/feature/settings', '/visit/fixture']) {
+    const r = runtime(path); assert.match(r.render(r.load('../../../app/_layout').default()), /ROUTED_SCREEN/);
+  }
+});
+test('unauthenticated direct links never mount routes in development or production', () => {
+  for (const development of [false, true]) for (const path of ['/treehouse-test', '/garden-test', '/feature/fairy']) {
+    const r = runtime(path, development, false); assert.match(r.render(r.load('../../../app/_layout').default()), /Sign in to PetalPal/); assert.equal(r.mounts(), 0);
+  }
+});
+test('unknown and nested preview paths fail closed; no preview fixtures in production catalog', () => {
+  const r = runtime('/'); const { routeAllowed } = r.load('../../../services/routePolicy');
+  for (const path of ['/treehouse-test/', '/dev/backend-qa/extra', '/feature/debug', '/future-preview', '/visit/a/debug']) assert.equal(routeAllowed(path, false), false);
+  for (const feature of r.load('../../../services/featureCatalog').GARDEN_FEATURES) assert.equal(previews.includes(feature.route), false);
+  assert.equal(routeAllowed('/', false), true);
+});
+test('real fairy alias and Back to Garden behavior are preserved without QA controls', () => {
+  for (const module of ['../../../app/garden-test', '../../../app/feature/[feature]']) {
+    const r = runtime('/garden-test'); r.render(r.load(module).default());
+    const scene = r.nodes.find(n => n.type === 'FairyGarden'); assert.ok(scene); assert.equal(scene.props.enableFairyWalk, true); assert.equal(scene.props.backendMode, true);
+    const back = r.nodes.find(n => n.props?.accessibilityLabel === 'Back to Garden'); assert.ok(back); back.props.onPress(); assert.deepEqual(r.navigation, ['/']);
+    assert.equal(r.nodes.some(n => ['QA', 'Sandbox'].includes(n.type)), false);
+  }
+});
+
+test('production tabs omit the starter demo while development retains it', () => {
+  for (const development of [false, true]) {
+    const r = runtime('/', development);
+    const tree = r.load('../../app-tabs').default();
+    const names = tree.props.children.filter(Boolean).map(node => node.props.name);
+    assert.equal(names.includes('explore'), development);
+    assert.ok(names.includes('garden-test')); assert.ok(names.includes('index'));
+  }
+});

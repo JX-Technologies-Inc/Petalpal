@@ -44,6 +44,7 @@ function memoryPrisma() {
   const rows = [];
   const prisma = {
     rows,
+    async $queryRawUnsafe(_sql, ownerId) { return [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }]; },
     event: { async findFirst({ where }) { return where.ownerId === alice.userId ? { id: where.id, ownerId: where.ownerId } : null; } },
     eventMemory: {
       async findUnique({ where }) { return rows.find((row) => row.sourceEventId === where.sourceEventId) || null; },
@@ -239,15 +240,19 @@ test("production memory worker durably enqueues the selected embedding revision"
       }
     }
   };
-  prisma.$queryRawUnsafe = async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+  prisma.$queryRawUnsafe = async (query, ownerId, ...args) => {
+    if (query.includes('"AIJob"')) { assert.equal(args[1], "test-worker"); return [{ id: ownerId }]; }
+    return [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+  };
   prisma.$transaction = async (callback) => callback(prisma);
   const embeddingProvider = {
     describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); },
     async embedDocuments() { throw new Error("memory handler must not embed inline"); }
   };
   const worker = createProductionAiWorker({ prisma, embeddingProvider, logger: { error() {} } });
-  const result = await worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id });
+  const result = await worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ id: "memory-claim", ownerId: alice.userId, eventId: event.id, attemptCount: 1, lockedAt: new Date() }, { workerId: "test-worker" });
   assert.equal(memories.length, 1);
+  assert.equal(result.jobCompleted, true);
   assert.equal(result.embeddingJob.jobType, AI_JOB_TYPES.EMBEDDING_GENERATION);
   assert.equal(result.embeddingJob.resourceId, "memory-1");
   assert.equal(result.embeddingJob.eventId, "event-1");
@@ -283,14 +288,17 @@ test("memory worker defers in-flight enrichment then terminally resolves stale P
       async create({ data }) { return { id: "embedding-pending", ...data }; }
     }
   };
-  prisma.$queryRawUnsafe = async (_query, ownerId) => [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+  prisma.$queryRawUnsafe = async (query, ownerId, ...args) => {
+    if (query.includes('"AIJob"')) { assert.equal(args[1], "test-worker"); return [{ id: ownerId }]; }
+    return [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }];
+  };
   prisma.$transaction = async (callback) => callback(prisma);
   const embeddingProvider = { describeProfile() { return getEmbeddingProfile(LOCAL_EMBEDDING_PROFILE_KEY); } };
   const worker = createProductionAiWorker({ prisma, embeddingProvider, logger: { error() {} } });
   await assert.rejects(worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id, attemptCount: 1, maxAttempts: 3 }),
     (error) => error.retryDelayMs === 5_000);
   assert.equal(updates, 0);
-  await worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ ownerId: alice.userId, eventId: event.id, attemptCount: 3, maxAttempts: 3 });
+  await worker.handlers[AI_JOB_TYPES.MEMORY_EXTRACTION]({ id: "memory-claim", ownerId: alice.userId, eventId: event.id, attemptCount: 3, maxAttempts: 3, lockedAt: new Date() }, { workerId: "test-worker" });
   assert.equal(updates, 1);
   assert.equal(event.emotionStatus, "FAILED");
   assert.equal(savedMemory.emotionOutcome, "FAILED");
@@ -650,7 +658,10 @@ test("Weekly and Monthly report inputs reuse period aggregates and semantic retr
     { id: "event-1", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-03"), memory: { id: "memory-1", topics: ["career"], importanceScore: 0.8 } },
     { id: "event-2", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-10"), memory: { id: "memory-2", topics: ["study"], importanceScore: 0.6 } },
     { id: "event-3", ownerId: alice.userId, memoryProcessingAllowed: true, occurredAt: new Date("2026-09-20"), memory: { id: "memory-3", topics: ["career"], importanceScore: 0.9 } }
-  ];
+  ].map((event) => ({ ...event, updatedAt: new Date("2026-09-21"), memory: {
+    ...event.memory, ownerId: alice.userId, sourceEventId: event.id, memoryType: "EVENT",
+    summary: `Evidence ${event.id}`, updatedAt: new Date("2026-09-21"), embeddingInputRevision: 1
+  } }));
   const prisma = {
     user: { async findUnique() { return { timezone: "UTC" }; } },
     aiConsent: { async findUnique() { return { aiProcessing: true, personalization: true, memoryEnabled: true, updatedAt: new Date() }; } },
@@ -977,6 +988,8 @@ test("grounded narrative input is deterministic, bounded, and does not retrieve 
 test("Weekly and monthly reports are owner-scoped before access", async () => {
   const calls = [];
   const repository = new PrivateReportRepository({
+    async $transaction(fn) { return fn(this); },
+    async $queryRawUnsafe(_sql, ownerId) { return [{ userId: ownerId, aiProcessing: true, personalization: true, memoryEnabled: true }]; },
     weeklyReport: { async findFirst(args) { calls.push(args); return args.where.ownerId === alice.userId ? { id: args.where.id } : null; } },
     monthlyReport: { async findFirst(args) { calls.push(args); return args.where.ownerId === alice.userId ? { id: args.where.id } : null; } },
     yearlyReport: { async findFirst(args) { calls.push(args); return args.where.ownerId === alice.userId ? { id: args.where.id } : null; } }

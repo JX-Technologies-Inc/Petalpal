@@ -1,0 +1,48 @@
+{
+  "Central\u2013Land0405": {
+    "centerline": [
+      [
+        1320.0,
+        430.0
+      ],
+      [
+        1340.0,
+        410.0
+      ],
+      [
+        1374.0,
+        389.0
+      ],
+      [
+        1400.0,
+        375.0
+      ]
+    ],
+    "width": 39,
+    "water_overlap_pixels": 0,
+    "method": "Curve V2 rigid stone stamps"
+  },
+  "Central\u2013Land09": {
+    "centerline": [
+      [
+        1215.0,
+        955.0
+      ],
+      [
+        1217.0,
+        1000.0
+      ],
+      [
+        1229.0,
+        1048.0
+      ],
+      [
+        1230.0,
+        1078.0
+      ]
+    ],
+    "width": 39,
+    "water_overlap_pixels": 0,
+    "method": "Curve V2 rigid stone stamps"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "structureSha256Before": "2df06aee6d976e4ef3b3e109f3eb7668a4501cea7c0160ba1bfa1e16be9db8d4",
+  "structureSha256After": "2df06aee6d976e4ef3b3e109f3eb7668a4501cea7c0160ba1bfa1e16be9db8d4",
+  "referenceSha256": "a23e77145957c0b517454489732c89f7ab7a086829bf29e812d28cafde08f0c1",
+  "structuralObjects": 29,
+  "decorativeMeshes": 5,
+  "views": {
+    "three_quarter": {
+      "azimuth": -48,
+      "elevation": 30
+    },
+    "petalpal_55": {
+      "azimuth": -48,
+      "elevation": 55
+    }
+  },
+  "cameraOrthoScale": 11.600000381469727,
+  "protected": "Structure mesh/topology/transforms/modifiers unchanged; reference PNG unchanged"
+}

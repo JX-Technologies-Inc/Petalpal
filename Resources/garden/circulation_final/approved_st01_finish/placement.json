@@ -1,0 +1,34 @@
+{
+  "masterSha256": "2c59d76949d8075be495c9cbd911732b3a5500f5fcdf61e0349e4b553b213d36",
+  "highCentral": [
+    1490.0,
+    860.0
+  ],
+  "lowLand08": [
+    1840.0,
+    1030.0
+  ],
+  "uniformScale": 0.2506066254305376,
+  "clockwiseRotationDegrees": -114.05790599991545,
+  "affine": [
+    [
+      -0.10216222430638702,
+      0.22883741091537727,
+      1520.9819394550127
+    ],
+    [
+      -0.22883741091537727,
+      -0.10216222430638702,
+      1311.1867664482475
+    ]
+  ],
+  "protectedHashes": {
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\Resources\\decorations\\stair\\ST01\\ST01_master.png": "2c59d76949d8075be495c9cbd911732b3a5500f5fcdf61e0349e4b553b213d36",
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\SS01_stepping_stones.png": "5cfc8bc0c8c54aec0a6ea965baf3143729e0feb80976d3c0e98f3937620b77fe",
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B01_bridge.png": "0015ac3eb6a350ccde890d69ad9f15543f1f647799205db0ec6cd5485b669ee8",
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B02_bridge.png": "2f775821f55e74fa6c216cbfe3bcafc7e2e981d94008c8a8f2be4cb53807e234",
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B01_foreground.png": "aca26d94532e5a879f8114963208df4beac54de3df12fb842dc55a4cdd98d8b8",
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\B02_foreground.png": "2419dd1bd56d1415f244f9b2cf158b3d90b31cf1532a86f871d91a6ee033cf60",
+    "C:\\Users\\cjysu\\Documents\\Petalpal\\mobile\\assets\\garden\\infrastructure\\final\\Road_grounded_connection.png": "6e097b2c3c64a56ae6cbf85227039174f262a13118b99d6347f746cd63f66861"
+  }
+}

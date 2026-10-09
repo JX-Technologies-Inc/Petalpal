@@ -19,6 +19,7 @@ import {
   
   import DailyCheckIn from "./Garden/DailyCheckIn";
   import GardenScene from "./Garden/GardenScene";
+  import GardenMapPrototype from "./Garden/components/GardenMapPrototype";
   import Calendar from "./Garden/Calendar";
   import VisitorRecords from "./Garden/VisitorRecords";
   
@@ -183,7 +184,11 @@ import {
     );
   }
   
-  function App() {
+  function PetalPalApp() {
+    const showGardenMapPrototype =
+      new URLSearchParams(window.location.search)
+        .get("gardenPrototype") === "1";
+
     const [
       currentUser,
       setCurrentUser
@@ -1045,29 +1050,33 @@ import {
                     </div>
                   )}
   
-                  <GardenScene
-                    owner={
-                      gardenData.owner ||
-                      currentUser
-                    }
-                    currentUser={currentUser}
-                    socket={socketRef.current}
-                    flowers={
-                      gardenData.flowers
-                    }
-                    activeVisitors={
-                      gardenData.activeVisitors
-                    }
-                    isOwnGarden={
-                      isOwnGarden
-                    }
-                    highlightedDate={
-                      selectedCalendarDate
-                    }
-                    onDeleteFlower={
-                      handleDeleteFlower
-                    }
-                  />
+                  {showGardenMapPrototype ? (
+                    <GardenMapPrototype />
+                  ) : (
+                    <GardenScene
+                      owner={
+                        gardenData.owner ||
+                        currentUser
+                      }
+                      currentUser={currentUser}
+                      socket={socketRef.current}
+                      flowers={
+                        gardenData.flowers
+                      }
+                      activeVisitors={
+                        gardenData.activeVisitors
+                      }
+                      isOwnGarden={
+                        isOwnGarden
+                      }
+                      highlightedDate={
+                        selectedCalendarDate
+                      }
+                      onDeleteFlower={
+                        handleDeleteFlower
+                      }
+                    />
+                  )}
   
                   <div className="below-garden-layout">
                     <Calendar
@@ -1108,4 +1117,17 @@ import {
     );
   }
   
+  function App() {
+    const showGardenPreview =
+      import.meta.env.DEV &&
+      new URLSearchParams(window.location.search)
+        .get("gardenPreview") === "1";
+
+    if (showGardenPreview) {
+      return <GardenMapPrototype />;
+    }
+
+    return <PetalPalApp />;
+  }
+
   export default App;

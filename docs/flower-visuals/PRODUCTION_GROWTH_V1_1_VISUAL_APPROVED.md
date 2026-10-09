@@ -1,0 +1,11 @@
+# PRODUCTION_GROWTH_V1_1_VISUAL_APPROVED
+
+Manual production visual QA **PASSED**, recorded 2026-09-29. The corrected, land-aware Production 30 output is the locked production visual baseline. Performance work may change computation and caching only.
+
+Locked: 30 parent-shaped QA records, 591 visual pieces, exact parent identities/anchors, component assignments, artwork/resolution, scales/rotations, Primary/Companion/Filler counts, low/mid/tall hierarchy, species distribution, focal rhythm and spatial coverage. Runtime botanical coverage is approximately 74.8%, visible alpha area 23,952 world px², six occupied sectors and zero outside production origins. Original-PNG alpha coverage is approximately 73.9% (the DEV approved June reference is 74.1% by the same independent measurement).
+
+Real persisted Flower Records remain authoritative. Derived children stay non-persisted and non-independent. No growth-origin metadata. Parent movement/Cancel/Confirm/reload, Final Mask validity without botanical pixel clipping, Land06 Tea Set occlusion, Journal/Support and backend semantics remain unchanged. Production collision remains Tulip/Lavender 20, Sunflower 24, default/Lotus/Cherry Blossom 22; visual S/M/L metadata 9/12/16 remains separate.
+
+Checkpoint: `output/flower-visual-checkpoints/PRODUCTION_GROWTH_V1_1_VISUAL_APPROVED/`. It captures the pre-optimization implementation, artwork, manifests, configuration, tests, approved output/metrics and documentation. `reference.json` locks exact production outputs for unchanged, moved and added-parent cases. `snapshot.zip` plus `manifest.json` reconstruct source; `checksums.json` and `verify_checkpoint.py` validate integrity. Restore into a separate empty directory, verify, install the archived mobile dependency lockfile, and open Production Growth QA at 30. User storage, dependencies, credentials and live databases are excluded.
+
+The older `MONTHLY_GARDEN_GROWTH_V1_1_APPROVED` checkpoint remains intact as the original DEV reference. Neither archive is overwritten by optimization. Performance work must match the production reference output exactly and pass existing visual/movement/persistence/collision regressions; it does not create a new visual direction.

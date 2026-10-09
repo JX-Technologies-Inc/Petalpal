@@ -1,0 +1,72 @@
+[
+  {
+    "land": "central",
+    "asset": "layers/land_central_environment.png",
+    "x": 798,
+    "y": 359,
+    "width": 605,
+    "height": 663,
+    "rotation": 0,
+    "scale": 1
+  },
+  {
+    "land": "101112",
+    "asset": "layers/land_101112_environment.png",
+    "x": 59,
+    "y": 499,
+    "width": 787,
+    "height": 822,
+    "rotation": 0,
+    "scale": 1
+  },
+  {
+    "land": "0405",
+    "asset": "layers/land_0405_environment.png",
+    "x": 1163,
+    "y": 51,
+    "width": 520,
+    "height": 290,
+    "rotation": 0,
+    "scale": 1
+  },
+  {
+    "land": "06",
+    "asset": "layers/land_06_environment.png",
+    "x": 1732,
+    "y": 275,
+    "width": 414,
+    "height": 294,
+    "rotation": 0,
+    "scale": 1
+  },
+  {
+    "land": "07",
+    "asset": "layers/land_07_environment.png",
+    "x": 1851,
+    "y": 595,
+    "width": 502,
+    "height": 326,
+    "rotation": 0,
+    "scale": 1
+  },
+  {
+    "land": "08",
+    "asset": "layers/land_08_environment.png",
+    "x": 1779,
+    "y": 1134,
+    "width": 474,
+    "height": 433,
+    "rotation": 0,
+    "scale": 1
+  },
+  {
+    "land": "09",
+    "asset": "layers/land_09_environment.png",
+    "x": 1000,
+    "y": 1075,
+    "width": 407,
+    "height": 501,
+    "rotation": 0,
+    "scale": 1
+  }
+]
