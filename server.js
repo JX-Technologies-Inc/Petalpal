@@ -172,6 +172,9 @@ export function setAiJobDispatcherForTests(dispatcher) {
 
 const io = new Server(server, {
   maxHttpBufferSize: SOCKET_MAX_PACKET_BYTES,
+  // CORS alone does not reject WebSocket upgrades. Use the same exact-origin
+  // policy for both Engine.IO transports; token authentication remains below.
+  allowRequest: (req, callback) => callback(null, isAllowedOrigin(req.headers.origin)),
   cors: {
     origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
     methods: ["GET", "POST"]

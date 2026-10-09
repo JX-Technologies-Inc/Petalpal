@@ -333,6 +333,8 @@ experiments/emotion-classifier-v2/v4/aligned-supervision-v1/external-dataset-sea
 /Resources/water/masks/water_mask_validation_overlay.png
 
 # Dependency, build and tool caches.
+.wrangler/
+/artifacts/cloudflare-dry-run/
 .expo/
 .cache/
 .parcel-cache/

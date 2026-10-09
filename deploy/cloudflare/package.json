@@ -1,0 +1,13 @@
+{
+  "name": "petalpal-web-hosting",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "test": "node --test ../../test/cloudflare-web.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.64.0",
+    "wrangler": "4.149.0"
+  }
+}

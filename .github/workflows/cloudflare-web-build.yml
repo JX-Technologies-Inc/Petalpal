@@ -1,0 +1,59 @@
+name: Build Cloudflare Expo artifact (no deployment)
+on:
+  workflow_dispatch:
+    inputs:
+      production_config:
+        description: Use human-provisioned public Firebase settings from the protected build environment
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DOTENV_CONFIG_QUIET: 'true'
+      DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/hosting-browsers
+    # A human must configure required reviewers before production-config builds.
+    environment: ${{ inputs.production_config && 'petalpal-web-build-production' || 'petalpal-web-build-synthetic' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Synthetic export
+        if: ${{ !inputs.production_config }}
+        run: npm run build:cloudflare -- --synthetic
+      - name: Production-config export (public Web SDK settings only)
+        if: ${{ inputs.production_config }}
+        env:
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          EXPO_PUBLIC_FIREBASE_APP_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_APP_ID }}
+        run: npm run build:cloudflare
+      - name: Isolated hosting-test dependencies (no database connection)
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm exec --no -- prisma generate
+          npm ci --prefix deploy/cloudflare --ignore-scripts --no-audit --no-fund
+          deploy/cloudflare/node_modules/.bin/playwright install --with-deps chromium
+      - name: Focused origin, authentication, Socket and static-hosting checks
+        run: npm run test:hosting
+      - name: Retain export for separately approved manual upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: expo-web-${{ inputs.production_config && 'production' || 'synthetic' }}-${{ github.sha }}
+          path: mobile/dist/
+          if-no-files-found: error
+          retention-days: 7
+      # Deliberately no Cloudflare credential, deploy command or production trigger.

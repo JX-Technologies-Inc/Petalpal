@@ -1,0 +1,24 @@
+# Allowlist context: no Expo, artwork, web builds, research, credentials or logs.
+**
+!Dockerfile.backend
+!package.json
+!package-lock.json
+!prisma.config.ts
+!prisma/
+!prisma/**
+!lib/
+!lib/*.js
+!server.js
+!moodClassifier.js
+!data/
+!data/flowerDB.js
+!data/mood-model.json
+!docs/
+!docs/openapi.yaml
+!scripts/
+!scripts/ai-worker.js
+**/.env*
+**/*service-account*
+**/*service_account*
+**/*.pem
+**/*.key

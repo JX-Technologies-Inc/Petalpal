@@ -749,3 +749,24 @@ The builder disables dotenv and telemetry. Its existing **public** `VITE_FIREBAS
 Express serves only allowlisted application shell/deep-link routes without API authentication; AuthGate still prevents unsigned-in content. Every data/write route retains server authentication and owner checks. Private paths remain no-store. Shell CSP permits WebAssembly compilation for same-origin CanvasKit, while JavaScript eval, inline scripts, wildcard origins and framed embedding remain prohibited. Preview/unknown routes do not get the SPA fallback.
 
 Local validation uses synthetic public configuration and fully intercepted identities/data in a fresh browser profile. It proves no production login or account linkage. Existing native login/lifecycle evidence keeps its original scope; no account, database, service, tunnel or Metro instance was recreated.
+
+
+## 2026-10-09 — Local Cloudflare Expo Web migration candidate
+
+Workers Static Assets now has a local-only deployment profile at
+`deploy/cloudflare/wrangler.jsonc`. The real Expo `single` export is built outside
+Render by `npm run build:cloudflare`; the manual GitHub workflow retains the
+artifact without deploying it. Direct REST/Socket calls use the existing
+`EXPO_PUBLIC_API_BASE_URL` contract, compiled to the Render origin. No product
+route, rendering setting, art, Firebase provider or native deployment code changed.
+The static Worker reuses the product shell allowlist; unknown assets/APIs do not
+fall back to HTML. CSP permits Render HTTPS/WSS plus the existing Firebase hosts.
+
+Synthetic export, Cloudflare/workerd delivery, Chromium sign-in screen/deep link,
+WASM, cross-origin browser preflight, token refresh/session hydration/logout and
+Socket polling/upgrade/reconnect passed. No real Firebase sign-in was attempted.
+Garden, Bookhouse and Reflection exported PNGs are byte-identical to source;
+prior user visual acceptance remains applicable, objective performance parity
+remains PARTIAL. See `docs/cloudflare-web-migration.md` for exact build inputs,
+preview protection, origin-scoped Firebase persistence and cutover/rollback gates.
+The existing Render frontend path remains intact until separately approved cutover.

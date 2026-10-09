@@ -1646,3 +1646,73 @@ This evidence is retained as an uncommitted SECURITY.md append in the separate C
 - [x] Merged approved candidate `902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8` into that isolated checkpoint. Only SECURITY.md and MANUAL_SECURITY_CHECKLIST.md conflicted; preview versions are exact prefixes of approved history, so the approved full histories resolve both without losing records. Preserved the separately uncommitted exact-source CI evidence by copying its append into this candidate while leaving the original file untouched. All other tracked files exactly match the CI-passed candidate, including workflows, tests, build inputs, Expo assets and application/backend/AI/security source. No new executable behavior or newly affected test exists.
 - [x] Reuse exact-source CI run 37902827021 for unchanged Security + Expo/Garden/HTTP tests; do not rerun historical suites. Existing excluded DB-resource/monitoring modules, unfinished Garden/Message pagination and Vite deployment entry points remain excluded. No provider/database operation, remote push, main update or existing-service restart is authorized or performed.
 - [ ] Target-platform production-container build verification is recorded separately against this final commit/tree after checkpoint creation; previous arm64 build evidence does not certify amd64. Production Firebase Web App binding remains UNKNOWN. User-confirmed Garden recovery is accepted; objective matched-reference visual/performance parity remains PARTIAL. Deployment remains blocked pending those release gates and separate approval.
+
+
+## 2026-10-09 — Local Cloudflare frontend / Render backend split
+
+**Scope:** isolated `codex/cloudflare-frontend-migration` branch from approved
+main `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3` / tree
+`952ffb9ff59c382de6623acbcab0fec990d17a51`. Accepted exact-source CI 37902827021,
+Docker and human Firebase evidence reused. Render build OOM above 8 GB is a user
+attestation, not a newly inspected provider log. No push, deployment, provider
+mutation, database operation or production identity used.
+
+- **Static boundary PASS (local):** actual Expo single-page production export,
+  Cloudflare workerd routing, deep links, JS/CSS/WASM MIME, CSP and browser sign-in
+  screen. API/missing-asset/debug paths are not rewritten to HTML. The Worker
+  serves static files only; authenticated/private calls go directly to Render.
+  HTML/errors and Authorization/Cookie-bearing static requests are no-store.
+- **Cross-origin boundary PASS (synthetic):** actual Chromium preflight and
+  readable 200/401/403 responses; exact allowed origins, no wildcard. Existing
+  token/owner checks reject another owner. Actual Socket.IO polling, direct WS,
+  polling-to-WS upgrade, event acknowledgements and refreshed-token reconnect
+  pass; denied origins and invalid tokens fail. Engine.IO now applies the same
+  allowlist to WS handshake admission. Backend proxy trust is unchanged.
+- **Firebase contract PASS, production login NOT VERIFIED:** AuthProvider
+  hydration/logout and client bearer refresh preserve existing semantics under
+  synthetic identities. Existing project/Web App/Admin configuration is reused
+  by attestation, never inspected. New exact frontend domains and return URLs
+  require human approval; persistence does not transfer between browser origins.
+- **Artwork/source integrity PASS:** no mobile product source/assets changed.
+  Exported Garden/Bookhouse/Reflection PNGs match source bytes. 460 exported files,
+  220,673,039 total bytes, largest 8,076,553 bytes, within checked Workers static
+  asset limits. Prior visual recovery stands; objective performance parity PARTIAL.
+- **Focused validation:** 10 tests passed, plus offline Wrangler packaging dry-run.
+  No historical PostgreSQL/DAST/AI/iPhone suites rerun. Test identities and database
+  method stubs are local; no real Firebase, database or paid inference contacted.
+- **Backend Docker build PASS:** linux/amd64, no Expo install/export, no web/Firebase
+  build argument. Allowed context 4.19 MB; image 827,814,439 bytes. Production
+  dependency lock, Prisma schema/migrations, startup and backend runtime preserved
+  except Socket origin admission. No frontend/artwork in this image. Peak Docker
+  build RAM and matched old/new build-memory reduction remain UNMEASURED; context
+  and image sizes are not RAM measurements. Subsequent test-runner-only package
+  script edits do not alter dependencies/postinstall/startup or runtime sources.
+- **Transition gate:** existing Dockerfile and Express frontend serving remain
+  unchanged. Opt-in backend-only deployment is blocked until the approved old-
+  origin traffic disposition. A separate transition image can layer a reviewed
+  prebuilt frontend on the backend image outside Render without invoking Expo.
+- **Automation gate:** new workflow is manually dispatched, builds/tests/uploads
+  artifacts only, with no cloud deploy credentials/step. Wrangler public domains,
+  version URLs and custom routes are disabled. Preview resource/Access, exact
+  CORS/Firebase domains, app.jastrevia.com and live compatibility are still human
+  gates. Existing AI Workers/company site/production settings remain unchanged.
+- **Tooling limitation:** requested `graphify update .` could not run because the
+  executable is unavailable. No generated graph or historical evidence changed.
+
+See `docs/cloudflare-web-migration.md` for staging, externally built transition
+image, ordered cutover and independent frontend/backend rollback. Local tests do
+not certify provider-edge behavior, real sign-in or a current Live revision.
+
+
+**Container validation/storage limitation:** after the successful backend-only
+image build (exit 0), Docker reported `Internal: input/output error` at the end
+of the separate transition-image export (exit 100). That transition build is NOT
+marked PASS. The backend-image smoke command returned exit 125 while extracting
+an image layer, also with an I/O error; it never reached application execution.
+The host then reported no free disk space. Only this task's generated
+`client/dist` and installed backend `node_modules` were removed to save source
+and evidence; the synthetic Expo export is retained. No Docker daemon restart,
+prune, existing-container stop or rebuild retry was performed. Native
+Node/workerd/Chromium tests passed independently. A healthy isolated Docker host
+must verify the final candidate image runtime and transition assembly before any
+provider deployment is approved. Image build success alone is not runtime PASS.

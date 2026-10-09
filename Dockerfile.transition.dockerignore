@@ -1,0 +1,6 @@
+**
+!Dockerfile.transition
+!client/
+!client/dist/
+!client/dist/**
+**/.env*
