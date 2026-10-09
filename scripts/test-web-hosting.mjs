@@ -14,8 +14,9 @@ const env = {
 if (process.env.PLAYWRIGHT_BROWSERS_PATH) env.PLAYWRIGHT_BROWSERS_PATH = process.env.PLAYWRIGHT_BROWSERS_PATH;
 try {
   for (const args of [
-    ['--test', 'test/cloudflare-web.test.mjs', 'test/back/cross-origin-web.test.js',
-      'test/back/cross-origin-browser.test.js', 'mobile/test/crossOriginApi.test.mjs'],
+    ['--test', 'test/cloudflare-web.test.mjs', 'test/cloudflare-preview.test.mjs', 'test/back/cross-origin-web.test.js',
+      'test/back/cross-origin-browser.test.js', 'test/back/cross-origin-browser-socket.test.js',
+      'mobile/test/crossOriginApi.test.mjs'],
     ['--test', '--test-name-pattern=cross-origin AuthProvider', 'mobile/test/authSession.test.mjs']
   ]) {
     const result = spawnSync(process.execPath, args, { env, stdio: 'inherit', cwd: new URL('..', import.meta.url) });

@@ -510,3 +510,20 @@ This supersedes the preceding Active/open-retirement statuses without erasing th
 Procedure and limitations: `docs/cloudflare-web-migration.md`. No checklist item
 above is satisfied by the synthetic local tests. Existing Firebase attestations
 are retained, not replaced; no provider settings, credentials or private logs read.
+
+### Static-only preview clarification — 2026-10-09
+
+- [ ] Approve a dedicated static-only preview upload/resource separately; use
+  `wrangler.preview.jsonc`, the synthetic artifact and reviewer-only Access before
+  enabling a URL. Keep alternate/version URLs disabled. This stage needs **no**
+  production Firebase Authorized Domain, Render CORS, DNS or real credentials.
+- [ ] Restore retained-image readability on an isolated healthy Docker host under
+  separate human maintenance authorization; preserve existing containers/recovery
+  state. Then validate runtime and transition frontend retention before Render
+  cutover. Current image inspection still fails despite restored disk capacity.
+- [ ] Real-auth preview still requires the earlier compatibility, exact-origin and
+  human login/Garden gates. Keep Render web/login until replacement activation
+  and approved old-origin traffic disposition; backend-only Render is last.
+
+Exact local/offline and separately approved provider steps are in
+`docs/cloudflare-web-migration.md`. No provider/manual item was performed here.

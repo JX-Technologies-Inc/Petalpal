@@ -1716,3 +1716,29 @@ prune, existing-container stop or rebuild retry was performed. Native
 Node/workerd/Chromium tests passed independently. A healthy isolated Docker host
 must verify the final candidate image runtime and transition assembly before any
 provider deployment is approved. Image build success alone is not runtime PASS.
+
+### Migration continuation — 2026-10-09
+
+- **Storage capacity restored; image/runtime BLOCKED:** read-only checks found
+  about 30 GiB host free space and 24 GiB free in Colima. Docker 29.5.2 and Colima
+  respond, but inspecting the retained backend image still fails with containerd
+  blob I/O errors; the recorded config ID is unavailable. No container smoke,
+  rebuild, restart, prune or existing-container mutation was attempted this turn.
+  Prior image build PASS does not establish runtime PASS. Build RAM is UNKNOWN.
+- **Two missing checks PASS:** Chromium exercised real cross-origin Socket.IO
+  polling, WebSocket upgrade, refreshed synthetic-token reconnect, invalid-token
+  rejection, denied polling/WS origins, CSP enforcement and polling no-store.
+  A separate workerd/Chromium test reused the retained Expo export and verified
+  the static-only preview blocks Render/Firebase HTTP and WS with zero escaped
+  provider requests. The previously accepted ten tests were not repeated.
+- **Preview isolation:** `wrangler.preview.jsonc` disables public/version URLs
+  and routes, and opts into CSP with self-only connections and no frames. Offline
+  packaging PASS. Resource creation/upload and reviewer-only Access remain human
+  approval gates; this static preview needs no production Firebase/CORS change.
+  Default Worker CSP and all backend controls remain unchanged.
+- **Cutover remains gated:** retain Render login/web through a validated compatible
+  transition release until Cloudflare is verified and old-origin traffic has an
+  approved disposition. Transition runtime/provider compatibility remain open.
+  No cloud resource, production connection, provider setting, identity, database,
+  push or deployment changed. Garden/Fairy source and quality settings unchanged;
+  performance parity remains PARTIAL. Graphify remains unavailable locally.

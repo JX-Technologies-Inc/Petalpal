@@ -174,3 +174,102 @@ transition export and backend dependencies were removed; source and the syntheti
 Expo export remain. No Docker restart, shared pruning or build retry occurred.
 Verify final image runtime and transition assembly on a healthy isolated Docker
 host before any live rollout. Local cloud preview/provider changes remain gated.
+
+## Continuation: isolated static preview and runtime gate (2026-10-09)
+
+Disk capacity is now available (approximately 30 GiB host / 24 GiB Colima VM),
+and Docker/Colima respond. However the retained backend image's manifest still
+returns a containerd I/O error; its previously recorded config ID is unavailable.
+Free space has not restored image readability. No new container smoke or build
+was attempted, and no daemon/container/cache/recovery state was changed. Build
+PASS is retained; container runtime remains BLOCKED. Build peak RAM is UNKNOWN.
+
+The accepted 10 tests are reused. Two additional focused checks passed: real
+Chromium Socket polling/WS upgrade/automatic refreshed-token reconnect, denied
+origins/tokens and CSP enforcement; and static-preview isolation in workerd and
+Chromium. The latter reused the retained Expo export without rebuilding it.
+The dedicated preview profile also passed Wrangler's offline packaging dry-run;
+no upload, account operation or cloud resource was performed.
+
+### Human-only static preview procedure
+
+This profile is for delivery/UI-shell review only; login and backend features
+are deliberately unavailable. It requires no Render CORS, Firebase Authorized
+Domain or DNS changes. It does not certify authenticated Garden functionality.
+
+1. Approve source publication and creation of a dedicated preview Worker
+   separately. Confirm `petalpal-web-preview` is unused or belongs only to this
+   preview; never overwrite an AI or production Worker. No publication is done
+   by this local preparation.
+2. Use the retained synthetic `mobile/dist` from checkpoint `f81759a`, whose
+   frontend source is unchanged, or the existing manually dispatched build
+   workflow with `production_config=false`. Download its exact
+   `expo-web-synthetic-<source SHA>` artifact into `mobile/dist` of the matching
+   reviewed source checkout. Keep the run ID/source SHA with the approval.
+3. Use a clean reviewed checkout without `.env*` or `.dev.vars*` files, the locked
+   hosting tools and the dedicated profile. Do not copy local credential files:
+
+   ```sh
+   npm ci --prefix deploy/cloudflare --ignore-scripts --no-audit --no-fund
+   # Local only, loopback and ephemeral port; no cloud resources:
+   deploy/cloudflare/node_modules/.bin/wrangler dev --local --ip 127.0.0.1 --port 0 --config deploy/cloudflare/wrangler.preview.jsonc
+   # Offline packaging only; no upload:
+   deploy/cloudflare/node_modules/.bin/wrangler deploy --dry-run --config deploy/cloudflare/wrangler.preview.jsonc
+   ```
+
+4. After explicit resource/upload approval, a human may run the same deploy
+   command without `--dry-run`. The profile retains `workers_dev=false`,
+   `preview_urls=false`, no custom routes, and `STATIC_PREVIEW_ONLY=1`. Verify
+   the resulting Worker identity and disabled URL settings in metadata only.
+   No agent/provider credential-value access is needed.
+5. In Cloudflare, configure Access to restrict the exact preview Worker hostname
+   to approved reviewers before enabling any URL. Keep version/other preview
+   URLs disabled; verify there is no alternate unprotected URL. If protection
+   cannot be configured before exposure, stop and keep local preview only.
+   Separately approve enabling that workers.dev hostname under the preview
+   Worker's Settings > Domains & Routes; do not attach a custom/company domain.
+   Record this as a reviewed preview-only config change so a later upload does
+   not silently replace the intended URL state. Confirm an unauthenticated
+   browser is challenged/denied before sharing the URL.
+6. Keep `STATIC_PREVIEW_ONLY=1`. Its CSP removes Render/Firebase connections and
+   Firebase frames/scripts; browser enforcement and zero provider requests were
+   verified locally. Do not enter real credentials. Turning on real auth/API
+   access requires a separate preview approval and the compatibility gates above.
+
+[Cloudflare documents workers.dev exposure and Access protection here](https://developers.cloudflare.com/workers/configuration/routing/workers-dev/#manage-access-to-workersdev).
+
+### Validated cutover order
+
+Static-only protected preview → restore/validate the retained backend image on
+a healthy isolated Docker host → separately validate the transition image with
+an approved prebuilt frontend → deploy that compatible transition release to
+Render while retaining its login/web frontend → authorize exact real-auth preview
+origins and test → approve/activate the replacement Cloudflare frontend → approve
+the disposition of old-origin users/links → select backend-only Render last.
+
+The unchanged original Dockerfile and prepared Dockerfile.transition preserve
+the compatibility path. Neither can currently be declared deployment-ready:
+transition image runtime and provider image-source compatibility still need
+verification. DNS activation alone does not retire old Render login links.
+Retain independent frontend and transition-backend rollback artifacts/config.
+
+Once image readability is restored, run the existing synthetic protocol fixture
+inside that retained image at most once, not another build. Example for a healthy
+isolated Docker host, from this worktree:
+
+```sh
+docker run --rm --pull=never --platform linux/amd64 --network none \
+  --memory=1g --memory-swap=1g --cpus=2 --pids-limit=128 --read-only \
+  --tmpfs /tmp:rw,nosuid,noexec,size=64m \
+  -e NODE_ENV=test -e DOTENV_CONFIG_PATH=/dev/null -e DOTENV_CONFIG_QUIET=true \
+  -e DEV_DATABASE_URL=postgresql://fixture:fixture@127.0.0.1:1/petalpal_test \
+  -e AI_ASYNC_EXECUTION_MODE=manual \
+  --mount type=bind,src="$PWD/test/back/cross-origin-web.test.js",dst=/app/test/back/cross-origin-web.test.js,readonly \
+  --entrypoint node petalpal-backend:cloudflare-migration \
+  --test --test-timeout=45000 /app/test/back/cross-origin-web.test.js
+```
+
+This starts the image's actual Express/Socket server under synthetic identity/DB
+adapters; it intentionally does not execute npm start, which would run migrations.
+It proves application runtime/protocol behavior, not production DB startup or
+Firebase configuration. The 1 GiB bound is a test runtime limit, not build RAM.

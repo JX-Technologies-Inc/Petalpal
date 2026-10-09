@@ -30,7 +30,15 @@ export default {
       response = await env.ASSETS.fetch(new Request(assetUrl, { method: request.method }));
     }
     const headers = new Headers(response.headers);
-    headers.set('Content-Security-Policy', contentSecurityPolicy);
+    // Delivery-only preview: the retained synthetic export cannot contact
+    // Render or Firebase. Real-auth preview is a separate approval gate.
+    const policy = env.STATIC_PREVIEW_ONLY === '1'
+      ? contentSecurityPolicy
+        .replace(/connect-src[^;]+/, "connect-src 'self'")
+        .replace(/frame-src[^;]+/, "frame-src 'none'")
+        .replace(' https://apis.google.com', '')
+      : contentSecurityPolicy;
+    headers.set('Content-Security-Policy', policy);
     headers.set('X-Content-Type-Options', 'nosniff');
     headers.set('X-Frame-Options', 'DENY');
     headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');

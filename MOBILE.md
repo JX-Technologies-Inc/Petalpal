@@ -770,3 +770,14 @@ prior user visual acceptance remains applicable, objective performance parity
 remains PARTIAL. See `docs/cloudflare-web-migration.md` for exact build inputs,
 preview protection, origin-scoped Firebase persistence and cutover/rollback gates.
 The existing Render frontend path remains intact until separately approved cutover.
+
+### Static-only migration preview — 2026-10-09
+
+Use `deploy/cloudflare/wrangler.preview.jsonc` with the retained synthetic Expo
+export for isolated delivery review. `STATIC_PREVIEW_ONLY=1` restricts browser
+connections to self and disables frames; real Render/Firebase login is unavailable
+in this profile. No mobile source, export rebuild or provider configuration change
+is required. Keep the flag enabled through separately approved protected staging;
+real-auth preview uses the distinct compatibility/origin gates in
+`docs/cloudflare-web-migration.md`. Existing Render login must survive transition
+until the Cloudflare replacement and old-origin traffic disposition are approved.
