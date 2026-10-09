@@ -1,5 +1,14 @@
 # Manual Security Checklist
 
+## Authorized logging deployment attempt — 2026-10-08
+
+- [x] Safe Render deployment metadata confirms PetalPal_v2 / `srv-d983eguq1p3s73fnk1m0`, Live `dep-db4578flot8c73frlk1g` at `d510b1ff97902704721060b4c1261657be3e4b76`, with auto-deploy disabled. Exact candidate branch/scope and rollback reference PASS; existing accepted evidence reused.
+- [ ] Approved `1f8d0f98fb16b9553ae03c474f5952c808928e48` selected and Deploy Commit clicked once. Returned immediately to deployment list to avoid logs; refreshed list contains no candidate deployment and still reports the baseline Live. Submission outcome UNKNOWN; deployment BLOCKED, no retry/rollback. No confirmed Render build failure claimed.
+- [ ] Candidate startup/migration verification and all three production GET checks NOT RUN because candidate Live was not established. LOG REDACTION ACCEPTANCE: UNKNOWN; no logs retrieved.
+- [ ] Obtain sanitized confirmation whether Render accepted the attempted submission; fresh explicit authorization required before any retry. Preserve working replacement credential. Previous rollback SHA: `d510b1ff97902704721060b4c1261657be3e4b76`, separately approved only.
+
+Credential recovery remains USER-CONFIRMED PASS; historical trace retention/misuse uncertainty remains. No secret-bearing pages, credentials, provider settings, SQL/manual migrations or unrelated changes accessed or modified. Historical evidence and canonical counts preserved.
+
 ## Firebase credential recovery — USER-CONFIRMED PASS, 2026-10-08
 
 - [x] User confirms replacement Firebase Admin credential works in production.
