@@ -490,3 +490,8 @@ This supersedes the preceding Active/open-retirement statuses without erasing th
 - [x] After deleting the August 25 and September 25 keys and retaining the October 8 replacement, the user signed in to `https://petalpal-v2.onrender.com/` and entered the existing Garden. **Current deployed production authentication PASS — user-confirmed only**, superseding the preceding not-retested/UNKNOWN status. No independent provider or fresh credential-acquisition verification.
 - [ ] Undeployed unified Expo Web candidate Firebase/public API/Socket binding remains NOT VERIFIED; this confirmation does not close that separate gate.
 - [ ] Historical exposure records, exact exposed-key identity uncertainty, unauthorized historical use and prior trace-retention uncertainty remain unchanged. No credential inspection, repeated investigation, provider mutation or changed canonical counts.
+
+### Corrected local Garden preview — user visual recovery confirmation, 2026-10-08
+
+- [x] **USER-CONFIRMED:** successful sign-in to the corrected synthetic preview and restoration of previously missing Garden artwork and overall appearance, with artwork fix `57bc31c`. Applies only to the inspected local preview; no independent production/provider or full visual/performance verification is inferred.
+- [ ] Matched-reference performance parity remains **PARTIAL**. Candidate production Firebase/public build binding remains **UNKNOWN**. Prior provider/authentication and exposure records remain unchanged.
