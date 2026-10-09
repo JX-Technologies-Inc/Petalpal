@@ -121,7 +121,7 @@ async function providerHarness({ userId = 'visitor', flower = placement, api = {
     return wrapper.type(wrapper.props).props.value;
   });
   await hooks.flush();
-  return { hooks, calls, storage, persistence };
+  return { hooks, calls, storage, persistence, props };
 }
 
 test('detail data resolves the existing journal and legacy journal ID without inventing content', () => {
@@ -602,4 +602,101 @@ test('DELTA-P2-2 delayed provider Delete cannot remove the next account cache', 
   pending.resolve(); await deleting;
   assert.equal(JSON.parse(provider.storage.items.get('petalpal_flower_placements_v1:bob'))[0].id, 'bob-placement');
   assert.equal(provider.storage.items.has('petalpal_flower_placements_v1:owner'), false);
+});
+
+
+test('message refresh safety: author deletion across Gardens replaces stale membership and retains pending work', () => {
+  const { mergeFlowerSource } = loadPlantingModules()('flowerDetailData');
+  const deleted = { id: 'deleted-author', text: 'Removed with author account' };
+  const kept = { id: 'retained', text: 'Still on server' };
+  const pending = { id: 'local-pending', text: 'Sending', pending: true };
+  for (const id of ['flower-in-garden-a', 'flower-in-garden-b']) {
+    const current = { ...source, id, messages: [deleted, kept, pending] };
+    const incoming = { ...source, id, messages: [kept] };
+    const result = mergeFlowerSource(current, incoming, 'refresh');
+    assert.deepEqual(plain(result.messages), [kept, pending]);
+    assert.deepEqual(plain(mergeFlowerSource(current, { ...incoming, messages: undefined }, 'refresh').messages), [deleted, kept, pending]);
+    assert.deepEqual(plain(mergeFlowerSource(current, { ...incoming, messages: [] }, 'refresh').messages), [pending]);
+  }
+});
+
+test('message refresh safety: pending and post-start arrivals survive complete replacement without old server rows', () => {
+  const { mergeFlowerSource } = loadPlantingModules()('flowerDetailData');
+  const old = { id: 'old', text: 'Deleted' }, live = { id: 'live', text: 'New arrival' };
+  const pending = { id: 'pending', text: 'Sending', pending: true };
+  const base = { ...source, messages: [old] };
+  const current = { ...source, messages: [old, live, pending] };
+  const refreshed = mergeFlowerSource(current, { ...source, messages: [] }, 'refresh', base);
+  assert.deepEqual(plain(refreshed.messages), [live, pending]);
+  assert.deepEqual(plain(mergeFlowerSource(refreshed, { ...source, messages: [] }, 'refresh', refreshed).messages), [pending]);
+});
+
+test('message refresh safety: failed fetch leaves current messages and reports error', async () => {
+  const request = deferred(); let broadcast;
+  const provider = await providerHarness({ api: {
+    loadFlowerSource: () => request.promise,
+    subscribeToFlowerUpdates: (_owner, _flower, fn) => { broadcast = fn; return () => {}; },
+  } });
+  provider.hooks.render().openFlowerDetail(placement); await provider.hooks.flush();
+  broadcast(source); await provider.hooks.flush();
+  request.reject(new Error('Refresh unavailable'));
+  const flow = await provider.hooks.flush();
+  assert.deepEqual(plain(flow.flowerDetailSource.messages), source.messages);
+  assert.equal(flow.detailError, 'Refresh unavailable');
+  assert.equal(flow.isDetailLoading, false);
+});
+
+test('message refresh safety: account switch cancels late GET and message action publication', async () => {
+  const get = deferred(), send = deferred(); let calls = 0;
+  const provider = await providerHarness({ api: {
+    loadFlowerSource: () => ++calls === 1 ? Promise.resolve(source) : get.promise,
+    leaveFlowerMessage: () => send.promise,
+  } });
+  provider.hooks.render().openFlowerDetail(placement); let flow = await provider.hooks.flush();
+  const sending = flow.leaveMessage('Pending for previous account'); await provider.hooks.flush();
+  // Same-account session refresh starts another complete GET.
+  provider.props.session = { user: { id: 'visitor', name: 'Visitor refreshed' } };
+  provider.hooks.render(); await provider.hooks.flush();
+  assert.equal(calls, 2);
+  provider.props.session = { user: { id: 'next-account' } };
+  provider.hooks.render(); flow = await provider.hooks.flush();
+  assert.equal(flow.selectedFlower, null); assert.equal(flow.flowerDetailSource, null);
+  get.resolve(source); send.resolve(source); await sending; flow = await provider.hooks.flush();
+  assert.equal(flow.currentUserId, 'next-account');
+  assert.equal(flow.flowerDetailSource, null); assert.equal(flow.detailError, '');
+});
+
+test('message refresh safety: complete provider refresh removes deleted rows while preserving a local send', async () => {
+  const refresh = deferred(), send = deferred(); let calls = 0;
+  const provider = await providerHarness({ api: {
+    loadFlowerSource: () => ++calls === 1 ? Promise.resolve(source) : refresh.promise,
+    leaveFlowerMessage: () => send.promise,
+  } });
+  provider.hooks.render().openFlowerDetail(placement); let flow = await provider.hooks.flush();
+  provider.props.session = { user: { id: 'visitor', name: 'Visitor refreshed' } };
+  provider.hooks.render(); flow = await provider.hooks.flush();
+  const sending = flow.leaveMessage('Legitimate local send'); await provider.hooks.flush();
+  refresh.resolve({ ...source, messages: [] }); flow = await provider.hooks.flush();
+  assert.ok(!flow.flowerDetailSource.messages.some(m => m.id === 'message-1'));
+  assert.ok(flow.flowerDetailSource.messages.some(m => m.text === 'Legitimate local send' && m.pending));
+  send.reject(new Error('Send failed')); await sending; flow = await provider.hooks.flush();
+  assert.ok(!flow.flowerDetailSource.messages.some(m => m.text === 'Legitimate local send'));
+});
+
+test('message refresh safety: superseded complete fetch and owner switch cannot republish old messages', async () => {
+  const old = deferred(), latest = deferred(); let calls = 0;
+  const provider = await providerHarness({ api: {
+    loadFlowerSource: () => ++calls === 1 ? Promise.resolve(source) : calls === 2 ? old.promise : latest.promise,
+  } });
+  provider.hooks.render().openFlowerDetail(placement); await provider.hooks.flush();
+  provider.props.session = { user: { id: 'visitor', name: 'refresh one' } };
+  provider.hooks.render(); await provider.hooks.flush();
+  provider.props.session = { user: { id: 'visitor', name: 'refresh two' } };
+  provider.hooks.render(); await provider.hooks.flush();
+  latest.resolve({ ...source, messages: [] }); let flow = await provider.hooks.flush();
+  assert.equal(flow.flowerDetailSource.messages.some(m => m.id === 'message-1'), false);
+  old.resolve(source); flow = await provider.hooks.flush();
+  assert.equal(flow.flowerDetailSource.messages.some(m => m.id === 'message-1'), false);
+  provider.props.gardenOwnerUserId = 'another-owner'; provider.hooks.render(); flow = await provider.hooks.flush();
+  assert.equal(flow.selectedFlower, null); assert.equal(flow.flowerDetailSource, null);
 });
