@@ -2,10 +2,7 @@ name: PetalPal security regression
 
 on:
   push:
-    branches: [integration/mobile-backend-test]
-  pull_request:
-    branches: [integration/mobile-backend-test, main]
-  workflow_dispatch:
+    branches: [release-validation/unified-expo-902f34a-ci]
 
 permissions:
   contents: read
@@ -29,6 +26,12 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          ref: 902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8
+      - name: Assert approved candidate commit and tree
+        run: |
+          test "$(git rev-parse HEAD)" = 902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8
+          test "$(git rev-parse HEAD^{tree})" = 261c5c2a36a6bce1ab914a8107ba1fe2b2a97679
+          test ! -e .env
       - name: Node 24 (matches backend Docker major)
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -65,6 +68,12 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          ref: 902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8
+      - name: Assert approved candidate commit and tree
+        run: |
+          test "$(git rev-parse HEAD)" = 902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8
+          test "$(git rev-parse HEAD^{tree})" = 261c5c2a36a6bce1ab914a8107ba1fe2b2a97679
+          test ! -e .env
       - name: Node 24
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -80,6 +89,8 @@ jobs:
           npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
       - name: Release Flower rendering boundary
         run: node mobile/test/productionGrowthRendering.test.mjs
+      - name: Release Garden artwork boundary
+        run: node --test mobile/test/gardenProductionArtwork.test.mjs
       - name: Actual Expo production export
         run: |
           NODE_ENV=production npm --prefix mobile run build:web
