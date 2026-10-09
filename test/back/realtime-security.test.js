@@ -29,17 +29,50 @@ async function fixture(t) {
     }
     return result;
   });
-  stub(prisma.friendship, "deleteMany", async ({ where }) => {
-    for (const row of where.OR) state.friends.delete(`${row.userId}:${row.friendId}`);
-    return { count: 2 };
-  });
+  function deleteFriendships(friends, { where }) {
+    let count = 0;
+    for (const key of friends) {
+      const [userId, friendId] = key.split(":");
+      if (where.OR.some(row => (row.userId === undefined || row.userId === userId)
+        && (row.friendId === undefined || row.friendId === friendId))) {
+        friends.delete(key); count++;
+      }
+    }
+    return { count };
+  }
+  stub(prisma.friendship, "deleteMany", async args => deleteFriendships(state.friends, args));
   stub(prisma.garden, "findUnique", async () => null);
   stub(prisma.auditEvent, "create", async () => ({ id: "synthetic-audit" }));
-  stub(prisma, "$transaction", async callback => callback({
-    user: { findUnique: async ({ where }) => state.users[where.id], delete: async ({ where }) => { delete state.users[where.id]; } },
-    friendship: { deleteMany: async () => {} }, friendRequest: { deleteMany: async () => {} },
-    garden: { findUnique: async () => null }, visitRecord: { deleteMany: async () => {} }, message: { deleteMany: async () => {} }
-  }));
+  stub(prisma, "$transaction", async (callback, options) => {
+    // Stage writes until success. This models fixture commit/rollback, not PostgreSQL locking.
+    const users = structuredClone(state.users), friends = new Set(state.friends);
+    const result = await callback({
+      $queryRawUnsafe: async (sql, ...ids) => {
+        assert.deepEqual(options, { isolationLevel: "ReadCommitted", maxWait: 2000, timeout: 5000 });
+        if (sql === "SELECT set_config('lock_timeout', '1500ms', true), set_config('statement_timeout', '4000ms', true)") {
+          assert.equal(ids.length, 0); return [{ set_config: "4000ms" }];
+        }
+        assert.ok(ids.length > 0 && ids.length <= 2);
+        assert.equal(sql, `SELECT id FROM "User" WHERE id IN (${ids.map((_, i) => '$' + (i + 1)).join(',')}) ORDER BY id COLLATE "C" FOR NO KEY UPDATE`);
+        return [...new Set(ids)].filter(id => users[id]).sort().map(id => ({ id }));
+      },
+      user: {
+        findUnique: async ({ where }) => users[where.id] ? { ...users[where.id] } : null,
+        update: async ({ where, data, select }) => {
+          assert.ok(users[where.id], "transaction update requires an existing user");
+          Object.assign(users[where.id], data);
+          return select ? Object.fromEntries(Object.keys(select).filter(key => select[key]).map(key => [key, users[where.id][key]])) : { ...users[where.id] };
+        },
+        delete: async ({ where }) => { const user = users[where.id]; delete users[where.id]; return user; }
+      },
+      friendship: { deleteMany: async args => deleteFriendships(friends, args) },
+      friendRequest: { deleteMany: async () => ({ count: 0 }) },
+      garden: { findUnique: async () => null },
+      visitRecord: { deleteMany: async () => ({ count: 0 }) }, message: { deleteMany: async () => ({ count: 0 }) }
+    });
+    state.users = users; state.friends = friends;
+    return result;
+  });
   setFirebaseTokenVerifierForTests(async token => {
     const id = token?.replace(/-token$/, "");
     if (!state.users[id] || state.revoked.has(id)) throw Object.assign(new Error("private verifier detail"), { code: "auth/id-token-revoked" });
@@ -90,7 +123,12 @@ test("authorized joins/movement use token actor and do not leak to outsider/user
     assert.equal((await action(friend, "move-avatar", { ...move, visitorId: "owner" })).code, "INVALID_PAYLOAD");
     assert.equal((await action(friend, "move-avatar", { ...move, ownerId: "outsider" })).code, "INVALID_PAYLOAD");
   });
-  await assertNoNewEvents(outsider, () => f.call("/friends/remove", "owner", { friendId: "friend" }), "friendListUpdated");
+  await assertNoNewEvents(outsider, async () => {
+    assert.equal((await f.call("/friends/remove", "owner", { friendId: "friend" })).status, 200);
+    assert.equal(f.state.friends.has("owner:friend"), false);
+    assert.equal(f.state.friends.has("friend:owner"), false);
+  }, "friendListUpdated");
+  assert.equal((await action(friend, "join-garden", "owner")).ok, false);
 });
 
 for (const reason of ["privacy", "friendship"]) test(`${reason} revocation rejects later actions/broadcasts and reconnect join`, async t => {
@@ -237,8 +275,18 @@ test("paused authorized movement cannot publish after privacy revocation", async
   f.state.pauseFriend = { enter, wait };
   await assertNoNewEvents(owner, async () => {
     const pending = action(friend, "move-avatar", move); await entered;
-    assert.equal((await f.call("/users/me/garden-privacy", "owner", { allowGardenVisits: false }, "PATCH")).status, 200);
-    release(); assert.equal((await pending).ok, false);
+    try {
+      const response = await f.call("/users/me/garden-privacy", "owner", { allowGardenVisits: false }, "PATCH");
+      assert.equal(response.status, 200);
+      assert.deepEqual(response.body, { allowGardenVisits: false });
+      assert.equal(f.state.users.owner.allowGardenVisits, false);
+    } finally { release(); }
+    assert.equal((await pending).ok, false);
+    assert.equal((await action(friend, "move-avatar", move)).ok, false);
+    assert.equal((await action(friend, "join-garden", "owner")).ok, false);
+    const reconnect = await f.socket("friend");
+    assert.equal((await action(reconnect, "join-garden", "owner")).ok, false);
+    assert.equal((await action(owner, "join-garden", "owner")).ok, true);
   });
 });
 
