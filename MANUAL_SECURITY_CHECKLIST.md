@@ -1,5 +1,15 @@
 # Manual Security Checklist
 
+## Logging-only production verification — 2026-10-08
+
+- [x] Render safe deployment metadata: PetalPal_v2 / `srv-d983eguq1p3s73fnk1m0`, Live deployment `dep-db468kbbc2fs73ap2t70`, exact approved source `1f8d0f98fb16b9553ae03c474f5952c808928e48`. Earlier unconfirmed-submission evidence is historical; no deployment action performed in this acceptance task.
+- [x] Startup USER-CONFIRMED PASS: 25 migrations found, none pending; listening on port 10000; Mood model loaded; no confirmed startup failure. No independent log inspection.
+- [x] Anonymous /session?view=metadata and invalid-synthetic-bearer /ai/reports returned 401, exact generic error bodies and expected HSTS/CSP/frame/nosniff/referrer/no-store headers. Sanitized request correlations/time are retained in SECURITY.md.
+- [ ] Root GET result UNKNOWN: transport attempt produced no HTTP response; no retry. Three authorized request attempts exhausted.
+- [ ] LOG REDACTION ACCEPTANCE UNKNOWN: safe request-correlated sanitized verification unavailable; no raw logs accessed. Root liveness and production logging privacy require further bounded evidence; no full P0 certification.
+
+Credential recovery confirmation and historical uncertainties/counts preserved. Accepted CI/build/migration/schema evidence reused; no provider settings, secrets, production SQL/manual migrations or mobile operations changed. Only this new verification checkpoint is intended for the scoped commit; earlier uncommitted evidence preserved.
+
 ## Authorized logging deployment attempt — 2026-10-08
 
 - [x] Safe Render deployment metadata confirms PetalPal_v2 / `srv-d983eguq1p3s73fnk1m0`, Live `dep-db4578flot8c73frlk1g` at `d510b1ff97902704721060b4c1261657be3e4b76`, with auto-deploy disabled. Exact candidate branch/scope and rollback reference PASS; existing accepted evidence reused.
