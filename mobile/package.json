@@ -52,7 +52,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "node ./test/plantingSystem.test.mjs && node ./test/plantingMaskRefinement.test.mjs && node ./test/flowerDetail.test.mjs",
-    "test:integration": "node --test test/applicationIntegration.test.mjs"
+    "test:integration": "node --test test/applicationIntegration.test.mjs",
+    "build:web": "expo export --platform web"
   },
   "private": true
 }

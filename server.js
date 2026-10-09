@@ -1,8 +1,10 @@
+import { isWebShellRequest } from "./lib/web-shell.js";
+import { parseJournalPage, journalPageCursor } from "./lib/journal-pagination.js";
 import { updateAiConsent } from "./lib/ai-consent.js";
 import { validateJournalCover } from './lib/journal-cover.js';
 import "dotenv/config";
 import express from "express";
-import { speechTranscriptionHandler } from "./lib/speech-transcription.js";
+import { speechAdmission, speechTranscriptionHandler } from "./lib/speech-transcription.js";
 import { PrismaAiCostGate, aiCostHttpStatus, isAiCostError } from "./lib/ai-cost-gate.js";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -248,7 +250,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
 // Authenticate and rate-limit before accepting the larger voice-only body.
-app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit,
+app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
   requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
 app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
@@ -307,8 +309,8 @@ if (apiDocsEnabled()) {
 
 app.use((req, res, next) => {
   const isPublicPage =
-    req.method === "GET" &&
-    (req.path === "/" ||
+    ["GET", "HEAD"].includes(req.method) &&
+    (isWebShellRequest(req) ||
       req.path === "/finish-sign-in" ||
       (Boolean(path.extname(req.path)) && !privateResponse(req)));
   const isFirebaseSession =
@@ -1494,14 +1496,30 @@ app.get("/users/:userId/journals/:journalId/cover", async (req, res) => {
 
 app.get("/users/:userId/journals", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
+  let page;
+  try { page = parseJournalPage(req.query, req.auth.userId); }
+  catch { return res.status(400).json({ error: "Invalid Journal page" }); }
+  if (page?.cursor) {
+    // A cutoff is not an authorization grant. Verify its anchor in this owner's index.
+    const anchor = await prisma.journal.findFirst({
+      where: { userId: req.auth.userId, id: page.cursor.id, createdAt: new Date(page.cursor.createdAt) },
+      select: { id: true }
+    });
+    if (!anchor) return res.status(400).json({ error: "Invalid Journal page" });
+  }
   const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
   const timezone = normalizeTimezone(user?.timezone) || "UTC";
   const journals = await prisma.journal.findMany({
-    where: { userId: req.auth.userId },
+    where: { userId: req.auth.userId, ...(page?.cursor ? { OR: [
+      { createdAt: { lt: new Date(page.cursor.createdAt) } },
+      { createdAt: new Date(page.cursor.createdAt), id: { lt: page.cursor.id } }
+    ] } : {}) },
     select: { id: true, content: true, createdAt: true, dailyCheckIn: { include: { emotionResult: true, flower: { include: { messages: true } } } } },
-    orderBy: { createdAt: "desc" }
+    orderBy: page ? [{ createdAt: "desc" }, { id: "desc" }] : { createdAt: "desc" },
+    ...(page ? { take: page.limit + 1 } : {})
   });
-  res.json(journals.map(journal => ({
+  const visible = page ? journals.slice(0, page.limit) : journals;
+  const entries = visible.map(journal => ({
     id: journal.id,
     createdAt: journal.createdAt,
     localDate: journal.dailyCheckIn?.localDate || new Intl.DateTimeFormat("en-CA", {
@@ -1510,7 +1528,10 @@ app.get("/users/:userId/journals", async (req, res) => {
     journal: { id: journal.id, content: journal.content },
     emotionResult: journal.dailyCheckIn?.emotionResult || null,
     flower: journal.dailyCheckIn?.flower || null
-  })));
+  }));
+  if (!page) return res.json(entries);
+  return res.json({ journals: entries, nextCursor: journals.length > page.limit
+    ? journalPageCursor(req.auth.userId, visible.at(-1)) : null });
 });
 
 app.get("/users/:userId/check-ins", async (req, res) => {
@@ -3574,8 +3595,7 @@ if (isDirectRun) {
   
   app.use((req, res, next) => {
     if (
-      req.method !== "GET" ||
-      req.path.startsWith("/socket.io")
+      !isWebShellRequest(req)
     ) {
       return next();
     }

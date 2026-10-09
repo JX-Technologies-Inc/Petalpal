@@ -178,22 +178,30 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
   }, [suppliedSession]);
 
   useEffect(() => {
-    if (!selectedFlower) return;
+    detailVersion.current++;
+    detailWorking.current = false;
+    setSelectedFlower(null); setFlowerDetailSource(null);
+    setIsDetailLoading(false); setIsDetailWorking(false); setDetailError('');
+  }, [suppliedSession?.user.id, session?.user.id, gardenOwnerUserId]);
+
+  useEffect(() => {
+    if (!selectedFlower || (suppliedSession && suppliedSession.user.id !== session?.user.id)) return;
     const ownerId = selectedFlower.ownerUserId || gardenOwnerUserId || session?.user.id;
     if (!session || !ownerId) return;
     let mounted = true;
     const version = detailVersion.current;
+    const refreshBase = flowerDetailSource;
     setIsDetailLoading(true);
     loadFlowerSource(ownerId, selectedFlower.flowerId).then((source) => {
       if (mounted && version === detailVersion.current) {
-        setFlowerDetailSource((current) => mergeFlowerSource(current, source, 'refresh'));
+        setFlowerDetailSource((current) => mergeFlowerSource(current, source, 'refresh', refreshBase));
         setDetailError('');
       }
     }).catch((error) => {
       if (mounted && version === detailVersion.current) setDetailError(error.message || 'Unable to load flower details.');
     }).finally(() => { if (mounted && version === detailVersion.current) setIsDetailLoading(false); });
     return () => { mounted = false; };
-  }, [selectedFlower?.flowerId, selectedFlower?.ownerUserId, gardenOwnerUserId, session]);
+  }, [selectedFlower?.flowerId, selectedFlower?.ownerUserId, gardenOwnerUserId, session, suppliedSession?.user.id]);
 
   useEffect(() => {
     const ownerId = selectedFlower?.ownerUserId || gardenOwnerUserId || session?.user.id;

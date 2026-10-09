@@ -75,15 +75,19 @@ export default function Bookhouse() {
   const cameraY = useRef(new Animated.Value(0)).current;
   const opening = useRef(new Animated.Value(1)).current;
   const requestVersion = useRef(0);
+  const journalRequest = useRef<AbortController | null>(null);
   const reload = useCallback(async () => {
     if (!session) return;
     const version = ++requestVersion.current;
+    journalRequest.current?.abort();
+    const controller = new AbortController();
+    journalRequest.current = controller;
     setLoading(true); setError('');
-    try { const next = await readJournals(session.user.id); if (version === requestVersion.current) setEntries(next); }
+    try { const next = await readJournals(session.user.id, controller.signal); if (version === requestVersion.current) setEntries(next); }
     catch (e) { if (version === requestVersion.current) setError(errorMessage(e)); }
     finally { if (version === requestVersion.current) setLoading(false); }
   }, [session]);
-  useFocusEffect(useCallback(() => { void reload(); return () => { requestVersion.current++; }; }, [reload]));
+  useFocusEffect(useCallback(() => { void reload(); return () => { requestVersion.current++; journalRequest.current?.abort(); }; }, [reload]));
   const years = useMemo(() => journalYears(entries), [entries]);
   const available = useMemo(() => new Set(entries.filter(e => e.journal).map(e => e.localDate.slice(0, 7))), [entries]);
   const zoom = Math.max(1.35, 980 / sceneWidth);

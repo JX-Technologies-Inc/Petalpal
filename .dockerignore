@@ -7,7 +7,9 @@ client/node_modules
 .env*
 **/.env*
 
-mobile
+mobile/node_modules*
+mobile/dist
+mobile/.expo
 test
 artifacts
 scripts/native-security*.mjs

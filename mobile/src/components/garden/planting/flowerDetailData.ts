@@ -42,7 +42,8 @@ export interface FlowerAccess {
 }
 
 export function mergeFlowerSource(current: FlowerSourceDetail | null, incoming: FlowerSourceDetail,
-  personalState: 'response' | 'broadcast' | 'refresh' = 'response'): FlowerSourceDetail {
+  personalState: 'response' | 'broadcast' | 'refresh' = 'response',
+  refreshBase?: FlowerSourceDetail | null): FlowerSourceDetail {
   if (!current || current.id !== incoming.id) {
     return personalState === 'broadcast' ? { ...incoming, supportState: undefined } : incoming;
   }
@@ -50,10 +51,22 @@ export function mergeFlowerSource(current: FlowerSourceDetail | null, incoming: 
   const supportState = personalState === 'broadcast' ? current.supportState
     : personalState === 'refresh' && sameDay && current.supportState?.supportedToday
       ? current.supportState : incoming.supportState || current.supportState;
+  const messageKey = (message: FlowerMessage) => message.id || message.createdAt
+    || `${message.author || message.senderName || 'Friend'}:${message.text}`;
+  // Complete GETs replace server membership. Only pending local work and
+  // arrivals since this request began may survive an older in-flight GET.
+  const baseline = refreshBase === undefined ? current : refreshBase;
+  const known = new Set((baseline?.messages || []).map(messageKey));
+  const replaceMessages = personalState === 'refresh' && Array.isArray(incoming.messages);
+  const retained = replaceMessages
+    ? (current.messages || []).filter(message => message.pending || !known.has(messageKey(message)))
+    : current.messages || [];
   const messages = new Map<string, FlowerMessage>();
-  for (const message of [...(current.messages || []), ...(incoming.messages || [])]) {
+  for (const message of replaceMessages
+    ? [...(incoming.messages || []), ...retained]
+    : [...retained, ...(incoming.messages || [])]) {
     if (personalState === 'response' && message.pending) continue;
-    const key = message.id || message.createdAt || `${message.author || message.senderName || 'Friend'}:${message.text}`;
+    const key = messageKey(message);
     messages.set(key, message);
   }
   return { ...current, ...incoming, supportState, messages: [...messages.values()],

@@ -21,7 +21,8 @@
         "benchmark:semantic:repair-dev": "node scripts/repair-dev-semantic-gold.js",
         "benchmark:embedding-candidates": "node scripts/benchmark-embedding-candidates.js",
         "check": "npm test && npm run lint && npm run build:client && npx prisma validate && node --check server.js && node --check lib/auth.js && node --check lib/firebase-admin.js",
-        "postinstall": "npx prisma generate"
+        "postinstall": "npx prisma generate",
+        "test:security:ci": "node scripts/security-ci.js"
     },
     "devDependencies": {
         "@electric-sql/pglite": "^0.3.16"

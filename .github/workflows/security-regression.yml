@@ -1,0 +1,87 @@
+name: PetalPal security regression
+
+on:
+  push:
+    branches: [integration/mobile-backend-test]
+  pull_request:
+    branches: [integration/mobile-backend-test, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security:
+    name: Isolated security baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
+      AI_ASYNC_EXECUTION_MODE: manual
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node 24 (matches backend Docker major)
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Reproducible backend dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Generate Prisma client only (no connection or migration)
+        run: npm exec --no -- prisma generate
+      - name: Check CI contract
+        run: node --test test/security-ci.test.js
+      - name: Auth, HTTP policy and isolated loopback DAST
+        run: npm run test:security:ci
+
+  expo-web:
+    name: Isolated Expo web boundary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
+      AI_ASYNC_EXECUTION_MODE: manual
+      EXPO_NO_DOTENV: '1'
+      EXPO_NO_TELEMETRY: '1'
+      CI: '1'
+      EXPO_PUBLIC_FIREBASE_API_KEY: synthetic-public-build-fixture
+      EXPO_PUBLIC_FIREBASE_PROJECT_ID: petalpal-synthetic
+      EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: fixture.invalid
+      EXPO_PUBLIC_FIREBASE_APP_ID: synthetic-public-app
+    steps:
+      - name: Checkout exact workflow revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
+      - name: Isolated dependencies and Prisma generation only
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm exec --no -- prisma generate
+          npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Actual Expo production export
+        run: |
+          NODE_ENV=production npm --prefix mobile run build:web
+          mkdir -p client/dist
+          cp -R mobile/dist/. client/dist/
+      - name: Combined HTTP and Expo route boundaries
+        run: node --test test/back/expo-web.test.js mobile/test/routePolicy.test.mjs

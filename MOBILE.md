@@ -721,3 +721,31 @@ AsyncStorage 2.2.0 requests iOS backup exclusion by default; this intent is not 
 ### Account deletion recent-login requirement — 2026-10-08
 
 Backend `DELETE /users/:id` now requires the verified Firebase sign-in `auth_time` to be within five minutes. Stale/missing evidence returns 403 `auth/requires-recent-login` with explicit sign-out/sign-in instructions; token refresh alone is insufficient. The mobile service propagates this safe error and preserves the current account/session/cache. Callers must sign out and sign in normally, then issue a new deletion request; no automatic retry, password prompt or account deletion is performed on rejection. Prior isolated 7/7 native evidence is preserved; this change authorizes no phone scenario or C deletion rerun.
+
+## Journal history pagination — 2026-10-08
+
+Bookhouse now requests `/users/:userId/journals?view=page&limit=50` and follows owner-scoped cursors before publishing the complete history array. Existing year/month/day navigation and refresh retain access to older entries. Refresh/unfocus cancels superseded page loads; a later-page failure keeps the existing retry UI rather than publishing partial history. If a cursor anchor was removed, retry starts from page one. No credentials or cursors are persisted by this service.
+
+Approved rollout should add server page support before updating clients. Requests without `view=page` retain their legacy complete-array response, and Bookhouse accepts an older server's initial complete array without truncation. That fallback and the legacy route remain unbounded; this is not full privacy-enumeration remediation. These changes are locally tested, NOT deployed or verified on a physical device; no Expo/provider/build configuration changed.
+
+
+## Message refresh safety — 2026-10-08
+
+Native and Expo web Flower detail now replace known server messages after a successful complete detail GET. An empty message array clears removed server records, including messages removed by their author's account deletion in other Gardens; an absent/non-array field is not treated as an authoritative empty list. Pending local sends and arrivals since GET began survive an overlapping response. Failed refresh retains existing data and the current error/retry UX. Superseded responses cannot restore old detail; switching account or Garden owner clears the selected detail and invalidates pending detail actions. Bookhouse Flower History continues to use its direct complete-response replacement.
+
+This is local refresh safety, not immediate deletion propagation or a cross-request snapshot. A later complete refresh is still needed to remove an already-received record deleted on the server; realtime payload arrival order is not versioned. No pagination, additional request, rendering/Flower-order change, provider setting or manual setup is introduced. Message revision/pagination remains blocked as recorded in SECURITY.md.
+
+
+## Voice upload admission — 2026-10-08
+
+The backend admits one transcription at a time per signed-in owner and four per process. A concurrent owner request returns 429; process saturation returns 503, with retry/type guidance and Retry-After: 1. The existing voice error flow can retry manually or use typed Event input; no automatic retry is added. Upload processing must finish within 30 seconds; disconnect cancels provider fetch without replaying/refunding an already reserved AI call. Successful transcript format, recording limits and Garden behavior are unchanged. Local implementation only, not deployed.
+
+## Unified Expo Web release preparation — 2026-10-08
+
+This isolated candidate changes the **production web build**, not the existing 8107/iPhone setup in A–F. Docker now runs `npm ci --ignore-scripts` and `npm run build:web` in `mobile/`, exporting the actual Expo application into the existing Express `client/dist` static boundary. The old Vite source remains in Git. Do not restart 8107 or reuse its development API overrides for this build.
+
+The builder disables dotenv and telemetry. Its existing **public** `VITE_FIREBASE_API_KEY` build argument is mapped to `EXPO_PUBLIC_FIREBASE_API_KEY` only during export. `firebase.ts` retains the same registered production project/auth-domain/app-id defaults as the legacy web client. No Admin credentials enter the builder. `EXPO_PUBLIC_API_BASE_URL` is deliberately absent: production `apiBaseUrl()` returns the same-origin path, including Socket.IO. The development web port-3000 fallback is eliminated by the production export. No provider configuration was read or changed; the real public key/app association still requires release configuration attestation without exposing its value.
+
+Express serves only allowlisted application shell/deep-link routes without API authentication; AuthGate still prevents unsigned-in content. Every data/write route retains server authentication and owner checks. Private paths remain no-store. Shell CSP permits WebAssembly compilation for same-origin CanvasKit, while JavaScript eval, inline scripts, wildcard origins and framed embedding remain prohibited. Preview/unknown routes do not get the SPA fallback.
+
+Local validation uses synthetic public configuration and fully intercepted identities/data in a fresh browser profile. It proves no production login or account linkage. Existing native login/lifecycle evidence keeps its original scope; no account, database, service, tunnel or Metro instance was recreated.

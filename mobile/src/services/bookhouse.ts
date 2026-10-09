@@ -13,7 +13,30 @@ export function monthKey(year: number, month: number) { return `${year}-${String
 export function journalYears(entries: JournalCheckIn[]) {
   return [...new Set([2026, 2027, 2028, 2029, 2030, ...entries.filter(e => e.journal).map(e => Number(e.localDate.slice(0, 4)))])].sort((a, b) => a - b);
 }
-export const readJournals = (userId: string) => apiRequest<JournalCheckIn[]>(`/users/${encodeURIComponent(userId)}/journals`);
+interface JournalPage { journals: JournalCheckIn[]; nextCursor: string | null }
+// Keep the complete-array service contract used by calendar navigation.
+export async function readJournals(userId: string, signal?: AbortSignal): Promise<JournalCheckIn[]> {
+  const entries: JournalCheckIn[] = [];
+  const seen = new Set<string>();
+  let cursor: string | null = null;
+  do {
+    if (signal?.aborted) throw new Error('Journal loading cancelled.');
+    const page: JournalPage | JournalCheckIn[] = await apiRequest<JournalPage | JournalCheckIn[]>(
+      `/users/${encodeURIComponent(userId)}/journals?view=page&limit=50${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`,
+      'GET', undefined, { signal });
+    // Older servers ignore view and return the original complete array. Never cap it.
+    if (Array.isArray(page) && cursor === null) return page;
+    if (Array.isArray(page) || !Array.isArray(page.journals) || page.journals.length > 50
+      || (page.nextCursor !== null && (typeof page.nextCursor !== 'string'
+        || !/^[A-Za-z0-9_-]{1,768}$/.test(page.nextCursor) || !page.journals.length || seen.has(page.nextCursor)))) {
+      throw new Error('Unable to load complete Journal history. Try again.');
+    }
+    entries.push(...page.journals);
+    cursor = page.nextCursor;
+    if (cursor) seen.add(cursor);
+  } while (cursor);
+  return entries;
+}
 export const savePrivateJournal = (userId: string, content: string) =>
   apiRequest<{ id: string; content: string }>(`/users/${encodeURIComponent(userId)}/journals`, 'POST', { content: content.trim() });
 
