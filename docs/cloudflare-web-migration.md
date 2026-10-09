@@ -561,3 +561,80 @@ Build peak memory remains UNKNOWN; VM memory allocation is not build peak RAM.
 
 No recovery, build, container execution, database/provider change, service restart,
 push, deployment or Cloudflare check performed in this continuation.
+
+## GitHub-hosted backend container validation — prepared 2026-10-09
+
+Local branch `validation/backend-container-57f9afa` continues migration commit
+`57f9afac5c1730f354e094a99ce5623ff2f107bd`. The backend Dockerfile, context allowlist,
+dependencies, application/security code, Prisma and accepted cross-origin fixture
+are unchanged. Local Colima remains forbidden: confirmed ext4 EIO, no verified
+independent backup. The protected synthetic Garden PASS is reused without checks.
+
+`.github/workflows/backend-container-validation.yml` runs only on a push changing
+that workflow on this exact validation branch. This is deliberate: a brand-new
+[manual-dispatch workflow needs default-branch registration](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onworkflow_dispatch).
+Publishing this branch is therefore also authorization for its first CI run;
+there is no need to merge main or modify existing CI. Re-run attempts are refused.
+No push/run has been authorized or performed. Checkout uses the event's exact SHA,
+a pinned action, read-only contents permission and no persisted Git credentials.
+
+The helper refuses local/self-hosted, non-Linux/x64, wrong-branch/event and retry
+contexts before Docker access. On the fresh Ubuntu 24.04 runner it performs one
+linux/amd64 build of `Dockerfile.backend`, using a dedicated BuildKit container
+capped at 4 GiB/2 CPUs and a 15-minute build timeout. It performs one smoke run
+with no network outside container loopback, no published ports, a read-only root,
+unprivileged UID, no capabilities, 1 GiB/2 CPUs/128 PIDs, and a 75-second outer
+deadline (45-second Node test deadline). The job has a 25-minute deadline.
+
+The new container entry point checks backend/security/AI/Prisma components remain
+present, Expo/client/artwork/deployment directories and Expo runtime packages are
+absent, and the startup command remains unchanged. It then imports the **existing**
+cross-origin test, using the image's actual server and dependencies: HTTP listening,
+explicit preflight, bearer rejection/acceptance, owner isolation, no-store,
+Socket.IO origin/token rejection, polling, WebSocket upgrade, acknowledgement and
+refreshed-token reconnect. These origin names are fixture headers, not outbound
+destinations. Firebase verification and DB reads use existing synthetic adapters;
+only synthetic configuration and two read-only fixture files enter the container.
+No PostgreSQL, Firebase identity, paid AI, npm start or migration execution occurs.
+This closes a container runtime gap only if remote CI passes; it does not validate
+normal migration/model-loader startup or production provider edges.
+
+If readable, CI records the dedicated BuildKit cgroup's `memory.peak` in bytes,
+including builder descendants but excluding the host Docker daemon. Otherwise the
+value is UNKNOWN. Total build RAM remains UNKNOWN; neither the configured limits,
+Docker context size nor Docker client RSS are treated as build memory measurements.
+No memory measurement, image build or container smoke has happened in this task.
+
+Local preparation validation: YAML and shell/JS syntax, exact trigger/permission
+scope, resource/network controls and six refusal cases PASS. An initial shell
+guard check exposed reliance on implicit `errexit`; explicit rejection now passes
+all six cases before Git/Docker access. Historical tests were not repeated.
+
+### Publication/deployment-trigger gate (still pending)
+
+The new workflow/helper has no deploy command, provider secret, environment,
+OIDC/write permission, registry push, reusable workflow or downstream trigger.
+Existing local push workflows target only `integration/mobile-backend-test`;
+this new branch does not match. No PR will be opened as part of publication.
+This source audit cannot establish current remote/provider automation safety.
+Before asking for the final push/run approval, obtain safe metadata confirming:
+
+1. The intended repository: proposed `origin` is `JX-Technologies-Inc/Petalpal`;
+   `personal` instead points to `starstarrr/PetalPal_v2`. Do not push both.
+2. Render Auto-Deploy remains OFF; Render previews, Cloudflare Git builds/preview
+   branches, GitHub Pages, repository/org workflows (`push`, `create`,
+   `workflow_run`, `workflow_job`) and external GitHub App/webhook automation will
+   not deploy or modify providers for this exact new branch/run. If any check is
+   unavailable, publication remains blocked pending human metadata confirmation.
+   Do not inspect webhook secret/configuration values or change provider settings.
+3. Separate approval explicitly names the final candidate commit/tree, chosen
+   repository, `refs/heads/validation/backend-container-57f9afa`, one non-force
+   push and its single automatic CI run. No registry publication, retry or deploy.
+
+After remote PASS, reuse the compatible transition plan above: retain the actual
+production Render frontend, separately validate its assembly with this backend,
+then obtain provider/configuration and exact rollout approval. Real Firebase
+verification/session behavior, provider-edge REST CORS/owner/no-store and Socket
+polling/direct WebSocket/upgrade/refresh reconnect remain human integration gates.
+Backend-only Render cannot precede a ready real Cloudflare frontend and old-origin
+cutover; the synthetic preview does not satisfy those gates.

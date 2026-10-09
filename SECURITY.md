@@ -1820,3 +1820,29 @@ now requires separately authorized quiescence/cold recovery copy and offline
 read-only diagnosis before any repair, restart or image reconstruction. Render
 transition retains the current production frontend; unchanged migration startup
 requires a human no-pending-migrations gate before a no-DB-change rollout.
+
+## 2026-10-09 — Backend container CI prepared; publication NOT authorized
+
+New exact-branch GitHub workflow and helper prepare one linux/amd64 backend build
+and one isolated container execution of the unchanged synthetic CORS/Socket
+fixture. Shell/JS/YAML validation and six explicit fail-closed entry checks PASS;
+local/self-hosted, wrong OS/branch/event and rerun contexts stop before Docker.
+An initial implicit-errexit guard failed the new negative check and was corrected
+to explicit rejection. No Docker/Colima operation or accepted test was repeated.
+Backend Dockerfile, dependencies, production/security code and Prisma unchanged.
+
+Runtime isolation is configured, not yet executed: network none, read-only root,
+unprivileged UID, no capabilities, bounded memory/CPU/PIDs/time, synthetic adapters
+and read-only test mounts only; no npm start/migrations, real Firebase, DB or AI.
+BuildKit cgroup peak will be reported if available; actual build memory and image
+runtime PASS remain UNKNOWN until separately approved remote CI completes.
+
+Local workflow audit finds read-only GitHub permissions, pinned checkout without
+persisted credentials, no secrets/provider environment/OIDC, deploy or registry
+push. Other local push workflows do not match the new branch. Remote hooks,
+organization automation and Render/Cloudflare Git triggers remain UNVERIFIED;
+publication must wait for safe metadata confirmation plus separate exact-SHA
+push/run approval. The push itself starts CI; no default-branch merge is needed.
+Runbook records the chosen-repository gate, resource bounds and remaining real
+Firebase/provider-edge REST/Socket/transition-startup gates. No push, CI run,
+production/cloud change, VM maintenance or Cloudflare retest performed.
