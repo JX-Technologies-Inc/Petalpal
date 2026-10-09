@@ -527,3 +527,20 @@ are retained, not replaced; no provider settings, credentials or private logs re
 
 Exact local/offline and separately approved provider steps are in
 `docs/cloudflare-web-migration.md`. No provider/manual item was performed here.
+
+### Protected synthetic staging authorization — 2026-10-09
+
+- [x] User approved one new `petalpal-expo-synthetic-9a9d57d` Worker, scoped Access
+  and one upload; only `xma38@jastrevia.com` may be an Access reviewer.
+- [x] Non-secret CLI metadata identifies the existing administrator's single
+  account `6007e20c3aa7e88753689744021afb00`, confirms the three protected AI
+  Workers there, and returns not-found for the new staging name.
+- [ ] Human with Access-management permissions must complete and verify the
+  exact-host/all-path policy. Current CLI scopes do not advertise that capability;
+  no Access connector is available. Do not include the administrator email.
+- [ ] Worker creation/upload, URL enablement, anonymous asset denial and authorized
+  synthetic Garden edge checks are NOT PERFORMED. Follow the latest runbook's
+  disabled-at-creation sequence; keep all viewing URLs disabled until verified.
+
+No additional deployment approval is requested. Existing production resources,
+Firebase, DNS, Render and Docker remain unchanged; no staging URL exists yet.

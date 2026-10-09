@@ -1766,3 +1766,21 @@ provider deployment is approved. Image build success alone is not runtime PASS.
   sharing assets. No provider/resource/push/deployment action occurred. Docker
   I/O remains BLOCKED without another operation; non-destructive diagnosis plan
   recorded separately. Garden performance parity remains PARTIAL.
+
+### Authorized Cloudflare staging gate — 2026-10-09
+
+- User authorized the single named synthetic Worker, scoped Access and one upload;
+  sole reviewer is `xma38@jastrevia.com`, excluding the administrator email.
+- Read-only authenticated CLI metadata identifies one intended account,
+  `6007e20c3aa7e88753689744021afb00`, and confirms deployment metadata for the
+  three protected AI Workers is readable there. Proposed preview Worker is absent
+  (Worker-not-found 10007). Packaging checkpoint `b46af3f` verified clean.
+- **Access gate UNKNOWN/BLOCKED for available automation:** CLI OAuth scopes
+  advertise Worker permissions but no Access-management permission; no connected
+  Access capability was found. Human exact-host policy setup and verification
+  required. No credential page/value, private log or environment file inspected.
+- Stopped before resource creation/upload/URL enablement. Anonymous and reviewer
+  edge checks NOT RUN; prior local synthetic PASS retained. No existing resource,
+  production configuration or Docker state changed; no tests repeated. Human-only
+  completion sequence recorded in the migration runbook. This is a capability
+  blocker, not evidence that the Cloudflare account lacks Access support.

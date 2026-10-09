@@ -376,3 +376,57 @@ Do not infer repair from free space alone. Preserve all images, volumes and VM
 recovery state. If repair/export or a fresh isolated runtime is needed, obtain
 separate maintenance authorization and a recovery plan first. No restart, prune,
 deletion, rebuild or smoke retry is part of preview preparation.
+
+## Authorized staging attempt — stopped before creation, 2026-10-09
+
+User authorized only the new `petalpal-expo-synthetic-9a9d57d` Worker, exact-host
+reviewer-only Access and one upload. Packaging checkpoint remains
+`b46af3f8a7436665c1027ff01dbc24ad00ffd10b`, tree
+`7bc76d9a8c6cd1a62241d8d320b6bd2977d11eeb`; clean at attempt start.
+
+Read-only Wrangler metadata identified exactly one account for administrator
+`maxingran630@gmail.com`: **`6007e20c3aa7e88753689744021afb00`**. Deployment metadata
+for `petalpal-emotion-ai`, `petalpal-ai-dispatch-production` and
+`petalpal-ai-dispatch-staging` is readable in this account. The proposed new
+Worker returned Worker-not-found (10007). No existing Worker was modified.
+
+Sole approved Access reviewer: **`xma38@jastrevia.com`**. The administrator email
+must NOT be added as another reviewer. Wrangler is authenticated with Worker
+permissions, but its advertised OAuth scopes contain no Access-management scope;
+no Cloudflare Access connector is available. Access configuration/verification
+cannot be completed through the available safe automation. No browser sign-in,
+credential inspection, Worker creation, upload or URL enablement was attempted.
+The public hostname remains unknown because the account subdomain was not read.
+
+### Human-only completion using the existing administrator session
+
+1. Select only account `6007e20c3aa7e88753689744021afb00` in Cloudflare. Confirm
+   the exact new Worker name is still absent and record the existing workers.dev
+   subdomain using metadata only. Do not create another account or change its
+   subdomain. Ensure the human operator can manage Access applications/policies.
+2. From this reviewed migration worktree, upload the retained synthetic artifact
+   **once** with the existing locked CLI (no rebuild, push or secret binding):
+
+   ```sh
+   CLOUDFLARE_ACCOUNT_ID=6007e20c3aa7e88753689744021afb00 deploy/cloudflare/node_modules/.bin/wrangler deploy --env-file /dev/null --config deploy/cloudflare/wrangler.preview.jsonc
+   ```
+
+   Use only after confirming the config still has workers.dev/preview URLs OFF,
+   no routes and the exact approved name. If the provider cannot guarantee no
+   reachable viewing URL at creation, STOP instead. Do not retry a failed or
+   ambiguous upload; inspect safe deployment metadata first.
+3. Configure Access for this Worker's exact workers.dev hostname and all paths;
+   allow only `xma38@jastrevia.com` using an existing supported login method.
+   No administrator-email, Everyone, Bypass or account-wide rule. Keep all URLs
+   disabled while verifying the hostname, policy selector and effective coverage.
+4. Only after that verification, enable the one protected workers.dev URL.
+   Leave version/preview/other URLs disabled. Check anonymous requests to `/`,
+   `/bookhouse`, `/canvaskit.wasm`, one actual JS asset and one actual PNG cannot
+   return application content. Access redirects/challenges or denials are expected.
+5. Reviewer `xma38@jastrevia.com` signs into Access privately, then uses the
+   public synthetic fixture to open Garden. Return only the exact protected URL
+   and safe PASS/FAIL metadata; never share Access cookies, tokens or login traces.
+
+All deployment authorization is already given; the remaining dependency is safe
+human Access setup/verification. Keep the preview disabled if any gate fails.
+Accepted tests remain reused; Docker and compatible-backend gates remain separate.
