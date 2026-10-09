@@ -10,6 +10,15 @@ export const securityTests = [
 
 export const httpTests = 'production HTTPS security headers|HSTS requires|CSP supports|private namespaces|Socket.IO polling';
 
+// Focused existing fixtures only; no real database/provider/load acceptance.
+export const additionalSecurityTests = [
+  { file: 'test/back/ai-cost-gate.test.js', pattern: '^(per-user shared quota blocks provider call, while another owner remains independent|revoked AI-processing consent blocks speech/emotion before quota reservation or provider work)$', count: 2 },
+  { file: 'test/back/ai-consent-lifecycle.test.js', pattern: '^same-millisecond revoke/regrant advances the consent epoch deterministically$', count: 1 },
+  { file: 'test/back/security-p0-socket.test.js', pattern: '^Socket\\.IO handshake rejects missing, invalid and expired verifier results at runtime$', count: 1 },
+  { file: 'test/back/realtime-security.test.js', pattern: '^(authorized joins/movement use token actor and do not leak to outsider/user rooms|paused authorized movement cannot publish after privacy revocation)$', count: 2 },
+  { file: 'test/back/private-journals.test.js', pattern: '^private Journal routes isolate persistence and preserve historical shelf entries$', count: 1 },
+];
+
 export function assertCleanCheckout(exists = existsSync) {
   // natural imports dotenv.config() directly, bypassing DOTENV_CONFIG_PATH.
   if (exists(new URL('../.env', import.meta.url))) throw new Error('Security CI requires a clean checkout without .env; existing files are never removed');
@@ -29,6 +38,7 @@ export function runSecurityCi(spawn = spawnSync, inherited = process.env) {
     ['--test', '--test-concurrency=1', ...securityTests],
     ['--test', `--test-name-pattern=${httpTests}`, 'test/back/http-security.test.js'],
     ['scripts/api-security-fuzz.js'],
+    ...additionalSecurityTests.map(({ file, pattern }) => ['--test', `--test-name-pattern=${pattern}`, file]),
   ]) {
     const result = spawn(process.execPath, args, {
       cwd: fileURLToPath(new URL('../', import.meta.url)), env,
