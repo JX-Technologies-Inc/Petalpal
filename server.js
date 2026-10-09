@@ -2,7 +2,7 @@ import { updateAiConsent } from "./lib/ai-consent.js";
 import { validateJournalCover } from './lib/journal-cover.js';
 import "dotenv/config";
 import express from "express";
-import { speechTranscriptionHandler } from "./lib/speech-transcription.js";
+import { speechAdmission, speechTranscriptionHandler } from "./lib/speech-transcription.js";
 import { PrismaAiCostGate, aiCostHttpStatus, isAiCostError } from "./lib/ai-cost-gate.js";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -248,7 +248,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
 // Authenticate and rate-limit before accepting the larger voice-only body.
-app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit,
+app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
   requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
 app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
