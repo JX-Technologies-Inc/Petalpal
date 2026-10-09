@@ -10,6 +10,7 @@ const load=loadPlantingModules(undefined,react,undefined,true,{
   './PlantingContext':{usePlanting:()=>state},
 });
 const api=load('productionGrowth'),render=load('ProductionPlantedFlowers').ProductionPlantedFlowers;
+assert.equal(api.USE_MONTHLY_GARDEN_GROWTH_V1_1,true,'Release defaults to the approved monthly Flower renderer');
 const layer=load('ProductionGrowthLayer').ProductionGrowthLayer;
 const monthly=load('../flower-density-sandbox/monthly-growth/monthlyGrowthModel');
 const records=[6,10].map(month=>{

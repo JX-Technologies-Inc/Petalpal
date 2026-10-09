@@ -78,6 +78,8 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm exec --no -- prisma generate
           npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Release Flower rendering boundary
+        run: node mobile/test/productionGrowthRendering.test.mjs
       - name: Actual Expo production export
         run: |
           NODE_ENV=production npm --prefix mobile run build:web

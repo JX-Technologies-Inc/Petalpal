@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync, existsSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, existsSync, mkdtempSync, writeFileSync, rmSync, mkdirSync, symlinkSync } from 'node:fs';
 import { parse } from 'yaml';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
@@ -111,8 +111,41 @@ test('Expo web CI builds the real production export with only synthetic public c
   assert.equal(job.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID, 'petalpal-synthetic');
   assert.equal(job.env.EXPO_PUBLIC_API_BASE_URL, undefined);
   const runs = job.steps.map(step => step.run || '').join('\n');
+  assert.ok(runs.includes('node mobile/test/productionGrowthRendering.test.mjs'));
   assert.match(runs, /NODE_ENV=production npm --prefix mobile run build:web/);
   assert.match(runs, /test\/back\/expo-web.test.js/);
   assert.doesNotMatch(runs, /migrate|deploy|npm start/);
   assert.doesNotMatch(source, /secrets\./);
+});
+
+
+test('root production build selects Expo and replaces stale output only after export success', () => {
+  const scripts = JSON.parse(read('package.json')).scripts;
+  assert.equal(scripts['build:client'], 'npm run build');
+  const directory = mkdtempSync(join(tmpdir(), 'petalpal-expo-build-command-'));
+  try {
+    mkdirSync(join(directory, 'bin'));
+    symlinkSync(process.execPath, join(directory, 'bin/node'));
+    writeFileSync(join(directory, 'bin/npm'), `#!/bin/sh
+set -eu
+[ "$EXPO_NO_DOTENV" = 1 ]
+[ "$*" = 'run build:web --prefix mobile' ]
+[ "$FIXTURE_FAIL" = 0 ] || exit 7
+mkdir -p mobile/dist
+printf 'synthetic Expo export' > mobile/dist/index.html
+`, { mode: 0o700 });
+    mkdirSync(join(directory, 'client/dist'), { recursive: true });
+    writeFileSync(join(directory, 'client/dist/stale-vite.js'), 'synthetic old output');
+    const run = fail => spawnSync('/bin/sh', ['-c', scripts.build], {
+      cwd: directory, env: { PATH: `${join(directory, 'bin')}:/usr/bin:/bin`, FIXTURE_FAIL: String(fail) },
+      encoding: 'utf8', timeout: 10000,
+    });
+    const failure = run(1);
+    assert.equal(failure.status, 7);
+    assert.equal(existsSync(join(directory, 'client/dist/stale-vite.js')), true);
+    const success = run(0);
+    assert.equal(success.status, 0);
+    assert.equal(existsSync(join(directory, 'client/dist/stale-vite.js')), false);
+    assert.equal(readFileSync(join(directory, 'client/dist/index.html'), 'utf8'), 'synthetic Expo export');
+  } finally { rmSync(directory, { recursive: true, force: true }); }
 });

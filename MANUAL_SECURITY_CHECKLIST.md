@@ -18,12 +18,12 @@ Credential recovery confirmation and historical uncertainties/counts preserved. 
 - [ ] Candidate startup/migration verification and all three production GET checks NOT RUN because candidate Live was not established. LOG REDACTION ACCEPTANCE: UNKNOWN; no logs retrieved.
 - [ ] Obtain sanitized confirmation whether Render accepted the attempted submission; fresh explicit authorization required before any retry. Preserve working replacement credential. Previous rollback SHA: `d510b1ff97902704721060b4c1261657be3e4b76`, separately approved only.
 
-Credential recovery remains USER-CONFIRMED PASS; historical trace retention/misuse uncertainty remains. No secret-bearing pages, credentials, provider settings, SQL/manual migrations or unrelated changes accessed or modified. Historical evidence and canonical counts preserved.
+Replacement functionality remains USER-CONFIRMED PASS; old-key retirement/exposed-key deletion are UNKNOWN under the later retirement assessment. Historical trace retention/misuse uncertainty remains. No secret-bearing pages, credentials, provider settings, SQL/manual migrations or unrelated changes accessed or modified. Historical evidence and canonical counts preserved.
 
-## Firebase credential recovery — USER-CONFIRMED PASS, 2026-10-08
+## Firebase credential recovery — historical confirmation, 2026-10-08
 
 - [x] User confirms replacement Firebase Admin credential works in production.
-- [x] User confirms the previously exposed Firebase service-account key has been deleted.
+- [ ] Current exposed-key deletion UNKNOWN. Earlier user-confirmed deletion is retained as historical evidence, superseded by the later report of two older keys still listed without safe exposed-key mapping; see the retirement assessment below.
 - [x] Sanitized user evidence confirms Render Live source `d510b1f` (recorded exact baseline `d510b1ff97902704721060b4c1261657be3e4b76`), 25 migrations found and none pending. No independent provider/credential/schema access performed.
 - [ ] Prior tool-trace/downstream retention and unauthorized historical use remain UNKNOWN; no erasure, absence of misuse or full incident certification claimed. Historical database-credential revocation remains separate.
 - [ ] Exact logging candidate `1f8d0f98fb16b9553ae03c474f5952c808928e48` is READY FOR APPROVAL on existing accepted CI/build/schema/configuration evidence, with no additional release-specific predeployment evidence blocker identified. Fresh separate deployment approval and subsequent bounded sanitized runtime/log-redaction acceptance remain required. Preserve the replacement credential even if a code rollback is separately approved. No deployment authorized or performed.
@@ -103,7 +103,7 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 ## 5. Firebase / Google
 
 - [x] Review Firebase Admin credential inventory. Evidence: two service accounts reviewed; active Admin key inventory recorded without key material. Status: `PASS`
-- [x] Remove unused service-account keys. Evidence: old Firebase Admin key revoked/removed; Gemini service account had zero keys. Status: `PASS`
+- [ ] Remove unused service-account keys. Historical evidence stated an old Admin key revoked/removed and zero Gemini keys; that does not identify the subsequently reported August 25 / September 25 keys still listed. Current enabled/use states and exposed-key mapping UNKNOWN; retirement OPEN. Status: `PARTIAL`
 - [x] Verify MFA/passkey protection on administrator accounts. Evidence: Firebase project administrator review completed. Status: `PASS`
 - [x] Review project members and permissions. Evidence: only intended Firebase human member found. Status: `PASS`
 - [x] Verify Firebase Web config is treated as public, not secret. Evidence: configuration classification review. Status: `PASS`
@@ -455,3 +455,38 @@ Source/package review establishes the JS-SDK/AsyncStorage mechanism and intended
 - [x] Full private-key serialization confirmed in the existing agent tool output and this task's local session record via shape-only checks; no raw values returned. Local session access restricted to its owner; history retained. Scoped changed-doc/owned-release-artifact checks found no separate plaintext credential artifact or incident commit. Secret UI remains closed; no provider action performed.
 - [ ] REQUIRED human/provider action: securely replace Render's Firebase Admin credential and revoke the exposed IAM service-account key; revalidate production configuration/authentication before resuming deployment. Never paste credentials into chat or expose them to snapshots. Rotation/revocation not performed or verified.
 - [ ] Existing local trace still contains the credential; remote retention/additional copies UNKNOWN. Use supported retention/redaction controls if needed, preserving sanitized audit evidence. No erasure claim; cleanup alone does not substitute for revocation. Deployment remains blocked; previous production SHA unchanged.
+
+## Firebase old-key retirement — status correction, 2026-10-08
+
+- [x] October 8 replacement created, Render updated and production authentication working: USER-CONFIRMED only; no new deployment/authentication test.
+- [ ] August 25 key: user reports still listed; enabled/disabled state, remaining consumers and deletion NOT VERIFIED.
+- [ ] September 25 key: user reports still listed; enabled/disabled state, remaining consumers and deletion NOT VERIFIED.
+- [ ] Exact exposed-key identity UNKNOWN. Earlier deletion/unused-key PASS is historical, not current closure; key age and working Render login cannot resolve the mapping.
+- [ ] Human-only: attest consumers/replacement coverage using non-secret metadata; prioritize any safely identified compromised key, otherwise a confirmed migrated/unused key (August 25 then September 25 only if equally established). Disable one, verify fresh authenticated operation and relevant job/cache cycles, delete when no longer needed, repeat. Preserve the October 8 key/service account. Do not re-enable a suspected compromised key to recover a consumer. Follow SECURITY.md's scoped sequence and official references; do not share key identifiers, fingerprints, credentials or raw logs.
+- [ ] Prior trace retention and unauthorized historical use remain UNKNOWN. No trace reopened or evidence erased.
+
+Existing inventory/attestations and canonical counts retained. No provider action or status independently verified, credential read, production mutation, repeated test, commit or push. MOBILE.md unchanged.
+
+### Old-key Active-status clarification — 2026-10-08
+
+- [ ] User now explicitly reports both older Firebase Admin keys (August 25 and September 25) **Active**. This supersedes the preceding UNKNOWN-enabled-state entries, not their history. Neither retirement nor exact compromised-key identity/revocation is verified; prior deletion PASS is superseded.
+- [x] October 8 replacement functionality remains USER-CONFIRMED PASS only.
+- [ ] Production-release approval remains blocked on human-only retirement confirmation; credential-free candidate CI may proceed. Keep the existing retirement procedure, never inspect keys/trace, and do not disable/delete anything in this task.
+
+No independent provider observation or mutation, test rerun, changed mobile procedure or canonical-count change. Routine CI results are recorded only in SECURITY.md.
+
+### Firebase old-key retirement — latest user confirmation, 2026-10-08
+
+- [x] August 25 old key **DELETED** — USER-CONFIRMED provider evidence only.
+- [x] September 25 old key **DELETED** — USER-CONFIRMED provider evidence only.
+- [x] October 8 replacement **RETAINED** — explicitly USER-CONFIRMED; retention is not independent proof of enabled state or current functionality.
+- [ ] Current production credential readiness **UNKNOWN**: authentication previously worked with the replacement, but the user explicitly reports it has not been retested after old-key deletion.
+- [ ] Exact exposed-key identity, historical unauthorized use and prior tool-trace retention remain **UNKNOWN**. No investigation repeated; no trace or credential inspected.
+
+This supersedes the preceding Active/open-retirement statuses without erasing their historical scope. Both dated keys' retirement is now user-confirmed complete; no independent provider verification or agent key action occurred. The user additionally reports intended Firebase Web App/project binding and deployed API/Socket configuration NOT YET VERIFIED; intended origin is `https://petalpal-v2.onrender.com`, with same-origin routing SOURCE-LEVEL PASS only. Production approval remains open for these distinct gates. Canonical counts unchanged.
+
+### Post-retirement production sign-in — USER-CONFIRMED PASS, 2026-10-08
+
+- [x] After deleting the August 25 and September 25 keys and retaining the October 8 replacement, the user signed in to `https://petalpal-v2.onrender.com/` and entered the existing Garden. **Current deployed production authentication PASS — user-confirmed only**, superseding the preceding not-retested/UNKNOWN status. No independent provider or fresh credential-acquisition verification.
+- [ ] Undeployed unified Expo Web candidate Firebase/public API/Socket binding remains NOT VERIFIED; this confirmation does not close that separate gate.
+- [ ] Historical exposure records, exact exposed-key identity uncertainty, unauthorized historical use and prior trace-retention uncertainty remain unchanged. No credential inspection, repeated investigation, provider mutation or changed canonical counts.
