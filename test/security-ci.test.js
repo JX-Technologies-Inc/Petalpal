@@ -67,7 +67,10 @@ test('workflow preserves scoped triggers, read-only permissions, pinned actions 
   for (const step of uses) assert.match(step.uses, /^actions\/(checkout|setup-node)@[0-9a-f]{40}$/);
   assert.equal(uses[0].with['persist-credentials'], false);
   assert.equal(uses[1].with['node-version'], '24.7.0');
+  const sourceGuard = job.steps.find(step => step.name === 'Assert source and bounded validation trigger');
+  assert.ok(sourceGuard);
   assert.deepEqual(job.steps.filter(step => step.run).map(step => step.run), [
+    sourceGuard.run,
     'npm ci --ignore-scripts --no-audit --no-fund', 'npm exec --no -- prisma generate',
     'node --test test/security-ci.test.js', 'npm run test:security:ci',
   ]);
@@ -101,4 +104,26 @@ test('real isolated failures, missing tests/commands and child timeout stop the 
       assert.notEqual(result, 0); assert.equal(calls, 1);
     }
   } finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+
+test('candidate validation is immutable, CI-only, and cannot replace ordinary source checks silently', () => {
+  const workflow = parse(read('.github/workflows/security-regression.yml'));
+  const condition = "github.event_name == 'push' && github.ref == 'refs/heads/integration/mobile-backend-test' && github.event.head_commit.message == 'ci: validate unified candidate efdeff5'";
+  assert.equal(workflow.env.PETALPAL_CANDIDATE_VALIDATION, '${{ ' + condition + ' }}');
+  assert.equal(workflow.env.PETALPAL_SOURCE_SHA, '${{ ' + condition + " && 'efdeff5659b3317b2f57bba24155d952ec97b599' || github.sha }}");
+  assert.equal(workflow.jobs['expo-web'].if, '${{ ' + condition + ' }}');
+  for (const job of Object.values(workflow.jobs)) {
+    assert.equal(job.steps[0].with.ref, '${{ env.PETALPAL_SOURCE_SHA }}');
+    assert.equal(job.steps[0].with['persist-credentials'], false);
+    const guard = job.steps[1].run;
+    assert.ok(guard.includes('test "$(git rev-parse HEAD)" = "$PETALPAL_SOURCE_SHA"'));
+    assert.ok(guard.includes('git diff --name-only "$PETALPAL_TRIGGER_SHA^" "$PETALPAL_TRIGGER_SHA"'));
+    assert.ok(guard.includes("'.github/workflows/security-regression.yml' 'test/security-ci.test.js'"));
+    assert.ok(guard.includes('test "$changed_files" = "$expected_files"'));
+    assert.equal(job['timeout-minutes'], 15);
+  }
+  assert.equal(workflow.jobs['expo-web'].env.EXPO_NO_DOTENV, '1');
+  assert.equal(workflow.jobs['expo-web'].env.EXPO_PUBLIC_API_BASE_URL, undefined);
+  assert.equal(workflow.jobs['expo-web'].env.EXPO_PUBLIC_FIREBASE_PROJECT_ID, 'petalpal-synthetic');
 });

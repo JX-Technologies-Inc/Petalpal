@@ -14,6 +14,11 @@ concurrency:
   group: petalpal-security-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  PETALPAL_CANDIDATE_VALIDATION: "${{ github.event_name == 'push' && github.ref == 'refs/heads/integration/mobile-backend-test' && github.event.head_commit.message == 'ci: validate unified candidate efdeff5' }}"
+  PETALPAL_SOURCE_SHA: "${{ github.event_name == 'push' && github.ref == 'refs/heads/integration/mobile-backend-test' && github.event.head_commit.message == 'ci: validate unified candidate efdeff5' && 'efdeff5659b3317b2f57bba24155d952ec97b599' || github.sha }}"
+  PETALPAL_TRIGGER_SHA: ${{ github.sha }}
+
 jobs:
   security:
     name: Isolated security baseline
@@ -28,7 +33,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ env.PETALPAL_SOURCE_SHA }}
           persist-credentials: false
+      - name: Assert source and bounded validation trigger
+        run: |
+          test "$(git rev-parse HEAD)" = "$PETALPAL_SOURCE_SHA"
+          test ! -e .env
+          if [ "$PETALPAL_CANDIDATE_VALIDATION" = 'true' ]; then
+            test "$PETALPAL_SOURCE_SHA" = 'efdeff5659b3317b2f57bba24155d952ec97b599'
+            git fetch --no-tags --depth=2 origin "$PETALPAL_TRIGGER_SHA"
+            changed_files="$(git diff --name-only "$PETALPAL_TRIGGER_SHA^" "$PETALPAL_TRIGGER_SHA")"
+            expected_files="$(printf '%s\n' '.github/workflows/security-regression.yml' 'test/security-ci.test.js')"
+            test "$changed_files" = "$expected_files"
+          fi
+          printf 'Workflow trigger SHA: %s\nCandidate checkout SHA: %s\n' "$PETALPAL_TRIGGER_SHA" "$(git rev-parse HEAD)"
       - name: Node 24 (matches backend Docker major)
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -43,3 +61,59 @@ jobs:
         run: node --test test/security-ci.test.js
       - name: Auth, HTTP policy and isolated loopback DAST
         run: npm run test:security:ci
+
+  expo-web:
+    if: "${{ github.event_name == 'push' && github.ref == 'refs/heads/integration/mobile-backend-test' && github.event.head_commit.message == 'ci: validate unified candidate efdeff5' }}"
+    name: Isolated Expo web boundary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
+      AI_ASYNC_EXECUTION_MODE: manual
+      EXPO_NO_DOTENV: '1'
+      EXPO_NO_TELEMETRY: '1'
+      CI: '1'
+      EXPO_PUBLIC_FIREBASE_API_KEY: synthetic-public-build-fixture
+      EXPO_PUBLIC_FIREBASE_PROJECT_ID: petalpal-synthetic
+      EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: fixture.invalid
+      EXPO_PUBLIC_FIREBASE_APP_ID: synthetic-public-app
+    steps:
+      - name: Checkout exact workflow revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ env.PETALPAL_SOURCE_SHA }}
+          persist-credentials: false
+      - name: Assert source and bounded validation trigger
+        run: |
+          test "$(git rev-parse HEAD)" = "$PETALPAL_SOURCE_SHA"
+          test ! -e .env
+          if [ "$PETALPAL_CANDIDATE_VALIDATION" = 'true' ]; then
+            test "$PETALPAL_SOURCE_SHA" = 'efdeff5659b3317b2f57bba24155d952ec97b599'
+            git fetch --no-tags --depth=2 origin "$PETALPAL_TRIGGER_SHA"
+            changed_files="$(git diff --name-only "$PETALPAL_TRIGGER_SHA^" "$PETALPAL_TRIGGER_SHA")"
+            expected_files="$(printf '%s\n' '.github/workflows/security-regression.yml' 'test/security-ci.test.js')"
+            test "$changed_files" = "$expected_files"
+          fi
+          printf 'Workflow trigger SHA: %s\nCandidate checkout SHA: %s\n' "$PETALPAL_TRIGGER_SHA" "$(git rev-parse HEAD)"
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
+      - name: Isolated dependencies and Prisma generation only
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm exec --no -- prisma generate
+          npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Actual Expo production export
+        run: |
+          NODE_ENV=production npm --prefix mobile run build:web
+          mkdir -p client/dist
+          cp -R mobile/dist/. client/dist/
+      - name: Combined HTTP and Expo route boundaries
+        run: node --test test/back/expo-web.test.js mobile/test/routePolicy.test.mjs
