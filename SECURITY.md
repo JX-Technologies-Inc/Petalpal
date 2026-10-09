@@ -1,5 +1,18 @@
 # PetalPal Security
 
+## Firebase credential recovery / logging release checkpoint — 2026-10-08
+
+This checkpoint supersedes earlier OPEN/BLOCKED statements **only for replacement Firebase credential functionality, exposed-key deletion and the resulting logging-only approval-readiness gate**. Prior evidence and canonical counts remain unchanged.
+
+- [x] **USER-CONFIRMED PASS — replacement functionality:** user confirms the replacement Firebase Admin credential works in production. No independent agent credential/runtime inspection performed.
+- [x] **USER-CONFIRMED PASS — exposed-key deletion:** user confirms the previously exposed Firebase service-account key has been deleted. Operational credential recovery is complete within these two attested checks; this is not full incident certification.
+- [x] **USER-CONFIRMED production baseline:** Render is Live at source `d510b1f`, resolving to the previously recorded exact baseline `d510b1ff97902704721060b4c1261657be3e4b76`; 25 migrations found, none pending. Reused sanitized user evidence, not a fresh provider query or independent schema/drift certification.
+- [ ] **Residual incident uncertainties:** prior tool/session traces and downstream copies/retention remain UNKNOWN; deletion/erasure is not claimed. Any unauthorized historical use remains UNKNOWN. Key deletion does not establish absence of past misuse or revoke previously issued sessions/tokens. Historical database-credential revocation remains a separate unresolved item.
+- [x] **Logging-only READY FOR APPROVAL:** exact candidate `1f8d0f98fb16b9553ae03c474f5952c808928e48` remains a direct child of the user-confirmed production baseline. Reuse accepted exact-source GitHub run 37870891575 (6/6), isolated Docker build, 25/25 migration fingerprint, scoped schema/startup/configuration and rollback compatibility evidence. Six-file scope: lib/auth.js, lib/rate-limit.js, lib/security-events.js, server.js, test/back/auth.test.js, test/back/logging-privacy.test.js. No dependency, configuration requirement, database operation, migration or startup contract changes. Nothing here establishes candidate deployment.
+- [ ] **Separate deployment approval REQUIRED:** no remaining release-specific predeployment evidence blocker is identified on the supplied baseline and existing accepted evidence. No repeat CI/build/migration test or full-schema inspection is needed for this unchanged logging delta. Preserve the working replacement credential and existing configuration; rollback, if separately approved, is code-only to `d510b1ff97902704721060b4c1261657be3e4b76`, never restoration of the exposed key. Fresh approval must name the exact candidate and existing Render service. The existing bounded synthetic GET/log-redaction acceptance remains pending **after** approved deployment, using sanitized human/provider PASS/FAIL only; no raw logs, private data or secret-bearing UI. Candidate startup, exact deployed code and production logging behavior are not yet verified. Any new baseline/configuration change requires scoped reassessment.
+
+DB-resource candidate `0ffdd3e26ab60e3dc470aa46f725d7b5cd795ec3` remains independently BLOCKED by production capacity/proxy/latency evidence; do not combine it with this release or deploy integration HEAD. Broader App Check, social acceptance, alerts and other PARTIAL statuses are unchanged. No provider/credential access, production SQL, tests/builds, migration or deployment performed; MOBILE.md unchanged. Only this checkpoint and the matching manual confirmation are intended for the scoped documentation commit; earlier uncommitted evidence stays preserved separately.
+
 ## Security Status
 
 Last updated: 2026-10-08

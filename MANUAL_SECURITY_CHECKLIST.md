@@ -1,5 +1,15 @@
 # Manual Security Checklist
 
+## Firebase credential recovery — USER-CONFIRMED PASS, 2026-10-08
+
+- [x] User confirms replacement Firebase Admin credential works in production.
+- [x] User confirms the previously exposed Firebase service-account key has been deleted.
+- [x] Sanitized user evidence confirms Render Live source `d510b1f` (recorded exact baseline `d510b1ff97902704721060b4c1261657be3e4b76`), 25 migrations found and none pending. No independent provider/credential/schema access performed.
+- [ ] Prior tool-trace/downstream retention and unauthorized historical use remain UNKNOWN; no erasure, absence of misuse or full incident certification claimed. Historical database-credential revocation remains separate.
+- [ ] Exact logging candidate `1f8d0f98fb16b9553ae03c474f5952c808928e48` is READY FOR APPROVAL on existing accepted CI/build/schema/configuration evidence, with no additional release-specific predeployment evidence blocker identified. Fresh separate deployment approval and subsequent bounded sanitized runtime/log-redaction acceptance remain required. Preserve the replacement credential even if a code rollback is separately approved. No deployment authorized or performed.
+
+This supersedes earlier credential-recovery OPEN/BLOCKED checkpoints only within the user-confirmed scope. All historical evidence and canonical counts remain; no provider mutation, credential inspection, repeated CI/build/migration test or mobile operational change.
+
 Provider and production-control-plane actions only. Never record passwords,
 tokens, keys, credential-bearing URLs, or full secret fingerprints here.
 
