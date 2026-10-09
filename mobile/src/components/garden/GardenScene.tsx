@@ -1173,11 +1173,10 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
             />
 
             {environmentEnabled && <GardenEnvironmentLayer />}
-            {/* The approved entrance road is unchanged in both DEV states. */}
-              {__DEV__ && infrastructureEnabled && <GardenLand09InterfaceLayer />}
-              <GardenConnectionLayer />
-            {/* World-aligned corrected infrastructure; OFF restores the prior DEV view. */}
-            {__DEV__ && infrastructureEnabled && <GardenInfrastructureLayer />}
+            {/* Approved world-aligned artwork is shared by development and production. */}
+            {infrastructureEnabled && <GardenLand09InterfaceLayer />}
+            <GardenConnectionLayer />
+            {infrastructureEnabled && <GardenInfrastructureLayer />}
             {__DEV__ && !infrastructureEnabled && <GardenBridge placement={bridgePlacement} />}
 
             {/* 8. Reference overlay when enabled */}
@@ -1218,7 +1217,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
                 onDebugStatus={__DEV__ ? setTreehouseStatus : undefined}
               />
             )}
-            {__DEV__ && infrastructureEnabled && showLandmarks && <GardenRoadApproachLayer />}
+            {infrastructureEnabled && showLandmarks && <GardenRoadApproachLayer />}
             {/* Planted Flowers & Active Placement Preview Layer */}
             <PlantedFlowerLayer depthPass={showLandmarks ? 'foreground' : 'all'} useMonthlyGrowth={useMonthlyGrowth} />
             {__DEV__ && !previewMode && calibrationMode === 'impact' && (
