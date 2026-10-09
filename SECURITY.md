@@ -1742,3 +1742,27 @@ provider deployment is approved. Image build success alone is not runtime PASS.
   No cloud resource, production connection, provider setting, identity, database,
   push or deployment changed. Garden/Fairy source and quality settings unchanged;
   performance parity remains PARTIAL. Graphify remains unavailable locally.
+
+### Protected synthetic staging preparation — 2026-10-09
+
+- Verified checkpoint `9a9d57d` and supplied full tree match; worktree was clean.
+  Reused the retained synthetic Expo export without rebuilding or editing it.
+- Added a separate preview-only Worker entry/browser fixture adapter; normal
+  hosting and backend/auth code unchanged. Public fake identity and empty
+  Garden/Journal data stay in-browser. Writes, unknown/other-owner routes and AI
+  reject; real Socket functionality is not simulated or claimed verified here.
+- New package check PASS: synthetic build settings and absence of forbidden
+  file classes/symlinks/selected credential patterns. No credential values or
+  environment files inspected. Scope is a bounded artifact check, not exhaustive
+  proof of secret absence. Accepted sanitized-build/source provenance retained.
+- Updated preview Chromium check PASS: actual Expo synthetic sign-in and Garden
+  reload, zero escaped provider requests, raw HTTP/WS CSP denial, fixture
+  no-store, unauthorized/other-owner/privileged-operation rejection. Offline
+  packaging PASS. Existing routing, MIME/WASM, artwork and backend tests reused.
+- Proposed new name `petalpal-expo-synthetic-9a9d57d`; availability and Access
+  account readiness require human metadata checks. All routes/URLs stay disabled.
+  Only ASSETS and the non-secret preview flag are bound. Public fixture strings
+  provide no real authorization; exact-host Cloudflare Access is required before
+  sharing assets. No provider/resource/push/deployment action occurred. Docker
+  I/O remains BLOCKED without another operation; non-destructive diagnosis plan
+  recorded separately. Garden performance parity remains PARTIAL.

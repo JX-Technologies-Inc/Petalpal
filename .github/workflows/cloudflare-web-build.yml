@@ -48,7 +48,7 @@ jobs:
           npm ci --prefix deploy/cloudflare --ignore-scripts --no-audit --no-fund
           deploy/cloudflare/node_modules/.bin/playwright install --with-deps chromium
       - name: Focused origin, authentication, Socket and static-hosting checks
-        run: npm run test:hosting
+        run: npm run test:hosting -- ${{ inputs.production_config && '--production-artifact' || '' }}
       - name: Retain export for separately approved manual upload
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

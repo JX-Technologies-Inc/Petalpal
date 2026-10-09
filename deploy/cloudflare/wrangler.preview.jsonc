@@ -1,8 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "petalpal-web-preview",
-  "main": "worker.js",
+  "name": "petalpal-expo-synthetic-9a9d57d",
+  "main": "preview-worker.js",
   "compatibility_date": "2026-10-09",
+  "keep_names": false,
   "workers_dev": false,
   "preview_urls": false,
   "routes": [],

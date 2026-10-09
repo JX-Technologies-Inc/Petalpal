@@ -12,9 +12,13 @@ const env = {
 };
 // CI installs Chromium into this explicit, task-owned cache.
 if (process.env.PLAYWRIGHT_BROWSERS_PATH) env.PLAYWRIGHT_BROWSERS_PATH = process.env.PLAYWRIGHT_BROWSERS_PATH;
+// Public production-config exports use normal static delivery checks, never the
+// synthetic-only package scanner or browser fixture login.
+const previewTests = process.argv.includes('--production-artifact') ? []
+  : ['test/cloudflare-preview.test.mjs', 'test/cloudflare-preview-package.test.mjs'];
 try {
   for (const args of [
-    ['--test', 'test/cloudflare-web.test.mjs', 'test/cloudflare-preview.test.mjs', 'test/back/cross-origin-web.test.js',
+    ['--test', 'test/cloudflare-web.test.mjs', ...previewTests, 'test/back/cross-origin-web.test.js',
       'test/back/cross-origin-browser.test.js', 'test/back/cross-origin-browser-socket.test.js',
       'mobile/test/crossOriginApi.test.mjs'],
     ['--test', '--test-name-pattern=cross-origin AuthProvider', 'mobile/test/authSession.test.mjs']

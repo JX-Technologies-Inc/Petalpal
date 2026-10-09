@@ -114,7 +114,7 @@ docker build --platform linux/amd64 -f Dockerfile.transition \
 1. Separately approve source publication and a preview resource. Keep production
    auto-deploy OFF. The supplied Wrangler config has workers.dev, version URLs
    and custom routes disabled; local dry-run does not create resources.
-2. Stage a dedicated `petalpal-web-preview` Worker with no public routes first.
+2. Stage the new isolated Worker named in the latest synthetic-preview procedure below, with no public routes first.
    Configure Cloudflare Access for its exact preview hostname before allowing
    preview traffic; then explicitly approve enabling that hostname. Do not attach
    this candidate to an existing AI Worker. A synthetic artifact can validate
@@ -192,6 +192,9 @@ The dedicated preview profile also passed Wrangler's offline packaging dry-run;
 no upload, account operation or cloud resource was performed.
 
 ### Human-only static preview procedure
+
+Historical signed-out-shell procedure. The synthetic-preview procedure below
+supersedes its Worker name, publication prerequisite and disabled-login scope.
 
 This profile is for delivery/UI-shell review only; login and backend features
 are deliberately unavailable. It requires no Render CORS, Firebase Authorized
@@ -273,3 +276,103 @@ This starts the image's actual Express/Socket server under synthetic identity/DB
 adapters; it intentionally does not execute npm start, which would run migrations.
 It proves application runtime/protocol behavior, not production DB startup or
 Firebase configuration. The 1 GiB bound is a test runtime limit, not build RAM.
+
+## Synthetic staging package — continuation of 9a9d57d
+
+Starting checkpoint `9a9d57dead95ce2d42fe867ad01c548b3277de16`, tree
+`0baabcceaacb535a192249b7e5f77477624150ba`, verified with a clean worktree.
+The existing Expo export is reused, with no frontend rebuild or bundle editing.
+The preview config now selects a separate `preview-worker.js` entry point and
+proposes **`petalpal-expo-synthetic-9a9d57d`**. The name is not reserved or checked
+against a provider account. If it exists, STOP; never update that Worker, even
+if it appears to be staging. Never select `petalpal-emotion-ai` or another AI Worker.
+
+The preview entry injects one same-origin script before Expo. It answers the
+existing SDK's synthetic sign-in/refresh and minimal session/Garden/Journal
+requests entirely in browser memory, with empty Garden/Journal fixtures. Use
+`preview@example.invalid` / `preview-only` (public fixture strings, not secrets).
+Real credentials must never be entered. A persistent banner labels the demo.
+Reload uses the SDK's synthetic local identity; use a fresh browser profile and
+discard its storage afterward. This is a read-only rendering preview, not a
+backend emulator or an authorization test. All writes/AI and unknown endpoints
+are rejected; no live Socket service is simulated. Cloudflare Access is the
+actual reviewer access boundary, independent of the publicly forgeable fixtures.
+
+CSP permits only same-origin connections/images plus local data/blob images;
+Firebase frames remain disabled. The Worker only binds static assets: no AI,
+database, service, KV, R2 or secret bindings. Normal Worker, Render, mobile source,
+artwork, DPR and animation settings are unchanged. `keep_names=false` prevents
+bundler helper references in the self-contained browser fixture function.
+
+New evidence: asset-package check PASS (synthetic SDK build settings; forbidden
+credential/database/log/source-map file classes, symlinks and selected credential
+patterns absent). This bounded scan is not a claim to detect every possible
+private string; provenance remains the accepted sanitized export and unchanged
+source. Updated Chromium preview check PASS: synthetic sign-in, reload into the
+actual Expo Garden, no external requests, CSP blocks raw HTTP/WS, other-owner and
+privileged operations rejected, fixture responses no-store. Offline packaging
+PASS. Prior routing/deep-link, JS/CSS/PNG/WASM MIME, artwork byte equality and cache
+evidence reused; no accepted backend/CORS/Socket/build suites repeated.
+The existing artifact workflow runs preview-fixture/package checks only for
+synthetic exports. Its production-config mode explicitly passes
+`--production-artifact` to retain normal static/protocol checks without running
+synthetic login or the synthetic-only asset scan on public production settings.
+
+### Minimum human-only authorization and setup
+
+1. Approve **one new Worker + one exact-host Access application/policy + one
+   upload of this reviewed local revision and retained synthetic export**, for
+   named reviewers in the intended Cloudflare account. Git publication is not
+   required for this local upload. No production, DNS, Firebase or Render change.
+2. Human checks Workers & Pages names only: proposed name must be absent. Confirm
+   the existing account workers.dev subdomain and Access availability. If Access
+   is unavailable or account-wide setup is needed, stop for that separate scope;
+   do not change account defaults or existing applications/Workers.
+3. In a reviewed checkout without environment/dev-vars files, reuse the locked
+   hosting dependencies and retained `mobile/dist`. Run the non-uploading command
+   below if preparing elsewhere. Human handles Cloudflare login locally without
+   sharing tokens, terminal auth output or provider secret pages.
+
+   ```sh
+   deploy/cloudflare/node_modules/.bin/wrangler deploy --dry-run --env-file /dev/null --config deploy/cloudflare/wrangler.preview.jsonc
+   ```
+
+4. Only after step 1 approval, human removes `--dry-run` for a single initial
+   upload. Keep `workers_dev=false`, `preview_urls=false`, `routes=[]` and
+   `STATIC_PREVIEW_ONLY=1`. Inspect identity/route/binding metadata only. No
+   deployment/version/preview URL may become an unprotected alternative.
+5. Before enabling traffic, configure Access for the full exact hostname
+   `petalpal-expo-synthetic-9a9d57d.<existing-account-subdomain>.workers.dev`, all
+   paths, with an Allow policy for explicit reviewer emails using the existing
+   login method, no Everyone/Bypass policy, and default denial for others. Scope
+   this to this Worker only. If protection cannot precede exposure, keep all
+   URLs disabled. [Cloudflare's per-Worker Access support](https://developers.cloudflare.com/workers/configuration/routing/workers-dev/#manage-access-to-workersdev).
+6. With that policy in place, human enables only this Worker's workers.dev URL
+   under Settings > Domains & Routes. Record the preview-only config change to
+   `workers_dev=true` for any future upload; keep all alternate URLs disabled.
+   In a fresh signed-out browser verify HTML, JS, WASM and image URLs are denied
+   or challenged before sharing. Then an allowed reviewer signs into Access and
+   uses only the public synthetic PetalPal fixture. No production login or data.
+
+### Deferred compatible-Render tests
+
+These remain separate future approvals; synthetic preview does not close them:
+exact frontend-origin REST OPTIONS preflight and readable 200/401/403 with real
+Firebase bearer refresh, owner isolation, no-store private/error responses,
+Socket.IO polling/direct-WebSocket admission, upgrade, authenticated room joins,
+reconnect with refreshed token and rejected origins/tokens through provider edges.
+Real Firebase persistence/verification-return/login/logout and authenticated
+Garden actions require approved test identities and the compatible transition
+Render backend retaining the existing frontend. Backend-only cutover remains last.
+
+### Separate non-destructive Docker diagnosis plan (not executed)
+
+The retained image still has an I/O blocker; no Docker operation was repeated.
+First record host/VM free blocks and inodes, Docker/Colima versions/status and
+host volume health metadata using read-only commands. Then have the local owner
+inspect only the affected image's containerd content/index metadata for missing
+versus unreadable blobs; never inspect container environments or private logs.
+Do not infer repair from free space alone. Preserve all images, volumes and VM
+recovery state. If repair/export or a fresh isolated runtime is needed, obtain
+separate maintenance authorization and a recovery plan first. No restart, prune,
+deletion, rebuild or smoke retry is part of preview preparation.

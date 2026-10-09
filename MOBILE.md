@@ -781,3 +781,15 @@ is required. Keep the flag enabled through separately approved protected staging
 real-auth preview uses the distinct compatibility/origin gates in
 `docs/cloudflare-web-migration.md`. Existing Render login must survive transition
 until the Cloudflare replacement and old-origin traffic disposition are approved.
+
+### Synthetic sign-in for isolated web preview — 2026-10-09
+
+The preview config now selects a separate `preview-worker.js` entry point for
+`petalpal-expo-synthetic-9a9d57d`. It reuses the unchanged Expo export and provides
+browser-only public synthetic sign-in plus empty Garden/Journal fixtures. Use
+`preview@example.invalid` / `preview-only` in a fresh browser profile, never real
+credentials. A banner identifies this read-only demo; writes, AI and live Socket
+functionality are unavailable. Normal Worker/mobile/Firebase setup is unchanged.
+`STATIC_PREVIEW_ONLY=1` remains mandatory; follow the latest migration runbook for
+separate resource/Access/upload approval. No new hostname or provider setup was
+performed. Discard the synthetic browser profile after review.

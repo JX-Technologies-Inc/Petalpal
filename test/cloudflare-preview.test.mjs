@@ -4,8 +4,8 @@ import { existsSync } from 'node:fs';
 import { unstable_dev } from '../deploy/cloudflare/node_modules/wrangler/wrangler-dist/cli.js';
 import { chromium } from '../deploy/cloudflare/node_modules/playwright/index.mjs';
 
-test('delivery-only preview reuses Expo export and browser CSP blocks production API/Firebase', { timeout: 45000 }, async t => {
-  const worker = await unstable_dev('deploy/cloudflare/worker.js', {
+test('synthetic preview signs into the unchanged Expo Garden without provider traffic', { timeout: 60000 }, async t => {
+  const worker = await unstable_dev('deploy/cloudflare/preview-worker.js', {
     config: 'deploy/cloudflare/wrangler.preview.jsonc', local: true, ip: '127.0.0.1', port: 0,
     persist: false, envFiles: [], logLevel: 'error', experimental: { disableExperimentalWarning: true }
   });
@@ -28,12 +28,35 @@ test('delivery-only preview reuses Expo export and browser CSP blocks production
   });
   await page.goto(`http://${worker.address}:${worker.port}/bookhouse`);
   await page.getByText('Sign in to PetalPal', { exact: true }).waitFor();
+  await page.getByLabel('Email', { exact: true }).fill('preview@example.invalid');
+  await page.getByLabel('Password', { exact: true }).fill('preview-only');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByText('Sign in to PetalPal', { exact: true }).waitFor({ state: 'hidden' });
+  await page.goto(`http://${worker.address}:${worker.port}/`);
+  await page.getByTestId('main-navigation').waitFor({ timeout: 25000 });
+  assert.equal(await page.getByRole('note').count(), 1);
+  const blocked = await page.evaluate(async () => {
+    const base = 'https://petalpal-v2.onrender.com';
+    // The fixture identity cannot perform privileged writes or read another owner.
+    const options = { headers: { Authorization: 'Bearer public.synthetic' } };
+    const paths = ['/users/other/garden', '/internal/ai-jobs'];
+    const statuses = await Promise.all(paths.map(async path => (await fetch(base + path, options)).status));
+    const write = await fetch(base + '/events', { ...options, method: 'POST', body: '{}' });
+    const noIdentity = await fetch(base + '/session');
+    return { statuses, write: write.status, noIdentity: noIdentity.status, cache: write.headers.get('Cache-Control') };
+  });
+  assert.deepEqual(blocked.statuses, [403, 403]);
+  assert.equal(blocked.write, 403); assert.equal(blocked.noIdentity, 401); assert.equal(blocked.cache, 'no-store');
   const violations = await page.evaluate(async () => {
     const directives = [];
     document.addEventListener('securitypolicyviolation', e => directives.push(e.effectiveDirective));
     for (const target of ['https://petalpal-v2.onrender.com/session',
       'https://identitytoolkit.googleapis.com/blocked-synthetic-probe']) {
-      try { await fetch(target); } catch { /* Expected CSP rejection, no token. */ }
+      // XHR bypasses the fixture fetch adapter and exercises the actual CSP.
+      await new Promise(resolve => {
+        const xhr = new XMLHttpRequest(); xhr.open('GET', target);
+        xhr.onloadend = resolve; xhr.send();
+      });
     }
     try { new WebSocket('wss://petalpal-v2.onrender.com/socket.io/'); } catch { /* Expected. */ }
     await new Promise(resolve => setTimeout(resolve, 100));
