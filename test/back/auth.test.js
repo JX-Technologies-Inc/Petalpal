@@ -67,13 +67,9 @@ test("Firebase verification failures identify missing Admin credentials without 
     assert.deepEqual(response.body, {
       error: "Authentication service unavailable"
     });
-    assert.equal(logs[0][1].issuer, claims.iss);
-    assert.equal(logs[0][1].audience, claims.aud);
-    assert.equal(logs[0][1].expectedProjectId, "petalpal-b212c");
-    assert.equal(logs[0][1].expirationTimestamp, claims.exp);
-    assert.equal(logs[0][1].reason, "admin_credential_unavailable");
-    assert.equal(logs[0][1].firebaseErrorCode, "app/invalid-credential");
-    assert.equal(logs[0][1].firebaseErrorMessage, "credential unavailable");
+    assert.deepEqual(logs[0][1], {
+      expectedProjectId: "petalpal-b212c", reason: "admin_credential_unavailable"
+    });
     assert.equal(JSON.stringify(logs).includes(token), false);
   } finally {
     console.info = originalLog;
@@ -123,7 +119,7 @@ test("Firebase token failures keep revoked, expired, and wrong-project details p
       assert.equal(response.statusCode, 401);
       assert.deepEqual(response.body, { error: "Invalid or expired Firebase token" });
       assert.equal(logs.at(-1)[1].reason, expectedReason);
-      assert.equal(logs.at(-1)[1].firebaseErrorCode, errorCode);
+      assert.deepEqual(Object.keys(logs.at(-1)[1]).sort(), ["expectedProjectId", "reason"]);
     }
   } finally {
     console.info = originalLog;

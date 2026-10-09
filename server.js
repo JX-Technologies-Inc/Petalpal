@@ -101,7 +101,7 @@ import {
   requireJsonObject, requireJsonContentType, allowBodyFields
 } from "./lib/http-errors.js";
 import { logServerError } from "./lib/security-log.js";
-import { requestId, emitSecurityEvent } from "./lib/security-events.js";
+import { requestId, emitSecurityEvent, securityRouteClass } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
 import { httpSecurity, securityHeaders, privateResponse } from "./lib/http-security.js";
@@ -1764,9 +1764,9 @@ app.put("/users/:userId/ai-consent",
       targetClass: "ai_consent", actionCode: "AI_CONSENT"
     });
   } catch (auditError) {
-    emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
+    emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
   }
-  emitSecurityEvent({ eventType: "ai_consent_changed", outcome: "completed", correlationId: req.requestId, routeClass: req.path, resourceClass: "ai_consent", actorId: req.auth.userId, success: true });
+  emitSecurityEvent({ eventType: "ai_consent_changed", outcome: "completed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "ai_consent", actorId: req.auth.userId, success: true });
   res.json(consent);
 });
 
@@ -3522,7 +3522,7 @@ app.delete("/users/:id", async (req, res) => {
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_REQUESTED", outcome: "REQUESTED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch (auditError) {
-        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
+        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "audit_event", safeReason: "audit_write_failed", fallbackUsed: true });
         return res.status(503).json({ error: "Account deletion is temporarily unavailable" });
       }
 
@@ -3544,7 +3544,7 @@ app.delete("/users/:id", async (req, res) => {
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_COMPLETED", outcome: "COMPLETED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch {
-        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: req.path, resourceClass: "audit_event", safeReason: "completed_audit_write_failed", fallbackUsed: true });
+        emitSecurityEvent({ eventType: "database_failure", outcome: "failed", correlationId: req.requestId, routeClass: securityRouteClass(req), resourceClass: "audit_event", safeReason: "completed_audit_write_failed", fallbackUsed: true });
       }
     } catch (err) {
       logServerError("DELETE /users/:id error", err);
