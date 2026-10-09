@@ -1,0 +1,45 @@
+name: PetalPal security regression
+
+on:
+  push:
+    branches: [integration/mobile-backend-test]
+  pull_request:
+    branches: [integration/mobile-backend-test, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security:
+    name: Isolated security baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
+      AI_ASYNC_EXECUTION_MODE: manual
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node 24 (matches backend Docker major)
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Reproducible backend dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Generate Prisma client only (no connection or migration)
+        run: npm exec --no -- prisma generate
+      - name: Check CI contract
+        run: node --test test/security-ci.test.js
+      - name: Auth, HTTP policy and isolated loopback DAST
+        run: npm run test:security:ci
