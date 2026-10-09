@@ -12,6 +12,7 @@ export const httpTests = 'production HTTPS security headers|HSTS requires|CSP su
 
 // Focused existing fixtures only; no real database/provider/load acceptance.
 export const additionalSecurityTests = [
+  { file: 'test/back/speech-admission.test.js', pattern: '^speech admission ', count: 4 },
   { file: 'test/back/ai-cost-gate.test.js', pattern: '^(per-user shared quota blocks provider call, while another owner remains independent|revoked AI-processing consent blocks speech/emotion before quota reservation or provider work)$', count: 2 },
   { file: 'test/back/ai-consent-lifecycle.test.js', pattern: '^same-millisecond revoke/regrant advances the consent epoch deterministically$', count: 1 },
   { file: 'test/back/security-p0-socket.test.js', pattern: '^Socket\\.IO handshake rejects missing, invalid and expired verifier results at runtime$', count: 1 },
