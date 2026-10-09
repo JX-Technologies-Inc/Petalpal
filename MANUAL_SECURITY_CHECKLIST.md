@@ -551,7 +551,8 @@ Firebase, DNS, Render and Docker remain unchanged; no staging URL exists yet.
   `xma38@jastrevia.com`, OTP/Hello World PASS, preview URLs OFF, no custom domains.
 - [x] Authorized single synthetic upload activated; anonymous HTML/deep link/JS/
   Garden image/WASM/fixture script independently confirmed Access-protected (302).
-- [ ] Reviewer confirms the deployed synthetic Garden opens after Access login.
+- [x] 2026-10-09: reviewer reports “Garden opens successfully” after the requested
+  Access/synthetic sign-in flow — USER-CONFIRMED PASS, closing the prior pending item.
   Use only the public synthetic fixture; never share OTPs, cookies or tokens.
 
 URL and version/deployment evidence are recorded in the migration runbook. This

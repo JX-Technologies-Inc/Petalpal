@@ -1798,3 +1798,9 @@ redirected (302) to the expected Access host after activation: PASS. No redirect
 query/cookie/token/private log inspected. Sole-reviewer policy remains human
 attestation; provider-edge authorized Garden confirmation pending. Local synthetic
 PASS retained. No production application/data/AI calls, production change or Docker action.
+
+**Reviewer confirmation — 2026-10-09:** user reports “Garden opens successfully”
+after the requested Access and synthetic sign-in flow. Authorized deployed
+synthetic Garden **USER-CONFIRMED PASS**, superseding the pending confirmation
+above. No additional upload/test/provider action; production/backend/Firebase
+and Docker readiness are not implied by this result.

@@ -464,3 +464,8 @@ the provider edge remains pending reviewer confirmation; local synthetic sign-in
 Garden PASS is reused. Use only `preview@example.invalid` / `preview-only` after
 the approved reviewer privately signs into Access. No credentials, private logs,
 real Firebase/API/Socket/DB/AI calls, production changes or Docker operations.
+
+**Reviewer confirmation, 2026-10-09:** user reports “Garden opens successfully”.
+The pending provider-edge synthetic Garden check is now **USER-CONFIRMED PASS**.
+Anonymous protection retains the independently verified PASS above. No further
+upload, test or provider action performed; backend/Docker gates remain separate.
