@@ -544,3 +544,15 @@ Exact local/offline and separately approved provider steps are in
 
 No additional deployment approval is requested. Existing production resources,
 Firebase, DNS, Render and Docker remain unchanged; no staging URL exists yet.
+
+### Protected preview now uploaded — 2026-10-09
+
+- [x] Human reports Worker creation, all-traffic Access for only
+  `xma38@jastrevia.com`, OTP/Hello World PASS, preview URLs OFF, no custom domains.
+- [x] Authorized single synthetic upload activated; anonymous HTML/deep link/JS/
+  Garden image/WASM/fixture script independently confirmed Access-protected (302).
+- [ ] Reviewer confirms the deployed synthetic Garden opens after Access login.
+  Use only the public synthetic fixture; never share OTPs, cookies or tokens.
+
+URL and version/deployment evidence are recorded in the migration runbook. This
+supersedes prior not-created/not-uploaded status without changing historical scope.

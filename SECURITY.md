@@ -1784,3 +1784,17 @@ provider deployment is approved. Image build success alone is not runtime PASS.
   production configuration or Docker state changed; no tests repeated. Human-only
   completion sequence recorded in the migration runbook. This is a capability
   blocker, not evidence that the Cloudflare account lacks Access support.
+
+### Protected synthetic upload — 2026-10-09
+
+Human confirmed scoped Access for only `xma38@jastrevia.com`, OTP/Hello World PASS,
+preview URLs OFF and no custom domains. Exact existing Worker/account identity
+and retained synthetic artifact integrity independently verified; no code/export
+rebuild. One packaged version upload and one 100% activation completed:
+`3fdcd984-8ef5-4d83-9df1-350f659b9b97`, deployment
+`ec0e3bde-e2e5-4704-9746-6b9b7e43bac4`. Access policy/routing were preserved.
+Anonymous HTML, deep link, actual JS, Garden PNG, WASM and fixture script all
+redirected (302) to the expected Access host after activation: PASS. No redirect
+query/cookie/token/private log inspected. Sole-reviewer policy remains human
+attestation; provider-edge authorized Garden confirmation pending. Local synthetic
+PASS retained. No production application/data/AI calls, production change or Docker action.

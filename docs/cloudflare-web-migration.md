@@ -430,3 +430,37 @@ The public hostname remains unknown because the account subdomain was not read.
 All deployment authorization is already given; the remaining dependency is safe
 human Access setup/verification. Keep the preview disabled if any gate fails.
 Accepted tests remain reused; Docker and compatible-backend gates remain separate.
+
+## Protected synthetic upload completed — 2026-10-09
+
+Human created the exact Worker in the existing account and confirmed all-traffic
+Access protection, sole reviewer `xma38@jastrevia.com`, company-email OTP/Hello
+World PASS, preview URLs OFF and no custom domains. These policy/identity checks
+are **human-confirmed**, not an independent Access API inspection.
+
+Agent verified the existing Worker deployment identity in account
+`6007e20c3aa7e88753689744021afb00`, unchanged preview implementation relative to
+`b46af3f`, and retained synthetic artifact integrity. No Expo rebuild. Anonymous
+preflight requests for HTML/deep link/actual JS/Garden PNG/WASM all redirected
+to `weathered-frog-e16e.cloudflareaccess.com` with 302, without following login
+redirects or retaining cookies/tokens.
+
+**One upload** of the already packaged Worker and retained static export succeeded
+via `wrangler versions upload --no-bundle`; version
+`3fdcd984-8ef5-4d83-9df1-350f659b9b97`. One version activation assigned 100% traffic;
+latest deployment (by creation time) `ec0e3bde-e2e5-4704-9746-6b9b7e43bac4`.
+No preview URL was reported by the upload. Access policy and routing were not
+changed: version upload/activation was used instead of full `wrangler deploy`
+or `triggers deploy`. The checked-in profile's URL-off settings remain fail-closed;
+do not use a full deploy to update this protected live preview without reconciling
+its routing. No future upload is authorized by this completion record.
+
+Protected URL: https://petalpal-expo-synthetic-9a9d57d.petalpal-jx.workers.dev/
+
+Post-activation anonymous HTML, `/bookhouse`, actual JS, Garden PNG,
+`/canvaskit.wasm` and `/__preview-fixtures.js` all returned 302 to the same Access
+host: **PASS**, no application resource exposed. Authorized Garden rendering at
+the provider edge remains pending reviewer confirmation; local synthetic sign-in/
+Garden PASS is reused. Use only `preview@example.invalid` / `preview-only` after
+the approved reviewer privately signs into Access. No credentials, private logs,
+real Firebase/API/Socket/DB/AI calls, production changes or Docker operations.

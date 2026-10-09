@@ -793,3 +793,14 @@ functionality are unavailable. Normal Worker/mobile/Firebase setup is unchanged.
 `STATIC_PREVIEW_ONLY=1` remains mandatory; follow the latest migration runbook for
 separate resource/Access/upload approval. No new hostname or provider setup was
 performed. Discard the synthetic browser profile after review.
+
+### Protected synthetic staging available — 2026-10-09
+
+The existing `petalpal-expo-synthetic-9a9d57d` Worker now serves the retained export
+at https://petalpal-expo-synthetic-9a9d57d.petalpal-jx.workers.dev/ behind the
+human-configured Access policy for `xma38@jastrevia.com` only. After private OTP
+login, use public fixture `preview@example.invalid` / `preview-only`. No real
+Firebase/API/Socket/DB/AI functionality. Anonymous asset protection PASS; signed-in
+Garden confirmation at this edge is pending. Version upload/activation preserved
+routing; do not run full deploy with the local URL-off profile. Render/native
+setup, artwork and quality settings remain unchanged.
