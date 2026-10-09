@@ -17,7 +17,7 @@ test('shelves preserve older real journals and do not add rows for empty check-i
 test('private Journal uses only the authenticated standalone Journal contract, never Events or AI', async () => {
   const calls = [];
   const loader = loadPlantingModules(undefined, undefined, undefined, false, { fetch: async (url, options) => {
-    calls.push({ url, options }); return { ok: true, status: 201, json: async () => ({ id: 'flower' }) };
+    calls.push({ url, options }); return { ok: true, status: 201, json: async () => options.method === 'GET' ? ({ journals: [], nextCursor: null }) : ({ id: 'flower' }) };
   } });
   loader('../../../services/api').configureApi({ apiBaseUrl: 'http://localhost:3107', getAccessToken: async () => 'local-token' });
   const service = loader('../../../services/bookhouse');
@@ -27,7 +27,7 @@ test('private Journal uses only the authenticated standalone Journal contract, n
   assert.equal(calls[0].url, 'http://localhost:3107/users/owner/journals');
   assert.equal(calls[0].options.headers.Authorization, 'Bearer local-token');
   assert.deepEqual(JSON.parse(calls[0].options.body), { content: 'A quiet moment' });
-  assert.equal(calls[1].url, 'http://localhost:3107/users/owner/journals');
+  assert.equal(calls[1].url, 'http://localhost:3107/users/owner/journals?view=page&limit=50');
 });
 
 const { focusCamera, boundCamera, zoomCamera } = load('../../bookhouse/shelfCamera');

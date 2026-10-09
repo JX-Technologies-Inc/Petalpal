@@ -721,3 +721,9 @@ AsyncStorage 2.2.0 requests iOS backup exclusion by default; this intent is not 
 ### Account deletion recent-login requirement — 2026-10-08
 
 Backend `DELETE /users/:id` now requires the verified Firebase sign-in `auth_time` to be within five minutes. Stale/missing evidence returns 403 `auth/requires-recent-login` with explicit sign-out/sign-in instructions; token refresh alone is insufficient. The mobile service propagates this safe error and preserves the current account/session/cache. Callers must sign out and sign in normally, then issue a new deletion request; no automatic retry, password prompt or account deletion is performed on rejection. Prior isolated 7/7 native evidence is preserved; this change authorizes no phone scenario or C deletion rerun.
+
+## Journal history pagination — 2026-10-08
+
+Bookhouse now requests `/users/:userId/journals?view=page&limit=50` and follows owner-scoped cursors before publishing the complete history array. Existing year/month/day navigation and refresh retain access to older entries. Refresh/unfocus cancels superseded page loads; a later-page failure keeps the existing retry UI rather than publishing partial history. If a cursor anchor was removed, retry starts from page one. No credentials or cursors are persisted by this service.
+
+Approved rollout should add server page support before updating clients. Requests without `view=page` retain their legacy complete-array response, and Bookhouse accepts an older server's initial complete array without truncation. That fallback and the legacy route remain unbounded; this is not full privacy-enumeration remediation. These changes are locally tested, NOT deployed or verified on a physical device; no Expo/provider/build configuration changed.
