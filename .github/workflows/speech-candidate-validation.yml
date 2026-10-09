@@ -1,0 +1,72 @@
+name: PetalPal speech candidate validation
+
+on:
+  push:
+    branches: [integration/mobile-backend-test]
+    paths: [.github/workflows/speech-candidate-validation.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-speech-candidate-validation
+  cancel-in-progress: true
+
+jobs:
+  speech-candidate:
+    name: Exact speech candidate (seven tests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
+      AI_ASYNC_EXECUTION_MODE: manual
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: 4036af3aee6462c916a56fb3eaed7ca9991cff72
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Verify candidate source before installation
+        run: |
+          test "$(git rev-parse HEAD)" = '4036af3aee6462c916a56fb3eaed7ca9991cff72'
+          test ! -e .env
+          printf 'Workflow trigger SHA: %s\nCandidate source SHA: %s\n' '${{ github.sha }}' "$(git rev-parse HEAD)"
+      - name: Install candidate dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Generate candidate Prisma client (no connection or migration)
+        run: npm exec --no -- prisma generate
+      - name: Seven candidate speech tests
+        timeout-minutes: 2
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { execFileSync, spawnSync } from 'node:child_process';
+          import { existsSync } from 'node:fs';
+          const candidate = '4036af3aee6462c916a56fb3eaed7ca9991cff72';
+          assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), candidate);
+          assert.equal(existsSync('.env'), false, 'Candidate tests require an env-free checkout');
+          const env = {
+            ...Object.fromEntries(['PATH', 'HOME', 'TMPDIR', 'SystemRoot']
+              .filter(key => process.env[key] !== undefined).map(key => [key, process.env[key]])),
+            NODE_ENV: 'test', DOTENV_CONFIG_PATH: '/dev/null',
+            DEV_DATABASE_URL: 'postgresql://fixture:fixture@127.0.0.1:1/petalpal_test',
+            AI_ASYNC_EXECUTION_MODE: 'manual',
+          };
+          const result = spawnSync(process.execPath, ['--test', '--test-concurrency=1', '--test-reporter=tap',
+            'test/back/speech-admission.test.js', 'test/back/speech-transcription.test.js'], {
+            env, encoding: 'utf8', timeout: 90000, maxBuffer: 1024 * 1024,
+          });
+          assert.ifError(result.error);
+          assert.equal(result.signal, null);
+          assert.equal(result.status, 0, 'Candidate tests failed');
+          const summary = Object.fromEntries([...result.stdout.matchAll(/^# (tests|pass|fail|cancelled|skipped) (\d+)$/gm)]
+            .map(([, key, count]) => [key, Number(count)]));
+          assert.deepEqual(summary, { tests: 7, pass: 7, fail: 0, cancelled: 0, skipped: 0 });
+          console.log(`Verified candidate source ${candidate}: 7/7 PASS`);
+          NODE
