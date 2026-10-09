@@ -557,3 +557,18 @@ Firebase, DNS, Render and Docker remain unchanged; no staging URL exists yet.
 
 URL and version/deployment evidence are recorded in the migration runbook. This
 supersedes prior not-created/not-uploaded status without changing historical scope.
+
+### Storage recovery and backend transition gates — 2026-10-09
+
+- [ ] Separately approve maintenance quiescence/Colima shutdown and adequate
+  external recovery storage; human verifies a consistent cold copy before any
+  offline filesystem repair or restart. Current guest ext4 metadata records EIO.
+- [ ] After safe recovery, validate retained backend/transition container runtime.
+- [ ] Identify the actual Live Render frontend artifact and supported delivery
+  mechanism for the existing service; retain login/web in the transition image.
+- [ ] Verify no pending migrations and existing provider readiness without values;
+  approve exact rollout/rollback artifacts separately. Real CORS/Firebase/Socket
+  integration and old-origin disposition precede backend-only deployment.
+
+These gates are unperformed. No stop, repair, DB/provider change or deployment
+occurred; previous synthetic staging confirmations remain valid in their scope.

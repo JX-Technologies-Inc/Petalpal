@@ -469,3 +469,95 @@ real Firebase/API/Socket/DB/AI calls, production changes or Docker operations.
 The pending provider-edge synthetic Garden check is now **USER-CONFIRMED PASS**.
 Anonymous protection retains the independently verified PASS above. No further
 upload, test or provider action performed; backend/Docker gates remain separate.
+
+## Backend continuation: read-only storage diagnosis — 2026-10-09
+
+Worktree `a2e8f2f` was clean at entry. No unrelated files/worktrees touched.
+Protected synthetic Garden and anonymous Access PASS reused without checks.
+
+**Confirmed blocker:** guest ext4/storage EIO, not merely a missing image tag.
+Docker 29.5.2/Colima respond; two containers are running (nine total), untouched.
+Host has about 15 GiB free; VM `/dev/vdb1` has about 24 GiB and 5.5 million free
+inodes. This shared volume backs both Docker and containerd and is mounted rw.
+The retained backend manifest
+`sha256:604b2d84b3d541f4ab959924a640bb03ea75e5f329bb95f7a8b2c24a6748b437`
+exists as an 856-byte regular file, but Docker open and filesystem flag lookup
+return EIO. No image contents, container environments or private logs were read.
+
+Read-only ext4 metadata reports `clean with errors`, error count 2, first error
+`ext4_do_writepages`, last error `ext4_journal_check_start`, both EIO at
+2026-10-09 14:29:38 PDT. `needs_recovery` alone is not diagnostic on a mounted
+journaled filesystem. Host APFS data volume is writable and SMART reports
+Verified; those facts do not rule out lower-level faults. Earlier host-space
+exhaustion is a plausible trigger, not proven root cause. Damage extent and the
+underlying host/virtual-disk cause remain UNKNOWN. No claim of PostgreSQL health.
+Backend build PASS retained; backend container and transition runtime NOT READY.
+Build peak memory remains UNKNOWN; VM memory allocation is not build peak RAM.
+
+### Minimum safe recovery gate — approval required, not performed
+
+1. Do not run more builds/smokes, prune, delete blobs/caches or perform in-place
+   repair. Further build attempts cannot establish filesystem health.
+2. Human approves a maintenance window explicitly covering graceful quiescence
+   of the existing running containers and stopping Colima, plus a recovery-copy
+   destination with adequate capacity. Preserve PostgreSQL and every volume/image.
+   The host's current 15 GiB free is not a sufficient basis for assuming room for
+   a safe copy of the roughly 70 GiB-used guest volume; arrange separate storage.
+3. Human makes and verifies a consistent cold VM/disk recovery copy after the
+   approved shutdown, without exposing credential/data contents. Preserve the
+   original. Check an **unmounted copy** read-only first (`e2fsck -fn` against
+   the human-identified copied ext4 partition, never the live `/dev/vdb1`).
+   [e2fsck documents mounted-filesystem checks as unsafe or invalid](https://man7.org/linux/man-pages/man8/e2fsck.8.html).
+4. Review the bounded filesystem result privately. Any repair, journal replay,
+   VM restart or switch to a fresh isolated runtime requires its own explicit
+   scope; never automatically repair/delete/reset the original. A simple restart
+   is not verified recovery and can replay the journal before a backup exists.
+5. After approved recovery, first establish image readability. If recoverable,
+   reuse the existing image for the one bounded synthetic runtime validation
+   already specified above. If irrecoverable, separately approve one clean image
+   reconstruction on healthy isolated storage. Do not repeat accepted host tests.
+
+### Smallest compatible Render transition (plan only)
+
+1. Human verifies safe metadata for existing `PetalPal_v2`
+   (`srv-d983eguq1p3s73fnk1m0`): current Live revision, repository/branch, source
+   type, Auto-Deploy OFF, Docker/start/health-check settings. Do not assume the
+   historical release SHA or existing service source can be changed in place.
+2. Reuse `Dockerfile.transition`: layer the **currently deployed production web
+   frontend artifact**, with its existing public Firebase/API binding, onto the
+   reviewed compatible backend image. Pin both artifact provenance and image
+   digest. The synthetic Cloudflare export must NEVER fill `client/dist` here.
+   Express still serves `client/dist`; no API proxy, product UI, AI/security,
+   Prisma schema, Garden quality or new service is needed for this compatibility
+   layer. If that exact frontend artifact is unavailable, stop for human artifact
+   recovery/build approval rather than substituting the synthetic preview.
+3. Validate the assembled image's runtime and retained login/deep-link/static
+   contracts on healthy isolated storage, using synthetic adapters and no DB
+   migration startup. Existing build/CORS/Socket evidence is reused, not proof of
+   the missing container runtime or current provider-edge compatibility.
+4. Human confirms an existing-service delivery mechanism before any rollout.
+   [Render documents Git-built Docker and image-backed services separately](https://render.com/docs/docker);
+   [prebuilt images require linux/amd64 and retained registry artifacts](https://render.com/docs/deploying-an-image).
+   Do not assume Git-to-image conversion is supported or create a replacement
+   service. If necessary, separately review a minimal Git Dockerfile that only
+   inherits the immutable transition image, contingent on supported registry
+   access; no Expo build on Render and no registry credential inspection here.
+5. Before authorizing an exact transition revision/image, human confirms existing
+   Firebase Admin/Web App, DB, AI/job and registry configuration readiness without
+   disclosing values. Preserve current start/health/proxy/rate-limit settings.
+   `npm start` still runs `prisma migrate deploy`: require human evidence of no
+   pending migration before a no-database-change rollout; otherwise stop for a
+   separate migration decision. Retain a tested frontend-bearing rollback image;
+   no automatic rollback or replay of migrations.
+6. Only after a separately approved compatible transition is Live, authorize exact
+   real-frontend CORS/Firebase domains while retaining old entries and approve
+   removal of synthetic fixtures in a distinct real-integration candidate. Human
+   tests real Firebase session/return/logout, REST preflight/owner/no-store and
+   Socket polling/direct-WS/upgrade/token-refresh reconnect through provider edges.
+   Existing Access or synthetic Garden PASS does not close these gates.
+7. Activate the real Cloudflare frontend only after those gates pass; retain Render
+   web/login until old-origin users/links and independent rollback are resolved.
+   Backend-only Render is the final separately approved step, not this transition.
+
+No recovery, build, container execution, database/provider change, service restart,
+push, deployment or Cloudflare check performed in this continuation.

@@ -1804,3 +1804,19 @@ after the requested Access and synthetic sign-in flow. Authorized deployed
 synthetic Garden **USER-CONFIRMED PASS**, superseding the pending confirmation
 above. No additional upload/test/provider action; production/backend/Firebase
 and Docker readiness are not implied by this result.
+
+### Docker storage diagnosis — 2026-10-09
+
+Read-only checks confirm the retained backend manifest exists (856 bytes), but
+Docker open and filesystem flag lookup fail with EIO. Guest ext4 `/dev/vdb1`
+reports `clean with errors`, two EIO records in `ext4_do_writepages` and
+`ext4_journal_check_start` at 14:29:38 PDT. About 24 GiB/5.5 million inodes remain
+free in the guest; host has about 15 GiB free. Storage/filesystem failure is
+confirmed; lower-level cause, damage extent and database health remain UNKNOWN.
+Two running containers and all volumes/images/caches remain untouched. No private
+logs, environment values or database contents inspected. Runtime remains BLOCKED;
+accepted builds/CORS/Socket/Cloudflare evidence reused without execution. Runbook
+now requires separately authorized quiescence/cold recovery copy and offline
+read-only diagnosis before any repair, restart or image reconstruction. Render
+transition retains the current production frontend; unchanged migration startup
+requires a human no-pending-migrations gate before a no-DB-change rollout.
