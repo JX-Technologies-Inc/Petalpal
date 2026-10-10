@@ -1,0 +1,45 @@
+name: Provision ONE TEST identity (owner-authorized writes)
+
+# Manual, main only. Writes only to the TEST Firebase project and TEST backend, and
+# only when the dispatcher types the exact authorization phrase. Never runs on its own.
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: signup (create account + verification email) then profile (after verifying)
+        type: choice
+        options: [signup, profile]
+        default: signup
+      authorization:
+        description: Type CREATE-ONE-TEST-IDENTITY to authorize TEST writes
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-integration-test-identity
+  cancel-in-progress: false
+
+jobs:
+  identity:
+    if: github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.authorization == 'CREATE-ONE-TEST-IDENTITY'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    environment: petalpal-web-build-integration
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Provision (TEST project and TEST backend only)
+        env:
+          AUTHORIZATION_PHRASE: ${{ inputs.authorization }}
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          INTEGRATION_TEST_EMAIL: ${{ secrets.INTEGRATION_TEST_EMAIL }}
+          INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+          PHASE: ${{ inputs.phase }}
+        run: node scripts/integration-test-identity.mjs "$PHASE"

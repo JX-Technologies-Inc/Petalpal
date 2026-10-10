@@ -632,3 +632,7 @@ This supplements the historical not-created preparation records above.
 
 - [ ] **TEST Render only:** set `CORS_ALLOWED_ORIGINS` on `petalpal-backend-test` to `https://petalpal-backend-test.onrender.com,https://petalpal-web-integration.petalpal-jx.workers.dev` (keep the existing value, add the second) and let the service restart; no Firebase Authorized Domain is needed for email/password sign-in. The agent has no Render access.
 - [ ] **Optional, for authenticated e2e:** approve one verified TEST-project identity that already has a TEST profile, stored as secrets `INTEGRATION_TEST_EMAIL` and `INTEGRATION_TEST_PASSWORD` in environment `petalpal-web-build-integration`. The agent will not create accounts or send verification emails.
+
+### TEST identity authorization — 2026-10-10 (not performed)
+
+- [ ] Owner adds secrets `INTEGRATION_TEST_EMAIL` (a company mailbox they can read, e.g. a `+petalpal-test` alias) and `INTEGRATION_TEST_PASSWORD` (16+ chars, unique) to environment `petalpal-web-build-integration`, then tells the agent to run `signup`; opens the verification email link (TEST Firebase); tells the agent to run `profile`, then `integration-e2e`.
