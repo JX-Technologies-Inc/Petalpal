@@ -17,6 +17,7 @@
 !docs/openapi.yaml
 !scripts/
 !scripts/ai-worker.js
+!scripts/start-integration-backend.sh
 **/.env*
 **/*service-account*
 **/*service_account*

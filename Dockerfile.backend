@@ -14,6 +14,6 @@ COPY lib ./lib
 COPY server.js moodClassifier.js ./
 COPY data/flowerDB.js data/mood-model.json ./data/
 COPY docs/openapi.yaml ./docs/openapi.yaml
-COPY scripts/ai-worker.js ./scripts/ai-worker.js
+COPY scripts/ai-worker.js scripts/start-integration-backend.sh ./scripts/
 EXPOSE 3000
 CMD ["npm", "start"]
