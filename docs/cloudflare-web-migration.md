@@ -638,3 +638,33 @@ verification/session behavior, provider-edge REST CORS/owner/no-store and Socket
 polling/direct WebSocket/upgrade/refresh reconnect remain human integration gates.
 Backend-only Render cannot precede a ready real Cloudflare frontend and old-origin
 cutover; the synthetic preview does not satisfy those gates.
+
+## Architecture update — parallel backend-only Render test service (2026-10-10)
+
+Supersedes, without deleting, "Smallest compatible Render transition", the
+`Dockerfile.transition` step of "Validated cutover order" and the related
+transition-image gates above. Owner decision: keep existing `PetalPal_v2` and its
+production Vite frontend unchanged; add a separate backend-only Render test service
+(`Dockerfile.backend`) on an isolated test database and test Firebase project.
+Configuration: `docs/render-backend-test-service.md` (prepared, not created).
+
+- Main was updated to `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3` after the records
+  above; `validation/backend-container-57f9afa` was a fast-forward of it (8 commits,
+  no conflicts). Integration continues on `integration/cloudflare-render-migration`.
+- Exact-branch backend CI [run 38006087561](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38006087561)
+  PASSED at `24739b8565992666b30824cd55ea47650b5ab3f5`: one linux/amd64
+  `Dockerfile.backend` build and the synthetic container smoke. This closes the
+  container-runtime gap blocked by the local Colima ext4 EIO; Colima stays untouched.
+  The workflow's branch filter makes it inert after merge.
+- Socket.IO `allowRequest` reviewed against engine.io 6.6.11: it runs for each new
+  handshake (polling or direct WebSocket) and an accepted session's upgrade inherits
+  it. No-Origin native polling remains allowed; React Native direct WebSocket sends
+  the backend's own origin, so each backend lists its own origin in
+  `CORS_ALLOWED_ORIGINS`. Comment corrected; a no-Origin native polling/upgrade/direct
+  WebSocket regression was added, and the whole cross-origin fixture now runs in the
+  existing PR security CI.
+- Remaining order: create test DB/Firebase/service (human) → parameterize the
+  Cloudflare API origin/auth domain → real-auth protected preview against the test
+  service → separate decision on production frontend/backend cutover. Production
+  `PetalPal_v2`, DNS and existing Workers are not part of these steps.
+- Any newer migration notes that exist only on a local machine are not reflected here.

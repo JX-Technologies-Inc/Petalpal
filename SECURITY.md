@@ -1846,3 +1846,15 @@ push/run approval. The push itself starts CI; no default-branch merge is needed.
 Runbook records the chosen-repository gate, resource bounds and remaining real
 Firebase/provider-edge REST/Socket/transition-startup gates. No push, CI run,
 production/cloud change, VM maintenance or Cloudflare retest performed.
+
+## 2026-10-10 — Migration integration reconciliation and parallel backend decision
+
+Historical records above are preserved; this section supersedes only the named statuses.
+
+- [x] **Main state reconciled:** remote main is `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3` (unified Expo candidate `902f34a` plus a SECURITY.md-only append). The 2026-10-09 "SAFE TO MERGE MAIN: NO" line describes the pre-merge state and is superseded by that main update; no exact-main-commit CI or amd64 build of root `Dockerfile` is recorded. Root `Dockerfile` builds the Expo frontend, so main must not be deployed to `PetalPal_v2`.
+- [x] **Backend container CI PASS:** [run 38006087561](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38006087561) at `24739b8565992666b30824cd55ea47650b5ab3f5` (tree `09dc4886c3000725500680b2fa2293ac312cfc84`); linux/amd64 `Dockerfile.backend` build plus synthetic container smoke. Job-level step metadata is not visible to this session; the run conclusion is reused, not rerun.
+- [x] **Socket.IO origin review:** `allowRequest` applies the HTTP exact-origin policy to each new Engine.IO handshake (engine.io 6.6.11 `verify()`; upgrades with an accepted session id inherit it). No-Origin native polling stays allowed; Firebase token checks are unchanged. Comment corrected; added a native no-Origin polling/upgrade/direct-WebSocket regression and the whole `test/back/cross-origin-web.test.js` to `scripts/security-ci.js`, so PR security CI covers it.
+- [x] **Architecture decision (owner):** a new isolated backend-only Render test service replaces the in-place `Dockerfile.transition` plan; `PetalPal_v2` and its Vite frontend remain unchanged. Prepared in `docs/render-backend-test-service.md`; nothing created.
+- [ ] **GitHub merge safety UNVERIFIED:** ruleset "Protect main" is active but has empty branch conditions (no effective rules on main; no required checks or reviews). Repository webhooks/GitHub App installations are not readable (403), so Render/Cloudflare Git-triggered deploys cannot be excluded from GitHub metadata. No GitHub environments or deployments exist. Main merge remains blocked on human confirmation.
+
+No provider, database, Firebase, DNS or secret change; no Colima/Docker use; no deployment.

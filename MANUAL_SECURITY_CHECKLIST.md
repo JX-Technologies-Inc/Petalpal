@@ -572,3 +572,16 @@ supersedes prior not-created/not-uploaded status without changing historical sco
 
 These gates are unperformed. No stop, repair, DB/provider change or deployment
 occurred; previous synthetic staging confirmations remain valid in their scope.
+
+### Parallel backend-only test service — 2026-10-10
+
+Owner decision supersedes the in-place `Dockerfile.transition` items above for
+`PetalPal_v2` (retained as history); that service and its Vite frontend stay unchanged.
+
+- [ ] Confirm `PetalPal_v2` Auto-Deploy is OFF or not tracking `main`, and that no
+  Render/Cloudflare GitHub integration deploys on `main` pushes (GitHub cannot show hooks).
+- [ ] Make "Protect main" target `main` (it currently matches no branch) and require
+  the PetalPal security regression checks before merging.
+- [ ] Provision an isolated test PostgreSQL and isolated test Firebase project; create
+  `petalpal-backend-test` per `docs/render-backend-test-service.md`. No production
+  credentials, Worker tokens or database may be reused.
