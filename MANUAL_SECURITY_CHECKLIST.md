@@ -636,3 +636,17 @@ This supplements the historical not-created preparation records above.
 ### TEST identity authorization — 2026-10-10 (not performed)
 
 - [ ] Owner adds secrets `INTEGRATION_TEST_EMAIL` (a company mailbox they can read, e.g. a `+petalpal-test` alias) and `INTEGRATION_TEST_PASSWORD` (16+ chars, unique) to environment `petalpal-web-build-integration`, then tells the agent to run `signup`; opens the verification email link (TEST Firebase); tells the agent to run `profile`, then `integration-e2e`.
+
+### Confirmed integration completion — 2026-10-10
+
+Supersedes prior TEST-not-run / TEST-not-live items only; all historical records remain.
+
+- [x] Owner confirms protected Cloudflare Integration Garden deployed and visually PASS;
+  TEST Render Live, independent TEST Firebase and Prisma PostgreSQL working.
+- [x] Exact-main `2df65c24fdc41310d6cb515bc18a6ecf36383268` authenticated integration
+  E2E [38034475861](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38034475861)
+  and anonymous smoke [38033944589](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38033944589)
+  independently confirmed successful through GitHub metadata; no rerun or new identity.
+- [x] Owner confirms existing production still serves Vite. No production/provider
+  change performed in this audit. Credential-retirement and production configuration
+  gates remain unresolved; integration completion does not close them.

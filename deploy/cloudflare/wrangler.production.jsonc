@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "petalpal-web-production",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-09",
+  // Preparation only. Create/upload/Access/domain activation need release approval.
+  // Uses the existing production API/Firebase CSP defaults, never integration vars.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [],
+  "assets": {
+    "directory": "../../mobile/dist",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "not_found_handling": "none",
+    "run_worker_first": true
+  },
+  "observability": { "enabled": false }
+}

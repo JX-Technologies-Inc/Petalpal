@@ -672,3 +672,14 @@ Configuration: `docs/render-backend-test-service.md` (prepared, not created).
 ### Integration-environment code (2026-10-10, after PR #11)
 
 PR #11 is merged (`3e5e4ef88c877f86c8e7e530512c3600b8b843cc`). Environment-specific Cloudflare hosting/build inputs and the backend integration guard are implemented for the backend-only test service; see `docs/render-backend-test-service.md` and `SECURITY.md`. Earlier sections remain historical. No resource was created or deployed.
+
+## Production-readiness decision — 2026-10-10
+
+The current decision and ordered production/rollback gates are in
+[Production readiness](production-readiness-2026-10-10.md). Historical preparation,
+failed artifacts and superseded transition decisions above remain preserved.
+Integration Garden, TEST backend and authenticated integration E2E are now accepted
+PASS. Production remains NO: first retain Vite and stage the production Cloudflare
+frontend against the existing API; any later backend transition needs its own
+artifact/delivery acceptance. The new `wrangler.production.jsonc` is inactive;
+no production deploy is authorized. Never reuse the TEST deployment workflow.
