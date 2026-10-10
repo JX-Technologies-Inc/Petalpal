@@ -76,22 +76,6 @@ export function readDist(dist) {
   return { errors: [...errors, ...checkDistText(text)], count: files.length };
 }
 
-// 4. Access application: exact host, reviewer-only allow, nothing else.
-export function checkAccessApp(app, policies, { host, reviewer }) {
-  const errors = [];
-  const domains = [app?.domain, ...(app?.self_hosted_domains || []), ...(app?.destinations || []).map(d => d?.uri)].filter(Boolean);
-  if (app?.type !== 'self_hosted') errors.push('Access app must be self_hosted');
-  if (!domains.length || domains.some(domain => domain !== host)) errors.push('Access app must cover exactly the integration host (all paths)');
-  if (!policies?.length) errors.push('Access app has no policies');
-  for (const policy of policies || []) {
-    const include = JSON.stringify(policy.include || []);
-    if (policy.decision !== 'allow') errors.push('only allow policies are permitted');
-    if (include !== JSON.stringify([{ email: { email: reviewer } }])) errors.push('policy must include exactly the approved reviewer');
-    if ((policy.exclude || []).length || (policy.require || []).length) errors.push('policy must not have exclude/require rules');
-  }
-  return [...new Set(errors)];
-}
-
 // 5. Anonymous, cookie-free response classification.
 export function classifyAnonymous(status, location) {
   if ([301, 302, 303, 307].includes(status) && /^https:\/\/[a-z0-9-]+\.cloudflareaccess\.com\//.test(location || '')) return 'protected';
@@ -116,7 +100,11 @@ async function latestDeploymentMessage() {
     const result = await cf(`/workers/scripts/${WORKER_NAME}/deployments`);
     const deployment = (result?.deployments || [])[0];
     return deployment?.annotations?.['workers/message'] || null;
-  } catch (error) { if (/HTTP 404/.test(error.message)) return null; throw error; }
+  } catch (error) {
+    // Per-Worker Editor tokens cannot create Workers; never fall through to creation.
+    if (/HTTP 404/.test(error.message)) throw new Error(`Worker ${WORKER_NAME} must already exist (owner creates it once)`);
+    throw error;
+  }
 }
 
 async function anonymousProbe(host) {
@@ -149,35 +137,23 @@ async function main([command]) {
     console.log(`same=${same}`);
     if (env.GITHUB_OUTPUT) await import('node:fs').then(fs => fs.appendFileSync(env.GITHUB_OUTPUT, `same=${same}\n`));
   } else if (command === 'activate') {
-    const reviewer = String(env.ACCESS_REVIEWER_EMAIL || '');
-    if (!/^[^@\s,]+@jastrevia\.com$/i.test(reviewer)) fail(['ACCESS_REVIEWER_EMAIL must be one approved company address']);
+    // Worker-level Cloudflare Access (owner-enabled once, exact-email reviewer
+    // policy) must already protect every hostname of this Worker. The token has
+    // no Access permission; protection is proven by cookie-free probes, and
+    // workers.dev is switched off again unless every probe is Access-blocked.
     if (await latestDeploymentMessage() !== deploymentMessage(env.ARTIFACT_ID, env.ARTIFACT_DIGEST)) fail(['current Worker deployment is not the verified artifact']);
-    const { subdomain } = await cf('/workers/subdomain');
+    const subdomain = String(env.CLOUDFLARE_WORKERS_SUBDOMAIN || '');
+    if (!/^[a-z0-9-]+$/.test(subdomain)) fail(['CLOUDFLARE_WORKERS_SUBDOMAIN variable missing or invalid']);
     const host = `${WORKER_NAME}.${subdomain}.workers.dev`;
-    const apps = (await cf('/access/apps')) || [];
-    let app = apps.find(item => [item.domain, ...(item.self_hosted_domains || [])].includes(host));
-    if (!app) {
-      app = await cf('/access/apps', { method: 'POST', body: {
-        type: 'self_hosted', name: 'PetalPal integration preview (reviewer only)', domain: host,
-        session_duration: '24h', app_launcher_visible: false,
-        policies: [{ name: 'PetalPal approved reviewer only', decision: 'allow', include: [{ email: { email: reviewer } }] }],
-      } });
-      console.log('Access application created for the integration host');
-    }
-    const policies = await cf(`/access/apps/${app.id}/policies`);
-    const errors = checkAccessApp(app, policies, { host, reviewer });
-    if (errors.length) fail(errors);
-    console.log('Access application verified: exact host, approved reviewer only');
-    await cf(`/workers/scripts/${WORKER_NAME}/subdomain`, { method: 'POST', body: { enabled: true, previews_enabled: false } });
+    const subdomainSetting = enabled => cf(`/workers/scripts/${WORKER_NAME}/subdomain`, { method: 'POST', body: { enabled, previews_enabled: false } });
+    if (await anonymousProbe(host) === 'exposed') { await subdomainSetting(false); fail(['host already publicly reachable; workers.dev disabled']); }
+    await subdomainSetting(true);
     let state = 'pending';
     for (let attempt = 0; attempt < 12 && state === 'pending'; attempt++) {
       await new Promise(done => setTimeout(done, 10000));
       state = await anonymousProbe(host);
     }
-    if (state !== 'protected') {
-      await cf(`/workers/scripts/${WORKER_NAME}/subdomain`, { method: 'POST', body: { enabled: false, previews_enabled: false } });
-      fail([`anonymous probe ${state}; workers.dev disabled again`]);
-    }
+    if (state !== 'protected') { await subdomainSetting(false); fail([`anonymous probe ${state}; workers.dev disabled again`]); }
     console.log(`::notice::Protected integration preview active: https://${host}`);
   } else throw new Error('Unknown command');
 }
