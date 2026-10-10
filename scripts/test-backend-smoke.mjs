@@ -44,7 +44,8 @@ check('invalid bearer token is rejected', invalid.status === 401, `status ${inva
 await invalid.arrayBuffer();
 
 const docs = await get('/api-docs/');
-check('API docs are disabled', docs.status === 404, `status ${docs.status}`);
+// Disabled docs fall through to the global deny-by-default auth gate.
+check('API docs are disabled (unauthenticated 401, never 200)', docs.status === 401, `status ${docs.status}`);
 await docs.arrayBuffer();
 
 const poll = await get('/socket.io/?EIO=4&transport=polling');
@@ -61,6 +62,25 @@ if (poll.status === 200 && text.startsWith('0{')) {
 const badSocket = await get('/socket.io/?EIO=4&transport=polling', { headers: { Origin: DISALLOWED } });
 check('disallowed Origin Socket.IO handshake is refused', badSocket.status === 403, `status ${badSocket.status}`);
 await badSocket.arrayBuffer();
+
+// Protected Cloudflare integration preview origin (anonymous; no token involved).
+const PREVIEW = 'https://petalpal-web-integration.petalpal-jx.workers.dev';
+const previewFlight = await get('/auth/session', { method: 'OPTIONS', headers: {
+  Origin: PREVIEW, 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'authorization,content-type' } });
+check('preview-origin preflight is granted exactly', previewFlight.status === 204 &&
+  previewFlight.headers.get('access-control-allow-origin') === PREVIEW, `status ${previewFlight.status}`);
+await previewFlight.arrayBuffer();
+const previewPoll = await get('/socket.io/?EIO=4&transport=polling', { headers: { Origin: PREVIEW } });
+const previewText = await previewPoll.text();
+check('preview-origin Socket.IO handshake opens', previewPoll.status === 200 && previewText.startsWith('0{'), `status ${previewPoll.status}`);
+if (previewPoll.status === 200 && previewText.startsWith('0{')) {
+  const { sid } = JSON.parse(previewText.slice(1));
+  await (await get(`/socket.io/?EIO=4&transport=polling&sid=${encodeURIComponent(sid)}`, {
+    method: 'POST', headers: { Origin: PREVIEW, 'Content-Type': 'text/plain' }, body: '1' })).arrayBuffer();
+}
+const previewDenied = await get('/session', { headers: { Origin: PREVIEW } });
+check('preview-origin request without token is still 401', previewDenied.status === 401, `status ${previewDenied.status}`);
+await previewDenied.arrayBuffer();
 
 const failed = results.filter(result => !result.ok).length;
 report(!failed, `${results.length - failed}/${results.length} TEST backend smoke checks passed`);
