@@ -1983,3 +1983,62 @@ This checkpoint preserves history and supersedes only the named pending TEST sta
 - MANUAL_SECURITY_CHECKLIST receives only the newly confirmed TEST provider/status
   reconciliation. No new production/manual completion is asserted. Graphify is
   unavailable locally; no generated graph changed. Colima/Docker untouched.
+
+### Audit completion addendum — 2026-10-10 (local, not in PR #26)
+
+Preparation PR: https://github.com/JX-Technologies-Inc/Petalpal/pull/26, exact head
+`0069ae3a436252f0a9d0d2969cd6631485a682dc`. Both required checks (Isolated security
+baseline and Isolated Expo web boundary) PASS in run `38036054100`; CodeQL analyses
+PASS in `38036051600`. No actual CI failure, rerun, merge or deployment. Main stays
+`2df65c24fdc41310d6cb515bc18a6ecf36383268`. This local evidence append is intentionally
+not pushed, preserving the CI-qualified PR head without another automatic test run.
+
+The prior push reported 21 open GitHub dependency alerts (13 high). A lockfile-only
+npm advisory lookup started before the owner's resume instruction completed without
+installing dependencies, executing lifecycle scripts or changing lockfiles: backend
+16 findings (6 high, 10 moderate), retained Vite client 4 high, Cloudflare deployment
+tooling 0; mobile also reported high-severity dependency chains. These are package
+advisory counts, not independently verified exploitability or distinct CVE counts.
+Examples include deepmerge-ts via Prisma, sharp via transformers, and grpc-js via
+Firebase/Firestore. Build/native/transitive scope and runtime reachability need
+triage before production certification. Do not automatically accept suggested major
+upgrades/downgrades or claim existing CI closes these advisories. No new dependency
+change, second audit or accepted integration retest was performed. This adds an
+unresolved dependency-security gate to the readiness report; readiness remains NO.
+
+### Preparation completion and evidence reconciliation — 2026-10-10
+
+- PR #26 merged normally as `5491d70ea0c8ae60c7d893bdd372894a09828ee3` after
+  required CI PASS. Merge tree equals its accepted head. Reused recorded Render
+  Auto-Deploy/previews OFF and Cloudflare no-Git-connection evidence; current remote
+  workflow inventory contains no main-triggered production deploy and #26 changes
+  no workflow. Merge message includes `[skip render]`. GitHub metadata shows only
+  dynamic analysis on the merge and zero deployments for that SHA. Provider hooks
+  are not independently visible; this is accepted configuration evidence, not new
+  secret-bearing provider inspection. No production deployment was invoked.
+- The preceding local addendum is preserved verbatim and is now being published
+  through a separate PR under the owner's authorization. Its local/unpushed and
+  main-SHA statements describe its original checkpoint, not current state.
+- **Dependency clarification:** the October 8 Dependency Vulnerability Remediation
+  section already triages the cited deepmerge-ts, mysql2, sharp and grpc-js chains,
+  distinguishes tool/server/browser reachability, and records the same backend
+  16 (6 high) and web 4 (4 high) package totals. The preceding advisory lookup did
+  not establish a new app-controlled defect or invalidate that accepted triage.
+  Source still uses static Prisma config/PostgreSQL, Firebase Auth rather than
+  Firestore/gRPC server handlers, and text feature extraction rather than image
+  decoding; research classifier is disabled in production. Reuse the existing
+  mitigation/compatible-upstream constraints and decoder backport evidence.
+  Residual supply-chain risk remains PARTIAL; no blind major downgrade/override,
+  alert dismissal, repeated audit or new dependency mutation is justified here.
+- **First-launch fallback prepared:** `rollback-worker.js` returns temporary 302
+  only for allowlisted GET/HEAD app pages to the fixed retained Vite entry point.
+  It drops query/path data, sends no-store/no-referrer, rejects writes (405) and
+  API/Socket/static/unknown paths (404), and contains no outbound fetch or binding.
+  Separate `wrangler.rollback.jsonc` targets only the production web Worker with
+  URLs/routes disabled. Three new focused tests PASS, registered in required CI.
+  No upload, version activation, routing change or production call occurred.
+- Readiness remains **NO** for credential retirement, production config/backup/
+  capacity, exact production export and feature/AI acceptance, plus retained Render
+  artifact/delivery and provider rollback availability. First-launch fallback code
+  is now ready for review; its authorized upload/version/edge acceptance is still
+  a deployment-stage gate. This is not full P0/P1 or supply-chain certification.

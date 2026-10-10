@@ -187,3 +187,27 @@ Provider references checked during audit: [Render deploys](https://render.com/do
 [Render health checks](https://render.com/docs/health-checks),
 [Cloudflare version rollback](https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/),
 [Firebase persistence](https://firebase.google.com/docs/auth/web/auth-state-persistence).
+
+## Preparation follow-up — 2026-10-10
+
+PR #26 merged normally at `5491d70ea0c8ae60c7d893bdd372894a09828ee3`, with its
+accepted tree unchanged. The production build guard/profile is now on main.
+
+The first-launch fallback implementation is now prepared in
+`deploy/cloudflare/rollback-worker.js` and `wrangler.rollback.jsonc`, with three
+new isolated tests. This supersedes only the missing-fallback-code item above;
+no provider rollback is yet operationally verified. Under the later scoped release
+approval, upload this version to the exact production web Worker while unexposed,
+record its version ID, then upload the approved application version. Use version
+upload/activation (not full deploy/triggers deploy) to preserve separately approved
+routing. Verify the fallback version returns temporary page redirects to the old
+Vite root and 404/405 for API/Socket/write requests before public cutover. Retain
+its version ID alongside the application ID. Rollback activates that exact fallback
+at 100%; never replace or redirect the Render API itself. Users must reopen the
+Vite entry and may need to sign in; no cross-origin session/local-state transfer
+is promised. After a known-good production app version exists, prefer its rollback.
+
+Dependency advisory scope is already documented in SECURITY.md's October 8
+remediation/constraints table. Reuse that triage: the latest package counts do not
+by themselves establish a new vulnerability or justify disruptive framework
+changes. Residual constrained dependency risk remains PARTIAL, not newly certified.
