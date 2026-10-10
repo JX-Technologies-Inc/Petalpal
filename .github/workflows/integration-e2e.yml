@@ -1,0 +1,33 @@
+name: Integration e2e (TEST Firebase + TEST backend, preview origin)
+
+# Manual only. Fixed TEST hosts; uses the TEST Web App config and one TEST
+# identity from the integration build environment. No deploy, no provider writes.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    environment: petalpal-web-build-integration
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Sign-in, CORS, owner isolation and Socket.IO
+        env:
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          INTEGRATION_TEST_EMAIL: ${{ secrets.INTEGRATION_TEST_EMAIL }}
+          INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+        run: node scripts/integration-e2e.mjs
