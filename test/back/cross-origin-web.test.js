@@ -83,6 +83,19 @@ test('cross-origin REST and actual Engine.IO transports retain origin, token and
       assert.match((await error)[0].message, /Invalid or expired/); s.disconnect();
     }
   });
+  await t.test('native clients without Origin still authenticate on polling upgrade and direct WebSocket', async () => {
+    for (const transports of [['polling', 'websocket'], ['websocket']]) {
+      const unauthenticated = socket({ transports, extraHeaders: {}, auth: { token: 'synthetic-invalid' } });
+      const rejected = once(unauthenticated, 'connect_error'); unauthenticated.connect();
+      assert.match((await rejected)[0].message, /Invalid or expired/); unauthenticated.disconnect();
+      const s = socket({ transports, extraHeaders: {} });
+      const connected = once(s, 'connect'); s.connect(); await connected;
+      if (s.io.engine.transport.name !== 'websocket') await once(s.io.engine, 'upgrade');
+      assert.equal(s.io.engine.transport.name, 'websocket');
+      assert.equal((await s.timeout(3000).emitWithAck('join-user')).ok, true);
+      s.disconnect();
+    }
+  });
   await t.test('polling authenticates, upgrades, acknowledges events and reconnects with a refreshed token', async () => {
     let token = 'synthetic-valid';
     const s = socket({ transports: ['polling', 'websocket'], auth: done => done({ token }) });
