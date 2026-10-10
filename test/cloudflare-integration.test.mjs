@@ -57,8 +57,10 @@ test('integration export refuses production API/Firebase and ambiguous targets b
   const run = (args, extra = {}) => spawnSync(process.execPath, ['scripts/build-cloudflare-web.mjs', ...args], {
     cwd: new URL('..', import.meta.url), env: { PATH: process.env.PATH, ...extra }, encoding: 'utf8', timeout: 20000
   });
-  const firebase = { EXPO_PUBLIC_FIREBASE_API_KEY: 'x', EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: 'it.firebaseapp.com',
-    EXPO_PUBLIC_FIREBASE_PROJECT_ID: 'it', EXPO_PUBLIC_FIREBASE_APP_ID: '1:1:web:it' };
+  // Well-formed synthetic TEST values (not real), so each case isolates one reason.
+  const firebase = { EXPO_PUBLIC_FIREBASE_API_KEY: 'AIza' + 'S'.repeat(35), EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: 'petalpal-it-synthetic.firebaseapp.com',
+    EXPO_PUBLIC_FIREBASE_PROJECT_ID: 'petalpal-it-synthetic', EXPO_PUBLIC_FIREBASE_APP_ID: '1:123456789012:web:abcdef0123' };
+  const origin = { CLOUDFLARE_API_ORIGIN: 'https://t.example.test' };
   for (const [args, env] of [
     [['--integration'], firebase],
     [['--integration'], { ...firebase, CLOUDFLARE_API_ORIGIN: 'https://petalpal-v2.onrender.com' }],
@@ -66,11 +68,23 @@ test('integration export refuses production API/Firebase and ambiguous targets b
     [['--integration'], { ...firebase, CLOUDFLARE_API_ORIGIN: 'https://t.example.test', EXPO_PUBLIC_FIREBASE_PROJECT_ID: 'petalpal-b212c' }],
     [['--integration'], { ...firebase, CLOUDFLARE_API_ORIGIN: 'https://t.example.test', EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: 'petalpal-b212c.firebaseapp.com' }],
     [['--integration'], { ...firebase, CLOUDFLARE_API_ORIGIN: 'https://t.example.test', EXPO_PUBLIC_FIREBASE_APP_ID: '1:879846854472:web:02b860eacfaf5bb7616d7d' }],
-    [['--integration', '--synthetic'], { ...firebase, CLOUDFLARE_API_ORIGIN: 'https://t.example.test' }]
+    [['--integration', '--synthetic'], { ...firebase, CLOUDFLARE_API_ORIGIN: 'https://t.example.test' }],
+    // Placeholder key names instead of values (observed in run 38025540771) and malformed values.
+    [['--integration'], { ...origin, EXPO_PUBLIC_FIREBASE_API_KEY: 'apiKey', EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: 'authDomain',
+      EXPO_PUBLIC_FIREBASE_PROJECT_ID: 'projectId', EXPO_PUBLIC_FIREBASE_APP_ID: 'appId' }],
+    [['--integration'], { ...firebase, ...origin, EXPO_PUBLIC_FIREBASE_API_KEY: 'apiKey' }],
+    [['--integration'], { ...firebase, ...origin, EXPO_PUBLIC_FIREBASE_PROJECT_ID: 'projectId' }],
+    [['--integration'], { ...firebase, ...origin, EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: 'other-project.firebaseapp.com' }],
+    [['--integration'], { ...firebase, ...origin, EXPO_PUBLIC_FIREBASE_APP_ID: 'appId' }],
   ]) {
     const result = run(args, env);
     assert.notEqual(result.status, 0, JSON.stringify(args));
     assert.match(result.stderr, /Integration build|Choose one build target/);
+    assert.doesNotMatch(result.stderr, /AIzaS{35}/);
     assert.doesNotMatch(result.stdout, /Exporting Expo Web/);
   }
+  // Positive control: well-formed TEST values pass validation and reach the export step.
+  const accepted = run(['--integration'], { ...firebase, ...origin, EXPO_PUBLIC_FIREBASE_PROJECT_ID: 'petalpal-integration-test',
+    EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: 'petalpal-integration-test.firebaseapp.com' });
+  assert.match(accepted.stdout, /Exporting Expo Web \(isolated integration configuration\)/);
 });

@@ -19,6 +19,15 @@ if (integration) {
       process.env.EXPO_PUBLIC_FIREBASE_APP_ID === productionFirebaseAppId) {
     throw new Error('Integration build must use the isolated test Firebase project, not production');
   }
+  // Reject placeholders (e.g. the literal key names) and malformed values; names only in errors.
+  const value = name => String(process.env[name] || '');
+  const project = value('EXPO_PUBLIC_FIREBASE_PROJECT_ID');
+  for (const [name, valid] of [
+    ['EXPO_PUBLIC_FIREBASE_API_KEY', /^AIza[0-9A-Za-z_-]{35}$/.test(value('EXPO_PUBLIC_FIREBASE_API_KEY'))],
+    ['EXPO_PUBLIC_FIREBASE_PROJECT_ID', /^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(project)],
+    ['EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN', value('EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN') === `${project}.firebaseapp.com`],
+    ['EXPO_PUBLIC_FIREBASE_APP_ID', /^1:\d+:web:[0-9a-f]+$/.test(value('EXPO_PUBLIC_FIREBASE_APP_ID'))],
+  ]) if (!valid) throw new Error(`Integration build requires a valid ${name} from the TEST Firebase Web App config`);
 }
 const config = JSON.parse(readFileSync(new URL('../mobile/app.json', import.meta.url)));
 if (config.expo.web.output !== 'single') throw new Error('Review hosting routing before changing Expo output mode');
