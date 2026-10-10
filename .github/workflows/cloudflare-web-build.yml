@@ -55,10 +55,14 @@ jobs:
         if: ${{ inputs.production_config }}
         env:
           EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
-          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
-          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
-          EXPO_PUBLIC_FIREBASE_APP_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_APP_ID }}
-        run: npm run build:cloudflare
+          # Existing production project/Web App: public identifiers, pinned here and
+          # enforced again by the build guard; only the Web API key is a secret.
+          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: petalpal-b212c.firebaseapp.com
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: petalpal-b212c
+          EXPO_PUBLIC_FIREBASE_APP_ID: '1:879846854472:web:02b860eacfaf5bb7616d7d'
+        run: |
+          npm run build:cloudflare
+          node scripts/cloudflare-production-deploy.mjs check-content
       - name: Isolated hosting-test dependencies (no database connection)
         run: |
           npm ci --ignore-scripts --no-audit --no-fund
