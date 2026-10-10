@@ -48,4 +48,11 @@ jobs:
       - name: Real Postgres marker and migration scenarios
         env:
           PETALPAL_MARKER_PG_ADMIN_URL: postgresql://ci:ci-disposable@127.0.0.1:5432/ci_admin
-        run: node --test --test-concurrency=1 test/back/integration-marker.postgres.test.js
+        shell: bash
+        run: |
+          set +e
+          node --test --test-concurrency=1 --test-reporter=tap test/back/integration-marker.postgres.test.js > marker.tap 2>&1
+          status=$?
+          # Synthetic disposable output only; surface failure lines (URLs removed) as annotations.
+          grep -E '^(not )?ok |P3[0-9]{3}|Error|error:|message:|marker' marker.tap | sed -E 's#[a-z]+://[^ ]+#<url>#g' | head -40 | while IFS= read -r line; do echo "::notice title=marker::$line"; done
+          exit $status
