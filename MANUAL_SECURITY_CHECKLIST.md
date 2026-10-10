@@ -616,3 +616,8 @@ This supplements the historical not-created preparation records above.
 
 - [ ] Owner directly reconfirms (secret-free PASS/FAIL) that `petalpal-backend-test`'s `DATABASE_URL` is the direct string generated from Prisma `petalpal_integration` and its `FIREBASE_SERVICE_ACCOUNT_JSON` belongs to `petalpal-integration-test`. The earlier recorded attestation was relayed by the previous agent and is not relied on.
 - [ ] Then replace the TEST Docker Command with `/bin/sh /app/scripts/start-integration-backend.sh` and run one manual deploy of the merged `main` commit. Auto-Deploy stays OFF.
+
+### TEST deploy — the one remaining owner action (2026-10-10)
+
+The agent has no Render access, so the authorized single deploy must be started by the owner:
+- [ ] In `petalpal-backend-test` → Settings, replace Docker Command with `/bin/sh /app/scripts/start-integration-backend.sh` and save. If Render does not start a deploy by itself, use Manual Deploy → "Deploy a specific commit" → `612e8335ad14c5229a8c335b3d233780488989b2` once. Do not start a second deploy if one is already running. Afterwards tell the agent; it runs `test-backend-smoke.yml` and reviews sanitized results. Saving this command is the owner's reconfirmation that the TEST service's credential bindings (recorded above) are unchanged.
