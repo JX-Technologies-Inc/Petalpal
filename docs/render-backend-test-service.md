@@ -24,7 +24,7 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 | Repository / branch | `JX-Technologies-Inc/Petalpal`, a dedicated test branch (e.g. `render/backend-test`) pointing at the approved merged commit — not `main` |
 | Auto-Deploy | OFF (manual deploys of an exact commit only) |
 | Dockerfile path / context | `./Dockerfile.backend` / `.` (context allowlist: `Dockerfile.backend.dockerignore`; image COPYs are explicit either way) |
-| Start command | Image default `npm start` = `prisma migrate deploy` then `node server.js`; runs migrations **only against the isolated test DB** set below |
+| Docker command (start override) | `sh -c "node lib/integration-environment.js && npm start"`. The guard runs **before** `prisma migrate deploy`, so a mis-set environment stops the deploy before any database is touched; `npm start` then migrates **only the isolated test DB**. `server.js` re-checks the same guard at startup |
 | Health check path | Leave blank (port check). The backend-only image has no unauthenticated 2xx route; adding one is out of scope |
 | Plan / region | Free/existing no-cost tier only; same region as the test DB |
 | Pre-deploy command, disks, custom domains, previews | None |
@@ -33,8 +33,9 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 
 | Variable | Test-service value / source |
 | --- | --- |
+| `PETALPAL_ENVIRONMENT` | `integration` (enables the fail-closed isolation guard in `lib/integration-environment.js`; any other value also fails) |
 | `NODE_ENV` | `production` (non-production refuses any non-local database) |
-| `DATABASE_URL` | Isolated test PostgreSQL. Must not share host+database or credentials with production |
+| `DATABASE_URL` | Isolated test PostgreSQL. Guard requires the database name to contain an `integration` or `test` token (e.g. `petalpal_integration`); the human must also ensure it shares no host credentials with production |
 | `FIREBASE_PROJECT_ID` | Isolated test Firebase project ID. **Required**: unset defaults to the production project |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Admin key of that isolated test project only |
 | `CORS_ALLOWED_ORIGINS` | Exact test frontend origin(s) plus this service's own `https://<name>.onrender.com` (React Native WebSocket handshakes send the target origin). No production origins needed |
@@ -47,14 +48,35 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 
 `RENDER=true` and `PORT` are provided by Render.
 
-## Frontend pairing (follow-up before real-auth testing)
+## Isolation matrix
 
-`scripts/build-cloudflare-web.mjs` and `deploy/cloudflare/worker.js` hard-code the
-production API origin `https://petalpal-v2.onrender.com` and production Firebase
-auth domain in `EXPO_PUBLIC_API_BASE_URL` and the CSP. Once the test service URL
-exists, a separate change must make the API origin and Firebase auth domain
-build/deploy inputs (keeping current values as the production default) so the
-protected Cloudflare preview can target this service and the test Firebase project.
+| Surface | Production | Integration (this plan) | Enforced by |
+| --- | --- | --- | --- |
+| Firebase | `petalpal-b212c` | separate test project, own Admin key and Web App | guard: explicit project ≠ production, service-account `project_id` must match, ambient credential variables unset; build: refuses production project/auth domain/app ID |
+| PostgreSQL | production Prisma Postgres | separate test DB named `…integration…`/`…test…` | guard (name token, `DEV_DATABASE_URL` unset); human provisioning |
+| REST + CORS | `petalpal-v2.onrender.com` | `petalpal-backend-test` origin only | guard: HTTPS exact origins, no production origins, own `RENDER_EXTERNAL_URL` must be listed; Worker CSP and build refuse the production API origin |
+| Socket.IO | same origin as REST | same test origin | `allowRequest` uses the CORS list; CSP `wss://` derived from the API origin |
+| AI | Cloudflare Workers AI + job dispatch | none | guard: `manual` mode, all three daily budgets `0`, Worker/job URLs and tokens must be unset |
+
+## Frontend pairing (implemented, not deployed)
+
+- `scripts/build-cloudflare-web.mjs --integration` exports Expo Web with
+  `EXPO_PUBLIC_API_BASE_URL=$CLOUDFLARE_API_ORIGIN` and the test Firebase Web App
+  settings; it refuses a missing/HTTP/production API origin and the production
+  Firebase project, auth domain or app ID. Default and `--synthetic` builds are unchanged.
+- `deploy/cloudflare/wrangler.integration.jsonc` is a separate Worker
+  (`petalpal-web-integration`) with `PETALPAL_ENVIRONMENT=integration`. Its CSP is
+  built from `API_ORIGIN` and `FIREBASE_AUTH_DOMAIN`, supplied at deploy time; it
+  answers 503 if they are missing or production. With no variables set,
+  `worker.js` keeps the exact production policy; `wrangler.jsonc` and
+  `wrangler.preview.jsonc` (protected synthetic preview) are untouched.
+- Manual workflow `cloudflare-web-build.yml` gained `integration_config`: environment
+  `petalpal-web-build-integration` (variable `CLOUDFLARE_API_ORIGIN`; the four public
+  `EXPO_PUBLIC_FIREBASE_*` secrets of the TEST Web App). It uploads an artifact only.
+- Human deploy (after approvals): from `deploy/cloudflare`,
+  `wrangler deploy -c wrangler.integration.jsonc --var API_ORIGIN:https://<test-backend> --var FIREBASE_AUTH_DOMAIN:<test-project>.firebaseapp.com`,
+  keep the URL disabled behind reviewer-only Cloudflare Access, and add that origin to
+  the backend's `CORS_ALLOWED_ORIGINS` and the test Firebase Authorized Domains.
 
 ## Validation after a human creates it
 

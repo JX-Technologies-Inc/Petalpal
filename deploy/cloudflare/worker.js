@@ -1,22 +1,17 @@
 import { isWebShellRequest } from '../../lib/web-shell.js';
+import { buildContentSecurityPolicy, resolveHostingConfig } from './hosting-config.js';
 
-// Static hosting only. All dynamic calls go directly to the existing backend.
-// Keep in sync with the explicit API origin in build-cloudflare-web.mjs.
-const apiOrigin = 'https://petalpal-v2.onrender.com';
-const contentSecurityPolicy = [
-  "default-src 'self'",
-  "script-src 'self' 'wasm-unsafe-eval' https://apis.google.com",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://lh3.googleusercontent.com",
-  "font-src 'self'",
-  `connect-src 'self' ${apiOrigin} wss://petalpal-v2.onrender.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com https://petalpal-b212c.firebaseapp.com`,
-  "frame-src https://petalpal-b212c.firebaseapp.com",
-  "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"
-].join('; ');
-
+// Static hosting only. All dynamic calls go directly to the configured backend
+// origin (see hosting-config.js; defaults are the existing production values).
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const hosting = resolveHostingConfig(env);
+    if (!hosting) {
+      return new Response('Hosting environment configuration required', { status: 503,
+        headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+    }
+    const contentSecurityPolicy = buildContentSecurityPolicy(hosting);
     let response;
     const shell = isWebShellRequest({ method: request.method, path: url.pathname });
     if (!['GET', 'HEAD'].includes(request.method)) {

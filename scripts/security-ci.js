@@ -21,6 +21,10 @@ export const additionalSecurityTests = [
   // Whole file (one top-level test and its subtests): cross-origin REST, Socket.IO
   // origin/token boundaries and native no-Origin compatibility.
   { file: 'test/back/cross-origin-web.test.js', pattern: '.', count: 1 },
+  // Isolated integration environment: Firebase/PostgreSQL/origin/AI guard and the
+  // environment-specific Cloudflare hosting configuration (no provider access).
+  { file: 'test/back/integration-environment.test.js', pattern: '.', count: 8 },
+  { file: 'test/cloudflare-integration.test.mjs', pattern: '.', count: 6 },
 ];
 
 export function assertCleanCheckout(exists = existsSync) {

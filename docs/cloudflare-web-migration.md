@@ -668,3 +668,7 @@ Configuration: `docs/render-backend-test-service.md` (prepared, not created).
   service → separate decision on production frontend/backend cutover. Production
   `PetalPal_v2`, DNS and existing Workers are not part of these steps.
 - Any newer migration notes that exist only on a local machine are not reflected here.
+
+### Integration-environment code (2026-10-10, after PR #11)
+
+PR #11 is merged (`3e5e4ef88c877f86c8e7e530512c3600b8b843cc`). Environment-specific Cloudflare hosting/build inputs and the backend integration guard are implemented for the backend-only test service; see `docs/render-backend-test-service.md` and `SECURITY.md`. Earlier sections remain historical. No resource was created or deployed.
