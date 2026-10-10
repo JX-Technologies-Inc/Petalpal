@@ -621,3 +621,4 @@ This supplements the historical not-created preparation records above.
 
 - [x] Owner created GitHub environment `petalpal-web-build-integration` (main only) with `CLOUDFLARE_API_ORIGIN` and the four TEST Web App `EXPO_PUBLIC_FIREBASE_*` values; integration artifact built (see SECURITY.md).
 - [ ] Deploy Worker `petalpal-web-integration` from that artifact behind reviewer-only Access; then add its origin to TEST `CORS_ALLOWED_ORIGINS` (one TEST redeploy) and TEST Firebase Authorized Domains.
+- [ ] Correct the four `petalpal-web-build-integration` secrets: each must hold the VALUE from the TEST Web App config (Firebase → Project settings → Your apps → SDK setup and configuration → Config), not the field name. Then the agent rebuilds once.
