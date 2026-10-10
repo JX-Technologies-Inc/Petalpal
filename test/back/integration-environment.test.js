@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { assertIntegrationEnvironment } from '../../lib/integration-environment.js';
+import { assertIntegrationEnvironment, assertIntegrationDatabase } from '../../lib/integration-environment.js';
 
 const valid = () => ({
   PETALPAL_ENVIRONMENT: 'integration', NODE_ENV: 'production',
@@ -73,4 +73,53 @@ test('integration guard errors never echo configured values', () => {
 
 test('misspelled environment flag fails closed', () => {
   assert.throws(() => assertIntegrationEnvironment({ PETALPAL_ENVIRONMENT: 'Integration' }), /exactly/);
+});
+
+test('Prisma Postgres direct URLs are accepted without a name token; pooled and Accelerate URLs are rejected', () => {
+  const direct = 'postgres://synthetic-id:synthetic-key@db.prisma.io:5432/postgres?sslmode=require';
+  assert.equal(assertIntegrationEnvironment({ ...valid(), DATABASE_URL: direct }), true);
+  assert.equal(assertIntegrationEnvironment({ ...valid(), DATABASE_URL: direct.replace('/postgres?', '/?') }), true);
+  rejects({ DATABASE_URL: direct.replace('db.prisma.io', 'pooled.db.prisma.io') }, /direct Prisma Postgres/);
+  rejects({ DATABASE_URL: 'prisma+postgres://accelerate.prisma-data.net/?api_key=synthetic' }, /Accelerate/);
+  rejects({ DATABASE_URL: direct.replace('?sslmode=require', '') }, /sslmode=require/);
+  rejects({ DATABASE_URL: direct.replace('/postgres?', '/other?') }, /unexpected Prisma Postgres database path/);
+});
+
+function fakeDatabase({ hasMarker = false, tables = 0, rows = [{ environment: 'integration' }], failCreate = false } = {}) {
+  const sql = [];
+  const query = async text => {
+    sql.push(text.replace(/\s+/g, ' ').trim());
+    if (text.includes('to_regclass')) return [{ hasMarker, tables }];
+    if (text.startsWith('SELECT environment')) return rows;
+    if (failCreate && text.startsWith('CREATE TABLE')) throw Object.assign(Error('synthetic'), { code: '42501' });
+    return [];
+  };
+  return { sql, query };
+}
+
+test('database marker: a new empty database is marked once inside a transaction', async () => {
+  const db = fakeDatabase();
+  assert.equal(await assertIntegrationDatabase(db.query), 'created');
+  assert.deepEqual(db.sql.slice(1).map(s => s.split(' ')[0]), ['BEGIN', 'CREATE', 'INSERT', 'COMMIT']);
+});
+
+test('database marker: an existing integration marker is verified with no writes', async () => {
+  const db = fakeDatabase({ hasMarker: true, tables: 30 });
+  assert.equal(await assertIntegrationDatabase(db.query), 'verified');
+  assert.ok(db.sql.every(s => s.startsWith('SELECT')));
+});
+
+test('database marker: a populated database without a marker (e.g. production) is rejected with no writes', async () => {
+  const db = fakeDatabase({ tables: 25 });
+  await assert.rejects(assertIntegrationDatabase(db.query), /existing tables but no integration marker/);
+  assert.equal(db.sql.length, 1); assert.ok(db.sql[0].startsWith('SELECT'));
+});
+
+test('database marker: wrong or duplicated marker content is rejected; failed creation rolls back', async () => {
+  for (const rows of [[], [{ environment: 'production' }], [{ environment: 'integration' }, { environment: 'integration' }]]) {
+    await assert.rejects(assertIntegrationDatabase(fakeDatabase({ hasMarker: true, rows }).query), /marker is not integration/);
+  }
+  const db = fakeDatabase({ failCreate: true });
+  await assert.rejects(assertIntegrationDatabase(db.query), /synthetic/);
+  assert.equal(db.sql.at(-1), 'ROLLBACK');
 });
