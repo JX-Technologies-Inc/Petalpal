@@ -87,6 +87,12 @@ an empty database alone is not provider-resource identity evidence.
   keep the URL disabled behind reviewer-only Cloudflare Access, and add that origin to
   the backend's `CORS_ALLOWED_ORIGINS` and the test Firebase Authorized Domains.
 
+## Validation after deployment
+
+After a successful TEST deploy, the agent can dispatch the manual GitHub workflow
+`TEST backend smoke (anonymous, read-only)` (`scripts/test-backend-smoke.mjs`); it
+covers the anonymous HTTP/CORS/Socket checks in step 2 below without credentials.
+
 ## Validation after a human creates it
 
 1. Deploy exactly the approved commit; confirm the build used `Dockerfile.backend`
