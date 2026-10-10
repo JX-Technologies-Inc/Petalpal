@@ -28,6 +28,7 @@ export const additionalSecurityTests = [
   { file: 'test/cloudflare-integration.test.mjs', pattern: '.', count: 8 },
   { file: 'test/cloudflare-integration-deploy.test.mjs', pattern: '.', count: 4 },
   { file: 'test/cloudflare-rollback.test.mjs', pattern: '.', count: 6 },
+  { file: 'test/cloudflare-production-deploy.test.mjs', pattern: '.', count: 5 },
 ];
 
 export function assertCleanCheckout(exists = existsSync) {

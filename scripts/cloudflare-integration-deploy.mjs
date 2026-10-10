@@ -17,10 +17,10 @@ const PRODUCTION_MARKERS = ['petalpal-v2.onrender.com', 'petalpal-b212c', '87984
 export function deploymentMessage(artifactId, digest) { return `integration-artifact ${artifactId} ${digest}`; }
 
 // 1. Artifact provenance: exact integration artifact from a successful main build.
-export function checkArtifactMetadata({ artifact, run }, { artifactId, digest, sourceSha }) {
+export function checkArtifactMetadata({ artifact, run }, { artifactId, digest, sourceSha }, kind = 'integration') {
   const errors = [];
   if (String(artifact?.id) !== String(artifactId)) errors.push('artifact id mismatch');
-  if (artifact?.name !== `expo-web-integration-${sourceSha}`) errors.push('artifact is not the integration export of the source commit');
+  if (artifact?.name !== `expo-web-${kind}-${sourceSha}`) errors.push(`artifact is not the ${kind} export of the source commit`);
   if (artifact?.digest !== digest) errors.push('artifact digest mismatch');
   if (artifact?.expired !== false) errors.push('artifact expired or unknown');
   if (artifact?.workflow_run?.id !== run?.id) errors.push('artifact run mismatch');
