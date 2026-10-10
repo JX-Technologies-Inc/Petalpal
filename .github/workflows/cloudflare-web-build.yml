@@ -6,6 +6,10 @@ on:
         description: Use human-provisioned public Firebase settings from the protected build environment
         type: boolean
         default: false
+      integration_config:
+        description: Isolated test backend + test Firebase Web App (environment petalpal-web-build-integration); never production values
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -19,8 +23,11 @@ jobs:
       DEV_DATABASE_URL: postgresql://fixture:fixture@127.0.0.1:1/petalpal_test
       PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/hosting-browsers
     # A human must configure required reviewers before production-config builds.
-    environment: ${{ inputs.production_config && 'petalpal-web-build-production' || 'petalpal-web-build-synthetic' }}
+    environment: ${{ inputs.integration_config && 'petalpal-web-build-integration' || inputs.production_config && 'petalpal-web-build-production' || 'petalpal-web-build-synthetic' }}
     steps:
+      - name: Reject ambiguous target
+        if: ${{ inputs.integration_config && inputs.production_config }}
+        run: echo "Choose either production_config or integration_config" && exit 1
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
@@ -31,8 +38,17 @@ jobs:
           cache-dependency-path: mobile/package-lock.json
       - run: npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
       - name: Synthetic export
-        if: ${{ !inputs.production_config }}
+        if: ${{ !inputs.production_config && !inputs.integration_config }}
         run: npm run build:cloudflare -- --synthetic
+      - name: Integration export (test API origin + test Firebase Web settings only)
+        if: ${{ inputs.integration_config }}
+        env:
+          CLOUDFLARE_API_ORIGIN: ${{ vars.CLOUDFLARE_API_ORIGIN }}
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          EXPO_PUBLIC_FIREBASE_APP_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_APP_ID }}
+        run: npm run build:cloudflare -- --integration
       - name: Production-config export (public Web SDK settings only)
         if: ${{ inputs.production_config }}
         env:
@@ -48,11 +64,11 @@ jobs:
           npm ci --prefix deploy/cloudflare --ignore-scripts --no-audit --no-fund
           deploy/cloudflare/node_modules/.bin/playwright install --with-deps chromium
       - name: Focused origin, authentication, Socket and static-hosting checks
-        run: npm run test:hosting -- ${{ inputs.production_config && '--production-artifact' || '' }}
+        run: npm run test:hosting -- ${{ (inputs.production_config || inputs.integration_config) && '--production-artifact' || '' }}
       - name: Retain export for separately approved manual upload
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: expo-web-${{ inputs.production_config && 'production' || 'synthetic' }}-${{ github.sha }}
+          name: expo-web-${{ inputs.integration_config && 'integration' || inputs.production_config && 'production' || 'synthetic' }}-${{ github.sha }}
           path: mobile/dist/
           if-no-files-found: error
           retention-days: 7

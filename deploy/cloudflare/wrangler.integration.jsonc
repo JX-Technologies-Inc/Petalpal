@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Isolated integration frontend. Uses the normal static Worker with an explicit
+  // test backend and test Firebase auth domain; separate name, so it can never
+  // replace petalpal-web-preview or the synthetic preview Worker.
+  "name": "petalpal-web-integration",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-09",
+  // No public hostname is activated by this file; exposure needs separate approval
+  // and must sit behind reviewer-only Cloudflare Access.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [],
+  // API_ORIGIN and FIREBASE_AUTH_DOMAIN are deliberately absent: a human supplies
+  // them at deploy time (`wrangler deploy --var API_ORIGIN:https://... --var
+  // FIREBASE_AUTH_DOMAIN:...`). Without them the Worker answers 503 (fail closed),
+  // and it refuses the production API origin and production Firebase domain.
+  "vars": { "PETALPAL_ENVIRONMENT": "integration" },
+  "assets": {
+    "directory": "../../mobile/dist",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "not_found_handling": "none",
+    "run_worker_first": true
+  },
+  "observability": { "enabled": false }
+}

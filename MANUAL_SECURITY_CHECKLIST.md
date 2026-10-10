@@ -585,3 +585,15 @@ Owner decision supersedes the in-place `Dockerfile.transition` items above for
 - [ ] Provision an isolated test PostgreSQL and isolated test Firebase project; create
   `petalpal-backend-test` per `docs/render-backend-test-service.md`. No production
   credentials, Worker tokens or database may be reused.
+
+### Isolated integration environment — consolidated human actions, 2026-10-10
+
+Nothing below has been performed. Details: `docs/render-backend-test-service.md`.
+Cost shown is what each item can add; confirm current plan pricing before approving.
+
+- [ ] **Firebase (test):** create a separate test project (Spark/free) with Email/Password auth, a Web App and a service-account key. Enter the key only in the Render dashboard; never in Git, chat or logs. Add the Cloudflare test origin to Authorized Domains once known.
+- [ ] **PostgreSQL (test):** create a separate database named with `integration` or `test`. Cost: a free tier if the provider offers one, otherwise a small paid instance (needs approval).
+- [ ] **Render (test):** one new Web Service from `Dockerfile.backend`, Auto-Deploy OFF, Docker command override and environment variables exactly as in the doc. Cost: free instance (sleeps, cold starts) or the smallest paid instance (approval needed). Reuse nothing from `PetalPal_v2`.
+- [ ] **Cloudflare (test):** one Worker `petalpal-web-integration` (free plan) behind reviewer-only Access with the URL disabled until verified, deployed with the two `--var` values. Set GitHub environment `petalpal-web-build-integration` (variable `CLOUDFLARE_API_ORIGIN`, four public `EXPO_PUBLIC_FIREBASE_*` secrets of the TEST Web App), then run the manual build workflow with `integration_config`.
+- [ ] **Approve** the exact commit/branch for the test service, then run the real-auth REST/Socket checks with a test identity.
+- [ ] Carried over, unchanged: confirm credential recovery (exposed Firebase key revoked) and the production `TRUST_PROXY` value.

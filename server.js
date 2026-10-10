@@ -106,12 +106,15 @@ import { logServerError } from "./lib/security-log.js";
 import { requestId, emitSecurityEvent, securityRouteClass } from "./lib/security-events.js";
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
+import { assertIntegrationEnvironment } from "./lib/integration-environment.js";
 import { httpSecurity, securityHeaders, privateResponse } from "./lib/http-security.js";
 import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./lib/history-metadata.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+// No-op unless PETALPAL_ENVIRONMENT=integration (isolated test service only).
+assertIntegrationEnvironment();
 const openapiDocument = YAML.parse(
   fs.readFileSync(path.join(__dirname, "docs", "openapi.yaml"), "utf8")
 );
