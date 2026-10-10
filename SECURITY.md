@@ -2042,3 +2042,10 @@ unresolved dependency-security gate to the readiness report; readiness remains N
   artifact/delivery and provider rollback availability. First-launch fallback code
   is now ready for review; its authorized upload/version/edge acceptance is still
   a deployment-stage gate. This is not full P0/P1 or supply-chain certification.
+
+## 2026-10-10 — First-launch fallback hardening (PR #27 continuation)
+
+- [x] Codex's published PR #27 fallback (`rollback-worker.js`, `wrangler.rollback.jsonc`, 3 tests) reused unchanged in design. Its local-only work beyond PR #27 was not available and is not claimed.
+- [x] Hardening: requests with `Upgrade`, `Authorization`, or a non-`navigate` `Sec-Fetch-Mode` are no longer redirected (404), so WebSocket upgrades, script fetches and bearer-carrying requests are never sent toward another origin; requests on the fallback host itself are refused (loop guard). Root-only target retained (no path/query forwarding).
+- [x] Tests 6/6 locally: navigation and deep links; API/Socket/static/missing/unknown 404; WebSocket/fetch/authenticated not redirected; writes 405; loop guard; fallback inactive in every normal profile, rejected by the integration deploy gate, and free of TEST/synthetic hosts. Registered in security CI.
+- [ ] Operational fallback (version upload/ID, provider activation) remains unverified and requires release approval.

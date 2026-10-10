@@ -683,3 +683,25 @@ PASS. Production remains NO: first retain Vite and stage the production Cloudfla
 frontend against the existing API; any later backend transition needs its own
 artifact/delivery acceptance. The new `wrangler.production.jsonc` is inactive;
 no production deploy is authorized. Never reuse the TEST deployment workflow.
+
+## First-launch fallback Worker version (2026-10-10, prepared, inactive)
+
+`deploy/cloudflare/rollback-worker.js` + `wrangler.rollback.jsonc` (Worker
+`petalpal-web-production`, no assets/vars/routes/workers.dev/previews). No other
+profile uses it, and the integration deploy gate rejects it.
+
+- Behavior: only GET/HEAD to web-shell routes (`lib/web-shell.js`) that are
+  top-level navigations (no `Sec-Fetch-Mode`, or `navigate`) get `302` to
+  `https://petalpal-v2.onrender.com/` with no path/query, `no-store` and
+  `no-referrer`. API, Socket.IO polling, WebSocket upgrades, script fetches,
+  static/missing assets, unknown paths and any request with `Authorization` get
+  404; writes 405. A request on the fallback host itself is refused (no loop).
+- Activation condition: only after a public production cutover, if the new
+  frontend fails launch acceptance and no known-good production Worker version
+  exists. Before cutover, keep the candidate unexposed instead.
+- Procedure (separately approved): before public activation, upload this version
+  with `wrangler versions upload -c wrangler.rollback.jsonc` and record its version
+  ID; then upload the application version and deploy it at 100%. Rollback =
+  `wrangler versions deploy <fallback-version-id>@100%`. Return = deploy the
+  application version again at 100%. Never route or redirect the Render API.
+- Users reopen the Vite site and may need to sign in again; no session transfer.
