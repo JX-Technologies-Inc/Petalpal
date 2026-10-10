@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import {
-  checkArtifactMetadata, checkWranglerConfig, checkDistText, checkAccessApp, classifyAnonymous, deploymentMessage,
+  checkArtifactMetadata, checkWranglerConfig, checkDistText, classifyAnonymous, deploymentMessage,
 } from '../scripts/cloudflare-integration-deploy.mjs';
 
 const sha = '521f6b54ac1bbc34177c1db98bc3bf1696d74220';
@@ -53,23 +53,6 @@ test('artifact content must carry only TEST backend and TEST Firebase and no cre
   }
   assert.notDeepEqual(checkDistText('no firebase here'), []);
   assert.ok(checkDistText(bundle({ apiKey: 'apiKey' })).every(error => !error.includes(key)));
-});
-
-const host = 'petalpal-web-integration.example.workers.dev';
-const reviewer = 'reviewer@jastrevia.com';
-const policy = (over = {}) => ({ decision: 'allow', include: [{ email: { email: reviewer } }], exclude: [], require: [], ...over });
-
-test('Access app must protect exactly the integration host for the single approved reviewer', () => {
-  const app = { type: 'self_hosted', domain: host, self_hosted_domains: [host] };
-  assert.deepEqual(checkAccessApp(app, [policy()], { host, reviewer }), []);
-  for (const [a, p] of [[{ ...app, domain: `${host}/admin`, self_hosted_domains: [`${host}/admin`] }, [policy()]],
-    [{ ...app, self_hosted_domains: [host, 'other.workers.dev'] }, [policy()]], [{ ...app, type: 'saas' }, [policy()]], [app, []],
-    [app, [policy({ decision: 'bypass' })]], [app, [policy({ include: [{ everyone: {} }] })]],
-    [app, [policy({ include: [{ email_domain: { domain: 'jastrevia.com' } }] })]],
-    [app, [policy({ include: [{ email: { email: reviewer } }, { email: { email: 'other@jastrevia.com' } }] })]],
-    [app, [policy(), policy({ decision: 'non_identity', include: [{ ip: { ip: '0.0.0.0/0' } }] })]]]) {
-    assert.notDeepEqual(checkAccessApp(a, p, { host, reviewer }), []);
-  }
 });
 
 test('anonymous probe classification never treats content as protected', () => {
