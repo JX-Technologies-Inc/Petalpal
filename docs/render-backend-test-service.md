@@ -24,12 +24,21 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 | Repository / branch | `JX-Technologies-Inc/Petalpal`, a dedicated test branch (e.g. `render/backend-test`) pointing at the approved merged commit — not `main` |
 | Auto-Deploy | OFF (manual deploys of an exact commit only) |
 | Dockerfile path / context | `./Dockerfile.backend` / `.` (context allowlist: `Dockerfile.backend.dockerignore`; image COPYs are explicit either way) |
-| Docker command (start override) | `sh -c "node lib/integration-environment.js && npm start"`. The guard runs **before** `prisma migrate deploy`, so a mis-set environment or non-integration database stops the deploy before any migration; `npm start` then migrates **only the isolated test DB**. `server.js` re-checks the same guard at startup |
+| Docker command (start override) | `/bin/sh /app/scripts/start-integration-backend.sh`. The included POSIX script uses `set -e`, runs the guard **before** `npm start`, and stops on guard failure. The unchanged `npm start` migrates **only the verified isolated test DB** before starting the backend. `server.js` re-checks the environment guard at startup |
 | Health check path | Leave blank (port check). The backend-only image has no unauthenticated 2xx route; adding one is out of scope |
 | Plan / region | Free/existing no-cost tier only; same region as the test DB |
 | Pre-deploy command, disks, custom domains, previews | None |
 
 ## Environment (names only; values are human-entered, never in Git/chat/logs)
+
+Startup correction: the earlier quoted `sh -c` override failed with exit 127.
+The subsequently proposed unquoted `-c` command was not deployed and is also
+superseded: standard shell argument parsing does not pass its complete command
+sequence to `-c`. Use the script path above, from a commit containing the script,
+Dockerfile COPY and context allowlist changes. Keep the default image CMD and
+the existing `npm start` migration sequence unchanged. Independently confirm
+the TEST database and Firebase Admin credential bindings before deployment;
+an empty database alone is not provider-resource identity evidence.
 
 | Variable | Test-service value / source |
 | --- | --- |
