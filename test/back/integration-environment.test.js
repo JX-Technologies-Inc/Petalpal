@@ -85,41 +85,65 @@ test('Prisma Postgres direct URLs are accepted without a name token; pooled and 
   rejects({ DATABASE_URL: direct.replace('/postgres?', '/other?') }, /unexpected Prisma Postgres database path/);
 });
 
-function fakeDatabase({ hasMarker = false, tables = 0, rows = [{ environment: 'integration' }], failCreate = false } = {}) {
+function fakeDatabase({ hasMarker = false, hasLegacy = false, hasSchema = false, tables = 0, rows = [{ environment: 'integration' }], failAt = null } = {}) {
   const sql = [];
   const query = async text => {
-    sql.push(text.replace(/\s+/g, ' ').trim());
-    if (text.includes('to_regclass')) return [{ hasMarker, tables }];
-    if (text.startsWith('SELECT environment')) return rows;
-    if (failCreate && text.startsWith('CREATE TABLE')) throw Object.assign(Error('synthetic'), { code: '42501' });
+    const statement = text.replace(/\s+/g, ' ').trim();
+    sql.push(statement);
+    if (statement.includes('to_regclass')) return [{ hasMarker, hasLegacy, hasSchema, tables }];
+    if (statement.startsWith('SELECT environment')) return rows;
+    if (failAt && statement.startsWith(failAt)) throw Object.assign(Error('synthetic'), { code: '42501' });
     return [];
   };
-  return { sql, query };
+  const writes = () => sql.filter(statement => !statement.startsWith('SELECT'));
+  return { sql, query, writes };
 }
 
-test('database marker: a new empty database is marked once inside a transaction', async () => {
+test('database marker: a new empty database gets the marker in its own schema, never in public', async () => {
   const db = fakeDatabase();
   assert.equal(await assertIntegrationDatabase(db.query), 'created');
-  assert.deepEqual(db.sql.slice(1).map(s => s.split(' ')[0]), ['BEGIN', 'CREATE', 'INSERT', 'COMMIT']);
+  assert.deepEqual(db.writes().map(s => s.split(' ').slice(0, 3).join(' ')),
+    ['BEGIN', 'CREATE SCHEMA petalpal_environment', 'CREATE TABLE petalpal_environment.marker', 'INSERT INTO petalpal_environment.marker', 'COMMIT']);
+  assert.ok(db.writes().every(s => !/\bpublic\./.test(s)));
 });
 
-test('database marker: an existing integration marker is verified with no writes', async () => {
-  const db = fakeDatabase({ hasMarker: true, tables: 30 });
+test('database marker: repeated startup after migrations verifies the marker with no writes', async () => {
+  const db = fakeDatabase({ hasMarker: true, hasSchema: true, tables: 30 });
   assert.equal(await assertIntegrationDatabase(db.query), 'verified');
-  assert.ok(db.sql.every(s => s.startsWith('SELECT')));
+  assert.deepEqual(db.writes(), []);
+  assert.ok(db.sql.some(s => s === 'SELECT environment FROM petalpal_environment.marker'));
+});
+
+test('database marker: the legacy public marker is verified and moved out of public once', async () => {
+  const db = fakeDatabase({ hasLegacy: true, tables: 1 });
+  assert.equal(await assertIntegrationDatabase(db.query), 'migrated');
+  assert.ok(db.sql.includes('SELECT environment FROM public._petalpal_environment'));
+  assert.deepEqual(db.writes(), ['BEGIN', 'CREATE SCHEMA petalpal_environment',
+    'ALTER TABLE public._petalpal_environment SET SCHEMA petalpal_environment',
+    'ALTER TABLE petalpal_environment._petalpal_environment RENAME TO marker', 'COMMIT']);
+  for (const rows of [[], [{ environment: 'production' }]]) {
+    const bad = fakeDatabase({ hasLegacy: true, tables: 1, rows });
+    await assert.rejects(assertIntegrationDatabase(bad.query), /marker is not integration/); assert.deepEqual(bad.writes(), []);
+  }
+  const crowded = fakeDatabase({ hasLegacy: true, tables: 2 });
+  await assert.rejects(assertIntegrationDatabase(crowded.query), /only public table/); assert.deepEqual(crowded.writes(), []);
 });
 
 test('database marker: a populated database without a marker (e.g. production) is rejected with no writes', async () => {
   const db = fakeDatabase({ tables: 25 });
   await assert.rejects(assertIntegrationDatabase(db.query), /existing tables but no integration marker/);
-  assert.equal(db.sql.length, 1); assert.ok(db.sql[0].startsWith('SELECT'));
+  assert.equal(db.sql.length, 1); assert.deepEqual(db.writes(), []);
 });
 
-test('database marker: wrong or duplicated marker content is rejected; failed creation rolls back', async () => {
+test('database marker: inconsistent marker state is rejected and failed writes roll back', async () => {
   for (const rows of [[], [{ environment: 'production' }], [{ environment: 'integration' }, { environment: 'integration' }]]) {
-    await assert.rejects(assertIntegrationDatabase(fakeDatabase({ hasMarker: true, rows }).query), /marker is not integration/);
+    await assert.rejects(assertIntegrationDatabase(fakeDatabase({ hasMarker: true, hasSchema: true, rows }).query), /marker is not integration/);
   }
-  const db = fakeDatabase({ failCreate: true });
-  await assert.rejects(assertIntegrationDatabase(db.query), /synthetic/);
-  assert.equal(db.sql.at(-1), 'ROLLBACK');
+  await assert.rejects(assertIntegrationDatabase(fakeDatabase({ hasMarker: true, hasSchema: true, hasLegacy: true }).query), /legacy marker present/);
+  await assert.rejects(assertIntegrationDatabase(fakeDatabase({ hasSchema: true }).query), /schema exists without a marker/);
+  for (const [state, failAt] of [[{}, 'INSERT'], [{ hasLegacy: true, tables: 1 }, 'ALTER TABLE petalpal_environment']]) {
+    const db = fakeDatabase({ ...state, failAt });
+    await assert.rejects(assertIntegrationDatabase(db.query), /synthetic/);
+    assert.equal(db.sql.at(-1), 'ROLLBACK');
+  }
 });
