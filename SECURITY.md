@@ -1945,3 +1945,41 @@ This record supplements the earlier preparation/resource attestations; historica
 
 - [x] Smoke script extended: anonymous preview-origin preflight/Socket.IO handshake/401 checks; the `/api-docs/` expectation corrected to 401 (deny-by-default gate), matching the earlier analysis.
 - [x] `integration-test-identity.yml` (manual, main only, single attempt, runs only when the dispatcher types `CREATE-ONE-TEST-IDENTITY`): `signup` creates (or reuses) one TEST Firebase password account and requests one verification email; `profile` refuses until the email is verified, then performs one TEST `/auth/session` to create the TEST profile. Fixed TEST project/backend; company-mailbox email and 16+ character password required; output is status codes and sanitized codes only. **Not run** — no write has occurred.
+
+## 2026-10-10 — Final production-readiness audit (preparation only)
+
+**READY FOR PRODUCTION: NO.** Audited remote protected main
+`2df65c24fdc41310d6cb515bc18a6ecf36383268`; detailed source/evidence, staged cutover,
+health/acceptance and rollback procedures: `docs/production-readiness-2026-10-10.md`.
+This checkpoint preserves history and supersedes only the named pending TEST statuses.
+
+- GitHub metadata confirms exact-main authenticated TEST E2E `38034475861` and
+  anonymous smoke `38033944589` PASS, PR #25 security/Expo `38033831358` PASS and
+  exact-main CodeQL PASS. Owner confirms protected Integration Garden and TEST
+  Firebase/Postgres/Render working. No accepted test repeated or provider request.
+- Source comparison: production baseline `1f8d0f98fb16b9553ae03c474f5952c808928e48`
+  has identical Prisma schema/config/all 25 migrations; no new migration required.
+  Reused recorded migration/postcheck evidence only, no DB access or live drift claim.
+  TEST Live `7813e440` backend/runtime inputs match main; accepted integration
+  artifact `521f6b54` mobile/hosting/build source matches main before this build fix.
+- Concrete blocker fixed: production frontend build previously accepted TEST or
+  placeholder Firebase settings. It now requires the existing production project,
+  auth domain and Web App, a well-formed public key, and refuses a conflicting API
+  origin. Errors contain variable names only. Two targeted local tests PASS,
+  including a real script/stub exporter and rejection before export. Key ownership
+  still needs human binding confirmation. Registered in required security CI.
+- Added inactive `wrangler.production.jsonc` for a distinct production web Worker;
+  no URLs/routes, credentials, resource creation or deployment. Worker runtime,
+  application/frontend code, backend, database and AI source remain unchanged.
+- Old backend supports the new Journal client's array fallback. Prefer frontend
+  acceptance against the existing API before any backend replacement. Root Dockerfile
+  builds Expo, not the old Vite site; backend-only image has no web shell. Current
+  service must be retained. Later transition delivery and old Vite artifact recovery
+  remain gates; no automatic switch to a second production backend or TEST reuse.
+- Historical remote backend build/synthetic smoke PASS retained (run `38006087561`);
+  BuildKit ~2.75 GiB excludes host daemon and does not prove production runtime
+  headroom. Full feature/AI acceptance, credential retirement, production bindings,
+  artifact/fallback retention and capacity remain open. No blanket P0/P1 closure.
+- MANUAL_SECURITY_CHECKLIST receives only the newly confirmed TEST provider/status
+  reconciliation. No new production/manual completion is asserted. Graphify is
+  unavailable locally; no generated graph changed. Colima/Docker untouched.

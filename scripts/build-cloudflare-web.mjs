@@ -8,6 +8,18 @@ const productionFirebaseProject = 'petalpal-b212c';
 const productionAuthDomain = 'petalpal-b212c.firebaseapp.com';
 const productionFirebaseAppId = '1:879846854472:web:02b860eacfaf5bb7616d7d'; // public default in mobile/src/services/firebase.ts
 if (synthetic && integration) throw new Error('Choose one build target: --synthetic or --integration');
+// A production export must retain the existing users' Firebase project/Web App.
+// Shape checks cannot prove the public key's provider binding; that remains a
+// human-only check. Never silently package TEST settings as a production artifact.
+if (!synthetic && !integration) {
+  for (const [name, valid] of [
+    ['EXPO_PUBLIC_FIREBASE_API_KEY', /^AIza[0-9A-Za-z_-]{35}$/.test(String(process.env.EXPO_PUBLIC_FIREBASE_API_KEY || ''))],
+    ['EXPO_PUBLIC_FIREBASE_PROJECT_ID', process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID === productionFirebaseProject],
+    ['EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN', process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN === productionAuthDomain],
+    ['EXPO_PUBLIC_FIREBASE_APP_ID', process.env.EXPO_PUBLIC_FIREBASE_APP_ID === productionFirebaseAppId],
+    ['CLOUDFLARE_API_ORIGIN', !process.env.CLOUDFLARE_API_ORIGIN || process.env.CLOUDFLARE_API_ORIGIN === productionApiOrigin],
+  ]) if (!valid) throw new Error(`Production build requires the approved production ${name}`);
+}
 // Integration build: explicit test backend + test Firebase Web App, never production.
 const apiOrigin = integration ? (process.env.CLOUDFLARE_API_ORIGIN || '') : productionApiOrigin;
 if (integration) {

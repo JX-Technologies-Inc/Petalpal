@@ -25,7 +25,7 @@ export const additionalSecurityTests = [
   // environment-specific Cloudflare hosting configuration (no provider access).
   { file: 'test/back/integration-environment.test.js', pattern: '.', count: 14 },
   { file: 'test/back/integration-startup.test.js', pattern: '.', count: 5 },
-  { file: 'test/cloudflare-integration.test.mjs', pattern: '.', count: 6 },
+  { file: 'test/cloudflare-integration.test.mjs', pattern: '.', count: 8 },
   { file: 'test/cloudflare-integration-deploy.test.mjs', pattern: '.', count: 4 },
 ];
 
