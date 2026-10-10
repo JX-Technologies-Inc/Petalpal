@@ -7,17 +7,21 @@ if (target !== TEST_ORIGIN) throw new Error('Smoke checks are restricted to the 
 
 const DISALLOWED = 'https://smoke-disallowed.example';
 const results = [];
-const check = (name, ok, detail) => { results.push({ name, ok }); console.log(`${ok ? 'PASS' : 'FAIL'} ${name} (${detail})`); };
-const get = (path, init = {}) => fetch(TEST_ORIGIN + path, { redirect: 'manual', ...init, signal: AbortSignal.timeout(30000) });
+// GitHub annotations make sanitized PASS/FAIL lines readable via the check-run API.
+const annotate = process.env.GITHUB_ACTIONS === 'true';
+const report = (ok, line) => console.log(annotate ? `::${ok ? 'notice' : 'error'} title=TEST smoke::${line}` : line);
+const check = (name, ok, detail) => { results.push({ name, ok }); report(ok, `${ok ? 'PASS' : 'FAIL'} ${name} (${detail})`); };
+const get = (path, init = {}) => fetch(TEST_ORIGIN + path, { redirect: 'manual', ...init, signal: AbortSignal.timeout(20000) });
 
-// Free instances cold-start: wait up to ~3 minutes for the service to answer.
+// Free instances cold-start: bounded wait (12 x <=30 s, within the job timeout).
 let ready;
-for (let attempt = 0; attempt < 18 && !ready; attempt++) {
-  try { const r = await get('/session'); if (r.status !== 502 && r.status !== 503) ready = r; else await r.arrayBuffer(); }
-  catch { /* not yet reachable */ }
+let lastStatus = 'no response';
+for (let attempt = 0; attempt < 12 && !ready; attempt++) {
+  try { const r = await get('/session'); lastStatus = `status ${r.status}`; if (r.status !== 502 && r.status !== 503) ready = r; else await r.arrayBuffer(); }
+  catch (error) { lastStatus = error?.name || 'network error'; }
   if (!ready) await new Promise(resolve => setTimeout(resolve, 10000));
 }
-if (!ready) { console.log('FAIL service reachable (no non-5xx response within timeout)'); process.exit(1); }
+if (!ready) { report(false, `FAIL service reachable (no non-5xx response; last ${lastStatus})`); process.exit(1); }
 
 const anonymous = ready;
 check('anonymous /session is rejected and uncached', anonymous.status === 401 && anonymous.headers.get('cache-control') === 'no-store',
@@ -59,5 +63,5 @@ check('disallowed Origin Socket.IO handshake is refused', badSocket.status === 4
 await badSocket.arrayBuffer();
 
 const failed = results.filter(result => !result.ok).length;
-console.log(`${results.length - failed}/${results.length} TEST backend smoke checks passed`);
+report(!failed, `${results.length - failed}/${results.length} TEST backend smoke checks passed`);
 process.exit(failed ? 1 : 0);
