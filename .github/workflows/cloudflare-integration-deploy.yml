@@ -1,0 +1,112 @@
+name: Deploy verified integration artifact (petalpal-web-integration only)
+
+# Manual only. Deploys an EXISTING verified integration artifact (never rebuilds)
+# to the separate integration Worker. phase=deploy uploads it with workers.dev,
+# preview URLs, routes and custom domains disabled. phase=activate creates or
+# verifies a reviewer-only Access app for the Worker's workers.dev host, then
+# enables that host and proves anonymous requests are blocked (else disables it).
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: deploy (private upload) or activate (Access + protected workers.dev)
+        type: choice
+        options: [deploy, activate]
+        default: deploy
+      artifact_id:
+        description: Verified integration artifact ID
+        required: true
+      artifact_digest:
+        description: Expected GitHub artifact digest (sha256:...)
+        required: true
+      source_sha:
+        description: Commit the artifact was built from
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: petalpal-web-integration-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    # Holds the only Cloudflare token. Owner configures required reviewer + main-only.
+    environment: petalpal-web-integration-deploy
+    env:
+      ARTIFACT_ID: ${{ inputs.artifact_id }}
+      ARTIFACT_DIGEST: ${{ inputs.artifact_digest }}
+      SOURCE_SHA: ${{ inputs.source_sha }}
+    steps:
+      - name: Checkout deployment tooling (main)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Validate inputs
+        shell: bash
+        run: |
+          [[ $ARTIFACT_ID =~ ^[0-9]+$ && $ARTIFACT_DIGEST =~ ^sha256:[0-9a-f]{64}$ && $SOURCE_SHA =~ ^[0-9a-f]{40}$ ]] || { echo "::error::invalid inputs"; exit 1; }
+          # Worker code must be byte-identical to the code the artifact was validated with.
+          git diff --quiet "$SOURCE_SHA" HEAD -- deploy/cloudflare/worker.js deploy/cloudflare/hosting-config.js \
+            deploy/cloudflare/wrangler.integration.jsonc deploy/cloudflare/package.json deploy/cloudflare/package-lock.json lib/web-shell.js \
+            || { echo "::error::Worker source differs from the artifact source commit"; exit 1; }
+      - name: Artifact provenance (exact integration artifact from a successful main build)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_METADATA: ${{ runner.temp }}/artifact.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID")
+          run_id=$(jq -r .workflow_run.id <<<"$artifact")
+          run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id" --jq '{id, path, head_branch, head_sha, event, conclusion}')
+          jq -n --argjson artifact "$artifact" --argjson run "$run" '{artifact: $artifact, run: $run}' > "$ARTIFACT_METADATA"
+          node scripts/cloudflare-integration-deploy.mjs check-artifact
+      - name: Download and verify digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/artifact.zip"
+          [[ "sha256:$(sha256sum "$RUNNER_TEMP/artifact.zip" | cut -d' ' -f1)" == "$ARTIFACT_DIGEST" ]] || { echo "::error::digest mismatch"; exit 1; }
+          rm -rf mobile/dist && mkdir -p mobile/dist && unzip -q "$RUNNER_TEMP/artifact.zip" -d mobile/dist
+      - name: Config and content checks (exact Worker, nothing public, TEST-only)
+        run: node scripts/cloudflare-integration-deploy.mjs check-content
+      - name: Pinned Wrangler only
+        run: npm ci --prefix deploy/cloudflare --ignore-scripts --no-audit --no-fund
+      - name: Skip if this exact artifact is already deployed
+        id: current
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_INTEGRATION_DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/cloudflare-integration-deploy.mjs already-deployed
+      - name: Private deploy (workers.dev, previews, routes and domains disabled)
+        if: inputs.phase == 'deploy' && steps.current.outputs.same != 'true'
+        working-directory: deploy/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_INTEGRATION_DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_SEND_METRICS: 'false'
+        run: >-
+          node_modules/.bin/wrangler deploy -c wrangler.integration.jsonc
+          --var API_ORIGIN:https://petalpal-backend-test.onrender.com
+          --var FIREBASE_AUTH_DOMAIN:petalpal-integration-test.firebaseapp.com
+          --message "integration-artifact ${ARTIFACT_ID} ${ARTIFACT_DIGEST}"
+      - name: Reviewer-only Access, then protected workers.dev activation
+        if: inputs.phase == 'activate'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_INTEGRATION_DEPLOY_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          ACCESS_REVIEWER_EMAIL: ${{ vars.ACCESS_REVIEWER_EMAIL }}
+        run: node scripts/cloudflare-integration-deploy.mjs activate
