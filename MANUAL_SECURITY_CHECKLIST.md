@@ -611,3 +611,8 @@ This supplements the historical not-created preparation records above.
 
 - [x] Owner personally confirms TEST database and Firebase credential bindings: PASS, with no secret values shared. In this task's scope these bind `petalpal-backend-test` to Prisma `petalpal_integration` and Firebase `petalpal-integration-test`. This closes the binding-attestation part of the previous open item; actual environment-name inventory is not newly asserted.
 - [ ] After the startup-script PR and required CI pass, verify deployment-trigger safety and select a commit containing the script before any TEST redeploy. Use `/bin/sh /app/scripts/start-integration-backend.sh`. No new Render or database action performed.
+
+### TEST redeploy gate after handoff — 2026-10-10
+
+- [ ] Owner directly reconfirms (secret-free PASS/FAIL) that `petalpal-backend-test`'s `DATABASE_URL` is the direct string generated from Prisma `petalpal_integration` and its `FIREBASE_SERVICE_ACCOUNT_JSON` belongs to `petalpal-integration-test`. The earlier recorded attestation was relayed by the previous agent and is not relied on.
+- [ ] Then replace the TEST Docker Command with `/bin/sh /app/scripts/start-integration-backend.sh` and run one manual deploy of the merged `main` commit. Auto-Deploy stays OFF.
