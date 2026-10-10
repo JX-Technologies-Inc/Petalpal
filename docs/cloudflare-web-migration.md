@@ -705,3 +705,39 @@ profile uses it, and the integration deploy gate rejects it.
   `wrangler versions deploy <fallback-version-id>@100%`. Return = deploy the
   application version again at 100%. Never route or redirect the Render API.
 - Users reopen the Vite site and may need to sign in again; no session transfer.
+
+## Production frontend-first release procedure (2026-10-10, prepared, not executed)
+
+Backend: existing `PetalPal_v2` at `1f8d0f98` (same 57 routes and request contracts
+as main; new client accepts the legacy Journal array). No backend deploy, migration,
+parallel backend or Vite change. Each step needs the final human GO.
+
+1. **Build:** run `cloudflare-web-build.yml` with `production_config=true` on main.
+   The build accepts only project `petalpal-b212c`, its auth domain, Web App
+   `1:879846854472:web:02b860eacfaf5bb7616d7d`, a well-formed key and the fixed API
+   `https://petalpal-v2.onrender.com`. Record artifact ID + digest (7-day retention).
+2. **Fallback version:** `cloudflare-production-deploy.yml` phase `upload-fallback`
+   (`source_sha` = release commit). Record the reported version ID.
+3. **Application version:** phase `upload-app` (artifact ID/digest). Gates: artifact
+   is `expo-web-production-<sha>` from a successful main build, zip digest matches,
+   Worker sources equal the release commit, profile private, content has only the
+   production API/Firebase and no TEST/synthetic identifiers or server secrets.
+   Then phase `activate-app` with that version ID (still private: no routes,
+   workers.dev or previews; Worker-level Access stays on).
+4. **CORS:** add exactly `https://app.jastrevia.com` to `PetalPal_v2`
+   `CORS_ALLOWED_ORIGINS`, keeping every existing origin; the save redeploys the
+   same Live commit `1f8d0f98` (confirm in the deploy record). Firebase Authorized
+   Domains: not needed for email/password sign-in.
+5. **Private acceptance:** attach `app.jastrevia.com` as the Worker's custom domain
+   while Worker-level Access (approved reviewer only) is on. With an approved
+   production test identity: sign-in, Garden loads, own Journal history complete,
+   another owner denied, Socket polling→WebSocket and reconnect, one consented AI
+   action completes via the existing Queue, logout clears the session.
+6. **Public:** remove Access from the Worker. Old Vite site stays unchanged.
+- **Rollback:** phase `rollback` with the fallback version ID → page visits 302 to
+  the Vite root, API/Socket untouched. Return: `activate-app` with the app version.
+  CORS rollback: remove the added origin. Backend rollback target (if ever needed):
+  Render deploy `dep-db468kbbc2fs73ap2t70`.
+- **GO:** steps 1–5 PASS, fallback version ID recorded, credential gate closed.
+  **NO-GO/rollback:** wrong project/API, any auth or owner-isolation failure,
+  missing history, broken Garden/Socket/AI, repeated 5xx, or fallback unverified.

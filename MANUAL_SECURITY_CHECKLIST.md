@@ -650,3 +650,10 @@ Supersedes prior TEST-not-run / TEST-not-live items only; all historical records
 - [x] Owner confirms existing production still serves Vite. No production/provider
   change performed in this audit. Credential-retirement and production configuration
   gates remain unresolved; integration completion does not close them.
+
+### Production frontend release — consolidated owner approval (2026-10-10)
+
+- [ ] Confirm historical `DATABASE_URL` revocation at Prisma (PASS/FAIL only).
+- [ ] Create GitHub environment `petalpal-web-build-production` (main only, required reviewer) with the four production `EXPO_PUBLIC_FIREBASE_*` values; project/auth domain/app ID are the public values above, only the Web API key must be entered.
+- [ ] Create Worker `petalpal-web-production` (Hello World, workers.dev and Preview URLs off, Worker-level Access with the approved reviewer only); token **Individual Workers → petalpal-web-production → Editor**, ≤30 days; GitHub environment `petalpal-web-production-deploy` (main only, required reviewer) with secret `CLOUDFLARE_PRODUCTION_DEPLOY_TOKEN` and variable `CLOUDFLARE_ACCOUNT_ID`.
+- [ ] Approve: the agent runs build → `upload-fallback` → `upload-app` → `activate-app` (private); owner adds `https://app.jastrevia.com` to `PetalPal_v2` CORS and attaches the custom domain under Access; one production test identity for acceptance; final public GO.

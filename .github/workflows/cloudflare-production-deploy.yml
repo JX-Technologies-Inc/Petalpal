@@ -1,0 +1,129 @@
+name: Production web Worker release (petalpal-web-production only)
+
+# Manual only, main only, first attempt only, owner-approved environment.
+# Never builds and never creates public routes, custom domains, workers.dev or
+# preview URLs. Public exposure (custom domain/DNS, Access removal) is a separate
+# human step. Phases:
+#   upload-fallback  upload the first-launch fallback version (not deployed)
+#   upload-app       verify the exact production artifact, upload it (not deployed)
+#   activate-app     deploy the verified application version at 100%
+#   rollback         deploy the verified fallback version at 100%
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        options: [upload-fallback, upload-app, activate-app, rollback]
+        required: true
+      source_sha:
+        description: Release commit (artifact source / fallback source)
+        required: true
+      artifact_id:
+        description: Production artifact ID (upload-app, activate-app)
+        default: ''
+      artifact_digest:
+        description: Expected artifact digest sha256:... (upload-app, activate-app)
+        default: ''
+      version_id:
+        description: Worker version ID to deploy (activate-app, rollback)
+        default: ''
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: petalpal-web-production-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    # Owner configures: required reviewer, main only, per-Worker Editor token.
+    environment: petalpal-web-production-deploy
+    env:
+      PHASE: ${{ inputs.phase }}
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      ARTIFACT_ID: ${{ inputs.artifact_id }}
+      ARTIFACT_DIGEST: ${{ inputs.artifact_digest }}
+      VERSION_ID: ${{ inputs.version_id }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_PRODUCTION_DEPLOY_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - name: Checkout release tooling (main)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Validate inputs and Worker source
+        shell: bash
+        run: |
+          [[ $SOURCE_SHA =~ ^[0-9a-f]{40}$ ]] || { echo "::error::invalid source_sha"; exit 1; }
+          if [[ $PHASE == upload-app || $PHASE == activate-app ]]; then
+            [[ $ARTIFACT_ID =~ ^[0-9]+$ && $ARTIFACT_DIGEST =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "::error::artifact inputs required"; exit 1; }
+          fi
+          if [[ $PHASE == activate-app || $PHASE == rollback ]]; then
+            [[ $VERSION_ID =~ ^[0-9a-f-]{36}$ ]] || { echo "::error::version_id required"; exit 1; }
+          fi
+          # Uploaded Worker code must be byte-identical to the release commit.
+          git diff --quiet "$SOURCE_SHA" HEAD -- deploy/cloudflare/worker.js deploy/cloudflare/hosting-config.js \
+            deploy/cloudflare/rollback-worker.js deploy/cloudflare/wrangler.production.jsonc deploy/cloudflare/wrangler.rollback.jsonc \
+            deploy/cloudflare/package.json deploy/cloudflare/package-lock.json lib/web-shell.js \
+            || { echo "::error::Worker source differs from the release commit"; exit 1; }
+      - name: Pinned Wrangler only
+        run: npm ci --prefix deploy/cloudflare --ignore-scripts --no-audit --no-fund
+
+      - name: Upload first-launch fallback version (not deployed)
+        if: inputs.phase == 'upload-fallback'
+        working-directory: deploy/cloudflare
+        shell: bash
+        run: |
+          set -euo pipefail
+          node ../../scripts/cloudflare-production-deploy.mjs check-fallback
+          export MESSAGE="first-launch-fallback ${SOURCE_SHA}" WRANGLER_OUTPUT="$RUNNER_TEMP/wrangler.txt"
+          node_modules/.bin/wrangler versions upload -c wrangler.rollback.jsonc --message "$MESSAGE" > "$WRANGLER_OUTPUT" 2>&1 || { tail -5 "$WRANGLER_OUTPUT" | sed -E 's/[A-Za-z0-9_-]{32,}/<redacted>/g'; exit 1; }
+          node ../../scripts/cloudflare-production-deploy.mjs record-version
+
+      - name: Artifact provenance (exact production artifact from a successful main build)
+        if: inputs.phase == 'upload-app'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_METADATA: ${{ runner.temp }}/artifact.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID")
+          run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$(jq -r .workflow_run.id <<<"$artifact")" --jq '{id, path, head_branch, head_sha, event, conclusion}')
+          jq -n --argjson artifact "$artifact" --argjson run "$run" '{artifact: $artifact, run: $run}' > "$ARTIFACT_METADATA"
+          node scripts/cloudflare-production-deploy.mjs check-artifact
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/artifact.zip"
+          [[ "sha256:$(sha256sum "$RUNNER_TEMP/artifact.zip" | cut -d' ' -f1)" == "$ARTIFACT_DIGEST" ]] || { echo "::error::digest mismatch"; exit 1; }
+          rm -rf mobile/dist && mkdir -p mobile/dist && unzip -q "$RUNNER_TEMP/artifact.zip" -d mobile/dist
+          node scripts/cloudflare-production-deploy.mjs check-content
+      - name: Upload production application version (not deployed)
+        if: inputs.phase == 'upload-app'
+        working-directory: deploy/cloudflare
+        shell: bash
+        run: |
+          set -euo pipefail
+          export MESSAGE="production-artifact ${ARTIFACT_ID} ${ARTIFACT_DIGEST}" WRANGLER_OUTPUT="$RUNNER_TEMP/wrangler.txt"
+          node_modules/.bin/wrangler versions upload -c wrangler.production.jsonc --message "$MESSAGE" > "$WRANGLER_OUTPUT" 2>&1 || { tail -5 "$WRANGLER_OUTPUT" | sed -E 's/[A-Za-z0-9_-]{32,}/<redacted>/g'; exit 1; }
+          node ../../scripts/cloudflare-production-deploy.mjs record-version
+
+      - name: Deploy a verified version at 100% (activate-app or rollback)
+        if: inputs.phase == 'activate-app' || inputs.phase == 'rollback'
+        working-directory: deploy/cloudflare
+        shell: bash
+        run: |
+          set -euo pipefail
+          node ../../scripts/cloudflare-production-deploy.mjs check-version
+          node_modules/.bin/wrangler versions deploy "${VERSION_ID}@100%" --name petalpal-web-production --yes \
+            --message "${PHASE} ${VERSION_ID}" > "$RUNNER_TEMP/wrangler.txt" 2>&1 || { tail -5 "$RUNNER_TEMP/wrangler.txt" | sed -E 's/[A-Za-z0-9_-]{32,}/<redacted>/g'; exit 1; }
+          echo "::notice title=${PHASE}::petalpal-web-production now serves ${VERSION_ID} at 100%"
