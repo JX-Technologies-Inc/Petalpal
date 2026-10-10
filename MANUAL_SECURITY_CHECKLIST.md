@@ -616,3 +616,8 @@ This supplements the historical not-created preparation records above.
 
 - [ ] Owner directly reconfirms (secret-free PASS/FAIL) that `petalpal-backend-test`'s `DATABASE_URL` is the direct string generated from Prisma `petalpal_integration` and its `FIREBASE_SERVICE_ACCOUNT_JSON` belongs to `petalpal-integration-test`. The earlier recorded attestation was relayed by the previous agent and is not relied on.
 - [ ] Then replace the TEST Docker Command with `/bin/sh /app/scripts/start-integration-backend.sh` and run one manual deploy of the merged `main` commit. Auto-Deploy stays OFF.
+
+### Cloudflare integration preview — 2026-10-10
+
+- [x] Owner created GitHub environment `petalpal-web-build-integration` (main only) with `CLOUDFLARE_API_ORIGIN` and the four TEST Web App `EXPO_PUBLIC_FIREBASE_*` values; integration artifact built (see SECURITY.md).
+- [ ] Deploy Worker `petalpal-web-integration` from that artifact behind reviewer-only Access; then add its origin to TEST `CORS_ALLOWED_ORIGINS` (one TEST redeploy) and TEST Firebase Authorized Domains.
