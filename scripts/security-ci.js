@@ -23,7 +23,7 @@ export const additionalSecurityTests = [
   { file: 'test/back/cross-origin-web.test.js', pattern: '.', count: 1 },
   // Isolated integration environment: Firebase/PostgreSQL/origin/AI guard and the
   // environment-specific Cloudflare hosting configuration (no provider access).
-  { file: 'test/back/integration-environment.test.js', pattern: '.', count: 8 },
+  { file: 'test/back/integration-environment.test.js', pattern: '.', count: 13 },
   { file: 'test/cloudflare-integration.test.mjs', pattern: '.', count: 6 },
 ];
 

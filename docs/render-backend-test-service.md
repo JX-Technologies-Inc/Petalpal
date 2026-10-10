@@ -24,7 +24,7 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 | Repository / branch | `JX-Technologies-Inc/Petalpal`, a dedicated test branch (e.g. `render/backend-test`) pointing at the approved merged commit — not `main` |
 | Auto-Deploy | OFF (manual deploys of an exact commit only) |
 | Dockerfile path / context | `./Dockerfile.backend` / `.` (context allowlist: `Dockerfile.backend.dockerignore`; image COPYs are explicit either way) |
-| Docker command (start override) | `sh -c "node lib/integration-environment.js && npm start"`. The guard runs **before** `prisma migrate deploy`, so a mis-set environment stops the deploy before any database is touched; `npm start` then migrates **only the isolated test DB**. `server.js` re-checks the same guard at startup |
+| Docker command (start override) | `sh -c "node lib/integration-environment.js && npm start"`. The guard runs **before** `prisma migrate deploy`, so a mis-set environment or non-integration database stops the deploy before any migration; `npm start` then migrates **only the isolated test DB**. `server.js` re-checks the same guard at startup |
 | Health check path | Leave blank (port check). The backend-only image has no unauthenticated 2xx route; adding one is out of scope |
 | Plan / region | Free/existing no-cost tier only; same region as the test DB |
 | Pre-deploy command, disks, custom domains, previews | None |
@@ -35,7 +35,7 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 | --- | --- |
 | `PETALPAL_ENVIRONMENT` | `integration` (enables the fail-closed isolation guard in `lib/integration-environment.js`; any other value also fails) |
 | `NODE_ENV` | `production` (non-production refuses any non-local database) |
-| `DATABASE_URL` | Isolated test PostgreSQL. Guard requires the database name to contain an `integration` or `test` token (e.g. `petalpal_integration`); the human must also ensure it shares no host credentials with production |
+| `DATABASE_URL` | **Direct** Prisma Postgres string of the integration database (`postgres://…@db.prisma.io:5432/postgres?sslmode=require`; the console name such as `petalpal_integration` does not appear in it). Pooled and `prisma+postgres://` Accelerate strings are rejected. Other PostgreSQL hosts still need an `integration`/`test` database name |
 | `FIREBASE_PROJECT_ID` | Isolated test Firebase project ID. **Required**: unset defaults to the production project |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Admin key of that isolated test project only |
 | `CORS_ALLOWED_ORIGINS` | Exact test frontend origin(s) plus this service's own `https://<name>.onrender.com` (React Native WebSocket handshakes send the target origin). No production origins needed |
@@ -53,7 +53,7 @@ project, secret, DNS or Cloudflare resource has been created or changed.
 | Surface | Production | Integration (this plan) | Enforced by |
 | --- | --- | --- | --- |
 | Firebase | `petalpal-b212c` | separate test project, own Admin key and Web App | guard: explicit project ≠ production, service-account `project_id` must match, ambient credential variables unset; build: refuses production project/auth domain/app ID |
-| PostgreSQL | production Prisma Postgres | separate test DB named `…integration…`/`…test…` | guard (name token, `DEV_DATABASE_URL` unset); human provisioning |
+| PostgreSQL | production Prisma Postgres | separate Prisma Postgres database (us-west-1) | before migrations, the guard connects and requires an `_petalpal_environment` marker row `integration`; a database with no tables gets the marker on first start; a populated database without it (e.g. production) is rejected after read-only catalog queries, with no write |
 | REST + CORS | `petalpal-v2.onrender.com` | `petalpal-backend-test` origin only | guard: HTTPS exact origins, no production origins, own `RENDER_EXTERNAL_URL` must be listed; Worker CSP and build refuse the production API origin |
 | Socket.IO | same origin as REST | same test origin | `allowRequest` uses the CORS list; CSP `wss://` derived from the API origin |
 | AI | Cloudflare Workers AI + job dispatch | none | guard: `manual` mode, all three daily budgets `0`, Worker/job URLs and tokens must be unset |

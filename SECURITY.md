@@ -1870,3 +1870,10 @@ Historical records above are preserved; this section adds evidence and new contr
 - [ ] **Not done, requires separate approval:** test database, test Firebase project and Render/Cloudflare resources do not exist; no real-auth, provider-edge REST/Socket or native test has run. Production is unchanged.
 
 No provider, database, Firebase, DNS or secret change; no Colima/Docker use.
+
+## 2026-10-10 — Integration guard: Prisma Postgres URL support with database marker
+
+- [x] **Finding:** Prisma Postgres direct strings use `db.prisma.io:5432/postgres` (or an empty path); the console database name never appears, and production also uses Prisma Postgres on the same host. The previous name-token rule would have rejected the real integration URL and cannot distinguish integration from production for this provider.
+- [x] **Fix (smallest safe):** for `db.prisma.io` only, the URL rule now requires path `postgres`/empty and `sslmode=require`; pooled and `prisma+postgres://` Accelerate strings are rejected (this service migrates with `DATABASE_URL`). Identity is proven in-database before `prisma migrate deploy`: the guard CLI requires a one-row `_petalpal_environment` marker = `integration`, creates it transactionally only in a database with no public tables, and rejects any populated database without it (for example production) after read-only catalog queries, with no write. Non-Prisma hosts keep the name-token rule. CLI output shows guard reasons or a driver error code only, never URLs/hosts/values. Production startup is unchanged (guard inactive without `PETALPAL_ENVIRONMENT=integration`).
+- [x] **Tests:** 13/13 guard tests locally (Node, injected query function; no database connection), included in PR security CI.
+- [x] Human-reported: Firebase test project `petalpal-integration-test` and Prisma Postgres `petalpal_integration` (us-west-1) created. No credential was shared or inspected; nothing deployed or migrated.
