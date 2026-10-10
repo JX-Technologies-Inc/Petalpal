@@ -18,6 +18,9 @@ export const additionalSecurityTests = [
   { file: 'test/back/security-p0-socket.test.js', pattern: '^Socket\\.IO handshake rejects missing, invalid and expired verifier results at runtime$', count: 1 },
   { file: 'test/back/realtime-security.test.js', pattern: '^(authorized joins/movement use token actor and do not leak to outsider/user rooms|paused authorized movement cannot publish after privacy revocation)$', count: 2 },
   { file: 'test/back/private-journals.test.js', pattern: '^private Journal routes isolate persistence and preserve historical shelf entries$', count: 1 },
+  // Whole file (one top-level test and its subtests): cross-origin REST, Socket.IO
+  // origin/token boundaries and native no-Origin compatibility.
+  { file: 'test/back/cross-origin-web.test.js', pattern: '.', count: 1 },
 ];
 
 export function assertCleanCheckout(exists = existsSync) {

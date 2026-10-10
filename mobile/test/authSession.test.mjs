@@ -5,11 +5,24 @@ import { hookHarness } from './hookHarness.mjs';
 const response = (data, status = 200) => ({ ok: status < 400, status, json: async () => data });
 const deferred = () => { let resolve, reject; const promise = new Promise((done, fail) => { resolve = done; reject = fail; }); return { promise, resolve, reject }; };
 const plain = (value) => JSON.parse(JSON.stringify(value));
+test('cross-origin AuthProvider hydrates and clears the same Firebase-backed session', async () => {
+  const origin = 'https://petalpal-v2.onrender.com';
+  const fixture = setup(user(), origin);
+  const state = await fixture.ready();
+  assert.equal(state.phase, 'signedIn');
+  assert.ok(fixture.requests.some(r => r.path === `${origin}/auth/session`));
+  assert.ok(fixture.requests.some(r => r.path === `${origin}/session?view=metadata`));
+  assert.ok(fixture.requests.every(r => r.path.startsWith(origin + '/')));
+  assert.ok(fixture.requests.every(r => r.options.headers.Authorization === 'Bearer synthetic-token-alice'));
+  await state.logout();
+  assert.equal((await fixture.hooks.flush()).phase, 'signedOut');
+  assert.equal(await fixture.api.accessToken(), null);
+});
 function user(uid = 'alice', verified = true) {
   return { uid, email: `${uid}@example.test`, emailVerified: verified, reload: async () => {},
     getIdToken: async () => `synthetic-token-${uid}` };
 }
-function setup(initial = null) {
+function setup(initial = null, apiOrigin = '') {
   const hooks = hookHarness(); const requests = [], emails = [], tokens = [], writes = [];
   const auth = { currentUser: initial, authStateReady: async () => {} };
   let changed, handler, emailError, registrationError, loginError, signOutError, storageError;
@@ -38,9 +51,11 @@ function setup(initial = null) {
     setItem: async (key, value) => { writes.push({ key, value }); items.set(key, value); },
     removeItem: async key => { if (storageError) throw storageError; items.delete(key); } };
   const load = loadPlantingModules(undefined, hooks.react, storage, false, {
+    env: { EXPO_PUBLIC_API_BASE_URL: apiOrigin },
     'firebase/auth': firebase, './firebase': { firebaseAuth: () => auth },
     fetch: async (path, options) => {
       requests.push({ path, options });
+      if (apiOrigin) path = path.replace(apiOrigin, '');
       if (handler) return handler(path, options);
       if (path === '/auth/session') {
         const payload = JSON.parse(options.body);

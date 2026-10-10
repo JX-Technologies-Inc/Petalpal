@@ -1,0 +1,6 @@
+# Build outside Render from the reviewed backend image and reviewed Expo export.
+# Explicit image reference is required; there is deliberately no latest default.
+ARG BACKEND_IMAGE
+FROM ${BACKEND_IMAGE}
+COPY client/dist /app/client/dist
+# Inherits the unchanged npm start / Prisma migration startup contract.

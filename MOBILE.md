@@ -749,3 +749,58 @@ The builder disables dotenv and telemetry. Its existing **public** `VITE_FIREBAS
 Express serves only allowlisted application shell/deep-link routes without API authentication; AuthGate still prevents unsigned-in content. Every data/write route retains server authentication and owner checks. Private paths remain no-store. Shell CSP permits WebAssembly compilation for same-origin CanvasKit, while JavaScript eval, inline scripts, wildcard origins and framed embedding remain prohibited. Preview/unknown routes do not get the SPA fallback.
 
 Local validation uses synthetic public configuration and fully intercepted identities/data in a fresh browser profile. It proves no production login or account linkage. Existing native login/lifecycle evidence keeps its original scope; no account, database, service, tunnel or Metro instance was recreated.
+
+
+## 2026-10-09 — Local Cloudflare Expo Web migration candidate
+
+Workers Static Assets now has a local-only deployment profile at
+`deploy/cloudflare/wrangler.jsonc`. The real Expo `single` export is built outside
+Render by `npm run build:cloudflare`; the manual GitHub workflow retains the
+artifact without deploying it. Direct REST/Socket calls use the existing
+`EXPO_PUBLIC_API_BASE_URL` contract, compiled to the Render origin. No product
+route, rendering setting, art, Firebase provider or native deployment code changed.
+The static Worker reuses the product shell allowlist; unknown assets/APIs do not
+fall back to HTML. CSP permits Render HTTPS/WSS plus the existing Firebase hosts.
+
+Synthetic export, Cloudflare/workerd delivery, Chromium sign-in screen/deep link,
+WASM, cross-origin browser preflight, token refresh/session hydration/logout and
+Socket polling/upgrade/reconnect passed. No real Firebase sign-in was attempted.
+Garden, Bookhouse and Reflection exported PNGs are byte-identical to source;
+prior user visual acceptance remains applicable, objective performance parity
+remains PARTIAL. See `docs/cloudflare-web-migration.md` for exact build inputs,
+preview protection, origin-scoped Firebase persistence and cutover/rollback gates.
+The existing Render frontend path remains intact until separately approved cutover.
+
+### Static-only migration preview — 2026-10-09
+
+Use `deploy/cloudflare/wrangler.preview.jsonc` with the retained synthetic Expo
+export for isolated delivery review. `STATIC_PREVIEW_ONLY=1` restricts browser
+connections to self and disables frames; real Render/Firebase login is unavailable
+in this profile. No mobile source, export rebuild or provider configuration change
+is required. Keep the flag enabled through separately approved protected staging;
+real-auth preview uses the distinct compatibility/origin gates in
+`docs/cloudflare-web-migration.md`. Existing Render login must survive transition
+until the Cloudflare replacement and old-origin traffic disposition are approved.
+
+### Synthetic sign-in for isolated web preview — 2026-10-09
+
+The preview config now selects a separate `preview-worker.js` entry point for
+`petalpal-expo-synthetic-9a9d57d`. It reuses the unchanged Expo export and provides
+browser-only public synthetic sign-in plus empty Garden/Journal fixtures. Use
+`preview@example.invalid` / `preview-only` in a fresh browser profile, never real
+credentials. A banner identifies this read-only demo; writes, AI and live Socket
+functionality are unavailable. Normal Worker/mobile/Firebase setup is unchanged.
+`STATIC_PREVIEW_ONLY=1` remains mandatory; follow the latest migration runbook for
+separate resource/Access/upload approval. No new hostname or provider setup was
+performed. Discard the synthetic browser profile after review.
+
+### Protected synthetic staging available — 2026-10-09
+
+The existing `petalpal-expo-synthetic-9a9d57d` Worker now serves the retained export
+at https://petalpal-expo-synthetic-9a9d57d.petalpal-jx.workers.dev/ behind the
+human-configured Access policy for `xma38@jastrevia.com` only. After private OTP
+login, use public fixture `preview@example.invalid` / `preview-only`. No real
+Firebase/API/Socket/DB/AI functionality. Anonymous asset protection PASS; signed-in
+Garden confirmation at this edge is pending. Version upload/activation preserved
+routing; do not run full deploy with the local URL-off profile. Render/native
+setup, artwork and quality settings remain unchanged.

@@ -1,6 +1,8 @@
 {
     "type": "module",
     "scripts": {
+        "build:cloudflare": "node scripts/build-cloudflare-web.mjs",
+        "test:hosting": "node scripts/test-web-hosting.mjs",
         "start": "npx prisma migrate deploy && node server.js",
         "dev:emotion-lab": "node --env-file-if-exists=.env --env-file-if-exists=.env.auth-e2e.local scripts/start-emotion-lab.js",
         "start:ai-worker": "node scripts/ai-worker.js",

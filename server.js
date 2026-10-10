@@ -172,6 +172,12 @@ export function setAiJobDispatcherForTests(dispatcher) {
 
 const io = new Server(server, {
   maxHttpBufferSize: SOCKET_MAX_PACKET_BYTES,
+  // CORS alone does not reject direct WebSocket handshakes. Engine.IO calls this
+  // for every new session (polling or direct WebSocket), applying the same
+  // exact-origin policy as HTTP; an accepted session's upgrade inherits it.
+  // Requests without Origin (native/React Native polling) remain allowed, as on
+  // HTTP. Firebase token authentication below is still required for all clients.
+  allowRequest: (req, callback) => callback(null, isAllowedOrigin(req.headers.origin)),
   cors: {
     origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
     methods: ["GET", "POST"]

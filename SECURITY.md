@@ -1646,3 +1646,215 @@ This evidence is retained as an uncommitted SECURITY.md append in the separate C
 - [x] Merged approved candidate `902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8` into that isolated checkpoint. Only SECURITY.md and MANUAL_SECURITY_CHECKLIST.md conflicted; preview versions are exact prefixes of approved history, so the approved full histories resolve both without losing records. Preserved the separately uncommitted exact-source CI evidence by copying its append into this candidate while leaving the original file untouched. All other tracked files exactly match the CI-passed candidate, including workflows, tests, build inputs, Expo assets and application/backend/AI/security source. No new executable behavior or newly affected test exists.
 - [x] Reuse exact-source CI run 37902827021 for unchanged Security + Expo/Garden/HTTP tests; do not rerun historical suites. Existing excluded DB-resource/monitoring modules, unfinished Garden/Message pagination and Vite deployment entry points remain excluded. No provider/database operation, remote push, main update or existing-service restart is authorized or performed.
 - [ ] Target-platform production-container build verification is recorded separately against this final commit/tree after checkpoint creation; previous arm64 build evidence does not certify amd64. Production Firebase Web App binding remains UNKNOWN. User-confirmed Garden recovery is accepted; objective matched-reference visual/performance parity remains PARTIAL. Deployment remains blocked pending those release gates and separate approval.
+
+
+## 2026-10-09 — Local Cloudflare frontend / Render backend split
+
+**Scope:** isolated `codex/cloudflare-frontend-migration` branch from approved
+main `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3` / tree
+`952ffb9ff59c382de6623acbcab0fec990d17a51`. Accepted exact-source CI 37902827021,
+Docker and human Firebase evidence reused. Render build OOM above 8 GB is a user
+attestation, not a newly inspected provider log. No push, deployment, provider
+mutation, database operation or production identity used.
+
+- **Static boundary PASS (local):** actual Expo single-page production export,
+  Cloudflare workerd routing, deep links, JS/CSS/WASM MIME, CSP and browser sign-in
+  screen. API/missing-asset/debug paths are not rewritten to HTML. The Worker
+  serves static files only; authenticated/private calls go directly to Render.
+  HTML/errors and Authorization/Cookie-bearing static requests are no-store.
+- **Cross-origin boundary PASS (synthetic):** actual Chromium preflight and
+  readable 200/401/403 responses; exact allowed origins, no wildcard. Existing
+  token/owner checks reject another owner. Actual Socket.IO polling, direct WS,
+  polling-to-WS upgrade, event acknowledgements and refreshed-token reconnect
+  pass; denied origins and invalid tokens fail. Engine.IO now applies the same
+  allowlist to WS handshake admission. Backend proxy trust is unchanged.
+- **Firebase contract PASS, production login NOT VERIFIED:** AuthProvider
+  hydration/logout and client bearer refresh preserve existing semantics under
+  synthetic identities. Existing project/Web App/Admin configuration is reused
+  by attestation, never inspected. New exact frontend domains and return URLs
+  require human approval; persistence does not transfer between browser origins.
+- **Artwork/source integrity PASS:** no mobile product source/assets changed.
+  Exported Garden/Bookhouse/Reflection PNGs match source bytes. 460 exported files,
+  220,673,039 total bytes, largest 8,076,553 bytes, within checked Workers static
+  asset limits. Prior visual recovery stands; objective performance parity PARTIAL.
+- **Focused validation:** 10 tests passed, plus offline Wrangler packaging dry-run.
+  No historical PostgreSQL/DAST/AI/iPhone suites rerun. Test identities and database
+  method stubs are local; no real Firebase, database or paid inference contacted.
+- **Backend Docker build PASS:** linux/amd64, no Expo install/export, no web/Firebase
+  build argument. Allowed context 4.19 MB; image 827,814,439 bytes. Production
+  dependency lock, Prisma schema/migrations, startup and backend runtime preserved
+  except Socket origin admission. No frontend/artwork in this image. Peak Docker
+  build RAM and matched old/new build-memory reduction remain UNMEASURED; context
+  and image sizes are not RAM measurements. Subsequent test-runner-only package
+  script edits do not alter dependencies/postinstall/startup or runtime sources.
+- **Transition gate:** existing Dockerfile and Express frontend serving remain
+  unchanged. Opt-in backend-only deployment is blocked until the approved old-
+  origin traffic disposition. A separate transition image can layer a reviewed
+  prebuilt frontend on the backend image outside Render without invoking Expo.
+- **Automation gate:** new workflow is manually dispatched, builds/tests/uploads
+  artifacts only, with no cloud deploy credentials/step. Wrangler public domains,
+  version URLs and custom routes are disabled. Preview resource/Access, exact
+  CORS/Firebase domains, app.jastrevia.com and live compatibility are still human
+  gates. Existing AI Workers/company site/production settings remain unchanged.
+- **Tooling limitation:** requested `graphify update .` could not run because the
+  executable is unavailable. No generated graph or historical evidence changed.
+
+See `docs/cloudflare-web-migration.md` for staging, externally built transition
+image, ordered cutover and independent frontend/backend rollback. Local tests do
+not certify provider-edge behavior, real sign-in or a current Live revision.
+
+
+**Container validation/storage limitation:** after the successful backend-only
+image build (exit 0), Docker reported `Internal: input/output error` at the end
+of the separate transition-image export (exit 100). That transition build is NOT
+marked PASS. The backend-image smoke command returned exit 125 while extracting
+an image layer, also with an I/O error; it never reached application execution.
+The host then reported no free disk space. Only this task's generated
+`client/dist` and installed backend `node_modules` were removed to save source
+and evidence; the synthetic Expo export is retained. No Docker daemon restart,
+prune, existing-container stop or rebuild retry was performed. Native
+Node/workerd/Chromium tests passed independently. A healthy isolated Docker host
+must verify the final candidate image runtime and transition assembly before any
+provider deployment is approved. Image build success alone is not runtime PASS.
+
+### Migration continuation — 2026-10-09
+
+- **Storage capacity restored; image/runtime BLOCKED:** read-only checks found
+  about 30 GiB host free space and 24 GiB free in Colima. Docker 29.5.2 and Colima
+  respond, but inspecting the retained backend image still fails with containerd
+  blob I/O errors; the recorded config ID is unavailable. No container smoke,
+  rebuild, restart, prune or existing-container mutation was attempted this turn.
+  Prior image build PASS does not establish runtime PASS. Build RAM is UNKNOWN.
+- **Two missing checks PASS:** Chromium exercised real cross-origin Socket.IO
+  polling, WebSocket upgrade, refreshed synthetic-token reconnect, invalid-token
+  rejection, denied polling/WS origins, CSP enforcement and polling no-store.
+  A separate workerd/Chromium test reused the retained Expo export and verified
+  the static-only preview blocks Render/Firebase HTTP and WS with zero escaped
+  provider requests. The previously accepted ten tests were not repeated.
+- **Preview isolation:** `wrangler.preview.jsonc` disables public/version URLs
+  and routes, and opts into CSP with self-only connections and no frames. Offline
+  packaging PASS. Resource creation/upload and reviewer-only Access remain human
+  approval gates; this static preview needs no production Firebase/CORS change.
+  Default Worker CSP and all backend controls remain unchanged.
+- **Cutover remains gated:** retain Render login/web through a validated compatible
+  transition release until Cloudflare is verified and old-origin traffic has an
+  approved disposition. Transition runtime/provider compatibility remain open.
+  No cloud resource, production connection, provider setting, identity, database,
+  push or deployment changed. Garden/Fairy source and quality settings unchanged;
+  performance parity remains PARTIAL. Graphify remains unavailable locally.
+
+### Protected synthetic staging preparation — 2026-10-09
+
+- Verified checkpoint `9a9d57d` and supplied full tree match; worktree was clean.
+  Reused the retained synthetic Expo export without rebuilding or editing it.
+- Added a separate preview-only Worker entry/browser fixture adapter; normal
+  hosting and backend/auth code unchanged. Public fake identity and empty
+  Garden/Journal data stay in-browser. Writes, unknown/other-owner routes and AI
+  reject; real Socket functionality is not simulated or claimed verified here.
+- New package check PASS: synthetic build settings and absence of forbidden
+  file classes/symlinks/selected credential patterns. No credential values or
+  environment files inspected. Scope is a bounded artifact check, not exhaustive
+  proof of secret absence. Accepted sanitized-build/source provenance retained.
+- Updated preview Chromium check PASS: actual Expo synthetic sign-in and Garden
+  reload, zero escaped provider requests, raw HTTP/WS CSP denial, fixture
+  no-store, unauthorized/other-owner/privileged-operation rejection. Offline
+  packaging PASS. Existing routing, MIME/WASM, artwork and backend tests reused.
+- Proposed new name `petalpal-expo-synthetic-9a9d57d`; availability and Access
+  account readiness require human metadata checks. All routes/URLs stay disabled.
+  Only ASSETS and the non-secret preview flag are bound. Public fixture strings
+  provide no real authorization; exact-host Cloudflare Access is required before
+  sharing assets. No provider/resource/push/deployment action occurred. Docker
+  I/O remains BLOCKED without another operation; non-destructive diagnosis plan
+  recorded separately. Garden performance parity remains PARTIAL.
+
+### Authorized Cloudflare staging gate — 2026-10-09
+
+- User authorized the single named synthetic Worker, scoped Access and one upload;
+  sole reviewer is `xma38@jastrevia.com`, excluding the administrator email.
+- Read-only authenticated CLI metadata identifies one intended account,
+  `6007e20c3aa7e88753689744021afb00`, and confirms deployment metadata for the
+  three protected AI Workers is readable there. Proposed preview Worker is absent
+  (Worker-not-found 10007). Packaging checkpoint `b46af3f` verified clean.
+- **Access gate UNKNOWN/BLOCKED for available automation:** CLI OAuth scopes
+  advertise Worker permissions but no Access-management permission; no connected
+  Access capability was found. Human exact-host policy setup and verification
+  required. No credential page/value, private log or environment file inspected.
+- Stopped before resource creation/upload/URL enablement. Anonymous and reviewer
+  edge checks NOT RUN; prior local synthetic PASS retained. No existing resource,
+  production configuration or Docker state changed; no tests repeated. Human-only
+  completion sequence recorded in the migration runbook. This is a capability
+  blocker, not evidence that the Cloudflare account lacks Access support.
+
+### Protected synthetic upload — 2026-10-09
+
+Human confirmed scoped Access for only `xma38@jastrevia.com`, OTP/Hello World PASS,
+preview URLs OFF and no custom domains. Exact existing Worker/account identity
+and retained synthetic artifact integrity independently verified; no code/export
+rebuild. One packaged version upload and one 100% activation completed:
+`3fdcd984-8ef5-4d83-9df1-350f659b9b97`, deployment
+`ec0e3bde-e2e5-4704-9746-6b9b7e43bac4`. Access policy/routing were preserved.
+Anonymous HTML, deep link, actual JS, Garden PNG, WASM and fixture script all
+redirected (302) to the expected Access host after activation: PASS. No redirect
+query/cookie/token/private log inspected. Sole-reviewer policy remains human
+attestation; provider-edge authorized Garden confirmation pending. Local synthetic
+PASS retained. No production application/data/AI calls, production change or Docker action.
+
+**Reviewer confirmation — 2026-10-09:** user reports “Garden opens successfully”
+after the requested Access and synthetic sign-in flow. Authorized deployed
+synthetic Garden **USER-CONFIRMED PASS**, superseding the pending confirmation
+above. No additional upload/test/provider action; production/backend/Firebase
+and Docker readiness are not implied by this result.
+
+### Docker storage diagnosis — 2026-10-09
+
+Read-only checks confirm the retained backend manifest exists (856 bytes), but
+Docker open and filesystem flag lookup fail with EIO. Guest ext4 `/dev/vdb1`
+reports `clean with errors`, two EIO records in `ext4_do_writepages` and
+`ext4_journal_check_start` at 14:29:38 PDT. About 24 GiB/5.5 million inodes remain
+free in the guest; host has about 15 GiB free. Storage/filesystem failure is
+confirmed; lower-level cause, damage extent and database health remain UNKNOWN.
+Two running containers and all volumes/images/caches remain untouched. No private
+logs, environment values or database contents inspected. Runtime remains BLOCKED;
+accepted builds/CORS/Socket/Cloudflare evidence reused without execution. Runbook
+now requires separately authorized quiescence/cold recovery copy and offline
+read-only diagnosis before any repair, restart or image reconstruction. Render
+transition retains the current production frontend; unchanged migration startup
+requires a human no-pending-migrations gate before a no-DB-change rollout.
+
+## 2026-10-09 — Backend container CI prepared; publication NOT authorized
+
+New exact-branch GitHub workflow and helper prepare one linux/amd64 backend build
+and one isolated container execution of the unchanged synthetic CORS/Socket
+fixture. Shell/JS/YAML validation and six explicit fail-closed entry checks PASS;
+local/self-hosted, wrong OS/branch/event and rerun contexts stop before Docker.
+An initial implicit-errexit guard failed the new negative check and was corrected
+to explicit rejection. No Docker/Colima operation or accepted test was repeated.
+Backend Dockerfile, dependencies, production/security code and Prisma unchanged.
+
+Runtime isolation is configured, not yet executed: network none, read-only root,
+unprivileged UID, no capabilities, bounded memory/CPU/PIDs/time, synthetic adapters
+and read-only test mounts only; no npm start/migrations, real Firebase, DB or AI.
+BuildKit cgroup peak will be reported if available; actual build memory and image
+runtime PASS remain UNKNOWN until separately approved remote CI completes.
+
+Local workflow audit finds read-only GitHub permissions, pinned checkout without
+persisted credentials, no secrets/provider environment/OIDC, deploy or registry
+push. Other local push workflows do not match the new branch. Remote hooks,
+organization automation and Render/Cloudflare Git triggers remain UNVERIFIED;
+publication must wait for safe metadata confirmation plus separate exact-SHA
+push/run approval. The push itself starts CI; no default-branch merge is needed.
+Runbook records the chosen-repository gate, resource bounds and remaining real
+Firebase/provider-edge REST/Socket/transition-startup gates. No push, CI run,
+production/cloud change, VM maintenance or Cloudflare retest performed.
+
+## 2026-10-10 — Migration integration reconciliation and parallel backend decision
+
+Historical records above are preserved; this section supersedes only the named statuses.
+
+- [x] **Main state reconciled:** remote main is `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3` (unified Expo candidate `902f34a` plus a SECURITY.md-only append). The 2026-10-09 "SAFE TO MERGE MAIN: NO" line describes the pre-merge state and is superseded by that main update; no exact-main-commit CI or amd64 build of root `Dockerfile` is recorded. Root `Dockerfile` builds the Expo frontend, so main must not be deployed to `PetalPal_v2`.
+- [x] **Backend container CI PASS:** [run 38006087561](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38006087561) at `24739b8565992666b30824cd55ea47650b5ab3f5` (tree `09dc4886c3000725500680b2fa2293ac312cfc84`); linux/amd64 `Dockerfile.backend` build plus synthetic container smoke. Job-level step metadata is not visible to this session; the run conclusion is reused, not rerun.
+- [x] **Socket.IO origin review:** `allowRequest` applies the HTTP exact-origin policy to each new Engine.IO handshake (engine.io 6.6.11 `verify()`; upgrades with an accepted session id inherit it). No-Origin native polling stays allowed; Firebase token checks are unchanged. Comment corrected; added a native no-Origin polling/upgrade/direct-WebSocket regression and the whole `test/back/cross-origin-web.test.js` to `scripts/security-ci.js`, so PR security CI covers it.
+- [x] **Architecture decision (owner):** a new isolated backend-only Render test service replaces the in-place `Dockerfile.transition` plan; `PetalPal_v2` and its Vite frontend remain unchanged. Prepared in `docs/render-backend-test-service.md`; nothing created.
+- [ ] **GitHub merge safety UNVERIFIED:** ruleset "Protect main" is active but has empty branch conditions (no effective rules on main; no required checks or reviews). Repository webhooks/GitHub App installations are not readable (403), so Render/Cloudflare Git-triggered deploys cannot be excluded from GitHub metadata. No GitHub environments or deployments exist. Main merge remains blocked on human confirmation.
+
+No provider, database, Firebase, DNS or secret change; no Colima/Docker use; no deployment.

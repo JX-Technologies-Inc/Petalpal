@@ -1,0 +1,32 @@
+name: Synthetic backend container validation (no deployment)
+
+# First publication is the separately approved run authorization. A new
+# workflow_dispatch-only workflow cannot bootstrap off the default branch.
+on:
+  push:
+    branches: [validation/backend-container-57f9afa]
+    paths: [.github/workflows/backend-container-validation.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-backend-container-validation
+  cancel-in-progress: false
+
+jobs:
+  backend-container:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact approved push
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: One bounded backend image build and synthetic runtime smoke
+        shell: bash
+        run: bash scripts/backend-container-ci.sh
+    # No environment, provider secrets, OIDC, registry push, reusable workflow,
+    # deployment action, PR event or workflow_run trigger. No automatic retry.

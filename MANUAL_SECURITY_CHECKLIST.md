@@ -495,3 +495,93 @@ This supersedes the preceding Active/open-retirement statuses without erasing th
 
 - [x] **USER-CONFIRMED:** successful sign-in to the corrected synthetic preview and restoration of previously missing Garden artwork and overall appearance, with artwork fix `57bc31c`. Applies only to the inspected local preview; no independent production/provider or full visual/performance verification is inferred.
 - [ ] Matched-reference performance parity remains **PARTIAL**. Candidate production Firebase/public build binding remains **UNKNOWN**. Prior provider/authentication and exposure records remain unchanged.
+
+
+## 2026-10-09 — Cloudflare frontend migration: new human gates, none performed
+
+- [ ] Separately approve publishing the local migration branch and staging a dedicated protected preview Worker; no existing AI Worker may be reused.
+- [ ] Configure the manual build environment with the existing public Firebase Web App settings and required reviewers. Never provide Admin credentials to the frontend build.
+- [ ] Confirm an exact compatible Live backend revision; prepare the externally built transition image retaining its frontend before real-auth preview. Do not assume the old Live backend supports the new UI.
+- [ ] Separately approve the exact preview Firebase Authorized Domain and Render CORS origin while preserving existing entries; validate email-verification return behavior and a fresh browser sign-in.
+- [ ] Human-check Garden/flowers, Fairy, Calendar, Bookhouse/Journal, navigation, login/logout and Socket reconnect through the real provider edge.
+- [ ] Separately approve app.jastrevia.com DNS/custom-domain and Firebase/CORS changes; retain jastrevia.com, Render traffic and AI Workers. No redirect or automatic production deployment.
+- [ ] Approve the disposition of old-origin users and an independent frontend/backend rollback before selecting the backend-only image on Render.
+
+Procedure and limitations: `docs/cloudflare-web-migration.md`. No checklist item
+above is satisfied by the synthetic local tests. Existing Firebase attestations
+are retained, not replaced; no provider settings, credentials or private logs read.
+
+### Static-only preview clarification — 2026-10-09
+
+- [ ] Approve a dedicated static-only preview upload/resource separately; use
+  `wrangler.preview.jsonc`, the synthetic artifact and reviewer-only Access before
+  enabling a URL. Keep alternate/version URLs disabled. This stage needs **no**
+  production Firebase Authorized Domain, Render CORS, DNS or real credentials.
+- [ ] Restore retained-image readability on an isolated healthy Docker host under
+  separate human maintenance authorization; preserve existing containers/recovery
+  state. Then validate runtime and transition frontend retention before Render
+  cutover. Current image inspection still fails despite restored disk capacity.
+- [ ] Real-auth preview still requires the earlier compatibility, exact-origin and
+  human login/Garden gates. Keep Render web/login until replacement activation
+  and approved old-origin traffic disposition; backend-only Render is last.
+
+Exact local/offline and separately approved provider steps are in
+`docs/cloudflare-web-migration.md`. No provider/manual item was performed here.
+
+### Protected synthetic staging authorization — 2026-10-09
+
+- [x] User approved one new `petalpal-expo-synthetic-9a9d57d` Worker, scoped Access
+  and one upload; only `xma38@jastrevia.com` may be an Access reviewer.
+- [x] Non-secret CLI metadata identifies the existing administrator's single
+  account `6007e20c3aa7e88753689744021afb00`, confirms the three protected AI
+  Workers there, and returns not-found for the new staging name.
+- [ ] Human with Access-management permissions must complete and verify the
+  exact-host/all-path policy. Current CLI scopes do not advertise that capability;
+  no Access connector is available. Do not include the administrator email.
+- [ ] Worker creation/upload, URL enablement, anonymous asset denial and authorized
+  synthetic Garden edge checks are NOT PERFORMED. Follow the latest runbook's
+  disabled-at-creation sequence; keep all viewing URLs disabled until verified.
+
+No additional deployment approval is requested. Existing production resources,
+Firebase, DNS, Render and Docker remain unchanged; no staging URL exists yet.
+
+### Protected preview now uploaded — 2026-10-09
+
+- [x] Human reports Worker creation, all-traffic Access for only
+  `xma38@jastrevia.com`, OTP/Hello World PASS, preview URLs OFF, no custom domains.
+- [x] Authorized single synthetic upload activated; anonymous HTML/deep link/JS/
+  Garden image/WASM/fixture script independently confirmed Access-protected (302).
+- [x] 2026-10-09: reviewer reports “Garden opens successfully” after the requested
+  Access/synthetic sign-in flow — USER-CONFIRMED PASS, closing the prior pending item.
+  Use only the public synthetic fixture; never share OTPs, cookies or tokens.
+
+URL and version/deployment evidence are recorded in the migration runbook. This
+supersedes prior not-created/not-uploaded status without changing historical scope.
+
+### Storage recovery and backend transition gates — 2026-10-09
+
+- [ ] Separately approve maintenance quiescence/Colima shutdown and adequate
+  external recovery storage; human verifies a consistent cold copy before any
+  offline filesystem repair or restart. Current guest ext4 metadata records EIO.
+- [ ] After safe recovery, validate retained backend/transition container runtime.
+- [ ] Identify the actual Live Render frontend artifact and supported delivery
+  mechanism for the existing service; retain login/web in the transition image.
+- [ ] Verify no pending migrations and existing provider readiness without values;
+  approve exact rollout/rollback artifacts separately. Real CORS/Firebase/Socket
+  integration and old-origin disposition precede backend-only deployment.
+
+These gates are unperformed. No stop, repair, DB/provider change or deployment
+occurred; previous synthetic staging confirmations remain valid in their scope.
+
+### Parallel backend-only test service — 2026-10-10
+
+Owner decision supersedes the in-place `Dockerfile.transition` items above for
+`PetalPal_v2` (retained as history); that service and its Vite frontend stay unchanged.
+
+- [ ] Confirm `PetalPal_v2` Auto-Deploy is OFF or not tracking `main`, and that no
+  Render/Cloudflare GitHub integration deploys on `main` pushes (GitHub cannot show hooks).
+- [ ] Make "Protect main" target `main` (it currently matches no branch) and require
+  the PetalPal security regression checks before merging.
+- [ ] Provision an isolated test PostgreSQL and isolated test Firebase project; create
+  `petalpal-backend-test` per `docs/render-backend-test-service.md`. No production
+  credentials, Worker tokens or database may be reused.

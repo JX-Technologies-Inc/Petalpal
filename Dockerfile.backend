@@ -1,0 +1,19 @@
+# Opt-in only after the frontend cutover. The existing Dockerfile remains the
+# transition/rollback path and continues serving the existing frontend.
+FROM node:24-bookworm-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends openssl \
+    && rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+COPY lib/database-isolation.js lib/native-security.js ./lib/
+# Build-only synthetic URL: generate Prisma, never connect or migrate.
+RUN NODE_ENV=production DATABASE_URL=postgresql://build:build@localhost:5432/petalpal_build npm ci --include=dev --no-audit --no-fund
+COPY lib ./lib
+COPY server.js moodClassifier.js ./
+COPY data/flowerDB.js data/mood-model.json ./data/
+COPY docs/openapi.yaml ./docs/openapi.yaml
+COPY scripts/ai-worker.js ./scripts/ai-worker.js
+EXPOSE 3000
+CMD ["npm", "start"]
