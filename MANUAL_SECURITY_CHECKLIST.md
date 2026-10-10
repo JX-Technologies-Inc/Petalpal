@@ -622,3 +622,7 @@ This supplements the historical not-created preparation records above.
 - [x] Owner created GitHub environment `petalpal-web-build-integration` (main only) with `CLOUDFLARE_API_ORIGIN` and the four TEST Web App `EXPO_PUBLIC_FIREBASE_*` values; integration artifact built (see SECURITY.md).
 - [ ] Deploy Worker `petalpal-web-integration` from that artifact behind reviewer-only Access; then add its origin to TEST `CORS_ALLOWED_ORIGINS` (one TEST redeploy) and TEST Firebase Authorized Domains.
 - [ ] Correct the four `petalpal-web-build-integration` secrets: each must hold the VALUE from the TEST Web App config (Firebase → Project settings → Your apps → SDK setup and configuration → Config), not the field name. Then the agent rebuilds once.
+
+### Integration Worker deployment authorization — 2026-10-10
+
+- [ ] **One step (owner):** create a Cloudflare API token for only the PetalPal account with **Workers Scripts: Edit** and **Access: Apps and Policies: Edit**, expiring within 30 days; store it as secret `CLOUDFLARE_INTEGRATION_DEPLOY_TOKEN` in a new GitHub environment `petalpal-web-integration-deploy` (deployment branch: `main`), with variables `CLOUDFLARE_ACCOUNT_ID` and `ACCESS_REVIEWER_EMAIL` (the single approved reviewer). The agent then runs `deploy`, then `activate`. Revoke the token after the preview phase.
