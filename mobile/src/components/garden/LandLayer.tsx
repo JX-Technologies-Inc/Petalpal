@@ -2,7 +2,7 @@ import { Group, Image, Rect, useImage } from '@shopify/react-native-skia';
 import { GARDEN_LANDS, type GardenLand, type GardenLandLayout } from './gardenMapLayout';
 import GardenShoreContact from './water/GardenShoreContact';
 
-function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
+function Land({ land, selected, renderPass }: { land: GardenLand; selected: boolean; renderPass: 'shore' | 'land' }) {
   const image = useImage(land.source);
   if (!image) return null;
   // Match web img width:100%, height:auto and CSS center-center rotation.
@@ -17,9 +17,12 @@ function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
       { translateX: -centerX },
       { translateY: -centerY },
     ]}>
-      <GardenShoreContact image={image} x={land.x} y={land.y} width={land.width} height={height} />
-      <Image image={image} x={land.x} y={land.y} width={land.width} height={height} fit="contain" />
-      {__DEV__ && selected && (
+      {renderPass === 'shore' ? (
+        <GardenShoreContact image={image} x={land.x} y={land.y} width={land.width} height={height} />
+      ) : (
+        <Image image={image} x={land.x} y={land.y} width={land.width} height={height} fit="contain" />
+      )}
+      {renderPass === 'land' && __DEV__ && selected && (
         <Group>
           <Rect x={land.x} y={land.y} width={land.width} height={height}
             color="#FFE36E" style="stroke" strokeWidth={6} />
@@ -30,16 +33,17 @@ function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
 }
 
 type LandLayerProps = {
+  renderPass?: 'shore' | 'land';
   layout?: GardenLandLayout;
   selectedLandId?: string | null;
 };
 
-export default function LandLayer({ layout = GARDEN_LANDS, selectedLandId = null }: LandLayerProps) {
+export default function LandLayer({ layout = GARDEN_LANDS, selectedLandId = null, renderPass = 'land' }: LandLayerProps) {
   const orderedLands = [...layout].sort((a, b) => a.zIndex - b.zIndex);
   return (
     <Group>
       {orderedLands.map((land) => (
-        <Land key={land.id} land={land} selected={land.id === selectedLandId} />
+        <Land key={land.id} land={land} selected={land.id === selectedLandId} renderPass={renderPass} />
       ))}
     </Group>
   );

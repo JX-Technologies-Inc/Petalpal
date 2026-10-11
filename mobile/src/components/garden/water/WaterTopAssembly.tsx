@@ -18,7 +18,7 @@ export type WaterTopAssemblyProps = {
   flow?: WaterTopFlow;
 };
 
-type WaterTopFlow = { seconds: SharedValue<number>; enabled: boolean };
+export type WaterTopFlow = { seconds: SharedValue<number>; enabled: boolean };
 
 // One clock shared by the channel AND the outlet, so motion never stops at
 // the compositing seam. Background/reduced-motion pauses happen once.

@@ -1,3 +1,8 @@
+import LotusSurfaceRipples from './LotusSurfaceRipples';
+import { useWaterTopFlow } from './WaterTopAssembly';
+import type { SharedValue } from 'react-native-reanimated';
+import {runtimeAudit} from '../performance/runtimeAudit';
+import GardenLotusContact from './GardenLotusContact';
 import { Group, Image, useImage } from '@shopify/react-native-skia';
 import { memo, useMemo } from 'react';
 import {
@@ -222,6 +227,7 @@ export const DEFAULT_LOTUS_PLACEMENTS: readonly LotusClusterPlacement[] = [
 ] as const;
 
 type LotusClusterItemProps = {
+  seconds: SharedValue<number>;
   placement: LotusClusterPlacement;
   mode: 'static' | 'sway';
   opacity: number;
@@ -229,6 +235,7 @@ type LotusClusterItemProps = {
 };
 
 const LotusClusterItem = memo(function LotusClusterItem({
+  seconds,
   placement,
   mode,
   opacity,
@@ -295,6 +302,9 @@ const LotusClusterItem = memo(function LotusClusterItem({
 
   return (
     <Group transform={clusterTransform}>
+      <GardenLotusContact image={staticImg} width={worldW} height={worldH} opacity={opacity} />
+      <LotusSurfaceRipples image={staticImg} width={worldW} height={worldH}
+        seconds={seconds} seed={placement.swayPhase ?? 0} opacity={opacity} />
       <Image
         image={staticImg}
         x={0}
@@ -325,6 +335,8 @@ export default function LotusLayer({
   active = true,
   placements = DEFAULT_LOTUS_PLACEMENTS,
 }: LotusLayerProps) {
+  runtimeAudit.render('LotusLayer');
+  const flow = useWaterTopFlow(active && visible, mode === 'sway');
   if (!visible || opacity <= 0) return null;
 
   return (
@@ -332,6 +344,7 @@ export default function LotusLayer({
       {placements.map((p) => (
         <LotusClusterItem
           key={p.id}
+          seconds={flow.seconds}
           placement={p}
           mode={mode}
           opacity={opacity}
