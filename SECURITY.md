@@ -2070,3 +2070,37 @@ unresolved dependency-security gate to the readiness report; readiness remains N
 - **Evidence limits (not independently verified):** the 100% allocation is the workflow's own statement after a successful `versions deploy`; no post-deploy deployment read-back was performed by the agent (no Cloudflare read access; `api.cloudflare.com` and the dashboard are unreachable from the agent sandbox). Job logs were not readable (HTTP 403). Fallback `e7947f5a-9eca-4fb1-b830-05e956a2cd7d` is **recorded** by upload run 38123416223 and was not deployed, replaced or deleted by any workflow step; its live availability is not independently confirmed.
 - **Privacy — owner attestation only:** the owner reports the Dashboard shows, for `petalpal-web-production`: workers.dev disabled, Preview URLs disabled, no routes or custom domains, Worker-level Access on all traffic with a single Allow policy for `xma38@jastrevia.com` and no broad/bypass rules, and a deploy token limited to Individual Workers → this Worker → Editor with an expiry. No screenshots were available to the agent. Repo side: both Wrangler profiles set `workers_dev=false`, `preview_urls=false`, `routes=[]`, and the production workflow uses `versions deploy` (no trigger/route/URL changes). A version deployment does not itself create public paths; an agent-side confirmation that they remain off after activation was not possible.
 - [ ] **Not public, not launched.** Remaining launch blockers: old `DATABASE_URL` revocation UNVERIFIED; production CORS for `https://app.jastrevia.com` not set; custom domain/DNS not attached; private acceptance with a production test identity not done; independent Cloudflare privacy verification (screenshots/read access) outstanding; final public GO.
+
+## 2026-10-11 — Events voice blob CSP correction (validated fix; release authorized, not deployed)
+
+- **Confirmed local cause:** Expo AudioRecorderWeb.stop creates a recording object
+  URL; `mobile/src/services/speech.ts` fetches it before `/speech/transcribe`.
+  An isolated Chromium test using the real voice hook, speech service and API
+  transport reproduces the Events input's `Failed to fetch` under the old CSP,
+  with zero transcription requests. Adding only `blob:` to `connect-src` permits
+  the recording read and a synthetic authenticated transcription response updates
+  the draft without saving an Event. No separate Events API defect was reproduced;
+  no Events, authentication, backend or database code was changed. Production
+  symptom attribution is consistent with this reproduction; authenticated
+  production dictation remains to be verified after an approved frontend release.
+- **Narrow security change:** `deploy/cloudflare/hosting-config.js` adds only that
+  connect-source token. Existing API/WSS/Firebase origins, scripts, frames and other
+  directives remain unchanged; static-only preview stays self-only. Unlisted
+  external connections and the optional Cloudflare Insights script remain blocked.
+  Browser bitrate-clamping warnings also occur during successful synthetic audio
+  capture/transcription; they do not cause the reproduced fetch failure.
+- **Validation PASS:** eight hosting/configuration cases; the browser regression's
+  five scenarios (old/fixed policy, backend failure, missing/expired identity,
+  external/script denial); 34 voice/API dependency regressions; four focused
+  Events/authentication integration cases; mobile TypeScript check; fresh synthetic
+  Expo export and real workerd hosting/browser test. Fixtures only, zero escaped
+  provider requests in the voice test, no real identities or production writes.
+  New regression is included in the existing hosting test runner.
+- **Release authorized, not deployed:** owner approved a scoped PR and checked merge,
+  a fresh production-config artifact from the exact merged commit, and one
+  `upload-app` followed by one `activate-app` for `petalpal-web-production`, with
+  existing required-reviewer gates. The workflow requires matching artifact and
+  Worker source. Preserve the existing fallback and Access. No Render promotion,
+  provider configuration changes, automatic retry/rollback or public launch.
+  Bounded private voice verification is pending; no synthetic Event or private
+  recording may be saved without separate authorization.
