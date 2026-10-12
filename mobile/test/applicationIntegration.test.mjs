@@ -373,7 +373,7 @@ test('native Friends discards old account responses and rejects stale actions af
 });
 
 test('Friends sidebar opens the native panel, deep links reuse it, and Return to Garden preserves Event/planting navigation', async () => {
-  const hooks = hookHarness(); const navigation = []; let params = {};
+  const hooks = hookHarness(); const navigation = []; let params = {}; let focused = 0;
   const planting = { activeMode: 'normal', selectedFlower: null, refreshGarden() {} };
   const native = Object.fromEntries(['ActivityIndicator', 'KeyboardAvoidingView', 'Modal', 'Pressable', 'ScrollView', 'Text', 'TextInput', 'View'].map(name => [name, name]));
   native.StyleSheet = { create: styles => styles, absoluteFill: {} };
@@ -390,7 +390,8 @@ test('Friends sidebar opens the native panel, deep links reuse it, and Return to
     '../garden-test': { __esModule: true, default: 'FairyScreen' },
   }, hooks.react);
   const { GardenHud } = load('../GardenHud');
-  let hud = hooks.mount(GardenHud);
+  const onFocusFairy = () => { focused++; };
+  let hud = hooks.mount(() => GardenHud({ onFocusFairy }));
   for (const [width, height, mobile] of [[390, 844, true], [844, 390, true], [768, 1024, false], [1440, 900, false]]) {
     dimensions = { width, height }; hud = hooks.render();
     const bar = featureNodes(hud).find(node => node.props?.testID === 'main-navigation');
@@ -449,14 +450,14 @@ test('Friends sidebar opens the native panel, deep links reuse it, and Return to
   params = { feature: 'friends' };
   assert.equal(load('../../../app/feature/[feature]').default().props.href.params.feature, 'friends');
   params = { feature: 'fairy' };
-  assert.equal(load('../../../app/feature/[feature]').default().type, 'FairyScreen');
+  assert.equal(load('../../../app/feature/[feature]').default().props.href.params.feature, 'fairy');
   params = {}; hud = hooks.render();
   featureNodes(hud).find(node => node.props?.testID === 'hud-fairy').props.onPress();
   hud = await hooks.flush();
-  assert.deepEqual(navigation, ['/feature/fairy']);
+  assert.deepEqual(navigation, []); assert.equal(focused, 1);
   assert.equal(featureNodes(hud).find(node => node.type === overlay.type).props.feature, undefined);
   params = { feature: 'fairy' }; hooks.render(); await hooks.flush();
-  assert.deepEqual(navigation, ['/feature/fairy', '/feature/fairy']);
+  assert.deepEqual(navigation, []); assert.equal(focused, 2);
   assert.equal(params.feature, undefined);
 });
 

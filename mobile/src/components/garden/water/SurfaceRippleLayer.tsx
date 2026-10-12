@@ -1,3 +1,4 @@
+import type { WaterTopFlow } from './WaterTopAssembly';
 import { Group, Image, Mask, Rect, Shader, Skia, useImage } from '@shopify/react-native-skia';
 import { memo, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
@@ -22,6 +23,7 @@ smoothstep(0.0,90.0,size.x-p.x)*smoothstep(0.0,90.0,size.y-p.y);return half4(a);
 `);
 
 type SurfaceRippleLayerProps = {
+  flow?: WaterTopFlow;
   active: boolean;
   enabled?: boolean;
   opacity?: number;
@@ -46,6 +48,7 @@ function SurfaceRippleLayer({
   width = GARDEN_WORLD_WIDTH,
   height = GARDEN_WORLD_HEIGHT,
   softWorldEdges = false,
+  flow,
 }: SurfaceRippleLayerProps) {
   const reducedMotion = useReducedMotion();
   const [foreground, setForeground] = useState(AppState.currentState === 'active');
@@ -55,7 +58,10 @@ function SurfaceRippleLayer({
   const frameC = useImage(WATER_ASSETS.ripples[2]);
   const frameD = useImage(WATER_ASSETS.ripples[3]);
   const frames = [frameA, frameB, frameC, frameD] as const;
-  const shouldAnimate = enabled && active && foreground && !reducedMotion;
+  const shouldAnimate = enabled && active && foreground && !reducedMotion && !flow;
+  const visiblePhase = useDerivedValue(() => flow
+    ? (flow.enabled ? flow.seconds.value * 4000 / SURFACE_RIPPLE_CYCLE_MS % 4 : 0)
+    : phase.value, [flow?.seconds, flow?.enabled]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (state) => {
@@ -77,10 +83,10 @@ function SurfaceRippleLayer({
     return () => cancelAnimation(phase);
   }, [phase, reducedMotion, shouldAnimate]);
 
-  const opacityA = useDerivedValue(() => cyclicWeight(phase.value, 0, 4) * opacity);
-  const opacityB = useDerivedValue(() => cyclicWeight(phase.value, 1, 4) * opacity);
-  const opacityC = useDerivedValue(() => cyclicWeight(phase.value, 2, 4) * opacity);
-  const opacityD = useDerivedValue(() => cyclicWeight(phase.value, 3, 4) * opacity);
+  const opacityA = useDerivedValue(() => cyclicWeight(visiblePhase.value, 0, 4) * opacity);
+  const opacityB = useDerivedValue(() => cyclicWeight(visiblePhase.value, 1, 4) * opacity);
+  const opacityC = useDerivedValue(() => cyclicWeight(visiblePhase.value, 2, 4) * opacity);
+  const opacityD = useDerivedValue(() => cyclicWeight(visiblePhase.value, 3, 4) * opacity);
   const opacities = [opacityA, opacityB, opacityC, opacityD] as const;
 
   if (!enabled) return null;

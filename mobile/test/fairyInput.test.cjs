@@ -85,6 +85,7 @@ test('measured paving destinations accept first try while lawns, water and narro
 function fairyHarness() {
   const slots = [], effects = [], queue = new Map(), host = {}, ref = { current: null };
   let cursor = 0, request = 0, now = 0, props;
+  const callbacks={entry:0,exit:0,mail:0};
   const react = {
     forwardRef: fn => fn,
     useRef: value => { const i = cursor++; return slots[i] ??= { current: value }; },
@@ -97,27 +98,40 @@ function fairyHarness() {
     useImperativeHandle: (target, fn) => { target.current = fn(); },
   };
   const jsx = (type, props) => ({ type, props });
+  const dependencies=new Map();
+  function loadNavigation(file) {
+    if(file.endsWith('.json'))return JSON.parse(fs.readFileSync(file,'utf8'));
+    if(dependencies.has(file))return dependencies.get(file).exports;
+    const loaded={exports:{}};dependencies.set(file,loaded);
+    vm.runInNewContext(compile(fs.readFileSync(file,'utf8')),{module:loaded,exports:loaded.exports,
+      require:request=>request.startsWith('@/')?request:loadNavigation(path.resolve(path.dirname(file),request+(path.extname(request)?'':'.ts')))});
+    return loaded.exports;
+  }
   const module = { exports: {} };
   vm.runInNewContext(compile(fs.readFileSync(path.join(directory, 'fairy/GardenFairy.tsx'), 'utf8')), {
     module, exports: module.exports, __DEV__: true, window: host, performance: { now: () => now },
     requestAnimationFrame: fn => { queue.set(++request, fn); return request; },
     cancelAnimationFrame: id => queue.delete(id),
     require: name => name === 'react' ? react : name === './walkNetwork' ? networkModule.exports
+      : name === './FairyNavigation' ? loadNavigation(path.join(directory,'fairy/FairyNavigation.ts'))
+      : name === './fairyMetrics' ? loadNavigation(path.join(directory,'fairy/fairyMetrics.ts'))
+      : name === './swingDestination' ? loadNavigation(path.join(directory,'fairy/swingDestination.ts'))
       : name === 'react/jsx-runtime' ? { jsx, jsxs: jsx }
       : name === 'react-native-reanimated' ? {
         useSharedValue: value => react.useRef({ value }).current, useDerivedValue: fn => ({ value: fn() }),
       } : name === '@shopify/react-native-skia' ? { Group: 'Group', Path: 'Path', Circle: 'Circle' } : name,
   });
-  props = { active: true, debug: false, blocked: () => false, onStatus: s => { harness.status = s; } };
+  props = { active: true, debug: false, blocked: () => false, onStatus: s => { harness.status = s; },
+    onTreehouseEntered:()=>callbacks.entry++,onTreehouseExited:()=>callbacks.exit++,onMailboxOpened:()=>callbacks.mail++ };
   const render = () => { cursor = 0; module.exports.default(props, ref); while (effects.length) effects.shift()(); };
   const harness = {
     move: p => { const accepted = ref.current.move(p); render(); return accepted; },
-    state: () => host.__fairyDebug.getState(),
+    state: () => host.__fairyDebug.getState(), callbacks, controls:()=>ref.current, loops:()=>queue.size,
     clockAdvance: ms => { now += ms; },
     frameAt: timestamp => { const callbacks = [...queue.values()]; queue.clear(); callbacks.forEach(fn => fn(timestamp)); render(); },
     step: () => { now += 50; const callbacks = [...queue.values()]; queue.clear(); callbacks.forEach(fn => fn(now)); render(); },
-    finish: () => { let frames = 0; while (harness.state().remaining.length) {
-      harness.step(); assert.ok(nearest(harness.state().position, WALK_NETWORK, .001)); assert.ok(++frames < 5000);
+    finish: () => { let frames = 0; while (harness.state().remaining.length || ['flying','flyingToSwing','flyingToMoonBed','flyingToTea','flyingToTreehouse','flyingToMailbox'].includes(harness.state().state)) {
+      harness.step(); if(harness.state().state==='walking')assert.ok(nearest(harness.state().position, WALK_NETWORK, .001)); assert.ok(++frames < 5000);
     } assert.equal(harness.state().target, null); assert.equal(harness.state().frame, 4); },
     active: value => { props = { ...props, active: value }; render(); },
   };
@@ -128,7 +142,7 @@ test('actual Fairy hooks complete ten sequential routes, accept mid-walk retarge
   for (const index of [1, 4, 0, 7, 11, 2, 5, 0, 3, 1]) {
     const target = WALK_NETWORK.nodes[index]; assert.equal(fairy.move(target), true);
     fairy.finish(); assert.ok(distance(fairy.state().position, target) < .001);
-    assert.equal(fairy.status, 'Resting on the path');
+    assert.equal(fairy.state().state, 'idle');
   }
   assert.equal(fairy.move(WALK_NETWORK.nodes[8]), true);
   for (let i = 0; i < 5; i++) fairy.step();
@@ -140,10 +154,13 @@ test('actual Fairy hooks complete ten sequential routes, accept mid-walk retarge
   assert.equal(JSON.stringify(fairy.state().remaining), remaining, 'Invalid input preserves the current walk');
   fairy.finish(); assert.ok(distance(fairy.state().position, WALK_START) < .001);
   assert.equal(fairy.move(WALK_START), true);
-  assert.equal(fairy.status, 'Resting on the path', 'Selecting the current foot position cannot leave a false moving state');
+  assert.equal(fairy.state().state, 'idle', 'Selecting the current foot position cannot leave a false moving state');
   fairy.move(WALK_NETWORK.nodes[2]); fairy.active(false);
-  assert.equal(fairy.state().remaining.length, 0); assert.equal(fairy.state().target, null);
-  fairy.active(true); assert.equal(fairy.move(WALK_NETWORK.nodes[1]), true); fairy.finish();
+  const paused = JSON.stringify(fairy.state());
+  for (let i = 0; i < 100; i++) fairy.step();
+  assert.equal(JSON.stringify(fairy.state()), paused, 'Covered Garden preserves the current route and pose');
+  fairy.active(true); fairy.finish();
+  assert.ok(distance(fairy.state().position, WALK_NETWORK.nodes[2]) < .001);
 });
 test('actual animation advances at 110 world units per second without teleporting or changing sprite cadence', () => {
   const fairy = fairyHarness(); fairy.move(WALK_NETWORK.nodes[1]);
@@ -182,4 +199,57 @@ test('registered B01 bridge foot chords stay on the actual integrated deck image
       assert.ok(pixels[(y*width+x)*4+3] >= 250, `Foot is on the deck, not transparent water: ${x},${y}`);
     }
   } finally { image.delete(); }
+});
+
+
+test('actual Fairy hooks own Treehouse and Mailbox sequences with one loop and exactly-once handoffs',()=>{
+  const fairy=fairyHarness();
+  function until(state){let frames=0;while(fairy.state().state!==state){fairy.step();assert.equal(fairy.loops(),1);assert.ok(++frames<2000,state);}}
+  assert.equal(fairy.controls().visitTreehouse(),true);until('enteringTreehouse');
+  assert.equal(fairy.move(WALK_START),false);until('insideTreehouse');
+  assert.equal(fairy.callbacks.entry,1);
+  fairy.active(false); for(let i=0;i<20;i++)fairy.step(); fairy.active(true); fairy.step();
+  assert.equal(fairy.state().state,'insideTreehouse');assert.equal(fairy.callbacks.entry,1);
+  assert.equal(fairy.controls().returnFromTreehouse(),true);assert.equal(fairy.controls().returnFromTreehouse(),false);
+  until('idle');assert.equal(fairy.callbacks.exit,1);
+  assert.equal(fairy.controls().visitMailbox(),true);until('retrievingMail');
+  assert.equal(fairy.controls().visitMailbox(),false);assert.equal(fairy.controls().visitTreehouse(),false);
+  until('mailboxTransition');assert.equal(fairy.callbacks.mail,1);
+  fairy.active(false);for(let i=0;i<20;i++)fairy.step();fairy.active(true);fairy.step();
+  assert.equal(fairy.state().state,'mailboxTransition');assert.equal(fairy.callbacks.mail,1);
+  assert.equal(fairy.controls().returnFromMailbox(),true);assert.equal(fairy.state().state,'idle');
+  assert.equal(fairy.controls().returnFromMailbox(),false);assert.equal(fairy.loops(),1);
+});
+
+test('normal Garden taps prioritize placement and flower details before all Fairy destinations', () => {
+  let source;
+  function visit(node) {
+    if (ts.isVariableDeclaration(node) && node.name.getText(scene) === 'handleGardenTap') source = node.initializer.arguments[0].getText(scene);
+    ts.forEachChild(node, visit);
+  }
+  visit(scene); assert.ok(source);
+  const calls = [], context = {
+    readOnly: false, fit: 1, selectedFlower: null, cameraZoom: { value: 1 }, cameraX: { value: 0 }, cameraY: { value: 0 }, baseX: 0, baseY: 0,
+    __DEV__: false, perfFixtureRef: { current: false }, activeModeRef: { current: 'normal' }, placementsRef: { current: [] }, useMonthlyGrowth: true,
+    hitProductionFlower: () => null, updatePreview: () => calls.push('placement'), openFlowerDetail: () => calls.push('detail'),
+    enableFairyWalk: true, treehousePlacement: {}, swingPlacement: {}, teaSetPlacement: {}, moonBedPlacement: {}, Platform: { OS: 'web' },
+    canvasRef: { current: { redraw: () => calls.push('redraw') } },
+    fairyRef: { current: { isMailboxBusy: () => false, move: () => { calls.push('move'); return true; } } },
+  };
+  for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
+    context[hit] = () => false; context.fairyRef.current[action] = () => calls.push(action);
+  }
+  const tap = vm.runInNewContext(compile(`(${source})`), context);
+  const expect = expected => { calls.length = 0; tap(100, 100); assert.deepEqual(calls, expected); };
+  expect(['move', 'redraw']);
+  context.hitsMailbox = () => true; context.fairyRef.current.isMailboxBusy = () => true;
+  context.activeModeRef.current = 'plant'; expect(['placement']);
+  context.activeModeRef.current = 'normal'; context.hitProductionFlower = () => ({ id: 'synthetic-flower' }); expect(['detail']);
+  context.selectedFlower = {}; expect([]); context.selectedFlower = null;
+  context.hitProductionFlower = () => null; expect([]);
+  context.fairyRef.current.isMailboxBusy = () => false;
+  for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
+    context[hit] = () => true; expect([action]); context[hit] = () => false;
+  }
+  context.readOnly = true; expect([]);
 });

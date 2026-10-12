@@ -1,3 +1,4 @@
+import {runtimeAudit} from './performance/runtimeAudit';
 import { Group, Image, useImage } from '@shopify/react-native-skia';
 import { memo, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { AppState } from 'react-native';
@@ -69,6 +70,7 @@ function WaterfallEntity({ x=0, y=0, scale=1, debugMode='all',
   registration=WATERFALL_LAYER_REGISTRATION, animationEnabled=false,
   flowSpeed='normal', splashParticlesVisible=true, assetQuality='full',
   active=true, sourcePond, onDebugStatus }: WaterfallEntityProps) {
+  runtimeAudit.render('WaterfallEntity');
   const reducedMotion = useReducedMotion();
   const playing = animationEnabled && !reducedMotion;
   const [foreground, setForeground] = useState(AppState.currentState === 'active');

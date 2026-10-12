@@ -1,10 +1,11 @@
 import type { CanvasKit, GrDirectContext, Surface } from 'canvaskit-wasm';
 
 // Lossless transparent-border copies reduce decoded Garden artwork from
-// ~552 MiB to ~278 MiB. 384 MiB leaves headroom for render intermediates and
-// repeated pans; the old full-world artwork needed a 608 MiB ceiling.
+// ~552 MiB to ~278 MiB. V2 native assets and terrain add ~75 MiB;
+// measured resident textures approach the former 384 MiB ceiling. 512 MiB
+// retains headroom for render intermediates and repeated pans without evictions.
 // This is a demand-filled ceiling, not an allocation or an image-retention cache.
-export const GARDEN_WEB_TEXTURE_CACHE_BYTES = 384 * 1024 * 1024;
+export const GARDEN_WEB_TEXTURE_CACHE_BYTES = 512 * 1024 * 1024;
 
 type WebCanvasKit = CanvasKit & {
   // CanvasKit's WebGL registry cleanup (present in the bundled runtime).

@@ -9,7 +9,7 @@ function runtime(path, development = false, signedIn = true) {
   const Stack = Object.assign(() => { mounts++; return 'ROUTED_SCREEN'; }, { Screen: () => null });
   const NativeTabs = Object.assign(() => { mounts++; return 'ROUTED_SCREEN'; }, { Trigger: Object.assign(Pass, { Label: Pass, Icon: () => null }) });
   const deps = {
-    'expo-router': { ThemeProvider: Pass, DarkTheme: {}, DefaultTheme: {}, Stack, Slot: Stack, usePathname: () => path, router: { dismissTo: to => navigation.push(to) }, useLocalSearchParams: () => ({ feature: 'fairy' }) },
+    'expo-router': { Redirect: 'Redirect', ThemeProvider: Pass, DarkTheme: {}, DefaultTheme: {}, Stack, Slot: Stack, usePathname: () => path, router: { dismissTo: to => navigation.push(to) }, useLocalSearchParams: () => ({ feature: 'fairy' }) },
     'react-native': { Text: 'Text', View: 'View', Pressable: 'Pressable', ScrollView: 'ScrollView', TextInput: 'TextInput', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'ActivityIndicator', Platform: { OS: 'web' }, StyleSheet: { create: value => value }, AppState: {}, useColorScheme: () => 'light' },
     'expo-splash-screen': { preventAutoHideAsync() {}, hideAsync: async () => {} },
     '@react-navigation/native': {},
@@ -61,12 +61,12 @@ test('unknown and nested preview paths fail closed; no preview fixtures in produ
   for (const feature of r.load('../../../services/featureCatalog').GARDEN_FEATURES) assert.equal(previews.includes(feature.route), false);
   assert.equal(routeAllowed('/', false), true);
 });
-test('real fairy alias and Back to Garden behavior are preserved without QA controls', () => {
+test('legacy Fairy routes redirect to the normal Garden without mounting another scene or QA controls', () => {
   for (const module of ['../../../app/garden-test', '../../../app/feature/[feature]']) {
     const r = runtime('/garden-test'); r.render(r.load(module).default());
-    const scene = r.nodes.find(n => n.type === 'FairyGarden'); assert.ok(scene); assert.equal(scene.props.enableFairyWalk, true); assert.equal(scene.props.backendMode, true);
-    const back = r.nodes.find(n => n.props?.accessibilityLabel === 'Back to Garden'); assert.ok(back); back.props.onPress(); assert.deepEqual(r.navigation, ['/']);
-    assert.equal(r.nodes.some(n => ['QA', 'Sandbox'].includes(n.type)), false);
+    const redirect = r.nodes.find(n => n.type === 'Redirect'); assert.ok(redirect);
+    assert.equal(typeof redirect.props.href === 'string' ? redirect.props.href : redirect.props.href.pathname, '/');
+    assert.equal(r.nodes.some(n => ['FairyGarden', 'QA', 'Sandbox'].includes(n.type)), false);
   }
 });
 

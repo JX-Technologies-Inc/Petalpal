@@ -1,6 +1,6 @@
 import { ImageShader, Rect, Shader, Skia, type SkImage } from '@shopify/react-native-skia';
 import { useDerivedValue } from 'react-native-reanimated';
-import { useWaterTopFlow } from './WaterTopAssembly';
+import { useWaterTopFlow, type WaterTopFlow } from './WaterTopAssembly';
 
 // The extended rect is a static backdrop only. Moving water stays inside the
 // garden's receiving-water bounds; the approved upper river animates itself.
@@ -44,9 +44,10 @@ half4 main(float2 p){
 }
 `);
 
-export default function GardenWaterField({image,active,animated=true}:{image:SkImage;active:boolean;animated?:boolean}) {
-  const flow=useWaterTopFlow(active,animated);
-  const uniforms=useDerivedValue(()=>({seconds:flow.enabled?flow.seconds.value:0}),[flow.enabled]);
+export default function GardenWaterField({image,active,animated=true,flow:sharedFlow}:{image:SkImage;active:boolean;animated?:boolean;flow?:WaterTopFlow}) {
+  const standalone=useWaterTopFlow(active&&!sharedFlow,animated&&!sharedFlow);
+  const flow=sharedFlow??standalone;
+  const uniforms=useDerivedValue(()=>({seconds:flow.enabled?flow.seconds.value:0}),[flow.enabled,flow.seconds]);
   if(!FIELD)return null;
   return <Rect x={-2400} y={-2400} width={7200} height={6600}>
     <Shader source={FIELD} uniforms={uniforms}>

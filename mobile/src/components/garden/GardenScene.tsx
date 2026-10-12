@@ -1,8 +1,19 @@
+import { hitsMailbox } from './fairy/mailboxDestination';
+import { hitsTreehouse } from './fairy/treehouseDestination';
+import {hitsTeaArea} from './fairy/teaDestination';
+import { hitsMoonBed } from './fairy/moonDestination';
+import { hitsSwing } from './fairy/swingDestination';
+import type { FairyState } from './fairy/FairyNavigation';
+import { constrainGardenCamera, zoomGardenAt } from './rendering/gardenWorldBounds';
 import GardenFairy, { type FairyHandle } from './fairy/GardenFairy';
 import { GardenCalendar } from './GardenCalendar';
 import type { FlowerSession } from './planting/flowerDetailApi';
 import { Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
-import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
+import { forwardRef, useImperativeHandle, type Ref, useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
+import { isGardenGroundBlocked } from './fairy/gardenGround';
+import {GardenProfile,GardenRuntimePanel} from './performance/GardenRuntimePanel';
+import {DEFAULT_ISOLATION,type GardenIsolation,runtimeAudit} from './performance/runtimeAudit';
+import {productionQARecords} from './planting/productionGrowthQAData';
 import { useFocusEffect } from 'expo-router';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -79,12 +90,13 @@ import {
   type WaterfallImpactPlacement,
 } from './waterfallImpactPlacement';
 import TreehouseCalibrationEditor, { type TreehousePlacement } from './TreehouseCalibrationEditor';
-import LandLayer from './LandLayer';
+import LandLayer, { GardenLandResources } from './LandLayer';
 import GardenConnectionLayer from './GardenConnectionLayer';
 import GardenLand09InterfaceLayer from './GardenLand09InterfaceLayer';
 import GardenInfrastructureLayer from './GardenInfrastructureLayer';
 import GardenRoadApproachLayer from './GardenRoadApproachLayer';
 import GardenEnvironmentLayer from './GardenEnvironmentLayer';
+import GardenOuterBasin from './GardenOuterBasin';
 import GardenBridge, { BridgeDebugOverlay } from './GardenBridge';
 import BridgeTestEditor from './BridgeTestEditor';
 import { INITIAL_BRIDGE_TEST } from './bridgeTestPlacement';
@@ -92,11 +104,12 @@ import LandmarkLayer from './LandmarkLayer';
 import WaterfallV2Entity from './WaterfallV2Entity';
 import { type WaterfallVersion } from './waterfallV2Placement';
 import SurfaceRippleLayer from './water/SurfaceRippleLayer';
+import FloatingPetalLayer from './water/FloatingPetalLayer';
 import GardenWaterField from './water/GardenWaterField';
 import WaterfallImpactUnderlay from './water/WaterfallImpactUnderlay';
 import FishLayer, { type FishDensity, type FishMotionPreset } from './water/FishLayer';
 import LotusLayer, { type LotusRenderMode } from './water/LotusLayer';
-import { type TopWaterMotionMode } from './water/WaterTopAssembly';
+import { useWaterTopFlow, type TopWaterMotionMode } from './water/WaterTopAssembly';
 import WaterTopCalibrationEditor, { type TopWaterDisplayPreset } from './WaterTopCalibrationEditor';
 import { INITIAL_WATER_TOP_PLACEMENT, type WaterTopPlacement } from './waterTopPlacement';
 
@@ -184,14 +197,21 @@ const CHECKED_IN_PAVILION = STATIC_LANDMARK_MAP_PLACEMENTS.pavilion;
 const CHECKED_IN_TEA_SET: TeaSetMapPlacement = {
   x: TEA_SET_MAP_X, y: TEA_SET_MAP_Y, scale: TEA_SET_MAP_SCALE, rotation: TEA_SET_MAP_ROTATION,
 };
-const MIN_CAMERA_ZOOM = 0.8;
-const MAX_CAMERA_ZOOM = 3;
+
+
+
+export type GardenSceneHandle = { focusFairy: () => void; returnFromTreehouse: () => boolean; returnFromMailbox: () => boolean };
 
 export type GardenSceneProps = {
   children?: import('react').ReactNode;
   showDevControls?: boolean;
   session?: FlowerSession;
   backendMode?: boolean;
+  /** Fired after the front-facing opened-letter pose and its 800 ms hold. */
+  onMailboxOpened?: () => void;
+  /** Future interior scene handoff. Entry is complete and the fairy is hidden. */
+  onTreehouseEntered?: () => void;
+  onTreehouseExited?: () => void;
   enableFairyWalk?: boolean;
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
@@ -202,8 +222,15 @@ export type GardenSceneProps = {
   showCalendar?: boolean;
 };
 
-function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, readOnly = false, onOpenBookhouse, onOpenReflection, showCalendar = false, children }: GardenSceneProps = {}) {
+function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, readOnly = false, onOpenBookhouse, onOpenReflection, showCalendar = false, children, onTreehouseEntered, onTreehouseExited, onMailboxOpened, interactionRef }: GardenSceneProps & {interactionRef?:Ref<GardenSceneHandle>} = {}) {
+  runtimeAudit.render('GardenScene');
   const planting = usePlanting();
+  const [perfFlags,setPerfFlags]=useState<GardenIsolation>({...DEFAULT_ISOLATION});
+  const [perfCount,setPerfCount]=useState<number|null>(null);
+  const perf=__DEV__?perfFlags:DEFAULT_ISOLATION;
+  const fixtureParents=useMemo(()=>__DEV__&&perfCount!==null?productionQARecords(perfCount):null,[perfCount]);
+  const drawnPlanting=fixtureParents?{...planting,placements:fixtureParents,activeMode:'normal' as const,
+    targetFlower:null,previewCoords:null,validationResult:null}:planting;
   const [useMonthlyGrowth, setUseMonthlyGrowth] = useState(USE_MONTHLY_GARDEN_GROWTH_V1_1);
   const {
     placements,
@@ -236,6 +263,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     .map(p => p.speciesCode || p.flowerName || 'UNKNOWN'))], [placements]);
 
   const activeModeRef = useRef(activeMode);
+  const perfFixtureRef=useRef(false);perfFixtureRef.current=fixtureParents!==null;
   const placementsRef = useRef(placements);
   useEffect(() => {
     activeModeRef.current = activeMode;
@@ -257,8 +285,12 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   const fairyRef = useRef<FairyHandle>(null);
   const fairyPress = useRef<{ x: number; y: number; pointerId: number } | null>(null);
+  const fairySeconds=useSharedValue(0);
+  const [fairyState, setFairyState] = useState<FairyState>('idle');
+  const fairyOnMoonBed = fairyState === 'sleepingOnMoonBed';
+  const fairyOnSwing = fairyState === 'sittingOnSwing';
   const [fairyDebug, setFairyDebug] = useState(false);
-  const [fairyStatus, setFairyStatus] = useState("Tap a path to walk");
+  const [fairyStatus, setFairyStatus] = useState("Tap dry ground to move");
   const handledParamRef = useRef<string | null>(null);
 
   const [waterfallVersion, setWaterfallVersion] = useState<WaterfallVersion>(initialWaterfallVersion);
@@ -392,6 +424,8 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   const [topWaterAssemblyEnabled, setTopWaterAssemblyEnabled] = useState(true);
   const [topWaterMotionMode, setTopWaterMotionMode] = useState<TopWaterMotionMode>('animate');
 
+  const surfaceFlow = useWaterTopFlow(worldActive && perf.Water && perf.WaterAnimation, waterRipplesVisible && perf.WaterAnimation);
+
   const calmBaseImage = useImage(WATER_ASSETS.calmBase);
 
 
@@ -399,13 +433,44 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     setGardenActive(true);
     return () => setGardenActive(false);
   }, []));
-  const waterfallFocus = __DEV__ && !previewMode && calibrationMode === 'waterfall';
+  const waterfallFocus = __DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'waterfall';
   const fit = Math.min(viewport.width / GARDEN_WORLD_WIDTH, viewport.height / GARDEN_WORLD_HEIGHT);
   const baseX = (viewport.width - GARDEN_WORLD_WIDTH * fit) / 2;
   const baseY = (viewport.height - GARDEN_WORLD_HEIGHT * fit) / 2;
   const cameraX = useSharedValue(0);
   const cameraY = useSharedValue(0);
   const cameraZoom = useSharedValue(1);
+  const maximumCameraZoom = 3;
+  const sceneElement = useRef<View>(null);
+  const zoomRequest = useRef({ time: 0, zoom: 1 });
+  const reducedCameraMotion = useReducedMotion();
+  const zoomAt = useCallback((factor: number, focalX = viewport.width / 2, focalY = viewport.height / 2) => {
+    if (fit <= 0) return;
+    const now = Date.now();
+    const previous = now - zoomRequest.current.time < 180 ? zoomRequest.current.zoom : cameraZoom.value;
+    const next = zoomGardenAt(viewport.width, viewport.height, fit, baseX, baseY,
+      cameraX.value, cameraY.value, cameraZoom.value, previous * factor, focalX, focalY);
+    zoomRequest.current = { time: now, zoom: next.zoom };
+    const timing = { duration: reducedCameraMotion ? 0 : 140, easing: Easing.out(Easing.cubic) };
+    cameraX.value = withTiming(next.x, timing);
+    cameraY.value = withTiming(next.y, timing);
+    cameraZoom.value = withTiming(next.zoom, timing);
+  }, [viewport.width, viewport.height, fit, baseX, baseY, cameraX, cameraY, cameraZoom, reducedCameraMotion]);
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const element = sceneElement.current as unknown as HTMLElement | null;
+    if (!element?.addEventListener) return;
+    const wheel = (event: WheelEvent) => {
+      // Capture only this Garden's wheel/pinch events, never browser-page zoom.
+      if ((event.target as Element)?.closest('button, input, textarea, select')) return;
+      event.preventDefault();
+      const rect = element.getBoundingClientRect();
+      const pixels = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? rect.height : 1);
+      zoomAt(Math.exp(-Math.max(-180, Math.min(180, pixels)) * .0025), event.clientX - rect.left, event.clientY - rect.top);
+    };
+    element.addEventListener('wheel', wheel, { passive: false });
+    return () => element.removeEventListener('wheel', wheel);
+  }, [zoomAt]);
   const maskScreenScale = useDerivedValue(() => fit * cameraZoom.value, [fit]);
   const startX = useSharedValue(0);
   const startY = useSharedValue(0);
@@ -447,6 +512,16 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     top: baseY + cameraY.value + calendarPoint.value.y * fit * cameraZoom.value - 22,
     opacity: calendarHighlight.value,
   }));
+  useImperativeHandle(interactionRef,()=>({
+    focusFairy:()=>{
+      if (activeModeRef.current !== 'normal' || selectedFlower) return;
+      const point = fairyRef.current?.getPosition();
+      if (point) focusCoords(point.x, point.y, cameraZoom.value);
+    },
+    returnFromTreehouse:()=>fairyRef.current?.returnFromTreehouse()??false,
+    returnFromMailbox:()=>fairyRef.current?.returnFromMailbox()??false,
+  }),[focusCoords,cameraZoom,selectedFlower]);
+
   const focusCalendarFlower = (flower: typeof placements[number]) => {
     const duration = calendarReducedMotion ? 0 : 500;
     cameraZoom.value = withTiming(1.8, { duration });
@@ -714,13 +789,14 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   const handleGardenTap = useCallback((screenX: number, screenY: number) => {
     if (readOnly || fit <= 0) return;
+    if (selectedFlower) return;
     const currentZoom = cameraZoom.value;
     const currentCamX = cameraX.value;
     const currentCamY = cameraY.value;
     const worldX = (screenX - baseX - currentCamX) / (fit * currentZoom);
     const worldY = (screenY - baseY - currentCamY) / (fit * currentZoom);
 
-    if (__DEV__ && !previewMode && calibrationMode === 'planting-regions') {
+    if (__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'planting-regions') {
       if (calSubMode === 'mask-paint') {
         return;
       }
@@ -740,6 +816,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       }
     }
 
+    if(perfFixtureRef.current)return;
     if (activeModeRef.current !== 'normal') {
       updatePreview(worldX, worldY);
     } else {
@@ -758,12 +835,36 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       }
       if (hitFlower) {
         openFlowerDetail(hitFlower);
-      } else if (enableFairyWalk) {
+        return;
+      }
+      // Placement and flower details own taps before any Fairy destination.
+      if (enableFairyWalk && fairyRef.current?.isMailboxBusy()) return;
+      if (enableFairyWalk && hitsMailbox({x:worldX,y:worldY},treehousePlacement)) {
+        fairyRef.current?.visitMailbox();
+        return;
+      }
+      if (enableFairyWalk && hitsTreehouse({x:worldX,y:worldY},treehousePlacement)) {
+        fairyRef.current?.visitTreehouse();
+        return;
+      }
+      if (enableFairyWalk && hitsSwing({x:worldX,y:worldY}, swingPlacement)) {
+        fairyRef.current?.visitSwing();
+        return;
+      }
+      if (enableFairyWalk && hitsTeaArea({x:worldX,y:worldY},teaSetPlacement)) {
+        fairyRef.current?.visitTea();
+        return;
+      }
+      if (enableFairyWalk && hitsMoonBed({x:worldX,y:worldY}, moonBedPlacement)) {
+        fairyRef.current?.visitMoonBed();
+        return;
+      }
+      if (enableFairyWalk) {
         const accepted = fairyRef.current?.move({ x: worldX, y: worldY });
         if (accepted && Platform.OS === 'web') canvasRef.current?.redraw();
       }
     }
-  }, [readOnly, fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk]);
+  }, [readOnly, selectedFlower, fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk, swingPlacement, moonBedPlacement, teaSetPlacement, treehousePlacement]);
 
   const startMaskPos = useRef({ localX: 0, localY: 0 });
 
@@ -944,12 +1045,15 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     const pan = Gesture.Pan()
       .maxPointers(1)
       .onStart(() => {
+        cancelAnimation(cameraX); cancelAnimation(cameraY); cancelAnimation(cameraZoom);
         startX.value = cameraX.value;
         startY.value = cameraY.value;
       })
       .onUpdate((event) => {
-        cameraX.value = startX.value + event.translationX;
-        cameraY.value = startY.value + event.translationY;
+        const next = constrainGardenCamera(viewport.width, viewport.height, fit, baseX, baseY,
+          startX.value + event.translationX, startY.value + event.translationY, cameraZoom.value);
+        cameraX.value = next.x;
+        cameraY.value = next.y;
       });
     const pinch = Gesture.Pinch()
       .onStart((event) => {
@@ -960,10 +1064,13 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         focalWorldY.value = (event.focalY - baseY - startY.value) / (fit * startZoom.value);
       })
       .onUpdate((event) => {
-        const nextZoom = Math.min(MAX_CAMERA_ZOOM, Math.max(MIN_CAMERA_ZOOM, startZoom.value * event.scale));
+        const nextZoom = constrainGardenCamera(viewport.width, viewport.height, fit, baseX, baseY, 0, 0, startZoom.value * event.scale).zoom;
         cameraZoom.value = nextZoom;
-        cameraX.value = event.focalX - baseX - focalWorldX.value * fit * nextZoom;
-        cameraY.value = event.focalY - baseY - focalWorldY.value * fit * nextZoom;
+        const next = constrainGardenCamera(viewport.width, viewport.height, fit, baseX, baseY,
+          event.focalX - baseX - focalWorldX.value * fit * nextZoom,
+          event.focalY - baseY - focalWorldY.value * fit * nextZoom, nextZoom);
+        cameraX.value = next.x;
+        cameraY.value = next.y;
       });
     const tap = Gesture.Tap()
       .enabled(!(enableFairyWalk && Platform.OS === 'web'))
@@ -972,7 +1079,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       .onEnd((event) => {
         handleGardenTap(event.x, event.y);
       });
-    const isPlantingCal = __DEV__ && !previewMode && calibrationMode === 'planting-regions';
+    const isPlantingCal = __DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'planting-regions';
     let effectivePan = pan;
     if (isPlantingCal) {
       if (calSubMode === 'mask-paint') {
@@ -987,7 +1094,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     }
     return Gesture.Simultaneous(effectivePan, pinch, tap);
   }, [baseX, baseY, fit, cameraX, cameraY, cameraZoom, focalWorldX, focalWorldY,
-    startX, startY, startZoom, handleGardenTap, enableFairyWalk, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan, moveMaskPan]);
+    viewport.width, viewport.height, startX, startY, startZoom, handleGardenTap, enableFairyWalk, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan, moveMaskPan]);
   const resetView = useCallback(() => {
     cameraX.value = 0;
     cameraY.value = 0;
@@ -1007,7 +1114,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   // Camera-only framing keeps the bridge above its numeric editor.
   const focusBridge = () => {
     if (fit <= 0) return;
-    const zoom = Math.min(MAX_CAMERA_ZOOM, viewport.width * 0.9 / (fit * 800), viewport.height * 0.48 / (fit * 700));
+    const zoom = Math.min(maximumCameraZoom, viewport.width * 0.9 / (fit * 800), viewport.height * 0.48 / (fit * 700));
     cameraZoom.value = zoom;
     cameraX.value = viewport.width / 2 - baseX - bridgePlacement.x * fit * zoom;
     cameraY.value = viewport.height * 0.27 - baseY - bridgePlacement.y * fit * zoom;
@@ -1042,7 +1149,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     resetView();
   }, [resetView]);
 
-  const isWaterTopCalibrating = __DEV__ && !previewMode && calibrationMode === 'water-top';
+  const isWaterTopCalibrating = __DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'water-top';
   const topWaterShowWater = true;
   const topWaterShowCliff = !isWaterTopCalibrating || (waterTopPreset !== 'water-only');
   const topWaterShowBank = !isWaterTopCalibrating || (waterTopFrontBankEnabled || waterTopPreset === 'bank' || waterTopPreset === 'all');
@@ -1051,6 +1158,8 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   return (
     <View
+      ref={sceneElement}
+      testID="garden-scene"
       style={styles.scene}
       // Web Fairy taps should not expire with the shared camera gesture's
       // 250ms timer. Only canvas presses qualify; controls, drags and pinches do not.
@@ -1093,75 +1202,91 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       {fit > 0 && (
         <GestureDetector gesture={cameraGesture}>
         <Canvas ref={canvasRef} style={styles.scene} active={worldActive}>
-          <PlantingProvider value={planting}>
+          <GardenLandResources>
+          <PlantingProvider value={drawnPlanting}>
           {/* Shared camera only. Neither sibling inherits an individual land transform. */}
           <Group transform={cameraTransform}>
             {/* 1. Solid fallback */}
             <Rect x={-2400} y={-2400} width={7200} height={6600} color={GARDEN_WATER_COLOR} />
 
             {/* 2. Calm water base */}
-            {waterBaseVisible && calmBaseImage && (
-              <GardenWaterField image={calmBaseImage} active={worldActive} animated={waterRipplesVisible} />
+            {perf.Water && waterBaseVisible && calmBaseImage && (
+              <GardenProfile name="Water field" enabled={perf.Water}><GardenWaterField flow={surfaceFlow} image={calmBaseImage} active={worldActive && perf.WaterAnimation} animated={waterRipplesVisible && perf.WaterAnimation} /></GardenProfile>
             )}
 
+            {/* Approved receiving-water floor/contact, below fish and all terrain. */}
+            {perf.Water && waterBaseVisible && <>
+              {perf.Land && <LandLayer renderPass="shore" layout={__DEV__ ? calibrationLayout : undefined} />}
+            </>}
+
             {/* 3. Fish (below ripples & surface disturbance) */}
-            <FishLayer
-              active={worldActive}
+            <GardenProfile name="Fish" enabled={perf.Fish}><FishLayer
+              active={worldActive && perf.WaterAnimation}
               enabled={fishVisible}
-              opacity={1.0}
+              opacity={0.84}
               density={fishDensity}
               motionPreset={fishMotionPreset}
-            />
+            /></GardenProfile>
 
             {/* 4. Surface ripples */}
-            <SurfaceRippleLayer
+            <GardenProfile name="Surface ripples" enabled={perf.Water}><SurfaceRippleLayer
+              flow={surfaceFlow}
               softWorldEdges
-              active={worldActive}
+              active={worldActive && perf.WaterAnimation}
               enabled={waterRipplesVisible}
               opacity={waterRippleOpacity}
-            />
+            /></GardenProfile>
+
+            {/* Sparse floating petals sit on the surface, below lotus and terrain. */}
+            {perf.Water && waterBaseVisible && <FloatingPetalLayer flow={surfaceFlow} fit={fit} impactPlacement={waterfallImpactPlacement} />}
 
             {/* 5. Waterfall Impact Underlay (disturbed turquoise water & wake, above fish/ripples, below lotus/land/landmarks) */}
-            <WaterfallImpactUnderlay
+            <GardenProfile name="Impact underlay" enabled={perf.Waterfall}><WaterfallImpactUnderlay
               strength={__DEV__ ? impactWaterStrength : 1.0}
-              active={worldActive}
+              active={worldActive && perf.WaterAnimation}
               enabled={foamVisible && waterfallVersion === 'legacy'}
               opacity={1.0}
               placement={waterfallImpactPlacement}
               onRuntimeStrength={__DEV__ ? setRuntimeUnderlayStrength : undefined}
-            />
+            /></GardenProfile>
             {__DEV__ && underlayDebugMode === 'current-z' && (
               <WaterfallImpactDebugShape placement={waterfallImpactPlacement} />
             )}
 
+            {/* Continuous outer cliffs; original water and landmarks are retained. */}
+            {perf.Land && <GardenOuterBasin />}
+
             {/* 6. Lotus */}
-            <LotusLayer
-              active={worldActive}
+            <GardenProfile name="Lotus" enabled={perf.Lotus}><LotusLayer
+              flow={surfaceFlow}
+              active={worldActive && perf.WaterAnimation}
               visible={lotusVisible}
               opacity={1.0}
-              mode={lotusMode}
-            />
+              mode={perf.WaterAnimation?lotusMode:'static'}
+            /></GardenProfile>
 
             {/* V2 is one independent terrain; islands and treehouse occlude it naturally. */}
-            {showLandmarks && waterfallVersion === 'v2' && (
-              <WaterfallV2Entity active={worldActive} animated={topWaterMotionMode === 'animate'} />
+            {perf.Waterfall && showLandmarks && waterfallVersion === 'v2' && (
+              <WaterfallV2Entity active={worldActive && perf.WaterAnimation} animated={topWaterMotionMode === 'animate' && perf.WaterAnimation} />
             )}
+          </Group>
+          <Group transform={cameraTransform}>
             {/* 7. LandLayer */}
-            <LandLayer layout={__DEV__ ? calibrationLayout : undefined}
-              selectedLandId={__DEV__ && !previewMode && calibrationMode === 'land' ? selectedLandId : null} />
+            <GardenProfile name="Land" enabled={perf.Land}><LandLayer layout={__DEV__ ? calibrationLayout : undefined}
+              selectedLandId={__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'land' ? selectedLandId : null} /></GardenProfile>
             {/* Month Planting Region Overlay */}
-            <PlantingRegionOverlay
+            <GardenProfile name="Planting overlays" enabled={perf.DebugUI}><PlantingRegionOverlay
               screenScale={maskScreenScale}
               highlightedMonth={activeMode !== 'normal' && targetFlower ? targetFlower.month : null}
               showAllRegions={showDevPlantingRegions}
-              isCalibrating={__DEV__ && !previewMode && calibrationMode === 'planting-regions'}
+              isCalibrating={__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'planting-regions'}
               calibrationMap={plantingCalibrationMap}
               selectedMonth={selectedCalMonth}
               displayMode={calDisplayMode}
               opacity={calSubMode === 'mask-paint' ? paintOpacity : calOpacity}
               showLandBounds={showLandBounds}
               layout={calibrationLayout}
-              isPaintingMask={__DEV__ && !previewMode && calibrationMode === 'planting-regions' && calSubMode === 'mask-paint'}
+              isPaintingMask={__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'planting-regions' && calSubMode === 'mask-paint'}
               paintingMonth={selectedCalMonth}
               activeStrokes={paintStrokes}
               activeOffset={maskOffset}
@@ -1170,7 +1295,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
               showAdditions={showAdditions}
               showErasures={showErasures}
               showFinalMask={showFinalMask}
-            />
+            /></GardenProfile>
 
             {environmentEnabled && <GardenEnvironmentLayer />}
             {/* Approved world-aligned artwork is shared by development and production. */}
@@ -1183,17 +1308,19 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
             {__DEV__ && (waterfallFocus ? waterfallReferenceOpacity : referenceOpacity) > 0 && (
               <GardenReferenceLayer opacity={waterfallFocus ? waterfallReferenceOpacity : referenceOpacity} />
             )}
-            {enableFairyWalk && <GardenFairy ref={fairyRef} debug={fairyDebug} onStatus={setFairyStatus}
-              active={worldActive && infrastructureEnabled && activeMode === 'normal' && !selectedFlower && previewMode}
-              blocked={() => false} />}
+          </Group>
+          <Group transform={cameraTransform}>
             {showLandmarks && (
-              <LandmarkLayer
-                behindTeaSet={<PlantedFlowerLayer depthPass="behind-tea-set" useMonthlyGrowth={useMonthlyGrowth} />}
+              <LandmarkLayer fairyOnMoonBed={fairyOnMoonBed} fairyOnSwing={fairyOnSwing} renderPass="motion"
+                landmarksVisible={perf.Landmarks}
+                waterEnabled={perf.Water}
+                waterAnimationEnabled={perf.WaterAnimation}
+                landmarkAnimationEnabled={worldActive && perf.LandmarkAnimation}
                 waterfallVersion={waterfallVersion}
-                showDiagnostics={__DEV__ && !previewMode && !waterfallFocus && showDiagnostics}
-                showBounds={__DEV__ && !previewMode && !waterfallFocus && calibrationMode !== 'land' && calibrationMode !== 'impact' && calibrationMode !== 'water-top'}
+                showDiagnostics={__DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && showDiagnostics}
+                showBounds={__DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && calibrationMode !== 'land' && calibrationMode !== 'impact' && calibrationMode !== 'water-top'}
                 waterfallImpactPlacement={waterfallImpactPlacement}
-                impactFoamEnabled={impactFoamEffective}
+                impactFoamEnabled={impactFoamEffective && perf.Waterfall}
                 treehousePlacement={treehousePlacement}
                 swingPlacement={swingPlacement}
                 moonBedPlacement={moonBedPlacement}
@@ -1201,44 +1328,103 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
                 pavilionPlacement={pavilionPlacement}
                 teaSetPlacement={teaSetPlacement}
                 waterfallPlacement={waterfallPlacement}
-                waterfallActive={worldActive}
+                waterfallActive={worldActive && perf.WaterAnimation}
                 moonBedIntegrationEnabled={moonBedIntegrationEnabled}
                 moonBedShadowOpacity={moonBedShadowOpacity}
                 treehouseLightingEnabled={worldTime.isTreehouseLightingTime}
                 swingLightingEnabled={worldTime.isTreehouseLightingTime}
                 topWaterAssemblyEnabled={topWaterAssemblyEnabled}
                 suppressLegacyWaterTop
-                topWaterMotionMode={topWaterMotionMode}
+                topWaterMotionMode={perf.WaterAnimation?topWaterMotionMode:'static'}
                 waterTopPlacement={waterTopPlacement}
                 topWaterShowWater={topWaterShowWater}
                 topWaterShowCliff={topWaterShowCliff}
                 topWaterShowBank={topWaterShowBank}
-                waterfallVisible={waterfallVisible}
+                waterfallVisible={waterfallVisible && perf.Waterfall}
                 onDebugStatus={__DEV__ ? setTreehouseStatus : undefined}
               />
             )}
+            {/* Ground and entrance slabs belong below the walking fairy. */}
             {infrastructureEnabled && showLandmarks && <GardenRoadApproachLayer />}
+          </Group>
+          {enableFairyWalk && <Group transform={cameraTransform}>
+            <GardenFairy motionClock={fairySeconds} onMailboxOpened={() => {
+              onMailboxOpened?.();
+            }} onTreehouseExited={() => {
+              onTreehouseExited?.();
+            }} onTreehouseEntered={() => {
+              onTreehouseEntered?.();
+            }} pixelsPerUnit={()=>fit*cameraZoom.value} onStateChange={setFairyState} ref={fairyRef} debug={fairyDebug} onStatus={setFairyStatus}
+              active={worldActive && perf.Land && perf.Infrastructure && infrastructureEnabled && activeMode === 'normal' && !selectedFlower && previewMode}
+              blocked={isGardenGroundBlocked} />
+          </Group>}
+          <Group transform={cameraTransform}>
+            {showLandmarks && (
+              <LandmarkLayer fairySeconds={fairySeconds} fairyAtTea={fairyState==='seatedAtTea'||fairyState==='drinkingTea'?fairyState:null} renderPass="static-front"
+                behindTeaSet={<PlantedFlowerLayer depthPass="behind-tea-set" useMonthlyGrowth={useMonthlyGrowth} />}
+                landmarksVisible={perf.Landmarks}
+                waterEnabled={perf.Water}
+                waterAnimationEnabled={perf.WaterAnimation}
+                landmarkAnimationEnabled={worldActive && perf.LandmarkAnimation}
+                waterfallVersion={waterfallVersion}
+                showDiagnostics={__DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && showDiagnostics}
+                showBounds={__DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && calibrationMode !== 'land' && calibrationMode !== 'impact' && calibrationMode !== 'water-top'}
+                waterfallImpactPlacement={waterfallImpactPlacement}
+                impactFoamEnabled={impactFoamEffective && perf.Waterfall}
+                treehousePlacement={treehousePlacement}
+                swingPlacement={swingPlacement}
+                moonBedPlacement={moonBedPlacement}
+                gardenArchPlacement={gardenArchPlacement}
+                pavilionPlacement={pavilionPlacement}
+                teaSetPlacement={teaSetPlacement}
+                waterfallPlacement={waterfallPlacement}
+                waterfallActive={worldActive && perf.WaterAnimation}
+                moonBedIntegrationEnabled={moonBedIntegrationEnabled}
+                moonBedShadowOpacity={moonBedShadowOpacity}
+                treehouseLightingEnabled={worldTime.isTreehouseLightingTime}
+                swingLightingEnabled={worldTime.isTreehouseLightingTime}
+                topWaterAssemblyEnabled={topWaterAssemblyEnabled}
+                suppressLegacyWaterTop
+                topWaterMotionMode={perf.WaterAnimation?topWaterMotionMode:'static'}
+                waterTopPlacement={waterTopPlacement}
+                topWaterShowWater={topWaterShowWater}
+                topWaterShowCliff={topWaterShowCliff}
+                topWaterShowBank={topWaterShowBank}
+                waterfallVisible={waterfallVisible && perf.Waterfall}
+                onDebugStatus={__DEV__ ? setTreehouseStatus : undefined}
+              />
+            )}
             {/* Planted Flowers & Active Placement Preview Layer */}
-            <PlantedFlowerLayer depthPass={showLandmarks ? 'foreground' : 'all'} useMonthlyGrowth={useMonthlyGrowth} />
-            {__DEV__ && !previewMode && calibrationMode === 'impact' && (
+            <GardenProfile name="Flower foreground" enabled={perf.Flowers}><PlantedFlowerLayer depthPass={showLandmarks ? 'foreground' : 'all'} useMonthlyGrowth={useMonthlyGrowth} /></GardenProfile>
+            {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'impact' && (
               <WaterfallImpactOverlay placement={waterfallImpactPlacement} />
             )}
             {/* TOP Z Diagnostic Copy: above LandmarkLayer / above WaterfallEntity */}
-            {__DEV__ && <BridgeDebugOverlay placement={bridgePlacement}
+            {__DEV__ && perf.DebugUI && <BridgeDebugOverlay placement={bridgePlacement}
               debug={showBridgeDebug} walkPath={showBridgeWalkPath} />}
             {__DEV__ && underlayDebugMode === 'top-z' && (
               <WaterfallImpactDebugShape placement={waterfallImpactPlacement} />
             )}
           </Group>
           </PlantingProvider>
+          </GardenLandResources>
         </Canvas>
         </GestureDetector>
       )}
+      <View style={{position:'absolute',left:12,bottom:90,flexDirection:'row',gap:6,zIndex:30}}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Zoom out Garden" onPress={() => zoomAt(1 / 1.25)}
+          style={styles.zoomButton}><Text style={styles.zoomButtonText}>−</Text></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Zoom in Garden" onPress={() => zoomAt(1.25)}
+          style={styles.zoomButton}><Text style={styles.zoomButtonText}>+</Text></Pressable>
+      </View>
+      {__DEV__&&showDevControls&&<GardenRuntimePanel flags={perfFlags} onFlags={setPerfFlags} count={perfCount} onCount={setPerfCount}
+        canChangeFixture={activeMode==='normal'} metadata={{realParentCount:placements.length,renderedParentCount:drawnPlanting.placements.length,
+          viewport,waterfallVersion,growthV11:useMonthlyGrowth,previewMode,environmentEnabled,worldPhase:worldTime.phase}}/>}
       {/* Planting Placement Controls Banner & Action Bar */}
-      <PlantingPlacementControls />
+      {!readOnly && fixtureParents===null&&<PlantingPlacementControls />}
 
       {/* Flower Detail Modal */}
-      {!readOnly && <FlowerDetailModal />}
+      {!readOnly && fixtureParents===null && <FlowerDetailModal />}
 
       {!readOnly && onOpenReflection && activeMode === 'normal' && !selectedFlower && (
         <Animated.View style={[{ position: 'absolute' }, pavilionEntryStyle]}>
@@ -1256,22 +1442,40 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       {!readOnly && onOpenBookhouse && activeMode === 'normal' && !selectedFlower && (
         <Animated.View style={[{ position: 'absolute' }, treehouseEntryStyle]}>
           <Pressable accessibilityRole="button" accessibilityLabel="Enter Treehouse Bookhouse"
-            accessibilityHint="Open your private journals and flower history" onPress={onOpenBookhouse}
+            accessibilityHint="Open your private journals and flower history" onPress={() => {
+              if (enableFairyWalk) fairyRef.current?.visitTreehouse(); else onOpenBookhouse();
+            }}
             style={({ pressed }) => ({ flex: 1, borderRadius: 28, backgroundColor: pressed ? '#FFF4DC22' : 'transparent' })} />
         </Animated.View>
+      )}
+      {enableFairyWalk && !readOnly && activeMode === 'normal' && !selectedFlower &&
+        (fairyState === 'insideTreehouse' || fairyState === 'exitingTreehouse' || fairyState === 'mailboxTransition') && (
+        <View testID="fairy-interaction-controls" style={{position:'absolute',right:16,bottom:110,gap:8,zIndex:30}}>
+          {fairyState === 'mailboxTransition' ? (
+            <Pressable accessibilityRole="button" accessibilityLabel="Return from mailbox" style={styles.fairyAction}
+              onPress={() => fairyRef.current?.returnFromMailbox()}><Text style={styles.fairyActionText}>Return from mailbox</Text></Pressable>
+          ) : <>
+            {fairyState === 'insideTreehouse' && onOpenBookhouse && <Pressable accessibilityRole="button"
+              accessibilityLabel="Open Bookhouse" style={styles.fairyAction} onPress={onOpenBookhouse}><Text style={styles.fairyActionText}>Open Bookhouse</Text></Pressable>}
+            <Pressable accessibilityRole="button" accessibilityLabel="Return from treehouse" style={styles.fairyAction}
+              disabled={fairyState === 'exitingTreehouse'} onPress={() => fairyRef.current?.returnFromTreehouse()}>
+              <Text style={styles.fairyActionText}>{fairyState === 'exitingTreehouse' ? 'Returning to Garden…' : 'Return from treehouse'}</Text>
+            </Pressable>
+          </>}
+        </View>
       )}
       {children}
       {showCalendar && !readOnly && activeMode === 'normal' && !selectedFlower && <GardenCalendar onFocusFlower={focusCalendarFlower} />}
       {showCalendar && <Animated.View pointerEvents="none" style={[{ position: 'absolute', width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: '#F5E8B3', backgroundColor: '#FFF2C518' }, calendarHighlightStyle]} />}
 
       {/* Floating button when in Preview Mode */}
-      {enableFairyWalk && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
+      {enableFairyWalk && showDevControls && __DEV__ && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
         <Text style={{ color: '#365b42', fontSize: 12 }}>{fairyStatus}</Text>
-        {__DEV__ && <Pressable accessibilityRole="button" accessibilityLabel="Toggle fairy path debug" onPress={() => { setFairyDebug(v => !v); setFairyStatus("Tap a path to walk"); }}>
+        {__DEV__ && <Pressable accessibilityRole="button" accessibilityLabel="Toggle fairy path debug" onPress={() => { setFairyDebug(v => !v); setFairyStatus("Tap dry ground to move"); }}>
           <Text style={{ color: '#365b42', fontSize: 12, marginTop: 6 }}>Path debug: {fairyDebug ? 'ON' : 'OFF'}</Text>
         </Pressable>}
       </View>}
-      {__DEV__ && showDevControls && previewMode && (
+      {__DEV__ && showDevControls && perf.DebugUI && previewMode && (
         <Pressable
           accessibilityRole="button"
           onPress={() => setPreviewMode(false)}
@@ -1282,7 +1486,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       )}
 
       {/* Full DEV Control Panels when Preview Mode is OFF */}
-      {__DEV__ && !previewMode && !waterfallFocus && calibrationMode !== 'impact' && calibrationMode !== 'water-top' && calibrationMode !== 'bridge' && calibrationMode !== 'planting-regions' && (
+      {__DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && calibrationMode !== 'impact' && calibrationMode !== 'water-top' && calibrationMode !== 'bridge' && calibrationMode !== 'planting-regions' && (
         <View style={styles.controls}>
           <View style={styles.controlRow}>
             <ToggleButton
@@ -1582,7 +1786,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           )}
         </View>
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'bridge' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'bridge' && (
         <BridgeTestEditor placement={bridgePlacement} onChange={setBridgePlacement}
           debug={showBridgeDebug} onDebug={() => setShowBridgeDebug(v => !v)}
           walkPath={showBridgeWalkPath} onWalkPath={() => setShowBridgeWalkPath(v => !v)}
@@ -1593,7 +1797,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           }}
           onDone={() => { setCalibrationMode('land'); setPreviewMode(true); }} />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'land' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'land' && (
         <NativeLandCalibrationEditor
           layout={calibrationLayout}
           selectedId={selectedLandId}
@@ -1609,7 +1813,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onResetAll={() => setCalibrationLayout(GARDEN_LANDS.map((land) => ({ ...land })))}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'treehouse' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'treehouse' && (
         <TreehouseCalibrationEditor
           placement={treehousePlacement}
           onNudge={(field, amount) => setTreehousePlacement((current) => ({
@@ -1619,7 +1823,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setTreehousePlacement({ ...CHECKED_IN_TREEHOUSE })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'swing' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'swing' && (
         <SwingCalibrationEditor
           placement={swingPlacement}
           onNudge={(field, amount) => setSwingPlacement((current) => ({
@@ -1629,7 +1833,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setSwingPlacement({ ...CHECKED_IN_SWING })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'moon-bed' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'moon-bed' && (
         <MoonBedMapCalibrationEditor
           placement={moonBedPlacement}
           onNudge={(field, amount) => setMoonBedPlacement((current) => ({
@@ -1639,7 +1843,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setMoonBedPlacement({ ...CHECKED_IN_MOON_BED })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'garden-arch' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'garden-arch' && (
         <StaticLandmarkCalibrationEditor
           title="Garden Arch"
           placement={gardenArchPlacement}
@@ -1651,7 +1855,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setGardenArchPlacement({ ...CHECKED_IN_GARDEN_ARCH })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'pavilion' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'pavilion' && (
         <StaticLandmarkCalibrationEditor
           title="Pavilion"
           placement={pavilionPlacement}
@@ -1663,7 +1867,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setPavilionPlacement({ ...CHECKED_IN_PAVILION })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'waterfall' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'waterfall' && (
         <WaterfallMapCalibrationEditor
           placement={waterfallPlacement}
           referenceOpacity={waterfallReferenceOpacity}
@@ -1679,7 +1883,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setWaterfallPlacement({ ...INITIAL_WATERFALL_PLACEMENT })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'tea-set' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'tea-set' && (
         <TeaSetMapCalibrationEditor
           placement={teaSetPlacement}
           onNudge={(field, amount) => setTeaSetPlacement((current) => ({
@@ -1701,7 +1905,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           onReset={() => setWaterfallImpactPlacement({ ...INITIAL_WATERFALL_IMPACT_PLACEMENT })}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'water-top' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'water-top' && (
         <WaterTopCalibrationEditor
           rawFinal
           placement={waterTopPlacement}
@@ -1735,7 +1939,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           }}
         />
       )}
-      {__DEV__ && !previewMode && calibrationMode === 'planting-regions' && (
+      {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'planting-regions' && (
         calSubMode === 'mask-paint' ? (
           <ManualMaskPaintEditor
             selectedMonth={selectedCalMonth}
@@ -1806,6 +2010,10 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
 const styles = StyleSheet.create({
   scene: { flex: 1, backgroundColor: GARDEN_WATER_COLOR },
+  fairyAction: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8, backgroundColor: '#365b42', alignItems: 'center' },
+  fairyActionText: { color: '#fff', fontSize: 14 },
+  zoomButton: { width: 40, height: 40, borderRadius: 8, backgroundColor: '#365b42', borderWidth: 1, borderColor: '#e3edda', alignItems: 'center', justifyContent: 'center' },
+  zoomButtonText: { color: '#fff', fontSize: 25, lineHeight: 30 },
   controls: { position: 'absolute', top: 8, left: 8, right: 8, padding: 8, gap: 6, backgroundColor: '#FFFFFFE8' },
   controlRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   controlButton: { minHeight: 32, paddingHorizontal: 10, justifyContent: 'center', borderRadius: 6, backgroundColor: '#D8DDDA' },
@@ -1880,11 +2088,12 @@ function WaterfallImpactDebugShape({ placement }: { placement: WaterfallImpactPl
   );
 }
 
-export default function GardenScene(props: GardenSceneProps = {}) {
+const GardenScene = forwardRef<GardenSceneHandle,GardenSceneProps>(function GardenScene(props, ref) {
   const detailParams = useLocalSearchParams<{ ownerId?: string }>();
   return (
     <PlantingProvider gardenOwnerUserId={props.gardenOwnerUserId || detailParams.ownerId} session={props.session} backendMode={props.backendMode}>
-      <GardenSceneContent {...props} />
+      <GardenSceneContent {...props} interactionRef={ref} />
     </PlantingProvider>
   );
-}
+});
+export default GardenScene;

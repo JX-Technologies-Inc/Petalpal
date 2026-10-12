@@ -1,8 +1,14 @@
+import LotusSurfaceRipples from './LotusSurfaceRipples';
+import { useWaterTopFlow, type WaterTopFlow } from './WaterTopAssembly';
+import type { SharedValue } from 'react-native-reanimated';
+import {runtimeAudit} from '../performance/runtimeAudit';
+import GardenLotusContact from './GardenLotusContact';
 import { Group, Image, useImage } from '@shopify/react-native-skia';
 import { memo, useMemo } from 'react';
 import {
   cancelAnimation,
   useDerivedValue,
+  useAnimatedReaction,
   useReducedMotion,
   useSharedValue,
   withRepeat,
@@ -222,6 +228,7 @@ export const DEFAULT_LOTUS_PLACEMENTS: readonly LotusClusterPlacement[] = [
 ] as const;
 
 type LotusClusterItemProps = {
+  seconds: SharedValue<number>;
   placement: LotusClusterPlacement;
   mode: 'static' | 'sway';
   opacity: number;
@@ -229,6 +236,7 @@ type LotusClusterItemProps = {
 };
 
 const LotusClusterItem = memo(function LotusClusterItem({
+  seconds,
   placement,
   mode,
   opacity,
@@ -295,6 +303,9 @@ const LotusClusterItem = memo(function LotusClusterItem({
 
   return (
     <Group transform={clusterTransform}>
+      <GardenLotusContact image={staticImg} width={worldW} height={worldH} opacity={opacity} />
+      <LotusSurfaceRipples image={staticImg} width={worldW} height={worldH}
+        seconds={seconds} seed={placement.swayPhase ?? 0} opacity={opacity} />
       <Image
         image={staticImg}
         x={0}
@@ -311,6 +322,7 @@ const LotusClusterItem = memo(function LotusClusterItem({
 export type LotusRenderMode = 'static' | 'sway';
 
 export type LotusLayerProps = {
+  flow?: WaterTopFlow;
   visible?: boolean;
   opacity?: number;
   mode?: LotusRenderMode;
@@ -324,7 +336,19 @@ export default function LotusLayer({
   mode = 'sway',
   active = true,
   placements = DEFAULT_LOTUS_PLACEMENTS,
+  flow: sharedFlow,
 }: LotusLayerProps) {
+  runtimeAudit.render('LotusLayer');
+  const standalone = useWaterTopFlow(active && visible && !sharedFlow, mode === 'sway' && !sharedFlow);
+  const flow = sharedFlow ?? standalone;
+  const rippleSeconds = useSharedValue(0);
+  const previous = useSharedValue(flow.seconds.value);
+  // Follow the existing scene clock; preserve the local phase during a pause.
+  useAnimatedReaction(() => flow.seconds.value, seconds => {
+    const elapsed = Math.max(0, seconds - previous.value);
+    previous.value = seconds;
+    if (active && visible && mode === 'sway' && flow.enabled) rippleSeconds.value += elapsed;
+  }, [flow.seconds, flow.enabled, active, visible, mode]);
   if (!visible || opacity <= 0) return null;
 
   return (
@@ -332,6 +356,7 @@ export default function LotusLayer({
       {placements.map((p) => (
         <LotusClusterItem
           key={p.id}
+          seconds={rippleSeconds}
           placement={p}
           mode={mode}
           opacity={opacity}

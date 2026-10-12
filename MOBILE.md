@@ -804,3 +804,49 @@ Firebase/API/Socket/DB/AI functionality. Anonymous asset protection PASS; signed
 Garden confirmation at this edge is pending. Version upload/activation preserved
 routing; do not run full deploy with the local URL-off profile. Render/native
 setup, artwork and quality settings remain unchanged.
+
+## Garden/Fairy V2 integration
+
+The authenticated `/` Garden now includes Fairy by default, with all V2 terrain,
+koi/wakes, lotus contact/ripple effects, floating petals and compatible grading.
+The Fairy HUD button focuses the existing character in the same Canvas; legacy
+`/garden-test` and `/feature/fairy` links redirect to this unified Garden. There
+is no independent Fairy scene. Events, Friends, Profile and Settings retain their
+local overlays; Calendar, Bookhouse and other established routes remain available.
+
+Covered/temporarily inactive Gardens pause Fairy in place rather than clearing
+its route or contextual state. After Treehouse entry, explicit in-scene controls
+open Bookhouse or return Fairy; Bookhouse return preserves the scene and state.
+Mailbox also has an in-scene return action. Planting and flower details take tap
+priority before Fairy landmarks/destinations. Normal user mode hides developer
+status/debug controls. Existing immediate pointer response, 110 world-unit/sec
+walking, authored narrow paths, initial camera, free pan and 0.8–3× zoom remain.
+
+The independent V2 full-screen water-material rewrite remains deferred: main's
+animated water field and ripple artwork are retained. Koi, lotus and original
+vector petals share the established paused water clock. Shore and opaque land
+passes share decoded island images; the existing V2 512 MiB texture-cache ceiling,
+static-picture rendering, resource cleanup and quality policy are unchanged.
+
+Owner visual review approved unified Fairy and preferred full V2 effects. This
+is functional integration acceptance, not formal FPS evidence. Historical
+callback-cadence regressions remain unresolved; keep PR #34 Draft and consult
+`INTEGRATION_OPTIMIZATION.md` on main for the closed investigations. No new
+performance benchmark or optimization experiment was run for this integration.
+
+Synthetic local review uses the normal `/` entry with
+`preview@example.invalid` / `preview-only`; no live API/socket or persistent writes.
+Export with `node scripts/build-cloudflare-web.mjs --synthetic` and serve through
+the existing loopback preview fixture server. This is not a production artifact.
+
+For changed interaction code, run
+`node --test mobile/test/fairyInput.test.cjs mobile/test/gardenFairyV2.test.cjs` from repository root. The latter runs
+`checkTreehouseEntry.cjs`, `checkMailboxInteraction.cjs` and `checkGardenGround.cjs`
+against the actual controller. For changed sampling or static rendering, include
+`gardenShoreCoverage.test.cjs`, `gardenStaticPicture.test.cjs` and
+`gardenRuntimeResources.test.mjs` from `mobile/test/`.
+
+After intentional terrain/layout/infrastructure geometry changes, use a Python
+runtime with NumPy and Pillow to run `python3 scripts/bakeGardenGround.py` from
+`mobile/`; review both existing generated ground-mask files. This is local asset generation, not deployment or migration. Preserve historical checkpoint
+evidence; missing approved checkpoint files must not be invented as test fixtures.

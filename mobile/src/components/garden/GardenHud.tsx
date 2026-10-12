@@ -10,7 +10,7 @@ import { SidebarIllustration } from './SidebarIllustration';
 import { usePlanting } from './planting/PlantingContext';
 
 // One navigation model; only its sizing changes with the viewport.
-export function GardenHud() {
+export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) {
   const insets = useSafeAreaInsets();
   const { theme, light } = usePanelTheme();
   const { width, height } = useWindowDimensions();
@@ -25,12 +25,13 @@ export function GardenHud() {
     if (!entryFeature) return;
     if (entryFeature === 'fairy') {
       router.setParams({ feature: undefined });
-      router.push('/feature/fairy');
+      setOpenFeature(undefined);
+      onFocusFairy?.();
       return;
     }
     if (gardenFeature(entryFeature)?.id !== 'garden') setOpenFeature(gardenFeature(entryFeature)?.id);
     router.setParams({ feature: undefined });
-  }, [entryFeature]);
+  }, [entryFeature, onFocusFairy]);
   if (activeMode !== 'normal' || selectedFlower) return null;
   const navigationItem = (feature: typeof GARDEN_FEATURES[number]) => {
     const selected = openFeature === feature.id || (feature.id === 'profile' && openFeature === 'settings') || (feature.id === 'garden' && !openFeature);
@@ -41,7 +42,7 @@ export function GardenHud() {
       onPress={() => {
         if (feature.id === 'fairy') {
           setOpenFeature(undefined);
-          router.push(feature.route);
+          onFocusFairy?.();
         } else setOpenFeature(feature.id === 'garden' ? undefined : feature.id);
       }}
       style={({ pressed }) => [styles.bottomItem,
