@@ -30,6 +30,30 @@ test("CSP supports current Firebase, local assets and same-origin WebSocket with
   assert.ok(!csp.match(/script-src[^;]*unsafe-inline/));
   assert.equal(securityHeaders(request, { NODE_ENV: "development" })["Content-Security-Policy"], undefined);
 });
+test("CSP supports Web voice recording reads via connect-src blob: without widening other directives", () => {
+  const firebase = "https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com https://petalpal-b212c.firebaseapp.com";
+  const directives = (req) => Object.fromEntries(securityHeaders(req, { NODE_ENV: "production" })["Content-Security-Policy"]
+    .split("; ").map(d => { const [name, ...sources] = d.split(" "); return [name, sources.join(" ")]; }));
+  for (const [req, script] of [[{ ...request, method: "POST", path: "/speech/transcribe" }, "'self' https://apis.google.com"],
+    [{ ...request, method: "GET", path: "/" }, "'self' 'wasm-unsafe-eval' https://apis.google.com"]]) {
+    assert.deepEqual(directives(req), {
+      "default-src": "'self'",
+      "script-src": script,
+      "style-src": "'self' 'unsafe-inline'",
+      "img-src": "'self' data: blob: https://lh3.googleusercontent.com",
+      "font-src": "'self'",
+      "connect-src": `'self' blob: wss://petalpal.example ${firebase}`,
+      "frame-src": "https://petalpal-b212c.firebaseapp.com",
+      "object-src": "'none'",
+      "base-uri": "'self'",
+      "form-action": "'self'",
+      "frame-ancestors": "'none'"
+    });
+  }
+  const invalidHost = directives({ ...request, headers: { host: "bad;host" } })["connect-src"];
+  assert.equal(invalidHost, `'self' blob:  ${firebase}`);
+  assert.equal(securityHeaders(request, { NODE_ENV: "development" })["Content-Security-Policy"], undefined);
+});
 test("private namespaces, dotted resource IDs and auth callback cannot escape no-store classification", () => {
   for (const path of ["/session", "/ai/memories/a.json", "/AI/memories/a.json", "/ai/reports", "/users/owner/garden", "/auth/session", "/speech/transcribe", "/internal/ai-jobs/dispatchable", "/finish-sign-in", "/unknown-private-route"]) {
     assert.ok(privateResponse({ path, method: "GET" }), path);

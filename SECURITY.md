@@ -2104,3 +2104,52 @@ unresolved dependency-security gate to the readiness report; readiness remains N
   provider configuration changes, automatic retry/rollback or public launch.
   Bounded private voice verification is pending; no synthetic Event or private
   recording may be saved without separate authorization.
+
+## 2026-10-12 — Render-served Web voice blob CSP correction (minimal release candidate; not released)
+
+- **Confirmed cause (source + owner-reported console):** on the Render-served Web
+  app (`https://petalpal-v2.onrender.com`), the browser refuses
+  `fetch(blob:...)` under the document CSP. `mobile/src/services/speech.ts` reads
+  the recording object URL with `fetch(uri)` before `/speech/transcribe`; Render's
+  production CSP in `lib/http-security.js` lacked `blob:` in `connect-src`. The
+  later Cloudflare hosting CSP correction (PR #32) applies only to that separate
+  hosting Worker policy.
+- **Minimal release scope:** branch based on the last recorded Render Live source
+  `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3`. `connect-src` gains only `blob:`.
+  All other directives, WebSocket host validation, HSTS, no-store classification,
+  authentication, CORS, speech admission/consent/quota and the 8 MB audio limit
+  are unchanged. `blob:` covers page-created object URLs and adds no network
+  origin. No Garden/Fairy, mobile/Expo source, other backend, dependency, Docker,
+  Prisma or migration change; the Cloudflare AI Worker is untouched.
+- **Validation PASS (local, pure-function):** new exact-directive regression for
+  shell and API requests plus invalid-host handling; 5/5 header/CSP/no-store
+  tests on this base. The new test fails without the fix. The real-HTTP app cases
+  in the same file need repository CI (dependencies unavailable in the sandbox).
+  The existing `CSP supports` security-CI selector includes the new test.
+- [ ] **Release pending:** a separately authorized Render `PetalPal_v2` deploy of
+  this exact commit (Docker Command `node server.js`, Pre-Deploy blank,
+  Auto-Deploy off), header read-back, then a bounded private dictation check
+  without saving an Event. Reconcile this entry with `main` separately.
+
+## 2026-10-12 — Render Web voice CSP release and production dictation PASS
+
+- [x] **Release PASS (owner-reported provider metadata):** Render `PetalPal_v2`
+  deploy `dep-db6mdjid0e5s73as3l8g` runs exact commit
+  `0b44ac74baa9f433a3dc11e4d3e0a6aa1715ccb3` (release branch
+  `release/render-voice-blob-csp-49ea26a`, previous Live `49ea26a6` plus only the
+  Render CSP `connect-src blob:` change). Exact-SHA security regression run
+  `38318717284` PASS beforehand. No migration, Cloudflare, AI Worker, DNS, Access,
+  Firebase, database or secret change was part of this release.
+- [x] **Production header PASS:** the Render-served production CSP includes
+  `connect-src 'self' blob:`; the other directives are covered by the exact
+  regression in `test/back/http-security.test.js`.
+- [x] **End-to-end private dictation PASS (owner-performed):** in the production
+  Web app, recorded speech was transcribed and inserted into the editable
+  "What happened?" field; no Event was saved. This closes the pending production
+  dictation verification in the 2026-10-11 Cloudflare voice CSP entry and the
+  release-pending item in the preceding Render entry; those historical records are
+  intentionally left unchanged. No recording, transcript or account detail is
+  recorded here.
+- **Scope/limits:** one owner-performed check on one browser; not a cross-browser,
+  codec, latency or load certification. Main receives the deployed commit by merge
+  so future main-based releases keep the fix. Canonical statuses/counts unchanged.
