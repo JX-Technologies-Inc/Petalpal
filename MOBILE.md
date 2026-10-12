@@ -807,15 +807,37 @@ setup, artwork and quality settings remain unchanged.
 
 ## Garden/Fairy V2 integration
 
-The Fairy route uses the existing single Garden Canvas, static-picture cache,
-input handler, initial framing, free pan, 0.8–3× zoom and authored narrow-path
-network. Ground navigation subtracts the
-approved planting masks; Treehouse and Mailbox sequences own movement until their
-handoff or return completes. The independent V2 full-screen water-material rewrite
-is deferred: retain main's animated water field and ripple artwork. New koi,
-lotus effects and the original vector petals share the scene's paused water clock.
-Shore and opaque land passes share decoded island images; the web texture cache
-has a bounded 512 MiB ceiling for the additional native-resolution assets.
+The authenticated `/` Garden now includes Fairy by default, with all V2 terrain,
+koi/wakes, lotus contact/ripple effects, floating petals and compatible grading.
+The Fairy HUD button focuses the existing character in the same Canvas; legacy
+`/garden-test` and `/feature/fairy` links redirect to this unified Garden. There
+is no independent Fairy scene. Events, Friends, Profile and Settings retain their
+local overlays; Calendar, Bookhouse and other established routes remain available.
+
+Covered/temporarily inactive Gardens pause Fairy in place rather than clearing
+its route or contextual state. After Treehouse entry, explicit in-scene controls
+open Bookhouse or return Fairy; Bookhouse return preserves the scene and state.
+Mailbox also has an in-scene return action. Planting and flower details take tap
+priority before Fairy landmarks/destinations. Normal user mode hides developer
+status/debug controls. Existing immediate pointer response, 110 world-unit/sec
+walking, authored narrow paths, initial camera, free pan and 0.8–3× zoom remain.
+
+The independent V2 full-screen water-material rewrite remains deferred: main's
+animated water field and ripple artwork are retained. Koi, lotus and original
+vector petals share the established paused water clock. Shore and opaque land
+passes share decoded island images; the existing V2 512 MiB texture-cache ceiling,
+static-picture rendering, resource cleanup and quality policy are unchanged.
+
+Owner visual review approved unified Fairy and preferred full V2 effects. This
+is functional integration acceptance, not formal FPS evidence. Historical
+callback-cadence regressions remain unresolved; keep PR #34 Draft and consult
+`INTEGRATION_OPTIMIZATION.md` on main for the closed investigations. No new
+performance benchmark or optimization experiment was run for this integration.
+
+Synthetic local review uses the normal `/` entry with
+`preview@example.invalid` / `preview-only`; no live API/socket or persistent writes.
+Export with `node scripts/build-cloudflare-web.mjs --synthetic` and serve through
+the existing loopback preview fixture server. This is not a production artifact.
 
 For changed interaction code, run
 `node --test mobile/test/fairyInput.test.cjs mobile/test/gardenFairyV2.test.cjs` from repository root. The latter runs

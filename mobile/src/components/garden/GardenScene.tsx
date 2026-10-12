@@ -200,7 +200,7 @@ const CHECKED_IN_TEA_SET: TeaSetMapPlacement = {
 
 
 
-export type GardenSceneHandle = { returnFromTreehouse: () => boolean; returnFromMailbox: () => boolean };
+export type GardenSceneHandle = { focusFairy: () => void; returnFromTreehouse: () => boolean; returnFromMailbox: () => boolean };
 
 export type GardenSceneProps = {
   children?: import('react').ReactNode;
@@ -285,7 +285,6 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   const fairyRef = useRef<FairyHandle>(null);
   const fairyPress = useRef<{ x: number; y: number; pointerId: number } | null>(null);
-  useImperativeHandle(interactionRef,()=>({returnFromTreehouse:()=>fairyRef.current?.returnFromTreehouse()??false,returnFromMailbox:()=>fairyRef.current?.returnFromMailbox()??false}),[]);
   const fairySeconds=useSharedValue(0);
   const [fairyState, setFairyState] = useState<FairyState>('idle');
   const fairyOnMoonBed = fairyState === 'sleepingOnMoonBed';
@@ -432,8 +431,6 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   useFocusEffect(useCallback(() => {
     setGardenActive(true);
-    fairyRef.current?.returnFromTreehouse();
-    fairyRef.current?.returnFromMailbox();
     return () => setGardenActive(false);
   }, []));
   const waterfallFocus = __DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'waterfall';
@@ -515,6 +512,16 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     top: baseY + cameraY.value + calendarPoint.value.y * fit * cameraZoom.value - 22,
     opacity: calendarHighlight.value,
   }));
+  useImperativeHandle(interactionRef,()=>({
+    focusFairy:()=>{
+      if (activeModeRef.current !== 'normal' || selectedFlower) return;
+      const point = fairyRef.current?.getPosition();
+      if (point) focusCoords(point.x, point.y, cameraZoom.value);
+    },
+    returnFromTreehouse:()=>fairyRef.current?.returnFromTreehouse()??false,
+    returnFromMailbox:()=>fairyRef.current?.returnFromMailbox()??false,
+  }),[focusCoords,cameraZoom,selectedFlower]);
+
   const focusCalendarFlower = (flower: typeof placements[number]) => {
     const duration = calendarReducedMotion ? 0 : 500;
     cameraZoom.value = withTiming(1.8, { duration });
@@ -782,6 +789,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   const handleGardenTap = useCallback((screenX: number, screenY: number) => {
     if (readOnly || fit <= 0) return;
+    if (selectedFlower) return;
     const currentZoom = cameraZoom.value;
     const currentCamX = cameraX.value;
     const currentCamY = cameraY.value;
@@ -809,10 +817,28 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     }
 
     if(perfFixtureRef.current)return;
-    if(enableFairyWalk && fairyRef.current?.isMailboxBusy())return;
     if (activeModeRef.current !== 'normal') {
       updatePreview(worldX, worldY);
     } else {
+      const currentPlacements = placementsRef.current;
+      let hitFlower: FlowerPlacementRecord | null = useMonthlyGrowth?hitProductionFlower(currentPlacements,worldX,worldY):null;
+      for (let i = currentPlacements.length - 1; !useMonthlyGrowth && i >= 0; i--) {
+        const p = currentPlacements[i];
+        const def = getFlowerPlacementDefinition(p.flowerName);
+        const hitCenterY = p.worldY - def.visualHeight * 0.35;
+        const dx = worldX - p.worldX;
+        const dy = worldY - hitCenterY;
+        if (dx * dx + dy * dy <= def.hitboxRadius * def.hitboxRadius) {
+          hitFlower = p;
+          break;
+        }
+      }
+      if (hitFlower) {
+        openFlowerDetail(hitFlower);
+        return;
+      }
+      // Placement and flower details own taps before any Fairy destination.
+      if (enableFairyWalk && fairyRef.current?.isMailboxBusy()) return;
       if (enableFairyWalk && hitsMailbox({x:worldX,y:worldY},treehousePlacement)) {
         fairyRef.current?.visitMailbox();
         return;
@@ -833,27 +859,12 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         fairyRef.current?.visitMoonBed();
         return;
       }
-      const currentPlacements = placementsRef.current;
-      let hitFlower: FlowerPlacementRecord | null = useMonthlyGrowth?hitProductionFlower(currentPlacements,worldX,worldY):null;
-      for (let i = currentPlacements.length - 1; !useMonthlyGrowth && i >= 0; i--) {
-        const p = currentPlacements[i];
-        const def = getFlowerPlacementDefinition(p.flowerName);
-        const hitCenterY = p.worldY - def.visualHeight * 0.35;
-        const dx = worldX - p.worldX;
-        const dy = worldY - hitCenterY;
-        if (dx * dx + dy * dy <= def.hitboxRadius * def.hitboxRadius) {
-          hitFlower = p;
-          break;
-        }
-      }
-      if (hitFlower) {
-        openFlowerDetail(hitFlower);
-      } else if (enableFairyWalk) {
+      if (enableFairyWalk) {
         const accepted = fairyRef.current?.move({ x: worldX, y: worldY });
         if (accepted && Platform.OS === 'web') canvasRef.current?.redraw();
       }
     }
-  }, [readOnly, fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk, swingPlacement, moonBedPlacement, teaSetPlacement, treehousePlacement]);
+  }, [readOnly, selectedFlower, fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk, swingPlacement, moonBedPlacement, teaSetPlacement, treehousePlacement]);
 
   const startMaskPos = useRef({ localX: 0, localY: 0 });
 
@@ -1342,9 +1353,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
             }} onTreehouseExited={() => {
               onTreehouseExited?.();
             }} onTreehouseEntered={() => {
-
               onTreehouseEntered?.();
-              if (!readOnly) onOpenBookhouse?.();
             }} pixelsPerUnit={()=>fit*cameraZoom.value} onStateChange={setFairyState} ref={fairyRef} debug={fairyDebug} onStatus={setFairyStatus}
               active={worldActive && perf.Land && perf.Infrastructure && infrastructureEnabled && activeMode === 'normal' && !selectedFlower && previewMode}
               blocked={isGardenGroundBlocked} />
@@ -1408,7 +1417,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         <Pressable accessibilityRole="button" accessibilityLabel="Zoom in Garden" onPress={() => zoomAt(1.25)}
           style={styles.zoomButton}><Text style={styles.zoomButtonText}>+</Text></Pressable>
       </View>
-      {__DEV__&&<GardenRuntimePanel flags={perfFlags} onFlags={setPerfFlags} count={perfCount} onCount={setPerfCount}
+      {__DEV__&&showDevControls&&<GardenRuntimePanel flags={perfFlags} onFlags={setPerfFlags} count={perfCount} onCount={setPerfCount}
         canChangeFixture={activeMode==='normal'} metadata={{realParentCount:placements.length,renderedParentCount:drawnPlanting.placements.length,
           viewport,waterfallVersion,growthV11:useMonthlyGrowth,previewMode,environmentEnabled,worldPhase:worldTime.phase}}/>}
       {/* Planting Placement Controls Banner & Action Bar */}
@@ -1439,12 +1448,28 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
             style={({ pressed }) => ({ flex: 1, borderRadius: 28, backgroundColor: pressed ? '#FFF4DC22' : 'transparent' })} />
         </Animated.View>
       )}
+      {enableFairyWalk && !readOnly && activeMode === 'normal' && !selectedFlower &&
+        (fairyState === 'insideTreehouse' || fairyState === 'exitingTreehouse' || fairyState === 'mailboxTransition') && (
+        <View testID="fairy-interaction-controls" style={{position:'absolute',right:16,bottom:110,gap:8,zIndex:30}}>
+          {fairyState === 'mailboxTransition' ? (
+            <Pressable accessibilityRole="button" accessibilityLabel="Return from mailbox" style={styles.fairyAction}
+              onPress={() => fairyRef.current?.returnFromMailbox()}><Text style={styles.fairyActionText}>Return from mailbox</Text></Pressable>
+          ) : <>
+            {fairyState === 'insideTreehouse' && onOpenBookhouse && <Pressable accessibilityRole="button"
+              accessibilityLabel="Open Bookhouse" style={styles.fairyAction} onPress={onOpenBookhouse}><Text style={styles.fairyActionText}>Open Bookhouse</Text></Pressable>}
+            <Pressable accessibilityRole="button" accessibilityLabel="Return from treehouse" style={styles.fairyAction}
+              disabled={fairyState === 'exitingTreehouse'} onPress={() => fairyRef.current?.returnFromTreehouse()}>
+              <Text style={styles.fairyActionText}>{fairyState === 'exitingTreehouse' ? 'Returning to Garden…' : 'Return from treehouse'}</Text>
+            </Pressable>
+          </>}
+        </View>
+      )}
       {children}
       {showCalendar && !readOnly && activeMode === 'normal' && !selectedFlower && <GardenCalendar onFocusFlower={focusCalendarFlower} />}
       {showCalendar && <Animated.View pointerEvents="none" style={[{ position: 'absolute', width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: '#F5E8B3', backgroundColor: '#FFF2C518' }, calendarHighlightStyle]} />}
 
       {/* Floating button when in Preview Mode */}
-      {enableFairyWalk && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
+      {enableFairyWalk && showDevControls && __DEV__ && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
         <Text style={{ color: '#365b42', fontSize: 12 }}>{fairyStatus}</Text>
         {__DEV__ && <Pressable accessibilityRole="button" accessibilityLabel="Toggle fairy path debug" onPress={() => { setFairyDebug(v => !v); setFairyStatus("Tap dry ground to move"); }}>
           <Text style={{ color: '#365b42', fontSize: 12, marginTop: 6 }}>Path debug: {fairyDebug ? 'ON' : 'OFF'}</Text>
@@ -1985,6 +2010,8 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
 const styles = StyleSheet.create({
   scene: { flex: 1, backgroundColor: GARDEN_WATER_COLOR },
+  fairyAction: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8, backgroundColor: '#365b42', alignItems: 'center' },
+  fairyActionText: { color: '#fff', fontSize: 14 },
   zoomButton: { width: 40, height: 40, borderRadius: 8, backgroundColor: '#365b42', borderWidth: 1, borderColor: '#e3edda', alignItems: 'center', justifyContent: 'center' },
   zoomButtonText: { color: '#fff', fontSize: 25, lineHeight: 30 },
   controls: { position: 'absolute', top: 8, left: 8, right: 8, padding: 8, gap: 6, backgroundColor: '#FFFFFFE8' },

@@ -22,7 +22,7 @@ const sources = [
   require('@/assets/garden/fairy/walk-v2/walk_07.png'),
   require('@/assets/garden/fairy/walk-v2/walk_08.png'),
 ];
-export type FairyHandle = { move:(p:Point)=>boolean; visitSwing:()=>boolean; visitMoonBed:()=>boolean; visitTea:()=>boolean; visitTreehouse:()=>boolean; visitMailbox:()=>boolean; isMailboxBusy:()=>boolean; returnFromMailbox:()=>boolean; returnFromTreehouse:()=>boolean; pointer:(p:Point)=>void; stop:()=>void };
+export type FairyHandle = { getPosition:()=>Point; move:(p:Point)=>boolean; visitSwing:()=>boolean; visitMoonBed:()=>boolean; visitTea:()=>boolean; visitTreehouse:()=>boolean; visitMailbox:()=>boolean; isMailboxBusy:()=>boolean; returnFromMailbox:()=>boolean; returnFromTreehouse:()=>boolean; pointer:(p:Point)=>void; stop:()=>void };
 type Props={motionClock?:SharedValue<number>;onMailboxOpened?:()=>void;onTreehouseEntered?:()=>void;onTreehouseExited?:()=>void;pixelsPerUnit?:()=>number;onStateChange?:(state:FairyState)=>void;blocked:(p:Point)=>boolean;active:boolean;debug:boolean;onStatus:(s:string)=>void};
 const polyline=(points:Point[])=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
 const networkPath=WALK_NETWORK.edges.map(e=>polyline([WALK_NETWORK.nodes[e.a],WALK_NETWORK.nodes[e.b]])).join(' ');
@@ -84,6 +84,7 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
     return true;
   };
   if(!controls.current)controls.current={
+    getPosition:()=>({...nav.current.position}),
     move:p=>requestMove(p),
     returnFromTreehouse:()=>{
       const accepted=nav.current.returnFromTreehouse();if(!accepted)return false;
@@ -106,6 +107,8 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
     const advanceAt=(now:number)=>{
       const dt=previous===undefined?0:Math.max(0,Math.min(50,now-previous));
       previous=Math.max(previous??now,now);
+      // A covered Garden pauses in place; resuming must not reset an interaction.
+      if(!config.current.active)return;
       if(config.current.active)seconds.value+=dt/1000;
       if(config.current.active&&(nav.current.remaining.length||nav.current.airborne||nav.current.state==='seatedAtTea'||nav.current.traversingTreehouse||(nav.current.mailboxSequenceActive&&nav.current.state!=='mailboxTransition'))){
         const old=nav.current.position;
@@ -136,7 +139,6 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
     request=requestAnimationFrame(tick);
     return()=>{step.current=()=>{};cancelAnimationFrame(request);};
   },[x,y,frame,facing,transform,seconds]);
-  useEffect(()=>{if(!active)controls.current?.stop();},[active]);
   useEffect(()=>{
     setRouteDrawing(debug&&nav.current.remaining.length?polyline([nav.current.position,...nav.current.remaining]):'');
     setTargetDrawing(debug?nav.current.target:null);

@@ -156,8 +156,11 @@ test('actual Fairy hooks complete ten sequential routes, accept mid-walk retarge
   assert.equal(fairy.move(WALK_START), true);
   assert.equal(fairy.state().state, 'idle', 'Selecting the current foot position cannot leave a false moving state');
   fairy.move(WALK_NETWORK.nodes[2]); fairy.active(false);
-  assert.equal(fairy.state().remaining.length, 0); assert.equal(fairy.state().target, null);
-  fairy.active(true); assert.equal(fairy.move(WALK_NETWORK.nodes[1]), true); fairy.finish();
+  const paused = JSON.stringify(fairy.state());
+  for (let i = 0; i < 100; i++) fairy.step();
+  assert.equal(JSON.stringify(fairy.state()), paused, 'Covered Garden preserves the current route and pose');
+  fairy.active(true); fairy.finish();
+  assert.ok(distance(fairy.state().position, WALK_NETWORK.nodes[2]) < .001);
 });
 test('actual animation advances at 110 world units per second without teleporting or changing sprite cadence', () => {
   const fairy = fairyHarness(); fairy.move(WALK_NETWORK.nodes[1]);
@@ -204,13 +207,49 @@ test('actual Fairy hooks own Treehouse and Mailbox sequences with one loop and e
   function until(state){let frames=0;while(fairy.state().state!==state){fairy.step();assert.equal(fairy.loops(),1);assert.ok(++frames<2000,state);}}
   assert.equal(fairy.controls().visitTreehouse(),true);until('enteringTreehouse');
   assert.equal(fairy.move(WALK_START),false);until('insideTreehouse');
-  assert.equal(fairy.callbacks.entry,1);for(let i=0;i<5;i++)fairy.step();assert.equal(fairy.callbacks.entry,1);
+  assert.equal(fairy.callbacks.entry,1);
+  fairy.active(false); for(let i=0;i<20;i++)fairy.step(); fairy.active(true); fairy.step();
+  assert.equal(fairy.state().state,'insideTreehouse');assert.equal(fairy.callbacks.entry,1);
   assert.equal(fairy.controls().returnFromTreehouse(),true);assert.equal(fairy.controls().returnFromTreehouse(),false);
   until('idle');assert.equal(fairy.callbacks.exit,1);
   assert.equal(fairy.controls().visitMailbox(),true);until('retrievingMail');
   assert.equal(fairy.controls().visitMailbox(),false);assert.equal(fairy.controls().visitTreehouse(),false);
   until('mailboxTransition');assert.equal(fairy.callbacks.mail,1);
-  for(let i=0;i<5;i++)fairy.step();assert.equal(fairy.callbacks.mail,1);
+  fairy.active(false);for(let i=0;i<20;i++)fairy.step();fairy.active(true);fairy.step();
+  assert.equal(fairy.state().state,'mailboxTransition');assert.equal(fairy.callbacks.mail,1);
   assert.equal(fairy.controls().returnFromMailbox(),true);assert.equal(fairy.state().state,'idle');
   assert.equal(fairy.controls().returnFromMailbox(),false);assert.equal(fairy.loops(),1);
+});
+
+test('normal Garden taps prioritize placement and flower details before all Fairy destinations', () => {
+  let source;
+  function visit(node) {
+    if (ts.isVariableDeclaration(node) && node.name.getText(scene) === 'handleGardenTap') source = node.initializer.arguments[0].getText(scene);
+    ts.forEachChild(node, visit);
+  }
+  visit(scene); assert.ok(source);
+  const calls = [], context = {
+    readOnly: false, fit: 1, selectedFlower: null, cameraZoom: { value: 1 }, cameraX: { value: 0 }, cameraY: { value: 0 }, baseX: 0, baseY: 0,
+    __DEV__: false, perfFixtureRef: { current: false }, activeModeRef: { current: 'normal' }, placementsRef: { current: [] }, useMonthlyGrowth: true,
+    hitProductionFlower: () => null, updatePreview: () => calls.push('placement'), openFlowerDetail: () => calls.push('detail'),
+    enableFairyWalk: true, treehousePlacement: {}, swingPlacement: {}, teaSetPlacement: {}, moonBedPlacement: {}, Platform: { OS: 'web' },
+    canvasRef: { current: { redraw: () => calls.push('redraw') } },
+    fairyRef: { current: { isMailboxBusy: () => false, move: () => { calls.push('move'); return true; } } },
+  };
+  for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
+    context[hit] = () => false; context.fairyRef.current[action] = () => calls.push(action);
+  }
+  const tap = vm.runInNewContext(compile(`(${source})`), context);
+  const expect = expected => { calls.length = 0; tap(100, 100); assert.deepEqual(calls, expected); };
+  expect(['move', 'redraw']);
+  context.hitsMailbox = () => true; context.fairyRef.current.isMailboxBusy = () => true;
+  context.activeModeRef.current = 'plant'; expect(['placement']);
+  context.activeModeRef.current = 'normal'; context.hitProductionFlower = () => ({ id: 'synthetic-flower' }); expect(['detail']);
+  context.selectedFlower = {}; expect([]); context.selectedFlower = null;
+  context.hitProductionFlower = () => null; expect([]);
+  context.fairyRef.current.isMailboxBusy = () => false;
+  for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
+    context[hit] = () => true; expect([action]); context[hit] = () => false;
+  }
+  context.readOnly = true; expect([]);
 });
