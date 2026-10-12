@@ -20,6 +20,15 @@ deployment, migration or provider-change permission; honor the user's explicitly
 authorized scope and existing approval gates. Prepare a local, reviewable result
 before requesting any additional approval.
 
+## Garden/Fairy performance reference
+
+Before Garden/Fairy performance or optimization work, read
+[INTEGRATION_OPTIMIZATION.md](INTEGRATION_OPTIMIZATION.md) first for verified
+baselines, rejected experiments, evidence locations and remaining acceptance gaps.
+Reuse applicable evidence and honor its non-regression constraints; do not restart
+completed investigations by default. [WARNING.md](WARNING.md) remains authoritative
+for privacy and credential safety, and the integration/deployment SOP still applies.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
