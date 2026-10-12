@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import { Group, Image, useImage } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -71,6 +72,7 @@ export type TeaSetEntityProps = {
   x?: number;
   y?: number;
   scale?: number;
+  fairy?: ReactNode;
   debugMode?: TeaSetDebugMode;
   registration?: TeaSetRegistration;
   onDebugStatus?: (status: string) => void;
@@ -79,7 +81,7 @@ export type TeaSetEntityProps = {
 /** Static embeddable Skia entity. The owning test screen supplies the Canvas. */
 export default function TeaSetEntity({
   x = 0, y = 0, scale = 1, debugMode = 'all',
-  registration = TEA_SET_LAYER_REGISTRATION, onDebugStatus,
+  registration = TEA_SET_LAYER_REGISTRATION, onDebugStatus, fairy,
 }: TeaSetEntityProps) {
   const leftBase = useProductionImage(require('@/assets/garden/landmarks/tea-set/left-chair-base.png'));
   const rightBase = useProductionImage(require('@/assets/garden/landmarks/tea-set/right-chair-base.png'));
@@ -103,6 +105,7 @@ export default function TeaSetEntity({
   return <Group transform={[{ translateX: x }, { translateY: y }, { scale }]}>
     <RegisteredLayer image={leftBase.image} name="left-chair-base" mode={mode} registration={registration} />
     <RegisteredLayer image={rightBase.image} name="right-chair-base" mode={mode} registration={registration} />
+    {mode === 'all' && fairy}
     <RegisteredLayer image={table.image} name="tea-table" mode={mode} registration={registration} />
     <RegisteredLayer image={leftOccluder.image} name="left-occluder" mode={mode} registration={registration} />
     <RegisteredLayer image={rightOccluder.image} name="right-occluder" mode={mode} registration={registration} />

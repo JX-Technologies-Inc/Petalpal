@@ -1,3 +1,9 @@
+import type {SharedValue} from 'react-native-reanimated';
+import TeaFairy from './fairy/TeaFairy';
+import SleepingMoonFairy from './fairy/SleepingMoonFairy';
+import SeatedSwingFairy from './fairy/SeatedSwingFairy';
+import {GardenProfile} from './performance/GardenRuntimePanel';
+import {runtimeAudit} from './performance/runtimeAudit';
 import { Blur, Circle, Group, Oval, Path, Rect } from '@shopify/react-native-skia';
 import type { ReactNode } from 'react';
 import MoonBedEntity, { MOON_BED_HEIGHT, MOON_BED_WIDTH } from './MoonBedEntity';
@@ -30,6 +36,11 @@ import { TEA_SET_MAP_ROTATION, TEA_SET_MAP_SCALE, TEA_SET_MAP_X, TEA_SET_MAP_Y }
 type LandmarkLayerProps = {
   /** World-space Land06 flowers, below every Tea Set layer. Shared by DEV and Garden. */
   behindTeaSet?: ReactNode;
+  renderPass?: 'all' | 'motion' | 'static-front';
+  landmarksVisible?: boolean;
+  waterEnabled?: boolean;
+  waterAnimationEnabled?: boolean;
+  landmarkAnimationEnabled?: boolean;
   waterfallVersion?: WaterfallVersion;
   onDebugStatus?: (status: string) => void;
   showDiagnostics?: boolean;
@@ -46,6 +57,10 @@ type LandmarkLayerProps = {
   waterfallActive?: boolean;
   treehouseLightingEnabled?: boolean;
   swingLightingEnabled?: boolean;
+  fairySeconds?: SharedValue<number>;
+  fairyAtTea?: 'seatedAtTea'|'drinkingTea'|null;
+  fairyOnMoonBed?: boolean;
+  fairyOnSwing?: boolean;
   moonBedIntegrationEnabled?: boolean;
   moonBedShadowOpacity?: number;
   topWaterAssemblyEnabled?: boolean;
@@ -80,7 +95,7 @@ function MoonBedIntegrationShadow({ opacity }: { opacity: number }) {
 }
 
 export default function LandmarkLayer({
-  behindTeaSet,
+  renderPass='all', behindTeaSet, landmarksVisible=true, waterEnabled=true, waterAnimationEnabled=true, landmarkAnimationEnabled=true,
   waterfallVersion = 'legacy',
   onDebugStatus, showDiagnostics = false, showBounds = false,
   treehousePlacement = { x: TREEHOUSE_MAP_X, y: TREEHOUSE_MAP_Y, scale: TREEHOUSE_MAP_SCALE },
@@ -102,6 +117,10 @@ export default function LandmarkLayer({
   waterfallImpactPlacement,
   impactFoamEnabled = true,
   swingLightingEnabled = false,
+  fairyOnSwing = false,
+  fairyOnMoonBed = false,
+  fairyAtTea = null,
+  fairySeconds,
   moonBedIntegrationEnabled = true,
   moonBedShadowOpacity = 0.5,
   topWaterAssemblyEnabled = true,
@@ -113,7 +132,8 @@ export default function LandmarkLayer({
   topWaterShowBank = true,
   waterfallVisible = true,
 }: LandmarkLayerProps) {
-  const waterTopFlow = useWaterTopFlow(waterfallVersion === 'legacy' && !suppressLegacyWaterTop && waterfallActive && topWaterAssemblyEnabled && topWaterShowWater, topWaterMotionMode === 'animate');
+  runtimeAudit.render('LandmarkLayer');
+  const waterTopFlow = useWaterTopFlow(renderPass !== 'static-front' && waterfallVersion === 'legacy' && !suppressLegacyWaterTop && waterfallActive && topWaterAssemblyEnabled && topWaterShowWater, topWaterMotionMode === 'animate');
   const { x, y, scale } = treehousePlacement;
   const swing = swingPlacement;
   const moonBed = moonBedPlacement;
@@ -148,7 +168,7 @@ export default function LandmarkLayer({
     { scaleY: __DEV__ ? waterfallPlacement.scaleY : 1 }];
   return (
     <Group>
-      {waterfallVersion === 'legacy' && <Group>
+      {renderPass !== 'static-front' && waterfallVersion === 'legacy' && <Group>
       {/* --------------------------------------------------------
           NEW WATER-TOP ASSEMBLY (authoritative Resources/water/water-top)
           Z-ORDER:
@@ -158,7 +178,7 @@ export default function LandmarkLayer({
           D. smaller left/right bank / seam-support layer (over WaterfallEntity)
           E. existing WaterfallContactFoam at waterfall bottom
           -------------------------------------------------------- */}
-      {!suppressLegacyWaterTop && topWaterAssemblyEnabled && (
+      {waterEnabled && !suppressLegacyWaterTop && topWaterAssemblyEnabled && (
         <WaterTopAssembly
           placement={waterTopPlacement}
           motionMode={topWaterMotionMode}
@@ -172,26 +192,26 @@ export default function LandmarkLayer({
       )}
 
       {/* Fallback to previous implementation ONLY when new assembly toggle is OFF */}
-      {!suppressLegacyWaterTop && !topWaterAssemblyEnabled && (
+      {waterEnabled && !suppressLegacyWaterTop && !topWaterAssemblyEnabled && (
         <WaterfallSourceWaterBase active={waterfallActive} />
       )}
 
       {/* C. Existing WaterfallEntity (APPROVED LOCATION UNCHANGED) */}
       {waterfallVisible && (
         <Group origin={waterfallCenter} transform={waterfallMapTransform}>
-          <WaterfallEntity x={waterfallPlacement.x} y={waterfallPlacement.y}
-            scale={waterfallPlacement.scale} animationEnabled assetQuality="map"
-            active={waterfallActive} flowWaterlineY={1228} />
+          <GardenProfile name="Waterfall">          <WaterfallEntity x={waterfallPlacement.x} y={waterfallPlacement.y}
+            scale={waterfallPlacement.scale} animationEnabled={waterAnimationEnabled} assetQuality="map"
+            active={waterfallActive} flowWaterlineY={1228} /></GardenProfile>
         </Group>
       )}
 
       {/* One continuous upper river and supporting cliffs; treehouse stays in front. */}
-      {suppressLegacyWaterTop && topWaterAssemblyEnabled && (
+      {waterEnabled && suppressLegacyWaterTop && topWaterAssemblyEnabled && (
         <WaterTopSource placement={waterTopPlacement} active={waterfallActive}
           animated={topWaterMotionMode === 'animate'} />
       )}
       {/* D. WaterTopAssembly front bank / seam support */}
-      {!suppressLegacyWaterTop && topWaterAssemblyEnabled && (
+      {waterEnabled && !suppressLegacyWaterTop && topWaterAssemblyEnabled && (
         <WaterTopAssembly
           placement={waterTopPlacement}
           motionMode={topWaterMotionMode}
@@ -205,7 +225,7 @@ export default function LandmarkLayer({
       )}
 
       {/* Fallback to previous environment ONLY when new assembly toggle is OFF */}
-      {!suppressLegacyWaterTop && !topWaterAssemblyEnabled && (
+      {waterEnabled && !suppressLegacyWaterTop && !topWaterAssemblyEnabled && (
         <WaterfallSourceEnvironment active={waterfallActive} />
       )}
       {/* CONTACT FOAM / SPLASH OCCLUDER: sits in FRONT of the lower end of the falling water */}
@@ -216,12 +236,13 @@ export default function LandmarkLayer({
         />
       )}
       </Group>}
+      <GardenProfile name="Landmark animation" enabled={landmarksVisible && renderPass !== 'static-front'}>
       <TreehouseEntity x={x} y={y} scale={scale}
-        animationEnabled={waterfallActive} lightingEnabled={treehouseLightingEnabled} onDebugStatus={onDebugStatus} />
+        animationEnabled={landmarkAnimationEnabled} lightingEnabled={treehouseLightingEnabled} onDebugStatus={onDebugStatus} />
       {/* Map-level landmark order: Treehouse, then Swing. Internal Swing stacking is untouched. */}
       <Group origin={swingCenter} transform={swingMapTransform}>
         <SwingEntity x={swing.x} y={swing.y} scale={swing.scale}
-          animationEnabled={waterfallActive} occupied={false} ribbonAnimationEnabled={waterfallActive}
+          animationEnabled={landmarkAnimationEnabled} occupied={fairyOnSwing} fairy={<SeatedSwingFairy />} ribbonAnimationEnabled={landmarkAnimationEnabled}
           lanternLightingEnabled={swingLightingEnabled} />
       </Group>
       {/* Moon Bed is a separate map landmark above the land layer. */}
@@ -233,8 +254,10 @@ export default function LandmarkLayer({
             <MoonBedIntegrationShadow opacity={moonBedShadowOpacity} />
           </Group>
         )}
-        <MoonBedEntity x={moonBed.x} y={moonBed.y} scale={moonBed.scale} animationEnabled={waterfallActive} />
+        <MoonBedEntity fairy={fairyOnMoonBed ? <SleepingMoonFairy /> : undefined} x={moonBed.x} y={moonBed.y} scale={moonBed.scale} animationEnabled={landmarkAnimationEnabled} />
       </Group>
+      </GardenProfile>
+      <GardenProfile name="Static landmarks" enabled={landmarksVisible && renderPass !== 'motion'}>
       <Group origin={gardenArchCenter}
         transform={[{ rotate: gardenArchPlacement.rotation * Math.PI / 180 }]}>
         <GardenArchEntity x={gardenArchPlacement.x} y={gardenArchPlacement.y}
@@ -246,13 +269,16 @@ export default function LandmarkLayer({
           scale={pavilionPlacement.scale} />
       </Group>
       {/* Tea Set is map-static and remains internally layered for future seating. */}
-      {behindTeaSet}
+      </GardenProfile>
+      {renderPass !== 'motion' && behindTeaSet}
+      <GardenProfile name="Tea Set" enabled={landmarksVisible && renderPass !== 'motion'}>
       <Group origin={teaSetCenter}
         transform={[{ rotate: teaSetPlacement.rotation * Math.PI / 180 }]}>
-        <TeaSetEntity x={teaSetPlacement.x} y={teaSetPlacement.y} scale={teaSetPlacement.scale} />
+        <TeaSetEntity fairy={<TeaFairy state={fairyAtTea} seconds={fairySeconds}/>} x={teaSetPlacement.x} y={teaSetPlacement.y} scale={teaSetPlacement.scale} />
       </Group>
+      </GardenProfile>
 
-      {__DEV__ && (showDiagnostics || showBounds) && (
+      {renderPass !== 'motion' && __DEV__ && (showDiagnostics || showBounds) && (
         <Group>
           <Group origin={waterfallCenter} transform={waterfallMapTransform}>
             <Rect x={waterfallPlacement.x} y={waterfallPlacement.y}

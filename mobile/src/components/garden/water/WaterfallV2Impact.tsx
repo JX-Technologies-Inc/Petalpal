@@ -17,11 +17,12 @@ half4 main(float2 p) {
   float2 d=p-float2(555,1520);
   // Unequal downstream lobes, not a single enclosed oval/foam disk.
   float2 q=(p-float2(540,1550))/float2(165,100);
-  float2 l=(p-float2(465,1635))/float2(155,125);
-  float2 r=(p-float2(640,1605))/float2(115,95);
-  float envelope=min(1.0,exp(-dot(q,q)*1.7)+0.55*exp(-dot(l,l)*1.6)+0.35*exp(-dot(r,r)*1.8));
+  float2 l=(p-float2(475,1680))/float2(170,170);
+  float2 r=(p-float2(640,1635))/float2(135,120);
+  float envelope=min(1.0,exp(-dot(q,q)*1.7)+0.65*exp(-dot(l,l)*1.6)+0.42*exp(-dot(r,r)*1.8));
   envelope*=smoothstep(240.0,300.0,p.x)*(1.0-smoothstep(810.0,880.0,p.x));
-  envelope*=smoothstep(1485.0,1535.0,p.y)*(1.0-smoothstep(1810.0,1880.0,p.y));
+  // The 0.5 map scale makes this 160-world-pixel receiving-water fade.
+  envelope*=smoothstep(1485.0,1530.0,p.y)*(1.0-smoothstep(1715.0,1840.0,p.y));
   half4 art=painting.eval(p+float2(0,192));
   float3 c=art.rgb/max(art.a,0.001);
   float wet=max(smoothstep(0.015,0.085,min(c.g-c.r,c.b-c.r)),smoothstep(0.82,0.96,min(c.r,min(c.g,c.b))));
@@ -41,13 +42,18 @@ half4 main(float2 p) {
     detail+=weight*(n*0.65+noise(uv*2.4+7.1)*0.35);
   }
   float core=exp(-dot(d/float2(110,43),d/float2(110,43)));
-  float downstream=1.0-smoothstep(70.0,315.0,d.y);
+  float downstream=1.0-smoothstep(110.0,320.0,d.y);
   // A compact active core; sparse outer clusters must not refill the painting's gaps.
-  float froth=smoothstep(0.53,0.74,detail)*(0.46*core+0.09*downstream);
-  float disturbance=(0.11+0.09*detail)*downstream;
+  float front=sin(length(d*float2(0.72,1.0))/17.0-t*0.75+noise(p/65.0)*1.2);
+  float ripple=smoothstep(0.92,1.0,front)*smoothstep(0.45,0.72,noise(p/40.0))*
+    smoothstep(35.0,90.0,d.y)*downstream*0.24;
+  float froth=smoothstep(0.48,0.80,detail)*(0.74*core+0.16*downstream)+ripple;
+  // Translucent aqua turbulence connects the bright foam to the clear pool;
+  // soft outer mist never fills the receiving water with an opaque white disk.
+  float disturbance=(0.18+0.12*detail)*downstream;
   float a=envelope*(disturbance+froth);
-  half3 teal=mix(half3(0.31,0.655,0.698),half3(0.518,0.820,0.847),detail);
-  half3 rgb=mix(teal,half3(0.949,0.984,0.984),froth/max(disturbance+froth,0.001));
+  half3 teal=mix(half3(0.520,0.795,0.790),half3(0.685,0.895,0.870),detail);
+  half3 rgb=mix(teal,half3(0.910,0.972,0.946),froth/max(disturbance+froth,0.001));
   return half4(rgb*a,a);
 }
 `);

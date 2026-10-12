@@ -1,13 +1,33 @@
 import { Platform } from 'react-native';
 import { Group, Image, Rect, useImage } from '@shopify/react-native-skia';
-import { useMemo } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import type { SkImage } from '@shopify/react-native-skia';
 import GardenStaticPicture from './GardenStaticPicture';
 import { GARDEN_LANDS, type GardenLand, type GardenLandLayout } from './gardenMapLayout';
 import GardenShoreContact, { makeShoreCoverage } from './water/GardenShoreContact';
 
-function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
-  const image = useImage(land.source);
-  const coverage = useMemo(() => Platform.OS === 'web' && image ? makeShoreCoverage(image,land.width) : null, [image,land.width]);
+// The shore and opaque passes share the same decoded artwork and GPU texture.
+// Keep loading in this owning scene root, outside cached static recordings.
+const LandImages = createContext<ReadonlyMap<unknown, SkImage | null> | null>(null);
+export function GardenLandResources({ children }: { children: ReactNode }) {
+  const central = useImage(GARDEN_LANDS[0].source);
+  const upper = useImage(GARDEN_LANDS[1].source);
+  const june = useImage(GARDEN_LANDS[2].source);
+  const july = useImage(GARDEN_LANDS[3].source);
+  const august = useImage(GARDEN_LANDS[4].source);
+  const september = useImage(GARDEN_LANDS[5].source);
+  const autumn = useImage(GARDEN_LANDS[6].source);
+  const images = useMemo(() => new Map(GARDEN_LANDS.slice(0, 7).map((land, index) =>
+    [land.source, [central, upper, june, july, august, september, autumn][index]])),
+  [central, upper, june, july, august, september, autumn]);
+  return <LandImages.Provider value={images}>{children}</LandImages.Provider>;
+}
+
+function Land({ land, selected, renderPass }: { land: GardenLand; selected: boolean; renderPass: 'shore' | 'land' }) {
+  const shared = useContext(LandImages);
+  const fallback = useImage(shared?.has(land.source) ? null : land.source);
+  const image = shared?.has(land.source) ? shared.get(land.source) : fallback;
+  const coverage = useMemo(() => renderPass === 'shore' && Platform.OS === 'web' && image ? makeShoreCoverage(image,land.width) : null, [image,land.width,renderPass]);
   const images = useMemo(() => image ? coverage ? [image,coverage] : [image] : [], [image,coverage]);
   const drawing = useMemo(() => {
     if (!image) return null;
@@ -19,28 +39,29 @@ function Land({ land, selected }: { land: GardenLand; selected: boolean }) {
       { rotate: land.rotation * Math.PI / 180 },
       { translateX: -centerX }, { translateY: -centerY },
     ]}>
-      <GardenShoreContact coverage={coverage} image={image} x={land.x} y={land.y} width={land.width} height={height} />
-      <Image image={image} x={land.x} y={land.y} width={land.width} height={height} fit="contain" />
-      {__DEV__ && selected && <Group>
+      {renderPass === 'shore' ? <GardenShoreContact coverage={coverage} image={image} x={land.x} y={land.y} width={land.width} height={height} />
+        : <Image image={image} x={land.x} y={land.y} width={land.width} height={height} fit="contain" />}
+      {renderPass === 'land' && __DEV__ && selected && <Group>
         <Rect x={land.x} y={land.y} width={land.width} height={height}
           color="#FFE36E" style="stroke" strokeWidth={6} />
       </Group>}
     </Group>;
-  }, [image, land, selected, coverage]);
+  }, [image, land, selected, coverage, renderPass]);
   return drawing ? <GardenStaticPicture images={images}>{drawing}</GardenStaticPicture> : null;
 }
 
 type LandLayerProps = {
+  renderPass?: 'shore' | 'land';
   layout?: GardenLandLayout;
   selectedLandId?: string | null;
 };
 
-export default function LandLayer({ layout = GARDEN_LANDS, selectedLandId = null }: LandLayerProps) {
+export default function LandLayer({ layout = GARDEN_LANDS, selectedLandId = null, renderPass = 'land' }: LandLayerProps) {
   const orderedLands = [...layout].sort((a, b) => a.zIndex - b.zIndex);
   return (
     <Group>
       {orderedLands.map((land) => (
-        <Land key={land.id} land={land} selected={land.id === selectedLandId} />
+        <Land key={land.id} land={land} selected={land.id === selectedLandId} renderPass={renderPass} />
       ))}
     </Group>
   );

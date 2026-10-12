@@ -3,15 +3,18 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePanelTheme } from '../components/features/PanelTheme';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import GardenScene from '@/components/garden/GardenScene';
+import GardenScene, {type GardenSceneHandle} from '@/components/garden/GardenScene';
 import FlowerDensitySandbox from '@/components/garden/flower-density-sandbox/FlowerDensitySandbox';
 import ProductionGrowthQA from '@/components/garden/planting/ProductionGrowthQA';
 
 export default function GardenTestScreen() {
   const { session } = useAuth();
+  const gardenRef=useRef<GardenSceneHandle>(null);
+  const [treehouseState,setTreehouseState]=useState<'outside'|'inside'|'exiting'>('outside');
+  const [mailboxOpened,setMailboxOpened]=useState(false);
   const insets = useSafeAreaInsets();
   const { theme } = usePanelTheme();
   const [showDensitySandbox, setShowDensitySandbox] = useState(false);
@@ -21,7 +24,19 @@ export default function GardenTestScreen() {
   if (showProductionQA) return <GestureHandlerRootView style={styles.root}><ProductionGrowthQA onClose={()=>setShowProductionQA(false)}/></GestureHandlerRootView>;
   return <GestureHandlerRootView style={styles.root}>
     {showDensitySandbox ? <FlowerDensitySandbox onClose={() => setShowDensitySandbox(false)} /> : <>
-      <GardenScene initialWaterfallVersion="v2" enableFairyWalk session={session} backendMode />
+      <GardenScene ref={gardenRef} initialWaterfallVersion="v2" enableFairyWalk session={session} backendMode
+        onTreehouseEntered={()=>setTreehouseState('inside')} onTreehouseExited={()=>setTreehouseState('outside')}
+        onMailboxOpened={()=>setMailboxOpened(true)} />
+      {treehouseState!=='outside'&&<Pressable accessibilityRole="button" accessibilityLabel="Return from treehouse"
+        disabled={treehouseState==='exiting'} style={[styles.sandboxButton,{top:106}]}
+        onPress={()=>{if(gardenRef.current?.returnFromTreehouse())setTreehouseState('exiting');}}>
+        <Text style={styles.sandboxLabel}>{treehouseState==='exiting'?'Returning to Garden…':'Return from treehouse'}</Text>
+      </Pressable>}
+      {mailboxOpened&&<Pressable accessibilityRole="button" accessibilityLabel="Return from mailbox"
+        style={[styles.sandboxButton,{top:150}]}
+        onPress={()=>{if(gardenRef.current?.returnFromMailbox())setMailboxOpened(false);}}>
+        <Text style={styles.sandboxLabel}>Return from mailbox</Text>
+      </Pressable>}
       <Pressable accessibilityRole="button" accessibilityLabel="Back to Garden"
         onPress={() => router.dismissTo('/')}
         style={({ pressed }) => [styles.back, { bottom: insets.bottom + 16, right: insets.right + 16,

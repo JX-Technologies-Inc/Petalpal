@@ -5,25 +5,38 @@ import { Platform } from 'react-native';
 // the real alpha contour; no duplicated decoding, guessed island shapes or foam ring.
 const SHORE_SOURCE = `
 uniform shader land;
-half4 main(float2 p){
+// Restrict the final contact polish to the crescent, bridge approaches and
+// small central channels. These coordinates affect water shading only.
+float polishZone(float2 p) {
+  float2 a=(p-float2(2080,730))/float2(345,175);
+  float2 b=(p-float2(1640,960))/float2(260,165);
+  float2 c=(p-float2(1690,1380))/float2(210,210);
+  float2 d=(p-float2(870,520))/float2(145,165);
+  float2 e=(p-float2(1000,1080))/float2(135,140);
+  float zone=max(max(exp(-dot(a,a)*2.0),exp(-dot(b,b)*2.0)),
+    max(exp(-dot(c,c)*2.0),max(exp(-dot(d,d)*2.0),exp(-dot(e,e)*2.0))));
+  return smoothstep(0.05,0.82,zone);
+}
+half4 main(float2 p) {
   float own=land.eval(p).a;
-  if(own>0.99)return half4(0);
-  float near=0.0,wide=0.0;
-  for(int i=0;i<8;i++){
-    float angle=float(i)*0.785398;
-    float2 direction=float2(cos(angle),sin(angle));
-    near+=land.eval(p+direction*6.0).a/8.0;
-    wide+=land.eval(p+direction*17.0).a/8.0;
-  }
-  float variation=0.78+0.22*sin(p.x/91.0+p.y/137.0);
-  float a=(near*0.20+wide*0.09)*(1.0-own)*variation;
-  return half4(half3(0.243,0.529,0.573)*a,a);
+  if(own==1.0) return half4(0);
+  float contact=(land.eval(p+float2(-3,-5)).a*0.65+
+                 land.eval(p+float2(2,-3)).a*0.35)*(1.0-own);
+  float broken=smoothstep(-0.3,0.5,sin(p.x/43.0+sin(p.y/71.0)*2.0));
+  float local=polishZone(p)*smoothstep(-0.25,0.65,
+    sin(p.x/31.0+sin(p.y/57.0)*1.6)+sin(p.y/23.0)*0.32);
+  float shadow=contact*broken*(0.31+local*0.075);
+  half4 stone=(land.eval(p+float2(-3,-10-local*2.0))+land.eval(p+float2(-5,-13-local*2.0)))*0.5;
+  float foot=stone.a*(1.0-own)*broken*(0.23+local*0.13);
+  float3 tint=mix(stone.rgb/max(float(stone.a),0.001),float3(0.39,0.68,0.67),0.74-local*0.12);
+  float alpha=shadow+foot*(1.0-shadow);
+  return half4(float3(0.13,0.39,0.43)*shadow+tint*foot*(1.0-shadow),alpha);
 }
 `;
 const SHORE = Skia.RuntimeEffect.Make(SHORE_SOURCE);
 const COVERED = Platform.OS === 'web' ? Skia.RuntimeEffect.Make(SHORE_SOURCE
   .replace('uniform shader land;', 'uniform shader land;\nuniform shader coverage;')
-  .replace('half4 main(float2 p){', 'half4 main(float2 p){\n  if(coverage.eval(p).r==0.0)return half4(0);')) : null;
+  .replace('half4 main(float2 p) {', 'half4 main(float2 p) {\n  if(coverage.eval(p).r==0.0)return half4(0);')) : null;
 
 // A conservative zero-result map, not artwork: all nonzero shoreline pixels
 // still use the original shader and original source sampling. Tiny RGBA cells
@@ -42,8 +55,8 @@ export function makeShoreCoverage(image: SkImage, worldWidth: number): SkImage |
       scan: for (let py = y0; py < y1; py++) for (let px = x0; px < x1; px++) {
         const alpha = pixels[(py*width+px)*4+3];
         any ||= alpha > 0;
-        // 254/255 safely exceeds SHORE's unchanged own > .99 guard.
-        full &&= alpha >= 254;
+        // Only fully opaque support can make the new contact shader exactly zero.
+        full &&= alpha === 255;
         if (any && !full) break scan;
       }
       rowNonempty += Number(any); rowInterior += Number(full);

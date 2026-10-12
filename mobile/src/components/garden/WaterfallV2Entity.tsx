@@ -50,13 +50,21 @@ half3 parcel(float2 p,float2 velocity,float period,float seed,float distortion,h
   return sum/max(total,0.001);
 }
 half4 poolTransition(half4 color,float2 p,float edge) {
-  if(p.y<1460.0)return color;
   half3 rgb=color.rgb/max(color.a,0.001);
+  // Grade only the wet falling sheet, retaining its painted light/dark detail
+  // and original alpha. Pale cliff flecks outside this channel stay untouched.
+  float falling=smoothstep(510.0,650.0,p.y)*(1.0-smoothstep(1540.0,1770.0,p.y));
+  falling*=1.0-smoothstep(158.0,210.0,abs(p.x-550.0));
+  float fallWet=water(painting.eval(p+float2(0,192)));
+  float cold=max(rgb.b-rgb.g,0.0);
+  half3 aqua=rgb+half3(cold*0.08,cold*0.30,-cold*0.65);
+  rgb=mix(rgb,aqua,falling*fallWet*mix(0.72,1.0,smoothstep(850.0,1500.0,p.y)));
+  if(p.y<1460.0)return half4(rgb*color.a,color.a);
   float wet=max(smoothstep(0.015,0.085,min(rgb.g-rgb.r,rgb.b-rgb.r)),
     smoothstep(0.68,0.94,min(rgb.r,min(rgb.g,rgb.b))));
-  float downstream=smoothstep(1485.0,1675.0,p.y+(p.x-555.0)*0.12);
+  float downstream=smoothstep(1460.0,1760.0,p.y+(p.x-555.0)*0.12);
   float tone=clamp(dot(rgb,half3(0.25,0.5,0.25)),0.0,1.0);
-  half3 pool=mix(half3(0.31,0.655,0.698),half3(0.518,0.820,0.847),tone);
+  half3 pool=mix(half3(0.375,0.680,0.705),half3(0.590,0.835,0.820),tone);
   // Retain painted detail while exchanging outer whitewater for pool color.
   rgb=mix(rgb,pool,downstream*wet*0.78);
   return half4(rgb*color.a,color.a)*edge;
@@ -131,7 +139,8 @@ export default function WaterfallV2Entity({ active = true, animated = true, prop
   const p = INITIAL_WATERFALL_V2_PLACEMENT;
   const center = {x:p.x+WIDTH*p.scale/2, y:p.y+HEIGHT*p.scale/2};
   const bands = proportions === 'original' ? WATERFALL_V2_ORIGINAL_BANDS : WATERFALL_V2_SHORT_BANDS;
-  return <Group origin={center} transform={[{rotate:p.rotation*Math.PI/180}]}>
+  return <Group>
+    <Group origin={center} transform={[{rotate:p.rotation*Math.PI/180}]}>
     <Group transform={[{translateX:p.x},{translateY:p.y},{scale:p.scale}]}>
       {bands.map(band => <Group key={band.start}
         transform={[{translateY:band.translateY},{scaleY:band.scaleY}]}>
@@ -147,6 +156,7 @@ export default function WaterfallV2Entity({ active = true, animated = true, prop
       </Group>
       </Group>
       </Group>)}
+    </Group>
     </Group>
   </Group>;
 }

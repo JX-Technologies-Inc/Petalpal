@@ -804,3 +804,27 @@ Firebase/API/Socket/DB/AI functionality. Anonymous asset protection PASS; signed
 Garden confirmation at this edge is pending. Version upload/activation preserved
 routing; do not run full deploy with the local URL-off profile. Render/native
 setup, artwork and quality settings remain unchanged.
+
+## Garden/Fairy V2 integration
+
+The Fairy route uses the existing single Garden Canvas, static-picture cache,
+input handler, initial framing, free pan, 0.8–3× zoom and authored narrow-path
+network. Ground navigation subtracts the
+approved planting masks; Treehouse and Mailbox sequences own movement until their
+handoff or return completes. The independent V2 full-screen water-material rewrite
+is deferred: retain main's animated water field and ripple artwork. New koi,
+lotus effects and the original vector petals share the scene's paused water clock.
+Shore and opaque land passes share decoded island images; the web texture cache
+has a bounded 512 MiB ceiling for the additional native-resolution assets.
+
+For changed interaction code, run
+`node --test mobile/test/fairyInput.test.cjs mobile/test/gardenFairyV2.test.cjs` from repository root. The latter runs
+`checkTreehouseEntry.cjs`, `checkMailboxInteraction.cjs` and `checkGardenGround.cjs`
+against the actual controller. For changed sampling or static rendering, include
+`gardenShoreCoverage.test.cjs`, `gardenStaticPicture.test.cjs` and
+`gardenRuntimeResources.test.mjs` from `mobile/test/`.
+
+After intentional terrain/layout/infrastructure geometry changes, use a Python
+runtime with NumPy and Pillow to run `python3 scripts/bakeGardenGround.py` from
+`mobile/`; review both existing generated ground-mask files. This is local asset generation, not deployment or migration. Preserve historical checkpoint
+evidence; missing approved checkpoint files must not be invented as test fixtures.

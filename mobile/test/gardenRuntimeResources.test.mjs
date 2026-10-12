@@ -160,7 +160,7 @@ test('Web surface context keeps its identity and receives a bounded texture budg
   assert.equal(kit.MakeWebGLContext(42), context);
   assert.equal(kit.MakeWebGLContext(0), null);
   assert.deepEqual(handles, [42, 0]);
-  assert.deepEqual(limits, [384 * 1024 * 1024]);
+  assert.deepEqual(limits, [512 * 1024 * 1024]);
   assert.equal(GARDEN_WEB_TEXTURE_CACHE_BYTES, limits[0]);
 });
 
@@ -184,7 +184,7 @@ test('Fish callback stops on blur, background, reduced motion, disable and unmou
     },
   };
   const load = loadPlantingModules(undefined, react, undefined, true, {
-    '@shopify/react-native-skia': { Group: 'Group', Image: 'Image', useImage: () => null },
+    '@shopify/react-native-skia': { Group: 'Group', Image: 'Image', useImage: () => null, Skia: { RuntimeEffect: { Make: () => ({}) } } },
     'react-native': { AppState: {
       get currentState() { return state; },
       addEventListener(_event, listener) { listeners.add(listener); return { remove: () => listeners.delete(listener) }; },

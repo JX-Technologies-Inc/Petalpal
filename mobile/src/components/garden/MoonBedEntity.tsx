@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import { Group, Image, useImage } from '@shopify/react-native-skia';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -95,6 +96,7 @@ export type MoonBedEntityProps = {
   x?: number;
   y?: number;
   scale?: number;
+  fairy?: ReactNode;
   debugMode?: MoonBedDebugMode;
   registration?: MoonBedRegistration;
   animationEnabled?: boolean;
@@ -165,6 +167,7 @@ export default function MoonBedEntity({
   registration = MOON_BED_LAYER_REGISTRATION,
   animationEnabled = false,
   onDebugStatus,
+  fairy,
 }: MoonBedEntityProps) {
   const reducedMotion = useReducedMotion();
   const windEnabled = animationEnabled && !reducedMotion;
@@ -208,6 +211,7 @@ export default function MoonBedEntity({
         registration={registration} />
       <RegisteredLayer image={pillow.image} name="pillow" mode={mode}
         registration={registration} />
+      {mode === 'all' && fairy}
       <HangingDecorLayer image={hangingDecor.image} mode={mode} registration={registration}
         leftTransform={leftPendantTransform} rightTransform={rightPendantTransform} />
       <RegisteredLayer image={blanketTail.image} name="blanket-tail" mode={mode}

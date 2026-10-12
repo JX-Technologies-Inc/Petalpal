@@ -31,7 +31,7 @@ function WaterfallImpactUnderlay({ enabled=true, opacity=1, strength=1.0, placem
       {/* 1. Deep turbulent water base / veil wrapping around sides & below the foam (blur 1.8) */}
       <Path
         path="M -52 -2 C -54 10 -45 22 -38 27 C -22 35 2 37 25 35 C 50 33 75 35 90 25 C 98 20 92 10 74 6 C 52 2 32 -4 14 -2 C -2 -4 -25 -10 -40 -8 Z"
-        opacity={alpha(0.55)}
+        opacity={alpha(0.32)}
       >
         <LinearGradient
           start={{ x: 0, y: 5 }}
@@ -46,12 +46,22 @@ function WaterfallImpactUnderlay({ enabled=true, opacity=1, strength=1.0, placem
       <Path
         path="M -34 12 C -20 22 5 25 28 17 C 20 25 -5 28 -28 22 Z"
         color="#3E8792"
-        opacity={alpha(0.48)}
+        opacity={alpha(0.20)}
       >
         <Blur blur={1.0} />
       </Path>
 
       {/* 3. Mid disturbed water strokes framing the exposed foam edge (blur 0.7 - 0.8) */}
+      {/* Receiving-water light fades locally, leaving the upper pond calm. */}
+      <Path
+        path="M -43 1 C -30 -8 7 -7 34 2 C 56 8 70 20 57 28 C 35 39 -8 29 -28 21 C -40 16 -48 9 -43 1 Z"
+        opacity={alpha(0.22)}
+      >
+        <LinearGradient start={{ x: -10, y: 0 }} end={{ x: 35, y: 35 }}
+          colors={['#F2FBFB', '#9DDEE3', 'rgba(157,222,227,0)']}
+          positions={[0, 0.38, 1]} />
+        <Blur blur={4} />
+      </Path>
       {/* Left-flank churn curl */}
       <Path
         path="M -44 4 C -36 12 -28 18 -14 22"
