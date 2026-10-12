@@ -28,7 +28,8 @@ export function buildContentSecurityPolicy({ apiOrigin, authDomain }) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://lh3.googleusercontent.com",
     "font-src 'self'",
-    `connect-src 'self' ${apiOrigin} wss://${new URL(apiOrigin).host} https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com https://${authDomain}`,
+    // Expo voice recordings use object URLs; speech.ts fetches the blob before transcription.
+    `connect-src 'self' blob: ${apiOrigin} wss://${new URL(apiOrigin).host} https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com https://${authDomain}`,
     `frame-src https://${authDomain}`,
     "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"
   ].join('; ');

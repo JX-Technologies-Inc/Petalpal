@@ -68,13 +68,13 @@ test -z "$NATIVE_SECURITY_TEST" || exit 1
 
 test('default hosting configuration keeps the exact production policy', async () => {
   const policy = await csp({ ASSETS });
-  assert.match(policy, /connect-src 'self' https:\/\/petalpal-v2\.onrender\.com wss:\/\/petalpal-v2\.onrender\.com https:\/\/identitytoolkit\.googleapis\.com https:\/\/securetoken\.googleapis\.com https:\/\/apis\.google\.com https:\/\/petalpal-b212c\.firebaseapp\.com;/);
+  assert.match(policy, /connect-src 'self' blob: https:\/\/petalpal-v2\.onrender\.com wss:\/\/petalpal-v2\.onrender\.com https:\/\/identitytoolkit\.googleapis\.com https:\/\/securetoken\.googleapis\.com https:\/\/apis\.google\.com https:\/\/petalpal-b212c\.firebaseapp\.com;/);
   assert.match(policy, /frame-src https:\/\/petalpal-b212c\.firebaseapp\.com;/);
 });
 
 test('integration Worker allows only its explicit backend and test Firebase domain', async () => {
   const policy = await csp(integration);
-  assert.match(policy, /connect-src 'self' https:\/\/petalpal-backend-test\.onrender\.com wss:\/\/petalpal-backend-test\.onrender\.com /);
+  assert.match(policy, /connect-src 'self' blob: https:\/\/petalpal-backend-test\.onrender\.com wss:\/\/petalpal-backend-test\.onrender\.com /);
   assert.match(policy, /https:\/\/petalpal-integration\.firebaseapp\.com/);
   assert.doesNotMatch(policy, /petalpal-v2|petalpal-b212c/);
   assert.match(policy, /'wasm-unsafe-eval'/); assert.doesNotMatch(policy, /'unsafe-eval'/);
