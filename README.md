@@ -72,6 +72,7 @@ npm run start:ai-worker
 
 Detailed engineering documentation is maintained separately:
 
+- [`INTEGRATION_DEPLOYMENT.md`](./INTEGRATION_DEPLOYMENT.md) — Canonical SOP to read before branch integration, isolated testing or controlled deployment; [`WARNING.md`](./WARNING.md) takes precedence for privacy and credential safety
 - [`MOBILE.md`](./MOBILE.md) — Physical-iPhone setup, mobile authentication, and isolated native testing runbook
 - [`LONG_TERM_AI.md`](./LONG_TERM_AI.md) — Long-term AI, memory, reports, and retrieval architecture
 - [`SECURITY.md`](./SECURITY.md) — Security architecture and backend hardening

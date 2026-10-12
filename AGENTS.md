@@ -8,6 +8,18 @@ Never override these requirements merely to complete a task.
 
 Apply this policy before the existing repository instructions below; do not weaken higher-priority restrictions.
 
+## Integration and deployment procedure
+
+Before branch integration, isolated integration testing or deployment work, read and follow
+repository-root [INTEGRATION_DEPLOYMENT.md](INTEGRATION_DEPLOYMENT.md) by default.
+[WARNING.md](WARNING.md) takes precedence for privacy and credential safety.
+Reuse accepted evidence for equivalent relevant inputs and run only impact-based
+checks. Preserve environment isolation, historical security evidence and existing
+Garden/Fairy behavior and rendering quality. The SOP does not grant merge, push,
+deployment, migration or provider-change permission; honor the user's explicitly
+authorized scope and existing approval gates. Prepare a local, reviewable result
+before requesting any additional approval.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
