@@ -1,13 +1,15 @@
 import { Redirect } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import GardenScene from '@/components/garden/GardenScene';
+import GardenScene, {type GardenSceneHandle} from '@/components/garden/GardenScene';
 import FlowerDensitySandbox from '@/components/garden/flower-density-sandbox/FlowerDensitySandbox';
 import ProductionGrowthQA from '@/components/garden/planting/ProductionGrowthQA';
 
 export default function GardenTestScreen() {
+  const gardenRef=useRef<GardenSceneHandle>(null);
+  const [treehouseState,setTreehouseState]=useState<'outside'|'inside'|'exiting'>('outside');
   const [showDensitySandbox, setShowDensitySandbox] = useState(false);
   const [showProductionQA,setShowProductionQA]=useState(false);
   useEffect(() => { if (__DEV__) void SplashScreen.hideAsync(); }, []);
@@ -15,7 +17,13 @@ export default function GardenTestScreen() {
   if (showProductionQA) return <GestureHandlerRootView style={styles.root}><ProductionGrowthQA onClose={()=>setShowProductionQA(false)}/></GestureHandlerRootView>;
   return <GestureHandlerRootView style={styles.root}>
     {showDensitySandbox ? <FlowerDensitySandbox onClose={() => setShowDensitySandbox(false)} /> : <>
-      <GardenScene initialWaterfallVersion="v2" enableFairyWalk />
+      <GardenScene ref={gardenRef} initialWaterfallVersion="v2" enableFairyWalk
+        onTreehouseEntered={()=>setTreehouseState('inside')} onTreehouseExited={()=>setTreehouseState('outside')} />
+      {treehouseState!=='outside'&&<Pressable accessibilityRole="button" accessibilityLabel="Return from treehouse"
+        disabled={treehouseState==='exiting'} style={[styles.sandboxButton,{top:106}]}
+        onPress={()=>{if(gardenRef.current?.returnFromTreehouse())setTreehouseState('exiting');}}>
+        <Text style={styles.sandboxLabel}>{treehouseState==='exiting'?'Returning to Garden…':'Return from treehouse'}</Text>
+      </Pressable>}
       <Pressable accessibilityRole="button" style={styles.sandboxButton} onPress={() => setShowDensitySandbox(true)}>
         <Text style={styles.sandboxLabel}>Flower Density Sandbox</Text>
       </Pressable>

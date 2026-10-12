@@ -1,3 +1,5 @@
+import { hitsMailbox } from './fairy/mailboxDestination';
+import { hitsTreehouse } from './fairy/treehouseDestination';
 import {hitsTeaArea} from './fairy/teaDestination';
 import { hitsMoonBed } from './fairy/moonDestination';
 import { hitsSwing } from './fairy/swingDestination';
@@ -12,7 +14,7 @@ import {DEFAULT_ISOLATION,type GardenIsolation} from './performance/runtimeAudit
 import {productionQARecords} from './planting/productionGrowthQAData';
 import {runtimeAudit} from './performance/runtimeAudit';
 import { Canvas, Circle, Group, Image, Path, Rect, useImage } from '@shopify/react-native-skia';
-import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
+import { forwardRef, useImperativeHandle, useCallback, useEffect, useMemo, useRef, useState, type Ref, type SetStateAction } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
@@ -199,14 +201,21 @@ const CHECKED_IN_TEA_SET: TeaSetMapPlacement = {
 
 
 
+export type GardenSceneHandle = { returnFromTreehouse: () => boolean; returnFromMailbox: () => boolean };
+
 export type GardenSceneProps = {
+  /** Fired after the front-facing opened-letter pose and its 800 ms hold. */
+  onMailboxOpened?: () => void;
+  /** Future interior scene handoff. Entry is complete and the fairy is hidden. */
+  onTreehouseEntered?: () => void;
+  onTreehouseExited?: () => void;
   enableFairyWalk?: boolean;
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
   gardenOwnerUserId?: string;
 };
 
-function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy' }: GardenSceneProps = {}) {
+function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', onTreehouseEntered, onTreehouseExited, onMailboxOpened, interactionRef }: GardenSceneProps & {interactionRef?:Ref<GardenSceneHandle>} = {}) {
   runtimeAudit.render('GardenScene');
   const planting = usePlanting();
   const [perfFlags,setPerfFlags]=useState<GardenIsolation>({...DEFAULT_ISOLATION});
@@ -268,6 +277,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   }>();
 
   const fairyRef = useRef<FairyHandle>(null);
+  useImperativeHandle(interactionRef,()=>({returnFromTreehouse:()=>fairyRef.current?.returnFromTreehouse()??false,returnFromMailbox:()=>fairyRef.current?.returnFromMailbox()??false}),[]);
   const [fairyState, setFairyState] = useState<FairyState>('idle');
   const fairyOnMoonBed = fairyState === 'sleepingOnMoonBed';
   const fairyOnSwing = fairyState === 'sittingOnSwing';
@@ -764,9 +774,18 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     }
 
     if(perfFixtureRef.current)return;
+    if(enableFairyWalk && fairyRef.current?.isMailboxBusy())return;
     if (activeModeRef.current !== 'normal') {
       updatePreview(worldX, worldY);
     } else {
+      if (enableFairyWalk && hitsMailbox({x:worldX,y:worldY},treehousePlacement)) {
+        fairyRef.current?.visitMailbox();
+        return;
+      }
+      if (enableFairyWalk && hitsTreehouse({x:worldX,y:worldY},treehousePlacement)) {
+        fairyRef.current?.visitTreehouse();
+        return;
+      }
       if (enableFairyWalk && hitsSwing({x:worldX,y:worldY}, swingPlacement)) {
         fairyRef.current?.visitSwing();
         return;
@@ -798,7 +817,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         fairyRef.current?.move({ x: worldX, y: worldY });
       }
     }
-  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk, swingPlacement, moonBedPlacement, teaSetPlacement]);
+  }, [fit, baseX, baseY, cameraZoom, cameraX, cameraY, updatePreview, openFlowerDetail, previewMode, calibrationMode, calSubMode, selectedCalMonth, plantingCalibrationMap, calibrationLayout, useMonthlyGrowth, enableFairyWalk, swingPlacement, moonBedPlacement, teaSetPlacement, treehousePlacement]);
 
   const startMaskPos = useRef({ localX: 0, localY: 0 });
 
@@ -1254,9 +1273,18 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
                 onDebugStatus={__DEV__ ? setTreehouseStatus : undefined}
               />
             )}
+            {/* Ground and entrance slabs belong below the walking fairy. */}
+            {__DEV__ && perf.Infrastructure && infrastructureEnabled && showLandmarks && <GardenRoadApproachLayer />}
           </GardenCanvasPlane>
           {enableFairyWalk && <GardenCanvasPlane name="fairy-walk" cameraTransform={cameraTransform} planting={drawnPlanting}>
-            <GardenFairy pixelsPerUnit={()=>fit*cameraZoom.value} onStateChange={setFairyState} ref={fairyRef} debug={fairyDebug} onStatus={setFairyStatus}
+            <GardenFairy onMailboxOpened={() => {
+              console.info('[Garden] onMailboxOpened');onMailboxOpened?.();
+            }} onTreehouseExited={() => {
+              console.info('[Garden] onTreehouseExited');onTreehouseExited?.();
+            }} onTreehouseEntered={() => {
+              console.info('[Garden] onTreehouseEntered');
+              onTreehouseEntered?.();
+            }} pixelsPerUnit={()=>fit*cameraZoom.value} onStateChange={setFairyState} ref={fairyRef} debug={fairyDebug} onStatus={setFairyStatus}
               active={gardenActive && perf.Land && perf.Infrastructure && infrastructureEnabled && activeMode === 'normal' && !selectedFlower && previewMode}
               blocked={isGardenGroundBlocked} />
           </GardenCanvasPlane>}
@@ -1296,7 +1324,6 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
                 onDebugStatus={__DEV__ ? setTreehouseStatus : undefined}
               />
             )}
-            {__DEV__ && perf.Infrastructure && infrastructureEnabled && showLandmarks && <GardenRoadApproachLayer />}
             {/* Planted Flowers & Active Placement Preview Layer */}
             <GardenProfile name="Flower foreground" enabled={perf.Flowers}><PlantedFlowerLayer depthPass={showLandmarks ? 'foreground' : 'all'} useMonthlyGrowth={useMonthlyGrowth} /></GardenProfile>
             {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'impact' && (
@@ -1945,11 +1972,12 @@ function WaterfallImpactDebugShape({ placement }: { placement: WaterfallImpactPl
   );
 }
 
-export default function GardenScene(props: GardenSceneProps = {}) {
+const GardenScene = forwardRef<GardenSceneHandle,GardenSceneProps>(function GardenScene(props, ref) {
   const detailParams = useLocalSearchParams<{ ownerId?: string }>();
   return (
     <PlantingProvider gardenOwnerUserId={props.gardenOwnerUserId || detailParams.ownerId}>
-      <GardenSceneContent {...props} />
+      <GardenSceneContent {...props} interactionRef={ref} />
     </PlantingProvider>
   );
-}
+});
+export default GardenScene;
