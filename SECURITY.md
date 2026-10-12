@@ -2104,3 +2104,29 @@ unresolved dependency-security gate to the readiness report; readiness remains N
   provider configuration changes, automatic retry/rollback or public launch.
   Bounded private voice verification is pending; no synthetic Event or private
   recording may be saved without separate authorization.
+
+## 2026-10-12 — Render-served Web voice blob CSP correction (minimal release candidate; not released)
+
+- **Confirmed cause (source + owner-reported console):** on the Render-served Web
+  app (`https://petalpal-v2.onrender.com`), the browser refuses
+  `fetch(blob:...)` under the document CSP. `mobile/src/services/speech.ts` reads
+  the recording object URL with `fetch(uri)` before `/speech/transcribe`; Render's
+  production CSP in `lib/http-security.js` lacked `blob:` in `connect-src`. The
+  later Cloudflare hosting CSP correction (PR #32) applies only to that separate
+  hosting Worker policy.
+- **Minimal release scope:** branch based on the last recorded Render Live source
+  `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3`. `connect-src` gains only `blob:`.
+  All other directives, WebSocket host validation, HSTS, no-store classification,
+  authentication, CORS, speech admission/consent/quota and the 8 MB audio limit
+  are unchanged. `blob:` covers page-created object URLs and adds no network
+  origin. No Garden/Fairy, mobile/Expo source, other backend, dependency, Docker,
+  Prisma or migration change; the Cloudflare AI Worker is untouched.
+- **Validation PASS (local, pure-function):** new exact-directive regression for
+  shell and API requests plus invalid-host handling; 5/5 header/CSP/no-store
+  tests on this base. The new test fails without the fix. The real-HTTP app cases
+  in the same file need repository CI (dependencies unavailable in the sandbox).
+  The existing `CSP supports` security-CI selector includes the new test.
+- [ ] **Release pending:** a separately authorized Render `PetalPal_v2` deploy of
+  this exact commit (Docker Command `node server.js`, Pre-Deploy blank,
+  Auto-Deploy off), header read-back, then a bounded private dictation check
+  without saving an Event. Reconcile this entry with `main` separately.
