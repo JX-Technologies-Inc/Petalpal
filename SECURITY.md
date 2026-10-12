@@ -1646,3 +1646,29 @@ This evidence is retained as an uncommitted SECURITY.md append in the separate C
 - [x] Merged approved candidate `902f34a45f7a2ad6f31c5049bf4fa41d86a25dc8` into that isolated checkpoint. Only SECURITY.md and MANUAL_SECURITY_CHECKLIST.md conflicted; preview versions are exact prefixes of approved history, so the approved full histories resolve both without losing records. Preserved the separately uncommitted exact-source CI evidence by copying its append into this candidate while leaving the original file untouched. All other tracked files exactly match the CI-passed candidate, including workflows, tests, build inputs, Expo assets and application/backend/AI/security source. No new executable behavior or newly affected test exists.
 - [x] Reuse exact-source CI run 37902827021 for unchanged Security + Expo/Garden/HTTP tests; do not rerun historical suites. Existing excluded DB-resource/monitoring modules, unfinished Garden/Message pagination and Vite deployment entry points remain excluded. No provider/database operation, remote push, main update or existing-service restart is authorized or performed.
 - [ ] Target-platform production-container build verification is recorded separately against this final commit/tree after checkpoint creation; previous arm64 build evidence does not certify amd64. Production Firebase Web App binding remains UNKNOWN. User-confirmed Garden recovery is accepted; objective matched-reference visual/performance parity remains PARTIAL. Deployment remains blocked pending those release gates and separate approval.
+
+## 2026-10-12 — Render-served Web voice blob CSP correction (minimal release candidate; not released)
+
+- **Confirmed cause (source + owner-reported console):** on the Render-served Web
+  app (`https://petalpal-v2.onrender.com`), the browser refuses
+  `fetch(blob:...)` under the document CSP. `mobile/src/services/speech.ts` reads
+  the recording object URL with `fetch(uri)` before `/speech/transcribe`; Render's
+  production CSP in `lib/http-security.js` lacked `blob:` in `connect-src`. The
+  later Cloudflare hosting CSP correction (PR #32) applies only to that separate
+  hosting Worker policy.
+- **Minimal release scope:** branch based on the last recorded Render Live source
+  `49ea26a6bd9867d5b2c65ca56b4d3e917c5d24a3`. `connect-src` gains only `blob:`.
+  All other directives, WebSocket host validation, HSTS, no-store classification,
+  authentication, CORS, speech admission/consent/quota and the 8 MB audio limit
+  are unchanged. `blob:` covers page-created object URLs and adds no network
+  origin. No Garden/Fairy, mobile/Expo source, other backend, dependency, Docker,
+  Prisma or migration change; the Cloudflare AI Worker is untouched.
+- **Validation PASS (local, pure-function):** new exact-directive regression for
+  shell and API requests plus invalid-host handling; 5/5 header/CSP/no-store
+  tests on this base. The new test fails without the fix. The real-HTTP app cases
+  in the same file need repository CI (dependencies unavailable in the sandbox).
+  The existing `CSP supports` security-CI selector includes the new test.
+- [ ] **Release pending:** a separately authorized Render `PetalPal_v2` deploy of
+  this exact commit (Docker Command `node server.js`, Pre-Deploy blank,
+  Auto-Deploy off), header read-back, then a bounded private dictation check
+  without saving an Event. Reconcile this entry with `main` separately.
