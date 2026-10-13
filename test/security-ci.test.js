@@ -66,7 +66,7 @@ test('workflow preserves scoped triggers, read-only permissions, pinned actions 
   assert.equal(uses.length, 2);
   for (const step of uses) assert.match(step.uses, /^actions\/(checkout|setup-node)@[0-9a-f]{40}$/);
   assert.equal(uses[0].with['persist-credentials'], false);
-  assert.equal(uses[1].with['node-version'], '24.7.0');
+  assert.equal(uses[1].with['node-version'], '24.21.0');
   assert.deepEqual(job.steps.filter(step => step.run).map(step => step.run), [
     'npm ci --ignore-scripts --no-audit --no-fund', 'npm exec --no -- prisma generate',
     'node --test test/security-ci.test.js', 'npm run test:security:ci',

@@ -21,6 +21,11 @@ for (const path of [
 const pkg = JSON.parse(readFileSync('/app/package.json', 'utf8'));
 assert.equal(pkg.scripts.start, 'npx prisma migrate deploy && node server.js');
 console.log('Backend-only image packaging PASS; production startup is unchanged and NOT executed');
+// The image's bundled ICU tzdata must model British Columbia permanent UTC-7 (IANA 2026b+).
+const vancouver = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Vancouver', hour: '2-digit', minute: '2-digit',
+  hourCycle: 'h23', timeZoneName: 'longOffset' }).format(new Date('2026-11-15T12:00:00Z'));
+assert.match(vancouver, /^05:00 GMT-07:00$/, `Image tzdata ${process.versions.tz} is stale for America/Vancouver`);
+console.log(`Image tzdata ${process.versions.tz}: America/Vancouver 2026-11-15T12:00Z = 05:00 UTC-7 PASS`);
 
 // Existing assertions cover listening HTTP, CORS, bearer rejection/acceptance,
 // owner isolation, no-store and Engine.IO polling/WS upgrade/token reconnect.

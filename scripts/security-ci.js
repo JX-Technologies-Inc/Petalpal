@@ -29,6 +29,8 @@ export const additionalSecurityTests = [
   { file: 'test/cloudflare-integration-deploy.test.mjs', pattern: '.', count: 4 },
   { file: 'test/cloudflare-rollback.test.mjs', pattern: '.', count: 6 },
   { file: 'test/cloudflare-production-deploy.test.mjs', pattern: '.', count: 5 },
+  // Runtime tzdata: Vancouver stays UTC-7 after 2026-11-01 (IANA 2026b+).
+  { file: 'test/back/vancouver-timezone.test.js', pattern: '.', count: 2 },
 ];
 
 export function assertCleanCheckout(exists = existsSync) {
