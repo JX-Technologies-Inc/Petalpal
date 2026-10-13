@@ -1922,15 +1922,17 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (Object.hasOwn(req.body, "ownerId") || Object.hasOwn(req.body, "userId") || req.query.ownerId !== undefined || req.query.userId !== undefined) {
       return res.status(400).json({ error: "Event ownership is derived from the authenticated Firebase identity" });
     }
+    // Event time is server-assigned. A client timestamp could backdate or
+    // future-date Events into already-closed or not-yet-open report periods.
+    if (Object.hasOwn(req.body, "occurredAt")) {
+      return res.status(400).json({ error: "Event time is assigned by the server" });
+    }
     // TEST-only synthetic Event time: rejected unless the isolated server-side gate passes.
     let simulatedOccurredAt = null;
     const simulatedTime = req.get(SIMULATED_TIME_HEADER);
     if (simulatedTime !== undefined) {
       if (simulatedTimeDenial({ firebase: req.firebase })) {
         return res.status(403).json({ error: "Simulated time is only available in an isolated test environment" });
-      }
-      if (Object.hasOwn(req.body, "occurredAt")) {
-        return res.status(400).json({ error: "Use either simulated time or occurredAt, not both" });
       }
       const owner = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
       try {
@@ -1949,7 +1951,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
       content: req.body.content,
       primaryGardenMood,
       enrichmentPending: Boolean(primaryGardenMood),
-      occurredAt: simulatedOccurredAt ?? req.body.occurredAt ?? new Date(),
+      occurredAt: simulatedOccurredAt ?? new Date(),
       idempotencyKey: req.get("idempotency-key")
     });
     const enrichment = result.created

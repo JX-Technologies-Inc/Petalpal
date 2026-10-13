@@ -4,6 +4,7 @@ import test from "node:test";
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
 import { AI_JOB_TYPES } from "../../lib/ai-jobs.js";
+import { localDateForInstant } from "../../lib/ai-periods.js";
 import { app, setAiJobDispatcherForTests, setWeeklyReportWorkerFactoryForTests } from "../../server.js";
 
 function fixture() {
@@ -193,14 +194,44 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     dispatchedJobs.push({ id: job.id, ownerId: job.ownerId, jobType: job.jobType });
     return { dispatched: true };
   });
+  const nearFuture = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  for (const occurredAt of ["2026-09-15T06:30:00.000Z", "2001-01-01T00:00:00.000Z", nearFuture, "2099-12-31T00:00:00.000Z", null, ""]) {
+    const clientTimed = await request(baseUrl, "/events", {
+      method: "POST",
+      headers: { "Idempotency-Key": "mobile-client-timed-1" },
+      body: { content: "Client-timed Event", primaryGardenMood: "SUNNY_BLOOM", occurredAt }
+    });
+    assert.equal(clientTimed.status, 400, String(occurredAt));
+  }
+  // This build has no simulated-time capability: the header is refused, never ignored.
+  for (const headers of [{ "X-PetalPal-Simulated-Time": "2026-10-08" }, { "X-PetalPal-Simulated-Time": "2001-01-01T00:00:00Z" }]) {
+    const forgedClock = await request(baseUrl, "/events", {
+      method: "POST",
+      headers: { "Idempotency-Key": "mobile-forged-clock-1", ...headers },
+      body: { content: "Forged clock Event", primaryGardenMood: "SUNNY_BLOOM" }
+    });
+    assert.equal(forgedClock.status, 403);
+  }
+  const both = await request(baseUrl, "/events", {
+    method: "POST",
+    headers: { "Idempotency-Key": "mobile-forged-clock-2", "X-PetalPal-Simulated-Time": "2026-10-08" },
+    body: { content: "Both", occurredAt: "2026-10-08T19:00:00.000Z" }
+  });
+  assert.equal(both.status, 400);
+  assert.equal(state.events.length, 0);
+  assert.equal(state.jobs.length, 0);
+  assert.equal(dispatchedJobs.length, 0);
+
+  const before = localDateForInstant(new Date(), "America/Vancouver");
   const created = await request(baseUrl, "/events", {
     method: "POST",
     headers: { "Idempotency-Key": "mobile-event-1" },
-    body: { content: "Late Vancouver Event", occurredAt: "2026-09-15T06:30:00.000Z" }
+    body: { content: "Late Vancouver Event" }
   });
+  const after = localDateForInstant(new Date(), "America/Vancouver");
   assert.equal(created.status, 201);
   assert.equal(created.body.event.ownerId, "alice");
-  assert.equal(created.body.event.localDate, "2026-09-14");
+  assert.ok([before, after].includes(created.body.event.localDate), "server time in the owner's IANA timezone");
   assert.equal(created.body.memoryJob.status, "PENDING");
   assert.equal(state.events.length, 1);
   assert.equal(state.jobs.length, 1);

@@ -11,7 +11,7 @@ COPY mobile/ ./
 RUN test -n "$VITE_FIREBASE_API_KEY" && EXPO_PUBLIC_FIREBASE_API_KEY="$VITE_FIREBASE_API_KEY" npm run build:web
 
 
-FROM node:24-bookworm-slim
+FROM node:24.21.0-bookworm-slim
 
 WORKDIR /app
 
