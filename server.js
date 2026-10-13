@@ -1919,6 +1919,15 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (Object.hasOwn(req.body, "ownerId") || Object.hasOwn(req.body, "userId") || req.query.ownerId !== undefined || req.query.userId !== undefined) {
       return res.status(400).json({ error: "Event ownership is derived from the authenticated Firebase identity" });
     }
+    // Event time is server-assigned. A client timestamp could backdate or
+    // future-date Events into already-closed or not-yet-open report periods.
+    if (Object.hasOwn(req.body, "occurredAt")) {
+      return res.status(400).json({ error: "Event time is assigned by the server" });
+    }
+    // No simulated-time capability exists in this build; never silently ignore the header.
+    if (req.get("x-petalpal-simulated-time") !== undefined) {
+      return res.status(403).json({ error: "Simulated time is only available in an isolated test environment" });
+    }
     const primaryGardenMood = req.body.primaryGardenMood ?? null;
     if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) {
       return res.status(400).json({ error: "Unsupported Primary Garden Mood" });
@@ -1929,7 +1938,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
       content: req.body.content,
       primaryGardenMood,
       enrichmentPending: Boolean(primaryGardenMood),
-      occurredAt: req.body.occurredAt ?? new Date(),
+      occurredAt: new Date(),
       idempotencyKey: req.get("idempotency-key")
     });
     const enrichment = result.created
