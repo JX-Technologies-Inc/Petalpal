@@ -265,6 +265,84 @@ foundation work.
 
 ## 12. Current Implementation Status
 
+### Phase 3 Sonnet Weekly reflections — 2026-10-13
+
+**IMPLEMENTED IN SOURCE; SONNET DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**
+Based on merged Phase 2 PR #44 (`13aee30c`). Earlier Phase 1/2 checkpoints below
+remain historical evidence. Monthly/Opus and phases 4–6 are outside this change.
+
+`lib/sonnet-weekly.js` adds a Weekly-only route through the existing native
+Anthropic Gateway adapter. Selection requires `AI_WEEKLY_REPORT_PROVIDER=anthropic`
+and `AI_WEEKLY_REPORT_MODEL=claude-sonnet-5-5`, both Gateway/Anthropic enable flags,
+valid Gateway configuration and every Phase 1 USD budget. Unset selection or
+`workers-ai` retains the existing production provider. Other explicit selections
+fail closed; no automatic provider switch, repair inference or paid replay.
+No runtime configuration, credential binding or deployment setting was changed.
+
+The versioned output contract is `weekly-reflection-v1`. Sonnet selects two salient
+sentences from distinct eligible EventMemory sources and may select one recurring
+topic backed by multiple Events. The application verifies exact supplied sentence
+equality, citations, distinct Events and current-period topic support, then renders
+the main reflection in natural localized wording with deterministic Event counts.
+This initial contract deliberately uses attributed source quotations and controlled
+language rather than accepting arbitrary paraphrases as fact. It cannot fabricate
+new experiences, numeric claims, emotional trends, diagnoses or causal conclusions
+through a free-form overview field. The optional insight describes recorded topic
+occurrences, not a claim about personal growth or an inferred psychological state.
+
+- Supported output locales: `en`, `zh-Hans`, `zh-Hant`, selected from the owner's
+  saved locale (including regional variants). Chinese main reflections enforce
+  **100–180 Unicode characters**, counting punctuation and quoted text. English is
+  capped at 900 characters. Source sentences remain verbatim; cross-language source
+  quotations are not silently translated. Too little eligible evidence or fewer
+  than two usable short sentences yields truthful `INSUFFICIENT_EVIDENCE` with no
+  Sonnet call. The initial strict contract may abstain on long unbroken prose;
+  acceptance of tone/coverage and any future paraphrase policy is still required.
+- English keeps existing owner-scoped BGE/pgvector semantic retrieval. Chinese
+  Weekly reports use up to 32 eligible period EventMemory candidates, with the
+  existing 8-evidence/4,000-context selection bounds. The source snapshots, original
+  Events, ownership and current consent remain authoritative. **BGE remains English
+  only**; no profile/dimension change or multilingual vector-quality claim is made.
+  Chinese locale/source policy is versioned and fenced separately from legacy or
+  Monthly behavior. Journal is never a provider source.
+- A trusted Gateway preparation callback reserves the existing Weekly allowance
+  (two calls) and conservative maximum input USD liability **before** retrieval.
+  A separate `AI_RETRIEVAL_RESERVED` AuditEvent reserves one potential Cloudflare
+  query against that provider's daily cap, including when later calls use legacy
+  routing. It does not add to the already-reserved owner/global two-call total.
+  Both provider quotas are admitted atomically; Chinese jobs conservatively reserve
+  the same allowance even though they do not make an embedding query.
+  It constructs only allowlisted provider input with short evidence aliases,
+  sentences, topics and Event count; no owner/Event/Memory/job identifiers or private
+  source snapshots are exported. Final payload bytes must fit the reservation.
+  The same deadline covers preparation, native transport and validation; late work
+  cannot dispatch Sonnet. Gateway upstream timeout uses the remaining deadline.
+  Already-started retrieval/DB work cannot be forcibly undone. No liability refund,
+  including insufficient evidence, failed preparation or ambiguous calls. The USD
+  ledger continues to cover Gateway traffic, not Workers AI dollar charges.
+- Reuse `grounded-narrative-v1` for durable job/reservation identity and saved-period
+  uniqueness across providers. The **structured content** version, locale and model
+  are stored in existing `narrativeSections` JSON. Saved finalized reports are never
+  regenerated merely because provider selection changed. Report, selected/cited
+  evidence and guarded job completion remain one transaction; consent epoch,
+  claim/lease, source revisions/deletion, timezone and exact locale are rechecked.
+- `AI_WEEKLY_REPORT_TIMEOUT_MS`: integer 1–20,000, default 20,000 ms.
+  `AI_WEEKLY_REPORT_MAX_OUTPUT_TOKENS`: integer 1–4,096, default 2,048.
+  Optional `AI_REPORT_SUPPORTED_LOCALES` is a comma-separated subset of the three
+  canonical output locales (default all three). Missing/malformed Gateway budgets
+  remain fail-closed. These names describe source behavior, not configured values.
+
+Deterministic statistics/trend calculations, Event creation/Flowers/emotion,
+deterministic memory extraction, BGE 384d storage/retrieval, durable workers,
+Monthly reports, client readers and Journal exclusion are preserved. No schema,
+migration, dependency, provider resource, production DB or infrastructure change.
+Mocked contract, localized grounding and atomic-worker evidence is recorded in
+[SECURITY.md](SECURITY.md#phase-3-sonnet-weekly-integration--2026-10-13) and the Phase 3
+Draft PR. Real Sonnet compatibility, output-selection/tone/latency quality, account
+entitlement/capacity, processor disclosure/retention review and approved live budgets
+still require separately authorized acceptance and release/cutover approval.
+No real/paid inference, frozen final evaluation, deployment or PR #37 action.
+
 ### Phase 2 Haiku Event secondary emotions — 2026-10-13
 
 **IMPLEMENTED IN SOURCE; HAIKU DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**

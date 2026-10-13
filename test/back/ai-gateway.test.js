@@ -359,3 +359,27 @@ test("sensitive provider text and exception details never enter logs or public e
   } finally { methods.forEach((m,i) => { console[m] = saved[i]; }); }
   assert.deepEqual(entries, []);
 });
+
+test("trusted input preparation requires admission first and sanitizes preparation failures", async t => {
+  const f = await fixture(t), req = await f.request("claude-sonnet-5-5"); let preparations = 0;
+  await assert.rejects(f.make({ env: { ...enabled, AI_USER_DAILY_USD_LIMIT: "0" } }).generate({ ...req,
+    prepareInput: async () => { preparations++; return {}; } }), { code: "AI_QUOTA_EXCEEDED" });
+  assert.equal(preparations, 0); assert.equal(f.calls.length, 0); assert.equal((await f.rows()).length, 0);
+  await assert.rejects(f.make().generate({ ...req, prepareInput: async () => { throw Error("SYNTHETIC_PRIVATE_PREPARATION"); } }),
+    e => e.code === "AI_GATEWAY_INVALID_INPUT" && !e.message.includes("PRIVATE"));
+  assert.equal(f.calls.length, 0); assert.equal((await f.rows()).length, 3);
+  await assert.rejects(f.make().generate(req), { code: "AI_INFERENCE_ALREADY_RESERVED" });
+});
+
+test("input preparation deadline and final byte bounds block late or oversized dispatch", async t => {
+  for (const mode of ["late", "large"]) {
+    const f = await fixture(t), req = await f.request("claude-sonnet-5-5"); let release, validations = 0;
+    const promise = f.make().generate({ ...req, timeoutMs: 15,
+      prepareInput: () => mode === "late" ? new Promise(resolve => { release = resolve; }) : { evidence: "x".repeat(10000) },
+      validateOutput: () => { validations++; return true; } });
+    await assert.rejects(promise, { code: mode === "late" ? "AI_GATEWAY_TIMEOUT" : "AI_GATEWAY_INVALID_INPUT" });
+    if (release) release({ evidence: "Synthetic" });
+    await new Promise(setImmediate); await new Promise(setImmediate);
+    assert.equal(f.calls.length, 0); assert.equal(validations, 0); assert.equal((await f.rows()).length, 3);
+  }
+});
