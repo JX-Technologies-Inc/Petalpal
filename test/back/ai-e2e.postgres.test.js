@@ -88,6 +88,15 @@ async function runJobs(jobType, where = {}) {
   return { pending, results };
 }
 
+// Fixture rows only. Garden.ownerId does not cascade, so Flowers and Gardens go first
+// (same order as lib/account-deletion.js); everything else cascades from User.
+async function removeFixtures() {
+  await m.prisma.flower.deleteMany({ where: { userId: { in: fixtureOwnerIds } } });
+  await m.prisma.garden.deleteMany({ where: { ownerId: { in: fixtureOwnerIds } } });
+  await m.prisma.user.deleteMany({ where: { id: { in: fixtureOwnerIds } } });
+  await m.prisma.auditEvent.deleteMany({ where: { actorUserId: { in: fixtureOwnerIds } } });
+}
+
 async function evidenceFor(field, reportId) {
   return m.prisma.aiEvidence.findMany({ where: { [field]: reportId }, orderBy: { sourceEventId: "asc" } });
 }
@@ -101,8 +110,7 @@ e2e("T00 preflight: isolated gate, empty non-fixture database, pgvector, fixture
   const [vector] = await m.prisma.$queryRawUnsafe(`SELECT count(*)::int AS "count" FROM pg_extension WHERE extname = 'vector'`);
   assert.equal(vector.count, 1);
   // Idempotent rerun on the same ephemeral database: remove only fixture rows.
-  await m.prisma.user.deleteMany({ where: { id: { in: fixtureOwnerIds } } });
-  await m.prisma.auditEvent.deleteMany({ where: { actorUserId: { in: fixtureOwnerIds } } });
+  await removeFixtures();
   for (const owner of manifest.owners) {
     await m.prisma.user.create({ data: { id: owner.id, name: owner.id, email: owner.email, firebaseUid: owner.firebaseUid,
       timezone: manifest.timezone, preferredLocale: "en" } });
@@ -395,7 +403,7 @@ e2e("T99 evidence log and fixture cleanup", async () => {
   m.setWeeklyReportWorkerFactoryForTests();
   m.setFirebaseTokenVerifierForTests();
   await new Promise((resolve) => state.server.close(resolve));
-  await m.prisma.user.deleteMany({ where: { id: { in: fixtureOwnerIds } } });
-  await m.prisma.auditEvent.deleteMany({ where: { actorUserId: { in: fixtureOwnerIds } } });
+  await removeFixtures();
+  assert.equal(await m.prisma.user.count(), 0, "ephemeral database left without fixture users");
   await m.prisma.$disconnect();
 });
