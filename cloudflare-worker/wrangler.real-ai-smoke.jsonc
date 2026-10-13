@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "petalpal-real-ai-smoke",
+  "main": "src/real-ai-smoke.js",
+  "compatibility_date": "2026-08-26",
+  "workers_dev": true,
+  "ai": { "binding": "AI" },
+  "vars": {
+    "SMOKE_ONLY": "1",
+    "REPORT_NARRATIVE_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  },
+  "observability": { "enabled": false }
+}

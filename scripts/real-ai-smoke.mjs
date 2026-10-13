@@ -1,0 +1,215 @@
+// Manual-only real provider smoke. No Firebase verifier, emotion, embedding or
+// narrative mocks. Synthetic Auth Emulator identities; existing app/worker paths.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { randomBytes } from 'node:crypto';
+const manifest = JSON.parse(fs.readFileSync(new URL('../test/fixtures/ai-e2e-manifest.json', import.meta.url), 'utf8'));
+const fixtureRefs = ['a04', 'a05', 'a06', 'a08', 'b01'];
+const fixtures = fixtureRefs.map(ref => manifest.events.find(event => event.ref === ref));
+assert.equal(fixtures.filter(e => e.owner === 'A' && e.membership.includes('M-2026-10')).length, 3);
+assert.equal(fixtures.filter(e => e.owner === 'A' && e.membership.includes('W-2026-10-05')).length, 2);
+assert.ok(fixtures.every(e => e.content.length < 600));
+if (process.argv.includes('--check-plan')) {
+  console.log('Plan: 5 Events; 5 emotion + 9 BGE + 2 narrative requests; no inference performed.');
+  process.exit(0);
+}
+const evidence = { sourceSha: process.env.GITHUB_SHA, status: 'NOT_TESTED', stage: 'preflight',
+  calls: { emotion: 0, embedding: 0, narrative: 0 }, events: [], retrieval: [], reports: [],
+  quality: 'NOT REVIEWED: citation validity does not prove factual grounding or coverage' };
+// Do not emit raw SDK/server/provider exceptions or Auth Emulator identities.
+const print = console.log.bind(console);
+for (const key of ['log', 'info', 'warn', 'error', 'debug']) console[key] = () => {};
+let prisma, server;
+const nativeFetch = globalThis.fetch;
+const fail = label => { throw new Error(label); };
+const check = (value, label) => { if (!value) fail(label); };
+let appOrigin;
+try {
+  check(process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_RUN_ATTEMPT === '1' &&
+    process.env.NODE_ENV === 'test' && process.env.PETALPAL_REAL_AI_APPROVED === '1', 'RUN_NOT_APPROVED');
+  check(process.env.FIREBASE_PROJECT_ID === 'demo-petalpal-real-ai' &&
+    process.env.FIREBASE_AUTH_EMULATOR_HOST === '127.0.0.1:9099', 'AUTH_NOT_ISOLATED');
+  for (const key of ['DATABASE_URL', 'PETALPAL_ENVIRONMENT', 'RENDER', 'RENDER_SERVICE_ID', 'RENDER_EXTERNAL_URL',
+    'NATIVE_SECURITY_TEST', 'GOOGLE_APPLICATION_CREDENTIALS', 'FIREBASE_SERVICE_ACCOUNT_JSON', 'FIREBASE_PRIVATE_KEY', 'FIREBASE_CLIENT_EMAIL',
+    'AI_JOB_EXECUTOR_URL', 'AI_JOB_EXECUTOR_TOKEN', 'AI_JOB_DISPATCH_TOKEN']) check(process.env[key] === undefined, 'UNEXPECTED_HOSTED_CONFIGURATION');
+  const provider = new URL(process.env.CLOUDFLARE_WORKER_AI_URL);
+  check(provider.protocol === 'https:' && /^petalpal-real-ai-smoke\.[a-z0-9-]+\.workers\.dev$/.test(provider.hostname) &&
+    provider.pathname === '/' && !provider.search && !provider.username && !provider.password && !provider.port,
+  'PROVIDER_NOT_DEDICATED_TEST_WORKER');
+  check(Boolean(process.env.CLOUDFLARE_WORKER_AI_TOKEN), 'MISSING_TEST_PROVIDER_AUTH');
+  const caps = { '/v1/event-emotion': ['emotion', 5, 1000], '/v1/embedding': ['embedding', 9, 3000],
+    '/v1/report-narrative': ['narrative', 2, 24000] };
+  const sent = new Set();
+  const journalDecoy = 'JOURNAL_DECOY_ONLY: I won a lunar sculpture award. Never use this in an AI report.';
+  globalThis.fetch = async (input, options = {}) => {
+    const url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url);
+    if (url.origin === provider.origin) {
+      const rule = caps[url.pathname];
+      check(rule && options.method === 'POST', 'PROVIDER_ROUTE_DENIED');
+      const [kind, limit, bytes] = rule;
+      const body = String(options.body || '');
+      check(Buffer.byteLength(body) <= bytes && !body.includes('JOURNAL_DECOY_ONLY'), 'PROVIDER_INPUT_REJECTED');
+      const operation = `${evidence.stage}:${url.pathname}:${body}`;
+      check(evidence.calls[kind] < limit && !sent.has(operation), 'CALL_LIMIT_OR_RETRY_BLOCKED');
+      sent.add(operation);
+      evidence.calls[kind] += 1; // Failed/ambiguous attempts are never refunded.
+      return nativeFetch(input, { ...options, redirect: 'error' });
+    }
+    check(url.origin === appOrigin || url.origin === 'http://127.0.0.1:9099', 'NETWORK_TARGET_DENIED');
+    return nativeFetch(input, { ...options, redirect: 'error' });
+  };
+  const infoResponse = await nativeFetch(`${provider.origin}/smoke-info`, { redirect: 'error',
+    signal: AbortSignal.timeout(10000), headers: { Authorization: `Bearer ${process.env.CLOUDFLARE_WORKER_AI_TOKEN}` } });
+  check(infoResponse.ok, 'TEST_WORKER_PREFLIGHT_FAILED');
+  const info = await infoResponse.json();
+  check(info.smokeOnly === true && info.maxEmotionOutputTokens === 64 && info.maxReportOutputTokens === 1024 &&
+    info.maxReportMessageBytes === 24000 && info.maxEmbeddingCharacters === 2000, 'TEST_WORKER_BOUNDS_MISMATCH');
+  assert.deepEqual(info.models, ['@cf/meta/llama-3.1-8b-instruct-fast', '@cf/baai/bge-small-en-v1.5', '@cf/meta/llama-3.3-70b-instruct-fp8-fast']);
+  evidence.provider = { models: info.models, smokeOnly: true, maxEmotionOutputTokens: 64,
+    maxReportOutputTokens: 1024, maxReportMessageBytes: 24000, maxEmbeddingCharacters: 2000 };
+  // Reuse the CI verifier before any fixture writes; independently inspect DB identity.
+  const { resolveDatabaseUrl } = await import('../lib/database-isolation.js');
+  const db = new URL(resolveDatabaseUrl());
+  check(db.hostname === '127.0.0.1' && db.port === '5432' && db.pathname === '/petalpal_ai_e2e_test', 'DB_TARGET_REJECTED');
+  prisma = (await import('../lib/prisma.js')).default;
+  const [identity] = await prisma.$queryRawUnsafe(`SELECT current_database() AS name,
+    (SELECT count(*)::int FROM pg_extension WHERE extname='vector') AS vector`);
+  check(identity.name === 'petalpal_ai_e2e_test' && identity.vector === 1 && await prisma.user.count() === 0, 'DB_NOT_EMPTY_AND_ISOLATED');
+  evidence.database = { disposable: true, identityVerified: true, pgvector: true };
+  const { initializeApp } = await import('firebase-admin/app');
+  const { getAuth } = await import('firebase-admin/auth');
+  const auth = getAuth(initializeApp({ projectId: 'demo-petalpal-real-ai' }));
+  const app = await import('../server.js');
+  server = app.app.listen(0, '127.0.0.1');
+  await new Promise(resolve => server.once('listening', resolve));
+  appOrigin = `http://127.0.0.1:${server.address().port}`;
+  const owners = {}, tokens = {};
+  for (const key of ['A', 'B']) {
+    const owner = manifest.owners.find(o => o.key === key);
+    owners[key] = owner;
+    const password = randomBytes(24).toString('base64url');
+    await auth.createUser({ uid: owner.firebaseUid, email: owner.email, emailVerified: true, password });
+    const login = await fetch('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=emulator-only', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: owner.email, password, returnSecureToken: true }) });
+    check(login.ok, 'EMULATOR_SIGN_IN_FAILED');
+    tokens[key] = (await login.json()).idToken;
+    await prisma.user.create({ data: { id: owner.id, name: owner.id, email: owner.email, firebaseUid: owner.firebaseUid,
+      timezone: manifest.timezone, preferredLocale: 'en' } });
+  }
+  const api = async (path, { owner = 'A', method = 'GET', body, headers = {}, authenticated = true } = {}) => {
+    const r = await fetch(appOrigin + path, { method, headers: {
+      ...(authenticated ? { Authorization: `Bearer ${tokens[owner]}` } : {}),
+      ...(body ? { 'Content-Type': 'application/json' } : {}), ...headers },
+      ...(body ? { body: JSON.stringify(body) } : {}) });
+    return { status: r.status, body: await r.json() };
+  };
+  evidence.stage = 'authentication-and-consent';
+  check((await api('/events', { method: 'POST', authenticated: false, body: {} })).status === 401, 'MISSING_AUTH_ACCEPTED');
+  check((await api('/ai/reports')).status === 403, 'MISSING_CONSENT_ACCEPTED');
+  for (const key of ['A', 'B']) check((await api(`/users/${owners[key].id}/ai-consent`, { owner: key, method: 'PUT',
+    body: { aiProcessing: true, personalization: true, memoryEnabled: true } })).status === 200, 'CONSENT_FAILED');
+  const { simulatedTimeDenial } = await import('../lib/simulated-time.js');
+  check(simulatedTimeDenial({ firebase: { email: owners.A.email, emailVerified: true } }) === null, 'SIMULATED_TIME_GATE_DENIED');
+  const journal = await api(`/users/${owners.A.id}/flowers`, { method: 'POST', body: { mood: 'SUNNY_BLOOM', journalText: journalDecoy } });
+  check([200, 201].includes(journal.status) && await prisma.journal.count() === 1 &&
+    await prisma.event.count() === 0 && await prisma.aiJob.count() === 0 && evidence.calls.emotion === 0, 'JOURNAL_EXCLUSION_FAILED');
+  const events = new Map();
+  evidence.stage = 'real-emotion';
+  for (const fixture of fixtures) {
+    const r = await api('/events', { owner: fixture.owner, method: 'POST',
+      headers: { 'Idempotency-Key': `real-${fixture.ref}`, 'X-PetalPal-Simulated-Time': fixture.occurredAtUtc },
+      body: { content: fixture.content, primaryGardenMood: fixture.mood } });
+    check(r.status === 201 && r.body.emotion?.status === 'SUCCESS' && r.body.memoryJob?.status === 'PENDING', 'EVENT_OR_REAL_EMOTION_FAILED');
+    check(r.body.event.localDate === fixture.localDate && r.body.event.ownerId === owners[fixture.owner].id, 'EVENT_DATE_OR_OWNER_FAILED');
+    events.set(fixture.ref, r.body.event.id);
+    evidence.events.push({ ref: fixture.ref, eventId: r.body.event.id, owner: fixture.owner, content: fixture.content,
+      occurredAt: fixture.occurredAtUtc, primary: fixture.mood, emotions: r.body.emotion.labels });
+  }
+  const { createProductionAiWorker } = await import('../lib/ai-worker.js');
+  const { CloudflareWorkersEmbeddingProvider } = await import('../lib/embedding-provider.js');
+  const { CLOUDFLARE_EMBEDDING_PROFILE_KEY } = await import('../lib/embedding-profiles.js');
+  const { SemanticEventRetrievalService } = await import('../lib/semantic-retrieval.js');
+  const { CloudflareWorkersReportNarrativeProvider, REPORT_NARRATIVE_GENERATION_VERSION } = await import('../lib/report-narrative.js');
+  const { PrismaAiJobRepository } = await import('../lib/ai-jobs.js');
+  const embedding = new CloudflareWorkersEmbeddingProvider(CLOUDFLARE_EMBEDDING_PROFILE_KEY, { timeoutMs: 60000 });
+  const retrieval = new SemanticEventRetrievalService({ prisma, provider: embedding });
+  const narrative = new CloudflareWorkersReportNarrativeProvider();
+  const workerFor = reportAsOf => createProductionAiWorker({ prisma, embeddingProvider: embedding,
+    reportNarrativeProvider: narrative, reportNarrativeTimeoutMs: 90000, reportAsOf,
+    semanticRetrieval: { async retrieve(args) {
+      const rows = await retrieval.retrieve(args);
+      check(rows.every(row => row.ownerId === args.identity.userId && [...events.values()].includes(row.sourceEventId)), 'RETRIEVAL_SOURCE_LEAK');
+      evidence.retrieval.push({ ownerId: args.identity.userId, dateFrom: args.dateFrom, dateTo: args.dateTo,
+        rows: rows.map(r => ({ eventId: r.sourceEventId, memoryId: r.id, similarity: r.similarity })) });
+      return rows;
+    } }, logger: { error() {} } });
+  evidence.stage = 'memory-and-real-bge';
+  for (const jobType of ['MEMORY_EXTRACTION', 'EMBEDDING_GENERATION']) {
+    const jobs = await prisma.aiJob.findMany({ where: { jobType, status: 'PENDING' } });
+    check(jobs.length === 5, 'EXPECTED_FIVE_JOBS');
+    for (const job of jobs) {
+      await prisma.aiJob.update({ where: { id: job.id }, data: { maxAttempts: 1 } });
+      check((await workerFor(null).runJob({ jobId: job.id, ownerId: job.ownerId, jobType })).succeeded, 'MEMORY_OR_EMBEDDING_JOB_FAILED');
+    }
+  }
+  const memories = await prisma.eventMemory.findMany({ select: { id: true, ownerId: true, sourceEventId: true, summary: true, topics: true } });
+  check(memories.length === 5 && memories.every(m => [...events.values()].includes(m.sourceEventId)), 'MEMORY_COUNT_FAILED');
+  evidence.memories = memories;
+  const vectors = await prisma.$queryRawUnsafe(`SELECT "eventMemoryId", "ownerId", "profileKey", "model", "status", vector_dims(embedding) AS dimensions FROM "EventMemoryEmbedding"`);
+  check(vectors.length === 5 && vectors.every(v => v.dimensions === 384 && v.profileKey === CLOUDFLARE_EMBEDDING_PROFILE_KEY && v.status === 'GENERATED'), 'REAL_VECTOR_PROVENANCE_FAILED');
+  evidence.vectors = vectors;
+  evidence.stage = 'semantic-relevance-and-owner-isolation';
+  const relevant = await retrieval.retrieve({ identity: { userId: owners.A.id }, query: 'Getting support at work and feeling more at ease', take: 4 });
+  check(relevant.length === 4 && relevant[0].sourceEventId === events.get('a08') && relevant.every(r => r.ownerId === owners.A.id), 'REAL_SEMANTIC_RANKING_OR_OWNER_FAILED');
+  evidence.semanticRanking = relevant.map(r => ({ eventId: r.sourceEventId, memoryId: r.id, similarity: r.similarity }));
+  check((await api(`/events/${events.get('a08')}`, { owner: 'B' })).status === 404, 'CROSS_OWNER_EVENT_LEAK');
+  evidence.stage = 'weekly-monthly-and-insufficient';
+  app.setWeeklyReportWorkerFactoryForTests(options => workerFor(options.reportAsOf));
+  for (const spec of [
+    { type: 'weekly', periodKey: '2026-10-05', clock: manifest.clocks.CLK_W, count: 2, previous: 2, refs: ['a06', 'a08'], generated: true },
+    { type: 'monthly', periodKey: '2026-10', clock: manifest.clocks.CLK_M, count: 3, previous: 1, refs: ['a05', 'a06', 'a08'], generated: true },
+    { type: 'weekly', periodKey: '2026-09-21', clock: manifest.clocks.CLK_W_INSUFFICIENT, count: 0, previous: 0, refs: [], generated: false }
+  ]) {
+    evidence.stage = `${spec.type}-${spec.periodKey}`;
+    const before = evidence.calls.narrative;
+    if (spec.type === 'weekly') {
+      const r = await api('/ai/reports/weekly/trigger', { method: 'POST',
+        headers: { 'X-PetalPal-Simulated-Time': spec.clock }, body: { localDate: spec.periodKey } });
+      check(r.status === 200 && r.body.execution === 'COMPLETED', 'WEEKLY_FAILED');
+    } else {
+      const job = await new PrismaAiJobRepository(prisma).enqueue({ identity: { userId: owners.A.id }, jobType: 'MONTHLY_REPORT',
+        resourceId: spec.periodKey, processingVersion: REPORT_NARRATIVE_GENERATION_VERSION, maxAttempts: 1 });
+      check((await workerFor(new Date(spec.clock)).runJob({ jobId: job.id, ownerId: owners.A.id, jobType: 'MONTHLY_REPORT' })).succeeded, 'MONTHLY_FAILED');
+    }
+    const r = await prisma[`${spec.type}Report`].findUnique({ where: { ownerId_periodKey: { ownerId: owners.A.id, periodKey: spec.periodKey } } });
+    check(r?.status === 'COMPLETE' && r.eventCount === spec.count && r.trendSignals.previousEventCount === spec.previous &&
+      r.trendSignals.eventCountChange === spec.count - spec.previous, 'REPORT_COUNTS_FAILED');
+    const period = manifest.periods[`${spec.type === 'weekly' ? 'W' : 'M'}-${spec.periodKey}`];
+    check(r.periodStartUtc.toISOString() === period.startUtc && r.periodEndUtc.toISOString() === period.endUtc, 'REPORT_BOUNDARY_FAILED');
+    check(r.narrativeStatus === (spec.generated ? 'GENERATED' : 'INSUFFICIENT_EVIDENCE') &&
+      evidence.calls.narrative - before === Number(spec.generated), 'NARRATIVE_OR_FALLBACK_FAILED');
+    const edges = await prisma.aiEvidence.findMany({ where: { [`${spec.type}ReportId`]: r.id } });
+    const allowed = spec.refs.map(ref => events.get(ref));
+    check(edges.every(e => e.ownerId === owners.A.id && allowed.includes(e.sourceEventId) &&
+      memories.some(m => m.id === e.sourceMemoryId && m.sourceEventId === e.sourceEventId && m.ownerId === e.ownerId)), 'REPORT_EVIDENCE_LEAK');
+    check(new Set(edges.map(e => e.sourceEventId)).size === allowed.length, 'IMPORTANT_EVIDENCE_MISSING');
+    check((await api(`/ai/reports/${spec.type}/${r.id}`, { owner: 'B' })).status === 404, 'CROSS_OWNER_REPORT_LEAK');
+    if (!spec.generated) check(r.summary === null, 'FALLBACK_NARRATIVE_PRESENT');
+    evidence.reports.push({ type: spec.type, periodKey: spec.periodKey, summary: r.summary, sections: r.narrativeSections,
+      trends: r.trendSignals, expectedEventIds: allowed, evidence: edges.map(e => ({ eventId: e.sourceEventId, memoryId: e.sourceMemoryId, claimType: e.claimType })) });
+  }
+  check(evidence.calls.emotion === 5 && evidence.calls.embedding === 9 && evidence.calls.narrative === 2, 'CALL_COUNTS_FAILED');
+  check(await prisma.event.count() === 5 && await prisma.eventMemory.count() === 5 && await prisma.journal.count() === 1, 'JOURNAL_PIPELINE_LEAK');
+  evidence.status = 'AUTOMATED_CHECKS_PASS_QUALITY_REVIEW_REQUIRED';
+} catch {
+  evidence.status = 'FAIL'; // Do not serialize raw exceptions or provider content.
+  process.exitCode = 1;
+} finally {
+  if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+  if (prisma) await prisma.$disconnect().catch(() => {});
+  // Only this run's disposable service container is destroyed by Actions; no
+  // deleteMany, shared database cleanup, local container or volume operations.
+  fs.writeFileSync('real-ai-smoke-evidence.json', JSON.stringify(evidence, null, 2));
+  print(JSON.stringify({ status: evidence.status, stage: evidence.stage, calls: evidence.calls }));
+}
