@@ -17,6 +17,7 @@ import {
 } from "../../lib/ai-periods.js";
 import { WeeklyReportService } from "../../lib/report-foundation.js";
 import { PrismaEventEmbeddingRepository } from "../../lib/semantic-retrieval.js";
+import { LOCAL_EMBEDDING_PROFILE_KEY, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const migrationNames = [
@@ -138,7 +139,8 @@ test("database rejects cross-owner AI relations, invalid evidence shapes and dup
   }
 });
 
-test("pgvector Event retrieval is 384-dimensional, owner-scoped, exact, and cascade-safe", async () => {
+for (const profileKey of [LOCAL_EMBEDDING_PROFILE_KEY, PRODUCTION_EMBEDDING_PROFILE_KEY]) {
+test(`pgvector Event retrieval is 384-dimensional, owner-scoped, exact, and cascade-safe (${profileKey})`, async () => {
   const database = await migratedDatabase();
   const first = [1, ...Array(383).fill(0)];
   const second = [0.8, 0.6, ...Array(382).fill(0)];
@@ -164,7 +166,9 @@ test("pgvector Event retrieval is 384-dimensional, owner-scoped, exact, and casc
     `);
 
     const consent = (await database.query(`SELECT "updatedAt" FROM "AiConsent" WHERE "userId" = 'alice'`)).rows[0];
-    const repository = new PrismaEventEmbeddingRepository(pgliteRawAdapter(database));
+    // This fixture must select its intended representation explicitly: the
+    // default now writes Cloudflare profile rows, not the retained inline vector.
+    const repository = new PrismaEventEmbeddingRepository(pgliteRawAdapter(database), profileKey);
     await repository.begin({ identity: { userId: "alice" }, memoryId: "memory-alice", inputRevision: 1 });
     await repository.store({
       identity: { userId: "alice" },
@@ -173,18 +177,23 @@ test("pgvector Event retrieval is 384-dimensional, owner-scoped, exact, and casc
       vector: first,
       consentUpdatedAt: new Date(consent.updatedAt)
     });
-    const stored = (await database.query(`
+    await repository.begin({ identity: { userId: "bob" }, memoryId: "memory-bob", inputRevision: 1 });
+    await repository.store({ identity: { userId: "bob" }, memoryId: "memory-bob", inputRevision: 1,
+      vector: first, consentUpdatedAt: new Date(consent.updatedAt) });
+    const legacy = profileKey === LOCAL_EMBEDDING_PROFILE_KEY;
+    const stored = (await database.query(legacy ? `
       SELECT "embeddingStatus", "embeddingProfileKey", "embeddedInputRevision"
       FROM "EventMemory" WHERE "id" = 'memory-alice'
-    `)).rows[0];
+    ` : `SELECT "status" AS "embeddingStatus", "profileKey" AS "embeddingProfileKey", "inputRevision" AS "embeddedInputRevision"
+      FROM "EventMemoryEmbedding" WHERE "eventMemoryId"='memory-alice' AND "profileKey"='${profileKey}'`)).rows[0];
     assert.deepEqual(stored, {
       embeddingStatus: "GENERATED",
-      embeddingProfileKey: "production-bge-small-en-v1.5-v1",
+      embeddingProfileKey: profileKey,
       embeddedInputRevision: 1
     });
-    await assert.rejects(database.exec(`
+    await assert.rejects(database.exec(legacy ? `
       UPDATE "EventMemory" SET "embedding" = '[1,2,3]'::vector WHERE "id" = 'memory-alice'
-    `), /dimension|expected 384/i);
+    ` : `UPDATE "EventMemoryEmbedding" SET "embedding"='[1,2,3]'::vector WHERE "eventMemoryId"='memory-alice'`), /dimension|expected 384/i);
 
     const rows = await repository.search({
       identity: { userId: "alice" },
@@ -197,10 +206,12 @@ test("pgvector Event retrieval is 384-dimensional, owner-scoped, exact, and casc
 
     await database.exec(`DELETE FROM "Event" WHERE "id" = 'event-alice'`);
     assert.equal((await database.query(`SELECT count(*)::int AS count FROM "EventMemory" WHERE "id" = 'memory-alice'`)).rows[0].count, 0);
+    assert.equal((await database.query(`SELECT count(*)::int AS count FROM "EventMemoryEmbedding" WHERE "eventMemoryId" = 'memory-alice'`)).rows[0].count, 0);
   } finally {
     await database.close();
   }
 });
+}
 
 test("Event deletion atomically removes every report that cites it", async () => {
   const state = {
@@ -210,6 +221,10 @@ test("Event deletion atomically removes every report that cites it", async () =>
     yearly: new Set(["yearly-1"])
   };
   const tx = {
+    $queryRawUnsafe: async (sql, ...params) => {
+      assert.match(sql, /FOR UPDATE/);
+      return sql.includes('"AiConsent"') ? [{ userId: params[0] }] : state.event ? [{ id: params[0] }] : [];
+    },
     event: {
       findFirst: async ({ where }) => state.event && where.ownerId === "alice" ? { id: where.id } : null,
       deleteMany: async () => { state.event = false; return { count: 1 }; }

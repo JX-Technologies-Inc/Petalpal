@@ -1,5 +1,72 @@
 # PetalPal Security
 
+## Phase 2 Haiku Event integration — 2026-10-13
+
+**Source implementation only, disabled by default; no production/provider action.**
+The Event route can explicitly select `anthropic` + `claude-haiku-5-5` through the
+merged, timeout-hardened Gateway adapter. Both Gateway enable flags and explicit
+budgets remain required. Missing provider selection or `workers-ai` preserves the
+legacy route; an invalid explicit selection or Haiku failure abstains to empty
+without another inference. No new endpoint, schema/migration or credential binding.
+
+- Inputs are exact saved owner-scoped PENDING Event text and canonical Primary.
+  Trusted policies recheck source, status and the Event-creation consent epoch
+  before reservation, before dispatch and after output validation. Journal,
+  memory, report and user metadata are never added to provider input. Preview
+  cannot invoke Haiku because it has no durable Event/reservation.
+- Strict JSON Schema and canonical Product-18 validation enforce zero to two
+  distinct labels and reject excluded, unknown, Primary-redundant or malformed
+  values. No primary mood override, experimental taxonomy, raw diagnostics,
+  probability vectors or reasoning persistence. Generated labels remain
+  `INFERRED_UNCONFIRMED`, with explicit Haiku/Gateway model provenance.
+- Event creation passes its consent epoch internally without changing the stored
+  schema or exposing it in HTTP. Emotion continues to need AI-processing consent
+  only. Revoke/regrant invalidates old work, including before dispatch.
+- Final Haiku enrichment locks consent (`FOR SHARE`) then owned Event
+  (`FOR UPDATE`), matching revoke/delete order, checks the exact source/PENDING
+  state and epoch, and persists Event labels plus the unique source-Event Flower
+  in one transaction. Consent changes clear labels but allow an ordinary base
+  Flower. Deletion/source changes block stale writes; failure marking is limited
+  to matching PENDING Events and cannot clear an already finalized result.
+- The original `event-secondary-v1` operation key spans legacy and Haiku, with one
+  Gateway reservation, unchanged shared call limits and provider-aware USD ledger.
+  Failed/ambiguous calls retain liability; no replay, paid retry, repair call,
+  cross-provider fallback or direct provider egress. Inference failure preserves
+  Event creation/base Flower and deterministic memory extraction. BGE 384d,
+  pgvector retrieval, durable workers, owner boundaries and deletion remain.
+- Existing maximum transport/output sizes and timeout continuation checks apply.
+  `AI_REQUEST_TIMEOUT_MS` must be an integer from 1 to 3,000 ms for Haiku (default
+  3,000); this change does not extend the Phase 1 ceiling. Conservative byte-based
+  admission may abstain on long valid Events and is not an exact billing cap.
+
+New synthetic/mock regressions cover route/model/default-off configuration, all
+Primaries and Product-18, strict output contracts, consent/source/deletion races,
+final-write rollback, shared cost admission/replay restrictions, timeout and
+provider failures, authenticated HTTP creation/duplicate/Flower behavior,
+deterministic memory, Journal exclusion, preview abstention and legacy routing.
+The suite joins the existing credential-stripping security CI runner in its own
+bounded invocation. Historical evidence below is preserved.
+
+Local evidence: the initial broad run passed **122/124**, including all **16/16**
+new Phase 2 tests. Both failures reproduced on unmodified `b9350a5e` in a separate
+temporary source copy: a stale pgvector fixture assumed the old inline profile,
+and a deletion mock omitted the existing lock-query method. Fixture-only repairs
+now explicitly test both retained local and active Cloudflare BGE 384d profiles,
+owner-isolated retrieval/dimension rejection/deletion cascades, and deletion locks;
+the affected P0 suite passes **8/8**. The other **117** regression cases passed in
+the broad run and their relevant runtime inputs are unchanged. This covers **125
+distinct passing cases** after the repairs; no embedding/retrieval/deletion runtime
+code was changed. No frozen final evaluation set or model benchmark was run.
+
+Remaining gates are live provider entitlement/exact-model compatibility,
+processor disclosure/retention and consent review, approved budgets/capacity,
+separately authorized bounded quality/latency acceptance and explicit deployment
+and cutover approval. Mocked output constraints do not establish model accuracy.
+No real inference, deployment, Cloudflare resources, credentials, production DB
+or infrastructure changes, existing worktree edits, PR #37 actions or automatic
+merge. `MANUAL_SECURITY_CHECKLIST.md` is unchanged: no genuine manual/provider
+action or provider status changed.
+
 ## PR #43 timeout hardening review — 2026-10-13
 
 The original Phase 1 `Promise.race` rejected on timeout but left its losing

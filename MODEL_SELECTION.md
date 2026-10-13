@@ -8,9 +8,10 @@
 
 **Scope:** Documentation only. No inference, benchmarking, credential changes, deployment, database operations, or PR #37 merge.
 
-> Phase 1 source implementation is tracked in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-1-gateway-provider-abstraction--2026-10-13).
-> Its adapters are disabled and disconnected from existing customer routes;
-> live provider acceptance and phases 2–6 remain pending.
+> Phase 1 was merged in PR #43. Phase 2 source integration is tracked in
+> [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-2-haiku-event-secondary-emotions--2026-10-13).
+> Haiku Event routing is disabled by default; production emotion processing remains
+> unchanged. Live provider acceptance, activation and phases 3–6 remain pending.
 
 ## 1. Executive Summary
 
@@ -302,7 +303,7 @@ This documentation introduces no verified security fix or provider status change
 
 ## 12. Implementation Roadmap
 
-Phase 1 abstraction source is implemented in a separate follow-up PR, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-1-gateway-provider-abstraction--2026-10-13); activation remains pending. Phases 2–6 below remain **PLANNED**. Existing environment names are listed to identify integration points; proposed names are design candidates only, with **no values**. Do not edit deployment configuration while reviewing this document.
+Phase 1 source is merged in PR #43, and Phase 2 Event integration is implemented with Haiku disabled by default, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-2-haiku-event-secondary-emotions--2026-10-13). Activation remains pending; phases 3–6 below remain **PLANNED**. Existing environment names identify integration points; no runtime values or deployment configuration were changed.
 
 ### Phase 1 — Gateway abstraction and configuration design
 
@@ -314,6 +315,7 @@ Phase 1 abstraction source is implemented in a separate follow-up PR, as recorde
 
 ### Phase 2 — Lightweight Event emotion routing
 
+- **Source status:** Implemented, disabled by default; see `lib/haiku-event-emotion.js`. Mocked acceptance only; no cutover or live quality claim.
 - **Modules:** `lib/event-emotion.js`, `lib/secondary-emotion-selector.js`, Event route integration in `server.js`, `lib/ai-cost-gate.js`; credential-free provider contract tests.
 - **Proposed names:** `AI_EVENT_EMOTION_PROVIDER`, `AI_EVENT_EMOTION_MODEL`; reuse `AI_REQUEST_TIMEOUT_MS`, `AI_EVENT_EMOTION_DAILY_LIMIT` and shared budget controls.
 - **Compatibility/security:** Haiku only; current consent, Event length bounds, primary mood, label taxonomy, exclusion rules and zero-to-two selection unchanged. Preserve Event creation/idempotency and deterministic memory extraction when inference fails. Validate provider metadata without exporting user identifiers.

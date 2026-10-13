@@ -265,6 +265,69 @@ foundation work.
 
 ## 12. Current Implementation Status
 
+### Phase 2 Haiku Event secondary emotions — 2026-10-13
+
+**IMPLEMENTED IN SOURCE; HAIKU DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**
+Based on merged Phase 1 PR #43 (`b9350a5e`). This checkpoint supersedes only the
+earlier statement that no Event route can select Gateway. Historical Phase 1 and
+embedding/report evidence below remains unchanged. Phases 3–6 are not implemented
+by this change.
+
+`lib/haiku-event-emotion.js` connects the existing authenticated `POST /events`
+enrichment to native Anthropic Messages through `CloudflareAiGateway`. Selection
+requires **both** `AI_EVENT_EMOTION_PROVIDER=anthropic` and
+`AI_EVENT_EMOTION_MODEL=claude-haiku-5-5`, plus the existing Phase 1 master and
+Anthropic enable flags, valid fixed Gateway configuration and all explicit USD
+budgets. These are documented configuration names/choices, not configured values.
+An absent provider selection (or explicit `workers-ai`) retains the original
+Workers AI path. Any other explicit selection fails closed to empty secondary
+labels; it never silently invokes Workers AI or another provider. Gateway flags
+and credentials alone do not select Haiku. No runtime configuration was changed.
+
+- Preserve all eight Primary Garden Moods and Product-18: the existing taxonomy
+  excludes `neutral`, `approval`, `disapproval`. The closed schema accepts only
+  zero to two distinct eligible labels in provider order, excluding Primary
+  redundancy. Invalid/duplicate/excluded/redundant labels, extra properties,
+  truncation or refusal reject the output to empty. The shared canonical selector
+  remains authoritative; no experimental classifier or cluster rule is enabled.
+- Only the saved, owned, still-PENDING Event's exact text and Primary are input.
+  Text retains the existing 4,000-character source limit; Gateway's conservative
+  byte admission can reject an otherwise valid long Event without preventing its
+  creation. No silent truncation. Prompt text treats Event content as untrusted
+  data and asks for abstention when evidence is unclear, neutral or insufficient.
+- AI-processing consent is sufficient for emotion; memory/personalization consent
+  is not added as a requirement. Creation captures the current consent epoch in
+  its existing transaction and passes it internally, never in the HTTP response.
+  A revoke/regrant before dispatch or while inference runs invalidates the result.
+  The three trusted Gateway authorization phases recheck source and epoch.
+- Final Haiku enrichment locks consent then the owned Event, rechecks the same
+  source/PENDING state and consent epoch, and writes Event metadata plus its unique
+  source-Event Flower atomically. Revoked consent drops labels and keeps the base
+  Flower. Deletion/source changes prevent stale derived writes. Failure marking
+  cannot overwrite an already finalized Event. No late response resumes processing
+  past the hardened Phase 1 timeout boundary.
+- Reuse the same `event-secondary-v1` paid-operation key across both providers.
+  Haiku reserves through Gateway only, so no double reservation. USD/call admission,
+  retained liability and safe usage accounting remain durable. No automatic
+  retries, repair inference, cross-provider fallback or historical reclassification.
+  Inference failure still saves the Event and base Flower and leaves deterministic
+  memory extraction available through the unchanged consent-gated durable job.
+- Event/Memory metadata identifies `claude-haiku-5-5`,
+  `haiku-event-secondary-v1`, `gateway`, and `INFERRED_UNCONFIRMED`; no probability
+  vectors, raw response, reasoning or diagnostic text is persisted. Preview has no
+  durable Event key and abstains with `EVENT_REQUIRED` when Haiku is selected.
+
+BGE 384d embeddings, embedding profiles, pgvector, retrieval, report workers,
+Journal exclusion, deletion cascades, scheduler and client rendering are unchanged.
+Mocked contract/HTTP and regression evidence is recorded in
+[SECURITY.md](SECURITY.md#phase-2-haiku-event-integration--2026-10-13).
+These tests establish classification constraints and lifecycle safety, not live
+emotion accuracy or latency. Remaining activation gates: approved provider access,
+exact-model Gateway compatibility, processor disclosure/retention/consent review,
+budget/capacity approval, separately authorized bounded quality/latency acceptance,
+then explicit release/cutover approval. No real/paid inference, provider resources,
+credentials, deployment, production DB/infrastructure action or PR #37 change.
+
 ### Phase 1 Gateway provider abstraction — 2026-10-13
 
 **IMPLEMENTED IN SOURCE; DISABLED AND NOT CONNECTED TO CUSTOMER ROUTES.**
