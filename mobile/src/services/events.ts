@@ -1,4 +1,5 @@
 import { apiRequest } from './api';
+import { rememberSyntheticFlowerDay, simulatedTimeHeaders } from './testClock';
 import type { FlowerPlacementRecord } from '../components/garden/planting/plantingPersistence';
 export type PrimaryMood = 'SUNNY_BLOOM' | 'GENTLE_BLOOM' | 'QUIET_BLOOM' | 'HEALING_BLOOM' | 'FIRE_BLOOM' | 'WONDER_BLOOM' | 'DRIFTING_BLOOM' | 'PEACEFUL_BLOOM';
 // Selection choices only: inference, redundancy filtering and species selection stay on the backend.
@@ -18,9 +19,13 @@ export interface EventResponse {
   emotion: { status: string; labels: string[]; fallbackReason?: string };
   memoryJob: { id: string; status: string } | null;
 }
-export const createEvent = (content: string, primaryGardenMood: PrimaryMood, idempotencyKey: string) =>
-  apiRequest<EventResponse>('/events', 'POST', { content: content.trim(), primaryGardenMood },
-    { headers: { 'Idempotency-Key': idempotencyKey } });
+export async function createEvent(content: string, primaryGardenMood: PrimaryMood, idempotencyKey: string) {
+  // simulatedTimeHeaders() is empty outside development builds with an active TEST date.
+  const result = await apiRequest<EventResponse>('/events', 'POST', { content: content.trim(), primaryGardenMood },
+    { headers: { 'Idempotency-Key': idempotencyKey, ...simulatedTimeHeaders() } });
+  rememberSyntheticFlowerDay(result?.flower?.id, result?.event?.localDate);
+  return result;
+}
 export const readEvent = (id: string) => apiRequest<BackendEvent>(`/events/${encodeURIComponent(id)}`);
 export async function eventFlowers(userId: string) {
   const garden = await apiRequest<{ flowers: BackendFlower[] }>(`/users/${encodeURIComponent(userId)}/garden`);

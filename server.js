@@ -107,6 +107,7 @@ import { requestId, emitSecurityEvent, securityRouteClass } from "./lib/security
 import { createAuditEvent } from "./lib/audit-events.js";
 import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting } from "./lib/security-config.js";
 import { assertIntegrationEnvironment } from "./lib/integration-environment.js";
+import { SIMULATED_TIME_HEADER, parseSimulatedTime, simulatedTimeDenial } from "./lib/simulated-time.js";
 import { httpSecurity, securityHeaders, privateResponse } from "./lib/http-security.js";
 import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./lib/history-metadata.js";
 
@@ -142,9 +143,11 @@ let emotionClassifier = classifyEmotion;
 let eventEmotionClassifier = classifyEventSecondaryEmotions;
 const aiCostGate = new PrismaAiCostGate(prisma);
 let firebaseUserDeleter = deleteFirebaseUser;
-const createDefaultWeeklyReportWorker = () => createProductionAiWorker({
+// reportAsOf is passed only by the gated TEST-only simulated-time trigger path.
+const createDefaultWeeklyReportWorker = ({ reportAsOf = null } = {}) => createProductionAiWorker({
   prisma,
-  reportNarrativeProvider: configuredCloudflareReportNarrativeProvider()
+  reportNarrativeProvider: configuredCloudflareReportNarrativeProvider(),
+  reportAsOf
 });
 let weeklyReportWorkerFactory = createDefaultWeeklyReportWorker;
 let aiJobDispatcher = dispatchAiJob;
@@ -1919,6 +1922,23 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (Object.hasOwn(req.body, "ownerId") || Object.hasOwn(req.body, "userId") || req.query.ownerId !== undefined || req.query.userId !== undefined) {
       return res.status(400).json({ error: "Event ownership is derived from the authenticated Firebase identity" });
     }
+    // TEST-only synthetic Event time: rejected unless the isolated server-side gate passes.
+    let simulatedOccurredAt = null;
+    const simulatedTime = req.get(SIMULATED_TIME_HEADER);
+    if (simulatedTime !== undefined) {
+      if (simulatedTimeDenial({ firebase: req.firebase })) {
+        return res.status(403).json({ error: "Simulated time is only available in an isolated test environment" });
+      }
+      if (Object.hasOwn(req.body, "occurredAt")) {
+        return res.status(400).json({ error: "Use either simulated time or occurredAt, not both" });
+      }
+      const owner = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { timezone: true } });
+      try {
+        simulatedOccurredAt = parseSimulatedTime(simulatedTime, owner?.timezone);
+      } catch {
+        return res.status(400).json({ error: "Invalid simulated time" });
+      }
+    }
     const primaryGardenMood = req.body.primaryGardenMood ?? null;
     if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) {
       return res.status(400).json({ error: "Unsupported Primary Garden Mood" });
@@ -1929,7 +1949,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
       content: req.body.content,
       primaryGardenMood,
       enrichmentPending: Boolean(primaryGardenMood),
-      occurredAt: req.body.occurredAt ?? new Date(),
+      occurredAt: simulatedOccurredAt ?? req.body.occurredAt ?? new Date(),
       idempotencyKey: req.get("idempotency-key")
     });
     const enrichment = result.created
@@ -2091,7 +2111,21 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
     });
     if (!owner) return res.status(403).json({ error: "Authenticated PetalPal owner was not found" });
 
-    const now = new Date();
+    let now = new Date();
+    // TEST-only controlled asOf. Closure is still enforced, against the simulated clock.
+    let reportAsOf = null;
+    const simulatedTime = req.get(SIMULATED_TIME_HEADER);
+    if (simulatedTime !== undefined) {
+      if (simulatedTimeDenial({ firebase: req.firebase })) {
+        return res.status(403).json({ error: "Simulated time is only available in an isolated test environment" });
+      }
+      try {
+        reportAsOf = parseSimulatedTime(simulatedTime, owner.timezone);
+      } catch {
+        return res.status(400).json({ error: "Invalid simulated time" });
+      }
+      now = reportAsOf;
+    }
     let period;
     try {
       period = req.body.localDate === undefined
@@ -2114,7 +2148,7 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
         transaction: tx
       });
     });
-    if (aiJobDispatchAllowed(job)) {
+    if (!reportAsOf && aiJobDispatchAllowed(job)) {
       let dispatched = false;
       try {
         dispatched = (await aiJobDispatcher(job)).dispatched;
@@ -2139,7 +2173,7 @@ app.post("/ai/reports/weekly/trigger", aiRateLimit, async (req, res) => {
           dispatched ? "QUEUED" : "PENDING_DISPATCH"
       });
     }
-    const execution = await weeklyReportWorkerFactory().runJob({
+    const execution = await weeklyReportWorkerFactory(reportAsOf ? { reportAsOf } : {}).runJob({
       jobId: job.id,
       ownerId,
       jobType: AI_JOB_TYPES.WEEKLY_REPORT,

@@ -1,0 +1,65 @@
+{
+  "manifestVersion": "ai-e2e-v1",
+  "purpose": "Deterministic synthetic fixtures for the isolated PetalPal AI E2E suite (T01-T09). Synthetic text only; no real user data. Writable only to an ephemeral pgvector PostgreSQL whose database name carries a test token.",
+  "timezone": "America/Vancouver",
+  "provider": "MOCK",
+  "embeddingProfileKey": "test-deterministic-384-v1",
+  "owners": [
+    { "key": "A", "id": "fx-owner-a", "firebaseUid": "fx-firebase-a", "email": "fx-owner-a@example.test", "token": "fx-token-a", "simulatedTimeAllowed": true, "consent": "granted" },
+    { "key": "B", "id": "fx-owner-b", "firebaseUid": "fx-firebase-b", "email": "fx-owner-b@example.test", "token": "fx-token-b", "simulatedTimeAllowed": true, "consent": "granted" },
+    { "key": "C", "id": "fx-owner-c", "firebaseUid": "fx-firebase-c", "email": "fx-owner-c@example.test", "token": "fx-token-c", "simulatedTimeAllowed": true, "consent": "granted-then-revoked" },
+    { "key": "D", "id": "fx-owner-d", "firebaseUid": "fx-firebase-d", "email": "fx-owner-d@example.test", "token": "fx-token-d", "simulatedTimeAllowed": false, "consent": "granted" }
+  ],
+  "clocks": {
+    "CLK_W": "2026-10-12T19:00:00Z",
+    "CLK_W_OPEN": "2026-10-11T19:00:00Z",
+    "CLK_W_INSUFFICIENT": "2026-09-29T19:00:00Z",
+    "CLK_M": "2026-11-02T20:00:00Z",
+    "CLK_M_OPEN": "2026-10-31T19:00:00Z"
+  },
+  "periods": {
+    "W-2026-09-21": { "type": "WEEKLY", "periodKey": "2026-09-21", "startUtc": "2026-09-21T07:00:00.000Z", "endUtc": "2026-09-28T07:00:00.000Z" },
+    "W-2026-09-28": { "type": "WEEKLY", "periodKey": "2026-09-28", "startUtc": "2026-09-28T07:00:00.000Z", "endUtc": "2026-10-05T07:00:00.000Z" },
+    "W-2026-10-05": { "type": "WEEKLY", "periodKey": "2026-10-05", "startUtc": "2026-10-05T07:00:00.000Z", "endUtc": "2026-10-12T07:00:00.000Z" },
+    "M-2026-09": { "type": "MONTHLY", "periodKey": "2026-09", "startUtc": "2026-09-01T07:00:00.000Z", "endUtc": "2026-10-01T07:00:00.000Z" },
+    "M-2026-10": { "type": "MONTHLY", "periodKey": "2026-10", "startUtc": "2026-10-01T07:00:00.000Z", "endUtc": "2026-11-01T07:00:00.000Z" },
+    "M-2026-11": { "type": "MONTHLY", "periodKey": "2026-11", "startUtc": "2026-11-01T07:00:00.000Z", "endUtc": "2026-12-01T07:00:00.000Z" }
+  },
+  "events": [
+    { "ref": "a01", "owner": "A", "occurredAtUtc": "2026-09-09T02:00:00.000Z", "localDate": "2026-09-08", "mood": "DRIFTING_BLOOM", "theme": "stress", "content": "Study group ran late and the exam deadline left me stressed.", "membership": ["M-2026-09"] },
+    { "ref": "a02", "owner": "A", "occurredAtUtc": "2026-09-16T04:00:00.000Z", "localDate": "2026-09-15", "mood": "FIRE_BLOOM", "theme": "stress", "content": "Overtime again at work; the project pressure felt heavy.", "membership": ["M-2026-09"] },
+    { "ref": "a03", "owner": "A", "occurredAtUtc": "2026-09-24T01:30:00.000Z", "localDate": "2026-09-23", "mood": "GENTLE_BLOOM", "theme": "cooking", "content": "Tried a new soup recipe for cooking night with my housemate.", "membership": ["M-2026-09", "W-2026-09-21"] },
+    { "ref": "a04", "owner": "A", "occurredAtUtc": "2026-09-30T05:00:00.000Z", "localDate": "2026-09-29", "mood": "FIRE_BLOOM", "theme": "stress", "content": "Another deadline moved up and I felt overwhelmed at my desk.", "membership": ["M-2026-09", "W-2026-09-28"] },
+    { "ref": "a05", "owner": "A", "occurredAtUtc": "2026-10-03T03:00:00.000Z", "localDate": "2026-10-02", "mood": "DRIFTING_BLOOM", "theme": "stress", "content": "Exam revision piled up and the pressure kept me awake.", "membership": ["M-2026-10", "W-2026-09-28"] },
+    { "ref": "a06", "owner": "A", "occurredAtUtc": "2026-10-05T07:15:00.000Z", "localDate": "2026-10-05", "mood": "QUIET_BLOOM", "theme": "stress", "content": "Just after midnight, still stressed about the Monday deadline.", "membership": ["M-2026-10", "W-2026-10-05"], "boundary": "weekly start +15 min" },
+    { "ref": "a07", "owner": "A", "occurredAtUtc": "2026-10-07T02:00:00.000Z", "localDate": "2026-10-06", "mood": "FIRE_BLOOM", "theme": "stress", "content": "Exam prep and overtime collided; I felt overwhelmed all evening.", "membership": ["M-2026-10", "W-2026-10-05"] },
+    { "ref": "a08", "owner": "A", "occurredAtUtc": "2026-10-09T01:00:00.000Z", "localDate": "2026-10-08", "mood": "HEALING_BLOOM", "theme": "recovery", "content": "I asked my manager for help and felt calmer afterwards.", "membership": ["M-2026-10", "W-2026-10-05"] },
+    { "ref": "a16", "owner": "A", "occurredAtUtc": "2026-10-10T04:00:00.000Z", "localDate": "2026-10-09", "mood": "FIRE_BLOOM", "theme": "stress", "content": "Exam prep and overtime collided; I felt overwhelmed all evening.", "membership": ["M-2026-10", "W-2026-10-05"], "duplicateOf": "a07" },
+    { "ref": "a09", "owner": "A", "occurredAtUtc": "2026-10-10T17:00:00.000Z", "localDate": "2026-10-10", "mood": "SUNNY_BLOOM", "theme": "recovery", "content": "Slept in, rested properly and felt much better this morning.", "membership": ["M-2026-10", "W-2026-10-05"] },
+    { "ref": "a10", "owner": "A", "occurredAtUtc": "2026-10-12T06:45:00.000Z", "localDate": "2026-10-11", "mood": "WONDER_BLOOM", "theme": "pottery", "content": "Late night pottery class; the clay finally held its shape on the wheel.", "membership": ["M-2026-10", "W-2026-10-05"], "boundary": "weekly end -15 min (UTC date already Oct 12)" },
+    { "ref": "a11", "owner": "A", "occurredAtUtc": "2026-10-12T07:10:00.000Z", "localDate": "2026-10-12", "mood": "PEACEFUL_BLOOM", "theme": "recovery", "content": "Woke early feeling rested and calmer about the week ahead.", "membership": ["M-2026-10"], "boundary": "weekly end +10 min (excluded from W-2026-10-05)" },
+    { "ref": "a12", "owner": "A", "occurredAtUtc": "2026-10-21T02:30:00.000Z", "localDate": "2026-10-20", "mood": "SUNNY_BLOOM", "theme": "recovery", "content": "Finished the report early with help from a colleague and felt better.", "membership": ["M-2026-10"] },
+    { "ref": "a13", "owner": "A", "occurredAtUtc": "2026-10-28T04:00:00.000Z", "localDate": "2026-10-27", "mood": "DRIFTING_BLOOM", "theme": "stress", "content": "Deadline week returned and the pressure crept back in.", "membership": ["M-2026-10"] },
+    { "ref": "a14", "owner": "A", "occurredAtUtc": "2026-11-01T06:30:00.000Z", "localDate": "2026-10-31", "mood": "WONDER_BLOOM", "theme": "pottery", "content": "Halloween pottery night: painted a small clay pumpkin.", "membership": ["M-2026-10"], "boundary": "monthly end -30 min (UTC date says November)" },
+    { "ref": "a15", "owner": "A", "occurredAtUtc": "2026-11-01T07:30:00.000Z", "localDate": "2026-11-01", "mood": "FIRE_BLOOM", "theme": "stress", "content": "First of November and already overwhelmed by a new deadline.", "membership": ["M-2026-11"], "boundary": "November boundary (excluded from M-2026-10)" },
+    { "ref": "b01", "owner": "B", "occurredAtUtc": "2026-10-08T03:00:00.000Z", "localDate": "2026-10-07", "mood": "FIRE_BLOOM", "theme": "stress", "content": "Exam prep and overtime collided; I felt overwhelmed tonight.", "membership": ["M-2026-10", "W-2026-10-05"], "decoy": "near-copy of a07 owned by B" },
+    { "ref": "b02", "owner": "B", "occurredAtUtc": "2026-10-09T18:00:00.000Z", "localDate": "2026-10-09", "mood": "PEACEFUL_BLOOM", "theme": "generic", "content": "Walked the dog by the river before lunch.", "membership": ["M-2026-10", "W-2026-10-05"], "embedding": "deliberately not generated (no-fallback probe)" },
+    { "ref": "c01", "owner": "C", "occurredAtUtc": "2026-10-06T19:00:00.000Z", "localDate": "2026-10-06", "mood": "QUIET_BLOOM", "theme": "generic", "content": "A quiet evening reading after a long shift.", "membership": ["M-2026-10", "W-2026-10-05"] },
+    { "ref": "c02", "owner": "C", "occurredAtUtc": "2026-10-09T19:00:00.000Z", "localDate": "2026-10-09", "mood": "HEALING_BLOOM", "theme": "recovery", "content": "Called a friend and felt calmer after the call.", "membership": ["M-2026-10", "W-2026-10-05"] }
+  ],
+  "expected": {
+    "flowers": { "A": 16, "B": 2, "C": 2, "D": 0 },
+    "weekly": {
+      "W-2026-10-05": { "owner": "A", "clock": "CLK_W", "eventCount": 6, "previousEventCount": 2, "eventCountChange": 4, "candidateCount": 6, "selectedRefs": ["a06", "a07", "a08", "a09", "a10"], "citedRefs": ["a06", "a07", "a08", "a09"], "excludedRefs": ["a16", "a05", "a11", "b01"], "narrativeStatus": "GENERATED" },
+      "W-2026-09-21": { "owner": "A", "clock": "CLK_W_INSUFFICIENT", "eventCount": 1, "candidateCount": 1, "selectedRefs": ["a03"], "citedRefs": [], "narrativeStatus": "INSUFFICIENT_EVIDENCE" }
+    },
+    "monthly": {
+      "M-2026-10": { "owner": "A", "clock": "CLK_M", "eventCount": 11, "previousEventCount": 4, "eventCountChange": 7, "candidateCount": 11, "selectedRefs": ["a05", "a06", "a07", "a08", "a09", "a10", "a11", "a12", "a13", "a14"], "citedRefs": ["a05", "a06", "a07", "a08", "a09", "a11", "a12", "a13"], "excludedRefs": ["a16", "a15", "a04", "b01"], "narrativeStatus": "GENERATED" }
+    },
+    "retrieval": {
+      "stressOctober": { "owner": "A", "query": "Feeling overwhelmed by deadlines and pressure", "period": "M-2026-10", "take": 5, "refs": ["a05", "a06", "a07", "a16", "a13"] },
+      "recoveryOctober": { "owner": "A", "query": "Times I rested, slept well or felt better", "period": "M-2026-10", "take": 4, "refs": ["a08", "a09", "a11", "a12"] },
+      "ownerBAll": { "owner": "B", "query": "Feeling overwhelmed by deadlines and pressure", "take": 10, "refs": ["b01"] }
+    }
+  }
+}

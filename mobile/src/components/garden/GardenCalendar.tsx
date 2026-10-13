@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { AppState, Image, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePanelTheme } from '../features/PanelTheme';
 import { usePlanting } from './planting/PlantingContext';
 import type { FlowerPlacementRecord } from './planting/plantingPersistence';
 
-import { calendarDateKey as dateKey, calendarRecordDay, calendarToday } from './calendarDates';
+import { calendarDateKey as dateKey, calendarPlacementDay, calendarToday, localDateValue } from './calendarDates';
+import { setSimulatedEventDate, simulatedEventDate, subscribeTestClock, syntheticFlowerDay, testClockSnapshot } from '../../services/testClock';
 
 export function GardenCalendar({ onFocusFlower }: { onFocusFlower: (flower: FlowerPlacementRecord) => void }) {
   const { placements, isGardenLoading, gardenError } = usePlanting();
@@ -13,7 +14,9 @@ export function GardenCalendar({ onFocusFlower }: { onFocusFlower: (flower: Flow
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [now, setNow] = useState(() => new Date());
-  const [simulated, setSimulated] = useState<Date | null>(null);
+  const testClockVersion = useSyncExternalStore(subscribeTestClock, testClockSnapshot, testClockSnapshot);
+  const simulatedKey = simulatedEventDate();
+  const simulated = simulatedKey ? localDateValue(simulatedKey) : null;
   const today = calendarToday(now, simulated, __DEV__);
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1));
@@ -27,12 +30,12 @@ export function GardenCalendar({ onFocusFlower }: { onFocusFlower: (flower: Flow
   const days = useMemo(() => {
     const result = new Map<string, FlowerPlacementRecord[]>();
     for (const flower of placements) {
-      const key = calendarRecordDay(flower.plantedDate);
+      const key = calendarPlacementDay(flower.plantedDate, syntheticFlowerDay(flower.flowerId), __DEV__);
       if (!key) continue;
       result.set(key, [...(result.get(key) || []), flower]);
     }
     return result;
-  }, [placements]);
+  }, [placements, testClockVersion]);
   const ink = light ? '#254C3B' : '#F5E9C8';
   const popup = light
     ? { paper: '#FAF3DF', ink: '#254E43', muted: '#637562', edge: '#C4AF79', rule: '#A6986A55', selected: '#DCE3CE', outline: '#416651', shade: '#AD925C18' }
@@ -46,7 +49,7 @@ export function GardenCalendar({ onFocusFlower }: { onFocusFlower: (flower: Flow
     <Pressable accessibilityRole="button" accessibilityLabel={`Open Garden calendar, ${today.toLocaleDateString()}`} onPress={() => { setMonth(new Date(today.getFullYear(), today.getMonth(), 1)); setSelected(dateKey(today)); setOpen(true); }} style={{ position: 'absolute', top: insets.top + 10, right: insets.right + 12, width: size, height: 64, justifyContent: 'center' }}>
       <Image accessible={false} source={light ? require('../../../assets/calendar/light.png') : require('../../../assets/calendar/dark.png')} resizeMode="contain" style={{ position: 'absolute', width: size, height: 64 }} />
       <Text style={[label, { marginLeft: size * .39, width: size * .47, textAlign: 'center', fontSize: size * .14 }]}>{today.toLocaleDateString('en', { month: 'short', day: 'numeric' })}</Text>
-      {__DEV__ && simulated && <Text style={{ position: 'absolute', top: 59, right: 8, fontSize: 10, color: ink }}>DEV date</Text>}
+      {__DEV__ && simulatedKey && <Text testID="test-clock-badge" style={{ position: 'absolute', top: 59, right: 4, paddingHorizontal: 5, borderRadius: 4, fontSize: 10, fontWeight: '700', color: '#FFFFFF', backgroundColor: '#B3261E' }}>TEST DATE {simulatedKey}</Text>}
     </Pressable>
     <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
       <View style={{ flex: 1, backgroundColor: '#13291D66', justifyContent: 'center', alignItems: 'center', padding: 18 }}>
@@ -76,9 +79,9 @@ export function GardenCalendar({ onFocusFlower }: { onFocusFlower: (flower: Flow
             <Text style={[popupLabel, { marginVertical: 10 }]}>{selected}</Text>
             {isGardenLoading ? <Text style={popupLabel}>Loading Garden…</Text> : gardenError ? <Text style={popupLabel}>{gardenError}</Text> : !(days.get(selected)?.length) ? <Text style={popupLabel}>No flowers or events for this day.</Text> : days.get(selected)!.map(flower => <Pressable key={flower.flowerId} accessibilityRole="button" accessibilityLabel={`Focus ${flower.flowerName}`} onPress={() => { setOpen(false); onFocusFlower(flower); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderColor: popup.rule, ...focus }}><Text style={popupLabel}>{flower.flowerName} · {flower.sourceType === 'EVENT' ? 'Event' : 'Flower'}</Text><Text style={[popupLabel, { fontSize: 12, color: popup.muted }]}>View in Garden</Text></Pressable>)}
             {__DEV__ && <View style={{ borderTopWidth: 1, borderColor: popup.rule, marginTop: 16, paddingTop: 12, gap: 12 }}>
-              <Text style={[popupLabel, { fontSize: 11, color: popup.muted }]}>DEV preview date only · does not change report timing on the server.</Text>
-              <Pressable accessibilityRole="button" style={focus} onPress={() => { const [y, m, d] = selected.split('-').map(Number); setSimulated(new Date(y, m - 1, d)); }}><Text style={popupLabel}>Use selected day for preview</Text></Pressable>
-              <Pressable accessibilityRole="button" style={focus} onPress={() => setSimulated(null)}><Text style={popupLabel}>Use device date</Text></Pressable>
+              <Text style={[popupLabel, { fontSize: 11, color: popup.muted }]}>{simulatedKey ? `TEST date active: ${simulatedKey}. New Events are dated this day only by an isolated test server; other servers reject them.` : 'TEST date off · Events use real server time.'}</Text>
+              <Pressable accessibilityRole="button" testID="test-clock-set" style={focus} onPress={() => setSimulatedEventDate(selected)}><Text style={popupLabel}>Use selected day as TEST date</Text></Pressable>
+              <Pressable accessibilityRole="button" testID="test-clock-reset" style={focus} onPress={() => setSimulatedEventDate(null)}><Text style={popupLabel}>Use device date (reset)</Text></Pressable>
             </View>}
           </ScrollView>
         </View>

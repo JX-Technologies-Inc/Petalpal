@@ -1,9 +1,10 @@
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
-import type { ReactNode } from 'react';
+import { useSyncExternalStore, type ReactNode } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useEventVoiceInput } from '../../hooks/useEventVoiceInput';
 import { useEventJournal } from '../../hooks/useEventJournal';
 import { emotionMessage, memoryMessage, PRIMARY_MOODS } from '../../services/events';
+import { simulatedEventDate, subscribeTestClock, testClockSnapshot } from '../../services/testClock';
 import { sourceFlowerImageUri } from '../garden/planting/flowerDetailApi';
 import { ui } from './FeatureUI';
 import { EventIllustration } from './EventIllustration';
@@ -13,6 +14,8 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
   const styles = createStyles(theme);
   const journal = useEventJournal(onGardenChanged);
   const voice = useEventVoiceInput(journal.content, journal.setContent, journal.busy);
+  useSyncExternalStore(subscribeTestClock, testClockSnapshot, testClockSnapshot);
+  const testDate = simulatedEventDate();
   return <View style={styles.body}>
     <Text style={styles.text}>A little moment, a new flower. Your Primary Mood is always your choice.</Text>
     <EventSection title="What happened?">
@@ -53,6 +56,7 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
           </Pressable>;
         })}
       </View>
+      {__DEV__ && testDate ? <Text testID="test-clock-event-notice" accessibilityRole="alert" style={[styles.caption, { color: '#B3261E', fontWeight: '700' }]}>TEST DATE {testDate}: this Event will be dated {testDate} (isolated test server only).</Text> : null}
       <EventAction title={journal.busy ? 'Saving Event…' : 'Save Event'} onPress={() => void journal.saveEvent()}
         disabled={journal.busy || voice.active || !journal.content.trim() || !journal.mood} />
       <Text style={styles.caption}>Emotion and memory processing follow your existing account consent.</Text>
