@@ -3,6 +3,7 @@ import test from "node:test";
 import { PGlite } from "@electric-sql/pglite";
 import { createProductionAiWorker } from "../../lib/ai-worker.js";
 import { PrivateEventRepository } from "../../lib/ai-events.js";
+import { DeterministicMemoryExtractor } from "../../lib/event-memory.js";
 import { ReportInputService, buildMonthlyReport, REPORT_EVIDENCE_LIMITS } from "../../lib/report-foundation.js";
 import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import { REPORT_NARRATIVE_GENERATION_VERSION } from "../../lib/report-narrative.js";
@@ -28,6 +29,10 @@ function output(packet) {
   for (const kind of ["CROSS_WEEK_TOPIC", "SELECTED_TOPIC_CHANGE"]) {
     const fact = packet.facts.find(item => item.kind === kind);
     if (fact) insights.push({ kind, factId: fact.id });
+  }
+  if (!insights.length) {
+    const fact = packet.facts.find(item => item.kind === "CROSS_WEEK_MOMENTS");
+    if (fact) insights.push({ kind: fact.kind, factId: fact.id });
   }
   return { version: MONTHLY_REFLECTION_CONTRACT, locale: packet.locale, overview: "O1", insights,
     closing: { factId: insights[0].factId, style: "OPEN" } };
@@ -189,6 +194,7 @@ test("Monthly schema rejects invented multilingual facts, altered counts, unknow
     for (const mutate of [raw => { raw.version = "v2"; }, raw => { raw.locale = "ja"; }, raw => { raw.overview = "O99"; },
       raw => { raw.text = "You became happier / 你的情绪改善了 / 你的情緒改善了"; },
       raw => { raw.insights[0].text = "You received a promotion"; }, raw => { raw.insights[0].count = 99; },
+      raw => { raw.insights[0].quotes = ["I received a promotion / 我升職了"]; },
       raw => { raw.insights[0].factId = "bob"; }, raw => { raw.insights[0].kind = "EMOTIONAL_TREND"; },
       raw => { raw.insights[0].factId = "C1"; }, raw => { raw.insights[1] = raw.insights[0]; },
       raw => { raw.closing.factId = "O1"; }, raw => { raw.closing.style = "PREDICT_IMPROVEMENT"; },
@@ -319,10 +325,10 @@ test("Monthly USD, owner, global, action and provider cost admission blocks both
 });
 
 test("sparse or single-week Monthly evidence abstains without inference while preserving deterministic statistics", async t => {
-  for (const mode of ["few", "one-week", "no-pattern", "long-anchor"]) {
+  for (const mode of ["few", "one-week", "unquotable", "long-anchor"]) {
     const f = await fixture(t, { count: mode === "few" ? 2 : 4, previousCount: 0 });
     if (mode === "one-week") await f.pg.exec('UPDATE "Event" SET "occurredAt"=\'2026-09-02\'');
-    if (mode === "no-pattern") await f.pg.exec('UPDATE "EventMemory" SET "topics"=json_build_array("id")');
+    if (mode === "unquotable") await f.pg.exec('UPDATE "EventMemory" SET "topics"=\'[]\',"summary"=repeat(\'合成的长句\',60)');
     if (mode === "long-anchor") await f.pg.exec('UPDATE "EventMemory" SET "summary"=repeat(\'synthetic\',1000) WHERE "sourceEventId"=\'event-0\'');
     const result = await f.run(); assert.equal(result.succeeded, true, result.error?.stack);
     assert.equal(result.result.status, "INSUFFICIENT_EVIDENCE"); assert.equal(f.calls.length, 0);
@@ -432,4 +438,45 @@ test("deleting a saved Monthly comparison source removes its report but preserve
   assert.equal((await f.rows("AIEvidence")).length, 0); assert.equal((await f.rows("AuditEvent")).length, 4);
   await f.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
   assert.equal((await f.run()).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1);
+});
+
+test("canonical deterministic extraction without topics supports verified cross-week Monthly moments in every locale", async t => {
+  for (const locale of ["en", "zh-CN", "zh-TW"]) {
+    const extracted = await new DeterministicMemoryExtractor().extract({ kind: "EVENT", id: "ordinary", content: summaries(monthlyReportLocale(locale))[0] });
+    assert.deepEqual(extracted.topics, []);
+    const f = await fixture(t, { locale, previousCount: 0 });
+    await f.pg.exec('UPDATE "EventMemory" SET "topics"=\'[]\'');
+    const result = await f.run(); assert.equal(result.succeeded, true, result.error?.stack);
+    assert.equal(f.calls.length, 1); assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
+    const packet = f.calls[0].packet, plan = output(packet);
+    assert.deepEqual(plan.insights.map(item => item.kind), ["CROSS_WEEK_MOMENTS"]);
+    const moment = packet.facts.find(item => item.id === plan.insights[0].factId);
+    assert.ok(moment.refs.every(ref => packet.evidence.some(item => item.ref === ref)));
+    assert.notEqual(packet.evidence.find(item => item.ref === moment.refs[0]).week, packet.evidence.find(item => item.ref === moment.refs[1]).week);
+    const report = (await f.rows("MonthlyReport"))[0].document;
+    assert.ok(moment.quotes.every(quote => report.summary.includes(quote)));
+    if (locale !== "en") assert.ok(monthlyTextLength(report.summary) >= 250 && monthlyTextLength(report.summary) <= 350);
+  }
+});
+
+test("Monthly moment cards preserve whole-source negation and numbers and reject altered or truncated evidence", () => {
+  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+    const input = contractInput(locale), quotes = locale === "en" ? ["I did not run 3 miles.", "I walked 2 miles, without racing."]
+      : locale === "zh-Hant" ? ["我沒有升職，也沒有加薪。", "我走了２公里，沒有參加比賽。"] : ["我没有升职，也没有加薪。", "我走了２公里，没有参加比赛。"];
+    for (const source of input.sourceFence.sources) { source.memory.topics = []; }
+    for (const [i, item] of input.evidenceSelection.evidence.entries()) {
+      item.topics = []; item.summary = quotes[i % 2];
+      input.sourceFence.sources.find(source => source.id === item.sourceEventId).memory.summary = item.summary;
+    }
+    const packet = buildMonthlyReflectionPacket(input), raw = output(packet), result = validateMonthlyReflection(raw, input);
+    const card = packet.facts.find(fact => fact.id === raw.insights[0].factId);
+    assert.ok(card.quotes.every(quote => quotes.includes(quote) && result.narrative.includes(quote)));
+    const altered = structuredClone(raw); altered.insights[0].quote = "I ran a marathon / 我升职了";
+    assert.throws(() => validateMonthlyReflection(altered, input));
+    for (const item of input.evidenceSelection.evidence) {
+      item.summary = "x".repeat(500);
+      input.sourceFence.sources.find(source => source.id === item.sourceEventId).memory.summary = item.summary;
+    }
+    assert.throws(() => buildMonthlyReflectionPacket(input), { code: "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE" });
+  }
 });

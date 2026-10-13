@@ -10,14 +10,19 @@ explicit routes fail closed; Weekly/Event production paths are preserved.
 
 - `monthly-reflection-v1` uses a closed structured composition plan, not arbitrary
   prose plus citations. Independently recomputed cards constrain cross-week topic
-  patterns, comparisons of selected current/previous record samples and a supported
-  closing. Unknown/version/locale/cards, altered counts, extra text, duplicate insight
+  patterns, comparisons of selected current/previous record samples, attributed
+  chronological moments and a supported closing. Unknown/version/locale/cards, altered counts, extra text, duplicate insight
   kinds, emotional trends, causes, diagnoses, predictions and invented milestones
   fail closed. Fluent wording cannot bypass factual validation. Topic labels are
   attributed exactly, never treated as proof of a personal experience or translated
   by the model. This assessed alternative to Weekly's quotation approach improves
   temporal synthesis, but controlled-language naturalness/depth still need product
-  acceptance. It is not a general semantic entailment checker.
+  acceptance. Canonical extraction often has no topic metadata, so up to four
+  exact-sentence pairs from earliest/latest represented weeks also support ordinary
+  Events. The model selects card IDs, never edits quotes. Sentence candidates retain
+  numbers/negation; potentially truncated final fragments are excluded. This hybrid
+  is an assessed limited alternative, not a claim that templates or citations alone
+  meet the intended final writing quality. No arbitrary paraphrase is accepted.
 - English/Simplified/Traditional Chinese output is localized from the saved owner
   locale. Chinese full-pattern/change fixtures target 250–350 grapheme clusters;
   `Intl.Segmenter` includes punctuation/combined emoji and excludes layout whitespace.
@@ -60,7 +65,7 @@ explicit routes fail closed; Weekly/Event production paths are preserved.
   fenced job completion remain atomic. Existing Weekly/Event contracts, private
   readers, memory extraction, consent/deletion behavior and BGE 384d are preserved.
 
-Local validation: **20/20 new Monthly tests passed** within the final impact set.
+Local validation: **20/20 initial Monthly tests passed** within the complete impact set.
 The combined regression reported **155/157 passed**, with two import/setup failures
 because this new checkout initially lacked its generated Prisma client. After
 credential-free client generation using the synthetic test setting (no DB connection),
@@ -76,8 +81,12 @@ malformed/refused output, budgets, late preparation/noncooperative fetches, curr
 and prior-source deletion, revocation/locale changes, safe failure, immutable reports
 and atomic evidence/job rollback. Initial fixture-only failures (legacy evidence
 uniqueness and an audit-event assertion name) were corrected before the passing run.
-The Monthly suite is a separate bounded invocation in credential-stripping security
-CI; exact-head GitHub CI is recorded on the Draft PR. Fixtures use injected fetch,
+Following canonical-extraction review, two additional tests cover topic-free Events
+in all three locales, preserved negation/numbers and rejected truncated/altered
+sentences. The final affected run passed **28/28** (22 Monthly cases plus 6 CI
+contract tests), zero failures/skips/cancellations. Exact-head GitHub CI is recorded
+on the Draft PR. The 22-case Monthly suite is a separate bounded invocation in
+credential-stripping security CI. Fixtures use injected fetch,
 synthetic data and disposable in-memory PGlite only. No live PostgreSQL connection,
 migration or provider call. Independent PostgreSQL connection lock scheduling is
 not certified by these single-engine transaction tests.

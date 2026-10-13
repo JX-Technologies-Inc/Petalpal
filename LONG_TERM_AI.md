@@ -286,11 +286,18 @@ miss the month's time span. Accepting arbitrary fluent prose with citations woul
 also not independently establish factual entailment. The Monthly contract instead
 uses a compositional, controlled-language plan: Opus selects/orders verified cards
 for an overview, one or two distinct insights, and a closing tied to a selected
-insight. It can choose among several supported topic patterns/comparisons and two
-reviewed closing styles. The application recomputes every card and renders localized
-clauses; no source quotation is required and no arbitrary paraphrase is accepted.
-This increases cross-week synthesis while preserving falsifiable checks, but it
-remains intentionally constrained writing, not unrestricted model-authored reflection.
+insight. It can choose among supported topic patterns/comparisons, recorded moments
+and reviewed closing styles. The preserved extractor copies optional Event topic
+metadata, which is normally empty in the standard Event flow. A topic-only contract
+would therefore abstain on ordinary useful evidence. The final hybrid also offers
+up to four pairs of exact supplied sentence candidates from the earliest/latest
+represented weeks, retaining negation and numbers without asserting a personal trend.
+Potentially truncated final fragments of 500-character memories are excluded.
+The application recomputes every card and renders localized clauses; model-authored
+paraphrases are not accepted. Topic-based synthesis does not require quotations,
+while topic-free Events can use attributed moments. This conscious quality tradeoff
+still uses controlled wording and some quotations; it does not claim to solve natural,
+free-form reflective writing merely by extending Weekly's template.
 Naturalness, repetition, insight usefulness and perceived depth need owner/product
 acceptance before activation; mocked tests cannot certify reflective quality.
 
@@ -301,8 +308,10 @@ acceptance before activation; mocked tests cannot certify reflective quality.
   and differing counts, and explicitly disclaims whole-month/life/emotional trends.
   No zero-evidence absence, new-topic, milestone, diagnosis, causality, prediction,
   invented experience or unsupported conclusion category is accepted. Exact original
-  topic labels remain attributed labels, including across output languages; there is
-  no unverified translation. The closing can only refer to a chosen insight.
+  topic labels and recorded sentence candidates remain attributed source language,
+  including across output locales; there is no unverified translation. The closing
+  can only refer to a chosen insight. Topic-free chronological moments are not
+  classified as milestones or evidence of an emotional change.
 - Supported locales: `en`, `zh-Hans`, `zh-Hant`, from the owner's saved locale and
   fenced against exact locale changes. Chinese main-reflection target is **250–350
   grapheme clusters**, punctuation/emoji included and layout whitespace excluded,
