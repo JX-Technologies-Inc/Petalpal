@@ -76,6 +76,10 @@ The final worker/lifecycle/private-report-reader/CI-contract check passed **41/4
 All inference was mocked, with synthetic data and disposable in-memory PGlite.
 Independent PostgreSQL lock interleavings and live quality/latency remain unverified;
 exact-commit GitHub CI evidence is recorded on the Phase 3 Draft PR separately.
+Initial CodeQL flagged a test-only hostname assertion whose regex contained
+unescaped dots. The mock now uses an exact URL comparison. Production Gateway
+address validation/egress was not affected; no scanning rule was suppressed.
+The affected Weekly suite passed **15/15** again after that assertion fix.
 
 Activation blockers: exact Sonnet/Gateway compatibility and entitlement, live
 selection/tone/coverage/latency acceptance, approved privacy/processor/retention and

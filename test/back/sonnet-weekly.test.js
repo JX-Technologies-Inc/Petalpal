@@ -131,7 +131,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
       .filter(event => event.memory).map(event => ({ ...event.memory, eventDate: event.occurredAt, similarity: 0.9 }));
   } };
   const fetchImpl = async (url, options) => {
-    assert.match(url, /^https:\/\/gateway.ai.cloudflare.com\/v1\/a{32}\/synthetic-weekly\/anthropic\/v1\/messages$/);
+    assert.equal(url, `https://gateway.ai.cloudflare.com/v1/${"a".repeat(32)}/synthetic-weekly/anthropic/v1/messages`);
     const body = JSON.parse(options.body), packet = JSON.parse(body.messages[0].content);
     calls.push({ body, packet, options }); return response(packet, options);
   };
