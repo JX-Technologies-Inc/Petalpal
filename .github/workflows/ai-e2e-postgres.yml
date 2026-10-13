@@ -20,6 +20,7 @@ on:
       - mobile/src/components/garden/GardenCalendar.tsx
       - mobile/test/testClock.test.mjs
       - package-lock.json
+      - scripts/verify-ai-e2e-*.mjs
       - .github/workflows/ai-e2e-postgres.yml
   workflow_dispatch:
 
@@ -77,19 +78,43 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm exec --no -- prisma generate
           npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Verify disposable target before migration (fail closed)
+        run: node scripts/verify-ai-e2e-database.mjs pre-migrate
       - name: Migrate the disposable service database only
+        # prisma.config.ts resolves the URL via resolveDatabaseUrl(): NODE_ENV=test,
+        # localhost DEV_DATABASE_URL only; it throws for any other target.
         run: npm exec --no -- prisma migrate deploy
-      - name: Gate, fixture and route checks (no database)
-        run: node --test --test-concurrency=1 test/back/simulated-time.test.js test/back/simulated-time.route.test.js test/back/ai-event.route.test.js
+      - name: Verify disposable target after migration (fail closed)
+        run: node scripts/verify-ai-e2e-database.mjs post-migrate
+      # Each test step fails unless the exact expected number of tests PASS with
+      # zero fail/skip/todo/cancel, so a disabled or skipped suite cannot succeed.
+      - name: Gate, fixture and route checks (in-memory stubs)
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-concurrency=1 --test-reporter=tap test/back/simulated-time.test.js test/back/simulated-time.route.test.js test/back/ai-event.route.test.js | tee unit.tap
+          node scripts/verify-ai-e2e-counts.mjs unit.tap 9
       - name: Client TEST clock checks
-        run: node --test mobile/test/testClock.test.mjs mobile/test/calendarDates.test.mjs
-      - name: T01-T09 against ephemeral pgvector (MOCK providers)
-        run: node --test --test-concurrency=1 test/back/ai-e2e.postgres.test.js
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-reporter=tap mobile/test/testClock.test.mjs mobile/test/calendarDates.test.mjs | tee client.tap
+          node scripts/verify-ai-e2e-counts.mjs client.tap 5
+      - name: T00-T09 against ephemeral pgvector (MOCK providers)
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-concurrency=1 --test-reporter=tap test/back/ai-e2e.postgres.test.js | tee e2e.tap
+          node scripts/verify-ai-e2e-counts.mjs e2e.tap 11
       - name: Synthetic evidence log
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ai-e2e-evidence
-          path: ai-e2e-evidence.json
+          path: |
+            ai-e2e-evidence.json
+            unit.tap
+            client.tap
+            e2e.tap
           if-no-files-found: ignore
           retention-days: 7
