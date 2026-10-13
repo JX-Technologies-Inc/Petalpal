@@ -8,6 +8,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { seedWeeklyFixtures, weeklyFixtureRetrieval, weeklyOnlyFetch } from '../../scripts/real-ai-weekly-only.mjs';
 import { createSmokeDiagnostics, recordWeeklyApi, weeklyReportSnapshot, withWeeklyDiagnostics } from '../../scripts/real-ai-smoke.mjs';
+import { AI_COST_ACTIONS } from '../../lib/ai-cost-gate.js';
 import { ReportInputService } from '../../lib/report-foundation.js';
 import { CloudflareWorkersReportNarrativeProvider, GroundedReportNarrativeService } from '../../lib/report-narrative.js';
 
@@ -168,4 +169,17 @@ test('Weekly-only runner writes separate sanitized evidence when explicit approv
     assert.equal(run.stderr, '');
     assert.equal(fixtures.some(f => JSON.stringify(evidence).includes(f.content)), false);
   } finally { rmSync(cwd, { recursive: true, force: true }); }
+});
+
+
+test('Weekly workflow budgets one report reservation using the real cost policy', () => {
+  const workflow = readFileSync(new URL('../../.github/workflows/real-ai-weekly-only.yml', import.meta.url), 'utf8');
+  // Reservation units include retrieval even when this diagnostic uses fixtures.
+  // This is separate from weeklyOnlyFetch's unchanged one-request ceiling.
+  const units = AI_COST_ACTIONS.WEEKLY_REPORT.calls;
+  for (const key of ['AI_GLOBAL_DAILY_CALL_LIMIT', 'AI_PROVIDER_DAILY_CALL_LIMIT', 'AI_USER_DAILY_CALL_LIMIT']) {
+    const values = [...workflow.matchAll(new RegExp(key + ": '([0-9]+)'", 'g'))];
+    assert.equal(values.length, 1);
+    assert.equal(Number(values[0][1]), units, key + ' must permit exactly one Weekly reservation');
+  }
 });
