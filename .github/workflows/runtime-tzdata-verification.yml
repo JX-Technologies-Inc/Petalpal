@@ -1,0 +1,80 @@
+name: Runtime tzdata verification (read-only, no deployment)
+
+# Verifies that the Node/ICU timezone data used by the backend images models
+# British Columbia permanent UTC-7 (IANA tzdata 2026b+). Public images and
+# repository files only: no secrets, environments, provider access, database,
+# Render/Cloudflare/Firebase interaction or deployment. The full Dockerfile.backend
+# build + in-image smoke stays with backend-container-validation.yml, whose
+# script deliberately refuses any other workflow or branch.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - Dockerfile
+      - Dockerfile.backend
+      - test/back/vancouver-timezone.test.js
+      - .github/workflows/runtime-tzdata-verification.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-runtime-tzdata-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pinned-node:
+    name: Pinned CI Node runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.21.0'
+      - name: Vancouver UTC-7 regression (no dependencies)
+        run: |
+          node -p "process.version + ' tzdata ' + process.versions.tz + ' icu ' + process.versions.icu"
+          node --test --test-reporter=tap test/back/vancouver-timezone.test.js
+
+  base-images:
+    name: Base image ${{ matrix.label }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The backend runtime Node is exactly the FROM image's Node: later layers only add openssl and npm packages.
+          - { label: proposed pin, image: 'node:24.21.0-bookworm-slim', expect: pass }
+          - { label: floating tag today, image: 'node:24-bookworm-slim', expect: pass }
+          # Resolution recorded by GitHub run 38006087561 (Dockerfile.backend build, 2026-10-09).
+          - { label: recorded 2026-10-09 digest, image: 'node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20', expect: pass }
+          # Negative control: the stale runtime the regression must reject.
+          - { label: stale control 24.7.0, image: 'node:24.7.0-bookworm-slim', expect: fail }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Inspect image and run the regression inside it
+        shell: bash
+        env:
+          IMAGE: ${{ matrix.image }}
+          EXPECT: ${{ matrix.expect }}
+        run: |
+          set -uo pipefail
+          docker pull --quiet "$IMAGE" || { echo "::error::cannot pull $IMAGE"; exit 1; }
+          echo "RepoDigests: $(docker image inspect --format '{{json .RepoDigests}}' "$IMAGE")"
+          run() { docker run --rm --network none --read-only --tmpfs /tmp:rw,noexec,size=16m --user 1000:1000 \
+            --cap-drop=ALL --security-opt=no-new-privileges -v "$PWD:/repo:ro" -w /repo "$IMAGE" "$@"; }
+          run node -p "process.version + ' tzdata ' + process.versions.tz + ' icu ' + process.versions.icu"
+          run node --test --test-reporter=tap test/back/vancouver-timezone.test.js > tz.tap 2>&1
+          status=$?
+          grep -E '^(ok|not ok) |^# (pass|fail)' tz.tap
+          if [ "$EXPECT" = pass ] && [ "$status" -ne 0 ]; then echo "::error::$IMAGE has stale America/Vancouver tzdata"; exit 1; fi
+          if [ "$EXPECT" = fail ] && [ "$status" -eq 0 ]; then echo "::error::negative control unexpectedly passed"; exit 1; fi
+          echo "$IMAGE: expected $EXPECT, observed exit $status"
+
