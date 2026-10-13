@@ -303,7 +303,7 @@ This documentation introduces no verified security fix or provider status change
 
 ## 12. Implementation Roadmap
 
-Phases 1–2 are merged in PRs #43–44; Phase 3 Weekly integration is implemented with Sonnet disabled by default, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-3-sonnet-weekly-reflections--2026-10-13). Activation remains pending; phases 4–6 below remain **PLANNED**. Existing environment names identify integration points; no runtime values or deployment configuration were changed.
+Phases 1–3 are merged in PRs #43–45; Phase 4 Monthly integration is implemented with Opus disabled by default, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-4-opus-monthly-reflections--2026-10-13). Activation remains pending; phases 5–6 below remain **PLANNED**. Existing environment names identify integration points; no runtime values or deployment configuration were changed.
 
 ### Phase 1 — Gateway abstraction and configuration design
 
@@ -333,6 +333,7 @@ Phases 1–2 are merged in PRs #43–44; Phase 3 Weekly integration is implement
 
 ### Phase 4 — Opus Monthly narrative integration
 
+- **Source status:** Implemented, disabled by default. `monthly-reflection-v1` composes verified cross-week topic patterns and explicitly sample-scoped current/previous comparisons, with localized controlled prose and supported closing. It does not copy Weekly's quotation contract or accept arbitrary cited prose as fact. The Monthly-only evidence policy prioritizes up to six week anchors within the existing 16-source/8,000-character budget; enrichment remains theme-bounded. Mocked acceptance only; naturalness/depth and live model compatibility remain review gates.
 - **Modules:** Monthly branches of the same report modules, evidence selection and existing worker handler; no automatic scheduler addition.
 - **Proposed names:** `AI_MONTHLY_REPORT_PROVIDER`, `AI_MONTHLY_REPORT_MODEL`, `AI_MONTHLY_REPORT_TIMEOUT_MS`, `AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS`; reuse `AI_MONTHLY_REPORT_DAILY_LIMIT`.
 - **Compatibility/security:** Account for always-on thinking; validate cross-week coverage, previous-month comparison, closing observation, and sparse-data behavior. Preserve Monthly period keys, original Event provenance, and 384d retrieval.
