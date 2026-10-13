@@ -18,6 +18,8 @@ on:
       - mobile/src/services/events.ts
       - mobile/src/components/garden/calendarDates.ts
       - mobile/src/components/garden/GardenCalendar.tsx
+      - mobile/src/components/features/EventsPanel.tsx
+      - mobile/src/hooks/useEventJournal.ts
       - mobile/test/testClock.test.mjs
       - package-lock.json
       - scripts/verify-ai-e2e-*.mjs
@@ -94,6 +96,23 @@ jobs:
           set -o pipefail
           node --test --test-concurrency=1 --test-reporter=tap test/back/simulated-time.test.js test/back/simulated-time.route.test.js test/back/ai-event.route.test.js | tee unit.tap
           node scripts/verify-ai-e2e-counts.mjs unit.tap 9
+      - name: Changed-scope Expo TypeScript check (MOBILE.md procedure)
+        working-directory: mobile
+        shell: bash
+        run: |
+          node - src/services/testClock.ts src/services/events.ts src/hooks/useEventJournal.ts \
+            src/components/garden/calendarDates.ts src/components/garden/GardenCalendar.tsx \
+            src/components/features/EventsPanel.tsx <<'JS'
+          const ts = require('typescript');
+          const config = ts.readConfigFile('tsconfig.json', ts.sys.readFile);
+          const parsed = ts.parseJsonConfigFileContent(config.config || {}, ts.sys, process.cwd());
+          const program = ts.createProgram(['expo-env.d.ts', ...process.argv.slice(2)], { ...parsed.options, noEmit: true });
+          const errors = [config.error, ...parsed.errors, ...ts.getPreEmitDiagnostics(program)].filter(Boolean);
+          const host = { getCanonicalFileName: p => p, getCurrentDirectory: ts.sys.getCurrentDirectory, getNewLine: () => '\n' };
+          if (errors.length) console.error(ts.formatDiagnostics(errors, host));
+          console.log(`TypeScript diagnostics: ${errors.length}`);
+          process.exitCode = errors.length ? 1 : 0;
+          JS
       - name: Client TEST clock checks
         shell: bash
         run: |
