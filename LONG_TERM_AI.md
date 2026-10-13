@@ -265,6 +265,80 @@ foundation work.
 
 ## 12. Current Implementation Status
 
+### Phase 1 Gateway provider abstraction — 2026-10-13
+
+**IMPLEMENTED IN SOURCE; DISABLED AND NOT CONNECTED TO CUSTOMER ROUTES.**
+[MODEL_SELECTION.md](MODEL_SELECTION.md) remains the intended hierarchy; phases
+2–6 require separate approval. The native Anthropic Messages and OpenAI Responses
+adapters in `lib/ai-gateway.js` prepare Haiku 5.5, Sonnet 5.5, Opus 5.5, and
+GPT-6 Sol. No existing server, Event classifier, report worker, inference Worker,
+embedding profile, retrieval, schema, migration, or deployment configuration selects
+them. Existing Workers AI model selections and BGE 384d/pgvector behavior remain.
+
+The building block requires an authenticated server identity, task/model allowlist,
+explicit master and provider enablement, a trusted provider/source authorization
+callback, bounded caller-constructed input, a closed JSON Schema, and a mandatory
+application grounding validator. Callbacks are server dependencies, never client
+input. Future integrations must construct Event-only input and keep final source,
+consent, owner, job and report persistence fences. The abstraction itself does not
+persist reports or certify arbitrary prose as factual.
+
+`PrismaAiCostGate` now optionally reserves provider-specific calls plus conservative
+USD liability in the existing non-cascading `AuditEvent` table under the existing
+shared PostgreSQL lock. No new database structure is required. New-provider paths
+retain user/action/global/provider call limits and add UTC user/global daily and
+monthly USD limits plus a provider monthly USD limit. Existing callers retain their
+original behavior. USD records cover Gateway traffic, not priced Workers AI usage
+or out-of-band calls made by other billing-account consumers.
+
+The explicit master/provider flags and budget configuration requirements are
+listed below (all routes default off):
+
+- `AI_GATEWAY_ENABLED`, `AI_GATEWAY_ANTHROPIC_ENABLED`, `AI_GATEWAY_OPENAI_ENABLED`:
+  only the exact string `true` enables the relevant boundary; unset/`false` disables.
+- Gateway address/auth names: `CLOUDFLARE_AI_GATEWAY_ACCOUNT_ID`,
+  `CLOUDFLARE_AI_GATEWAY_ID`, `CLOUDFLARE_AI_GATEWAY_TOKEN`.
+- Provider secret names: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`; only the selected
+  provider's credential is required. No secret values were configured or retrieved.
+- Budget names: `AI_USER_DAILY_USD_LIMIT`, `AI_USER_MONTHLY_USD_LIMIT`,
+  `AI_GLOBAL_DAILY_USD_LIMIT`, `AI_GLOBAL_MONTHLY_USD_LIMIT`, and
+  `AI_ANTHROPIC_MONTHLY_USD_LIMIT` / `AI_OPENAI_MONTHLY_USD_LIMIT` for the selected
+  provider. Missing/malformed values fail closed; zero denies admission. Decimal
+  USD values support up to nine fractional digits, accounted as integer nanodollars.
+
+The adapter computes conservative input admission from serialized UTF-8 bytes plus
+1,024 framing units; this is not an exact tokenizer or a provider billing cap.
+Reservations use all admitted output tokens, including reasoning, plus 25% input
+cache-write headroom. Valid native usage is recorded without content; liability
+can increase but is never automatically refunded. Invalid responses, timeout,
+transport uncertainty and deletion preserve the original reservation. The Event
+key matches the existing secondary-emotion operation; report reservations keep
+the existing owner/action/job key across providers. Changing provider cannot buy
+a replay. Automatic fallback and retries are rejected even with remaining budget.
+
+Transport uses only fixed Cloudflare native provider URLs, independent provider
+and Gateway authentication, redirect rejection, one attempt, no response caching,
+and no Gateway payload or metadata log collection. Requests omit tools, user
+identifiers and arbitrary metadata. OpenAI uses `store: false`. Private class fields
+prevent accidental credential serialization. Native response envelopes, completion
+status, model identity, usage, 512 KiB transport and 32 KiB structured-text bounds,
+local JSON Schema constraints and application grounding are checked. Anthropic's
+unsupported numeric/length/array constraints are omitted only from the wire schema;
+the original schema remains authoritative locally. No validation coercion/repair.
+
+**Acceptance:** Focused mocked/in-memory regression PASS **131/131**, including
+37 new Gateway tests; zero failed/skipped/cancelled. Eight affected Gateway cases
+also passed after final review hardening. Coverage and boundaries are
+recorded in the Phase 1 PR and the
+[security checkpoint](SECURITY.md#phase-1-ai-gateway-abstraction--2026-10-13).
+Prisma client generation is local code generation only. Exact-model live Gateway
+compatibility, account entitlement/capacity, privacy terms/retention, approved secret
+bindings and paid acceptance remain unverified. Runtime Event/report routing,
+localized grounding, UI, scheduling, fallback and recovery remain later phases.
+No paid inference, model benchmark, provider resources/configuration, production
+changes, database mutation/migration, or PR #37 action occurred.
+
+
 | Component | Status | Evidence | Notes |
 | --- | --- | --- | --- |
 | Event-only AI boundary | IMPLEMENTED | Event API + Daily Grow route tests | Journal path is isolated; Event API is the only long-term AI source |

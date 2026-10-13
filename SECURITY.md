@@ -1,5 +1,91 @@
 # PetalPal Security
 
+## PR #43 timeout hardening review — 2026-10-13
+
+The original Phase 1 `Promise.race` rejected on timeout but left its losing
+continuation running. A fetch implementation ignoring `AbortSignal` could return
+late and start response validation or application callbacks after rejection.
+The transport now checks cancellation and a monotonic deadline after fetch, each
+body read, usage recording, grounding validation and final consent/authorization
+checks. It also checks before parsing/validation stages. Late response bodies are
+cancelled without reading or validating output. Expired continuations cannot
+start subsequent application callbacks or return a successful result.
+
+Timeouts remain ambiguous and non-retryable; durable reservations are never
+refunded or reopened. Usage recording or a trusted callback already started
+before timeout cannot be forcibly undone, but its completion cannot advance to
+the next stage. Remote cancellation and absence of provider charges are still
+not guaranteed. Existing consent, owner/lease, privacy and default-off controls
+are unchanged; no production routing or provider configuration changed.
+
+Two mocked late-fetch regressions (Anthropic and OpenAI) failed against the
+original code and passed with the fix. Three additional regressions hold usage,
+grounding or consent work past timeout and verify no subsequent callback, while
+retaining accounting and replay protection. All fixtures are synthetic, with
+mocked fetch and disposable in-memory PGlite; no real inference or production DB.
+Local validation: **42/42 Gateway tests and 14/14 Cost Gate tests PASS**, zero
+failures/skips/cancellations in those completed suites. The first Cost Gate
+invocation could not load without its synthetic `DEV_DATABASE_URL`; the isolated
+rerun supplied the repository CI placeholder and passed. Changed-file syntax,
+diff checks and the AST-only graph update also passed. Remote CI results belong
+to the final published commit and are recorded on PR #43 separately.
+Historical implementation and security evidence below remains unchanged.
+
+## Phase 1 AI Gateway abstraction — 2026-10-13
+
+**Local implementation, disabled by default; no production acceptance claimed.**
+The standalone `CloudflareAiGateway` building block prepares native Anthropic and
+OpenAI adapters without changing server/worker model routing. No new public HTTP
+route, credentials, Cloudflare resources, deployment, database schema or migration.
+The existing Firebase authentication, Event-only boundary, consent, owner scope,
+BGE 384d profiles, pgvector and report write fences remain authoritative.
+
+- Master and per-provider flags default off. Enabled configuration validates fixed
+  Cloudflare endpoint components, selected provider/Gateway credentials and explicit
+  USD budgets, with static errors that reveal no values. Redirects, arbitrary
+  endpoints, caller-selected unsupported models/tasks, retry counts above one and
+  fallback requests are rejected. Server-side provider/source authorization and an
+  application grounding validator are mandatory dependencies; no client can supply
+  those dependencies through an existing route.
+- Existing shared Cost Gate reservations retain their original keys and lock.
+  Optional provider call accounting and UTC daily/monthly USD reservations use
+  non-content `AuditEvent` rows. No deletion/refund or provider switch reopens a
+  reserved operation. Missing ledger/budget/consent fails closed. Valid usage is
+  recorded without Event content and never decreases reserved liability. Budget
+  estimates are conservative admission controls, not guaranteed billing caps or
+  coverage of other account consumers. Existing Workers AI call quotas remain.
+- Pre-dispatch and post-response checks cover consent epoch, Event owner/existence
+  or report job owner/current lease. A trusted source/provider callback is checked
+  before reservation, before dispatch and after response. Future report integration
+  still requires selected-source validation and the existing final write fence;
+  this abstraction performs no report persistence.
+- Native responses are bounded, parsed, model/completion/usage checked and validated
+  with closed JSON Schema without coercion, then application grounding checks.
+  Rejected output, refusal, truncation and ambiguous timeout/transport errors never
+  trigger a repair call or fallback. Total transport deadline includes body reads
+  and validation; abort cannot prove remote cancellation or absence of charges.
+- Native Gateway requests suppress payload and metadata logging, bypass response
+  caching, request one upstream attempt and omit arbitrary diagnostic metadata.
+  OpenAI requests use `store: false`; this does not promise zero provider retention.
+  No raw provider response/errors, reasoning blocks or private input are logged;
+  credentials are in private fields and only transmitted to fixed Gateway URLs.
+  Live account-level logging/cache/retry/retention settings remain unverified.
+
+**Validation:** Focused regression PASS **131/131**, zero failed/skipped/cancelled,
+covering 37 new Gateway tests plus existing Cost Gate, report worker/write fence,
+Cloudflare embeddings, consent lifecycle, prompt-injection and CI contract tests.
+Eight affected Gateway cases also PASS after final malformed-envelope and config
+snapshot hardening. Changed-file syntax, lock consistency, local Prisma generation
+and diff checks PASS.
+Mocked fetch plus disposable in-memory PGlite only; no real provider requests or
+provider databases. New tests join the existing credential-stripping security CI
+runner. Historical production/security evidence below is preserved. Provider
+activation, processor disclosure/consent, privacy/retention terms, capacity and
+exact-model acceptance still require separately authorized later work.
+`MANUAL_SECURITY_CHECKLIST.md` is unchanged because no manual/provider action or
+provider status was changed by this task.
+
+
 ## Published speech candidate / exact-source CI — 2026-10-08
 
 - [x] **Publication PASS:** clean isolated branch `release-candidate/speech-only-ace8ed1` published at unchanged `4036af3aee6462c916a56fb3eaed7ca9991cff72`; remote exact ref confirmed. Parent remains production logging base `1f8d0f98fb16b9553ae03c474f5952c808928e48`, with the same two source files and admission test only. Candidate worktree and all prior uncommitted evidence preserved; no candidate code changes.
