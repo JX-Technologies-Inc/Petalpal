@@ -65,16 +65,17 @@ jobs:
           IMAGE: ${{ matrix.image }}
           EXPECT: ${{ matrix.expect }}
         run: |
-          set -uo pipefail
+          # GitHub runs bash with -e -o pipefail; every expected non-zero status is captured explicitly.
+          set -euo pipefail
           docker pull --quiet "$IMAGE" || { echo "::error::cannot pull $IMAGE"; exit 1; }
           echo "RepoDigests: $(docker image inspect --format '{{json .RepoDigests}}' "$IMAGE")"
           run() { docker run --rm --network none --read-only --tmpfs /tmp:rw,noexec,size=16m --user 1000:1000 \
             --cap-drop=ALL --security-opt=no-new-privileges -v "$PWD:/repo:ro" -w /repo "$IMAGE" "$@"; }
           run node -p "process.version + ' tzdata ' + process.versions.tz + ' icu ' + process.versions.icu"
-          run node --test --test-reporter=tap test/back/vancouver-timezone.test.js > tz.tap 2>&1
-          status=$?
-          grep -E '^(ok|not ok) |^# (tests|pass|fail)|must be 05:00' tz.tap
-          count() { grep -E "^# $1 [0-9]+$" tz.tap | awk '{print $3}'; }
+          status=0
+          run node --test --test-reporter=tap test/back/vancouver-timezone.test.js > tz.tap 2>&1 || status=$?
+          grep -E '^(ok|not ok) |^# (tests|pass|fail)|must be 05:00' tz.tap || true
+          count() { grep -E "^# $1 [0-9]+$" tz.tap | awk '{print $3}' || true; }
           tests=$(count tests); passed=$(count pass); failed=$(count fail)
           # Both directions require the 2-test regression to actually execute.
           if [ "$tests" != 2 ]; then echo "::error::regression did not execute 2 tests (got '${tests}')"; exit 1; fi
