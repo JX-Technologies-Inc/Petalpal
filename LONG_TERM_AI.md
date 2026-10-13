@@ -5,6 +5,11 @@
 > AI architecture decision, schema change, implementation completion, reversal,
 > and material test result.
 
+> Planned model hierarchy, Cloudflare AI Gateway routing, report quality, and
+> provider rollout gates are documented in [MODEL_SELECTION.md](MODEL_SELECTION.md).
+> That design is not an implementation or production activation; the historical
+> checkpoints below retain their original scope.
+
 ## 1. Canonical Product Rules
 
 - AI only processes user-authored Events.
