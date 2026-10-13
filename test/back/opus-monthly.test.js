@@ -178,6 +178,7 @@ test("Monthly contract composes localized grounded patterns, sample changes and 
   for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
     const input = contractInput(locale), packet = buildMonthlyReflectionPacket(input), raw = output(packet);
     const result = validateMonthlyReflection(raw, input);
+    assert.equal(packet.facts.some(fact => fact.kind === "CROSS_WEEK_MOMENTS"), false, "supported synthesis takes precedence over quotations");
     assert.equal(result.sections.length, 3); assert.equal(result.sections[0].contractVersion, MONTHLY_REFLECTION_CONTRACT);
     assert.equal(packet.coverage.representedWeeks.length, 4);
     assert.ok(result.sections[2].evidenceRefs.some(ref => ref.sourceEventId === "previous"));

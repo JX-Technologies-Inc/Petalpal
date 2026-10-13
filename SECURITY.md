@@ -19,7 +19,9 @@ explicit routes fail closed; Weekly/Event production paths are preserved.
   temporal synthesis, but controlled-language naturalness/depth still need product
   acceptance. Canonical extraction often has no topic metadata, so up to four
   exact-sentence pairs from earliest/latest represented weeks also support ordinary
-  Events. The model selects card IDs, never edits quotes. Sentence candidates retain
+  Events when no independently grounded topic synthesis exists. These modes are
+  exclusive, so quotations cannot displace available verified synthesis and saved
+  section order remains faithful to the main reflection. The model selects card IDs, never edits quotes. Sentence candidates retain
   numbers/negation; potentially truncated final fragments are excluded. This hybrid
   is an assessed limited alternative, not a claim that templates or citations alone
   meet the intended final writing quality. No arbitrary paraphrase is accepted.

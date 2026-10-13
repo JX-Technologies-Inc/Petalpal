@@ -289,7 +289,7 @@ for an overview, one or two distinct insights, and a closing tied to a selected
 insight. It can choose among supported topic patterns/comparisons, recorded moments
 and reviewed closing styles. The preserved extractor copies optional Event topic
 metadata, which is normally empty in the standard Event flow. A topic-only contract
-would therefore abstain on ordinary useful evidence. The final hybrid also offers
+would therefore abstain on ordinary useful evidence. When no independently supported topic synthesis exists, the final hybrid offers
 up to four pairs of exact supplied sentence candidates from the earliest/latest
 represented weeks, retaining negation and numbers without asserting a personal trend.
 Potentially truncated final fragments of 500-character memories are excluded.
