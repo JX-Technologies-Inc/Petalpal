@@ -124,6 +124,10 @@ e2e("T00 preflight: isolated gate, empty non-fixture database, pgvector, fixture
   state.server = m.app.listen(0, "127.0.0.1");
   await new Promise((resolve) => state.server.once("listening", resolve));
   state.baseUrl = `http://127.0.0.1:${state.server.address().port}`;
+  const offset = (instant) => new Intl.DateTimeFormat("en-CA", { timeZone: manifest.timezone, timeZoneName: "longOffset" })
+    .formatToParts(new Date(instant)).find((part) => part.type === "timeZoneName").value;
+  record({ testId: "T00", result: "PASS", runtime: { node: process.version, tzdata: process.versions.tz || null,
+    vancouverOffset20261215: offset("2026-12-15T12:00:00Z") }, outputs: "gate open for fixture identity; no non-fixture users; pgvector present" });
 });
 
 e2e("T01 simulated Calendar/Event date: denied outside the gate, exact when allowed", async () => {

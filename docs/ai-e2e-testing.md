@@ -44,4 +44,5 @@ so a wrong manifest fails before any database run.
 - **Narrative: MOCK.** A template that cites the evidence it is given. It shows the citation and write-fence path, not narrative quality.
 - **Cost:** 0 inference calls and $0.
 - **Reflection UI:** `reflection.tsx` visual rendering is not exercised. T09 checks the list and detail API contract that the UI reads.
+- **Timezone data:** IANA tzdata 2026b moved British Columbia to permanent UTC−7, so `America/Vancouver` offsets after 2026-11-01 depend on the Node/ICU tzdata version. Every fixed fixture precedes that change; T00 records `process.versions.tz` and the December offset in the evidence log.
 - **Not yet proven:** semantic relevance needs a separate, version-pinned real-embedding benchmark run with an approved provider, call ceiling and cost ceiling.
