@@ -1,0 +1,142 @@
+name: AI E2E (ephemeral pgvector, MOCK providers)
+
+# Deterministic T01-T09 AI pipeline acceptance against a disposable pgvector
+# service container created and destroyed by this job. No repository secrets,
+# GitHub environments, Firebase/Cloudflare/Render/Prisma credentials, hosted
+# databases, paid inference or deployment. Providers are MOCK (0 inference calls).
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - server.js
+      - lib/**
+      - prisma/**
+      - test/back/ai-e2e.postgres.test.js
+      - test/back/simulated-time*.test.js
+      - test/fixtures/ai-e2e-*
+      - mobile/src/services/testClock.ts
+      - mobile/src/services/events.ts
+      - mobile/src/components/garden/calendarDates.ts
+      - mobile/src/components/garden/GardenCalendar.tsx
+      - mobile/src/components/features/EventsPanel.tsx
+      - mobile/src/hooks/useEventJournal.ts
+      - mobile/test/testClock.test.mjs
+      - package-lock.json
+      - scripts/verify-ai-e2e-*.mjs
+      - .github/workflows/ai-e2e-postgres.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-ai-e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ai-e2e:
+    name: Ephemeral pgvector AI E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-disposable
+          POSTGRES_DB: petalpal_ai_e2e_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      # Disposable container only; resolveDatabaseUrl() requires localhost + a test token.
+      DEV_DATABASE_URL: postgresql://ci:ci-disposable@127.0.0.1:5432/petalpal_ai_e2e_test
+      AI_ASYNC_EXECUTION_MODE: manual
+      # Non-production placeholder; tokens are verified by an injected test stub.
+      FIREBASE_PROJECT_ID: petalpal-ai-e2e-test
+      PETALPAL_SIMULATED_TIME: '1'
+      PETALPAL_SIMULATED_TIME_EMAILS: fx-owner-a@example.test,fx-owner-b@example.test,fx-owner-c@example.test
+      PETALPAL_AI_E2E: '1'
+      PETALPAL_AI_E2E_EVIDENCE: ai-e2e-evidence.json
+      RATE_LIMIT_AI_MAX: '200'
+      RATE_LIMIT_GENERAL_MAX: '1000'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
+      - name: Dependencies and Prisma client
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm exec --no -- prisma generate
+          npm ci --prefix mobile --ignore-scripts --no-audit --no-fund
+      - name: Verify disposable target before migration (fail closed)
+        run: node scripts/verify-ai-e2e-database.mjs pre-migrate
+      - name: Migrate the disposable service database only
+        # prisma.config.ts resolves the URL via resolveDatabaseUrl(): NODE_ENV=test,
+        # localhost DEV_DATABASE_URL only; it throws for any other target.
+        run: npm exec --no -- prisma migrate deploy
+      - name: Verify disposable target after migration (fail closed)
+        run: node scripts/verify-ai-e2e-database.mjs post-migrate
+      # Each test step fails unless the exact expected number of tests PASS with
+      # zero fail/skip/todo/cancel, so a disabled or skipped suite cannot succeed.
+      - name: Gate, fixture and route checks (in-memory stubs)
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-concurrency=1 --test-reporter=tap test/back/simulated-time.test.js test/back/simulated-time.route.test.js test/back/ai-event.route.test.js | tee unit.tap
+          node scripts/verify-ai-e2e-counts.mjs unit.tap 9
+      - name: Changed-scope Expo TypeScript check (MOBILE.md procedure)
+        working-directory: mobile
+        shell: bash
+        run: |
+          if [ ! -f expo-env.d.ts ]; then
+            printf '%s\n' '/// <reference types="expo/types" />' > expo-env.d.ts
+          fi
+          node - src/services/testClock.ts src/services/events.ts src/hooks/useEventJournal.ts \
+            src/components/garden/calendarDates.ts src/components/garden/GardenCalendar.tsx \
+            src/components/features/EventsPanel.tsx <<'JS'
+          const ts = require('typescript');
+          const config = ts.readConfigFile('tsconfig.json', ts.sys.readFile);
+          const parsed = ts.parseJsonConfigFileContent(config.config || {}, ts.sys, process.cwd());
+          const program = ts.createProgram(['expo-env.d.ts', ...process.argv.slice(2)], { ...parsed.options, noEmit: true });
+          const errors = [config.error, ...parsed.errors, ...ts.getPreEmitDiagnostics(program)].filter(Boolean);
+          const host = { getCanonicalFileName: p => p, getCurrentDirectory: ts.sys.getCurrentDirectory, getNewLine: () => '\n' };
+          if (errors.length) console.error(ts.formatDiagnostics(errors, host));
+          console.log(`TypeScript diagnostics: ${errors.length}`);
+          process.exitCode = errors.length ? 1 : 0;
+          JS
+      - name: Client TEST clock checks
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-reporter=tap mobile/test/testClock.test.mjs mobile/test/calendarDates.test.mjs | tee client.tap
+          node scripts/verify-ai-e2e-counts.mjs client.tap 5
+      - name: T00-T09 against ephemeral pgvector (MOCK providers)
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-concurrency=1 --test-reporter=tap test/back/ai-e2e.postgres.test.js | tee e2e.tap
+          node scripts/verify-ai-e2e-counts.mjs e2e.tap 11
+      - name: Synthetic evidence log
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ai-e2e-evidence
+          path: |
+            ai-e2e-evidence.json
+            unit.tap
+            client.tap
+            e2e.tap
+          if-no-files-found: ignore
+          retention-days: 7

@@ -8,3 +8,11 @@ export function calendarRecordDay(value: string) {
 export function calendarToday(device: Date, simulated: Date | null, development: boolean) {
   return development && simulated ? simulated : device;
 }
+// TEST-mode Event Flowers use their synthetic Event local date; otherwise unchanged.
+export function calendarPlacementDay(plantedDate: string, syntheticDay: string | null, development: boolean) {
+  return development && syntheticDay ? syntheticDay : calendarRecordDay(plantedDate);
+}
+export function localDateValue(key: string) {
+  const [year, month, day] = key.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}

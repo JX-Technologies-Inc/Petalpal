@@ -4,6 +4,7 @@ import { useAuth } from '../services/auth';
 import { createEvent, eventFlowers, plantingRecord, readEvent,
   type BackendFlower, type EventResponse, type PrimaryMood } from '../services/events';
 import { loadFlowerPlacements, type FlowerPlacementRecord } from '../components/garden/planting/plantingPersistence';
+import { simulatedEventDate } from '../services/testClock';
 
 // Existing Event orchestration, kept independent of the replaceable panel.
 export function useEventJournal(onGardenChanged?: () => void) {
@@ -17,7 +18,7 @@ export function useEventJournal(onGardenChanged?: () => void) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [pollError, setPollError] = useState('');
-  const pending = useRef<{ content: string; mood: PrimaryMood; key: string } | null>(null);
+  const pending = useRef<{ content: string; mood: PrimaryMood; testDate: string | null; key: string } | null>(null);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const refresh = useCallback(async () => {
@@ -35,8 +36,10 @@ export function useEventJournal(onGardenChanged?: () => void) {
     setBusy(true); setError('');
     const draft = pending.current;
     // Keep the same key after transport failure; a retry cannot duplicate an Event.
-    if (!draft || draft.content !== content.trim() || draft.mood !== mood) pending.current = {
-      content: content.trim(), mood, key: `mobile-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    // A changed TEST date (development builds only; always null in release) is a new Event.
+    const testDate = simulatedEventDate();
+    if (!draft || draft.content !== content.trim() || draft.mood !== mood || draft.testDate !== testDate) pending.current = {
+      content: content.trim(), mood, testDate, key: `mobile-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     };
     try {
       const created = await createEvent(pending.current!.content, mood, pending.current!.key);
