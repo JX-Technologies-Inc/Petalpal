@@ -100,6 +100,9 @@ jobs:
         working-directory: mobile
         shell: bash
         run: |
+          if [ ! -f expo-env.d.ts ]; then
+            printf '%s\n' '/// <reference types="expo/types" />' > expo-env.d.ts
+          fi
           node - src/services/testClock.ts src/services/events.ts src/hooks/useEventJournal.ts \
             src/components/garden/calendarDates.ts src/components/garden/GardenCalendar.tsx \
             src/components/features/EventsPanel.tsx <<'JS'
