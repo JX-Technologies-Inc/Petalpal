@@ -265,6 +265,107 @@ foundation work.
 
 ## 12. Current Implementation Status
 
+### Phase 4 Opus Monthly reflections — 2026-10-13
+
+**IMPLEMENTED IN SOURCE; OPUS DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**
+Base: merged Phase 3 PR #45, `daba16e5`; its reviewed head `e959eaf0` is an
+ancestor. The Phase 1–3 checkpoints below retain their original scope and evidence.
+
+`lib/opus-monthly.js` routes Monthly jobs through the existing native Anthropic
+Cloudflare AI Gateway adapter only when `AI_MONTHLY_REPORT_PROVIDER=anthropic`
+and `AI_MONTHLY_REPORT_MODEL=claude-opus-5-5` are explicitly selected, with both
+Gateway/Anthropic flags and the existing fixed-endpoint/auth/USD validation.
+Absent selection or `workers-ai` keeps production Monthly behavior. Other explicit
+selections fail closed. No configuration was activated. Weekly/Event integrations,
+deterministic statistics/trends, Event/Flower creation, memory extraction, BGE
+384d/pgvector, client readers and durable queues remain unchanged.
+
+**Writing-quality assessment and grounding balance.** Copying Weekly's two exact
+quotations plus a generic closing would provide weak Monthly synthesis and could
+miss the month's time span. Accepting arbitrary fluent prose with citations would
+also not independently establish factual entailment. The Monthly contract instead
+uses a compositional, controlled-language plan: Opus selects/orders verified cards
+for an overview, one or two distinct insights, and a closing tied to a selected
+insight. It can choose among supported topic patterns/comparisons, recorded moments
+and reviewed closing styles. The preserved extractor copies optional Event topic
+metadata, which is normally empty in the standard Event flow. A topic-only contract
+would therefore abstain on ordinary useful evidence. When no independently supported topic synthesis exists, the final hybrid offers
+up to four pairs of exact supplied sentence candidates from the earliest/latest
+represented weeks, retaining negation and numbers without asserting a personal trend.
+Potentially truncated final fragments of 500-character memories are excluded.
+The application recomputes every card and renders localized clauses; model-authored
+paraphrases are not accepted. Topic-based synthesis does not require quotations,
+while topic-free Events can use attributed moments. This conscious quality tradeoff
+still uses controlled wording and some quotations; it does not claim to solve natural,
+free-form reflective writing merely by extending Weekly's template.
+Naturalness, repetition, insight usefulness and perceived depth need owner/product
+acceptance before activation; mocked tests cannot certify reflective quality.
+
+- `monthly-reflection-v1`: closed version/locale/overview/insights/closing schema.
+  Cross-week topic cards require distinct selected Events in at least two local
+  Monday-based calendar weeks. A change compares topic occurrences **only in the
+  selected current/previous samples**, requires supporting records in both periods
+  and differing counts, and explicitly disclaims whole-month/life/emotional trends.
+  No zero-evidence absence, new-topic, milestone, diagnosis, causality, prediction,
+  invented experience or unsupported conclusion category is accepted. Exact original
+  topic labels and recorded sentence candidates remain attributed source language,
+  including across output locales; there is no unverified translation. The closing
+  can only refer to a chosen insight. Topic-free chronological moments are not
+  classified as milestones or evidence of an emotional change.
+- Supported locales: `en`, `zh-Hans`, `zh-Hant`, from the owner's saved locale and
+  fenced against exact locale changes. Chinese main-reflection target is **250–350
+  grapheme clusters**, punctuation/emoji included and layout whitespace excluded,
+  using `Intl.Segmenter`. Representative full-pattern/change fixtures meet the target.
+  Sparse supported reflections may be shorter; no filler, truncation, repair inference
+  or relaxed factual check is used to reach a preferred length. Chinese hard cap:
+  500 graphemes; existing 700-character section and 1,800-character total bounds also
+  remain. Metadata fits existing `narrativeSections` JSON; durable generation and
+  reservation identity remains `grounded-narrative-v1`, preventing paid regeneration.
+- `monthly-cross-week-v1` selection admits at most **64 candidates**, fairly across
+  eligible current-week buckets and a previous-month bucket. It first takes one
+  fitting anchor from every eligible current week (at most six), then up to three
+  previous-month sources, then current-month enrichment. All selected evidence shares
+  **16 sources / 8,000 context characters**. A deliberate Monthly-only policy gives
+  week anchors priority over the three-per-theme enrichment cap; enrichment and
+  previous-month selection each retain that cap within their own period. This avoids
+  losing early/late weeks solely because the same topic recurs. Missing a required
+  week or fewer than three current sources/two weeks yields insufficient evidence.
+  There is no claim that unrecorded weeks are represented. No supported insight also
+  yields truthful `INSUFFICIENT_EVIDENCE`, null summary and no Opus call.
+- English retains the existing owner-scoped BGE/pgvector query as a ranking signal;
+  explicit chronological anchors resolve against eligible owned period EventMemory.
+  Chinese uses the same independently tested bounded period selection without a
+  Chinese embedding query or vector-profile change. Similarity cannot introduce a
+  source or override coverage. Owned Event/Memory identity, type, permission, dates,
+  exact summaries/topics/revisions and the full current/previous snapshot are checked.
+  Journal is excluded; no Weekly prose is used as independent evidence. Selected
+  previous sources are persisted as normal AiEvidence, so existing deletion code
+  invalidates a saved report when a selected comparison source is removed.
+- Existing Gateway preparation reserves the two-call report allowance, potential
+  Cloudflare retrieval quota and maximum admitted input/native output USD liability
+  before retrieval. Default output allowance is 4,096 tokens (configurable 1–8,192);
+  timeout is 20,000 ms (configurable 1–20,000). Existing Opus low-effort native
+  output configuration is reused without sampling parameters or disabling thinking.
+  Serialized bytes remain bounded; long input may fail before dispatch. The same
+  deadline includes preparation/transport/validation; noncooperative late responses
+  cannot read/validate/persist. No automatic paid retry, repair, cross-provider fallback,
+  direct egress, refund or Phase 5 behavior. Conservative reservations survive all
+  outcomes. Gateway USD accounting still excludes Workers AI dollars and other
+  billing-account consumers. Optional `AI_REPORT_SUPPORTED_LOCALES` remains explicit.
+- Existing consent epoch, exact owner/job/claim/lease, timezone, source-deletion and
+  final atomic report/evidence/completion fences remain. Monthly-only localized
+  policy permits selected sources from the immediately previous month for comparison;
+  legacy Monthly and Weekly source policies remain unchanged. Finalized reports
+  remain immutable across route changes. No schema, migration or dependency changes.
+
+Validation and remaining acceptance boundaries are recorded in
+[SECURITY.md](SECURITY.md#phase-4-opus-monthly-integration--2026-10-13).
+No real/paid inference, deployment, provider resources/credentials, production DB or
+infrastructure changes, PR #37 changes or existing worktree edits. Phase 5 is not
+implemented. `MANUAL_SECURITY_CHECKLIST.md` is unchanged: no manual/provider status
+changed. Exact-model compatibility/capacity, privacy/retention/consent disclosure,
+approved spend and live writing-quality/latency acceptance remain activation gates.
+
 ### Phase 3 Sonnet Weekly reflections — 2026-10-13
 
 **IMPLEMENTED IN SOURCE; SONNET DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**

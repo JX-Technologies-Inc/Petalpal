@@ -1,5 +1,106 @@
 # PetalPal Security
 
+## Phase 4 Opus Monthly integration — 2026-10-13
+
+**Disabled by default; source and mocked acceptance only.** New isolated worktree
+based on `main@daba16e5` (PR #45 merge), with verified Phase 3 ancestry. The existing
+Monthly route remains selected unless both explicit Monthly provider/model selection
+and all existing Gateway/Anthropic configuration and budget gates pass. Invalid
+explicit routes fail closed; Weekly/Event production paths are preserved.
+
+- `monthly-reflection-v1` uses a closed structured composition plan, not arbitrary
+  prose plus citations. Independently recomputed cards constrain cross-week topic
+  patterns, comparisons of selected current/previous record samples, attributed
+  chronological moments and a supported closing. Unknown/version/locale/cards, altered counts, extra text, duplicate insight
+  kinds, emotional trends, causes, diagnoses, predictions and invented milestones
+  fail closed. Fluent wording cannot bypass factual validation. Topic labels are
+  attributed exactly, never treated as proof of a personal experience or translated
+  by the model. This assessed alternative to Weekly's quotation approach improves
+  temporal synthesis, but controlled-language naturalness/depth still need product
+  acceptance. Canonical extraction often has no topic metadata, so up to four
+  exact-sentence pairs from earliest/latest represented weeks also support ordinary
+  Events when no independently grounded topic synthesis exists. These modes are
+  exclusive, so quotations cannot displace available verified synthesis and saved
+  section order remains faithful to the main reflection. The model selects card IDs, never edits quotes. Sentence candidates retain
+  numbers/negation; potentially truncated final fragments are excluded. This hybrid
+  is an assessed limited alternative, not a claim that templates or citations alone
+  meet the intended final writing quality. No arbitrary paraphrase is accepted.
+- English/Simplified/Traditional Chinese output is localized from the saved owner
+  locale. Chinese full-pattern/change fixtures target 250–350 grapheme clusters;
+  `Intl.Segmenter` includes punctuation/combined emoji and excludes layout whitespace.
+  Shorter supported output is preferred to padding. Chinese cap 500 graphemes plus
+  the existing 700-character section / 1,800-character total caps remain. No paid
+  repair or output truncation. Statistics/trends remain deterministic and unchanged;
+  sample topic changes are explicitly not whole-month activity or emotion changes.
+- `monthly-cross-week-v1` admits up to 64 candidates fairly across owner-local
+  calendar weeks and previous-month comparisons. Mandatory current-week anchors
+  (at most six) precede enrichment; all selected evidence shares 16 sources / 8,000
+  context characters. This reviewed-policy delta permits anchors above the old
+  three-per-theme cap, while enrichment and previous-month selection separately
+  retain three-per-theme. Up to three prior-month sources are eligible. Missing a
+  required week, fewer than three current sources/two represented weeks, or no
+  supported synthesis causes truthful insufficient evidence with no native dispatch.
+  English BGE/pgvector semantic ranking remains; owner-scoped chronological anchors
+  prevent similarity/recentness concentration. Chinese uses independently tested
+  bounded EventMemory selection without multilingual embeddings or vector changes.
+- Only eligible owned Events and EVENT memories enter provider input. Request-local
+  aliases map to exact provenance; no owner/Event/Memory/job IDs, Journal, Weekly
+  prose, server source snapshots or credentials are exported as report data. Prior
+  month selection has its own explicit localized Monthly policy; final fences still
+  lock and compare full current/previous source snapshots and the exact saved locale,
+  timezone, consent epoch and claim. Selected previous evidence is stored in existing
+  AiEvidence so existing owner-scoped Event deletion removes affected saved Monthly
+  reports. Cost reservations remain after deletion and block paid replay.
+- The existing native Opus adapter preserves always-on thinking compatibility,
+  low effort and bounded total output, fixed authenticated Gateway egress, no tools,
+  logging/cache suppression and one attempt. Configuration is named-key/private-field
+  scoped. Existing durable shared-call/native-USD/Cloudflare-query admission occurs
+  before retrieval; denial rolls back all admissions. Native timeout remains at most
+  20 seconds, including preparation/validation; late noncooperative fetches cannot
+  read output, run validation, record late usage or persist. Abort cannot undo
+  already-dispatched work. No retry, repair, provider fallback, direct egress or refund.
+  Existing billing coverage limitations remain (Gateway ledger is not Workers AI or
+  account-wide dollar accounting).
+- Report content version is distinct from stable `grounded-narrative-v1` period/job/
+  reservation identity. Duplicate processing, provider changes or source deletion
+  cannot buy new inference. Saved finalized reports are reused; report, evidence and
+  fenced job completion remain atomic. Existing Weekly/Event contracts, private
+  readers, memory extraction, consent/deletion behavior and BGE 384d are preserved.
+
+Local validation: **20/20 initial Monthly tests passed** within the complete impact set.
+The combined regression reported **155/157 passed**, with two import/setup failures
+because this new checkout initially lacked its generated Prisma client. After
+credential-free client generation using the synthetic test setting (no DB connection),
+the affected consent suite passed **10/10** and private-report reader passed **1/1**,
+including both previously blocked cases. All 157 distinct impact cases therefore
+have passing evidence across those runs; rerun counts overlap and are not additive.
+Coverage includes approved Sonnet behavior, existing report worker/source fences,
+consent lifecycle, deterministic foundation, both local/production 384d vector
+profiles, owner/Journal/deletion boundaries, idempotency and CI contracts. Monthly
+fixtures also cover English/Simplified/Traditional grounding and grapheme limits,
+recent-heavy ranking, six-week/timezone coverage, incomplete/sparse evidence,
+malformed/refused output, budgets, late preparation/noncooperative fetches, current
+and prior-source deletion, revocation/locale changes, safe failure, immutable reports
+and atomic evidence/job rollback. Initial fixture-only failures (legacy evidence
+uniqueness and an audit-event assertion name) were corrected before the passing run.
+Following canonical-extraction review, two additional tests cover topic-free Events
+in all three locales, preserved negation/numbers and rejected truncated/altered
+sentences. The final affected run passed **28/28** (22 Monthly cases plus 6 CI
+contract tests), zero failures/skips/cancellations. Exact-head GitHub CI is recorded
+on the Draft PR. The 22-case Monthly suite is a separate bounded invocation in
+credential-stripping security CI. Fixtures use injected fetch,
+synthetic data and disposable in-memory PGlite only. No live PostgreSQL connection,
+migration or provider call. Independent PostgreSQL connection lock scheduling is
+not certified by these single-engine transaction tests.
+
+Activation gates remain: exact Opus/Gateway availability/compatibility and capacity,
+live writing-quality/coverage/latency acceptance, privacy/processor/retention and
+consent disclosure review, approved budgets and explicit release/model-cutover
+approval. No deployment, real/paid AI inference, Cloudflare resources/credentials,
+production DB/infrastructure changes, PR #37 changes or existing worktree edits.
+Phase 5 is not implemented. Manual checklist unchanged: no genuine manual/provider
+action or provider status changed. Earlier evidence below is retained verbatim.
+
 ## Phase 3 Sonnet Weekly integration — 2026-10-13
 
 **Source implementation only, disabled by default; no live provider acceptance.**

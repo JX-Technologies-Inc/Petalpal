@@ -14,6 +14,8 @@ export const httpTests = 'production HTTPS security headers|HSTS requires|CSP su
 
 // Focused existing fixtures only; no real database/provider/load acceptance.
 export const additionalSecurityTests = [
+  // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
+  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 22 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
   { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 15 },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
