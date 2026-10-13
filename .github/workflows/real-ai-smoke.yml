@@ -1,0 +1,76 @@
+name: REAL AI smoke (manual approval, disposable database)
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Full reviewed commit SHA selected for this dispatch
+        required: true
+      authorization:
+        description: Type APPROVE-16-REAL-AI-CALLS after reviewing provider and cost
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: petalpal-real-ai-smoke
+  cancel-in-progress: false
+jobs:
+  smoke:
+    if: github.run_attempt == 1 && inputs.source_sha == github.sha && inputs.authorization == 'APPROVE-16-REAL-AI-CALLS'
+    environment: petalpal-real-ai-smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-disposable
+          POSTGRES_DB: petalpal_ai_e2e_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+      DEV_DATABASE_URL: postgresql://ci:ci-disposable@127.0.0.1:5432/petalpal_ai_e2e_test
+      FIREBASE_PROJECT_ID: demo-petalpal-real-ai
+      AI_ASYNC_EXECUTION_MODE: manual
+      PETALPAL_SIMULATED_TIME: '1'
+      PETALPAL_SIMULATED_TIME_EMAILS: fx-owner-a@example.test,fx-owner-b@example.test
+      AI_REQUEST_TIMEOUT_MS: '60000'
+      AI_GLOBAL_DAILY_CALL_LIMIT: '16'
+      AI_PROVIDER_DAILY_CALL_LIMIT: '16'
+      AI_USER_DAILY_CALL_LIMIT: '16'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.21.0'
+      - name: Dependencies (no provider credentials available)
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm exec --no -- prisma generate
+          npm install --prefix "$RUNNER_TEMP/firebase-cli" --ignore-scripts --no-audit --no-fund firebase-tools@15.33.0
+      - name: Verify fresh disposable database before migration
+        run: node scripts/verify-ai-e2e-database.mjs pre-migrate
+      - name: Migrate disposable database only
+        run: npm exec --no -- prisma migrate deploy
+      - name: Verify migrated disposable database
+        run: node scripts/verify-ai-e2e-database.mjs post-migrate
+      - name: Approved real inference with local Auth Emulator
+        env:
+          PETALPAL_REAL_AI_APPROVED: '1'
+          CLOUDFLARE_WORKER_AI_URL: ${{ vars.REAL_AI_WORKER_URL }}
+          CLOUDFLARE_WORKER_AI_TOKEN: ${{ secrets.REAL_AI_WORKER_TOKEN }}
+        run: |
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" emulators:exec --only auth --project demo-petalpal-real-ai --config test/real-ai/firebase.json 'node scripts/real-ai-smoke.mjs'
+      - name: Synthetic evidence only (no emulator or provider logs)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: real-ai-smoke-evidence
+          path: real-ai-smoke-evidence.json
+          if-no-files-found: ignore
+          retention-days: 3
