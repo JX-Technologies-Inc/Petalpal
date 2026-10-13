@@ -1,5 +1,91 @@
 # PetalPal Security
 
+## Phase 3 Sonnet Weekly integration — 2026-10-13
+
+**Source implementation only, disabled by default; no live provider acceptance.**
+Weekly Sonnet requires explicit `anthropic` / `claude-sonnet-5-5` selection and the
+existing Gateway enablement, fixed address/auth validation and explicit USD budgets.
+Default Weekly processing and all Monthly processing keep the previous provider.
+No new endpoint, dependency, schema/migration, credentials or provider resources.
+
+- `weekly-reflection-v1` is a closed output schema, with locale, two source-quoted
+  moments and an optional recurring-topic insight. The model chooses exact supplied
+  whole sentence candidates; validation rejects changed/partial quotes, invented
+  numbers, missing/unknown citations, duplicate Events, extra prose fields,
+  unsupported locale/version and invented topic/conclusion categories. Overview and
+  insight citations are mapped to original owned Event/Memory evidence at storage.
+  Prose and Event counts are rendered from verified selections and deterministic
+  facts, rather than treating citation existence or token overlap as entailment.
+- English, Simplified Chinese and Traditional Chinese use localized controlled
+  wording; Chinese main reflections enforce 100–180 Unicode characters including
+  punctuation/quotes. Exact source quotations preserve negation, dates and numeric
+  language, with no arbitrary translation. Recurrence requires at least two distinct
+  supporting Events in the current period; it does not assert emotional improvement,
+  hidden causes or personal growth. Tone/coverage still need product acceptance.
+  Long unbroken or otherwise unquotable evidence may cause truthful abstention.
+- English semantic RAG remains BGE 384d/pgvector with its English-only eligibility
+  policy. Chinese Weekly context is bounded period retrieval of owned eligible
+  EventMemory, with existing count/context/duplicate selection limits. No Chinese
+  embedding inference, model/profile switch or multilingual semantic quality claim.
+  The Chinese source policy is explicit/versioned and applies only to localized
+  Weekly input. Journal, cross-owner, revised/deleted or ineligible sources cannot
+  pass the pre-dispatch/final source fences. Saved locale changes also invalidate
+  in-flight localized reports; the legacy English and Monthly fences are retained.
+- Gateway trusted input preparation reserves shared Weekly calls and worst-case
+  input/output USD liability before retrieval, then enforces final serialized byte
+  bounds. This avoids double-reservation and paid query work before budget admission.
+  `AI_RETRIEVAL_RESERVED` in the existing non-cascading ledger also reserves the
+  potential Cloudflare query against its provider daily quota, across new/legacy
+  routes. It is provider-only accounting: owner/global totals stay at two calls.
+  Both provider limits and USD admission share the same transaction/advisory lock;
+  denial rolls back every reservation. Chinese jobs conservatively reserve the
+  same query allowance without invoking embeddings. No new schema/table is needed.
+  Preparation errors are sanitized; cancellation/deadline checks prevent late
+  preparation from dispatching Sonnet. The hardened native-response deadline guards
+  remain. The upstream request timeout accounts for time already spent preparing.
+  Already-started work/remote charges cannot be undone or disproved by abort.
+- Provider input contains short evidence aliases and allowed sentence/topic/count
+  fields only. Owner, Event, Memory and job IDs, source snapshots, private reasoning,
+  raw errors/responses and unrelated environment values are not logged/exported.
+  New service credentials/configuration use private fields and named-key snapshots.
+  Existing no-log/no-cache, fixed Gateway egress and single-attempt controls remain.
+- Durable `grounded-narrative-v1` job/reservation identity remains stable across
+  providers; content version/locale/model live in existing sections JSON. Claim,
+  lease, consent epoch and exact source snapshots are checked before dispatch and
+  again at atomic report/evidence/job completion. Finalized saved reports remain
+  immutable across provider changes. Neither invalid output nor transport ambiguity
+  opens a paid retry, repair call or cross-provider fallback. Ledger liability is
+  retained even for preparation/insufficient-evidence outcomes. Gateway USD totals
+  still exclude Workers AI dollar charges and other billing-account consumers.
+
+New mocked/PGlite tests cover localized schemas/grounding/length, unsupported facts,
+insufficient and unquotable evidence, admission before retrieval, owner/Journal
+boundaries, malformed output/timeouts/late preparation, consent/source/locale races,
+duplicate execution, immutable saved reports, safe errors and atomic rollback/lease
+expiry. The suite joins the credential-stripping security CI runner as a separate
+bounded invocation. Existing historical security/production evidence below remains.
+
+Local validation: the broad impact-based regression passed **200/200**, including
+15 new Weekly tests and two new Gateway preparation cases. After final provider
+quota hardening, the **73/73** affected Weekly/Gateway/Cost Gate tests passed again,
+with zero failed/skipped/cancelled. Coverage includes both native adapters, retained
+Haiku behavior, existing report workers/fences, deterministic foundation, consent
+lifecycle, BGE/pgvector ownership/deletion and CI contracts. Changed-file syntax,
+local Prisma code generation (no connection/migration) and diff checks passed.
+The final worker/lifecycle/private-report-reader/CI-contract check passed **41/41**.
+All inference was mocked, with synthetic data and disposable in-memory PGlite.
+Independent PostgreSQL lock interleavings and live quality/latency remain unverified;
+exact-commit GitHub CI evidence is recorded on the Phase 3 Draft PR separately.
+
+Activation blockers: exact Sonnet/Gateway compatibility and entitlement, live
+selection/tone/coverage/latency acceptance, approved privacy/processor/retention and
+consent disclosures, budgets/capacity, and explicit release/cutover approval.
+No deployment, real/paid AI inference, frozen evaluation, Cloudflare provisioning,
+credential changes, production database/infrastructure modifications, existing
+worktree changes or PR #37 actions. Phase 4 is not implemented or authorized by
+this checkpoint. `MANUAL_SECURITY_CHECKLIST.md` is unchanged because no genuine
+manual/provider action or provider status changed.
+
 ## Phase 2 Haiku Event integration — 2026-10-13
 
 **Source implementation only, disabled by default; no production/provider action.**

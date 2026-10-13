@@ -8,10 +8,10 @@
 
 **Scope:** Documentation only. No inference, benchmarking, credential changes, deployment, database operations, or PR #37 merge.
 
-> Phase 1 was merged in PR #43. Phase 2 source integration is tracked in
-> [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-2-haiku-event-secondary-emotions--2026-10-13).
-> Haiku Event routing is disabled by default; production emotion processing remains
-> unchanged. Live provider acceptance, activation and phases 3–6 remain pending.
+> Phases 1–2 were merged in PRs #43–44. Phase 3 source integration is tracked in
+> [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-3-sonnet-weekly-reflections--2026-10-13).
+> Haiku and Sonnet routing are disabled by default; production model selections
+> remain unchanged. Live provider acceptance, activation and phases 4–6 remain pending.
 
 ## 1. Executive Summary
 
@@ -303,7 +303,7 @@ This documentation introduces no verified security fix or provider status change
 
 ## 12. Implementation Roadmap
 
-Phase 1 source is merged in PR #43, and Phase 2 Event integration is implemented with Haiku disabled by default, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-2-haiku-event-secondary-emotions--2026-10-13). Activation remains pending; phases 3–6 below remain **PLANNED**. Existing environment names identify integration points; no runtime values or deployment configuration were changed.
+Phases 1–2 are merged in PRs #43–44; Phase 3 Weekly integration is implemented with Sonnet disabled by default, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-3-sonnet-weekly-reflections--2026-10-13). Activation remains pending; phases 4–6 below remain **PLANNED**. Existing environment names identify integration points; no runtime values or deployment configuration were changed.
 
 ### Phase 1 — Gateway abstraction and configuration design
 
@@ -324,6 +324,7 @@ Phase 1 source is merged in PR #43, and Phase 2 Event integration is implemented
 
 ### Phase 3 — Sonnet Weekly narrative integration
 
+- **Source status:** Implemented, disabled by default; `weekly-reflection-v1` uses verified source sentences and localized deterministic prose. Chinese period EventMemory selection preserves the English-only BGE vector policy. Mocked acceptance only, without live tone/accuracy/latency or cutover claims.
 - **Modules:** `lib/report-narrative.js`, `lib/report-foundation.js`, `lib/ai-worker.js`, `lib/report-write-fence.js`, `lib/ai-periods.js`, `lib/trend-analyzer.js`, and report readers only where contract compatibility requires it.
 - **Proposed names:** `AI_WEEKLY_REPORT_PROVIDER`, `AI_WEEKLY_REPORT_MODEL`, `AI_WEEKLY_REPORT_TIMEOUT_MS`, `AI_WEEKLY_REPORT_MAX_OUTPUT_TOKENS`, `AI_REPORT_SUPPORTED_LOCALES`; reuse `AI_WEEKLY_REPORT_DAILY_LIMIT`.
 - **Compatibility/security:** Version the new schema, supported locale and grounding policy; keep the existing Weekly trigger, period uniqueness, selected evidence, consent/source fence, and atomic writes. Validate overview and insight citations. Chinese release is blocked until localized factual validation is accepted; multilingual retrieval remains separate.
