@@ -21,6 +21,7 @@ import { loadMoodModel } from "./moodClassifier.js";
 import { classifyEmotion } from "./lib/emotion-classifier.js";
 import { generateFlowerMetadata } from "./lib/flower-engine.js";
 import { classifyEventSecondaryEmotions, eventSecondaryEmotionEnabled, EVENT_SECONDARY_MODEL_ID, EVENT_SECONDARY_MODEL_VERSION } from "./lib/event-emotion.js";
+import { classifyHaikuEventSecondaryEmotions, eventEmotionProvider, withHaikuEventWriteFence } from "./lib/haiku-event-emotion.js";
 import { canonicalEventLabels, previewEventFlower } from "./lib/event-flower.js";
 import {
   CANONICAL_PRIMARY_GARDEN_MOODS,
@@ -1803,8 +1804,8 @@ app.put("/users/:userId/ai-consent",
 function withEmotionLabDiagnostics(result, includeDiagnostics, details = result.diagnostics) {
   if (!includeDiagnostics) return result;
   return { ...result, diagnostics: {
-    provider: "Cloudflare Workers AI",
-    model: EVENT_SECONDARY_MODEL_ID.replace(/^@/, ""),
+    provider: result.provider || "Cloudflare Workers AI",
+    model: result.modelId || EVENT_SECONDARY_MODEL_ID.replace(/^@/, ""),
     attempted: details?.attempted ?? result.status !== "SKIPPED",
     status: details?.status || (result.status === "FAILED"
       ? (result.fallbackReason === "INVALID_MODEL_OUTPUT" ? "INVALID_RESPONSE" : "PROVIDER_ERROR")
@@ -1817,7 +1818,12 @@ function withEmotionLabDiagnostics(result, includeDiagnostics, details = result.
   } };
 }
 
-async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, aiProcessingAllowed, includeDiagnostics = false }) {
+async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, aiProcessingAllowed, createdConsentUpdatedAt, includeDiagnostics = false }) {
+  if (eventEmotionProvider() !== "workers-ai") {
+    const result = await classifyHaikuEventSecondaryEmotions({ prisma, identity: { userId }, eventId,
+      text, primaryGardenMood, aiProcessingAllowed, createdConsentUpdatedAt });
+    return withEmotionLabDiagnostics(result, includeDiagnostics);
+  }
   if (aiProcessingAllowed !== true) return withEmotionLabDiagnostics(
     { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "CONSENT_DISABLED" }, includeDiagnostics,
     { attempted: false, status: "SKIPPED", fallbackReason: "AI_CONSENT_DISABLED" });
@@ -1851,35 +1857,36 @@ function eventEmotionMetadata(emotion) {
     emotionStatus: emotion.status,
     emotionOutcome: success ? (emotion.labels.length ? `INFERRED_${emotion.labels.length}` : "ABSTAINED") : emotion.status,
     emotionProvenance: attempted ? "INFERRED_UNCONFIRMED" : null,
-    emotionModelId: attempted ? EVENT_SECONDARY_MODEL_ID : null,
-    emotionModelVersion: attempted ? EVENT_SECONDARY_MODEL_VERSION : null,
-    emotionModelStatus: attempted ? "production" : null,
+    emotionModelId: attempted ? (emotion.modelId || EVENT_SECONDARY_MODEL_ID) : null,
+    emotionModelVersion: attempted ? (emotion.modelVersion || EVENT_SECONDARY_MODEL_VERSION) : null,
+    emotionModelStatus: attempted ? (emotion.modelId ? "gateway" : "production") : null,
     emotionProbabilities: null
   };
 }
 
-async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed) {
+async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed, createdConsentUpdatedAt) {
+  const haikuSelected = eventEmotionProvider() !== "workers-ai";
   const emotion = await eventEmotionResult({
-    userId: event.ownerId, eventId: event.id, text: event.content, primaryGardenMood, aiProcessingAllowed
+    userId: event.ownerId, eventId: event.id, text: event.content, primaryGardenMood, aiProcessingAllowed, createdConsentUpdatedAt
   });
-  let flower = null;
-  const metadata = eventEmotionMetadata(emotion);
-  try {
-    await prisma.event.update({
+  const persist = async (database, safeEmotion) => {
+    let flower = null;
+    const metadata = eventEmotionMetadata(safeEmotion);
+    await database.event.update({
       where: { id: event.id, ownerId: event.ownerId },
-      data: { primaryGardenMood, secondaryEmotions: emotion.labels, ...metadata }
+      data: { primaryGardenMood, secondaryEmotions: safeEmotion.labels, ...metadata }
     });
     if (primaryGardenMood) {
-      const garden = await ensureGarden(event.ownerId);
-      const recentFlowers = await prisma.flower.findMany({
+      const garden = await ensureGarden(event.ownerId, database);
+      const recentFlowers = await database.flower.findMany({
         where: { userId: event.ownerId }, orderBy: { createdAt: "desc" }, take: 5,
         select: { name: true, left: true, top: true }
       });
       const chosen = previewEventFlower({
         userId: event.ownerId, localDate: event.localDate, primaryGardenMood,
-        labels: emotion.labels, recentFlowers
+        labels: safeEmotion.labels, recentFlowers
       });
-      flower = await prisma.flower.upsert({
+      flower = await database.flower.upsert({
         where: { sourceEventId: event.id },
         update: {},
         create: {
@@ -1892,15 +1899,24 @@ async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed)
         }
       });
     }
+    return { emotion: safeEmotion, flower };
+  };
+  try {
+    return !haikuSelected ? await persist(prisma, emotion)
+      : await withHaikuEventWriteFence(prisma, { event, emotion }, persist);
   } catch {
     console.info("Event enrichment persistence failed", { eventId: event.id, status: "FAILED" });
     try {
-      await prisma.event.update({ where: { id: event.id, ownerId: event.ownerId },
-        data: { emotionStatus: "FAILED", emotionOutcome: "FAILED", secondaryEmotions: [], emotionProbabilities: null } });
+      const data = { emotionStatus: "FAILED", emotionOutcome: "FAILED", secondaryEmotions: [], emotionProbabilities: null };
+      if (!haikuSelected) {
+        await prisma.event.update({ where: { id: event.id, ownerId: event.ownerId }, data });
+      } else {
+        await prisma.event.updateMany({ where: { id: event.id, ownerId: event.ownerId,
+          content: event.content, primaryGardenMood, emotionStatus: "PENDING" }, data });
+      }
     } catch { /* A later retry or repair must resolve an Event still marked PENDING. */ }
-    return { emotion: { status: "FAILED", labels: [], latencyMs: emotion.latencyMs, fallbackReason: "PERSISTENCE_FAILED" }, flower: null };
+    return { emotion: { ...emotion, status: "FAILED", labels: [], latencyMs: emotion.latencyMs, fallbackReason: "PERSISTENCE_FAILED" }, flower: null };
   }
-  return { emotion, flower };
 }
 
 app.post("/events", aiRateLimit, async (req, res) => {
@@ -1943,7 +1959,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
     });
     const enrichment = result.created
       ? (primaryGardenMood
-          ? await enrichCreatedEvent(result.event, primaryGardenMood, result.aiProcessingAllowed)
+          ? await enrichCreatedEvent(result.event, primaryGardenMood, result.aiProcessingAllowed, result.aiProcessingConsentUpdatedAt)
           : { emotion: { status: "SKIPPED", labels: [], latencyMs: 0, fallbackReason: "FEATURE_DISABLED" }, flower: null })
       : { emotion: { status: result.event.emotionStatus || "SKIPPED", labels: result.event.secondaryEmotions || [] },
           flower: await prisma.flower.findUnique({ where: { sourceEventId: result.event.id } }).catch(() => null) };
@@ -1997,7 +2013,7 @@ app.post("/dev/emotion-preview", aiRateLimit, async (req, res) => {
     localDate: localDateForInstant(new Date(), normalizeTimezone(user.timezone) || "UTC"),
     primaryGardenMood, labels: emotion.labels, recentFlowers
   });
-  return res.json({ classifierEnabled: aiProcessingAllowed && eventSecondaryEmotionEnabled(), inferenceStatus: emotion.status,
+  return res.json({ classifierEnabled: aiProcessingAllowed && eventEmotionProvider() === "workers-ai" && eventSecondaryEmotionEnabled(), inferenceStatus: emotion.status,
     labels: emotion.labels, flower, diagnostics: emotion.diagnostics,
     latencyMs: emotion.latencyMs, fallbackReason: emotion.fallbackReason || null });
 });
