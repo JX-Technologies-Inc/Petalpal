@@ -1924,6 +1924,10 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (Object.hasOwn(req.body, "occurredAt")) {
       return res.status(400).json({ error: "Event time is assigned by the server" });
     }
+    // No simulated-time capability exists in this build; never silently ignore the header.
+    if (req.get("x-petalpal-simulated-time") !== undefined) {
+      return res.status(403).json({ error: "Simulated time is only available in an isolated test environment" });
+    }
     const primaryGardenMood = req.body.primaryGardenMood ?? null;
     if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) {
       return res.status(400).json({ error: "Unsupported Primary Garden Mood" });

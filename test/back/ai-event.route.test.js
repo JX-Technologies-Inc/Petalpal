@@ -194,14 +194,30 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     dispatchedJobs.push({ id: job.id, ownerId: job.ownerId, jobType: job.jobType });
     return { dispatched: true };
   });
-  for (const occurredAt of ["2026-09-15T06:30:00.000Z", "2001-01-01T00:00:00.000Z", "2099-12-31T00:00:00.000Z", null]) {
+  const nearFuture = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  for (const occurredAt of ["2026-09-15T06:30:00.000Z", "2001-01-01T00:00:00.000Z", nearFuture, "2099-12-31T00:00:00.000Z", null, ""]) {
     const clientTimed = await request(baseUrl, "/events", {
       method: "POST",
       headers: { "Idempotency-Key": "mobile-client-timed-1" },
-      body: { content: "Client-timed Event", occurredAt }
+      body: { content: "Client-timed Event", primaryGardenMood: "SUNNY_BLOOM", occurredAt }
     });
-    assert.equal(clientTimed.status, 400);
+    assert.equal(clientTimed.status, 400, String(occurredAt));
   }
+  // This build has no simulated-time capability: the header is refused, never ignored.
+  for (const headers of [{ "X-PetalPal-Simulated-Time": "2026-10-08" }, { "X-PetalPal-Simulated-Time": "2001-01-01T00:00:00Z" }]) {
+    const forgedClock = await request(baseUrl, "/events", {
+      method: "POST",
+      headers: { "Idempotency-Key": "mobile-forged-clock-1", ...headers },
+      body: { content: "Forged clock Event", primaryGardenMood: "SUNNY_BLOOM" }
+    });
+    assert.equal(forgedClock.status, 403);
+  }
+  const both = await request(baseUrl, "/events", {
+    method: "POST",
+    headers: { "Idempotency-Key": "mobile-forged-clock-2", "X-PetalPal-Simulated-Time": "2026-10-08" },
+    body: { content: "Both", occurredAt: "2026-10-08T19:00:00.000Z" }
+  });
+  assert.equal(both.status, 400);
   assert.equal(state.events.length, 0);
   assert.equal(state.jobs.length, 0);
   assert.equal(dispatchedJobs.length, 0);

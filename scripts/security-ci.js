@@ -31,6 +31,8 @@ export const additionalSecurityTests = [
   { file: 'test/cloudflare-production-deploy.test.mjs', pattern: '.', count: 5 },
   // Runtime tzdata: Vancouver stays UTC-7 after 2026-11-01 (IANA 2026b+).
   { file: 'test/back/vancouver-timezone.test.js', pattern: '.', count: 2 },
+  // Event API: token-derived ownership, server-assigned Event time, private reads.
+  { file: 'test/back/ai-event.route.test.js', pattern: '.', count: 1 },
 ];
 
 export function assertCleanCheckout(exists = existsSync) {
