@@ -1,5 +1,36 @@
 # PetalPal Security
 
+## PR #43 timeout hardening review — 2026-10-13
+
+The original Phase 1 `Promise.race` rejected on timeout but left its losing
+continuation running. A fetch implementation ignoring `AbortSignal` could return
+late and start response validation or application callbacks after rejection.
+The transport now checks cancellation and a monotonic deadline after fetch, each
+body read, usage recording, grounding validation and final consent/authorization
+checks. It also checks before parsing/validation stages. Late response bodies are
+cancelled without reading or validating output. Expired continuations cannot
+start subsequent application callbacks or return a successful result.
+
+Timeouts remain ambiguous and non-retryable; durable reservations are never
+refunded or reopened. Usage recording or a trusted callback already started
+before timeout cannot be forcibly undone, but its completion cannot advance to
+the next stage. Remote cancellation and absence of provider charges are still
+not guaranteed. Existing consent, owner/lease, privacy and default-off controls
+are unchanged; no production routing or provider configuration changed.
+
+Two mocked late-fetch regressions (Anthropic and OpenAI) failed against the
+original code and passed with the fix. Three additional regressions hold usage,
+grounding or consent work past timeout and verify no subsequent callback, while
+retaining accounting and replay protection. All fixtures are synthetic, with
+mocked fetch and disposable in-memory PGlite; no real inference or production DB.
+Local validation: **42/42 Gateway tests and 14/14 Cost Gate tests PASS**, zero
+failures/skips/cancellations in those completed suites. The first Cost Gate
+invocation could not load without its synthetic `DEV_DATABASE_URL`; the isolated
+rerun supplied the repository CI placeholder and passed. Changed-file syntax,
+diff checks and the AST-only graph update also passed. Remote CI results belong
+to the final published commit and are recorded on PR #43 separately.
+Historical implementation and security evidence below remains unchanged.
+
 ## Phase 1 AI Gateway abstraction — 2026-10-13
 
 **Local implementation, disabled by default; no production acceptance claimed.**

@@ -188,6 +188,71 @@ test("body timeout is bounded after headers; oversized body is rejected", async 
   }
 });
 
+for (const model of ["claude-haiku-5-5", "gpt-6-sol"]) {
+  test(`late ${model} fetch ignoring abort cannot read output or invoke application callbacks`, async t => {
+    let releaseFetch, validations = 0;
+    const phases = [];
+    const f = await fixture(t, {
+      fetchImpl: () => new Promise(resolve => { releaseFetch = resolve; }),
+      authorize: async ({ phase }) => { phases.push(phase); return true; }
+    });
+    const req = await f.request(model);
+    await assert.rejects(f.make().generate({ ...req, timeoutMs: 15,
+      validateOutput: () => { validations++; return true; }
+    }), { code: "AI_GATEWAY_TIMEOUT", outcome: "AMBIGUOUS", retryable: false });
+    assert.equal(f.calls[0].options.signal.aborted, true);
+    const response = Response.json(native(model));
+    const reads = t.mock.method(response.body, "getReader");
+    const cancellations = t.mock.method(response.body, "cancel");
+    releaseFetch(response);
+    // Drain the detached continuation after the public request has already rejected.
+    await new Promise(setImmediate); await new Promise(setImmediate);
+    assert.equal(reads.mock.callCount(), 0);
+    assert.equal(cancellations.mock.callCount(), 1);
+    assert.equal(validations, 0);
+    assert.deepEqual(phases, ["before", "dispatch"]);
+    assert.equal((await f.rows()).length, 2, "liability retained, no late usage/output processing");
+    await assert.rejects(f.make().generate(req), { code: "AI_INFERENCE_ALREADY_RESERVED" });
+    assert.equal(f.calls.length, 1);
+  });
+}
+
+for (const stage of ["usage", "grounding", "consent"]) {
+  test(`timeout during ${stage} prevents subsequent application processing`, { timeout: 5000 }, async t => {
+    let release, enter, validations = 0, consentChecks = 0;
+    const pending = new Promise(resolve => { release = resolve; });
+    const entered = new Promise(resolve => { enter = resolve; });
+    const pause = async () => { enter(); await pending; };
+    const phases = [];
+    const f = await fixture(t, { authorize: async ({ phase }) => { phases.push(phase); return true; } });
+    const originalUsage = PrismaAiCostGate.prototype.recordGatewayUsage;
+    t.mock.method(PrismaAiCostGate.prototype, "recordGatewayUsage", async function (...args) {
+      await originalUsage.apply(this, args);
+      if (stage === "usage") await pause();
+    });
+    const originalConsent = PrismaAiCostGate.prototype.checkGatewayConsent;
+    t.mock.method(PrismaAiCostGate.prototype, "checkGatewayConsent", async function (...args) {
+      consentChecks++;
+      await originalConsent.apply(this, args);
+      if (stage === "consent" && consentChecks === 2) await pause();
+    });
+    const req = await f.request();
+    const rejected = assert.rejects(f.make().generate({ ...req, timeoutMs: 100,
+      validateOutput: async () => { validations++; if (stage === "grounding") await pause(); return true; }
+    }), { code: "AI_GATEWAY_TIMEOUT", outcome: "AMBIGUOUS", retryable: false });
+    await entered;
+    await rejected;
+    release();
+    await new Promise(setImmediate); await new Promise(setImmediate);
+    assert.equal(validations, stage === "usage" ? 0 : 1);
+    assert.equal(consentChecks, stage === "consent" ? 2 : 1);
+    assert.deepEqual(phases, ["before", "dispatch"]);
+    assert.equal((await f.rows()).length, 3, "already recorded usage and liability remain");
+    await assert.rejects(f.make().generate(req), { code: "AI_INFERENCE_ALREADY_RESERVED" });
+    assert.equal(f.calls.length, 1);
+  });
+}
+
 test("schema, malformed JSON, refusal, truncation and model mismatch reject without repair", async t => {
   for (const raw of [
     native("claude-haiku-5-5", { data: { summary: 3 } }), native("claude-haiku-5-5", { data: { summary: "x".repeat(81) } }),
