@@ -1,5 +1,37 @@
 # PetalPal Long-Term AI
 
+## 2026-10-13 — isolated real-AI smoke evidence and diagnostic follow-up
+
+- Run `38463741047`, source `d26d7e49eef8f294b625458e6e8b934af1083bd2`,
+  stopped at `weekly-2026-10-05`. Its saved synthetic artifact records 5 emotion,
+  7 BGE and 1 narrative request attempts; 5 Events, 5 EventMemories and 5 generated
+  real 384-dimensional BGE vectors. Semantic ranking/owner checks passed, and
+  Weekly retrieval selected the two expected owner-scoped Events in the closed
+  period. The original artifact remains unchanged.
+- No completed report evidence was recorded. The old catch discarded failure
+  details, so the exact failing condition, successful narrative inference,
+  report persistence and factual quality cannot be established retrospectively.
+  Monthly generation and the later insufficient-evidence case were not reached.
+- Test-runner-only diagnostics now retain a fixed-allowlist assertion identifier,
+  Weekly HTTP/execution/error codes, report presence and status enums, and boolean
+  count/boundary/ownership/coverage/narrative acceptance checks. Generic upstream
+  provider failure becomes `PROVIDER_ERROR_UNCLASSIFIED`; unknown values are not
+  copied. Existing attempt counters remain authoritative for attempted HTTP
+  inference requests, not confirmed model completions or billing. Narrative
+  acceptance is not a claim of factual quality. Evidence is saved before teardown.
+- Local validation: 5/5 diagnostic tests passed, including five distinct report
+  assertion scenarios, generic provider failure, hostile diagnostic values,
+  failed diagnostic reads, and real-runner artifact persistence on a guarded
+  local failure. Syntax/whitespace checks passed. No inference, workflow rerun,
+  production change, credential access or security-boundary change occurred.
+- A future targeted Weekly/report diagnosis can avoid repeating emotion and BGE
+  calls by using saved synthetic Event/memory data and fixture-based retrieval,
+  retaining isolated storage, consent/authentication gates and bounded provider
+  access. This would test the report path, not full real retrieval or full E2E.
+  The artifact stores vector metadata, not reusable vectors; genuine pgvector
+  replay cannot be claimed from that artifact alone. No targeted mode was added.
+  Publishing changes and any new paid run require separate approval.
+
 > Canonical engineering record for long-term memory, retrieval, reports, and
 > AI application architecture. This is a living record: update it with every
 > AI architecture decision, schema change, implementation completion, reversal,

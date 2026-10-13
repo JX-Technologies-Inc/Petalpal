@@ -3,6 +3,70 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { randomBytes } from 'node:crypto';
+import { pathToFileURL } from 'node:url';
+// Diagnostics expose fixed codes/enums and booleans only; never exception text.
+const ASSERTION_IDS = new Set([
+  'AUTH_NOT_ISOLATED', 'CALL_COUNTS_FAILED', 'CALL_LIMIT_OR_RETRY_BLOCKED',
+  'CONSENT_FAILED', 'CROSS_OWNER_EVENT_LEAK', 'CROSS_OWNER_REPORT_LEAK',
+  'DB_NOT_EMPTY_AND_ISOLATED', 'DB_TARGET_REJECTED', 'EMULATOR_SIGN_IN_FAILED',
+  'EVENT_DATE_OR_OWNER_FAILED', 'EVENT_OR_REAL_EMOTION_FAILED', 'EXPECTED_FIVE_JOBS',
+  'FALLBACK_NARRATIVE_PRESENT', 'IMPORTANT_EVIDENCE_MISSING', 'JOURNAL_EXCLUSION_FAILED',
+  'JOURNAL_PIPELINE_LEAK', 'MEMORY_COUNT_FAILED', 'MEMORY_OR_EMBEDDING_JOB_FAILED',
+  'MISSING_AUTH_ACCEPTED', 'MISSING_CONSENT_ACCEPTED', 'MISSING_TEST_PROVIDER_AUTH',
+  'MONTHLY_FAILED', 'NARRATIVE_OR_FALLBACK_FAILED', 'NETWORK_TARGET_DENIED',
+  'PROVIDER_INPUT_REJECTED', 'PROVIDER_ROUTE_DENIED', 'REAL_SEMANTIC_RANKING_OR_OWNER_FAILED',
+  'REAL_VECTOR_PROVENANCE_FAILED', 'REPORT_BOUNDARY_FAILED', 'REPORT_COUNTS_FAILED',
+  'REPORT_EVIDENCE_LEAK', 'RETRIEVAL_SOURCE_LEAK', 'RUN_NOT_APPROVED',
+  'SIMULATED_TIME_GATE_DENIED', 'TEST_WORKER_BOUNDS_MISMATCH', 'TEST_WORKER_PREFLIGHT_FAILED',
+  'UNEXPECTED_HOSTED_CONFIGURATION', 'WEEKLY_FAILED',
+]);
+const safeEnum = (value, allowed) => allowed.includes(value) ? value : 'UNKNOWN';
+export function createSmokeDiagnostics() {
+  const data = { failedAssertion: null, weekly: [] };
+  return { data, check(value, label) {
+    if (value) return;
+    data.failedAssertion ??= ASSERTION_IDS.has(label) ? label : 'UNCLASSIFIED_FAILURE';
+    throw new Error('SMOKE_ASSERTION_FAILED');
+  } };
+}
+export function recordWeeklyApi(diagnostic, response) {
+  diagnostic.httpStatus = Number.isInteger(response.status) && response.status >= 100 && response.status <= 599 ? response.status : null;
+  diagnostic.execution = safeEnum(response.body?.execution, ['COMPLETED', 'FAILED', 'ALREADY_RUNNING_OR_FINALIZED', 'ALREADY_FINALIZED', 'QUEUED', 'PENDING_DISPATCH']);
+  const code = response.body?.errorCode;
+  diagnostic.errorCode = code == null ? null : safeEnum(code, [
+    'REPORT_NARRATIVE_TIMEOUT', 'REPORT_NARRATIVE_INVALID_OUTPUT', 'REPORT_NARRATIVE_GROUNDING_FAILED',
+    'REPORT_NARRATIVE_PROVIDER_NOT_CONFIGURED', 'AI_QUOTA_EXCEEDED', 'AI_INFERENCE_ALREADY_RESERVED',
+    'AI_BUDGET_UNAVAILABLE', 'AI_FORBIDDEN', 'WEEKLY_REPORT_JOB_FAILED'
+  ]);
+  if (code === 'REPORT_NARRATIVE_PROVIDER_FAILED') diagnostic.errorCode = 'PROVIDER_ERROR_UNCLASSIFIED';
+}
+export function weeklyReportSnapshot(report, edges, { spec, period, ownerId, allowed, memories, narrativeAttempts }) {
+  const iso = value => value instanceof Date && Number.isFinite(value.getTime()) ? value.toISOString() : null;
+  return {
+    reportReadStatus: 'READ', persisted: report !== null,
+    reportStatus: report ? safeEnum(report.status, ['COMPLETE', 'PARTIAL']) : null,
+    narrativeStatus: report ? safeEnum(report.narrativeStatus, ['NOT_GENERATED', 'GENERATED', 'INSUFFICIENT_EVIDENCE']) : null,
+    eventCountsMatch: report ? report.eventCount === spec.count && report.trendSignals?.previousEventCount === spec.previous &&
+      report.trendSignals?.eventCountChange === spec.count - spec.previous : null,
+    periodBoundariesMatch: report ? iso(report.periodStartUtc) === period.startUtc && iso(report.periodEndUtc) === period.endUtc : null,
+    evidenceOwnershipValid: report ? edges.every(e => e.ownerId === ownerId && allowed.includes(e.sourceEventId) &&
+      memories.some(m => m.id === e.sourceMemoryId && m.sourceEventId === e.sourceEventId && m.ownerId === e.ownerId)) : null,
+    evidenceCoverageValid: report ? new Set(edges.map(e => e.sourceEventId)).size === allowed.length : null,
+    // Mirrors the runner's acceptance check; does not certify prose truth/quality.
+    narrativeValid: report ? report.narrativeStatus === (spec.generated ? 'GENERATED' : 'INSUFFICIENT_EVIDENCE') &&
+      narrativeAttempts === Number(spec.generated) : null
+  };
+}
+export async function withWeeklyDiagnostics(diagnostic, action, inspect) {
+  try { return await action(); }
+  finally {
+    try { Object.assign(diagnostic, await inspect()); }
+    catch { diagnostic.reportReadStatus = 'UNAVAILABLE'; }
+  }
+}
+
+export async function runSmoke() {
+
 const manifest = JSON.parse(fs.readFileSync(new URL('../test/fixtures/ai-e2e-manifest.json', import.meta.url), 'utf8'));
 const fixtureRefs = ['a04', 'a05', 'a06', 'a08', 'b01'];
 const fixtures = fixtureRefs.map(ref => manifest.events.find(event => event.ref === ref));
@@ -21,8 +85,8 @@ const print = console.log.bind(console);
 for (const key of ['log', 'info', 'warn', 'error', 'debug']) console[key] = () => {};
 let prisma, server;
 const nativeFetch = globalThis.fetch;
-const fail = label => { throw new Error(label); };
-const check = (value, label) => { if (!value) fail(label); };
+const { data: diagnostics, check } = createSmokeDiagnostics();
+evidence.diagnostics = diagnostics;
 let appOrigin;
 try {
   check(process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_RUN_ATTEMPT === '1' &&
@@ -97,11 +161,12 @@ try {
     await prisma.user.create({ data: { id: owner.id, name: owner.id, email: owner.email, firebaseUid: owner.firebaseUid,
       timezone: manifest.timezone, preferredLocale: 'en' } });
   }
-  const api = async (path, { owner = 'A', method = 'GET', body, headers = {}, authenticated = true } = {}) => {
+  const api = async (path, { owner = 'A', method = 'GET', body, headers = {}, authenticated = true, diagnostic } = {}) => {
     const r = await fetch(appOrigin + path, { method, headers: {
       ...(authenticated ? { Authorization: `Bearer ${tokens[owner]}` } : {}),
       ...(body ? { 'Content-Type': 'application/json' } : {}), ...headers },
       ...(body ? { body: JSON.stringify(body) } : {}) });
+    if (diagnostic) recordWeeklyApi(diagnostic, { status: r.status });
     return { status: r.status, body: await r.json() };
   };
   evidence.stage = 'authentication-and-consent';
@@ -173,24 +238,30 @@ try {
   ]) {
     evidence.stage = `${spec.type}-${spec.periodKey}`;
     const before = evidence.calls.narrative;
+    const period = manifest.periods[`${spec.type === 'weekly' ? 'W' : 'M'}-${spec.periodKey}`];
+    const allowed = spec.refs.map(ref => events.get(ref));
+    const diagnostic = { httpStatus: null, execution: null, errorCode: null,
+      reportReadStatus: 'NOT_READ', persisted: null };
+    let reportSnapshot, edgeSnapshot;
+    if (spec.type === 'weekly') diagnostics.weekly.push(diagnostic);
+    const reportAttempt = async () => {
     if (spec.type === 'weekly') {
       const r = await api('/ai/reports/weekly/trigger', { method: 'POST',
-        headers: { 'X-PetalPal-Simulated-Time': spec.clock }, body: { localDate: spec.periodKey } });
+        headers: { 'X-PetalPal-Simulated-Time': spec.clock }, body: { localDate: spec.periodKey }, diagnostic });
+      recordWeeklyApi(diagnostic, r);
       check(r.status === 200 && r.body.execution === 'COMPLETED', 'WEEKLY_FAILED');
     } else {
       const job = await new PrismaAiJobRepository(prisma).enqueue({ identity: { userId: owners.A.id }, jobType: 'MONTHLY_REPORT',
         resourceId: spec.periodKey, processingVersion: REPORT_NARRATIVE_GENERATION_VERSION, maxAttempts: 1 });
       check((await workerFor(new Date(spec.clock)).runJob({ jobId: job.id, ownerId: owners.A.id, jobType: 'MONTHLY_REPORT' })).succeeded, 'MONTHLY_FAILED');
     }
-    const r = await prisma[`${spec.type}Report`].findUnique({ where: { ownerId_periodKey: { ownerId: owners.A.id, periodKey: spec.periodKey } } });
+    const r = reportSnapshot = await prisma[`${spec.type}Report`].findUnique({ where: { ownerId_periodKey: { ownerId: owners.A.id, periodKey: spec.periodKey } } });
     check(r?.status === 'COMPLETE' && r.eventCount === spec.count && r.trendSignals.previousEventCount === spec.previous &&
       r.trendSignals.eventCountChange === spec.count - spec.previous, 'REPORT_COUNTS_FAILED');
-    const period = manifest.periods[`${spec.type === 'weekly' ? 'W' : 'M'}-${spec.periodKey}`];
     check(r.periodStartUtc.toISOString() === period.startUtc && r.periodEndUtc.toISOString() === period.endUtc, 'REPORT_BOUNDARY_FAILED');
     check(r.narrativeStatus === (spec.generated ? 'GENERATED' : 'INSUFFICIENT_EVIDENCE') &&
       evidence.calls.narrative - before === Number(spec.generated), 'NARRATIVE_OR_FALLBACK_FAILED');
-    const edges = await prisma.aiEvidence.findMany({ where: { [`${spec.type}ReportId`]: r.id } });
-    const allowed = spec.refs.map(ref => events.get(ref));
+    const edges = edgeSnapshot = await prisma.aiEvidence.findMany({ where: { [`${spec.type}ReportId`]: r.id } });
     check(edges.every(e => e.ownerId === owners.A.id && allowed.includes(e.sourceEventId) &&
       memories.some(m => m.id === e.sourceMemoryId && m.sourceEventId === e.sourceEventId && m.ownerId === e.ownerId)), 'REPORT_EVIDENCE_LEAK');
     check(new Set(edges.map(e => e.sourceEventId)).size === allowed.length, 'IMPORTANT_EVIDENCE_MISSING');
@@ -198,18 +269,40 @@ try {
     if (!spec.generated) check(r.summary === null, 'FALLBACK_NARRATIVE_PRESENT');
     evidence.reports.push({ type: spec.type, periodKey: spec.periodKey, summary: r.summary, sections: r.narrativeSections,
       trends: r.trendSignals, expectedEventIds: allowed, evidence: edges.map(e => ({ eventId: e.sourceEventId, memoryId: e.sourceMemoryId, claimType: e.claimType })) });
+    };
+    if (spec.type === 'weekly') await withWeeklyDiagnostics(diagnostic, reportAttempt, async () => {
+      const report = reportSnapshot === undefined ? await prisma.weeklyReport.findUnique({
+        where: { ownerId_periodKey: { ownerId: owners.A.id, periodKey: spec.periodKey } },
+        select: { id: true, status: true, narrativeStatus: true, eventCount: true, trendSignals: true,
+          periodStartUtc: true, periodEndUtc: true }
+      }) : reportSnapshot;
+      const edges = edgeSnapshot ?? (report ? await prisma.aiEvidence.findMany({
+        where: { weeklyReportId: report.id }, select: { ownerId: true, sourceEventId: true, sourceMemoryId: true }
+      }) : []);
+      return weeklyReportSnapshot(report, edges, { spec, period, ownerId: owners.A.id, allowed, memories,
+        narrativeAttempts: evidence.calls.narrative - before });
+    });
+    else await reportAttempt();
   }
   check(evidence.calls.emotion === 5 && evidence.calls.embedding === 9 && evidence.calls.narrative === 2, 'CALL_COUNTS_FAILED');
   check(await prisma.event.count() === 5 && await prisma.eventMemory.count() === 5 && await prisma.journal.count() === 1, 'JOURNAL_PIPELINE_LEAK');
   evidence.status = 'AUTOMATED_CHECKS_PASS_QUALITY_REVIEW_REQUIRED';
 } catch {
   evidence.status = 'FAIL'; // Do not serialize raw exceptions or provider content.
+  diagnostics.failedAssertion ??= 'UNCLASSIFIED_FAILURE';
   process.exitCode = 1;
 } finally {
+  // Persist diagnostic state before teardown, including failed Weekly assertions.
+  fs.writeFileSync('real-ai-smoke-evidence.json', JSON.stringify(evidence, null, 2));
   if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
   if (prisma) await prisma.$disconnect().catch(() => {});
   // Only this run's disposable service container is destroyed by Actions; no
   // deleteMany, shared database cleanup, local container or volume operations.
-  fs.writeFileSync('real-ai-smoke-evidence.json', JSON.stringify(evidence, null, 2));
   print(JSON.stringify({ status: evidence.status, stage: evidence.stage, calls: evidence.calls }));
+}
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try { await runSmoke(); }
+  catch { process.exitCode = 1; process.stderr.write('SMOKE_RUNNER_FAILED\n'); }
 }
