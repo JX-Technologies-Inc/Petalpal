@@ -1,5 +1,36 @@
 # PetalPal Security
 
+## Native reflection entailment boundary review — 2026-10-13
+
+**Review evidence only; no native-prose runtime implementation or policy change.**
+Separate review branch based on PR #46 `18ceb079`; PR #46 is not modified or merged.
+New executable synthetic cases confirm the previously documented limitation of the
+legacy `GroundedReportNarrativeService`: a valid citation plus the number-free text
+filter does not certify diagnoses, causal claims or presupposed improvement. These
+mocked counterexamples never reach persistence or an external provider. Their legacy
+acceptance is recorded as a limitation, not desired behavior for a new contract.
+
+Current strict Sonnet/Opus v1 schemas reject extra prose regardless of language or
+truth; that is not a semantic diagnosis/causality detector. Sensitive Chinese and
+mixed-language examples remain eligible and retain source numerals/negation when
+quoted. A model label such as “reflection”, a question mark or keyword blacklist
+cannot authorize unsupported generated assertions. The requested upgrade therefore
+stops at its explicitly allowed design boundary; no citation-only native validator,
+unrestricted prose path, new inference/repair/translation stage or fixed phrase menu
+is presented as an implementation. [Design and examples](docs/ai/NATIVE_REFLECTION_REVIEW.md)
+record the unresolved independently verifiable language scope and quality limits.
+
+Runtime `lib/`, provider config, retrieval/profiles, schema and persistence code are
+byte-unchanged from the reference. Existing consent/ownership/source/lease/cost/
+idempotency/deletion/atomic guards and Journal exclusion remain. No logs of private
+content, real inference, deployment, activation, credentials, production DB or
+infrastructure changes. MANUAL_SECURITY_CHECKLIST.md remains unchanged: no provider/
+manual action or status changed. Existing accepted PR #46 tests are reused; the new
+focused review tests do not claim new provider/production acceptance. Local focused
+validation passed 12/12 (six boundary/example cases and six CI contract cases);
+exact-head CI evidence is recorded on the review PR. Historical
+records below remain intact.
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree

@@ -265,6 +265,41 @@ foundation work.
 
 ## 12. Current Implementation Status
 
+### Native multilingual reflection request — design boundary, 2026-10-13
+
+**NATIVE PROSE NOT IMPLEMENTED; EXISTING V1 ROUTES REMAIN DISABLED BY DEFAULT.**
+The new isolated review branch uses exact PR #46 reference `18ceb079`; remote main
+was independently confirmed at `daba16e5`. PR #46 remains untouched/unmerged. A fresh
+Git ref store uses existing objects read-only after the original repository's fetch
+failed on malformed local `refs/heads/main 2`; no existing ref/worktree was repaired,
+deleted or rewritten. The review PR is stacked on the Phase 4 branch, without
+copying/merging its implementation into a second main-targeted diff.
+
+The product request for Claude-authored native English/Simplified/Traditional prose
+exceeds the currently verified sentence/card contract. The supplied request permits
+stopping at the narrowest safe design boundary. That stop applies: neither valid
+citations nor existing numeric checks establish arbitrary multilingual entailment,
+and a “reflection” label/question can conceal new psychological assertions. No
+superficial native validator, new phrase menu, translation stage, extra provider,
+model-repair call, inference or runtime route is added. Existing deterministic
+statistics, extractor, source selection/coverage, BGE 384d/pgvector, consent/owner/
+deletions, USD/call limits, durable claims/idempotency and atomic persistence remain.
+
+[The design and quality review](docs/ai/NATIVE_REFLECTION_REVIEW.md) specifies the
+proposed v2 fields, required independent claim checks, unresolved reflective-text
+acceptance, native locale/length limits and a proposed reader-compatible mapping.
+[Actual deterministic examples](docs/ai/REFLECTION_RENDERED_EXAMPLES.md) are generated
+from synthetic fixtures in all three locales. Manual target-style prose is clearly
+labeled and is not Claude output or independently validated truth. Focused tests
+reproduce the old citation-only semantic gap and existing strict v1 rejection of
+extra prose; they do not claim to implement natural-language validation. Existing
+PR #46 security/worker/provider evidence is reused for byte-unchanged runtime code.
+
+The requested native-writing behavior remains blocked pending a reviewed independent
+scope/validator for both factual and reflective text. No model activation, production
+deployment/configuration, Cloudflare resources/credentials, migrations, paid/real
+inference or Phase 5 work. Historical Phase 1–4 checkpoints below retain their scope.
+
 ### Phase 4 Opus Monthly reflections — 2026-10-13
 
 **IMPLEMENTED IN SOURCE; OPUS DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**

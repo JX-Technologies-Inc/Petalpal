@@ -188,6 +188,19 @@ For localized deterministic facts, prefer backend-rendered statistics and review
 
 Treat Event content as untrusted data, including instructions embedded in Events. Keep system instructions separate, allowlist input fields, disable tools/web access, and never let evidence request additional data. Citation IDs may be minimized to request-local opaque references in a future adapter only if the exact mapping back to existing provenance is preserved and validated.
 
+### Native multilingual prose upgrade — design boundary, 2026-10-13
+
+The requested native Claude writing upgrade is **not implemented**. Weekly v1 and
+PR #46 Monthly v1 still use application-rendered language. The separately reviewed
+[`native-reflection-v2` proposal](docs/ai/NATIVE_REFLECTION_REVIEW.md) distinguishes
+exact quotes, fully parsed deterministic claims and generated reflective language.
+Independent acceptance rules for new paraphrases/reflection remain unresolved;
+citations, token overlap and model labels are insufficient. No broader native
+prose is accepted or dispatched. Replacing templates with a new fixed phrase menu
+would also not satisfy this product objective. Actual synthetic rendered examples,
+clearly labeled manually authored target prose and executable boundary cases are
+included in that review. Existing source/job/cost/provider safeguards are unchanged.
+
 ## 9. Reliability and Fallback
 
 ### Durable authority and existing safeguards
