@@ -2153,3 +2153,12 @@ unresolved dependency-security gate to the readiness report; readiness remains N
 - **Scope/limits:** one owner-performed check on one browser; not a cross-browser,
   codec, latency or load certification. Main receives the deployed commit by merge
   so future main-based releases keep the fix. Canonical statuses/counts unchanged.
+
+## 2026-10-12 — Event timestamp integrity: client `occurredAt` rejected (prepared; not released)
+
+- **Finding (Medium, data integrity):** `POST /events` accepted any client-supplied `occurredAt` (`req.body.occurredAt ?? new Date()`), validated only as a parseable date. An authenticated owner could backdate or future-date their own Events, moving `localDate`, the Garden month, the date-seeded Flower selection and Weekly/Monthly period membership — including into a closed, not-yet-reported period before triggering it. Owner scoping, consent and the finalized-report write fence were not bypassed; impact is limited to the owner's own data. The field was undocumented in `docs/openapi.yaml`, never sent by `mobile/` or other repository clients, and accepted only by one route test.
+- **Fix (this branch only):** the route rejects any body containing `occurredAt` (including `null`) with 400 before any write, and always assigns server time. Event `localDate` is still derived in the owner's IANA timezone.
+- **Compatibility:** no repository client sends the field. An external client that does would now receive 400 instead of a client-dated Event; there is no silent ignore.
+- **Tests:** `test/back/ai-event.route.test.js` now asserts 400 with no Event/job/dispatch for past, far-past, far-future and `null` values, and server-time local dates for accepted Events. Local run: NOT RUN in the preparation sandbox (backend dependencies unavailable); requires existing PR CI.
+- **Separation:** independent of the TEST-only simulated clock (`test/ai-e2e-simulated-clock`). If both merge, the combined line is `occurredAt: simulatedOccurredAt ?? new Date()`; the simulated-time conflict check becomes unreachable and may be removed.
+- **Not done:** no push, PR, merge, deploy, migration, provider change or production write. Release follows the Render API lane after separate approval.
