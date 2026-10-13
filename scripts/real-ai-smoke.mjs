@@ -1,5 +1,6 @@
 // Manual-only real provider smoke. No Firebase verifier, emotion, embedding or
-// narrative mocks. Synthetic Auth Emulator identities; existing app/worker paths.
+// narrative mocks. Weekly-only mode explicitly uses seeded fixtures/retrieval.
+// Synthetic Auth Emulator identities; existing app/worker paths.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { randomBytes } from 'node:crypto';
@@ -14,7 +15,7 @@ const ASSERTION_IDS = new Set([
   'JOURNAL_PIPELINE_LEAK', 'MEMORY_COUNT_FAILED', 'MEMORY_OR_EMBEDDING_JOB_FAILED',
   'MISSING_AUTH_ACCEPTED', 'MISSING_CONSENT_ACCEPTED', 'MISSING_TEST_PROVIDER_AUTH',
   'MONTHLY_FAILED', 'NARRATIVE_OR_FALLBACK_FAILED', 'NETWORK_TARGET_DENIED',
-  'PROVIDER_INPUT_REJECTED', 'PROVIDER_ROUTE_DENIED', 'REAL_SEMANTIC_RANKING_OR_OWNER_FAILED',
+  'PROVIDER_NOT_DEDICATED_TEST_WORKER', 'PROVIDER_INPUT_REJECTED', 'PROVIDER_ROUTE_DENIED', 'REAL_SEMANTIC_RANKING_OR_OWNER_FAILED',
   'REAL_VECTOR_PROVENANCE_FAILED', 'REPORT_BOUNDARY_FAILED', 'REPORT_COUNTS_FAILED',
   'REPORT_EVIDENCE_LEAK', 'RETRIEVAL_SOURCE_LEAK', 'RUN_NOT_APPROVED',
   'SIMULATED_TIME_GATE_DENIED', 'TEST_WORKER_BOUNDS_MISMATCH', 'TEST_WORKER_PREFLIGHT_FAILED',
@@ -65,7 +66,7 @@ export async function withWeeklyDiagnostics(diagnostic, action, inspect) {
   }
 }
 
-export async function runSmoke() {
+export async function runSmoke({ weeklyOnly = false } = {}) {
 
 const manifest = JSON.parse(fs.readFileSync(new URL('../test/fixtures/ai-e2e-manifest.json', import.meta.url), 'utf8'));
 const fixtureRefs = ['a04', 'a05', 'a06', 'a08', 'b01'];
@@ -74,7 +75,7 @@ assert.equal(fixtures.filter(e => e.owner === 'A' && e.membership.includes('M-20
 assert.equal(fixtures.filter(e => e.owner === 'A' && e.membership.includes('W-2026-10-05')).length, 2);
 assert.ok(fixtures.every(e => e.content.length < 600));
 if (process.argv.includes('--check-plan')) {
-  console.log('Plan: 5 Events; 5 emotion + 9 BGE + 2 narrative requests; no inference performed.');
+  console.log(weeklyOnly ? 'Plan: fixture retrieval; 0 emotion + 0 BGE + 1 narrative request; no inference performed.' : 'Plan: 5 Events; 5 emotion + 9 BGE + 2 narrative requests; no inference performed.');
   process.exit(0);
 }
 const evidence = { sourceSha: process.env.GITHUB_SHA, status: 'NOT_TESTED', stage: 'preflight',
@@ -88,9 +89,12 @@ const nativeFetch = globalThis.fetch;
 const { data: diagnostics, check } = createSmokeDiagnostics();
 evidence.diagnostics = diagnostics;
 let appOrigin;
+if (weeklyOnly) evidence.mode = 'WEEKLY_ONLY_FIXTURE_RETRIEVAL';
 try {
   check(process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_RUN_ATTEMPT === '1' &&
     process.env.NODE_ENV === 'test' && process.env.PETALPAL_REAL_AI_APPROVED === '1', 'RUN_NOT_APPROVED');
+  if (weeklyOnly) check(process.env.PETALPAL_WEEKLY_ONLY_APPROVED === 'APPROVE-1-WEEKLY-LLM-CALL' &&
+    process.env.GITHUB_REF === 'refs/heads/test/real-ai-smoke', 'RUN_NOT_APPROVED');
   check(process.env.FIREBASE_PROJECT_ID === 'demo-petalpal-real-ai' &&
     process.env.FIREBASE_AUTH_EMULATOR_HOST === '127.0.0.1:9099', 'AUTH_NOT_ISOLATED');
   for (const key of ['DATABASE_URL', 'PETALPAL_ENVIRONMENT', 'RENDER', 'RENDER_SERVICE_ID', 'RENDER_EXTERNAL_URL',
@@ -122,6 +126,12 @@ try {
     check(url.origin === appOrigin || url.origin === 'http://127.0.0.1:9099', 'NETWORK_TARGET_DENIED');
     return nativeFetch(input, { ...options, redirect: 'error' });
   };
+  if (weeklyOnly) {
+    const { weeklyOnlyFetch } = await import('./real-ai-weekly-only.mjs');
+    evidence.providerAttempt = { httpStatus: null, category: 'NOT_ATTEMPTED' };
+    globalThis.fetch = weeklyOnlyFetch({ providerOrigin: provider.origin, appOrigin: () => appOrigin,
+      fetchImpl: nativeFetch, calls: evidence.calls, check, diagnostic: evidence.providerAttempt });
+  }
   const infoResponse = await nativeFetch(`${provider.origin}/smoke-info`, { redirect: 'error',
     signal: AbortSignal.timeout(10000), headers: { Authorization: `Bearer ${process.env.CLOUDFLARE_WORKER_AI_TOKEN}` } });
   check(infoResponse.ok, 'TEST_WORKER_PREFLIGHT_FAILED');
@@ -180,16 +190,22 @@ try {
   check([200, 201].includes(journal.status) && await prisma.journal.count() === 1 &&
     await prisma.event.count() === 0 && await prisma.aiJob.count() === 0 && evidence.calls.emotion === 0, 'JOURNAL_EXCLUSION_FAILED');
   const events = new Map();
-  evidence.stage = 'real-emotion';
-  for (const fixture of fixtures) {
-    const r = await api('/events', { owner: fixture.owner, method: 'POST',
-      headers: { 'Idempotency-Key': `real-${fixture.ref}`, 'X-PetalPal-Simulated-Time': fixture.occurredAtUtc },
-      body: { content: fixture.content, primaryGardenMood: fixture.mood } });
-    check(r.status === 201 && r.body.emotion?.status === 'SUCCESS' && r.body.memoryJob?.status === 'PENDING', 'EVENT_OR_REAL_EMOTION_FAILED');
-    check(r.body.event.localDate === fixture.localDate && r.body.event.ownerId === owners[fixture.owner].id, 'EVENT_DATE_OR_OWNER_FAILED');
-    events.set(fixture.ref, r.body.event.id);
-    evidence.events.push({ ref: fixture.ref, eventId: r.body.event.id, owner: fixture.owner, content: fixture.content,
-      occurredAt: fixture.occurredAtUtc, primary: fixture.mood, emotions: r.body.emotion.labels });
+  if (weeklyOnly) {
+    evidence.stage = 'synthetic-fixtures';
+    const { seedWeeklyFixtures } = await import('./real-ai-weekly-only.mjs');
+    await seedWeeklyFixtures({ prisma, fixtures, owners, timezone: manifest.timezone, events });
+  } else {
+    evidence.stage = 'real-emotion';
+    for (const fixture of fixtures) {
+      const r = await api('/events', { owner: fixture.owner, method: 'POST',
+        headers: { 'Idempotency-Key': `real-${fixture.ref}`, 'X-PetalPal-Simulated-Time': fixture.occurredAtUtc },
+        body: { content: fixture.content, primaryGardenMood: fixture.mood } });
+      check(r.status === 201 && r.body.emotion?.status === 'SUCCESS' && r.body.memoryJob?.status === 'PENDING', 'EVENT_OR_REAL_EMOTION_FAILED');
+      check(r.body.event.localDate === fixture.localDate && r.body.event.ownerId === owners[fixture.owner].id, 'EVENT_DATE_OR_OWNER_FAILED');
+      events.set(fixture.ref, r.body.event.id);
+      evidence.events.push({ ref: fixture.ref, eventId: r.body.event.id, owner: fixture.owner, content: fixture.content,
+        occurredAt: fixture.occurredAtUtc, primary: fixture.mood, emotions: r.body.emotion.labels });
+    }
   }
   const { createProductionAiWorker } = await import('../lib/ai-worker.js');
   const { CloudflareWorkersEmbeddingProvider } = await import('../lib/embedding-provider.js');
@@ -198,44 +214,51 @@ try {
   const { CloudflareWorkersReportNarrativeProvider, REPORT_NARRATIVE_GENERATION_VERSION } = await import('../lib/report-narrative.js');
   const { PrismaAiJobRepository } = await import('../lib/ai-jobs.js');
   const embedding = new CloudflareWorkersEmbeddingProvider(CLOUDFLARE_EMBEDDING_PROFILE_KEY, { timeoutMs: 60000 });
-  const retrieval = new SemanticEventRetrievalService({ prisma, provider: embedding });
+  const retrieval = weeklyOnly
+    ? (await import('./real-ai-weekly-only.mjs')).weeklyFixtureRetrieval({ prisma, eventIds: [...events.values()], check })
+    : new SemanticEventRetrievalService({ prisma, provider: embedding });
   const narrative = new CloudflareWorkersReportNarrativeProvider();
   const workerFor = reportAsOf => createProductionAiWorker({ prisma, embeddingProvider: embedding,
     reportNarrativeProvider: narrative, reportNarrativeTimeoutMs: 90000, reportAsOf,
     semanticRetrieval: { async retrieve(args) {
       const rows = await retrieval.retrieve(args);
       check(rows.every(row => row.ownerId === args.identity.userId && [...events.values()].includes(row.sourceEventId)), 'RETRIEVAL_SOURCE_LEAK');
-      evidence.retrieval.push({ ownerId: args.identity.userId, dateFrom: args.dateFrom, dateTo: args.dateTo,
+      if (!weeklyOnly) evidence.retrieval.push({ ownerId: args.identity.userId, dateFrom: args.dateFrom, dateTo: args.dateTo,
         rows: rows.map(r => ({ eventId: r.sourceEventId, memoryId: r.id, similarity: r.similarity })) });
       return rows;
     } }, logger: { error() {} } });
-  evidence.stage = 'memory-and-real-bge';
-  for (const jobType of ['MEMORY_EXTRACTION', 'EMBEDDING_GENERATION']) {
-    const jobs = await prisma.aiJob.findMany({ where: { jobType, status: 'PENDING' } });
-    check(jobs.length === 5, 'EXPECTED_FIVE_JOBS');
-    for (const job of jobs) {
-      await prisma.aiJob.update({ where: { id: job.id }, data: { maxAttempts: 1 } });
-      check((await workerFor(null).runJob({ jobId: job.id, ownerId: job.ownerId, jobType })).succeeded, 'MEMORY_OR_EMBEDDING_JOB_FAILED');
+  if (!weeklyOnly) {
+    evidence.stage = 'memory-and-real-bge';
+    for (const jobType of ['MEMORY_EXTRACTION', 'EMBEDDING_GENERATION']) {
+      const jobs = await prisma.aiJob.findMany({ where: { jobType, status: 'PENDING' } });
+      check(jobs.length === 5, 'EXPECTED_FIVE_JOBS');
+      for (const job of jobs) {
+        await prisma.aiJob.update({ where: { id: job.id }, data: { maxAttempts: 1 } });
+        check((await workerFor(null).runJob({ jobId: job.id, ownerId: job.ownerId, jobType })).succeeded, 'MEMORY_OR_EMBEDDING_JOB_FAILED');
+      }
     }
   }
   const memories = await prisma.eventMemory.findMany({ select: { id: true, ownerId: true, sourceEventId: true, summary: true, topics: true } });
   check(memories.length === 5 && memories.every(m => [...events.values()].includes(m.sourceEventId)), 'MEMORY_COUNT_FAILED');
-  evidence.memories = memories;
-  const vectors = await prisma.$queryRawUnsafe(`SELECT "eventMemoryId", "ownerId", "profileKey", "model", "status", vector_dims(embedding) AS dimensions FROM "EventMemoryEmbedding"`);
-  check(vectors.length === 5 && vectors.every(v => v.dimensions === 384 && v.profileKey === CLOUDFLARE_EMBEDDING_PROFILE_KEY && v.status === 'GENERATED'), 'REAL_VECTOR_PROVENANCE_FAILED');
-  evidence.vectors = vectors;
-  evidence.stage = 'semantic-relevance-and-owner-isolation';
-  const relevant = await retrieval.retrieve({ identity: { userId: owners.A.id }, query: 'Getting support at work and feeling more at ease', take: 4 });
-  check(relevant.length === 4 && relevant[0].sourceEventId === events.get('a08') && relevant.every(r => r.ownerId === owners.A.id), 'REAL_SEMANTIC_RANKING_OR_OWNER_FAILED');
-  evidence.semanticRanking = relevant.map(r => ({ eventId: r.sourceEventId, memoryId: r.id, similarity: r.similarity }));
+  if (!weeklyOnly) {
+    evidence.memories = memories;
+    const vectors = await prisma.$queryRawUnsafe(`SELECT "eventMemoryId", "ownerId", "profileKey", "model", "status", vector_dims(embedding) AS dimensions FROM "EventMemoryEmbedding"`);
+    check(vectors.length === 5 && vectors.every(v => v.dimensions === 384 && v.profileKey === CLOUDFLARE_EMBEDDING_PROFILE_KEY && v.status === 'GENERATED'), 'REAL_VECTOR_PROVENANCE_FAILED');
+    evidence.vectors = vectors;
+    evidence.stage = 'semantic-relevance-and-owner-isolation';
+    const relevant = await retrieval.retrieve({ identity: { userId: owners.A.id }, query: 'Getting support at work and feeling more at ease', take: 4 });
+    check(relevant.length === 4 && relevant[0].sourceEventId === events.get('a08') && relevant.every(r => r.ownerId === owners.A.id), 'REAL_SEMANTIC_RANKING_OR_OWNER_FAILED');
+    evidence.semanticRanking = relevant.map(r => ({ eventId: r.sourceEventId, memoryId: r.id, similarity: r.similarity }));
+  }
   check((await api(`/events/${events.get('a08')}`, { owner: 'B' })).status === 404, 'CROSS_OWNER_EVENT_LEAK');
   evidence.stage = 'weekly-monthly-and-insufficient';
   app.setWeeklyReportWorkerFactoryForTests(options => workerFor(options.reportAsOf));
-  for (const spec of [
+  const reportSpecs = [
     { type: 'weekly', periodKey: '2026-10-05', clock: manifest.clocks.CLK_W, count: 2, previous: 2, refs: ['a06', 'a08'], generated: true },
     { type: 'monthly', periodKey: '2026-10', clock: manifest.clocks.CLK_M, count: 3, previous: 1, refs: ['a05', 'a06', 'a08'], generated: true },
     { type: 'weekly', periodKey: '2026-09-21', clock: manifest.clocks.CLK_W_INSUFFICIENT, count: 0, previous: 0, refs: [], generated: false }
-  ]) {
+  ];
+  for (const spec of weeklyOnly ? reportSpecs.slice(0, 1) : reportSpecs) {
     evidence.stage = `${spec.type}-${spec.periodKey}`;
     const before = evidence.calls.narrative;
     const period = manifest.periods[`${spec.type === 'weekly' ? 'W' : 'M'}-${spec.periodKey}`];
@@ -267,7 +290,7 @@ try {
     check(new Set(edges.map(e => e.sourceEventId)).size === allowed.length, 'IMPORTANT_EVIDENCE_MISSING');
     check((await api(`/ai/reports/${spec.type}/${r.id}`, { owner: 'B' })).status === 404, 'CROSS_OWNER_REPORT_LEAK');
     if (!spec.generated) check(r.summary === null, 'FALLBACK_NARRATIVE_PRESENT');
-    evidence.reports.push({ type: spec.type, periodKey: spec.periodKey, summary: r.summary, sections: r.narrativeSections,
+    if (!weeklyOnly) evidence.reports.push({ type: spec.type, periodKey: spec.periodKey, summary: r.summary, sections: r.narrativeSections,
       trends: r.trendSignals, expectedEventIds: allowed, evidence: edges.map(e => ({ eventId: e.sourceEventId, memoryId: e.sourceMemoryId, claimType: e.claimType })) });
     };
     if (spec.type === 'weekly') await withWeeklyDiagnostics(diagnostic, reportAttempt, async () => {
@@ -284,16 +307,18 @@ try {
     });
     else await reportAttempt();
   }
-  check(evidence.calls.emotion === 5 && evidence.calls.embedding === 9 && evidence.calls.narrative === 2, 'CALL_COUNTS_FAILED');
+  check(weeklyOnly
+    ? evidence.calls.emotion === 0 && evidence.calls.embedding === 0 && evidence.calls.narrative === 1
+    : evidence.calls.emotion === 5 && evidence.calls.embedding === 9 && evidence.calls.narrative === 2, 'CALL_COUNTS_FAILED');
   check(await prisma.event.count() === 5 && await prisma.eventMemory.count() === 5 && await prisma.journal.count() === 1, 'JOURNAL_PIPELINE_LEAK');
-  evidence.status = 'AUTOMATED_CHECKS_PASS_QUALITY_REVIEW_REQUIRED';
+  evidence.status = weeklyOnly ? 'WEEKLY_DIAGNOSTICS_PASS' : 'AUTOMATED_CHECKS_PASS_QUALITY_REVIEW_REQUIRED';
 } catch {
   evidence.status = 'FAIL'; // Do not serialize raw exceptions or provider content.
   diagnostics.failedAssertion ??= 'UNCLASSIFIED_FAILURE';
   process.exitCode = 1;
 } finally {
   // Persist diagnostic state before teardown, including failed Weekly assertions.
-  fs.writeFileSync('real-ai-smoke-evidence.json', JSON.stringify(evidence, null, 2));
+  fs.writeFileSync(weeklyOnly ? 'real-ai-weekly-only-evidence.json' : 'real-ai-smoke-evidence.json', JSON.stringify(evidence, null, 2));
   if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
   if (prisma) await prisma.$disconnect().catch(() => {});
   // Only this run's disposable service container is destroyed by Actions; no
@@ -303,6 +328,6 @@ try {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  try { await runSmoke(); }
+  try { await runSmoke({ weeklyOnly: process.argv.includes('--weekly-only') }); }
   catch { process.exitCode = 1; process.stderr.write('SMOKE_RUNNER_FAILED\n'); }
 }

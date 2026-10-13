@@ -1,5 +1,38 @@
 # PetalPal Long-Term AI
 
+## 2026-10-13 — Weekly-only diagnostic preparation (local, unpublished)
+
+- Added an explicit Weekly-only runner mode reusing the existing five synthetic
+  Event fixtures. After the existing disposable-CI database identity/empty checks
+  and authenticated consent setup, Events and deterministic EventMemories are
+  seeded under consent locks. Owner/period-scoped fixture retrieval supplies the
+  report input; the normal Weekly API, worker, report services, Cloudflare narrative
+  provider and transactional report/evidence persistence remain in use. No saved
+  successful report is fabricated, and no embedding is marked as generated.
+- Transport permits at most one narrative attempt, zero emotion/BGE attempts and
+  no retry, with the existing 24 KB input / Worker 1,024-output-token bounds.
+  Failure diagnostics add only upstream HTTP status and allowlisted categories;
+  unknown/transport failures remain `PROVIDER_ERROR_UNCLASSIFIED`. The separate
+  artifact contains codes/enums/counts/booleans, not fixture or narrative content.
+- Local validation: six new tests passed with synthetic database doubles and
+  mocked HTTP responses through the actual narrative provider and validation
+  service. Covered sufficient evidence, owner/consent filtering, successful
+  validation, provider/JSON/grounding failures, call/route/input guards and
+  failure-artifact writing. Zero real provider calls; hosted database persistence
+  and actual LLM behavior are still untested in this targeted mode. Previous full
+  E2E evidence and five diagnostic tests are retained, not rerun.
+- Prepared separate `real-ai-weekly-only.yml`; existing full E2E workflow is
+  unchanged. Smallest execution path: explicitly approve publication of the test
+  branch and a registration-only PR for this new workflow on main; separately
+  approve its merge, then one manual dispatch on `test/real-ai-smoke` with the
+  exact reviewed `source_sha` and `APPROVE-1-WEEKLY-LLM-CALL`, followed by the
+  existing protected-environment approval. Branch/first-attempt/SHA gates,
+  reviewer protections and shared smoke concurrency remain intact.
+- One LLM request is sufficient for a targeted report-path diagnostic attempt;
+  it cannot reproduce the original unknown failure with certainty, validate real
+  emotion/semantic retrieval, or establish report factual quality. No publication,
+  deployment, database/container operation, credential change or inference occurred.
+
 ## 2026-10-13 — isolated real-AI smoke evidence and diagnostic follow-up
 
 - Run `38463741047`, source `d26d7e49eef8f294b625458e6e8b934af1083bd2`,
