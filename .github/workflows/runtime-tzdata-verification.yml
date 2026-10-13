@@ -73,8 +73,17 @@ jobs:
           run node -p "process.version + ' tzdata ' + process.versions.tz + ' icu ' + process.versions.icu"
           run node --test --test-reporter=tap test/back/vancouver-timezone.test.js > tz.tap 2>&1
           status=$?
-          grep -E '^(ok|not ok) |^# (pass|fail)' tz.tap
-          if [ "$EXPECT" = pass ] && [ "$status" -ne 0 ]; then echo "::error::$IMAGE has stale America/Vancouver tzdata"; exit 1; fi
-          if [ "$EXPECT" = fail ] && [ "$status" -eq 0 ]; then echo "::error::negative control unexpectedly passed"; exit 1; fi
-          echo "$IMAGE: expected $EXPECT, observed exit $status"
+          grep -E '^(ok|not ok) |^# (tests|pass|fail)|must be 05:00' tz.tap
+          count() { grep -E "^# $1 [0-9]+$" tz.tap | awk '{print $3}'; }
+          tests=$(count tests); passed=$(count pass); failed=$(count fail)
+          # Both directions require the 2-test regression to actually execute.
+          if [ "$tests" != 2 ]; then echo "::error::regression did not execute 2 tests (got '${tests}')"; exit 1; fi
+          if [ "$EXPECT" = pass ]; then
+            [ "$status" -eq 0 ] && [ "$passed" = 2 ] && [ "$failed" = 0 ] || { echo "::error::$IMAGE has stale America/Vancouver tzdata"; exit 1; }
+          else
+            # The control must fail on the Vancouver assertion itself, not for any other reason.
+            [ "$status" -ne 0 ] && [ "$failed" = 2 ] && grep -q 'must be 05:00 in America/Vancouver' tz.tap \
+              || { echo "::error::negative control did not fail on the Vancouver tzdata assertion"; exit 1; }
+          fi
+          echo "$IMAGE: expected $EXPECT, observed exit $status, pass $passed, fail $failed -> OK"
 
