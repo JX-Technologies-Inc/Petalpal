@@ -6,6 +6,8 @@ import { existsSync } from 'node:fs';
 export const securityTests = [
   'test/back/auth.test.js',
   'test/back/security-config.test.js',
+  // Native provider contracts use injected fetch and disposable PGlite only.
+  'test/back/ai-gateway.test.js',
 ];
 
 export const httpTests = 'production HTTPS security headers|HSTS requires|CSP supports|private namespaces|Socket.IO polling';

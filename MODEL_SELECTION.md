@@ -8,6 +8,10 @@
 
 **Scope:** Documentation only. No inference, benchmarking, credential changes, deployment, database operations, or PR #37 merge.
 
+> Phase 1 source implementation is tracked in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-1-gateway-provider-abstraction--2026-10-13).
+> Its adapters are disabled and disconnected from existing customer routes;
+> live provider acceptance and phases 2–6 remain pending.
+
 ## 1. Executive Summary
 
 PetalPal prioritizes factual grounding, report quality, reliability, and user experience over small per-request savings. The intended hierarchy is Claude Haiku 5.5 for Event secondary emotions, Claude Sonnet 5.5 for Weekly reflections, Claude Opus 5.5 for Monthly reflections, and OpenAI GPT-6 Sol for explicitly permitted report fallback. Deterministic EventMemory extraction, Cloudflare BGE Small English v1.5 embeddings, and PostgreSQL pgvector remain in place.
@@ -298,7 +302,7 @@ This documentation introduces no verified security fix or provider status change
 
 ## 12. Implementation Roadmap
 
-All phases below are **PLANNED**. No phase is implemented by this PR. Existing environment names are listed to identify integration points; proposed names are design candidates only, with **no values**. Do not edit deployment configuration while reviewing this document.
+Phase 1 abstraction source is implemented in a separate follow-up PR, as recorded in [LONG_TERM_AI.md](LONG_TERM_AI.md#phase-1-gateway-provider-abstraction--2026-10-13); activation remains pending. Phases 2–6 below remain **PLANNED**. Existing environment names are listed to identify integration points; proposed names are design candidates only, with **no values**. Do not edit deployment configuration while reviewing this document.
 
 ### Phase 1 — Gateway abstraction and configuration design
 
