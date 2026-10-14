@@ -7,6 +7,8 @@ node experiments/prompt-first-reflection/prepare.mjs
 node experiments/prompt-first-reflection/prepare.mjs --requests > /tmp/petalpal-synthetic-requests.json
 node --test experiments/prompt-first-reflection/test.mjs
 node experiments/prompt-first-reflection/render-examples.mjs
+node experiments/prompt-first-reflection/acceptance.mjs   # 36-case plan and reservation only
+node --test experiments/prompt-first-reflection/acceptance.test.mjs
 ```
 
 `--requests` emits 120 real Anthropic Messages API body shapes, with credential-free headers and relative Gateway path. They are **not sent**. Bind the existing authenticated Gateway URL and credentials only inside a separately approved trusted runner. There is deliberately no `--send` flag. `dataset: synthetic` is a caller assertion, not a private-data detector; the CLI accepts only the committed fixtures, never a file upload, database query or arbitrary Event input.
@@ -19,6 +21,7 @@ node experiments/prompt-first-reflection/render-examples.mjs
 - `experiment.mjs`: synthetic source admission, minimized alias-only user packet, wire/local schema, provider request construction and structural review. Original source/memory IDs, owner and revisions stay in its private closure. No mutable input reference is retained.
 - `fixtures.mjs`: 20 authored scenarios, 73 source Events; Weekly uses the first two (or fewer), Monthly uses up to four. All three locales see byte-identical evidence. Dates are synthetic fixture choices, never translations of source-relative time.
 - `examples.mjs`: six manually authored writing targets. Not used as a semantic acceptance registry or supplied as few-shot examples.
+- `acceptance.mjs`: approval-gated runner for the 36-case first batch. Checks that request-construction sources match the approved commit, then runs model and token-count preflight, serial single attempts, a no-replay ledger (`wx`, fsync before dispatch), 20 s/64 KiB/20 min limits, usage/budget stops and sanitized results. A live run (no `mockLedgerPath`) always uses the fixed `~/.petalpal-acceptance/<commit>.jsonl` and accepts no other option, so a new path cannot start a second live run. Mocked runs must name their own ledger and are labelled `MOCK`. It has no transport: after authorization, a trusted caller injects the Gateway-bound one. Verified only with mocked transports (`acceptance.test.mjs`). The tests need git history containing that commit.
 - `compare.mjs`: reference v1/v2/v2.1 comparison using one deterministic authored candidate per case. v1 is main's deterministic rendering; v2/v2.1 are pinned Draft #49 source. Abstention is recorded, never repaired by rewriting source text.
 
 To reproduce the committed baseline artifact, use a clean, read-only checkout of `09f6aee0584c386c99523e81657413efab32f1af` with its existing dependencies. Do not reset anyone else's checkout. No provider calls or DB connection occur; transitive reference configuration receives a synthetic closed localhost endpoint only:
