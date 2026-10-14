@@ -1,3 +1,4 @@
+import { compositionMockResponse, developmentSources } from '../fixtures/native-composition.js';
 import { nativeMockResponse } from "../fixtures/native-reflection.js";
 import assert from "node:assert/strict";
 import test from "node:test";
@@ -353,18 +354,28 @@ test("localized source policy rejects wrong owners, Journal memories, unsupporte
   }
 });
 
-const nativeEnv = { ...enabled, AI_REPORT_REFLECTION_CONTRACT: "native-reflection-v2" };
 
-test("native Weekly uses existing Gateway, admission and atomic persistence in all three locales", async t => {
+for (const contract of ['native-reflection-v2', 'native-reflection-v2.1']) {
+  const nativeEnv = { ...enabled, AI_REPORT_REFLECTION_CONTRACT: contract };
+  const responseFor = contract === 'native-reflection-v2' ? nativeMockResponse : compositionMockResponse;
+  async function contractFixture(t, options) {
+    const f = await fixture(t, options);
+    if (contract === 'native-reflection-v2.1') {
+      const rows = (await f.pg.query('SELECT "id" FROM "EventMemory" WHERE "ownerId"=\'alice\' ORDER BY "id"')).rows;
+      for (const [i, row] of rows.entries()) await f.pg.query('UPDATE "EventMemory" SET "summary"=$1,"topics"=\'[]\' WHERE "id"=$2', [row.id.startsWith('prior-') ? 'I drew in my sketchbook.' : developmentSources[i % developmentSources.length], row.id]);
+    }
+    return f;
+  }
+test(`${contract} Weekly uses existing Gateway, admission and atomic persistence in all three locales`, async t => {
   for (const locale of ["en", "zh-CN", "zh-TW"]) {
-    const f = await fixture(t, { locale });
-    f.respond(packet => Response.json(native(nativeMockResponse(packet))));
+    const f = await contractFixture(t, { locale });
+    f.respond(packet => Response.json(native(responseFor(packet))));
     const result = await f.run(nativeEnv);
     assert.equal(result.succeeded, true, result.error?.code);
     assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0);
     const report = (await f.rows("WeeklyReport"))[0].document;
-    assert.equal(report.narrativeSections[0].contractVersion, "native-reflection-v2");
-    assert.deepEqual(report.narrativeSections[0].nativeBlocks, nativeMockResponse(f.calls[0].packet).blocks);
+    assert.equal(report.narrativeSections[0].contractVersion, contract);
+    assert.deepEqual(report.narrativeSections[0][contract === "native-reflection-v2" ? "nativeBlocks" : "nativeParagraphs"], responseFor(f.calls[0].packet)[contract === "native-reflection-v2" ? "blocks" : "paragraphs"]);
     assert.ok((await f.rows("AIEvidence")).length >= 2);
     assert.equal((await f.rows("AIJob"))[0].status, "SUCCEEDED");
     assert.equal((await f.rows("AuditEvent")).length, 4);
@@ -373,18 +384,18 @@ test("native Weekly uses existing Gateway, admission and atomic persistence in a
   }
 });
 
-test("native Weekly rejects unsupported prose and refusal without repair, v1 fallback or paid replay", async t => {
-  const sparse = await fixture(t);
+test(`${contract} Weekly rejects unsupported prose and refusal without repair, v1 fallback or paid replay`, async t => {
+  const sparse = await contractFixture(t);
   await sparse.pg.exec('DELETE FROM "EventMemory" WHERE "id"<>\'memory-0\'');
   const sparseResult = await sparse.run(nativeEnv);
   assert.equal(sparseResult.succeeded, true); assert.equal(sparseResult.result.status, "INSUFFICIENT_EVIDENCE");
   assert.equal(sparse.calls.length, 0); assert.equal(sparse.legacyCalls, 0);
   for (const mode of ["ungrounded", "refusal", "truncated", "malformed"]) {
-    const f = await fixture(t);
+    const f = await contractFixture(t);
     f.respond(packet => {
       if (mode === "malformed") return new Response("invalid");
-      const output = nativeMockResponse(packet);
-      if (mode === "ungrounded") output.blocks[0].clauses[0].text = "Drawing cured your anxiety / 你的情绪已经好转";
+      const output = responseFor(packet);
+      if (mode === "ungrounded") (output.paragraphs?.[0] || output.blocks[0].clauses[0]).text = "Drawing cured your anxiety / 你的情绪已经好转";
       const envelope = native(output);
       if (mode === "refusal") envelope.stop_reason = "refusal";
       if (mode === "truncated") envelope.stop_reason = "max_tokens";
@@ -396,9 +407,9 @@ test("native Weekly rejects unsupported prose and refusal without repair, v1 fal
   }
 });
 
-test("native Weekly consent, owner, cost and contract denial prevents dispatch", async t => {
+test(`${contract} Weekly consent, owner, cost and contract denial prevents dispatch`, async t => {
   for (const mode of ["consent", "owner", "cost", "contract"]) {
-    const f = await fixture(t, { locale: "en" });
+    const f = await contractFixture(t, { locale: "en" });
     if (mode === "consent") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
     const env = { ...nativeEnv, ...(mode === "cost" ? { AI_USER_DAILY_USD_LIMIT: "0" } : {}),
       ...(mode === "contract" ? { AI_REPORT_REFLECTION_CONTRACT: "unreviewed" } : {}) };
@@ -408,14 +419,15 @@ test("native Weekly consent, owner, cost and contract denial prevents dispatch",
   }
 });
 
-test("native Weekly stale sources, revocation and evidence-write failure cannot persist returned prose", async t => {
-  for (const stage of ["delete", "revoke", "epoch", "evidence"]) {
-    const f = await fixture(t); if (stage === "evidence") f.failEvidence();
+test(`${contract} Weekly stale sources, revocation and evidence-write failure cannot persist returned prose`, async t => {
+  for (const stage of ["delete", "revoke", "epoch", "evidence", "revision"]) {
+    const f = await contractFixture(t); if (stage === "evidence") f.failEvidence();
     f.respond(async packet => {
       if (stage === "delete") await f.pg.exec('DELETE FROM "Event" WHERE "id"=\'event-0\'');
       if (stage === "revoke") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
       if (stage === "epoch") await f.pg.exec('UPDATE "AiConsent" SET "updatedAt"=\'2099-01-01\'');
-      return Response.json(native(nativeMockResponse(packet)));
+      if (stage === "revision") await f.pg.exec('UPDATE "EventMemory" SET "embeddingInputRevision"=2 WHERE "id"=\'memory-0\'');
+      return Response.json(native(responseFor(packet)));
     });
     const result = await f.run(nativeEnv);
     assert.ok(result.succeeded === false || result.result?.status === "CONSENT_INELIGIBLE");
@@ -424,25 +436,30 @@ test("native Weekly stale sources, revocation and evidence-write failure cannot 
   }
 });
 
-test("native Weekly late fetch ignores AbortSignal safely and finalized results stay immutable under v1 selection", async t => {
-  const f = await fixture(t); let release, packet;
+test(`${contract} Weekly late fetch ignores AbortSignal safely and finalized results stay immutable under v1 selection`, async t => {
+  const f = await contractFixture(t); let release, packet;
   f.respond(value => { packet = value; return new Promise(resolve => { release = resolve; }); });
   const result = await f.run({ ...nativeEnv, AI_WEEKLY_REPORT_TIMEOUT_MS: "250" });
   assert.equal(result.error.code, "AI_GATEWAY_TIMEOUT");
-  const response = Response.json(native(nativeMockResponse(packet))), reader = t.mock.method(response.body, "getReader");
+  const response = Response.json(native(responseFor(packet))), reader = t.mock.method(response.body, "getReader");
   release(response); await new Promise(setImmediate); await new Promise(setImmediate);
   assert.equal(reader.mock.callCount(), 0); assert.equal((await f.rows("WeeklyReport")).length, 0);
-  const saved = await fixture(t); saved.respond(value => Response.json(native(nativeMockResponse(value))));
+  const saved = await contractFixture(t); saved.respond(value => Response.json(native(responseFor(value))));
   const concurrent = await Promise.all([saved.run(nativeEnv), saved.run(nativeEnv)]);
   assert.equal(concurrent.filter(item => item.succeeded).length, 1); assert.equal(saved.calls.length, 1);
   const before = (await saved.rows("WeeklyReport"))[0].document;
-  await saved.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
-  assert.equal((await saved.run({ ...enabled, AI_REPORT_REFLECTION_CONTRACT: "v1" })).result.skipped, true);
-  assert.deepEqual((await saved.rows("WeeklyReport"))[0].document, before); assert.equal(saved.calls.length, 1);
+  for (const selectedContract of ['v1', 'native-reflection-v2', 'native-reflection-v2.1']) {
+    await saved.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+    assert.equal((await saved.run({ ...enabled, AI_REPORT_REFLECTION_CONTRACT: selectedContract })).result.skipped, true);
+    assert.deepEqual((await saved.rows("WeeklyReport"))[0].document, before); assert.equal(saved.calls.length, 1);
+  }
   const v1 = await fixture(t);
   assert.equal((await v1.run(enabled)).succeeded, true);
+  assert.equal(v1.calls.length, 1);
   const original = (await v1.rows("WeeklyReport"))[0].document;
   await v1.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
   assert.equal((await v1.run(nativeEnv)).result.skipped, true);
   assert.deepEqual((await v1.rows("WeeklyReport"))[0].document, original); assert.equal(v1.calls.length, 1);
 });
+
+}

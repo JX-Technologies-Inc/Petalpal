@@ -14,12 +14,13 @@ export const httpTests = 'production HTTPS security headers|HSTS requires|CSP su
 
 // Focused existing fixtures only; no real database/provider/load acceptance.
 export const additionalSecurityTests = [
+  { file: 'test/back/native-composition.test.js', pattern: '.', count: 17 },
   // Native v2 proof grammar and six validated mocked examples; no paid inference.
   { file: 'test/back/native-reflection.test.js', pattern: '.', count: 11 },
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
-  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 27 },
+  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 32, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
-  { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 20 },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 25, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
   { file: 'test/back/haiku-event-emotion.test.js', pattern: '.', count: 16 },
   { file: 'test/back/speech-admission.test.js', pattern: '^speech admission ', count: 4 },

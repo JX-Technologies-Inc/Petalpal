@@ -1,5 +1,39 @@
 # PetalPal Long-Term AI
 
+## 2026-10-13 — Native v2.1 controlled composition, prepared for review
+
+A new isolated `feat/native-reflection-composition` worktree/branch starts from
+PR #48 exact head `da67c2ca619fd3bb6f163435f07d3ff3f49df765`, stacked on
+`feat/native-reflection-v2`. Verified main: `ba867045c0c044a25b04e99dee93c53f10351506`.
+PRs #47/#48 were still open Drafts; their branches/worktrees are preserved.
+
+New source ASTs retain complete first-person constructions, negation, plans,
+degree, mixed feelings, quantities, record-relative dates and exact private
+provenance. Native paragraphs compose verified fragments and neutral/dated-record
+relationships, with fully consumed text and an optional named-entry invitation
+that explicitly permits stopping. Cross-language mappings are finite; unrecognized
+language remains quoted. Recurrence derives from parsed actual actions, not
+optional metadata; comparisons remain selected-sample counts. No inference of
+causes, recovery, persistent emotions, personality or positive trajectory.
+
+`AI_REPORT_REFLECTION_CONTRACT=native-reflection-v2.1` is an additional explicit
+opt-in, requiring all existing Sonnet/Opus/Gateway/budget gates. Defaults, v1,
+original v2, stable `grounded-narrative-v1` durable job/reservation identity, BGE
+384d, pgvector, bounded Chinese retrieval, Event-only input, Journal exclusion,
+consent epochs, owner/source fences, deletion and atomic persistence are unchanged.
+A rejected/ambiguous attempt cannot replay, repair or fall back automatically;
+finalized reports are immutable across contract selection.
+
+[Design, limits and acceptance plan](docs/ai/NATIVE_REFLECTION_V2.md#2026-10-13-addendum--native-reflection-v21-composition-expansion).
+[Six complete authored examples and same-source before/after](docs/ai/NATIVE_COMPOSITION_EXAMPLES.md).
+18/30 prior everyday variants now qualify natively (6/10 per locale), versus 0/30
+on v2. The predeclared synthetic set has 24 accepted and 24 rejected, all matching
+expectations; neither set estimates real-world coverage. Original qualified
+creative sources still require quotation. **Useful expansion, not launch-ready
+companion writing:** independent bilingual and product acceptance remains open.
+No provider action, real/paid inference, deployment, database migration or merge.
+MANUAL_SECURITY_CHECKLIST.md is unchanged because no manual/provider status changed.
+
 > Canonical engineering record for long-term memory, retrieval, reports, and
 > AI application architecture. This is a living record: update it with every
 > AI architecture decision, schema change, implementation completion, reversal,
@@ -9,6 +43,13 @@
 > provider rollout gates are documented in [MODEL_SELECTION.md](MODEL_SELECTION.md).
 > That design is not an implementation or production activation; the historical
 > checkpoints below retain their original scope.
+
+Local verification: 17 composition + 11 original-native proof tests; Sonnet 25,
+Opus 32; cost/consent/write-fence/CI-runner 45 passed. The full security matrix
+passed 241 checks in staged runs after correcting the isolated runtime's missing
+adjacent npm; final affected proof/provider reruns passed 28 + 10. Counts overlap.
+[Commands, environment limitations and corrected test attempts](docs/ai/NATIVE_REFLECTION_V2.md#local-verification-record--2026-10-13)
+are recorded separately from hosted CI and product acceptance.
 
 ## 2026-10-13 — Native reflection v2 executable subset (default off)
 

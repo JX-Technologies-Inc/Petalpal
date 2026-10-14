@@ -1,5 +1,48 @@
 # PetalPal Security
 
+## Native composition v2.1 — 2026-10-13 (default off; review pending)
+
+This additive candidate is stacked on exact PR #48 `da67c2ca`, preserving PR #47,
+v1 and original v2. `native-reflection-v2.1` is a separate explicit contract; it
+does not enable a provider or alter existing routes. No credentials, infrastructure,
+production data or manual/provider status changed; the manual checklist is unchanged.
+
+- Full-source, bounded deterministic parsing preserves AUTHOR, polarity, degree,
+  modality, numbers, temporal context, mixed feelings and exact private source
+  text/revision/owner/timestamps. Unsupported suffixes, causal or fictional framing,
+  actor ambiguity and incomplete summaries reject native extraction.
+- Exact locale mappings are closed executable rules, awaiting independent bilingual
+  review. Output locale stays server-controlled; source Events are never translated
+  in storage. Unknown cross-language text remains a whole attributed quote, with
+  quote-framing/display-control checks. No arbitrary translation/entailment claim.
+- Whole-paragraph recursive parsing validates literals, every fragment, neutral
+  connective, record chronology and explicit stop-option invitation. IDs only
+  select proof candidates. Unknown words, hidden psychological questions and
+  causal reinterpretations reject the output without repair or extra inference.
+- Actual positive activity predicates can support multi-source/week recurrence;
+  plans/negative actions cannot. Comparisons are only selected record counts.
+  Neither statistical cards nor invitations substitute for actual current Event
+  coverage. All eligible Monthly weeks remain required.
+- Existing consent/source/owner/locale checks, durable USD/call admission, no-replay
+  ledger, timeout boundary, stable `grounded-narrative-v1`, finalized-report reuse,
+  deletion and atomic report/evidence/job writes remain authoritative. Event-only
+  AI, Journal exclusion, BGE 384d/pgvector and existing retrieval policies are unchanged.
+
+The semantic boundary and executable counterexamples are documented in
+[the native design addendum](docs/ai/NATIVE_REFLECTION_V2.md#2026-10-13-addendum--native-reflection-v21-composition-expansion).
+Product limitations (restricted coverage, repetition, weak personalization) are
+**not** evidence of a consent/cost/isolation defect and do not justify relaxing
+validation. Conversely, passing mocked safeguards does not certify fluent product
+quality. Predeclared synthetic 48/48 expectation matches and selected everyday
+18/30 native eligibility are not production accuracy claims. No activation approval.
+
+Local verification: 17 composition + 11 original-native proof tests; Sonnet 25,
+Opus 32; cost/consent/write-fence/CI-runner 45 passed. The full security matrix
+passed 241 checks in staged runs after correcting the isolated runtime's missing
+adjacent npm; final affected proof/provider reruns passed 28 + 10. Counts overlap.
+[Commands, environment limitations and corrected test attempts](docs/ai/NATIVE_REFLECTION_V2.md#local-verification-record--2026-10-13)
+are recorded separately from hosted CI and product acceptance.
+
 ## Native reflection v2 grounding boundary — 2026-10-13
 
 **Working executable subset; default off.** Verified base `main@ba867045` contains
