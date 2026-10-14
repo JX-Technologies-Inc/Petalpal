@@ -10,6 +10,50 @@
 > That design is not an implementation or production activation; the historical
 > checkpoints below retain their original scope.
 
+## 2026-10-13 — Native reflection v2 executable subset (default off)
+
+A new isolated branch from verified `main@ba867045` (Phase 4 merged) adds actual
+model-authored clause text to the Sonnet Weekly / Opus Monthly services, behind
+`AI_REPORT_REFLECTION_CONTRACT=native-reflection-v2`. Missing/`v1` retains existing
+verified renderers; Gateway/provider/model/budget gates remain required. PR #47's
+open Draft grounding-boundary checkpoint (`28d9dbf3`) is reviewed and preserved,
+not overwritten: arbitrary-language entailment is still unsupported, but a positive
+complete-clause language provides a working, independently checked subset.
+
+Authorized EventMemory and deterministic totals produce request-local typed
+propositions with exact Event/Memory provenance, owner, occurrence/revision/update
+timestamps and validation rule. Private IDs and source snapshots stay server-side.
+The model composes complete text from supported facts and optional non-presuppositional
+invitations. The backend rebuilds proof, validates the entire wording, and stores the
+accepted strings unchanged using existing JSON sections/AiEvidence and atomic
+report/job completion. It does not synthesize substitute prose or call another model.
+
+This first subset supports attributed quotations; narrowly parsed complete recorded
+feelings; two literal recorded activities and recurrence; metadata label recurrence
+across records/weeks; explicitly sample-scoped comparisons; and optional Event totals.
+It cannot independently certify arbitrary paraphrases, emotional significance,
+motivations, causality, diagnosis, personal growth, implied claims in questions or
+open-ended translation. Exact quotations prove only what the owner recorded, not
+that the described world event occurred. Most source text therefore remains attributed.
+The positive grammar has finite phrasing and product depth remains an acceptance
+limit; this is not completion of unrestricted production-quality AI companionship.
+
+Full Monthly cross-week selection/coverage, English BGE 384d/pgvector, bounded
+Chinese chronological selection, deterministic extraction/statistics, Event-only
+processing, Journal exclusion, owner/consent/source/locale/claim fences, USD admission,
+late-response deadlines and deletion remain authoritative. Content version changes
+never change the stable period/job/cost key. Rejections and ambiguous requests have
+no automatic fallback, retry, repair or refund; finalized reports are reused. v1 is
+retained for future eligible operations only. No migration, reader/API or scheduling
+change, provider activation, real inference, deployment or production access.
+
+See [contract and acceptance plan](docs/ai/NATIVE_REFLECTION_V2.md) for category-specific
+proofs/counterexamples and [six executable mock examples](docs/ai/NATIVE_REFLECTION_EXAMPLES.md)
+for English, Simplified and Traditional Chinese. The Chinese examples meet the
+100–180 Weekly / 250–350 Monthly targets without padding. Focused test evidence is
+recorded with this change in SECURITY.md. All prior checkpoints below retain their
+original scope; none is upgraded to live native-writing acceptance.
+
 ## 1. Canonical Product Rules
 
 - AI only processes user-authored Events.

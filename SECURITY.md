@@ -1,5 +1,72 @@
 # PetalPal Security
 
+## Native reflection v2 grounding boundary — 2026-10-13
+
+**Working executable subset; default off.** Verified base `main@ba867045` contains
+merged Phase 4. PR #47 remained an open Draft (`28d9dbf3`) at review; its arbitrary
+native-language grounding limit is preserved. This separate change adds
+`native-reflection-v2` only behind exact named configuration and the existing
+Sonnet/Opus provider/model, Gateway and USD gates. Default routes, approved v1
+renderers, Event emotion processing and all historical evidence below are retained.
+
+- Backend-owned typed propositions carry exact Event/Memory/owner scope, source
+  revision/update/occurrence timestamps and a rule version. Private IDs/snapshots
+  remain server-side. Deterministic totals are checked against authorized period
+  sources. The output validator rebuilds proof from captured input, not model
+  citations, mutable proof packets, token overlap, self-assessment, a generic
+  blacklist or second LLM opinion.
+- Every complete returned clause must belong to the positive locale grammar with
+  exact proposition values. Unsupported prefixes, suffixes, connectives, hidden
+  questions and model-labelled reflective claims fail closed. Exact source quotes
+  preserve language/negation/numbers and require balanced framing/no display control
+  characters. Complete-summary feeling/activity grammars reject contextual qualifiers,
+  fictional/third-party attribution and negation. Topic wording explicitly names
+  metadata labels; selected-sample changes cannot imply life or emotional changes.
+- The finite executable language permits attributed source text/local dates,
+  recorded first-person feelings, two literal recorded activities/recurrence,
+  label recurrence, sample comparisons and optional Event totals. Separate optional
+  invitations assert no improvement, cause, diagnosis or hidden emotional state.
+  No unrestricted paraphrase, automatic translation, external-world verification,
+  causal/psychological synthesis or universal entailment is claimed. Most ordinary
+  Events remain quoted; linguistic range/context selection and product depth remain
+  explicit limits. Details/counterexamples and acceptance gates are in
+  [the contract record](docs/ai/NATIVE_REFLECTION_V2.md).
+- Claude supplies complete text and composition; the application accepts the exact
+  strings and assembles only whitespace. Monthly selection and output retain all
+  eligible current-week coverage; record counts cannot buy coverage. Existing
+  700-character section bounds and conservative Chinese caps apply; length targets
+  never authorize padding, truncation or another inference request.
+- Validation runs inside the existing Gateway deadline. Consent/epoch, source
+  revision/deletion, locale/timezone, owner and lease fences still precede atomic
+  report/evidence/job persistence. Event-only input, Journal exclusion, deterministic
+  extraction/statistics, BGE 384d, owner-scoped pgvector, bounded Chinese retrieval,
+  fixed authenticated egress and private diagnostics remain unchanged.
+- The content version never changes stable `grounded-narrative-v1` period/job/cost
+  identity. No retry, repair, refund or automatic fallback is added. A reserved or
+  ambiguous native operation cannot switch to v1 to buy another call. Finalized
+  v1/native reports are reused unchanged. v1 remains truthful only for future
+  eligible operations under explicit selection. No Phase 5 implementation.
+
+Focused validation: the initial complete impact run passed **148/148**, including
+native proofs, both Anthropic services, deterministic foundation, report worker,
+source/claim/consent fences and six CI contract tests. The final affected-service run passed **64/64** (11 native proof, 20 Weekly,
+27 Monthly and 6 CI contract cases). After refining the synthetic examples to
+demonstrate complete-summary native feeling attribution, their affected pure suite
+passed **11/11** again. Overlapping counts are not additive; exact-head hosted CI
+is recorded on the Draft PR. Fixtures use synthetic data, injected
+fetch and disposable in-memory PGlite, with stripped process configuration and a
+nonconnecting synthetic DB setting. There is no live provider or database access.
+Six examples are actual validated authored mock responses, not measured model tone,
+accuracy, schema adherence or live acceptance. PGlite does not certify independent
+PostgreSQL connection lock scheduling. Positive grammar/meaning review, native-speaker
+product acceptance, exact-model Gateway compatibility, privacy/processor review,
+approved budgets and separately authorized paid acceptance/release remain open.
+
+No deployment, activation, credentials/resources, production DB/infrastructure,
+PR #37 or pre-existing worktree changes. MANUAL_SECURITY_CHECKLIST.md is unchanged:
+no genuine manual/provider action or provider status changed. Canonical security
+statuses/counts and all prior checkpoints remain unchanged.
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree

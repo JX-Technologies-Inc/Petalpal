@@ -1,3 +1,4 @@
+import { nativeMockResponse } from "../fixtures/native-reflection.js";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { PGlite } from "@electric-sql/pglite";
@@ -480,4 +481,98 @@ test("Monthly moment cards preserve whole-source negation and numbers and reject
     }
     assert.throws(() => buildMonthlyReflectionPacket(input), { code: "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE" });
   }
+});
+
+const nativeEnv = { ...enabled, AI_REPORT_REFLECTION_CONTRACT: "native-reflection-v2" };
+
+test("native Monthly uses existing Gateway, admission and atomic persistence in all three locales", async t => {
+  for (const locale of ["en", "zh-CN", "zh-TW"]) {
+    const f = await fixture(t, { locale });
+    f.respond(packet => Response.json(native(nativeMockResponse(packet))));
+    const result = await f.run(nativeEnv);
+    assert.equal(result.succeeded, true, result.error?.code);
+    assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0);
+    const report = (await f.rows("MonthlyReport"))[0].document;
+    assert.equal(report.narrativeSections[0].contractVersion, "native-reflection-v2");
+    assert.deepEqual(report.narrativeSections[0].nativeBlocks, nativeMockResponse(f.calls[0].packet).blocks);
+    assert.ok((await f.rows("AIEvidence")).length >= 2);
+    assert.equal((await f.rows("AIJob"))[0].status, "SUCCEEDED");
+    assert.equal((await f.rows("AuditEvent")).length, 4);
+    assert.doesNotMatch(JSON.stringify(f.calls[0].packet), /alice|bob|event-0|memory-0|sourceFence/);
+    assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
+  }
+});
+
+test("native Monthly rejects unsupported prose and refusal without repair, v1 fallback or paid replay", async t => {
+  const sparse = await fixture(t);
+  await sparse.pg.exec('DELETE FROM "EventMemory" WHERE "id"<>\'memory-0\'');
+  const sparseResult = await sparse.run(nativeEnv);
+  assert.equal(sparseResult.succeeded, true); assert.equal(sparseResult.result.status, "INSUFFICIENT_EVIDENCE");
+  assert.equal(sparse.calls.length, 0); assert.equal(sparse.legacyCalls, 0);
+  for (const mode of ["ungrounded", "refusal", "truncated", "malformed"]) {
+    const f = await fixture(t);
+    f.respond(packet => {
+      if (mode === "malformed") return new Response("invalid");
+      const output = nativeMockResponse(packet);
+      if (mode === "ungrounded") output.blocks[0].clauses[0].text = "Drawing cured your anxiety / 你的情绪已经好转";
+      const envelope = native(output);
+      if (mode === "refusal") envelope.stop_reason = "refusal";
+      if (mode === "truncated") envelope.stop_reason = "max_tokens";
+      return Response.json(envelope);
+    });
+    assert.equal((await f.run(nativeEnv)).succeeded, false);
+    assert.equal((await f.run({ ...enabled, AI_REPORT_REFLECTION_CONTRACT: "v1" })).error.code, "AI_INFERENCE_ALREADY_RESERVED");
+    assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0); assert.equal((await f.rows("MonthlyReport")).length, 0);
+  }
+});
+
+test("native Monthly consent, owner, cost and contract denial prevents dispatch", async t => {
+  for (const mode of ["consent", "owner", "cost", "contract"]) {
+    const f = await fixture(t, { locale: "en" });
+    if (mode === "consent") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
+    const env = { ...nativeEnv, ...(mode === "cost" ? { AI_USER_DAILY_USD_LIMIT: "0" } : {}),
+      ...(mode === "contract" ? { AI_REPORT_REFLECTION_CONTRACT: "unreviewed" } : {}) };
+    if (mode === "owner") assert.equal((await f.make(env).runJob({ jobId: "job-1", ownerId: "bob", jobType: "MONTHLY_REPORT" })).claimed, false);
+    else { const result = await f.run(env); assert.ok(!result.succeeded || result.result?.status === "CONSENT_INELIGIBLE"); }
+    assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+  }
+});
+
+test("native Monthly stale sources, revocation and evidence-write failure cannot persist returned prose", async t => {
+  for (const stage of ["delete", "revoke", "epoch", "evidence"]) {
+    const f = await fixture(t); if (stage === "evidence") f.failEvidence();
+    f.respond(async packet => {
+      if (stage === "delete") await f.pg.exec('DELETE FROM "Event" WHERE "id"=\'event-0\'');
+      if (stage === "revoke") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
+      if (stage === "epoch") await f.pg.exec('UPDATE "AiConsent" SET "updatedAt"=\'2099-01-01\'');
+      return Response.json(native(nativeMockResponse(packet)));
+    });
+    const result = await f.run(nativeEnv);
+    assert.ok(result.succeeded === false || result.result?.status === "CONSENT_INELIGIBLE");
+    assert.equal((await f.rows("MonthlyReport")).length, 0); assert.equal((await f.rows("AIEvidence")).length, 0);
+    assert.equal((await f.rows("AuditEvent")).length, 4);
+  }
+});
+
+test("native Monthly late fetch ignores AbortSignal safely and finalized results stay immutable under v1 selection", async t => {
+  const f = await fixture(t); let release, packet;
+  f.respond(value => { packet = value; return new Promise(resolve => { release = resolve; }); });
+  const result = await f.run({ ...nativeEnv, AI_MONTHLY_REPORT_TIMEOUT_MS: "250" });
+  assert.equal(result.error.code, "AI_GATEWAY_TIMEOUT");
+  const response = Response.json(native(nativeMockResponse(packet))), reader = t.mock.method(response.body, "getReader");
+  release(response); await new Promise(setImmediate); await new Promise(setImmediate);
+  assert.equal(reader.mock.callCount(), 0); assert.equal((await f.rows("MonthlyReport")).length, 0);
+  const saved = await fixture(t); saved.respond(value => Response.json(native(nativeMockResponse(value))));
+  const concurrent = await Promise.all([saved.run(nativeEnv), saved.run(nativeEnv)]);
+  assert.equal(concurrent.filter(item => item.succeeded).length, 1); assert.equal(saved.calls.length, 1);
+  const before = (await saved.rows("MonthlyReport"))[0].document;
+  await saved.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  assert.equal((await saved.run({ ...enabled, AI_REPORT_REFLECTION_CONTRACT: "v1" })).result.skipped, true);
+  assert.deepEqual((await saved.rows("MonthlyReport"))[0].document, before); assert.equal(saved.calls.length, 1);
+  const v1 = await fixture(t);
+  assert.equal((await v1.run(enabled)).succeeded, true);
+  const original = (await v1.rows("MonthlyReport"))[0].document;
+  await v1.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  assert.equal((await v1.run(nativeEnv)).result.skipped, true);
+  assert.deepEqual((await v1.rows("MonthlyReport"))[0].document, original); assert.equal(v1.calls.length, 1);
 });

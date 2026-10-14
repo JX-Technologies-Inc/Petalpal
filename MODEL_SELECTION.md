@@ -13,6 +13,49 @@
 > Haiku and Sonnet routing are disabled by default; production model selections
 > remain unchanged. Live provider acceptance, activation and phases 4–6 remain pending.
 
+## Native reflection v2 — executable subset, 2026-10-13
+
+Current source base: verified `main@ba867045` includes merged PR #46's Phase 4
+Opus implementation. PR #47 remained an open Draft at review, head `28d9dbf3`;
+its arbitrary-language entailment boundary is retained as historical evidence.
+This separate change implements a restricted executable subset rather than merging
+or rewriting that checkpoint. No inference, provider action or activation occurred.
+
+`lib/native-reflection.js` adds `native-reflection-v2` to the existing Sonnet Weekly
+and Opus Monthly Gateway services. `AI_REPORT_REFLECTION_CONTRACT` absent or `v1`
+retains their verified v1 renderers; only the exact new version selects v2, and
+unknown explicit values fail closed. All existing provider/model, consent and budget
+switches still apply. Workers AI/Event routes and production defaults are unchanged.
+
+Claude supplies complete native clause text and paragraph composition. The backend
+recomputes typed propositions and checks **every complete clause** against a positive
+locale grammar and exact proposition values, then joins accepted strings unchanged.
+It neither generates replacement prose nor treats a citation, keyword overlap,
+self-assessment, blacklist or another LLM as entailment proof. This is constrained
+native composition, **not unrestricted native prose**. Source attribution still
+carries most ordinary Events; linguistic range and reflective depth remain limited.
+
+Permitted facts are exact framed source quotations/local dates, complete-summary
+first-person feeling statements in a narrow grammar, two completely parsed recorded
+activities and their recurrence, exact stored topic-label recurrence, selected-sample
+label comparisons, and optional deterministic Event totals. Selected Monthly evidence
+and the output must cover every eligible current week. Topic counts describe labels;
+activity statements describe recorded actions; neither establishes life/emotion trends.
+Reflective invitations use a separate positive grammar with no assumed improvement,
+problem, diagnosis, motivation or causal claim. Unsupported text is rejected without
+repair calls or automatic fallback. The v1 renderer remains available only for future
+eligible operations; finalized reports and reserved/ambiguous attempts cannot be
+reopened by changing contracts, models or providers. Durable generation identity stays
+`grounded-narrative-v1`; the new version is report content metadata only.
+
+See [the contract, executable counterexamples and acceptance plan](docs/ai/NATIVE_REFLECTION_V2.md)
+and [six validated mock-response examples](docs/ai/NATIVE_REFLECTION_EXAMPLES.md).
+Chinese examples reach Weekly 100–180 / Monthly 250–350 graphemes; those targets
+never authorize filler or additional calls. Mocked results do not establish actual
+Claude fluency, schema adherence, quality, latency or availability. Exact-model,
+privacy/processor, multilingual quality and separately authorized release/paid
+acceptance gates remain open. No Phase 5 fallback is implemented.
+
 ## 1. Executive Summary
 
 PetalPal prioritizes factual grounding, report quality, reliability, and user experience over small per-request savings. The intended hierarchy is Claude Haiku 5.5 for Event secondary emotions, Claude Sonnet 5.5 for Weekly reflections, Claude Opus 5.5 for Monthly reflections, and OpenAI GPT-6 Sol for explicitly permitted report fallback. Deterministic EventMemory extraction, Cloudflare BGE Small English v1.5 embeddings, and PostgreSQL pgvector remain in place.
