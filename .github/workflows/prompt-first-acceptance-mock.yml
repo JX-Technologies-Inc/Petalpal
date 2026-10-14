@@ -43,3 +43,7 @@ jobs:
         run: node --test experiments/prompt-first-reflection/acceptance.test.mjs
       - name: Existing PR #51 prompt-first tests
         run: node --test experiments/prompt-first-reflection/test.mjs
+      - name: Revised v2 prompt regression tests
+        run: node --test experiments/prompt-first-reflection/test-v2.mjs
+      - name: Existing security CI contract
+        run: node --test test/security-ci.test.js

@@ -1,11 +1,13 @@
 # Prompt-first Claude reflection evaluation
 
-Offline preparation only. No provider transport, credential lookup, route, database, report persistence or production eligibility. Requires Node 24 and the repository's existing dependencies (`npm ci --ignore-scripts` in a clean isolated checkout if needed). Do not load `.env`.
+The v2 prompt revision is offline preparation only: no provider calls, credentials, database, report persistence or production eligibility. The v1 direct transport remains solely as immutable first-run evidence and is not authorized for another run. Requires Node 24 and the repository's exact locked dependencies (`npm ci --ignore-scripts` in a clean isolated checkout). Do not load `.env`.
 
 ```sh
 node experiments/prompt-first-reflection/prepare.mjs
 node experiments/prompt-first-reflection/prepare.mjs --requests > /tmp/petalpal-synthetic-requests.json
 node --test experiments/prompt-first-reflection/test.mjs
+node experiments/prompt-first-reflection/prepare-v2.mjs
+node --test experiments/prompt-first-reflection/test-v2.mjs
 node experiments/prompt-first-reflection/render-examples.mjs
 node experiments/prompt-first-reflection/acceptance.mjs   # 36-case plan and reservation only
 node --test experiments/prompt-first-reflection/acceptance.test.mjs
@@ -17,21 +19,18 @@ node --test experiments/prompt-first-reflection/acceptance.test.mjs
 
 ## Modules
 
-- `prompts/shared-v1.txt` + report-specific versioned suffix: exact system prompt assembled by `systemPrompt`. Shared changes require version review for both prompts; versions are fixed for this experiment.
-- `experiment.mjs`: synthetic source admission, minimized alias-only user packet, wire/local schema, provider request construction and structural review. Original source/memory IDs, owner and revisions stay in its private closure. No mutable input reference is retained.
+- `prompts/shared-v1.txt` + report-specific v1 suffixes: immutable first-evaluation prompts assembled by `systemPrompt`.
+- `prompts-v2/shared-v2.txt` + report-specific v2 suffixes: revised semantic and writing instructions assembled by `systemPromptV2`. The v2 path has no live runner or authorization.
+- `experiment.mjs`: immutable v1 synthetic source admission, minimized alias-only user packet, wire/local schema, provider request construction and structural review. Original source/memory IDs, owner and revisions stay in its private closure. No mutable input reference is retained.
+- `experiment-v2.mjs`: changes only the versioned system prompt and packet `promptVersion`; delegates admission, evidence construction, schema, source fence, evaluator and reservation to v1.
+- `prepare-v2.mjs`: builds the 120 revised requests offline and exposes no `--requests` or send mode.
 - `fixtures.mjs`: 20 authored scenarios, 73 source Events; Weekly uses the first two (or fewer), Monthly uses up to four. All three locales see byte-identical evidence. Dates are synthetic fixture choices, never translations of source-relative time.
 - `examples.mjs`: six manually authored writing targets. Not used as a semantic acceptance registry or supplied as few-shot examples.
 - `acceptance.mjs`: approval-gated runner for the 36-case first batch. Checks that request-construction sources match the approved commit, then runs model and token-count preflight, serial single attempts, a no-replay ledger (`wx`, fsync before dispatch), 20 s/64 KiB/20 min limits, usage/budget stops and sanitized results. A live run (no `mockLedgerPath`) always uses the fixed `~/.petalpal-acceptance/<commit>.jsonl` and accepts no other option, so a new path cannot start a second live run. Mocked runs must name their own ledger and are labelled `MOCK`. It has no transport of its own. The only real one is `live-anthropic.mjs`, a direct `https://api.anthropic.com` adapter that sends only when called by an active LIVE run. It reads the key once from `PETALPAL_CLAUDE_EVAL_API_KEY` in a trusted runtime and never logs it or writes it to the ledger. Verified only with mocked transports (`acceptance.test.mjs`). The tests need git history containing that commit; CI runs them via `.github/workflows/prompt-first-acceptance-mock.yml` with `npm ci`.
 
 **Runner limits.** The fixed ledger only blocks a second live run for one OS user on one machine. It is **not** cross-machine replay prevention: another machine, a different HOME or a deleted ledger file can start again. The human approval record and Gateway-side limits remain the authority. `mockLedgerPath` exists only for mocked transports. A `MOCK` run never authorizes real or paid calls, must never be used with a real transport, and its results are not acceptance evidence.
 
-**Single live run (operator only, on a trusted machine with internet).** Use a full clone of this branch with `npm ci --ignore-scripts` done. Paste the key at the silent prompt; it is not echoed or saved to shell history:
-
-```sh
-read -rs PETALPAL_CLAUDE_EVAL_API_KEY && export PETALPAL_CLAUDE_EVAL_API_KEY && node experiments/prompt-first-reflection/live-anthropic.mjs; unset PETALPAL_CLAUDE_EVAL_API_KEY
-```
-
-It prints only the sanitized summary. Results stay in `~/.petalpal-acceptance/<commit>.jsonl`, and a second run is refused.
+**Historical v1 live run.** The first 36-call batch completed. Its authorization and single-use ledger are consumed. Do not invoke `live-anthropic.mjs` again or use that approval for v2; any v2 provider evaluation requires a new, separately scoped authorization, budget and ledger.
 - `compare.mjs`: reference v1/v2/v2.1 comparison using one deterministic authored candidate per case. v1 is main's deterministic rendering; v2/v2.1 are pinned Draft #49 source. Abstention is recorded, never repaired by rewriting source text.
 
 To reproduce the committed baseline artifact, use a clean, read-only checkout of `09f6aee0584c386c99523e81657413efab32f1af` with its existing dependencies. Do not reset anyone else's checkout. No provider calls or DB connection occur; transitive reference configuration receives a synthetic closed localhost endpoint only:
