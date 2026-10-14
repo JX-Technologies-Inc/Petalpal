@@ -1,7 +1,7 @@
 // Approval-gated runner for the 36-case first acceptance batch in docs/ai/PROMPT_FIRST_REFLECTION.md.
 // Ships no transport, credential, environment access, database, user Event or report persistence. A trusted
-// caller injects `transport(request, { signal })` -> `{ status, body: AsyncIterable<Uint8Array> }`; only that
-// transport binds the Gateway origin and credentials. Verified with mocked transports only.
+// caller injects `transport(request, { signal, grant })` -> `{ status, body: AsyncIterable<Uint8Array> }`; only
+// that transport binds the provider origin and credentials (see live-anthropic.mjs).
 import { execFileSync } from 'node:child_process';
 import { closeSync, fsyncSync, mkdirSync, openSync, writeSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -48,7 +48,7 @@ export function acceptancePlan() {
 }
 
 // One HTTP attempt. The deadline covers the transport call and every body read; late results are discarded.
-async function exchange(transport, request, timeoutMs) {
+async function exchange(transport, request, timeoutMs, grant) {
   const controller = new AbortController();
   let timer;
   const expired = new Promise(resolve => {
@@ -56,7 +56,7 @@ async function exchange(transport, request, timeoutMs) {
   });
   const attempt = (async () => {
     try {
-      const response = await transport(request, { signal: controller.signal }), status = response?.status, chunks = [];
+      const response = await transport(request, { signal: controller.signal, grant }), status = response?.status, chunks = [];
       if (!Number.isSafeInteger(status) || status < 100 || status > 599 ||
           typeof response.body?.[Symbol.asyncIterator] !== 'function') return { error: 'AMBIGUOUS_TRANSPORT' };
       let bytes = 0;
@@ -109,6 +109,9 @@ function assess(c, r) {
 // another path cannot start a second live run. Mocked runs must name their own ledger and are labelled MOCK.
 // Local only: NOT cross-machine replay prevention. A MOCK run never authorizes real or paid calls.
 export const liveLedgerPath = () => join(homedir(), '.petalpal-acceptance', `${APPROVED_COMMIT}.jsonl`);
+// Real transports must refuse unless called by an active LIVE run. MOCK runs never hold a grant; revoked at run end.
+const liveGrants = new WeakSet();
+export const isLiveGrant = grant => liveGrants.has(grant);
 
 export async function runAcceptance({ transport, mockLedgerPath, ...mockOptions } = {}) {
   const mode = mockLedgerPath === undefined ? 'LIVE' : 'MOCK', ledgerPath = mode === 'LIVE' ? liveLedgerPath() : mockLedgerPath;
@@ -131,7 +134,8 @@ export async function runAcceptance({ transport, mockLedgerPath, ...mockOptions 
     throw Error('ACCEPTANCE_LEDGER_UNAVAILABLE');
   }
   const write = entry => { writeSync(fd, JSON.stringify(entry) + '\n'); fsyncSync(fd); };
-  const started = now(), calls = { metadata: 0, count: 0, inference: 0 }, outcomes = {};
+  const started = now(), calls = { metadata: 0, count: 0, inference: 0 }, outcomes = {}, grant = Object.freeze({});
+  if (mode === 'LIVE') liveGrants.add(grant);
   let knownNanoUsd = 0, uncertainNanoUsd = 0;
   const finish = stopReason => {
     const summary = { mode, status: stopReason ? 'STOPPED' : 'COMPLETED', stopReason, calls: { ...calls }, outcomes: { ...outcomes },
@@ -144,7 +148,7 @@ export async function runAcceptance({ transport, mockLedgerPath, ...mockOptions 
     if (now() - started + callTimeoutMs > BOUNDS.runDeadlineMs) throw new Stop('RUN_DEADLINE');
     calls[call]++;
     write({ entry: 'attempt', call, id }); // Durable before dispatch: a crash or unknown outcome consumes it.
-    const begin = now(), result = await exchange(transport, request, callTimeoutMs);
+    const begin = now(), result = await exchange(transport, request, callTimeoutMs, grant);
     return { ...result, latencyMs: now() - begin };
   };
   const { 'Content-Type': _, ...getHeaders } = plan.cases[0].prepared.request.headers;
@@ -187,7 +191,7 @@ export async function runAcceptance({ transport, mockLedgerPath, ...mockOptions 
     if (error instanceof Stop) return finish(error.reason);
     finish('RUNNER_ERROR');
     throw Error('ACCEPTANCE_RUNNER_ERROR');
-  } finally { closeSync(fd); }
+  } finally { liveGrants.delete(grant); closeSync(fd); }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

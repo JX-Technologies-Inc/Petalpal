@@ -2,11 +2,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { APPROVED_COMMIT, APPROVED_SCENARIOS, BOUNDS, MODELS, acceptancePlan, assertPinnedSources, runAcceptance } from './acceptance.mjs';
+import { APPROVED_COMMIT, APPROVED_SCENARIOS, BOUNDS, MODELS, acceptancePlan, assertPinnedSources, liveLedgerPath,
+  runAcceptance } from './acceptance.mjs';
+import { anthropicTransport } from './live-anthropic.mjs';
 import { TYPES, VERSION } from './experiment.mjs';
 import { prepareAll } from './prepare.mjs';
 
@@ -261,4 +263,52 @@ console.log(JSON.stringify({ path: liveLedgerPath(), first: [first.mode, first.s
   assert.deepEqual(result, { path: join(home, '.petalpal-acceptance', `${APPROVED_COMMIT}.jsonl`),
     first: ['LIVE', 'PREFLIGHT_MODEL_UNCONFIRMED'], calls: 1, unchanged: true,
     reruns: ['ACCEPTANCE_LEDGER_UNAVAILABLE', 'ACCEPTANCE_CONFIG_REJECTED', 'ACCEPTANCE_CONFIG_REJECTED'] });
+});
+
+test('direct Anthropic adapter: refused in MOCK runs, exact official endpoints in LIVE, key never in the ledger', async () => {
+  const KEY = `sk-ant-${CANARY}`, seen = [], priorHome = process.env.HOME, priorFetch = globalThis.fetch;
+  const fetchMock = async (url, init) => {
+    seen.push({ url, init });
+    const { pathname } = new URL(url);
+    if (init.method === 'GET') return new Response(JSON.stringify({ type: 'model', id: pathname.split('/').pop() }));
+    return new Response(JSON.stringify(pathname.endsWith('/count_tokens') ? { input_tokens: 1000 } : message({ body: init.body })));
+  };
+  let captured;
+  const real = anthropicTransport(KEY, fetchMock), wrapped = (request, options) => { captured = options.grant; return real(request, options); };
+  process.env.HOME = mkdtempSync(join(tmpdir(), 'petalpal-acceptance-home-'));
+  globalThis.fetch = () => { throw Error('Only the injected fetch may be used'); };
+  try {
+    const mock = await runAcceptance({ transport: real, mockLedgerPath: ledgerPath() });
+    assert.deepEqual([mock.mode, mock.stopReason, seen.length], ['MOCK', 'PREFLIGHT_MODEL_UNCONFIRMED', 0]);
+    const live = await runAcceptance({ transport: wrapped });
+    assert.deepEqual([live.mode, live.status, live.calls], ['LIVE', 'COMPLETED', { metadata: 2, count: 36, inference: 36 }]);
+    assert.deepEqual(seen.map(s => s.url), [...Object.values(MODELS).map(m => `https://api.anthropic.com/v1/models/${m}`),
+      ...Array(36).fill('https://api.anthropic.com/v1/messages/count_tokens'), ...Array(36).fill('https://api.anthropic.com/v1/messages')]);
+    for (const { init } of seen) {
+      assert.equal(init.redirect, 'error');
+      assert.ok(init.signal instanceof AbortSignal);
+      assert.deepEqual(init.headers, { 'x-api-key': KEY, 'anthropic-version': acceptancePlan().cases[0].prepared.request.headers['anthropic-version'],
+        ...(init.method === 'POST' ? { 'content-type': 'application/json' } : {}) });
+    }
+    acceptancePlan().cases.forEach((c, i) => assert.equal(seen[38 + i].init.body, JSON.stringify(c.prepared.request.body)));
+    assert.equal(read(liveLedgerPath()).includes(CANARY), false);
+    await assert.rejects(real({ method: 'POST', path: '/anthropic/v1/messages', body: '{}' }, { grant: captured }),
+      /ANTHROPIC_TRANSPORT_LIVE_RUN_REQUIRED/);
+    assert.equal(seen.length, 74);
+  } finally {
+    if (priorHome === undefined) delete process.env.HOME; else process.env.HOME = priorHome;
+    globalThis.fetch = priorFetch;
+  }
+});
+
+test('live CLI fails closed without an injected key: no request and no ledger', () => {
+  const home = mkdtempSync(join(tmpdir(), 'petalpal-acceptance-home-'));
+  let stderr = '';
+  try {
+    execFileSync(process.execPath, ['experiments/prompt-first-reflection/live-anthropic.mjs'],
+      { cwd: ROOT, env: { PATH: process.env.PATH, HOME: home }, stdio: 'pipe' });
+  } catch (error) { stderr = String(error.stderr); }
+  assert.match(stderr, /ANTHROPIC_TRANSPORT_CONFIG_REJECTED/);
+  assert.equal(existsSync(join(home, '.petalpal-acceptance')), false);
+  for (const key of ['', ' sk-ant-x', 'sk-ant-x\n']) assert.throws(() => anthropicTransport(key, async () => {}), /CONFIG_REJECTED/);
 });
