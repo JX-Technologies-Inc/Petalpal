@@ -6,10 +6,70 @@ import { nativeFixture } from '../fixtures/native-reflection.js';
 import { parseRecordedConstruction as parse, constructionPhrases, activityThemes } from '../../lib/reflection-source-language.js';
 import { buildCompositionPackage as build, validateComposition as validate, COMPOSITION_VERSION } from '../../lib/native-composition.js';
 import { nativeReflectionEnabled, buildNativeReflectionPackage, nativeTextLength } from '../../lib/native-reflection.js';
+import { reviewInput, authoredComposition, evaluateReview49 } from '../evaluation/review49.mjs';
 const render = (type = 'WEEKLY', locale = 'en', rich = false) => {
   const input = compositionFixture(type, locale, rich), pkg = build(input), output = compositionMockResponse(pkg.publicPacket, { includeStats: locale !== 'en' });
   return { input, pkg, output };
 };
+test('review49 ambiguous relationships, litotes and planning dates stay whole quotes in every output locale', () => {
+  const sources = ['I talked with a partner.', 'I planned to talk with a partner.', 'I did not talk with a partner.',
+    'I felt not a little happy.', '我感到不有点开心。', '我感到不有點開心。',
+    'Yesterday, I planned to rest.', 'I planned to rest yesterday.', 'After work, I planned to write a poem.',
+    '昨天我计划休息。', '下班後我計劃休息。'];
+  for (const source of sources) {
+    assert.equal(parse(source), null, source);
+    for (const locale of locales) {
+      const input = reviewInput({ sources: [source, 'I read 17 pages.'] }, 'WEEKLY', locale), pkg = build(input);
+      const prop = pkg.publicPacket.propositions[0];
+      assert.equal(prop.kind, 'EXACT_RECORD'); assert.equal(prop.quote, source);
+      const output = authoredComposition(pkg.publicPacket);
+      assert.ok(validate(output, input).narrative.includes(source));
+      output.paragraphs[0].text = pkg.publicPacket.grammar.openings[0] + ({ en: 'talking with a partner', 'zh-Hans': '和一位伴侣聊天', 'zh-Hant': '和一位伴侶聊天' })[locale] + pkg.publicPacket.grammar.end;
+      assert.throws(() => validate(output, input), { code: 'REPORT_NARRATIVE_GROUNDING_FAILED' });
+    }
+  }
+  assert.ok(parse('I planned to rest.')); // Narrowing only ambiguous scope, not all plans.
+});
+test('review49 full paragraphs reject cross-language negation, mixed-feeling, quantity, actor, time and cause mutations', () => {
+  const cases = [
+    ['I did not fix the bug.', ['not fixing', '没有修好', '沒有修好'], ['fixing', '修好', '修好']],
+    ['我感到疲惫但开心。', ['tired but happy', '疲惫但开心', '疲憊但開心'], ['happy', '开心', '開心']],
+    ['我在速寫本上畫了兩棵樹。', ['two trees', '两棵树', '兩棵樹'], ['three trees', '三棵树', '三棵樹']],
+    ['Yesterday, I rested.', ['2026-09-14', '2026-09-14', '2026-09-14'], ['2026-09-15', '2026-09-15', '2026-09-15']]
+  ];
+  for (const [source, from, to] of cases) for (const [i, locale] of locales.entries()) {
+    const input = reviewInput({ sources: [source, 'I read 17 pages.'] }, 'WEEKLY', locale);
+    const output = authoredComposition(build(input).publicPacket);
+    validate(output, input);
+    assert.ok(output.paragraphs[0].text.includes(from[i]));
+    output.paragraphs[0].text = output.paragraphs[0].text.replace(from[i], to[i]);
+    assert.throws(() => validate(output, input), { code: 'REPORT_NARRATIVE_GROUNDING_FAILED' });
+  }
+  for (const locale of locales) {
+    const input = reviewInput({ sources: ['I rested.', 'I read 17 pages.'] }, 'WEEKLY', locale);
+    const output = authoredComposition(build(input).publicPacket);
+    for (const suffix of [' This made you happier.', ' Why did this help you recover?', '所以你变得更开心。', '這讓你更有韌性。']) {
+      const changed = structuredClone(output); changed.paragraphs[0].text += suffix;
+      assert.throws(() => validate(changed, input));
+    }
+    output.paragraphs[0].text = output.paragraphs[0].text.replace(locale === 'en' ? 'You' : '你', locale === 'en' ? 'Your friend' : '你的朋友');
+    assert.throws(() => validate(output, input));
+  }
+});
+test('review49 fresh identical-evidence comparison records abstention separately from product quality', () => {
+  const results = evaluateReview49();
+  assert.deepEqual(results.nativeSourceEligibility, { accepted: 4, total: 24 });
+  assert.equal(results.rows.length, 36);
+  assert.deepEqual(results.counts, {
+    v1: { accepted: 32, preflightAbstained: 4, outputRejected: 0 },
+    v2: { accepted: 36, preflightAbstained: 0, outputRejected: 0 },
+    'v2.1': { accepted: 24, preflightAbstained: 12, outputRejected: 0 }
+  });
+  for (const row of results.rows) {
+    if (['relationships', 'mixed-language'].includes(row.domain)) assert.equal(row.versions['v2.1'].code, 'REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE');
+    if (row.versions['v2.1'].status === 'accepted') assert.equal(row.versions['v2.1'].referencedEvents, row.type === 'WEEKLY' ? 2 : 4);
+  }
+});
 test('composition has a separate explicit opt-in while v1 and original native v2 remain unchanged', () => {
   assert.equal(nativeReflectionEnabled({}), false);
   assert.equal(nativeReflectionEnabled({ AI_REPORT_REFLECTION_CONTRACT: COMPOSITION_VERSION }), true);

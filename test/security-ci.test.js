@@ -33,6 +33,11 @@ test('CI runner resolves the explicit baseline and strips unsafe inherited confi
       for (const contract of matrixContracts) titles.push(...templates.map(title => title.replace('${contract}', contract)));
     }
     assert.equal(titles.filter(title => new RegExp(pattern).test(title)).length, count, file);
+    if (matrixContracts) {
+      // Every title is scheduled exactly once across the disjoint processes.
+      const groups = additionalSecurityTests.filter(item => item.file === file);
+      for (const title of titles) assert.equal(groups.filter(group => new RegExp(group.pattern).test(title)).length, 1, title);
+    }
   }
   assert.throws(() => assertCleanCheckout(() => true), /clean checkout/);
   assert.doesNotThrow(() => assertCleanCheckout(() => false));

@@ -1,0 +1,8 @@
+[
+  {"domain":"work","sources":["I felt frustrated.","The meeting ran over, but I did not promise to finish tonight.","客户没有批准方案，我只是把问题整理给团队。","同事接手了簡報；我鬆了口氣，也擔心交接漏了細節。"]},
+  {"domain":"study","sources":["I read 17 pages.","我复习了两章，但练习题只做对一半。","I understood the example after class, not during the exam.","今天只讀了半小時，還是沒弄懂那個證明。"]},
+  {"domain":"relationships","sources":["I talked with a partner.","朋友取消了晚餐，我失望，但没有生气。","My sister sounded tired; I was glad she called.","我們還沒有和好，只是同意下週再談。"]},
+  {"domain":"emotions","sources":["我感到平静。","I was proud of submitting it and anxious about the response.","并不是不难过，只是今天不想聊。","我很想念家人，也享受一個人吃飯的安靜。"]},
+  {"domain":"daily-life","sources":["I cooked dinner. I felt grateful.","下雨没去散步，在家把衣服叠好了。","I slept badly, though I cannot tell whether the coffee mattered.","我幫鄰居搬了兩箱書，剩下的三箱是她自己搬的。"]},
+  {"domain":"mixed-language","sources":["今天的 review 没过，我需要改两个地方，不是重做全部。","I felt relieved，但还没收到正式确认。","和 study group 討論了 recursion，我還不能獨立寫出解法。","Mum said take your time，我听了想哭，但不是因为难过。"]}
+]
