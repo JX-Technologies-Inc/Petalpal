@@ -107,6 +107,7 @@ function assess(c, r) {
 
 // A live run (no mockLedgerPath) always uses this fixed per-commit ledger and accepts no other option, so choosing
 // another path cannot start a second live run. Mocked runs must name their own ledger and are labelled MOCK.
+// Local only: NOT cross-machine replay prevention. A MOCK run never authorizes real or paid calls.
 export const liveLedgerPath = () => join(homedir(), '.petalpal-acceptance', `${APPROVED_COMMIT}.jsonl`);
 
 export async function runAcceptance({ transport, mockLedgerPath, ...mockOptions } = {}) {
