@@ -1,0 +1,117 @@
+{
+  "origin": "Six manual target-style drafts authored during this task; not Claude outputs, not executable native generation, not blind human review.",
+  "validationStatus": "UNVERIFIED_TARGET_PROSE",
+  "productionEligible": false,
+  "sourceScenario": "creative",
+  "sourceNote": "Source strings are unchanged from fresh-corpus.json. Weekly uses sources 1–2; Monthly uses sources 1–4. Timestamps order records and do not by themselves date the activities.",
+  "examples": [
+    {
+      "id": "weekly-en",
+      "reportType": "WEEKLY",
+      "locale": "en",
+      "sourceIndices": [
+        0,
+        1
+      ],
+      "text": "The uneven lines were something you liked in your kitchen-window sketch, even while the reflection was difficult to draw. With your short story, you tried a different opening and had not yet chosen a version; excitement and irritation were both part of writing it. If you feel like revisiting either piece, is there a line or passage you would like to linger over? Leaving them for another day is an option, too.",
+      "supportConcerns": [
+        "Kitchen-window joins kitchen window and sketch; the source does not locate the user at the window.",
+        "Different opening paraphrases 换了一个开头. It does not establish an improved, finished, or published story.",
+        "Irritation is a proposed rendering of 烦躁, not an independently reviewed intensity equivalence.",
+        "The invitation refers to existing pieces but line or passage is a small inferred detail of a sketch/story; a free-text checker cannot certify its presuppositions."
+      ]
+    },
+    {
+      "id": "weekly-zh-Hans",
+      "reportType": "WEEKLY",
+      "locale": "zh-Hans",
+      "sourceIndices": [
+        0,
+        1
+      ],
+      "text": "这周，你写到厨房窗户的速写：喜欢那些不太规整的线条，也觉得倒影不好画。写短篇小说时，你换了一个开头，还没决定用哪一版；兴奋和烦躁同时在场。如果愿意，可以再看看那张速写，或读一遍新开头，有没有哪一处想多停留一会儿？也可以先把它们放下。",
+      "supportConcerns": [
+        "这周 scopes recording, not a separately established date of drawing.",
+        "不太规整 may soften uneven; 不好画 may shift hard to draw. Neither multilingual equivalence has independent native-speaker review.",
+        "同时在场 renders 既兴奋又烦躁 without reducing the negative feeling, but remains an unvalidated metaphorical paraphrase.",
+        "新开头 means the replacement opening, not a completely new story; the invitation must not imply a wish to continue or a need to improve."
+      ]
+    },
+    {
+      "id": "weekly-zh-Hant",
+      "reportType": "WEEKLY",
+      "locale": "zh-Hant",
+      "sourceIndices": [
+        0,
+        1
+      ],
+      "text": "這週，你寫到廚房窗戶的速寫：喜歡那些不太規整的線條，也覺得倒影不好畫。寫短篇小說時，你換了一個開頭，還沒決定用哪一版；興奮和煩躁同時存在。如果你願意，可以再看看那張速寫，或讀一遍新開頭，有沒有哪一處想多停留一會兒？也可以先把它們放下。",
+      "supportConcerns": [
+        "Traditional-script output must not alter the English source or the Simplified source/profile language.",
+        "速寫, 不太規整 and 不好畫 are proposed translations, not merely a lossless script conversion.",
+        "同時存在 retains mixed emotion in intent, but exact simultaneity/intensity needs review.",
+        "No causal connection between the drawing difficulty and the emotions during story writing is licensed. The draft must continue to separate those activities."
+      ]
+    },
+    {
+      "id": "monthly-en",
+      "reportType": "MONTHLY",
+      "locale": "en",
+      "sourceIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "text": "The kitchen-window sketch and the opening of your short story appear in entries from different weeks. You liked the sketch's uneven lines even though the reflection was difficult to draw. When you returned to that sketch and added the cup on the sill, you still liked those lines.\n\nYou wrote about changing the story's opening without yet choosing a version, and about feeling both excited and irritated while writing. Another entry describes reading two openings to a friend. She preferred the second; in that entry, you had not made your own choice.\n\nIf you feel like revisiting either piece, is there a detail in the sketch or a passage in an opening you would like to look at again? You can leave that question for another day, too.",
+      "supportConcerns": [
+        "Recurrence is about distinct selected records, not a creative habit, commitment, or increase in activity.",
+        "Returned to the window sketch explicitly links the sketch identity, but still does not prove artistic improvement or completion.",
+        "The English draft resolves 她 to the friend and retains her preference separately from the user's non-decision; this mapping needs independent review.",
+        "In that entry scopes the non-decision to the record; it does not establish the user's current preference or uninterrupted indecision.",
+        "Irritated is an unreviewed translation of 烦躁. Emotions attach to writing generally, not necessarily changing the opening.",
+        "The invitation and the words detail or passage have factual presuppositions that remain unverified; optionality is not semantic proof."
+      ]
+    },
+    {
+      "id": "monthly-zh-Hans",
+      "reportType": "MONTHLY",
+      "locale": "zh-Hans",
+      "sourceIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "text": "窗户速写和小说开头，出现在这个月不同周的记录里。你喜欢速写中不太规整的线条，倒影却不好画；回到那张速写时，你加上了窗台上的杯子，仍然喜欢那些线条。\n\n写小说时，你既兴奋又烦躁，也换了一个开头。后来的一条记录写到，你把两个开头读给朋友听。她喜欢第二版，而在提到选择的那两条记录里，你当时都还没有选定。\n\n如果愿意回看，你想先看看窗台上的杯子，还是读读那两个开头？也可以暂时不作选择。",
+      "supportConcerns": [
+        "不同周的记录 describes record coverage, not activity chronology, a habit, or increased practice.",
+        "回到那张速写 is supported by returned to the window sketch; it is not inferred merely from the later timestamp.",
+        "仍然喜欢 is explicitly supported by still liked, but 不太规整 and 不好画 are unreviewed renderings of uneven and hard to draw.",
+        "你当时都还没有选定 compares two recorded non-decisions only; it must not imply an uninterrupted state between the records or present uncertainty.",
+        "也换了一个开头 is neutral conjunction: the mixed emotions are scoped to writing, with no causal link to the replacement or sketch.",
+        "The final question offers source-specific choices and an option not to choose, but present availability and interest remain unverified premises."
+      ]
+    },
+    {
+      "id": "monthly-zh-Hant",
+      "reportType": "MONTHLY",
+      "locale": "zh-Hant",
+      "sourceIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "text": "窗戶速寫和小說開頭，出現在這個月不同週的記錄裡。你喜歡速寫中不太規整的線條，倒影卻不好畫；回到那張速寫時，你加上了窗臺上的杯子，仍然喜歡那些線條。\n\n寫小說時，你既興奮又煩躁，也換了一個開頭。後來的一則記錄寫到，你把兩個開頭讀給朋友聽。她喜歡第二版，而在提到選擇的那兩則記錄裡，你當時都還沒有選定。\n\n如果你願意回看，想先看看窗臺上的杯子，還是讀讀那兩個開頭？也可以暫時不作選擇。",
+      "supportConcerns": [
+        "The Simplified and Traditional story sources require meaning review, not only character conversion.",
+        "不同週的記錄 refers to record coverage; distinct records alone do not prove recurring real-world behavior or activity chronology.",
+        "窗臺上的杯子 is sourced from cup on the sill. Neither its color nor ownership is specified.",
+        "當時都還沒有選定 compares two source-time non-decisions; it cannot establish continuous or current uncertainty.",
+        "她 refers to the source's friend and must not imply a romantic relationship or the user's preference. 興奮/煩躁 remain mixed feelings about writing.",
+        "The final optional question's assumptions about interest and present availability have not been independently checked."
+      ]
+    }
+  ]
+}

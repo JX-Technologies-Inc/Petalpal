@@ -1,0 +1,2646 @@
+{
+  "origin": "New synthetic data authored during the same implementation task. Not blind, externally authored, representative, or independent semantic ground truth.",
+  "referenceCommit": "09f6aee0584c386c99523e81657413efab32f1af",
+  "method": "Single deterministic author per baseline; no sampled model output, repair, retry, blind judgment, or provider call. Proposed native lane has no independent semantic registry and therefore certifies no prose.",
+  "metrics": {
+    "independentUnsupportedClaimCount": null,
+    "naturalnessScore": null,
+    "warmthScore": null,
+    "note": "Not measured independently. Passing the reference validator is not an independent semantic audit."
+  },
+  "sources": {
+    "count": 32,
+    "v21Parsed": 3
+  },
+  "counts": {
+    "v1": {
+      "accepted": 37,
+      "preflightAbstained": 11,
+      "outputRejected": 0
+    },
+    "v2": {
+      "accepted": 48,
+      "preflightAbstained": 0,
+      "outputRejected": 0
+    },
+    "v2.1": {
+      "accepted": 18,
+      "preflightAbstained": 30,
+      "outputRejected": 0
+    }
+  },
+  "proposedCounts": {
+    "certifiedNativeProse": 0,
+    "nativeAbstained": 48,
+    "exactSourceArtifacts": 48,
+    "note": "Quotation artifacts are not native reports; conditional fixture composition is tested separately."
+  },
+  "rows": [
+    {
+      "scenario": "work-study",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “I read 12 pages.” In another entry: “今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 277,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I read 12 pages.”\n\nOne entry says: “今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”",
+          "graphemes": 68,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote about reading 12 pages.\n\nOne entry reads: “今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”",
+          "graphemes": 73,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "work-study-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I read 12 pages."
+          },
+          {
+            "eventId": "work-study-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "work-study",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你留下了2条记录。回看其中的片段，你写到：“I read 12 pages.”也记录了：“今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”这些片段来自你当时选择留下的内容，并不代表这一周的全部。你可以按自己的节奏回顾，不急着把记录的多少当作生活好坏的判断。",
+          "graphemes": 134,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I read 12 pages.”\n\n有一条记录写着：“今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”",
+          "graphemes": 59,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你写到了读12页。\n\n有一条记录写着：“今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”",
+          "graphemes": 51,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "work-study-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I read 12 pages."
+          },
+          {
+            "eventId": "work-study-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "work-study",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你留下了2條記錄。回看其中的片段，你寫到：「I read 12 pages.」也記錄了：「今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。」這些片段來自你當時選擇留下的內容，並不代表這一週的全部。你可以按自己的節奏回顧，不急著把記錄的多少當作生活好壞的判斷。",
+          "graphemes": 134,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I read 12 pages.」\n\n有一條記錄寫著：「今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。」",
+          "graphemes": 59,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你寫到了讀12頁。\n\n有一則記錄寫著：「今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。」",
+          "graphemes": 51,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "work-study-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I read 12 pages."
+          },
+          {
+            "eventId": "work-study-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "work-study",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。",
+        "I asked a colleague to check the outline, not to finish the assignment for me.",
+        "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “I read 12 pages.” In a later represented week: “報告交出去了。” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 479,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I read 12 pages.”\n\nOne entry says: “今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。” In your own words: “I asked a colleague to check the outline, not to finish the assignment for me.” On 2026-09-27, you wrote: “報告交出去了。”",
+          "graphemes": 180,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote about reading 12 pages.\n\nOne entry reads: “今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。” One entry reads: “I asked a colleague to check the outline, not to finish the assignment for me.” One entry reads: “報告交出去了。我有點高興，也不確定老師會不會理解最後一段。”",
+          "graphemes": 198,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "work-study-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I read 12 pages."
+          },
+          {
+            "eventId": "work-study-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+          },
+          {
+            "eventId": "work-study-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I asked a colleague to check the outline, not to finish the assignment for me."
+          },
+          {
+            "eventId": "work-study-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "work-study",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。",
+        "I asked a colleague to check the outline, not to finish the assignment for me.",
+        "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看这个月，你留下了4条事件记录。这次回顾从其中选取4个片段，覆盖有可用事件记忆的全部4个自然周；这些片段分布在月内不同的周，提供了回看的几个落点，并不代表整个月的全部经历。在所选片段中较早的一周，你写到：“I read 12 pages.”到了较晚的一周，你留下了：“報告交出去了。”把它们放在一起，可以回看月内不同时间留下的具体片段，但不据此认定两件事之间有因果，也不把先后顺序当作情绪变化。回顾可以先停在这些具体记录上：它们保留了不同时刻的表达，也留下了未被记录的空白。这些片段对你意味着什么，仍可以由你自己慢慢理解，不必急着把整个月归成一个结论。",
+          "graphemes": 274,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I read 12 pages.”\n\n有一条记录写着：“今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”回到你当时的话：“I asked a colleague to check the outline, not to finish the assignment for me.”在2026-09-27的记录里，你写到：“報告交出去了。”",
+          "graphemes": 162,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这个月，你写到了读12页。\n\n有一条记录写着：“今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。”有一条记录写着：“I asked a colleague to check the outline, not to finish the assignment for me.”有一条记录写着：“報告交出去了。我有點高興，也不確定老師會不會理解最後一段。”",
+          "graphemes": 165,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "work-study-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I read 12 pages."
+          },
+          {
+            "eventId": "work-study-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+          },
+          {
+            "eventId": "work-study-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I asked a colleague to check the outline, not to finish the assignment for me."
+          },
+          {
+            "eventId": "work-study-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "work-study",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。",
+        "I asked a colleague to check the outline, not to finish the assignment for me.",
+        "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看這個月，你留下了4條事件記錄。這次回顧從其中選取4個片段，涵蓋有可用事件記憶的全部4個自然週；這些片段分布在月內不同的週，提供了回看的幾個落點，並不代表整個月的全部經歷。在所選片段中較早的一週，你寫到：「I read 12 pages.」到了較晚的一週，你留下了：「報告交出去了。」把它們放在一起，可以回看月內不同時間留下的具體片段，但不據此認定兩件事之間有因果，也不把先後順序當作情緒變化。回顧可以先停在這些具體記錄上：它們保留了不同時刻的表達，也留下了未被記錄的空白。這些片段對你意味著什麼，仍可以由你自己慢慢理解，不必急著把整個月歸成一個結論。",
+          "graphemes": 274,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I read 12 pages.」\n\n有一條記錄寫著：「今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。」回到你當時的話：「I asked a colleague to check the outline, not to finish the assignment for me.」在2026-09-27的記錄裡，你寫到：「報告交出去了。」",
+          "graphemes": 162,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這個月，你寫到了讀12頁。\n\n有一則記錄寫著：「今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。」有一則記錄寫著：「I asked a colleague to check the outline, not to finish the assignment for me.」有一則記錄寫著：「報告交出去了。我有點高興，也不確定老師會不會理解最後一段。」",
+          "graphemes": 165,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "work-study-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I read 12 pages."
+          },
+          {
+            "eventId": "work-study-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。"
+          },
+          {
+            "eventId": "work-study-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I asked a colleague to check the outline, not to finish the assignment for me."
+          },
+          {
+            "eventId": "work-study-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "technical-project",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “I fixed the bug.” In another entry: “Tests passed locally, but I did not deploy the change.” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 293,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I fixed the bug.”\n\nOne entry says: “Tests passed locally, but I did not deploy the change.”",
+          "graphemes": 84,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote about fixing the bug.\n\nOne entry reads: “Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.”",
+          "graphemes": 131,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "technical-project-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I fixed the bug."
+          },
+          {
+            "eventId": "technical-project-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "technical-project",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I fixed the bug.”\n\n有一条记录写着：“Tests passed locally, but I did not deploy the change.”",
+          "graphemes": 75,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你写到了修好这个bug。\n\n有一条记录写着：“Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.”",
+          "graphemes": 114,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "technical-project-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I fixed the bug."
+          },
+          {
+            "eventId": "technical-project-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "technical-project",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I fixed the bug.」\n\n有一條記錄寫著：「Tests passed locally, but I did not deploy the change.」",
+          "graphemes": 75,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你寫到了修好這個bug。\n\n有一則記錄寫著：「Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.」",
+          "graphemes": 114,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "technical-project-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I fixed the bug."
+          },
+          {
+            "eventId": "technical-project-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "technical-project",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.",
+        "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。",
+        "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “I fixed the bug.” In a later represented week: “這次測試又失敗了。” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 481,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I fixed the bug.”\n\nOne entry says: “Tests passed locally, but I did not deploy the change.” In your own words: “今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。” On 2026-09-27, you wrote: “這次測試又失敗了。”",
+          "graphemes": 165,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote about fixing the bug.\n\nOne entry reads: “Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.” One entry reads: “今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。” One entry reads: “這次測試又失敗了。我想休息一下，不是打算放棄這個專案。”",
+          "graphemes": 221,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "technical-project-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I fixed the bug."
+          },
+          {
+            "eventId": "technical-project-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+          },
+          {
+            "eventId": "technical-project-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。"
+          },
+          {
+            "eventId": "technical-project-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "technical-project",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.",
+        "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。",
+        "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看这个月，你留下了4条事件记录。这次回顾从其中选取4个片段，覆盖有可用事件记忆的全部4个自然周；这些片段分布在月内不同的周，提供了回看的几个落点，并不代表整个月的全部经历。在所选片段中较早的一周，你写到：“I fixed the bug.”到了较晚的一周，你留下了：“這次測試又失敗了。”把它们放在一起，可以回看月内不同时间留下的具体片段，但不据此认定两件事之间有因果，也不把先后顺序当作情绪变化。回顾可以先停在这些具体记录上：它们保留了不同时刻的表达，也留下了未被记录的空白。这些片段对你意味着什么，仍可以由你自己慢慢理解，不必急着把整个月归成一个结论。",
+          "graphemes": 276,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I fixed the bug.”\n\n有一条记录写着：“Tests passed locally, but I did not deploy the change.”回到你当时的话：“今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。”在2026-09-27的记录里，你写到：“這次測試又失敗了。”",
+          "graphemes": 147,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这个月，你写到了修好这个bug。\n\n有一条记录写着：“Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.”有一条记录写着：“今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。”有一条记录写着：“這次測試又失敗了。我想休息一下，不是打算放棄這個專案。”",
+          "graphemes": 193,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "technical-project-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I fixed the bug."
+          },
+          {
+            "eventId": "technical-project-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+          },
+          {
+            "eventId": "technical-project-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。"
+          },
+          {
+            "eventId": "technical-project-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "technical-project",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.",
+        "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。",
+        "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看這個月，你留下了4條事件記錄。這次回顧從其中選取4個片段，涵蓋有可用事件記憶的全部4個自然週；這些片段分布在月內不同的週，提供了回看的幾個落點，並不代表整個月的全部經歷。在所選片段中較早的一週，你寫到：「I fixed the bug.」到了較晚的一週，你留下了：「這次測試又失敗了。」把它們放在一起，可以回看月內不同時間留下的具體片段，但不據此認定兩件事之間有因果，也不把先後順序當作情緒變化。回顧可以先停在這些具體記錄上：它們保留了不同時刻的表達，也留下了未被記錄的空白。這些片段對你意味著什麼，仍可以由你自己慢慢理解，不必急著把整個月歸成一個結論。",
+          "graphemes": 276,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I fixed the bug.」\n\n有一條記錄寫著：「Tests passed locally, but I did not deploy the change.」回到你當時的話：「今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。」在2026-09-27的記錄裡，你寫到：「這次測試又失敗了。」",
+          "graphemes": 147,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這個月，你寫到了修好這個bug。\n\n有一則記錄寫著：「Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.」有一則記錄寫著：「今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。」有一則記錄寫著：「這次測試又失敗了。我想休息一下，不是打算放棄這個專案。」",
+          "graphemes": 193,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "technical-project-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I fixed the bug."
+          },
+          {
+            "eventId": "technical-project-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production."
+          },
+          {
+            "eventId": "technical-project-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。"
+          },
+          {
+            "eventId": "technical-project-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "friendship",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “I met a project partner for lunch; we talked about deadlines, not dating.” In another entry: “朋友说她可能搬走。” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 305,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I met a project partner for lunch; we talked about deadlines, not dating.”\n\nOne entry says: “朋友说她可能搬走。”",
+          "graphemes": 96,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "friendship-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I met a project partner for lunch; we talked about deadlines, not dating."
+          },
+          {
+            "eventId": "friendship-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "朋友说她可能搬走。我有点难过，但她还没有决定。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "friendship",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I met a project partner for lunch; we talked about deadlines, not dating.”\n\n有一条记录写着：“朋友说她可能搬走。”",
+          "graphemes": 87,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "friendship-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I met a project partner for lunch; we talked about deadlines, not dating."
+          },
+          {
+            "eventId": "friendship-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "朋友说她可能搬走。我有点难过，但她还没有决定。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "friendship",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I met a project partner for lunch; we talked about deadlines, not dating.」\n\n有一條記錄寫著：「朋友说她可能搬走。」",
+          "graphemes": 87,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "friendship-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I met a project partner for lunch; we talked about deadlines, not dating."
+          },
+          {
+            "eventId": "friendship-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "朋友说她可能搬走。我有点难过，但她还没有决定。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "friendship",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。",
+        "I wanted to reply to Sam, but I did not send a message.",
+        "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I met a project partner for lunch; we talked about deadlines, not dating.”\n\nOne entry says: “朋友说她可能搬走。” In your own words: “I wanted to reply to Sam, but I did not send a message.” On 2026-09-27, you wrote: “今晚和哥哥通了電話。”",
+          "graphemes": 190,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "friendship-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I met a project partner for lunch; we talked about deadlines, not dating."
+          },
+          {
+            "eventId": "friendship-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "朋友说她可能搬走。我有点难过，但她还没有决定。"
+          },
+          {
+            "eventId": "friendship-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I wanted to reply to Sam, but I did not send a message."
+          },
+          {
+            "eventId": "friendship-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "friendship",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。",
+        "I wanted to reply to Sam, but I did not send a message.",
+        "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I met a project partner for lunch; we talked about deadlines, not dating.”\n\n有一条记录写着：“朋友说她可能搬走。”回到你当时的话：“I wanted to reply to Sam, but I did not send a message.”在2026-09-27的记录里，你写到：“今晚和哥哥通了電話。”",
+          "graphemes": 172,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "friendship-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I met a project partner for lunch; we talked about deadlines, not dating."
+          },
+          {
+            "eventId": "friendship-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "朋友说她可能搬走。我有点难过，但她还没有决定。"
+          },
+          {
+            "eventId": "friendship-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I wanted to reply to Sam, but I did not send a message."
+          },
+          {
+            "eventId": "friendship-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "friendship",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。",
+        "I wanted to reply to Sam, but I did not send a message.",
+        "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I met a project partner for lunch; we talked about deadlines, not dating.」\n\n有一條記錄寫著：「朋友说她可能搬走。」回到你當時的話：「I wanted to reply to Sam, but I did not send a message.」在2026-09-27的記錄裡，你寫到：「今晚和哥哥通了電話。」",
+          "graphemes": 172,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "friendship-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I met a project partner for lunch; we talked about deadlines, not dating."
+          },
+          {
+            "eventId": "friendship-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "朋友说她可能搬走。我有点难过，但她还没有决定。"
+          },
+          {
+            "eventId": "friendship-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I wanted to reply to Sam, but I did not send a message."
+          },
+          {
+            "eventId": "friendship-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "daily-life",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “The bus arrived late, so I walked to the shop.” In another entry: “买了三颗苹果，给邻居两颗；剩下的一颗还没吃。” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 294,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “The bus arrived late, so I walked to the shop.”\n\nOne entry says: “买了三颗苹果，给邻居两颗；剩下的一颗还没吃。”",
+          "graphemes": 85,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "daily-life-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The bus arrived late, so I walked to the shop. I did not feel angry about it."
+          },
+          {
+            "eventId": "daily-life-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "daily-life",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你留下了2条记录。回看其中的片段，你写到：“I did not feel angry about it.”也记录了：“买了三颗苹果，给邻居两颗；剩下的一颗还没吃。”这些片段来自你当时选择留下的内容，并不代表这一周的全部。你可以按自己的节奏回顾，不急着把记录的多少当作生活好坏的判断。",
+          "graphemes": 138,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“The bus arrived late, so I walked to the shop.”\n\n有一条记录写着：“买了三颗苹果，给邻居两颗；剩下的一颗还没吃。”",
+          "graphemes": 76,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "daily-life-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The bus arrived late, so I walked to the shop. I did not feel angry about it."
+          },
+          {
+            "eventId": "daily-life-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "daily-life",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你留下了2條記錄。回看其中的片段，你寫到：「I did not feel angry about it.」也記錄了：「买了三颗苹果，给邻居两颗；剩下的一颗还没吃。」這些片段來自你當時選擇留下的內容，並不代表這一週的全部。你可以按自己的節奏回顧，不急著把記錄的多少當作生活好壞的判斷。",
+          "graphemes": 138,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「The bus arrived late, so I walked to the shop.」\n\n有一條記錄寫著：「买了三颗苹果，给邻居两颗；剩下的一颗还没吃。」",
+          "graphemes": 76,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "daily-life-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The bus arrived late, so I walked to the shop. I did not feel angry about it."
+          },
+          {
+            "eventId": "daily-life-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "daily-life",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。",
+        "Yesterday I planned to cook, but tonight I might order noodles instead.",
+        "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “The bus arrived late, so I walked to the shop.” In a later represented week: “洗衣機修好了，是房東請人修的。” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 511,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “The bus arrived late, so I walked to the shop.”\n\nOne entry says: “买了三颗苹果，给邻居两颗；剩下的一颗还没吃。” In your own words: “Yesterday I planned to cook, but tonight I might order noodles instead.” On 2026-09-27, you wrote: “洗衣機修好了，是房東請人修的。”",
+          "graphemes": 201,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "daily-life-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The bus arrived late, so I walked to the shop. I did not feel angry about it."
+          },
+          {
+            "eventId": "daily-life-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+          },
+          {
+            "eventId": "daily-life-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Yesterday I planned to cook, but tonight I might order noodles instead."
+          },
+          {
+            "eventId": "daily-life-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "daily-life",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。",
+        "Yesterday I planned to cook, but tonight I might order noodles instead.",
+        "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看这个月，你留下了4条事件记录。这次回顾从其中选取4个片段，覆盖有可用事件记忆的全部4个自然周；这些片段分布在月内不同的周，提供了回看的几个落点，并不代表整个月的全部经历。在所选片段中较早的一周，你写到：“The bus arrived late, so I walked to the shop.”到了较晚的一周，你留下了：“洗衣機修好了，是房東請人修的。”把它们放在一起，可以回看月内不同时间留下的具体片段，但不据此认定两件事之间有因果，也不把先后顺序当作情绪变化。回顾可以先停在这些具体记录上：它们保留了不同时刻的表达，也留下了未被记录的空白。这些片段对你意味着什么，仍可以由你自己慢慢理解，不必急着把整个月归成一个结论。",
+          "graphemes": 306,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“The bus arrived late, so I walked to the shop.”\n\n有一条记录写着：“买了三颗苹果，给邻居两颗；剩下的一颗还没吃。”回到你当时的话：“Yesterday I planned to cook, but tonight I might order noodles instead.”在2026-09-27的记录里，你写到：“洗衣機修好了，是房東請人修的。”",
+          "graphemes": 183,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "daily-life-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The bus arrived late, so I walked to the shop. I did not feel angry about it."
+          },
+          {
+            "eventId": "daily-life-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+          },
+          {
+            "eventId": "daily-life-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Yesterday I planned to cook, but tonight I might order noodles instead."
+          },
+          {
+            "eventId": "daily-life-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "daily-life",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。",
+        "Yesterday I planned to cook, but tonight I might order noodles instead.",
+        "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看這個月，你留下了4條事件記錄。這次回顧從其中選取4個片段，涵蓋有可用事件記憶的全部4個自然週；這些片段分布在月內不同的週，提供了回看的幾個落點，並不代表整個月的全部經歷。在所選片段中較早的一週，你寫到：「The bus arrived late, so I walked to the shop.」到了較晚的一週，你留下了：「洗衣機修好了，是房東請人修的。」把它們放在一起，可以回看月內不同時間留下的具體片段，但不據此認定兩件事之間有因果，也不把先後順序當作情緒變化。回顧可以先停在這些具體記錄上：它們保留了不同時刻的表達，也留下了未被記錄的空白。這些片段對你意味著什麼，仍可以由你自己慢慢理解，不必急著把整個月歸成一個結論。",
+          "graphemes": 306,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「The bus arrived late, so I walked to the shop.」\n\n有一條記錄寫著：「买了三颗苹果，给邻居两颗；剩下的一颗还没吃。」回到你當時的話：「Yesterday I planned to cook, but tonight I might order noodles instead.」在2026-09-27的記錄裡，你寫到：「洗衣機修好了，是房東請人修的。」",
+          "graphemes": 183,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "daily-life-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The bus arrived late, so I walked to the shop. I did not feel angry about it."
+          },
+          {
+            "eventId": "daily-life-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。"
+          },
+          {
+            "eventId": "daily-life-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "Yesterday I planned to cook, but tonight I might order noodles instead."
+          },
+          {
+            "eventId": "daily-life-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "creative",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “I sketched the kitchen window.” In another entry: “今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 295,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I sketched the kitchen window.”\n\nOne entry says: “今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。”",
+          "graphemes": 86,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "creative-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw."
+          },
+          {
+            "eventId": "creative-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "creative",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你留下了2条记录。回看其中的片段，你写到：“I sketched the kitchen window.”也记录了：“今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。”这些片段来自你当时选择留下的内容，并不代表这一周的全部。你可以按自己的节奏回顾，不急着把记录的多少当作生活好坏的判断。",
+          "graphemes": 152,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I sketched the kitchen window.”\n\n有一条记录写着：“今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。”",
+          "graphemes": 77,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "creative-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw."
+          },
+          {
+            "eventId": "creative-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "creative",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你留下了2條記錄。回看其中的片段，你寫到：「I sketched the kitchen window.」也記錄了：「今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。」這些片段來自你當時選擇留下的內容，並不代表這一週的全部。你可以按自己的節奏回顧，不急著把記錄的多少當作生活好壞的判斷。",
+          "graphemes": 152,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I sketched the kitchen window.」\n\n有一條記錄寫著：「今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。」",
+          "graphemes": 77,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "creative-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw."
+          },
+          {
+            "eventId": "creative-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "creative",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。",
+        "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines.",
+        "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “I sketched the kitchen window.” In a later represented week: “把短篇小說的兩個開頭讀給朋友聽了。” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 502,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I sketched the kitchen window.”\n\nOne entry says: “今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。” In your own words: “I returned to the window sketch and added the cup on the sill.” On 2026-09-27, you wrote: “把短篇小說的兩個開頭讀給朋友聽了。”",
+          "graphemes": 194,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "creative-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw."
+          },
+          {
+            "eventId": "creative-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+          },
+          {
+            "eventId": "creative-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines."
+          },
+          {
+            "eventId": "creative-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "creative",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。",
+        "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines.",
+        "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看这个月，你留下了4条事件记录。这次回顾从其中选取4个片段，覆盖有可用事件记忆的全部4个自然周；这些片段分布在月内不同的周，提供了回看的几个落点，并不代表整个月的全部经历。在所选片段中较早的一周，你写到：“I sketched the kitchen window.”到了较晚的一周，你留下了：“把短篇小說的兩個開頭讀給朋友聽了。”把它们放在一起，可以回看月内不同时间留下的具体片段，但不据此认定两件事之间有因果，也不把先后顺序当作情绪变化。回顾可以先停在这些具体记录上：它们保留了不同时刻的表达，也留下了未被记录的空白。这些片段对你意味着什么，仍可以由你自己慢慢理解，不必急着把整个月归成一个结论。",
+          "graphemes": 297,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I sketched the kitchen window.”\n\n有一条记录写着：“今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。”回到你当时的话：“I returned to the window sketch and added the cup on the sill.”在2026-09-27的记录里，你写到：“把短篇小說的兩個開頭讀給朋友聽了。”",
+          "graphemes": 176,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "creative-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw."
+          },
+          {
+            "eventId": "creative-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+          },
+          {
+            "eventId": "creative-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines."
+          },
+          {
+            "eventId": "creative-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "creative",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。",
+        "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines.",
+        "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看這個月，你留下了4條事件記錄。這次回顧從其中選取4個片段，涵蓋有可用事件記憶的全部4個自然週；這些片段分布在月內不同的週，提供了回看的幾個落點，並不代表整個月的全部經歷。在所選片段中較早的一週，你寫到：「I sketched the kitchen window.」到了較晚的一週，你留下了：「把短篇小說的兩個開頭讀給朋友聽了。」把它們放在一起，可以回看月內不同時間留下的具體片段，但不據此認定兩件事之間有因果，也不把先後順序當作情緒變化。回顧可以先停在這些具體記錄上：它們保留了不同時刻的表達，也留下了未被記錄的空白。這些片段對你意味著什麼，仍可以由你自己慢慢理解，不必急著把整個月歸成一個結論。",
+          "graphemes": 297,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I sketched the kitchen window.」\n\n有一條記錄寫著：「今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。」回到你當時的話：「I returned to the window sketch and added the cup on the sill.」在2026-09-27的記錄裡，你寫到：「把短篇小說的兩個開頭讀給朋友聽了。」",
+          "graphemes": 176,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "creative-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw."
+          },
+          {
+            "eventId": "creative-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。"
+          },
+          {
+            "eventId": "creative-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines."
+          },
+          {
+            "eventId": "creative-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "rest-leisure",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “我休息了。” In another entry: “I stayed home with a puzzle.” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 263,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “我休息了。”\n\nOne entry says: “I stayed home with a puzzle.”",
+          "graphemes": 54,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote about resting.\n\nOne entry reads: “I stayed home with a puzzle. I was not lonely; I just did not want company that evening.”",
+          "graphemes": 108,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "rest-leisure-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "我休息了。"
+          },
+          {
+            "eventId": "rest-leisure-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "rest-leisure",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你留下了2条记录。回看其中的片段，你写到：“我休息了。”也记录了：“I stayed home with a puzzle.”这些片段来自你当时选择留下的内容，并不代表这一周的全部。你可以按自己的节奏回顾，不急着把记录的多少当作生活好坏的判断。",
+          "graphemes": 120,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“我休息了。”\n\n有一条记录写着：“I stayed home with a puzzle.”",
+          "graphemes": 45,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你写到了休息。\n\n有一条记录写着：“I stayed home with a puzzle. I was not lonely; I just did not want company that evening.”",
+          "graphemes": 91,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "rest-leisure-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "我休息了。"
+          },
+          {
+            "eventId": "rest-leisure-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "rest-leisure",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你留下了2條記錄。回看其中的片段，你寫到：「我休息了。」也記錄了：「I stayed home with a puzzle.」這些片段來自你當時選擇留下的內容，並不代表這一週的全部。你可以按自己的節奏回顧，不急著把記錄的多少當作生活好壞的判斷。",
+          "graphemes": 120,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「我休息了。」\n\n有一條記錄寫著：「I stayed home with a puzzle.」",
+          "graphemes": 45,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你寫到了休息。\n\n有一則記錄寫著：「I stayed home with a puzzle. I was not lonely; I just did not want company that evening.」",
+          "graphemes": 91,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "rest-leisure-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "我休息了。"
+          },
+          {
+            "eventId": "rest-leisure-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "rest-leisure",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening.",
+        "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。",
+        "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “我休息了。” In a later represented week: “I walked by the water with Mei today.” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 494,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “我休息了。”\n\nOne entry says: “I stayed home with a puzzle.” In your own words: “週末可能去海邊，如果下雨就留在家。” On 2026-09-27, you wrote: “I walked by the water with Mei today.”",
+          "graphemes": 142,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote about resting.\n\nOne entry reads: “I stayed home with a puzzle. I was not lonely; I just did not want company that evening.” One entry reads: “週末可能去海邊，如果下雨就留在家。現在還沒訂車票。” One entry reads: “I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it.”",
+          "graphemes": 254,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "rest-leisure-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "我休息了。"
+          },
+          {
+            "eventId": "rest-leisure-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+          },
+          {
+            "eventId": "rest-leisure-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。"
+          },
+          {
+            "eventId": "rest-leisure-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "rest-leisure",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening.",
+        "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。",
+        "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看这个月，你留下了4条事件记录。这次回顾从其中选取4个片段，覆盖有可用事件记忆的全部4个自然周；这些片段分布在月内不同的周，提供了回看的几个落点，并不代表整个月的全部经历。在所选片段中较早的一周，你写到：“我休息了。”到了较晚的一周，你留下了：“I walked by the water with Mei today.”把它们放在一起，可以回看月内不同时间留下的具体片段，但不据此认定两件事之间有因果，也不把先后顺序当作情绪变化。回顾可以先停在这些具体记录上：它们保留了不同时刻的表达，也留下了未被记录的空白。这些片段对你意味着什么，仍可以由你自己慢慢理解，不必急着把整个月归成一个结论。",
+          "graphemes": 289,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“我休息了。”\n\n有一条记录写着：“I stayed home with a puzzle.”回到你当时的话：“週末可能去海邊，如果下雨就留在家。”在2026-09-27的记录里，你写到：“I walked by the water with Mei today.”",
+          "graphemes": 124,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这个月，你写到了休息。\n\n有一条记录写着：“I stayed home with a puzzle. I was not lonely; I just did not want company that evening.”有一条记录写着：“週末可能去海邊，如果下雨就留在家。現在還沒訂車票。”有一条记录写着：“I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it.”",
+          "graphemes": 226,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "rest-leisure-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "我休息了。"
+          },
+          {
+            "eventId": "rest-leisure-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+          },
+          {
+            "eventId": "rest-leisure-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。"
+          },
+          {
+            "eventId": "rest-leisure-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "rest-leisure",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening.",
+        "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。",
+        "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看這個月，你留下了4條事件記錄。這次回顧從其中選取4個片段，涵蓋有可用事件記憶的全部4個自然週；這些片段分布在月內不同的週，提供了回看的幾個落點，並不代表整個月的全部經歷。在所選片段中較早的一週，你寫到：「我休息了。」到了較晚的一週，你留下了：「I walked by the water with Mei today.」把它們放在一起，可以回看月內不同時間留下的具體片段，但不據此認定兩件事之間有因果，也不把先後順序當作情緒變化。回顧可以先停在這些具體記錄上：它們保留了不同時刻的表達，也留下了未被記錄的空白。這些片段對你意味著什麼，仍可以由你自己慢慢理解，不必急著把整個月歸成一個結論。",
+          "graphemes": 289,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「我休息了。」\n\n有一條記錄寫著：「I stayed home with a puzzle.」回到你當時的話：「週末可能去海邊，如果下雨就留在家。」在2026-09-27的記錄裡，你寫到：「I walked by the water with Mei today.」",
+          "graphemes": 124,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這個月，你寫到了休息。\n\n有一則記錄寫著：「I stayed home with a puzzle. I was not lonely; I just did not want company that evening.」有一則記錄寫著：「週末可能去海邊，如果下雨就留在家。現在還沒訂車票。」有一則記錄寫著：「I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it.」",
+          "graphemes": 226,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "rest-leisure-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "我休息了。"
+          },
+          {
+            "eventId": "rest-leisure-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I stayed home with a puzzle. I was not lonely; I just did not want company that evening."
+          },
+          {
+            "eventId": "rest-leisure-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。"
+          },
+          {
+            "eventId": "rest-leisure-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "mixed-emotions",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “I felt proud of saying no, and guilty about it at the same time.” In another entry: “今天收到好消息，却没有想象中开心。” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 303,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I felt proud of saying no, and guilty about it at the same time.”\n\nOne entry says: “今天收到好消息，却没有想象中开心。”",
+          "graphemes": 94,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "mixed-emotions-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt proud of saying no, and guilty about it at the same time."
+          },
+          {
+            "eventId": "mixed-emotions-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "mixed-emotions",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I felt proud of saying no, and guilty about it at the same time.”\n\n有一条记录写着：“今天收到好消息，却没有想象中开心。”",
+          "graphemes": 85,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "mixed-emotions-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt proud of saying no, and guilty about it at the same time."
+          },
+          {
+            "eventId": "mixed-emotions-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "mixed-emotions",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I felt proud of saying no, and guilty about it at the same time.」\n\n有一條記錄寫著：「今天收到好消息，却没有想象中开心。」",
+          "graphemes": 85,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "mixed-emotions-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt proud of saying no, and guilty about it at the same time."
+          },
+          {
+            "eventId": "mixed-emotions-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "mixed-emotions",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。",
+        "The quiet room felt like a storm had finally left, but I still felt sad.",
+        "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “I felt proud of saying no, and guilty about it at the same time.” In a later represented week: “I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 564,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I felt proud of saying no, and guilty about it at the same time.”\n\nOne entry says: “今天收到好消息，却没有想象中开心。” In your own words: “The quiet room felt like a storm had finally left, but I still felt sad.” On 2026-09-27, you wrote: “I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。”",
+          "graphemes": 247,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "mixed-emotions-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt proud of saying no, and guilty about it at the same time."
+          },
+          {
+            "eventId": "mixed-emotions-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+          },
+          {
+            "eventId": "mixed-emotions-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The quiet room felt like a storm had finally left, but I still felt sad."
+          },
+          {
+            "eventId": "mixed-emotions-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "mixed-emotions",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。",
+        "The quiet room felt like a storm had finally left, but I still felt sad.",
+        "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I felt proud of saying no, and guilty about it at the same time.”\n\n有一条记录写着：“今天收到好消息，却没有想象中开心。”回到你当时的话：“The quiet room felt like a storm had finally left, but I still felt sad.”在2026-09-27的记录里，你写到：“I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。”",
+          "graphemes": 229,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "mixed-emotions-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt proud of saying no, and guilty about it at the same time."
+          },
+          {
+            "eventId": "mixed-emotions-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+          },
+          {
+            "eventId": "mixed-emotions-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The quiet room felt like a storm had finally left, but I still felt sad."
+          },
+          {
+            "eventId": "mixed-emotions-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "mixed-emotions",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。",
+        "The quiet room felt like a storm had finally left, but I still felt sad.",
+        "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I felt proud of saying no, and guilty about it at the same time.」\n\n有一條記錄寫著：「今天收到好消息，却没有想象中开心。」回到你當時的話：「The quiet room felt like a storm had finally left, but I still felt sad.」在2026-09-27的記錄裡，你寫到：「I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。」",
+          "graphemes": 229,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "mixed-emotions-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt proud of saying no, and guilty about it at the same time."
+          },
+          {
+            "eventId": "mixed-emotions-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天收到好消息，却没有想象中开心。我也说不清为什么。"
+          },
+          {
+            "eventId": "mixed-emotions-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "The quiet room felt like a storm had finally left, but I still felt sad."
+          },
+          {
+            "eventId": "mixed-emotions-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "sensitive-ordinary",
+      "type": "WEEKLY",
+      "locale": "en",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 2 Events this week. Looking back, you wrote: “I booked a routine appointment, but I have not attended it yet.” In another entry: “今天想起去年的失业经历，有点难受；现在的工作并没有出问题。” These are moments you chose to record, rather than a complete picture of your week. You can reflect on their meaning at your own pace, without treating how much you recorded as a judgment about your life.",
+          "graphemes": 316,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I booked a routine appointment, but I have not attended it yet.”\n\nOne entry says: “今天想起去年的失业经历，有点难受；现在的工作并没有出问题。”",
+          "graphemes": 107,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "sensitive-ordinary-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room."
+          },
+          {
+            "eventId": "sensitive-ordinary-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "sensitive-ordinary",
+      "type": "WEEKLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "这周，你留下了2条记录。回看其中的片段，你写到：“I am uneasy about the waiting room.”也记录了：“今天想起去年的失业经历，有点难受；现在的工作并没有出问题。”这些片段来自你当时选择留下的内容，并不代表这一周的全部。你可以按自己的节奏回顾，不急着把记录的多少当作生活好坏的判断。",
+          "graphemes": 150,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I booked a routine appointment, but I have not attended it yet.”\n\n有一条记录写着：“今天想起去年的失业经历，有点难受；现在的工作并没有出问题。”",
+          "graphemes": 98,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "sensitive-ordinary-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room."
+          },
+          {
+            "eventId": "sensitive-ordinary-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "sensitive-ordinary",
+      "type": "WEEKLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "這週，你留下了2條記錄。回看其中的片段，你寫到：「I am uneasy about the waiting room.」也記錄了：「今天想起去年的失业经历，有点难受；现在的工作并没有出问题。」這些片段來自你當時選擇留下的內容，並不代表這一週的全部。你可以按自己的節奏回顧，不急著把記錄的多少當作生活好壞的判斷。",
+          "graphemes": 150,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I booked a routine appointment, but I have not attended it yet.」\n\n有一條記錄寫著：「今天想起去年的失业经历，有点难受；现在的工作并没有出问题。」",
+          "graphemes": 98,
+          "referencedEvents": 2,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "sensitive-ordinary-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room."
+          },
+          {
+            "eventId": "sensitive-ordinary-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "sensitive-ordinary",
+      "type": "MONTHLY",
+      "locale": "en",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。",
+        "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved.",
+        "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You recorded 4 Events this month. This reflection selects 4 moments across all 4 calendar weeks with eligible memories. These entries offer points of reference, rather than a complete account of your month. In an earlier represented week, you wrote: “I booked a routine appointment, but I have not attended it yet.” In a later represented week: “和家人談到界線時，我停了一下。” Read together, these are two moments from different parts of the recorded month, without assuming one explains the other. These recorded moments leave space for your own perspective. They do not explain the whole month or tell you how its experiences should feel.",
+          "graphemes": 526,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "You wrote: “I booked a routine appointment, but I have not attended it yet.”\n\nOne entry says: “今天想起去年的失业经历，有点难受；现在的工作并没有出问题。” In your own words: “After checking the bill, I asked for a payment extension.” On 2026-09-27, you wrote: “和家人談到界線時，我停了一下。”",
+          "graphemes": 211,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "sensitive-ordinary-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room."
+          },
+          {
+            "eventId": "sensitive-ordinary-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+          },
+          {
+            "eventId": "sensitive-ordinary-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved."
+          },
+          {
+            "eventId": "sensitive-ordinary-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "sensitive-ordinary",
+      "type": "MONTHLY",
+      "locale": "zh-Hans",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。",
+        "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved.",
+        "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看这个月，你留下了4条事件记录。这次回顾从其中选取4个片段，覆盖有可用事件记忆的全部4个自然周；这些片段分布在月内不同的周，提供了回看的几个落点，并不代表整个月的全部经历。在所选片段中较早的一周，你写到：“I am uneasy about the waiting room.”到了较晚的一周，你留下了：“和家人談到界線時，我停了一下。”把它们放在一起，可以回看月内不同时间留下的具体片段，但不据此认定两件事之间有因果，也不把先后顺序当作情绪变化。回顾可以先停在这些具体记录上：它们保留了不同时刻的表达，也留下了未被记录的空白。这些片段对你意味着什么，仍可以由你自己慢慢理解，不必急着把整个月归成一个结论。",
+          "graphemes": 298,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你写下过：“I booked a routine appointment, but I have not attended it yet.”\n\n有一条记录写着：“今天想起去年的失业经历，有点难受；现在的工作并没有出问题。”回到你当时的话：“After checking the bill, I asked for a payment extension.”在2026-09-27的记录里，你写到：“和家人談到界線時，我停了一下。”",
+          "graphemes": 193,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "sensitive-ordinary-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room."
+          },
+          {
+            "eventId": "sensitive-ordinary-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+          },
+          {
+            "eventId": "sensitive-ordinary-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved."
+          },
+          {
+            "eventId": "sensitive-ordinary-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "sensitive-ordinary",
+      "type": "MONTHLY",
+      "locale": "zh-Hant",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。",
+        "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved.",
+        "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+      ],
+      "versions": {
+        "v1": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "回看這個月，你留下了4條事件記錄。這次回顧從其中選取4個片段，涵蓋有可用事件記憶的全部4個自然週；這些片段分布在月內不同的週，提供了回看的幾個落點，並不代表整個月的全部經歷。在所選片段中較早的一週，你寫到：「I am uneasy about the waiting room.」到了較晚的一週，你留下了：「和家人談到界線時，我停了一下。」把它們放在一起，可以回看月內不同時間留下的具體片段，但不據此認定兩件事之間有因果，也不把先後順序當作情緒變化。回顧可以先停在這些具體記錄上：它們保留了不同時刻的表達，也留下了未被記錄的空白。這些片段對你意味著什麼，仍可以由你自己慢慢理解，不必急著把整個月歸成一個結論。",
+          "graphemes": 298,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2": {
+          "status": "accepted-by-reference-validator",
+          "narrative": "你寫下過：「I booked a routine appointment, but I have not attended it yet.」\n\n有一條記錄寫著：「今天想起去年的失业经历，有点难受；现在的工作并没有出问题。」回到你當時的話：「After checking the bill, I asked for a payment extension.」在2026-09-27的記錄裡，你寫到：「和家人談到界線時，我停了一下。」",
+          "graphemes": 193,
+          "referencedEvents": 4,
+          "independentUnsupportedClaimCount": null
+        },
+        "v2.1": {
+          "status": "abstained",
+          "stage": "preflight",
+          "code": "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"
+        }
+      },
+      "proposed": {
+        "status": "native-prose-abstained",
+        "code": "ATOM_NOT_ESTABLISHED",
+        "certifiedNativeProse": false,
+        "productionEligible": false,
+        "quoteArtifact": [
+          {
+            "eventId": "sensitive-ordinary-1",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room."
+          },
+          {
+            "eventId": "sensitive-ordinary-2",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。"
+          },
+          {
+            "eventId": "sensitive-ordinary-3",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved."
+          },
+          {
+            "eventId": "sensitive-ordinary-4",
+            "kind": "EXACT_ATTRIBUTED_SOURCE",
+            "text": "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+          }
+        ]
+      }
+    }
+  ]
+}

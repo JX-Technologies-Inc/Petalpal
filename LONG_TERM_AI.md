@@ -1,5 +1,35 @@
 # PetalPal Long-Term AI
 
+## 2026-10-13 — Semantic evidence research checkpoint
+
+Separate research branch based on verified `main@ba867045`; unmerged Drafts
+#47/#48/#49 and their worktrees are preserved. The experimental files under
+`experiments/semantic-evidence/` have no production import path or persistence.
+
+**Outcome: revise the semantic evidence architecture before integration.** A
+generic typed composition checker can preserve source identity, polarity,
+modality, quantities, explicit relations and temporal scope once source meanings
+are established. It cannot establish arbitrary source meanings or certify actual
+natural prose. Developer-authored synthetic annotations and matching multilingual
+realization fixtures are explicitly conditional; none is production eligible.
+The source-to-meaning and meaning-to-text proof gaps remain open. This is not an
+implementation of native AI writing or an expansion of the existing fixed grammar.
+
+The [research record](docs/ai/SEMANTIC_EVIDENCE_RESEARCH.md),
+[six target examples and matched comparison](docs/ai/SEMANTIC_EVIDENCE_EXAMPLES.md)
+and [executable boundary](experiments/semantic-evidence/README.md) distinguish
+mechanical verification, assumed semantic proof, product writing and remaining
+blind-evaluation gates. The exact full Event must remain the source of contextual
+scope: the current truncated Memory summary is not automatically complete evidence.
+No change to the extractor, retrieval or source data is made here.
+
+Event-only processing, Journal exclusion, owner/consent/source/deletion fences,
+BGE 384d/pgvector and bounded Chinese retrieval, durable AiJob/idempotency/cost
+reservations, single-attempt policy, immutable finalized reports and atomic
+report/evidence persistence are unchanged. No schema migration, production DB,
+provider/credential action, repair/fallback call or deployment occurred. Integration
+requires a separate approved task; existing historical evidence remains below.
+
 > Canonical engineering record for long-term memory, retrieval, reports, and
 > AI application architecture. This is a living record: update it with every
 > AI architecture decision, schema change, implementation completion, reversal,

@@ -1,5 +1,37 @@
 # PetalPal Security
 
+## Isolated semantic evidence trust-boundary research — 2026-10-13
+
+This research adds no production security behavior. It documents a material
+grounding boundary: exact spans/citations and a valid typed claim do not establish
+either source-to-meaning entailment or that all generated wording preserves that
+meaning. A complete source snapshot is required because the current deterministic
+Memory summary can truncate context. The reviewed #49 findings (ambiguous partner,
+litotes, planning-date scope) remain evidence against treating finite mappings as
+universal proof; #49 and its historical security records are unmodified.
+
+The [offline experiment](experiments/semantic-evidence/README.md) uses synthetic
+data, bounds input/AST size, binds annotations to full source snapshots and spans,
+checks exact semantic fields/relations, and rejects unknown operators. Conditional
+fixture statuses always retain `productionEligible: false`; a model-controlled
+label, citation, invitation or prose attachment cannot promote them. Exact source
+quotation is returned as data only; it must be displayed inertly, not executed as
+HTML/Markdown. It establishes what was recorded, not external-world truth.
+
+The simulated owner/consent/revision checks are **not** a replacement for existing
+server authorization or transaction fences. No router, provider, database, schema,
+dependency, deployment or persistence code changes. Production privacy, retention,
+cost and retry behavior is unchanged, not freshly recertified. No provider/manual
+status changed, so `MANUAL_SECURITY_CHECKLIST.md` remains untouched. See the
+[research limitations](docs/ai/SEMANTIC_EVIDENCE_RESEARCH.md) and focused executable
+tests under `experiments/semantic-evidence/`; historical evidence below is preserved.
+
+Focused offline evidence: 79/79 tests pass. Same-task code review additionally
+caught and fixed expanded-year timestamp misordering and an assertion-type gap in
+the experimental activity-order rule. These are prototype findings only, with
+regression tests; conditional semantic checks remain non-production and do not
+certify arbitrary source interpretation, multilingual prose or actual authorization.
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree

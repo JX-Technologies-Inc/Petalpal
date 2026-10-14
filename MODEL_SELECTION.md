@@ -1,5 +1,30 @@
 # PetalPal — AI Model Selection and Cloudflare Architecture
 
+## 2026-10-13 — Isolated semantic evidence research (no routing change)
+
+The requested Weekly Sonnet 5.5 / Monthly Opus 5.5 targets remain unchanged;
+this experiment makes no model call and does not reverify provider availability.
+Current `main` was inspected at `ba867045c0c044a25b04e99dee93c53f10351506`.
+Draft #47 (`28d9dbf3`), #48 (`da67c2ca`) and #49 (`09f6aee0`) were reviewed
+read-only, including #49's acceptance review; none is integrated by this work.
+
+[Semantic evidence research](docs/ai/SEMANTIC_EVIDENCE_RESEARCH.md) separates
+source-to-meaning evidence, compositional claim checking, and meaning-to-text
+verification. The [offline prototype](experiments/semantic-evidence/README.md)
+checks typed claims and relations against explicitly assumed synthetic annotations.
+It does not parse unrestricted Events or verify free-form multilingual prose.
+Even matching authored realization fixtures remain conditional and ineligible for
+production. There is no new grammar, sentence menu, provider flag or retry path.
+
+**Decision: revise the semantic evidence architecture before integration.**
+The fresh identical-evidence comparison and six unverified product targets are
+[documented separately](docs/ai/SEMANTIC_EVIDENCE_EXAMPLES.md). Authored examples,
+conditional proofs and exact quotation artifacts are not native Claude generation
+or independent bilingual validation. BGE 384d/pgvector, bounded Chinese retrieval,
+profile language and all existing v1/v2/v2.1 implementations remain unchanged.
+No paid call, activation, deployment, schema change, fallback or merge is authorized
+by this record. Historical model-selection evidence below retains its original scope.
+
 **Status:** Intended architecture; implementation and activation require separate approval.
 
 **Verification date:** 2026-10-13 (America/Vancouver). Prices are USD.
