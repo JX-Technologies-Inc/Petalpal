@@ -1,0 +1,45 @@
+name: Prompt-first acceptance runner (mock only)
+
+# Mocked transports only: no secrets, credentials, provider, metadata, token-count or inference requests.
+on:
+  pull_request:
+    paths:
+      - 'experiments/prompt-first-reflection/**'
+      - 'lib/ai-gateway-config.js'
+      - 'lib/ai-gateway-schema.js'
+      - 'package-lock.json'
+      - '.github/workflows/prompt-first-acceptance-mock.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prompt-first-acceptance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  mock-runner:
+    name: Mocked acceptance runner and prompt-first tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      NODE_ENV: test
+      DOTENV_CONFIG_PATH: /dev/null
+    steps:
+      - name: Checkout (full history; the runner pins sources to approved commit c5699758)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.21.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Exact locked dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Mocked acceptance runner tests
+        run: node --test experiments/prompt-first-reflection/acceptance.test.mjs
+      - name: Existing PR #51 prompt-first tests
+        run: node --test experiments/prompt-first-reflection/test.mjs
