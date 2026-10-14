@@ -155,3 +155,204 @@ The exact unsupported boundary is arbitrary prose outside the reviewed finite
 language: it cannot be independently checked by this implementation. The working
 subset is suitable for code/product review, not a claim of completed unrestricted
 production-quality native writing or approval to activate it.
+
+## 2026-10-13 addendum — native-reflection-v2.1 composition expansion
+
+This addendum preserves the original v2 contract and the historical discussion
+above. It is an executable, separately default-off expansion, not acceptance for
+launch. Worktree `petalpal-native-reflection-composition`, branch
+`feat/native-reflection-composition`, is based on exact PR #48 head
+`da67c2ca619fd3bb6f163435f07d3ff3f49df765`. Verified main was
+`ba867045c0c044a25b04e99dee93c53f10351506`; PRs #47 and #48 were open Drafts.
+The expansion must remain stacked on `feat/native-reflection-v2` while #48 is
+unmerged. It is not independently mergeable into main.
+
+### Executable source language
+
+`reflection-source-language.js` consumes the **whole** stored EventMemory summary
+(up to 499 UTF-16 units), with at most three first-person predicates. The first
+actor must be explicit (`I`/`我`); actor elision is allowed only within a supported
+same-subject conjunction. Each new sentence requires the actor again. Unknown
+suffixes, fiction/quoted-speaker qualifications, third parties, hypotheticals,
+unsupported negation and partial matches reject the entire construction.
+
+The internal `recorded-construction-v1` AST carries AUTHOR, action/feeling,
+positive/negative polarity, plain/very/a-little degree, actual/plan modality,
+explicit mixed feelings and their AND/CONTRAST relationship, typed quantities,
+relationship and possession where present, finally, temporal context, source
+language candidates, and exact source evidence/revision/owner/timestamps.
+Supported lexical families are deliberately finite:
+
+- Work/study, finishing a shift, studying 1–99 minutes, reading 1–99 pages.
+- Fixing/resolving the bug; encountering a failing test; completing a draft.
+- Writing a poem; sketchbook drawing; drawing 1–9 trees; comparing lines in 1–9
+  drawings; sharing one drawing with one friend.
+- Resting, cooking dinner, walking in a park, talking with one friend/colleague/
+  partner. An unspecified Chinese `朋友` cannot silently become singular English
+  `a friend`: the supported source specifies `一位`.
+- Tired, exhausted/worn out, happy, sad, frustrated, lonely, grateful/thankful,
+  relieved, worried, calm, and explicitly recorded “a little more at ease.”
+  This last phrase retains its comparative meaning; it never proves recovery.
+- Explicit plans/negative actions for registered base forms; bounded positive
+  quantities; after work/study; today/yesterday; explicit then; mixed emotions.
+  Relative dates resolve to the owner-local **record date**, never report-read
+  time. “After” is a temporal qualifier, never causal evidence.
+- `drew <name> using/with charcoal` and its explicit Chinese equivalents, with a
+  bounded 1–4-word Latin title-case name. The name remains an untranslated quoted
+  label, not a verified place type. No link says separately recorded drawings
+  are the same artwork or that two references to a friend are the same person.
+
+Each supported predicate has explicit en/Hans/Hant lexical mappings. Source
+language, language-neutral AST, and server-authoritative output locale are
+separate. This is finite translation, not arbitrary multilingual entailment.
+The mappings need independent bilingual review before activation. Original Events
+and EventMemory are never rewritten. Arbitrary code-switching (for example,
+`今天去了 River Park and walked for 20 minutes.`), implicit actors, unlisted
+synonyms, causal stories and qualified creative narratives remain quotation-only.
+The target `今天学习很累，但和朋友聊天后感觉轻松了一点。` is deliberately ineligible
+for native paraphrase because its actor/relationship/temporal structure is outside
+this reviewed construction, rather than being simplified until it passes.
+
+### Typed facts and complete paragraph proof
+
+`native-composition.js` reuses the original authorized snapshot checks. It derives
+`RECORDED_EPISODE`, `EXACT_RECORD`, `RECORDED_RECURRENCE` and `SAMPLE_COMPARISON`.
+Recurrence requires independently parsed positive actual actions in distinct
+Events (and distinct weeks for Monthly). It no longer depends on optional topic
+metadata. Plans and negative actions cannot create activity recurrence. Sample
+comparisons require both current and previous selected records and unequal counts;
+wording explicitly concerns selected records, never activity frequency or a life
+trend. Complete whole-summary quotes retain unrecognized language and qualifiers;
+framing characters, display controls and potentially truncated 500-unit summaries
+cannot use the quote escape hatch. At least one native episode is required: a
+quote-only packet abstains before inference rather than claiming native writing.
+
+The provider returns `paragraphs[{role,refs,text}]`: one overview, one or two
+observations, optional final invitation. A recursive-descent validator consumes
+all text against independently rebuilt facts and the locale grammar:
+
+1. A record-scoped opening plus 1–4 complete episode fragments. Neutral list
+   conjunctions/semicolons combine fragments; within an episode its proved AND,
+   CONTRAST or explicit THEN and temporal qualifiers remain intact. Fragment
+   choices compose dynamically; there is no menu of finished report paragraphs.
+2. A cross-week opening requires facts from at least two current calendar weeks.
+   An earlier/later construction requires strictly increasing record dates and
+   explicitly describes **entries**, not inferred action chronology.
+3. Whole attributed quotation, or a precisely scoped recurrence/sample-count
+   sentence, can accompany episodes. Up to three sentences per paragraph are
+   parsed with exact separators. IDs select candidates; every word and connective
+   must still parse. No unconsumed suffix, added cause, repair or normalization.
+4. An optional invitation uses an already included named drawing entry, with an
+   explicit choice to stop. It labels the **record**, not an artwork assumed still
+   to exist. No enjoyment, improvement, diagnosis or hidden question assumptions.
+
+Each factual paragraph needs an episode or exact record; statistical cards and
+closings cannot buy source coverage. Weekly requires two distinct current Events;
+Monthly three and every eligible current week. The unchanged saved-section bound
+is 700 UTF-16 units total, Chinese caps 250 Weekly/500 Monthly. Length targets are
+100–180/250–350 Chinese graphemes when sufficient evidence exists, never minima
+that justify filler. Exact accepted text is persisted unchanged with paragraph
+metadata. v1 and original v2 remain reproducible and are not silently upgraded.
+
+### Counterexamples and exact limits
+
+| Category | Supported claim | Rejected counterexample |
+| --- | --- | --- |
+| Recorded action | Two trees in a sketchbook, exact source quantity | Three trees; `your` sketchbook when possession was unspecified |
+| Subjective feeling | Author recorded tired but happy after work | Work caused fatigue; tired therefore unhappy; durable mood diagnosis |
+| Recorded plan/negation | Planning to fix the bug; not fixing it | The bug was fixed; a plan counted as an actual recurring activity |
+| Recurrence | Two selected drawing records in two weeks | Drawing became a habit, therapy or growing commitment |
+| Selected comparison | One previous and two current selected records | You drew more this month or became more creative |
+| Record chronology | Earlier entry / later entry with ordered dates | One experience caused the next or these were the same drawing |
+| Invitation | Revisit the named entry, or stop | Why did River Park make you feel better? |
+| Unknown language | Entire original-language attributed record | Fluent translation inferred from a citation or a few shared words |
+
+No citation, keyword match, model self-assessment, blacklist or second LLM serves
+as proof. Truth is bounded to what the authorized records explicitly say; the
+system does not prove that a recorded real-world experience actually happened.
+Arbitrary paraphrases, implied speakers, pragmatic irony, arbitrary names/scripts,
+open-ended relationships and psychological/causal synthesis remain unverified.
+
+### Evidence and acceptance
+
+[Six complete examples and identical-source comparisons](NATIVE_COMPOSITION_EXAMPLES.md)
+are byte-checked mocked provider outputs. New examples use the same mixed-language
+sources for all requested output locales. Chinese examples meet their target
+ranges without padding. English Monthly omits the optional count comparison to
+stay inside the existing 700-unit cap. They are authored examples, not measured
+Claude quality. They demonstrate new source coverage and composition, not launch
+acceptance.
+
+The earlier 30 selected everyday variants now yield **18 native / 12 quotation-only**:
+6/10 native in each locale, versus original v2 0/30. The distinct predeclared set
+has **48 cases** (16/locale): 24 accepted positives, 24 rejected negatives,
+zero expectation mismatches. It was authored in the same task before the parser,
+not collected blind or independently, and is not a production-rate estimate.
+The first evaluation harness read array fixtures as objects; fixing the harness
+produced the reported results without changing parser rules to fit the held-out
+cases. Metamorphic actor/negation/modality/date/quantity/scope tests reject stale
+prose, rather than treating a source ID as permanent evidence.
+
+**Product verdict: useful executable expansion; launch acceptance still blocked.**
+The original six PR #48 examples retain their qualified creative text as quotations
+(Weekly one quoted record; Monthly three). The new samples reduce quote dependence
+and add specific invitations, but openings, attribution and coordination remain
+noticeably constrained. Cross-week grouping is meaningful at the level of recorded
+activities; it does not supply a free-form personal interpretation. The main
+limitation is expressive coverage/product quality, not permission to weaken proof.
+
+Before activation: independent bilingual semantic review of every source/output
+production and adversarial scope cases; fresh blind, owner-approved representative
+synthetic evaluation with eligible/quotation/abstention denominators; product review
+of same-evidence outputs for warmth/repetition/personalization; then separately
+authorized provider-format, quality, latency and USD acceptance. Human reviewers
+must decide whether this controlled language is useful enough for a limited pilot.
+No production claim follows from these mocked tests. Remain Draft/default-off until
+that review; arbitrary prose stays outside the accepted contract.
+
+Scope hardening in v2.1: shared-AND feeling constructions with negation or unequal
+degrees are ineligible (`I felt not tired and happy`, `I felt very tired and happy`).
+Explicit per-predicate wording remains available. Modal/negative action compounds
+with THEN or CONTRAST stay quotation-only pending a separate scope rule. Neutral
+modal/negative compounds reattribute each following predicate explicitly, so a
+plan or negation cannot silently extend to the next action. A failing test remains
+a test-related record; it cannot establish that the author did technical work.
+
+### Local verification record — 2026-10-13
+
+| Check | Accepted result |
+| --- | --- |
+| Native composition proof/source/schema/evaluation/examples | 17 passed |
+| Original native v2 proof and historical examples | 11 passed, original six unchanged |
+| Sonnet Weekly matrix, v1/v2/v2.1 | 25 passed |
+| Opus Monthly matrix, v1/v2/v2.1 | 32 passed |
+| Full cost-gate, consent-lifecycle, report-write-fence and CI-runner tests | 45 passed |
+| Security matrix (auth, Gateway, HTTP/DAST, Event/Journal, reports, cost, consent, startup and hosting regression fixtures) | 241 passed across staged runs |
+| Final affected rerun after scope hardening | 28 proof/baseline + 10 v2.1 Gateway integration tests passed |
+| `git diff --check`; `graphify update .` | Passed; AST-only local graph, no inference |
+
+Focused counts overlap the security matrix and final reruns; they must not be
+added into an inflated unique-test total. Tests used injected fetch, synthetic
+fixtures, disposable PGlite and the repository's local security harness. No real
+provider, credentials, production database, actual migration or deployment ran.
+Independent-connection PostgreSQL locking and real Claude output are not certified.
+
+Accepted regression runtime: Node 24.19.0 with IANA tzdata 2026b. The repository's
+hosted workflow pins 24.21.0; no runtime pin was changed. An earlier 24.7 aggregate
+run stalled and was stopped, not counted as a pass. A v1 immutability fixture
+initially used newly mixed-language evidence and correctly abstained; restoring
+its original v1 evidence fixed the test's incorrect one-inference expectation.
+The held-out harness's initial array/object mismatch was also fixed, as recorded
+above. The security runner later reached 210 passing tests but its startup fixture
+could not find `npm` adjacent to the bundled Node binary. A task-local copy of the
+same Node binary with an adjacent npm link fixed only that test environment; all
+31 tests from startup onward then passed. No unrelated source was changed to make
+these environment checks pass. Final native proof and provider tests were rerun
+after the last semantic-scope changes and passed.
+
+Hosted CI remains a separate acceptance gate. The existing workflow PR filters
+cover `main` and `integration/mobile-backend-test`, not this stacked feature base;
+no filters were widened and no unrelated workflow/deployment was dispatched. The
+Draft PR reports the exact-head GitHub check status rather than equating these
+local runs with hosted CI. Semantic/product approval, PR #48 integration, and a
+clean required hosted run remain necessary before merge/activation decisions.

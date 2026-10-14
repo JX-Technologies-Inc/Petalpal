@@ -22,9 +22,25 @@ test('CI runner resolves the explicit baseline and strips unsafe inherited confi
   assert.deepEqual(calls[1].args, ['--test', `--test-name-pattern=${httpTests}`, 'test/back/http-security.test.js']);
   assert.deepEqual(calls[2].args, ['scripts/api-security-fuzz.js']);
   assert.deepEqual(calls.slice(3).map(call => call.args), additionalSecurityTests.map(({ file, pattern }) => ['--test', `--test-name-pattern=${pattern}`, file]));
-  for (const { file, pattern, count } of additionalSecurityTests) {
+  for (const { file, pattern, count, matrixContracts } of additionalSecurityTests) {
     const titles = [...read(file).matchAll(/^test\((["'])(.*?)\1/gm)].map(match => match[2]);
+    if (matrixContracts) {
+      const matrix = /for \(const contract of \[(.*?)\]\)/.exec(read(file));
+      assert.ok(matrix, file);
+      assert.deepEqual([...matrix[1].matchAll(/'([^']+)'/g)].map(match => match[1]), matrixContracts);
+      const templates = [...read(file).matchAll(/^test\(`(.*?)`/gm)].map(match => match[1]);
+      assert.equal(templates.length, 5, file);
+      for (const contract of matrixContracts) titles.push(...templates.map(title => title.replace('${contract}', contract)));
+    }
     assert.equal(titles.filter(title => new RegExp(pattern).test(title)).length, count, file);
+    if (matrixContracts) {
+      // Every title is scheduled exactly once across the disjoint processes.
+      const groups = additionalSecurityTests.filter(item => item.file === file);
+      for (const title of titles) assert.equal(groups.filter(group => new RegExp(group.pattern).test(title)).length, 1, title);
+      for (const container of ['', file, file.split('/').at(-1), '/workspace/' + file]) {
+        assert.equal(new RegExp(pattern).test(container), false, `matrix selector must not select parent container: ${container}`);
+      }
+    }
   }
   assert.throws(() => assertCleanCheckout(() => true), /clean checkout/);
   assert.doesNotThrow(() => assertCleanCheckout(() => false));

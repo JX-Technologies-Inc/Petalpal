@@ -1,5 +1,48 @@
 # PetalPal Security
 
+## Native composition v2.1 — 2026-10-13 (default off; review pending)
+
+This additive candidate is stacked on exact PR #48 `da67c2ca`, preserving PR #47,
+v1 and original v2. `native-reflection-v2.1` is a separate explicit contract; it
+does not enable a provider or alter existing routes. No credentials, infrastructure,
+production data or manual/provider status changed; the manual checklist is unchanged.
+
+- Full-source, bounded deterministic parsing preserves AUTHOR, polarity, degree,
+  modality, numbers, temporal context, mixed feelings and exact private source
+  text/revision/owner/timestamps. Unsupported suffixes, causal or fictional framing,
+  actor ambiguity and incomplete summaries reject native extraction.
+- Exact locale mappings are closed executable rules, awaiting independent bilingual
+  review. Output locale stays server-controlled; source Events are never translated
+  in storage. Unknown cross-language text remains a whole attributed quote, with
+  quote-framing/display-control checks. No arbitrary translation/entailment claim.
+- Whole-paragraph recursive parsing validates literals, every fragment, neutral
+  connective, record chronology and explicit stop-option invitation. IDs only
+  select proof candidates. Unknown words, hidden psychological questions and
+  causal reinterpretations reject the output without repair or extra inference.
+- Actual positive activity predicates can support multi-source/week recurrence;
+  plans/negative actions cannot. Comparisons are only selected record counts.
+  Neither statistical cards nor invitations substitute for actual current Event
+  coverage. All eligible Monthly weeks remain required.
+- Existing consent/source/owner/locale checks, durable USD/call admission, no-replay
+  ledger, timeout boundary, stable `grounded-narrative-v1`, finalized-report reuse,
+  deletion and atomic report/evidence/job writes remain authoritative. Event-only
+  AI, Journal exclusion, BGE 384d/pgvector and existing retrieval policies are unchanged.
+
+The semantic boundary and executable counterexamples are documented in
+[the native design addendum](docs/ai/NATIVE_REFLECTION_V2.md#2026-10-13-addendum--native-reflection-v21-composition-expansion).
+Product limitations (restricted coverage, repetition, weak personalization) are
+**not** evidence of a consent/cost/isolation defect and do not justify relaxing
+validation. Conversely, passing mocked safeguards does not certify fluent product
+quality. Predeclared synthetic 48/48 expectation matches and selected everyday
+18/30 native eligibility are not production accuracy claims. No activation approval.
+
+Local verification: 17 composition + 11 original-native proof tests; Sonnet 25,
+Opus 32; cost/consent/write-fence/CI-runner 45 passed. The full security matrix
+passed 241 checks in staged runs after correcting the isolated runtime's missing
+adjacent npm; final affected proof/provider reruns passed 28 + 10. Counts overlap.
+[Commands, environment limitations and corrected test attempts](docs/ai/NATIVE_REFLECTION_V2.md#local-verification-record--2026-10-13)
+are recorded separately from hosted CI and product acceptance.
+
 ## Native reflection v2 grounding boundary — 2026-10-13
 
 **Working executable subset; default off.** Verified base `main@ba867045` contains
@@ -2573,3 +2616,14 @@ unresolved dependency-security gate to the readiness report; readiness remains N
 - **Tests:** `test/back/ai-event.route.test.js` asserts 400 with zero Event/job/dispatch for past, far-past, near-future (+1 h), far-future, `null` and empty values; 403 for the header; 400 when both are sent; and server-time local dates for accepted Events. The file was previously run by no workflow on `main`, so it is added to `scripts/security-ci.js` (whole file, one top-level test). Local run: BLOCKED (backend dependencies unavailable in the preparation sandbox); requires PR CI.
 - **TEST clock (PR #37, unmerged):** when combined, the unconditional header 403 is replaced by PR #37's server-enforced gate (still 403 whenever the gate fails). Client `occurredAt` stays rejected first, and Event time becomes `simulatedOccurredAt ?? new Date()`.
 - **Not done:** no push, PR, merge, deploy, migration, provider change or production write. Release follows the Render API lane after separate approval.
+
+
+## 2026-10-13 — PR #49 composition review: mapping integrity and hosted CI boundary
+
+- **Grounding defects confirmed at `b99b85aa`:** English `partner` was mapped to romantic 伴侣/伴侶 without evidence; negative LITTLE treated English litotes (`not a little happy`) as Boolean negation; contextual plans could move a planning date onto the intended action. These are semantic integrity defects in the default-off v2.1 source grammar, not privacy/consent or cost-admission bypasses.
+- **Narrowing fix:** these ambiguous complete sources now use the existing whole-record quote eligibility path, or cause preflight abstention when native/coverage requirements cannot be met. No grammar expansion, inferred relationship, paid repair, provider fallback or old-report replay. v1 and original v2 remain unchanged.
+- **Focused regression evidence:** complete-paragraph tests in en/zh-Hans/zh-Hant cover the three findings, cross-language polarity, mixed feelings, quantity, actor, temporal context, causality and hidden factual premises in questions. New synthetic identical-evidence evaluation covers 24 Events and 36 report/locale inputs per contract. Product quality is assessed separately: only 4/24 sources have v2.1 native interpretations, and launch acceptance is withheld. See [the review and six comparisons](docs/ai/PR49_ACCEPTANCE_REVIEW.md); no live model quality is claimed.
+- **Actual hosted baseline:** manual [run 38494203122](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38494203122) checked out exact `b99b85aa80891060f57c0ab49fcdcf8c8d084bb3` in both checkout logs. Expo passed; security failed when the combined Monthly process exceeded the runner's 90-second limit after all 32 assertions passed (one process cancellation). This failed run is retained, not relabeled as a pass. The runner now executes v1/v2/v2.1 report matrices in disjoint processes with the same timeout and complete test coverage, enforced by the CI-contract test. Workflow files and deployment settings are untouched. Final amended-head hosted results are recorded on PR #49.
+- **Preserved:** Event-only AI, Journal exclusion, owner/consent/source deletion fences, BGE 384d, pgvector, provider-aware budgets, durable jobs, idempotency and atomic persistence. All providers/contracts remain default-off; no inference, deployment, credentials/resources, production database change, automatic merge or changes to PR #37/#47. No provider/manual activation status changed, so the manual checklist is unchanged. Historical records above remain intact.
+
+- **Hosted follow-up evidence:** [run 38494932309](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/38494932309), exact checkout `8aad6b42c42b0fecf340955dfe71a01e0e515d99`, passed security and Expo. Its logs nevertheless showed duplicated matrix execution: a negative-lookahead base selector matched a Node parent test container. The final runner uses positive title prefixes; CI-contract tests also forbid selecting empty/file/root containers. Final hosted validation must show 22+5+5 Monthly and 15+5+5 Weekly, with no repeated native matrices. This retains the original failed run and intermediate passing evidence without overstating either.

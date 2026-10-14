@@ -1,5 +1,35 @@
 # PetalPal — AI Model Selection and Cloudflare Architecture
 
+## 2026-10-13 — Grounded composition expansion (separate stacked Draft)
+
+`native-reflection-v2.1` is an explicit new default-off content contract for the
+existing Sonnet 5.5 Weekly and Opus 5.5 Monthly adapters. Missing/`v1` and original
+`native-reflection-v2` retain their behavior. No provider, model, job identity,
+retrieval, infrastructure or production configuration is changed.
+
+Base: exact unmerged PR #48 head `da67c2ca619fd3bb6f163435f07d3ff3f49df765`;
+main was verified at `ba867045c0c044a25b04e99dee93c53f10351506`. Branch
+`feat/native-reflection-composition` depends on `feat/native-reflection-v2` and
+must not be presented as independently mergeable into main. PR #47 is untouched.
+
+The executable expansion parses complete bounded everyday constructions into
+source-scoped typed facts, then checks every model-authored paragraph against a
+compositional grammar. Explicit multilingual mappings, mixed feelings, negation,
+plans, quantities, cross-week activities, scoped sample comparisons and optional
+named-entry invitations are supported. Unknown constructions remain whole-source
+quotations; arbitrary paraphrases and psychological synthesis remain unsupported.
+See [the design addendum](docs/ai/NATIVE_REFLECTION_V2.md#2026-10-13-addendum--native-reflection-v21-composition-expansion)
+and [six new examples plus identical-source comparisons](docs/ai/NATIVE_COMPOSITION_EXAMPLES.md).
+
+Selected everyday coverage improves from 0/30 to 18/30 native; separate predeclared
+synthetic expectations match 48/48 (24 accept, 24 reject). These are not production
+rates or real model quality. **Product acceptance remains blocked:** the original
+qualified creative narratives still need quotes, and connective/attribution choices
+remain constrained. This working safe subset requires bilingual semantic review,
+fresh blind evaluation and product approval before any separately authorized model
+acceptance. No deployment, inference, automatic fallback/repair, activation or merge.
+Historical records below retain their original scope.
+
 **Status:** Intended architecture; implementation and activation require separate approval.
 
 **Verification date:** 2026-10-13 (America/Vancouver). Prices are USD.
