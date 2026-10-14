@@ -20,11 +20,13 @@ export const additionalSecurityTests = [
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
   // Each contract gets a fresh process within the unchanged 90-second bound.
   // The combined PGlite matrix exceeded that bound on hosted run 38494203122.
-  { file: 'test/back/opus-monthly.test.js', pattern: '^(?!native-reflection-)', count: 22, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
+  // Positive title prefixes also exclude Node's file/root test containers;
+  // a negative lookahead alone matches those containers and runs descendants.
+  { file: 'test/back/opus-monthly.test.js', pattern: '^(?:Monthly|bounded|Opus|English|Simplified|invalid|sparse|malformed,|late|consent|source|deleting|canonical) ', count: 22, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   { file: 'test/back/opus-monthly.test.js', pattern: '^native-reflection-v2 Monthly ', count: 5, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   { file: 'test/back/opus-monthly.test.js', pattern: '^native-reflection-v2\\.1 Monthly ', count: 5, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
-  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(?!native-reflection-)', count: 15, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(?:versioned|Chinese|Sonnet|English|explicit|zero|insufficient|malformed/refused/unselected/ungrounded|timeout|late|consent|duplicate|evidence|localized) ', count: 15, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^native-reflection-v2 Weekly ', count: 5, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^native-reflection-v2\\.1 Weekly ', count: 5, matrixContracts: ['native-reflection-v2', 'native-reflection-v2.1'] },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.

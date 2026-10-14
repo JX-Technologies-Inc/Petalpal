@@ -37,6 +37,9 @@ test('CI runner resolves the explicit baseline and strips unsafe inherited confi
       // Every title is scheduled exactly once across the disjoint processes.
       const groups = additionalSecurityTests.filter(item => item.file === file);
       for (const title of titles) assert.equal(groups.filter(group => new RegExp(group.pattern).test(title)).length, 1, title);
+      for (const container of ['', file, file.split('/').at(-1), '/workspace/' + file]) {
+        assert.equal(new RegExp(pattern).test(container), false, `matrix selector must not select parent container: ${container}`);
+      }
     }
   }
   assert.throws(() => assertCleanCheckout(() => true), /clean checkout/);
