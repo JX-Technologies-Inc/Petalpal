@@ -1,5 +1,27 @@
 # PetalPal Security
 
+## Isolated prompt-first Claude writing evaluation — 2026-10-13
+
+New [prompt-first evaluation](docs/ai/PROMPT_FIRST_REFLECTION.md) from verified
+`main@ba867045c0c044a25b04e99dee93c53f10351506` prepares versioned Sonnet Weekly and
+Opus Monthly prompts outside v1/v2/v2.1. It permits natural paragraphs only in an
+offline, synthetic experiment; no production route or persistence changes.
+20 scenarios yield 120 provider-compatible unsent requests and six explicitly
+[authored writing targets](docs/ai/PROMPT_FIRST_EXAMPLES.md). Source/consent/revision,
+alias, bounds and coverage checks do not establish free-form semantic grounding.
+34 focused tests include false claims that pass structure while remaining
+UNVERIFIED and production-ineligible. Claude quality is unmeasured.
+
+The approval-only first live plan is 36 synthetic inference calls (18 per model),
+US$3.31776 estimated maximum token cost / US$3.6864 reserved with input headroom,
+US$4 pre-tax proposed ceiling, exact public model IDs verified, account/Gateway
+access still unverified. No calls or provider/manual changes occurred; the manual
+checklist remains unchanged. Preserve historical evidence below, existing
+Event-only/Journal exclusion, owner/consent/deletion fences, BGE 384d/pgvector,
+durable jobs/cost reservations, single attempts, atomic persistence and finalized
+report immutability. Drafts #47–#50 remain separate and unchanged.
+
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree

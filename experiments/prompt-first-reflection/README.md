@@ -1,0 +1,33 @@
+# Prompt-first Claude reflection evaluation
+
+Offline preparation only. No provider transport, credential lookup, route, database, report persistence or production eligibility. Requires Node 24 and the repository's existing dependencies (`npm ci --ignore-scripts` in a clean isolated checkout if needed). Do not load `.env`.
+
+```sh
+node experiments/prompt-first-reflection/prepare.mjs
+node experiments/prompt-first-reflection/prepare.mjs --requests > /tmp/petalpal-synthetic-requests.json
+node --test experiments/prompt-first-reflection/test.mjs
+node experiments/prompt-first-reflection/render-examples.mjs
+```
+
+`--requests` emits 120 real Anthropic Messages API body shapes, with credential-free headers and relative Gateway path. They are **not sent**. Bind the existing authenticated Gateway URL and credentials only inside a separately approved trusted runner. There is deliberately no `--send` flag. `dataset: synthetic` is a caller assertion, not a private-data detector; the CLI accepts only the committed fixtures, never a file upload, database query or arbitrary Event input.
+
+[Design, source review, acceptance and limitations](../../docs/ai/PROMPT_FIRST_REFLECTION.md). [Readable comparisons](../../docs/ai/PROMPT_FIRST_EXAMPLES.md). [Full system prompts](../../docs/ai/PROMPT_FIRST_SYSTEM_PROMPTS.md).
+
+## Modules
+
+- `prompts/shared-v1.txt` + report-specific versioned suffix: exact system prompt assembled by `systemPrompt`. Shared changes require version review for both prompts; versions are fixed for this experiment.
+- `experiment.mjs`: synthetic source admission, minimized alias-only user packet, wire/local schema, provider request construction and structural review. Original source/memory IDs, owner and revisions stay in its private closure. No mutable input reference is retained.
+- `fixtures.mjs`: 20 authored scenarios, 73 source Events; Weekly uses the first two (or fewer), Monthly uses up to four. All three locales see byte-identical evidence. Dates are synthetic fixture choices, never translations of source-relative time.
+- `examples.mjs`: six manually authored writing targets. Not used as a semantic acceptance registry or supplied as few-shot examples.
+- `compare.mjs`: reference v1/v2/v2.1 comparison using one deterministic authored candidate per case. v1 is main's deterministic rendering; v2/v2.1 are pinned Draft #49 source. Abstention is recorded, never repaired by rewriting source text.
+
+To reproduce the committed baseline artifact, use a clean, read-only checkout of `09f6aee0584c386c99523e81657413efab32f1af` with its existing dependencies. Do not reset anyone else's checkout. No provider calls or DB connection occur; transitive reference configuration receives a synthetic closed localhost endpoint only:
+
+```sh
+env -i PATH="$PATH" HOME="$HOME" NODE_ENV=test DOTENV_CONFIG_PATH=/dev/null \
+  DEV_DATABASE_URL=postgresql://fixture:fixture@127.0.0.1:1/petalpal_test \
+  node experiments/prompt-first-reflection/compare.mjs --reference /path/to/read-only-pr49 \
+  > /tmp/petalpal-comparison.json
+```
+
+Compare that JSON with `comparison-results.json`. The reference pin and clean `lib/`/dependency declarations are checked. This optional comparison is not needed for ordinary CI; the experimental tests are registered in the existing environment-stripping security CI runner. Output artifacts contain only authored synthetic evidence. Do not use this script to inspect live records.
