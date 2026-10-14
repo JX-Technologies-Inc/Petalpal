@@ -14,6 +14,8 @@ export const httpTests = 'production HTTPS security headers|HSTS requires|CSP su
 
 // Focused existing fixtures only; no real database/provider/load acceptance.
 export const additionalSecurityTests = [
+  // Offline prompt preparation: 10 literal titles + 24 table cases = 34 tests; no inference.
+  { file: 'experiments/prompt-first-reflection/test.mjs', pattern: '.', count: 10 },
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
   { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 22 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
