@@ -95,7 +95,7 @@ function createReportPrisma() {
   const prisma = {
     state,
     user: {
-      async findUnique({ where }) { return where.id === ownerId ? { timezone: "UTC" } : null; }
+      async findUnique({ where }) { return where.id === ownerId ? { timezone: "UTC", preferredLocale: "en" } : null; }
     },
     aiConsent: {
       async findUnique({ where }) {

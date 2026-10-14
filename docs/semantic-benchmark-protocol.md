@@ -68,3 +68,25 @@ production candidate. Selection considered aggregate metrics, slice balance,
 latency, cost, dimensions, and deployment practicality. No production DB,
 pgvector, ANN, reranker, fusion, backfill, multilingual data, or held-out data
 was used.
+
+## Multilingual evaluation plan — not executed (2026-10-14)
+
+Status: plan only. No multilingual embedding scores exist, and none may be reported.
+
+- The current fixture can't measure Chinese. All 40 `zh-zh`/`en-zh`/`zh-en`/
+  `code-switch` queries label only English Events. The 100 `zh` Events are templated
+  placeholder text, and there is no Traditional Chinese.
+- Minimal next fixture (`multilingual-retrieval-gold-v1`, synthetic): owner-scoped
+  `en`, `zh-Hans`, and `zh-Hant` corpora, plus mixed-language Events. Include
+  en→zh and zh→en queries, paraphrases, hard negatives, negation, and incomplete
+  actions. Each query lists relevant Event IDs, defined independently of any model.
+- Metrics: report Recall@1/3/5 and MRR per language/script and direction. Keep
+  Weekly selected-evidence Recall@8, Monthly Recall@16, and candidate-pool loss
+  separate from query-ranking metrics.
+- Baselines: compare the existing bounded Chinese EventMemory selection with
+  multilingual candidates on the same fixture. The recorded English BGE dev numbers
+  use a different dataset and profile, so don't compare them directly.
+- Blocked dependencies: `@huggingface/transformers` and model weights are not installed
+  in the sandbox, and the npm registry returned 403 for test dependencies. Workers AI
+  calls are paid. Running any candidate needs separate approval to download weights or
+  make paid calls.

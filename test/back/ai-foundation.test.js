@@ -663,7 +663,7 @@ test("Weekly and Monthly report inputs reuse period aggregates and semantic retr
     summary: `Evidence ${event.id}`, updatedAt: new Date("2026-09-21"), embeddingInputRevision: 1
   } }));
   const prisma = {
-    user: { async findUnique() { return { timezone: "UTC" }; } },
+    user: { async findUnique() { return { timezone: "UTC", preferredLocale: "en" }; } },
     aiConsent: { async findUnique() { return { aiProcessing: true, personalization: true, memoryEnabled: true, updatedAt: new Date() }; } },
     event: {
       async findMany({ where }) {
