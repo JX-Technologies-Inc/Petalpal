@@ -1,3 +1,5 @@
+import { installSocialSafety } from "./lib/social-safety.js";
+import { requireSocialPair, hiddenSocialIds, filterSocialPayload } from "./lib/garden-access.js";
 import { isWebShellRequest } from "./lib/web-shell.js";
 import { parseJournalPage, journalPageCursor } from "./lib/journal-pagination.js";
 import { updateAiConsent } from "./lib/ai-consent.js";
@@ -703,6 +705,13 @@ async function getGardenResponse(userId, { includePrivate = false, viewerUserId 
 }
 
 
+installSocialSafety(app, { db: prisma, realtime, clearVisitors: async (tx, a, b) => {
+  for (const [ownerId, visitorId] of [[a,b],[b,a]]) {
+    const garden = await tx.garden.findUnique({ where: { ownerId }, select: { id: true } });
+    if (garden) setActiveVisitors(garden.id, getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorId));
+  }
+} });
+
 app.get("/users", async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -717,7 +726,8 @@ app.get("/users", async (req, res) => {
       take: 100,
     });
 
-    res.json(users);
+    const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+    res.json(users.filter(user => !hidden.has(user.id)));
   } catch (err) {
     logServerError("GET /users error", err);
     res.status(500).json({ error: "Failed to get users" });
@@ -765,7 +775,8 @@ app.get("/users/search", async (req, res) => {
         take: 20
       });
   
-      res.json(users);
+      const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+    res.json(users.filter(user => !hidden.has(user.id)));
   
     } catch (err) {
   
@@ -831,6 +842,7 @@ app.get("/users/:userId/garden-access", async (req, res) => {
 
 app.get("/users/:userId", async (req, res) => {
   try {
+    await requireSocialPair(prisma, req.auth.userId, req.params.userId);
     const user = await prisma.user.findUnique({
       where: {
         id: req.params.userId,
@@ -889,7 +901,8 @@ app.get("/users/:userId/friends", async (req, res) => {
       take: 500,
     });
 
-    res.json(friendships.map((item) => item.friend));
+    const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+    res.json(friendships.map((item) => item.friend).filter(user => !hidden.has(user.id)));
   } catch (err) {
     logServerError("GET /users/:userId/friends error", err);
     res.status(500).json({ error: "Failed to get friends" });
@@ -923,7 +936,7 @@ app.get("/users/:userId/garden", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(gardenResponse);
+    res.json(filterSocialPayload(gardenResponse, await hiddenSocialIds(prisma, req.auth.userId)));
   } catch (err) {
     if (sendSocialError(res, err)) return;
     logServerError("GET /users/:userId/garden error", err);
@@ -2218,261 +2231,6 @@ app.get("/users/:userId/subscription", async (req, res) => {
   res.json(entitlement);
 });
 
-app.post("/reports", async (req, res) => {
-  const { reportedUserId, messageId, category, details } = req.body;
-
-  if ((reportedUserId !== undefined && !validId(reportedUserId)) ||
-      (messageId !== undefined && !validId(messageId))) {
-    return res.status(400).json({ error: "Invalid reported resource identifier" });
-  }
-  if (!validOptionalString(details, MAX_REPORT_DETAILS_LENGTH)) {
-    return res.status(413).json({ error: `Report details must be ${MAX_REPORT_DETAILS_LENGTH} characters or fewer` });
-  }
-
-  if (!REPORT_CATEGORIES.has(category)) {
-    return res.status(400).json({ error: "Invalid report category" });
-  }
-
-  if (!reportedUserId && !messageId) {
-    return res.status(400).json({
-      error: "A reported user or message is required"
-    });
-  }
-
-  if (reportedUserId === req.auth.userId) {
-    return res.status(400).json({ error: "You cannot report yourself" });
-  }
-
-  const [reportedUser, message] = await Promise.all([
-    reportedUserId
-      ? prisma.user.findUnique({ where: { id: reportedUserId } })
-      : Promise.resolve(null),
-    messageId
-      ? prisma.message.findUnique({ where: { id: messageId } })
-      : Promise.resolve(null)
-  ]);
-
-  if ((reportedUserId && !reportedUser) || (messageId && !message)) {
-    return res.status(404).json({ error: "Reported content was not found" });
-  }
-
-  const report = await prisma.report.create({
-    data: {
-      reporterId: req.auth.userId,
-      reportedUserId: reportedUserId || null,
-      messageId: messageId || null,
-      category,
-      details:
-        typeof details === "string" && details.trim()
-          ? details.trim()
-          : null
-    }
-  });
-
-  res.status(201).json(report);
-});
-
-// =========================================================
-// FRIEND REQUESTS
-// =========================================================
-
-// Send a friend request
-app.post("/friends/request", async (req, res) => {
-    try {
-      const {
-        receiverId
-      } = req.body;
-      const senderId = req.auth.userId;
-  
-      if (!senderId || !receiverId) {
-        return res.status(400).json({
-          error: "Sender and receiver are required"
-        });
-      }
-      if (!validId(receiverId)) {
-        return res.status(400).json({ error: "Invalid receiver" });
-      }
-  
-      if (
-        String(senderId) ===
-        String(receiverId)
-      ) {
-        return res.status(400).json({
-          error: "You cannot send a friend request to yourself"
-        });
-      }
-  
-      const [sender, receiver] =
-        await Promise.all([
-          prisma.user.findUnique({
-            where: {
-              id: senderId
-            }
-          }),
-  
-          prisma.user.findUnique({
-            where: {
-              id: receiverId
-            }
-          })
-        ]);
-  
-      if (!sender || !receiver) {
-        return res.status(404).json({
-          error: "User not found"
-        });
-      }
-  
-      // Check whether they are already friends
-      const existingFriendship =
-        await prisma.friendship.findFirst({
-          where: {
-            OR: [
-              {
-                userId: senderId,
-                friendId: receiverId
-              },
-              {
-                userId: receiverId,
-                friendId: senderId
-              }
-            ]
-          }
-        });
-  
-      if (existingFriendship) {
-        return res.status(409).json({
-          error: "You are already friends"
-        });
-      }
-  
-      // Check for an outgoing pending request
-      const existingOutgoingRequest =
-        await prisma.friendRequest.findUnique({
-          where: {
-            senderId_receiverId: {
-              senderId,
-              receiverId
-            }
-          }
-        });
-  
-      if (
-        existingOutgoingRequest &&
-        existingOutgoingRequest.status ===
-          "pending"
-      ) {
-        return res.status(409).json({
-          error: "Friend request already sent"
-        });
-      }
-  
-      // Check whether the other user already sent a request
-      const existingIncomingRequest =
-        await prisma.friendRequest.findUnique({
-          where: {
-            senderId_receiverId: {
-              senderId: receiverId,
-              receiverId: senderId
-            }
-          }
-        });
-  
-      if (
-        existingIncomingRequest &&
-        existingIncomingRequest.status ===
-          "pending"
-      ) {
-        return res.status(409).json({
-          error:
-            "This user has already sent you a friend request. Check your incoming requests."
-        });
-      }
-  
-      let friendRequest;
-  
-      if (existingOutgoingRequest) {
-        friendRequest =
-          await prisma.friendRequest.update({
-            where: {
-              id: existingOutgoingRequest.id
-            },
-            data: {
-              status: "pending"
-            },
-            include: {
-              sender: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              },
-              receiver: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              }
-            }
-          });
-      } else {
-        friendRequest =
-          await prisma.friendRequest.create({
-            data: {
-              senderId,
-              receiverId,
-              status: "pending"
-            },
-            include: {
-              sender: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              },
-              receiver: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              }
-            }
-          });
-      }
-  
-      // Optional real-time notification for the receiver
-      realtime
-  .to(`user:${senderId}`)
-  .to(`user:${receiverId}`)
-  .emit("friendRequestUpdated", {
-    type: "request-sent",
-    request: friendRequest,
-    senderId,
-    receiverId
-  });
-  
-      res.status(201).json({
-        success: true,
-        message: "Friend request sent",
-        request: friendRequest
-      });
-    } catch (err) {
-      logServerError("POST /friends/request error", err);
-  
-      res.status(500).json({
-        error: "Failed to send friend request"
-      });
-    }
-  });
-  
   // Get incoming and outgoing requests
   app.get(
     "/friends/requests/:userId",
@@ -2541,10 +2299,8 @@ app.post("/friends/request", async (req, res) => {
             })
           ]);
   
-        res.json({
-          incoming,
-          outgoing
-        });
+        const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+        res.json(filterSocialPayload({ incoming, outgoing }, hidden));
       } catch (err) {
         logServerError("GET /friends/requests/:userId error", err);
   
@@ -2605,6 +2361,7 @@ app.post("/friends/request", async (req, res) => {
   
         await withSocialLocks(prisma, [senderId, receiverId], async tx => {
           await tx.$queryRawUnsafe('SELECT id FROM "FriendRequest" WHERE id=$1 FOR UPDATE', friendRequest.id);
+          await requireSocialPair(tx, senderId, receiverId);
           const current = await tx.friendRequest.findUnique({ where: { id: friendRequest.id } });
           if (!current || current.status !== "pending" || current.senderId !== senderId || current.receiverId !== receiverId) {
             throw new SocialAccessError("Friend request not found or no longer pending", 404);

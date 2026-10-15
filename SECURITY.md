@@ -2506,3 +2506,7 @@ unresolved dependency-security gate to the readiness report; readiness remains N
 - **Tests:** `test/back/ai-event.route.test.js` asserts 400 with zero Event/job/dispatch for past, far-past, near-future (+1 h), far-future, `null` and empty values; 403 for the header; 400 when both are sent; and server-time local dates for accepted Events. The file was previously run by no workflow on `main`, so it is added to `scripts/security-ci.js` (whole file, one top-level test). Local run: BLOCKED (backend dependencies unavailable in the preparation sandbox); requires PR CI.
 - **TEST clock (PR #37, unmerged):** when combined, the unconditional header 403 is replaced by PR #37's server-enforced gate (still 403 whenever the gate fails). Client `occurredAt` stays rejected first, and Event time becomes `simulatedOccurredAt ?? new Date()`.
 - **Not done:** no push, PR, merge, deploy, migration, provider change or production write. Release follows the Render API lane after separate approval.
+
+## Local App Store readiness candidate — 2026-10-15
+
+See `docs/APP_STORE_RELEASE_READINESS.md` for additive evidence. Persistent user blocks are enforced with existing pair locks and realtime revocation. Reports use structured references, owner/visibility checks, deduplication and bounded submission volume. Moderator APIs require a verified Firebase identity on an operator-managed UID allowlist and omit reporter identity. Historical backlog counts and earlier evidence are unchanged; this candidate has not been deployed.

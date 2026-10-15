@@ -1,3 +1,4 @@
+import { SafetyActions } from '../../features/SafetyActions';
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -144,9 +145,9 @@ export default function FlowerDetailModal() {
           <Text style={styles.receivedSupport}>♥ Support received: {detail.supportCount}</Text>
           {detail.messages.length > 0 && <View style={styles.notesContainer}>
             <Text style={styles.detailLabel}>Messages</Text>
-            {detail.messages.map((message, index) => <Text key={message.id || index} style={styles.messageText}>
+            {detail.messages.map((message, index) => <View key={message.id || index}><Text style={styles.messageText}>
               {message.author || message.senderName || 'Friend'}: {message.text}{message.pending ? ' (sending...)' : ''}
-            </Text>)}
+            </Text>{message.id && !message.pending ? <SafetyActions messageId={message.id} userId={message.authorUserId || message.userId} onBlocked={closeFlowerDetail} /> : null}</View>)}
           </View>}
           {isDetailLoading && <Text style={styles.statusText}>Loading flower details…</Text>}
 

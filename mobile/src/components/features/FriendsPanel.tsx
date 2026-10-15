@@ -1,3 +1,4 @@
+import { SafetyActions, BlockedUsers } from './SafetyActions';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -156,15 +157,16 @@ export function FriendsPanel({ addingFriend = false, onAddFriend = () => {}, onC
         const isFriend = friends.some(friend => friend.id === user.id);
         const outgoing = requests.outgoing.some(request => request.receiverId === user.id);
         const incoming = requests.incoming.some(request => request.senderId === user.id);
-        return <View key={user.id} style={styles.listRow}>{identity(user)}
+        return <View key={user.id} style={styles.listRow}>{identity(user)}<SafetyActions userId={user.id} onBlocked={() => { setResults([]); void refresh(); }} />
           <FeatureActionButton secondary title={isFriend ? 'Already Friends' : outgoing ? 'Request Sent' : incoming ? 'Incoming Request' : 'Add Friend'}
             disabled={!!busy || isFriend || outgoing || incoming} onPress={() => void send(user)} />
         </View>;
       })}
     </View> : null}
+    <BlockedUsers />
     <Text style={styles.sectionTitle}>Friend Requests  ·  {requests.incoming.length}</Text>
     {requests.incoming.map(request => <View key={request.id} style={styles.listRow}>
-      {identity(request.sender)}
+      {identity(request.sender)}<SafetyActions userId={request.senderId} onBlocked={() => void refresh()} />
       <View style={styles.requestActions}>
         <Pressable accessibilityRole="button" accessibilityLabel={`Accept ${request.sender?.name || 'friend request'}`}
           disabled={!!busy} onPress={() => void respond(request, 'accept')} style={({ pressed }) => [styles.smallAction, !!busy && ui.disabled, pressed && ui.pressed]}>
@@ -186,6 +188,7 @@ export function FriendsPanel({ addingFriend = false, onAddFriend = () => {}, onC
             disabled={!!busy} onLongPress={() => setRemoving(friend)} onPress={() => setRemoving(friend)}>
             {identity(friend)}
           </Pressable>
+          <SafetyActions userId={friend.id} onBlocked={() => void refresh()} />
           <Pressable accessibilityRole="button" accessibilityLabel={`Visit ${friend.name}'s Garden`}
             accessibilityHint={allowed ? 'Open Garden as a visitor' : friend.allowGardenVisits === false ? 'Garden visits are private' : 'Garden access has not been verified'}
             accessibilityState={{ disabled: !allowed || !!busy }} disabled={!allowed || !!busy} testID={`visit-${friend.id}`}
