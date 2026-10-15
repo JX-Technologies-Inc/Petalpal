@@ -1,5 +1,30 @@
 # PetalPal Security
 
+## Local Event/Journal content-safety candidate — 2026-10-14
+
+`petalpal-content-v1` adds shared offline checks for new `/events`, private
+`/users/:userId/journals`, and legacy Daily Grow `journalText`/`event` submissions,
+before persistence, job creation or enrichment. Fixed English/Simplified Chinese
+422 errors contain no submitted text. Owner authentication, consent, Event
+idempotency/transactions and Journal exclusion from AI remain intact. Existing
+matching Event retries are preserved; historical content is not scanned or changed.
+
+No moderation dependency/dictionary is adopted: the three requested MIT-code
+candidates have unresolved dataset provenance and/or inadequate bilingual scope.
+The fallback uses independently authored bounded phrase rules and synthetic tests.
+It cannot determine threat credibility or comprehensive semantic intent and can
+produce false positives and false negatives. See [policy, enforcement, tests and
+licensing assessment](docs/content-safety.md) and [notice scope](THIRD_PARTY_NOTICES.md).
+This is local synthetic evidence, not production acceptance or commercial legal
+clearance. No provider/manual setting or status changed; existing checklist evidence
+is preserved. No push, merge, deployment, production data access or paid call.
+
+Local validation: 62/62 focused tests and 6/6 CI-contract tests passed; 261-request
+loopback DAST made zero external attempts/unexpected DB calls. All selected security
+cases have passing evidence across local runtimes; a single successful full-runner
+result remains unverified due shell tzdata and bundled-npm fixture limitations
+documented in the policy report. No existing security gate or test was weakened.
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree

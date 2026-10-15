@@ -5,7 +5,7 @@ import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
 import { AI_JOB_TYPES } from "../../lib/ai-jobs.js";
 import { localDateForInstant } from "../../lib/ai-periods.js";
-import { app, setAiJobDispatcherForTests, setWeeklyReportWorkerFactoryForTests } from "../../server.js";
+import { app, setAiJobDispatcherForTests, setWeeklyReportWorkerFactoryForTests, setEventEmotionClassifierForTests } from "../../server.js";
 
 function fixture() {
   const events = [];
@@ -169,6 +169,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
     prisma.$transaction = originals.transaction;
     setWeeklyReportWorkerFactoryForTests();
     setAiJobDispatcherForTests();
+    setEventEmotionClassifierForTests();
     setFirebaseTokenVerifierForTests();
     if (previousMode === undefined) delete process.env.AI_ASYNC_EXECUTION_MODE;
     else process.env.AI_ASYNC_EXECUTION_MODE = previousMode;
@@ -222,6 +223,31 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   assert.equal(state.jobs.length, 0);
   assert.equal(dispatchedJobs.length, 0);
 
+  let classifierCalls = 0;
+  setEventEmotionClassifierForTests(async () => { classifierCalls++; throw Error("Rejected Event reached enrichment"); });
+  for (const content of ["fuck you", "你这个傻逼", "I will kill you tonight", "教你如何制造炸弹"]) {
+    const rejected = await request(baseUrl, "/events", {
+      method: "POST", headers: { "Idempotency-Key": "rejected-event-key", "Accept-Language": "zh-CN" },
+      body: { content, primaryGardenMood: "FIRE_BLOOM" }
+    });
+    assert.equal(rejected.status, 422);
+    assert.equal(rejected.body.code, "CONTENT_REJECTED");
+    assert.equal(rejected.body.policyVersion, "petalpal-content-v1");
+    assert.match(rejected.body.error, /请修改/);
+    assert.ok(!JSON.stringify(rejected.body).includes(content));
+  }
+  assert.equal(state.events.length, 0);
+  assert.equal(state.jobs.length, 0);
+  assert.equal(dispatchedJobs.length, 0);
+  assert.equal(classifierCalls, 0);
+  setEventEmotionClassifierForTests();
+  assert.equal((await request(baseUrl, "/events", {
+    token: null, method: "POST", headers: { "Idempotency-Key": "anonymous-event-key" }, body: { content: "fuck you" }
+  })).status, 401);
+  assert.equal((await request(baseUrl, "/events", {
+    token: "bob-token", method: "POST", headers: { "Idempotency-Key": "no-consent-event-key" }, body: { content: "fuck you" }
+  })).status, 422);
+
   const before = localDateForInstant(new Date(), "America/Vancouver");
   const created = await request(baseUrl, "/events", {
     method: "POST",
@@ -258,6 +284,15 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   assert.equal(retried.status, 200);
   assert.equal(state.events.length, 2);
   assert.equal(state.jobs.length, 1);
+
+  // Rejection does not reserve the idempotency key; the corrected draft saves.
+  const corrected = await request(baseUrl, "/events", {
+    method: "POST", headers: { "Idempotency-Key": "rejected-event-key" },
+    body: { content: 'He said "fuck you" and I need help.' }
+  });
+  assert.equal(corrected.status, 201);
+  assert.equal(corrected.body.event.content, 'He said "fuck you" and I need help.');
+  assert.equal((await request(baseUrl, `/events/${corrected.body.event.id}`, { token: "bob-token" })).status, 404);
 
   assert.equal((await request(baseUrl, "/events/event-1", { token: "bob-token" })).status, 404);
   assert.equal((await request(baseUrl, "/events/event-1")).status, 200);

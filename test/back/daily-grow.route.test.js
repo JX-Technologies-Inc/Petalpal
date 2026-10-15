@@ -106,7 +106,13 @@ function installPrismaStub() {
   prisma.flower.findMany = async () => state.flower ? [state.flower] : [];
   prisma.event.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create Event"); };
   prisma.aiJob.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create AIJob"); };
-  prisma.$transaction = async (callback) => {
+  prisma.$transaction = async (callback, options) => {
+    // Garden reads now use the existing social authorization transaction.
+    // Keep them separate from the alternating Daily Grow/progression fixture.
+    if (options?.isolationLevel === "ReadCommitted") return callback({
+      ...transaction, $queryRawUnsafe: async () => [],
+      user: prisma.user, garden: prisma.garden, friendship: prisma.friendship, visitRecord: prisma.visitRecord
+    });
     transactionCalls += 1;
     return transactionCalls % 2 === 1 ? callback(transaction) : null;
   };
@@ -158,6 +164,23 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     setFirebaseTokenVerifierForTests();
     restorePrisma();
     await new Promise((resolve) => httpServer.close(resolve));
+  });
+
+  await t.test("both legacy Journal aliases reject before Garden, Journal or AI writes", async () => {
+    for (const field of ["journalText", "event"]) {
+      resetState();
+      // Separate synthetic owner keeps the existing concurrency test's request
+      // budget intact; production rate limits remain active for every request.
+      const result = await api(baseUrl, "/users/friend-1/flowers", {
+        token: "friend-token", method: "POST", body: { mood: "FIRE_BLOOM", [field]: "你这个傻逼" }
+      });
+      assert.equal(result.status, 422);
+      assert.equal(result.body.code, "CONTENT_REJECTED");
+      assert.equal(transactionCalls, 0);
+      assert.equal(longTermAiWrites, 0);
+      assert.equal(state.journal, null);
+      assert.equal(state.flower, null);
+    }
   });
 
   await t.test("rejects an invalid Daily Grow request safely", async () => {
