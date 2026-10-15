@@ -211,7 +211,10 @@ try {
     // Deletion after dispatch, before the response is accepted: the source fence must reject persistence.
     await seedOwner(prisma, "zh-acceptance-dave", ALICE);
     gateway.beforeResponse = async packet => {
-      const ids = (await prisma.eventMemory.findMany({ where: { ownerId: "zh-acceptance-dave", eventDate: { gte: new Date(`${WEEK}T00:00:00Z`) } }, take: 1 })).map(row => row.sourceEventId);
+      // Earliest source inside the Weekly period (Monday 2026-09-14 .. 2026-09-21, UTC owner).
+      const ids = (await prisma.eventMemory.findMany({ where: { ownerId: "zh-acceptance-dave",
+        eventDate: { gte: new Date(`${WEEK}T00:00:00Z`), lt: new Date("2026-09-21T00:00:00Z") } },
+        orderBy: { eventDate: "asc" }, take: 1 })).map(row => row.sourceEventId);
       await prisma.eventMemory.deleteMany({ where: { ownerId: "zh-acceptance-dave", sourceEventId: { in: ids } } });
       await prisma.event.deleteMany({ where: { ownerId: "zh-acceptance-dave", id: { in: ids } } });
       assert.ok(packet && ids.length === 1);
@@ -229,7 +232,9 @@ try {
   summary.result = "PASS";
 } catch (error) {
   summary.result = "FAIL";
-  summary.failure = error?.code || (error instanceof assert.AssertionError ? `ASSERTION: ${error.message}` : error?.message === "REPORT_FAILED" ? "REPORT_FAILED" : "UNEXPECTED_ERROR");
+  // Synthetic-only messages; assertion text names the failed check.
+  summary.failure = error instanceof assert.AssertionError ? `ASSERTION: ${String(error.message).split("\n")[0].slice(0, 200)}`
+    : error?.code || (error?.message === "REPORT_FAILED" ? "REPORT_FAILED" : "UNEXPECTED_ERROR");
   process.exitCode = 1;
 } finally {
   await prisma.$disconnect();
