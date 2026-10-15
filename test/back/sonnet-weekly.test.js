@@ -42,8 +42,15 @@ function contractInput(locale = "zh-Hans") {
 // Disposable SQL engine and synthetic fixtures only; no real models, production
 // schema/migrations, accounts or external connections. SQL rollback is real;
 // independent-connection PostgreSQL row-lock scheduling is not simulated here.
+// node:test keeps after-hook closures until the file ends; a hook that captures the PGlite instance (or the
+// fixture scope) keeps every instance's WASM heap reachable across all tests. Capture only a holder and drop it.
+function closeAfter(t, pg) {
+  const holder = { pg };
+  t.after(async () => { const db = holder.pg; holder.pg = null; await db?.close(); });
+}
+
 async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
-  const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); t.after(() => pg.close());
+  const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); closeAfter(t, pg);
   await pg.exec(`CREATE TYPE "AIJobType" AS ENUM ('WEEKLY_REPORT','MONTHLY_REPORT');
     CREATE TYPE "AIJobStatus" AS ENUM ('PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED');
     CREATE TABLE "User" ("id" text PRIMARY KEY,"timezone" text,"preferredLocale" text);

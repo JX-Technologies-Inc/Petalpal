@@ -14,7 +14,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CREATED=0
 FAILS=0
 RESULTS=()
-LOGDIR="$(mktemp -d -t petalpal-zh-v2-weekly)"
+LOGDIR=""
 
 say() { printf '%s\n' "$*"; }
 stop() { say "STOP: $*"; exit 2; }
@@ -23,10 +23,15 @@ cleanup() {
     id="$(docker ps -aq --filter "name=^/${NAME}$" --filter "label=${LABEL}")"
     [ -n "$id" ] && docker rm -f "$id" >/dev/null 2>&1 && say "Cleanup: removed container ${NAME} (tmpfs data discarded)"
   fi
-  rm -rf "$LOGDIR"
+  # Remove only the private log directory this script created.
+  [ -n "$LOGDIR" ] && [ -d "$LOGDIR" ] && rm -rf -- "$LOGDIR"
 }
 trap cleanup EXIT
 trap 'exit 130' INT TERM
+
+# Portable template (GNU and BSD mktemp both require XXXXXX); fail closed if it cannot be created.
+LOGDIR="$(mktemp -d "${TMPDIR:-/tmp}/petalpal-zh-v2-weekly.XXXXXX")" || { LOGDIR=""; stop "could not create a private temporary log directory"; }
+[ -n "$LOGDIR" ] && [ -d "$LOGDIR" ] && [ -O "$LOGDIR" ] || { LOGDIR=""; stop "temporary log directory is missing or not owned by this user"; }
 
 # Clean environment: no inherited secrets, .env, Render or provider variables reach any child process.
 clean() { env -i PATH="$PATH" HOME="$HOME" NODE_ENV=test DEV_DATABASE_URL="$URL" "$@"; }
