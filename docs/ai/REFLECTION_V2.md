@@ -1,6 +1,18 @@
 # Opt-in Prompt-First reflection v2 — 2026-10-15
 
-Status: **implemented offline, default off, not production-ready.** No paid inference has used this contract. Human editorial acceptance and a separately approved live evaluation are required before any cutover.
+Status: **PROMPT IMPROVED · OFFLINE TESTED · REAL PROVIDER REVALIDATION PENDING · HUMAN EDITORIAL ACCEPTANCE PENDING · PRODUCTION DEFAULT OFF.** The historical single-call Weekly acceptance below used the earlier prompt. The editorial revision has had zero provider calls and is not production-ready.
+
+## Editorial revision — 2026-10-15
+
+Based on verified handoff `d80ab522d77c0c8483b45a7827e2fbf5561f5ee0`, on local branch `codex/reflection-v2-editorial-quality`.
+
+- Evidence-led prose replaces length targets: details supply warmth, ordinary moments need no meaning added, and unresolved matters stay at the time described. Separate Events do not establish shared objects, people or causal links. Missing information is handled by omitting unsupported claims, not narrating the omission.
+- Weekly: one to three short paragraphs about a few moments; weekday order only when useful. Monthly: usually two to four paragraphs spanning every represented week, with one allowed for sparse evidence by the existing schema; no required week-by-week account or recovery arc.
+- Locale guidance distinguishes plain contemporary English, everyday Simplified Mandarin and idiomatic Traditional Chinese with regional vocabulary where the source supports it. No translated English draft, character-conversion workflow, example prose or word blacklist is added to the production prompt.
+- Only instruction strings change at runtime. Schemas, deterministic validation, evidence selection/trimming algorithm, models, consent/source fences, budgets, timeouts, no-replay protections and saved-report behavior are unchanged. Serialized instruction sizes are 2,602 Weekly / 2,855 Monthly bytes (previously 2,614 / 2,889), so this edit does not shrink the evidence packet allowance. Existing deterministic trimming may retain more evidence at a size boundary.
+- No contract or durable generation identity change is made. Saved reports remain immutable; this revision applies only to new, explicitly opted-in generations. Any future regeneration/versioning policy needs a separate contract decision.
+
+See [editorial standards, reference examples and evaluation limits](REFLECTION_V2_EDITORIAL.md). Historical examples and live evidence below are preserved verbatim; historical authored examples demonstrate the contract, not the new editorial target. The dated preparation notes below retain their original pre-call status.
 
 ## Why v1 reads mechanically
 

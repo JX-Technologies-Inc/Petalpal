@@ -127,7 +127,7 @@ test("v2 packets carry Event text, weekday and week labels without identifiers, 
   }
 });
 
-test("authored v2 reflections for the Prompt-First negation and mixed-work matrix render native prose with sentence evidence", () => {
+test("historical authored Prompt-First references render verbatim with sentence evidence, without proving editorial quality", () => {
   const all = cases(); assert.equal(all.length, 12);
   for (const { type, locale, valid, check } of all) {
     const result = check(structuredClone(valid));
@@ -140,6 +140,91 @@ test("authored v2 reflections for the Prompt-First negation and mixed-work matri
     // No application-authored template text is added to Claude's prose.
     for (const template of ["You recorded", "Looking back", "这周，你留下了", "這週，你留下了", "selected", "所选", "所選"]) assert.equal(result.narrative.includes(template), false);
   }
+});
+
+// HUMAN-AUTHORED / NOT CLAUDE: requested label for offline editorial reference
+// prose, prepared by Codex; human editorial acceptance is still pending.
+// These shorter alternatives reuse the existing mixed-work Events verbatim.
+// They are contract examples, never samples of model performance or few-shots.
+const EDITORIAL = {
+  en: [
+    "You finally fixed the bug and tested the login screen twice, though you were still worried about the next day's demo.",
+    "You got a little annoyed halfway through drawing the cup by the window and left the unfinished sketch on the table.",
+    "On a weekend walk with your friend 小林, you were happy to see her and talked about an unfinished sketch, without deciding when to draw again.",
+    "You enjoyed a quiet Sunday reading at home, and still did not know how the next project would go."
+  ],
+  "zh-Hans": [
+    "bug 终于修好了，登录页面也测了两遍，不过你还是担心第二天的演示。",
+    "窗边的杯子画到一半，你觉得有点烦，把没画完的素描放在了桌上，没有继续画。",
+    "周末和朋友小林散步，见到她你很开心，也聊起了未完成的素描，但还没决定什么时候再画。",
+    "周日在家安静地读书，你很享受，只是还不知道下一个项目会怎么样。"
+  ],
+  "zh-Hant": [
+    "bug 終於修好了，登入畫面也測了兩次，不過你還是擔心隔天的 demo。",
+    "畫窗邊的杯子時，你畫到一半覺得有點煩，把沒完成的素描留在桌上，沒有繼續畫。",
+    "週末和朋友小林散步，你很開心見到她，也聊起了未完成的素描，但還沒決定什麼時候再畫。",
+    "週日在家安靜地看書，你很享受，只是還不知道下一個專案會怎麼樣。"
+  ]
+};
+
+test("short editorial references preserve locale rendering and per-sentence provenance with flexible Weekly and Monthly structure", () => {
+  for (const locale of LOCALES) {
+    const sentence = i => [EDITORIAL[locale][i], [`E${i + 1}`]];
+    for (const type of ["WEEKLY", "MONTHLY"]) {
+      const input = type === "WEEKLY" ? weeklyInput(locale, SCENARIOS["mixed-work"].slice(0, 2)) : monthlyInput(locale, SCENARIOS["mixed-work"]);
+      // Monthly spans all four weeks in three paragraphs without following the
+      // packet's chronological order or claiming the two sketches are identical.
+      const order = type === "WEEKLY" ? [[0], [1]] : [[1, 2], [0], [3]];
+      const output = plan(locale, type, order.map(indices => indices.map(sentence)));
+      const result = type === "WEEKLY" ? validateWeeklyReflectionV2(output, input) : validateMonthlyReflectionV2(output, input);
+      assert.equal(result.narrative, order.map(indices => indices.map(i => EDITORIAL[locale][i]).join(locale === "en" ? " " : "")).join("\n\n"));
+      assert.deepEqual(result.sections.flatMap(section => section.claims.map(claim => claim.evidenceRefs)),
+        order.flat().map(i => [{ sourceEventId: `event-${i + 1}`, sourceMemoryId: `memory-${type === "MONTHLY" ? "event-" : ""}${i + 1}` }]));
+    }
+  }
+});
+
+// Existing localized drawing Events from sonnet-weekly.test.js. They never
+// identify the shared drawing as the finished sketch, or the friend as a partner.
+const DRAWINGS = {
+  en: ["I finished a sketch. It was a quiet afternoon.", "I shared my drawing with a friend."],
+  "zh-Hans": ["今天画完了一幅素描。那个下午很安静。", "我把画分享给朋友，聊了彼此的近况。"],
+  "zh-Hant": ["今天畫完了一幅素描。那個下午很安靜。", "我把畫分享給朋友，聊了彼此的近況。"]
+};
+
+test("pure-language and sparse existing Events allow short paragraphs without relaxing evidence minimums", () => {
+  for (const locale of LOCALES) {
+    const texts = DRAWINGS[locale], input = weeklyInput(locale, texts);
+    // Exact-source quotations exercise script and source preservation, not voice.
+    const output = plan(locale, "WEEKLY", [texts.map((text, i) => [`“${text}”`, [`E${i + 1}`]])]);
+    assert.equal(validateWeeklyReflectionV2(output, input).sections.length, 1);
+    assert.throws(() => buildWeeklyReflectionV2Packet(weeklyInput(locale, texts.slice(0, 1))), { code: "REPORT_NARRATIVE_INVALID_INPUT" });
+
+    const monthly = monthlyInput(locale, SCENARIOS["mixed-work"].slice(0, 3), ["02", "09", "10"].map(day => `2026-09-${day}T12:00:00Z`));
+    const brief = plan(locale, "MONTHLY", [[
+      [EDITORIAL[locale][0], ["E1"]], [EDITORIAL[locale][1], ["E2"]]
+    ]]);
+    // Existing contract: select >=3 current Events across >=2 weeks; output
+    // cites every represented week, not necessarily every selected Event.
+    assert.equal(validateMonthlyReflectionV2(brief, monthly).sections.length, 1);
+    assert.throws(() => buildMonthlyReflectionV2Packet(monthlyInput(locale, SCENARIOS.negation.slice(0, 2))),
+      { code: "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE" });
+  }
+});
+
+test("unsupported editorial counterexamples can pass deterministic validation and still require human rejection", () => {
+  // Deliberately wrong paraphrases, NOT target prose. Citations are necessary
+  // traceability, never semantic entailment. Do not turn these into allowlists.
+  for (const { type, scenario, locale, valid, check } of cases()) {
+    const output = structuredClone(valid);
+    output.paragraphs[0].sentences[0].text = scenario === "mixed-work"
+      ? ({ en: "The demo went well and you stopped worrying.", "zh-Hans": "演示很顺利，你不再担心了。", "zh-Hant": "demo 很順利，你不再擔心了。" })[locale]
+      : ({ en: "You were unhappy about the result.", "zh-Hans": "你对结果不高兴。", "zh-Hant": "你對結果不高興。" })[locale];
+    assert.doesNotThrow(() => check(output), `${type}/${scenario}/${locale}: requires semantic review`);
+  }
+  const input = weeklyInput("en", DRAWINGS.en);
+  const merged = plan("en", "WEEKLY", [[["You shared the sketch you finished with your partner.", ["E1", "E2"]]]]);
+  assert.doesNotThrow(() => validateWeeklyReflectionV2(merged, input), "object identity and relationship are not proved by refs");
 });
 
 test("v2 validation rejects unknown aliases, alias text, unsupported digits, fragment quotes, wrong-source quotes and missing coverage", () => {
@@ -199,5 +284,9 @@ test("contract selection defaults to v1, accepts only the exact v2 opt-in and ke
     assert.throws(() => weeklyReflectionContract({ AI_WEEKLY_REFLECTION_CONTRACT: value }), { code: "AI_GATEWAY_CONFIG_INVALID" });
   }
   assert.throws(() => monthlyReflectionContract({ AI_MONTHLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY }), { code: "AI_GATEWAY_CONFIG_INVALID" });
-  for (const type of ["WEEKLY", "MONTHLY"]) assert.ok(REFLECTION_V2_INSTRUCTIONS[type].length <= 4000);
+  // Do not reduce the packet's byte allowance relative to the verified d80ab522
+  // prompts. This guards a real cost/evidence tradeoff, not particular wording.
+  for (const [type, baselineBytes] of [["WEEKLY", 2614], ["MONTHLY", 2889]]) {
+    assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS[type])) <= baselineBytes, type);
+  }
 });
