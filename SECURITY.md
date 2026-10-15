@@ -2506,3 +2506,90 @@ unresolved dependency-security gate to the readiness report; readiness remains N
 - **Tests:** `test/back/ai-event.route.test.js` asserts 400 with zero Event/job/dispatch for past, far-past, near-future (+1 h), far-future, `null` and empty values; 403 for the header; 400 when both are sent; and server-time local dates for accepted Events. The file was previously run by no workflow on `main`, so it is added to `scripts/security-ci.js` (whole file, one top-level test). Local run: BLOCKED (backend dependencies unavailable in the preparation sandbox); requires PR CI.
 - **TEST clock (PR #37, unmerged):** when combined, the unconditional header 403 is replaced by PR #37's server-enforced gate (still 403 whenever the gate fails). Client `occurredAt` stays rejected first, and Event time becomes `simulatedOccurredAt ?? new Date()`.
 - **Not done:** no push, PR, merge, deploy, migration, provider change or production write. Release follows the Render API lane after separate approval.
+
+## 2026-10-15 — Pre-authentication API admission (CodeQL #19–21; local, not released)
+
+- **Finding:** the speech POST, Journal-cover PUT and general authenticated API
+  middleware invoked Firebase verification and profile lookup before the general
+  user limiter. Failed authentication never reached that limiter. This is a
+  resource-exhaustion gap, not evidence of an authentication bypass.
+- **Ordering:** speech now runs shared IP admission → Firebase verification /
+  verified-email check / profile lookup → existing general user quota → AI quota
+  → speech concurrency admission → large-body parsing → existing validation,
+  consent/cost gate and provider handling. Cover PUT runs IP admission → the same
+  authentication → general user quota → owner check → large-body parsing and
+  existing validation/write. Other authenticated API paths (including cover GET)
+  retain bounded 32 KB parsing, then run IP admission → authentication/profile →
+  general user quota → existing route authorization and limits.
+- **Budget:** `RATE_LIMIT_ADMISSION_MAX=1200` attempts per
+  `RATE_LIMIT_ADMISSION_WINDOW_MS=60000` by default, independent of
+  `RATE_LIMIT_WINDOW_MS`. These positive-integer options use the existing parser
+  and fallback behavior. The generous coarse ceiling leaves shared-IP headroom
+  above the existing 300/user/15-minute general and 30/user/15-minute AI defaults;
+  it is not a measured production-capacity guarantee. All outcomes consume
+  admission because successful verification also costs work. One limiter instance
+  shares the budget across routes; each matching request enters it once. The
+  early speech/cover handlers terminate before the general authentication layer.
+- **Preserved policy:** `/auth` and `/session` retain the existing pre-verification
+  failure limiter, successful-session refunds and verified-UID session quota.
+  Authenticated session reads also receive the new coarse all-attempt ceiling;
+  this intentionally supplements their tighter failure quota with a separate
+  counter. Public pages and session-setup exceptions are unchanged. The existing
+  `/internal/ai-jobs/*` service authentication and executor routes run separately,
+  before interactive admission. Worker admission/workload limits remain a
+  separate security decision. Firebase authorization, ownership, consent,
+  provider budgets and existing response bodies are unchanged; admission denial
+  uses the existing 429 JSON, rate-limit headers and `Retry-After` contract.
+- **IP and storage assumptions:** only Express `req.ip` is keyed, under the
+  existing `TRUST_PROXY` configuration (`false` by default; blanket `true` is
+  rejected). The locked `ipKeyGenerator` normalizes mapped IPv4 and groups IPv6
+  /56 prefixes. No raw forwarding header is trusted by the limiter. A configured
+  trusted proxy must overwrite/append the real peer address and all ingress paths
+  must match the verified topology; hop counts are safe only with invariant
+  path lengths. Actual deployed topology/configuration was not accessed or
+  verified. Reuse of `createRateLimiter` caps this map at 10,000 keys: expired
+  entries reset on access and are reclaimed at capacity, active entries are not
+  evicted, and new keys receive 429 if all entries are active. Idle entries can
+  remain until capacity cleanup, but cannot grow beyond that cap.
+- **Limits:** per-process fixed windows reset on restart, allow window-boundary
+  bursts, and do not coordinate replicas or defend against distributed DDoS.
+  A heavily shared IP or a full key table can cause collateral rejection. Before
+  rollout, validate capacity/fairness and trusted ingress; use upstream edge/WAF
+  rate and connection controls, and a coordinated store if fleet-wide quotas are
+  required. No new dependency, Redis, provider setting or production action was
+  introduced. The existing open proxy/topology/scaling verification item in
+  `MANUAL_SECURITY_CHECKLIST.md` remains applicable and unchanged; the two new
+  optional settings above need no provider change to take effect at defaults.
+- **Local evidence (synthetic only, Node 24.21.0):** 37/37 focused tests passed
+  across rate-limit, preauth-admission routes, auth-abuse routes, auth,
+  security-config and security-CI runner tests. Coverage includes invalid/missing
+  tokens, zero verification/profile/route work after admission denial, concurrent
+  and cross-route attempts, single counting, shared-IP successes, user/AI quotas,
+  owner isolation, existing session limits, spoofed forwarding prefixes under a
+  trusted loopback proxy and ignored headers without proxy trust, mapped IPv4,
+  IPv6 /56, 10,000-key capacity/expiration, and separate executor traffic.
+  Added these rate-limit regression files to the existing security-CI selection.
+- **Additional product regression:** 33/33 tests passed across Daily Grow,
+  security-baseline, account deletion, Fairy onboarding/progress/runtime and
+  Garden response tests. Two stale fixtures failed identically with the untouched
+  base server loaded: Daily Grow lacked transactional Garden-read delegates, and
+  the deletion-error test lacked a recent verified `auth_time`. Repaired only
+  those synthetic fixtures, retained every assertion and added an explicit owner
+  Garden 200 assertion. Existing missing/stale-login rejection tests also pass.
+- **Full security gate PASS:** `npm run test:security:ci` completed successfully
+  on the final isolated run: 214/214 tests across all 21 command batches, zero
+  failures, cancellations or skips. This covers AI Gateway, HTTP security,
+  offline API fuzzing, Event AI, Weekly/Monthly AI, speech admission, AI quotas /
+  consent, private Journals, realtime privacy, cross-origin boundaries and
+  integration/deployment guards. Two earlier runs hit the unchanged 90-second
+  subprocess ceiling in unchanged `ai-gateway.test.js`; the final run used no
+  concurrent test processes and passed that batch (75/75) within the same limit.
+  All 20 following commands also passed separately (139/139). No timeout or
+  assertion was weakened and no test was disabled. Syntax and `git diff --check`
+  passed. No production access or paid API calls were used; package manifests
+  and lockfiles are unchanged.
+- **Isolation:** prepared from verified `origin/main` at
+  `ba867045c0c044a25b04e99dee93c53f10351506` on an independent worktree/branch.
+  Existing dirty work, the content-safety worktree, PRs #58/#59 and the malformed
+  local `main 2` ref were not changed. CodeQL Default setup and historical evidence
+  are preserved; this local change does not claim that GitHub alerts are closed.

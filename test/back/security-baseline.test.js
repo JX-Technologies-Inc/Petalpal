@@ -43,7 +43,9 @@ test("Month 1 HTTP security boundary protects private resources and rejects unsa
   prisma.auditEvent.create = async () => ({ id: "audit-test" });
   setFirebaseTokenVerifierForTests(async (token) => ({
     uid: token === "owner-token" ? "firebase-owner" : "firebase-other",
-    email_verified: true
+    email_verified: true,
+    // Reach the intended deletion-error assertion through the recent-login gate.
+    auth_time: Math.floor(Date.now() / 1000)
   }));
 
   const server = app.listen(0, "127.0.0.1");

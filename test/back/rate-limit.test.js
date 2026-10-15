@@ -98,3 +98,46 @@ test("capacity pressure cannot evict an active budget; expired buckets free capa
   timestamp = 2000;
   assert.equal((await run(limiter, { ip: "new" })).statusCode, 200);
 });
+
+test("admission counts successful shared-IP work independently of user/auth quotas", async () => {
+  const { admission } = rateLimiters({ RATE_LIMIT_ADMISSION_MAX: "2", RATE_LIMIT_ADMISSION_WINDOW_MS: "5000" });
+  const req = { ip: "192.0.2.50", auth: { userId: "one" } };
+  assert.equal((await run(admission, req, 200)).statusCode, 200);
+  assert.equal((await run(admission, { ...req, auth: { userId: "two" } }, 200)).statusCode, 200);
+  const denied = await run(admission, { ...req, auth: { userId: "three" } });
+  assert.equal(denied.statusCode, 429);
+  assert.equal(denied.headers["Retry-After"], "5");
+  assert.equal((await run(admission, { ip: "192.0.2.51" })).statusCode, 200);
+});
+
+test("admission uses normalized IPs, ignores submitted identity/headers and groups IPv6 /56", async () => {
+  const { admission } = rateLimiters({ RATE_LIMIT_ADMISSION_MAX: "1" });
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).statusCode, 200);
+  assert.equal((await run(admission, { ip: "::ffff:c000:201", headers: { "x-forwarded-for": "192.0.2.2" }, body: { userId: "other" } })).statusCode, 429);
+  assert.equal((await run(admission, { ip: "2001:db8:abcd:1200::1" })).statusCode, 200);
+  assert.equal((await run(admission, { ip: "2001:0db8:abcd:12ff:0000:0000:0000:0002" })).statusCode, 429);
+  assert.equal((await run(admission, { ip: "2001:db8:abcd:1300::1" })).statusCode, 200);
+});
+
+test("admission defaults to 1200/minute independently of the existing quota window", async t => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1000 });
+  const { admission } = rateLimiters({ RATE_LIMIT_WINDOW_MS: "900000" });
+  const first = await run(admission, { ip: "192.0.2.1" });
+  assert.equal(first.headers["RateLimit-Limit"], "1200");
+  assert.equal(first.headers["RateLimit-Reset"], "61");
+  t.mock.timers.tick(60_000);
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).headers["RateLimit-Remaining"], "1199");
+});
+
+test("admission keeps at most 10000 active keys, retains budgets and reclaims expired capacity", async t => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1000 });
+  const { admission } = rateLimiters({ RATE_LIMIT_ADMISSION_MAX: "1", RATE_LIMIT_ADMISSION_WINDOW_MS: "1000" });
+  for (let i = 0; i < 10_000; i++) {
+    assert.equal((await run(admission, { ip: `10.0.${i >> 8}.${i & 255}` })).statusCode, 200);
+  }
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).statusCode, 429);
+  assert.equal((await run(admission, { ip: "10.0.0.0" })).statusCode, 429);
+  t.mock.timers.tick(1000);
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).statusCode, 200);
+  assert.equal((await run(admission, { ip: "10.0.0.0" })).statusCode, 200);
+});

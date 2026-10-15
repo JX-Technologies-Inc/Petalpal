@@ -106,7 +106,13 @@ function installPrismaStub() {
   prisma.flower.findMany = async () => state.flower ? [state.flower] : [];
   prisma.event.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create Event"); };
   prisma.aiJob.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create AIJob"); };
-  prisma.$transaction = async (callback) => {
+  prisma.$transaction = async (callback, options) => {
+    // Garden reads now authorize inside a transaction. Supply the same synthetic
+    // delegates there without advancing the separate Daily Grow write fixture.
+    if (options?.isolationLevel === 'ReadCommitted') return callback({
+      user: prisma.user, garden: prisma.garden, friendship: prisma.friendship,
+      visitRecord: prisma.visitRecord, $queryRawUnsafe: async () => []
+    });
     transactionCalls += 1;
     return transactionCalls % 2 === 1 ? callback(transaction) : null;
   };
@@ -211,6 +217,7 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(checkIns.body[0].journal.content, "A private thankful moment");
 
     const ownerGarden = await api(baseUrl, `/users/${owner.id}/garden`);
+    assert.equal(ownerGarden.status, 200);
     assert.equal(ownerGarden.body.flowers[0].event, "A private thankful moment");
     assert.deepEqual(
       ownerGarden.body.flowers[0].dailyCheckIn.emotionResult.secondaryEmotions,
