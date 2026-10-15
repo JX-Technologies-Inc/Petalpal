@@ -2593,3 +2593,84 @@ unresolved dependency-security gate to the readiness report; readiness remains N
   Existing dirty work, the content-safety worktree, PRs #58/#59 and the malformed
   local `main 2` ref were not changed. CodeQL Default setup and historical evidence
   are preserved; this local change does not claim that GitHub alerts are closed.
+
+## 2026-10-15 — Saturated admission limiter CPU amplification (local follow-up)
+
+- **Defect:** at the 10,000-key cap, each untracked-key rejection scanned the
+  entire map and allocated an expiration array to calculate Retry-After, even
+  when no entry could have expired. The preceding isolated benchmark measured
+  4.52 CPU seconds for 10,000 such denials (about 53 times known-key CPU/request).
+  This is a conditional resource-exhaustion weakness, not authentication bypass.
+- **Correction:** keep one scalar earliest-expiration cache. New entries update
+  the minimum, including after backward wall-clock movement. Resetting or
+  successfully refunding away the earliest bucket invalidates the cache;
+  capacity pressure lazily recomputes it. At capacity, scan/reclaim only when
+  expiration is due or the cache is invalid. Repeated denials before expiration
+  use constant-time map lookup and cached Retry-After, without table traversal
+  or an expiration array. Existing stale-finish identity checks remain intact.
+- **Preserved:** fail-closed capacity, active budgets, bounded key storage,
+  synchronous admission/counting, HTTP 429 bodies and security events, all
+  user/auth/AI quotas, 1,200/minute default, IPv6 /56, proxy trust and middleware
+  order. No dependency, provider or deployment configuration changed.
+- **Deterministic coverage:** instrumented map traversal verifies zero scans
+  across 10,000 saturated denials and one reclamation scan at expiration;
+  assertions also cover response body, Retry-After, security events, active
+  budget preservation, earliest-bucket reset/deletion, stale successful finishes,
+  backward/forward clock changes and capacity recovery. No timing assertions.
+- **CPU/latency benchmark:** one sequential before/after pair on Apple M2 arm64,
+  Node 24.7.0, using the original `c1af23b4` limiter and this correction in
+  separate isolated processes. Synthetic normalized IPv4 keys; fixed injected
+  clock; 10,000 active buckets; 4,000 known-key denials followed by five batches
+  of 2,000 untracked-key denials. Real security-event serialization remained
+  enabled, with stdout directed to the null device. No network/provider work.
+  Untracked-key CPU fell from **5,586.353 ms to 131.192 ms** (42.6x, 97.7% lower);
+  wall time fell from **7,813.965 ms to 74.600 ms**. Relative to the earlier
+  4.52-second observation, measured CPU is 34.5x lower (97.1%). Per-batch median
+  latency fell from 0.349–0.605 ms to 0.006–0.007 ms; p95 from 0.597–3.059 ms to
+  0.006–0.010 ms, p99 from 0.903–8.116 ms to 0.008–0.030 ms. Known-key CPU for
+  4,000 denials was 37.155 ms before / 48.994 ms after; corrected unknown-key
+  CPU/request was about 1.07x the corrected known-key cost. These noisy local
+  measurements are evidence of improvement, not CI timing thresholds or SLOs.
+- **Memory/recovery benchmark:** corrected forced-GC heap was 5.251 MiB before
+  population, 6.593 MiB at capacity, 6.802–6.810 MiB across denial batches and
+  5.673 MiB after expiration. RSS reached 70.125 MiB and remained 69.859 MiB
+  after recovery; retained heap was stable under pressure, not proof that RSS
+  immediately returns to baseline. Full expiration/recovery took 3.363 ms
+  versus 2.998 ms before; linear reclamation is intentionally retained. The
+  harness includes assertions/normalization and excludes HTTP transport,
+  production log collection, Firebase/database cost and deployment load.
+- **Focused/product verification:** focused limiter, admission, auth-abuse,
+  auth, security-config and CI-runner tests **41/41 PASS** on Node 24.7.0 and
+  24.19.0. Selected Daily Grow, security-baseline, account-deletion, Fairy
+  onboarding/progress/runtime and Garden response regressions **34/34 PASS**
+  on Node 24.7.0. Existing actual-route fixtures retain concurrent exact-quota,
+  zero verifier/profile/database work after denial, shared-IP, mapped IPv4,
+  IPv6 /56, forwarding-spoof, user/AI quota and executor-separation assertions.
+  An initial new test's symbol-mock cleanup interference was corrected using
+  explicit restoration; no assertion was relaxed.
+- **Runtime validation history:** the first full-run attempt on system Node
+  24.7.0 failed the two unchanged Vancouver tests because it contains tzdata
+  2025b. The available bundled Node 24.19.0 contains tzdata 2026b, but its bare
+  binary directory lacks adjacent npm, causing four unchanged integration-startup
+  tests to fail in the next attempt. A temporary directory containing a copy of
+  that existing Node binary and a link to existing npm supplies the expected
+  runtime layout without installing/upgrading dependencies or altering installed
+  tools. Startup/timezone prerequisites then passed **7/7**. No test, timeout,
+  workflow or provider configuration was changed to address these environment
+  failures. CI's exact Node 24.21.0 verification remains a subsequent GitHub gate.
+- **Full security gate PASS:** the unchanged `scripts/security-ci.js` completed
+  all 21 command batches on that Node 24.19.0 / tzdata 2026b runtime:
+  **218/218 PASS**, zero failures, cancellations or skips, retaining the existing
+  90-second subprocess ceiling. This includes AI Gateway, HTTP security/offline
+  fuzzing, Event/Weekly/Monthly AI, speech/AI-cost/consent, private Journal and
+  realtime/cross-origin tests, integration/deployment guards and timezone tests.
+  Syntax and diff checks passed. Only the limiter, its tests and this appended
+  evidence changed; no source deployment, production request, push, alert
+  dismissal or provider-setting change was performed.
+- **Limits unchanged:** expiry-triggered scans remain O(maxKeys); this is not a
+  general replacement of the limiter's storage algorithm. Wall-clock changes
+  still affect fixed-window duration as before. Shared-IP collateral rejection,
+  window-boundary bursts, process restarts, replica-independent budgets and the
+  need for verified client-IP/proxy topology and upstream controls remain.
+  Existing manual/provider checklist items still apply; no new provider action
+  or verified provider status is introduced by this local optimization.
