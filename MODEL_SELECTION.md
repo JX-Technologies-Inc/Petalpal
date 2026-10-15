@@ -331,6 +331,10 @@ Phases 1–3 are merged in PRs #43–45; Phase 4 Monthly integration is implemen
 - **Rollback:** Stop new Sonnet admissions, preserve valid saved reports, and use the old compatible renderer/adapter where authorized. Do not overwrite finalized reports or reopen their jobs.
 - **Approval:** Product acceptance of brevity/tone/locale, security acceptance of grounding and privacy, exact budget/route approval, and a separately scoped paid acceptance and release decision.
 
+### Prompt-First reflection v2 (opt-in) — 2026-10-15
+
+- **Source status:** `weekly-reflection-v2` (Sonnet) and `monthly-reflection-v2` (Opus) are implemented behind `AI_WEEKLY_REFLECTION_CONTRACT` / `AI_MONTHLY_REFLECTION_CONTRACT`, default v1. Same models, limits and reservations; see [docs/ai/REFLECTION_V2.md](docs/ai/REFLECTION_V2.md). Not accepted for production.
+
 ### Phase 4 — Opus Monthly narrative integration
 
 - **Source status:** Implemented, disabled by default. `monthly-reflection-v1` composes verified cross-week topic patterns, explicitly sample-scoped current/previous comparisons, or attributed earliest/latest-week moments for ordinary topic-free Events, with localized controlled prose and supported closing. This assessed hybrid retains quotations where independent synthesis is unavailable; it does not accept arbitrary cited prose as fact. The Monthly-only evidence policy prioritizes up to six week anchors within the existing 16-source/8,000-character budget; enrichment remains theme-bounded. Mocked acceptance only; naturalness/depth and live model compatibility remain review gates.

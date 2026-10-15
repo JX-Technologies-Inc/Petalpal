@@ -10,6 +10,7 @@ import { PrismaAiCostGate } from "../../lib/ai-cost-gate.js";
 import { assertReportSources } from "../../lib/report-write-fence.js";
 import { buildWeeklyReflectionPacket, validateWeeklyReflection, weeklyReportProvider,
   WEEKLY_REFLECTION_CONTRACT, SONNET_WEEKLY_MODEL, SonnetWeeklyReflectionService } from "../../lib/sonnet-weekly.js";
+import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
 
 const enabled = { AI_WEEKLY_REPORT_PROVIDER: "anthropic", AI_WEEKLY_REPORT_MODEL: SONNET_WEEKLY_MODEL,
   AI_GATEWAY_ENABLED: "true", AI_GATEWAY_ANTHROPIC_ENABLED: "true",
@@ -350,4 +351,30 @@ test("localized source policy rejects wrong owners, Journal memories, unsupporte
     assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0);
     assert.ok(result.succeeded === false || result.result?.status === "INSUFFICIENT_EVIDENCE");
   }
+});
+
+test("opt-in weekly-reflection-v2 saves cited Claude prose without identifiers; v1 stays default and finalized reports are reused", async t => {
+  const v2env = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY };
+  const written = packet => ({ version: REFLECTION_V2.WEEKLY, locale: packet.locale, paragraphs: [{ sentences: packet.evidence
+    .filter(item => item.scope !== "previous").map(item => ({ text: packet.locale === "en" ? `You wrote: “${item.text}”` : `你写下：“${item.text}”`, refs: [item.ref] })) }] });
+  const f = await fixture(t); f.respond(packet => Response.json(native(written(packet))));
+  const result = await f.run(v2env); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 1); assert.equal(f.calls[0].body.system, REFLECTION_V2_INSTRUCTIONS.WEEKLY);
+  const packet = f.calls[0].packet; assert.equal(packet.version, REFLECTION_V2.WEEKLY);
+  for (const hidden of ["alice", "event-", "memory-", "prior-", "eventCount"]) assert.equal(JSON.stringify(packet).includes(hidden), false, hidden);
+  const report = (await f.rows("WeeklyReport"))[0].document;
+  assert.equal(report.generationVersion, REPORT_NARRATIVE_GENERATION_VERSION);
+  assert.ok(report.narrativeSections.every(section => section.contractVersion === REFLECTION_V2.WEEKLY && section.claims.length));
+  assert.equal(report.summary, written(packet).paragraphs[0].sentences.map(item => item.text).join(""));
+  assert.deepEqual((await f.rows("AIEvidence")).map(row => row.claimType), ["NARRATIVE_CITED", "NARRATIVE_CITED"]);
+  assert.equal((await f.rows("AIJob"))[0].status, "SUCCEEDED");
+  const invalid = await fixture(t), failed = await invalid.run({ ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: "weekly-reflection-v3" });
+  assert.equal(failed.succeeded, false); assert.equal(invalid.calls.length, 0); assert.equal(invalid.retrievalCalls, 0); assert.equal(invalid.legacyCalls, 0);
+  // A finalized v1 report is reused, never regenerated, after the v2 opt-in.
+  const old = await fixture(t); assert.equal((await old.run()).succeeded, true);
+  const before = (await old.rows("WeeklyReport"))[0].document;
+  await old.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  const reused = await old.run(v2env); assert.equal(reused.result.skipped, true); assert.equal(old.calls.length, 1);
+  assert.deepEqual((await old.rows("WeeklyReport"))[0].document, before);
+  assert.equal(before.narrativeSections[0].contractVersion, WEEKLY_REFLECTION_CONTRACT);
 });

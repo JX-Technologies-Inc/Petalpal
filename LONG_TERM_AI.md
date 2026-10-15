@@ -265,6 +265,17 @@ foundation work.
 
 ## 12. Current Implementation Status
 
+### Opt-in Prompt-First reflection v2 — 2026-10-15
+
+**IMPLEMENTED IN SOURCE; DEFAULT OFF; NOT PRODUCTION-READY.** Root cause of the
+mechanical v1 prose: Claude only selects quotes or card IDs while application
+templates write every sentence, and Chinese quote limits make mixed-language weeks
+abstain. `weekly-reflection-v2` / `monthly-reflection-v2` (`lib/reflection-v2.js`)
+have Claude compose native en/zh-Hans/zh-Hant prose as cited sentences; models,
+evidence selection, English BGE/pgvector, Chinese bounded selection and job identity
+are unchanged. Validation and residual risks: [docs/ai/REFLECTION_V2.md](docs/ai/REFLECTION_V2.md).
+Next gate: an owner-approved, budgeted 12-case live evaluation with human review.
+
 ### Phase 4 Opus Monthly reflections — 2026-10-13
 
 **IMPLEMENTED IN SOURCE; OPUS DISABLED BY DEFAULT; NO PRODUCTION CUTOVER.**

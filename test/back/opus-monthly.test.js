@@ -14,6 +14,7 @@ import { monthlyPeriodFor } from "../../lib/ai-periods.js";
 import { selectMonthlyEvidence, MONTHLY_EVIDENCE_POLICY, monthlyWeek } from "../../lib/monthly-evidence.js";
 import { buildMonthlyReflectionPacket, validateMonthlyReflection, monthlyReportProvider, monthlyTextLength,
   MONTHLY_REFLECTION_CONTRACT, OPUS_MONTHLY_MODEL, OpusMonthlyReflectionService } from "../../lib/opus-monthly.js";
+import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
 
 const enabled = { AI_MONTHLY_REPORT_PROVIDER: "anthropic", AI_MONTHLY_REPORT_MODEL: OPUS_MONTHLY_MODEL,
   AI_GATEWAY_ENABLED: "true", AI_GATEWAY_ANTHROPIC_ENABLED: "true",
@@ -480,4 +481,31 @@ test("Monthly moment cards preserve whole-source negation and numbers and reject
     }
     assert.throws(() => buildMonthlyReflectionPacket(input), { code: "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE" });
   }
+});
+
+test("opt-in monthly-reflection-v2 saves cited cross-week Claude prose; v1 stays default and finalized reports are reused", async t => {
+  const v2env = { ...enabled, AI_MONTHLY_REFLECTION_CONTRACT: REFLECTION_V2.MONTHLY };
+  const written = packet => ({ version: REFLECTION_V2.MONTHLY, locale: packet.locale, paragraphs: [{ sentences: packet.evidence
+    .filter(item => item.scope !== "previous").map(item => ({ text: packet.locale === "en" ? `You wrote: “${item.text}”` : `你写下：“${item.text}”`, refs: [item.ref] })) }] });
+  const f = await fixture(t); f.respond(packet => Response.json(native(written(packet))));
+  const result = await f.run(v2env); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 1); assert.equal(f.calls[0].body.system, REFLECTION_V2_INSTRUCTIONS.MONTHLY);
+  const packet = f.calls[0].packet; assert.equal(packet.version, REFLECTION_V2.MONTHLY);
+  for (const hidden of ["alice", "event-", "memory-", "prior-", "eventCount"]) assert.equal(JSON.stringify(packet).includes(hidden), false, hidden);
+  const report = (await f.rows("MonthlyReport"))[0].document;
+  assert.equal(report.generationVersion, REPORT_NARRATIVE_GENERATION_VERSION);
+  assert.ok(report.narrativeSections.every(section => section.contractVersion === REFLECTION_V2.MONTHLY && section.claims.length));
+  assert.equal(report.summary, written(packet).paragraphs[0].sentences.map(item => item.text).join(""));
+  assert.deepEqual(packet.evidence.map(item => item.week ?? item.scope), ["previous", "W1", "W2", "W3", "W4"]);
+  assert.deepEqual((await f.rows("AIEvidence")).map(row => row.claimType).sort(), ["NARRATIVE_CITED", "NARRATIVE_CITED", "NARRATIVE_CITED", "NARRATIVE_CITED", "NARRATIVE_SELECTED"]);
+  assert.equal((await f.rows("AIJob"))[0].status, "SUCCEEDED");
+  const invalid = await fixture(t), failed = await invalid.run({ ...enabled, AI_MONTHLY_REFLECTION_CONTRACT: "monthly-reflection-v3" });
+  assert.equal(failed.succeeded, false); assert.equal(invalid.calls.length, 0); assert.equal(invalid.retrievalCalls, 0); assert.equal(invalid.legacyCalls, 0);
+  // A finalized v1 report is reused, never regenerated, after the v2 opt-in.
+  const old = await fixture(t); assert.equal((await old.run()).succeeded, true);
+  const before = (await old.rows("MonthlyReport"))[0].document;
+  await old.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  const reused = await old.run(v2env); assert.equal(reused.result.skipped, true); assert.equal(old.calls.length, 1);
+  assert.deepEqual((await old.rows("MonthlyReport"))[0].document, before);
+  assert.equal(before.narrativeSections[0].contractVersion, MONTHLY_REFLECTION_CONTRACT);
 });
