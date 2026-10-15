@@ -130,6 +130,7 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 - [ ] Verify data residency and subprocessors. Evidence: published subprocessors include US and England operations; no Canada-only or single-region guarantee is configured. Status: `NOT VERIFIED / OPTIONAL HARDENING`
 - [x] Verify Workers Logs configuration. Evidence: Workers Logs, invocation logs, and persistence enabled; live invocation observed; traces intentionally disabled; Free-plan retention documented as 3 days. Status: `PASS`
 - [ ] Do not place private configuration values in this checklist. Evidence: final checklist review. Status: `NOT CHECKED / PASS / ACTION REQUIRED`
+- [ ] Before the single zh-Hans Reflection v2 Weekly Sonnet 5.5 acceptance call (`scripts/zh-reflection-v2-weekly-acceptance.mjs live-weekly`, added 2026-10-15): human operator confirms, without automation or secret-bearing screenshots, that the `petalpal-integration` Cloudflare AI Gateway has no retry, fallback, dynamic-routing or caching rule that could add or redirect Anthropic requests (the request also sends `cf-aig-max-attempts: 1` and skip-cache); then enters the integration-only Gateway token and Anthropic key at the hidden TTY prompt. Requires a separate `APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL` approval naming the exact commit and a ≤ US$0.05 cap. Status: `NOT PERFORMED / NOT AUTHORIZED`; no live call made.
 
 ## 8. Final Security P0 closure
 

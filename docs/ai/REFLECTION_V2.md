@@ -49,3 +49,17 @@ Reservations are unchanged: Weekly ≈ US$0.041 (8,192-byte input allowance, 2,0
 1. Owner-approved, budgeted live evaluation of the same 12-case matrix (`negation`, `mixed-work` × Weekly/Monthly × en/zh-Hans/zh-Hant), with no retries.
 2. Independent human factual and editorial review of every output: negation/litotes, speaker, unresolved matters, temporal and emotional additions, fluency, translation-like phrasing, repetition, Traditional Chinese wording.
 3. Measured latency, tokens and grounding-failure rate. Byte-based admission counts Chinese at ~3 bytes per character; any change to it is a separate budget decision.
+
+## Isolated zh-Hans Weekly acceptance (prepared 2026-10-15, live call not run)
+
+`scripts/zh-reflection-v2-weekly-acceptance.mjs` exercises `weekly-reflection-v2` with `claude-sonnet-5-5` through the production worker path on a fresh disposable PostgreSQL. Weekly only; Monthly/Opus is unconfigured.
+
+- `offline` ($0, mocked Gateway; CI workflow `zh-reflection-v2-weekly-offline.yml` or `scripts/zh-reflection-v2-weekly-offline.sh`) covers:
+  - the saved v2 report: zh-Hans, contract, model, cited owner-scoped evidence, owner-only reads, finalized reuse and no re-charge;
+  - the single-report limits refusing a second report;
+  - Monthly being refused;
+  - consent denial;
+  - deletion mid-flight;
+  - ungrounded output with no repair and no replay;
+  - cross-owner isolation.
+- `live-weekly` makes exactly one real call. It needs a separate `APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL` approval naming the exact verified commit and a cap ≤ US$0.05 (the full reservation is US$0.04096). Gates are listed in `SECURITY.md`. Output is synthetic and must still receive human editorial review; it is not production acceptance.

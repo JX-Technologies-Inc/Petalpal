@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# OFFLINE-only zh-Hans Weekly/Monthly acceptance on a throwaway local PostgreSQL container.
+# OFFLINE-only zh-Hans Reflection v2 Weekly acceptance on a throwaway local PostgreSQL container.
 # No credentials, no Claude/Gateway calls (mocked responses). The only network access is a one-time
 # Docker image pull if the image is missing. Removes only the container this script created.
 set -u
-NAME=petalpal-zh-acceptance-offline
+NAME=petalpal-zh-v2-weekly-offline
 LABEL="petalpal.acceptance=offline-$$"
 IMAGE=pgvector/pgvector:pg16
 PORT=55432   # fixed: the runner refuses any other port
 DB_USER=acceptance
 DB_PASS=acceptance-local-only
-DB=petalpal_acceptance_offline_test
+DB=petalpal_acceptance_v2_offline_test
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CREATED=0
 FAILS=0
 RESULTS=()
-LOGDIR="$(mktemp -d -t petalpal-zh-acceptance)"
+LOGDIR="$(mktemp -d -t petalpal-zh-v2-weekly)"
 
 say() { printf '%s\n' "$*"; }
 stop() { say "STOP: $*"; exit 2; }
@@ -39,8 +39,8 @@ step() {
 
 # ---- Preflight (stop safely; never touch anything that already exists) ----
 cd "$ROOT" || stop "repository not found"
-[ "$(git branch --show-current)" = "test/zh-report-acceptance" ] || stop "not on branch test/zh-report-acceptance"
-[ -f scripts/zh-report-acceptance.mjs ] || stop "acceptance runner missing"
+[ "$(git branch --show-current)" = "test/zh-reflection-v2-live-weekly" ] || stop "not on branch test/zh-reflection-v2-live-weekly"
+[ -f scripts/zh-reflection-v2-weekly-acceptance.mjs ] || stop "acceptance runner missing"
 [ -x node_modules/.bin/prisma ] || stop "dependencies missing (not reinstalling automatically)"
 [ -d generated/prisma ] || stop "Prisma Client not generated"
 [ -e .env ] && stop ".env present in repo; move it away first"
@@ -69,13 +69,13 @@ done
 
 # ---- Tests ----
 TAIL=3 step "Prisma migrations on disposable database (real schema)" migrate clean node_modules/.bin/prisma migrate deploy
-TAIL=10 step "PGlite suites: sonnet-weekly + opus-monthly (mocked Gateway)" pglite \
-  clean node --test test/back/sonnet-weekly.test.js test/back/opus-monthly.test.js
+TAIL=10 step "PGlite + gate suites: sonnet-weekly, reflection-v2, v2 Weekly gates (mocked Gateway)" pglite \
+  clean node --test test/back/sonnet-weekly.test.js test/back/reflection-v2.test.js test/back/zh-reflection-v2-weekly-gates.test.js
 if [ "$FAILS" = 0 ] || [ "${RESULTS[0]}" = "PASS  Prisma migrations on disposable database (real schema)" ]; then
-  TAIL=200 step "zh-Hans acceptance runner: offline (mocked Gateway, real PostgreSQL)" runner \
-    clean node scripts/zh-report-acceptance.mjs offline
+  TAIL=200 step "zh-Hans v2 Weekly acceptance runner: offline (mocked Gateway, real PostgreSQL)" runner \
+    clean node scripts/zh-reflection-v2-weekly-acceptance.mjs offline
 else
-  RESULTS+=("SKIP  zh-Hans acceptance runner (migrations failed)"); FAILS=$((FAILS + 1))
+  RESULTS+=("SKIP  zh-Hans v2 Weekly acceptance runner (migrations failed)"); FAILS=$((FAILS + 1))
 fi
 
 say ""; say "==== SUMMARY ===="

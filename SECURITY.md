@@ -1,5 +1,48 @@
 # PetalPal Security
 
+## Isolated zh-Hans Reflection v2 Weekly acceptance runner — 2026-10-15
+
+**Preparation and offline/mocked validation only; no paid inference, deployment,
+migration, credential, provider or production-data change.** Branch
+`test/zh-reflection-v2-live-weekly` (based on PR #57) reuses the unmerged
+`test/zh-report-acceptance` runner (commits cherry-picked with `-x`) and narrows it
+to `weekly-reflection-v2` on `claude-sonnet-5-5`. It calls the real worker, cost gate,
+Gateway client, v2 validator and persistence. No `AI_MONTHLY_*` name is set, so no
+Opus service exists; a Monthly job is refused before any reservation or dispatch.
+
+Live mode (`live-weekly`) is fail-closed before any database or provider module loads
+(`scripts/zh-reflection-v2-weekly-gates.mjs`). It requires all of the following:
+- `NODE_ENV=test`, no `.env`, and no inherited `DATABASE_URL`, `AI_*`, Render,
+  Anthropic, Gateway, OpenAI, Firebase or Cloudflare variables;
+- a fresh loopback `petalpal_acceptance_v2_live_test` database on port 55432 with
+  zero users and audit rows;
+- no `CI`/`GITHUB_ACTIONS`, and a TTY for hidden secret entry;
+- `PETALPAL_ZH_ACCEPTANCE_APPROVAL=APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL`;
+- a full approved commit SHA equal to a clean `HEAD`;
+- a budget cap ≤ US$0.05 that is at least the US$0.04096 full reservation;
+- the human Gateway no-retry attestation (manual checklist §7);
+- an unconsumed ledger.
+
+Exactly-one-dispatch controls:
+- The in-process dispatch guard allows one exact URL and one call. It creates
+  `<git-common-dir>/petalpal-acceptance/zh-weekly-v2-sonnet-live.jsonl` exclusively
+  (`wx`) and fsyncs an `attempt` entry before the send, so a crash, timeout or
+  unknown outcome still consumes the run. The ledger records only commit, cap,
+  model, HTTP status and sanitized cost, never bodies, headers or secrets. It is a
+  local control, not cross-machine replay prevention.
+- The Gateway client keeps `fallback`/`maxAttempts` replay blocks and sends
+  `cf-aig-max-attempts: 1`.
+- Single-report database limits allow 2 calls and 1 Weekly action, with all USD
+  limits set to the cap, so a second report is refused before dispatch.
+- The deterministic cost reservation blocks scheduler re-runs.
+- Ungrounded output fails without a repair call.
+
+Gateway-side retry/fallback configuration is **not** machine-verified. This is a
+residual risk covered only by the manual attestation.
+
+The offline CI workflow uses a disposable pgvector service, `contents: read` and no
+secrets, and never invokes live mode.
+
 ## Opt-in Prompt-First reflection v2 — 2026-10-15
 
 **Default off; offline source and mocked tests only; no paid inference, deployment,
