@@ -1,3 +1,4 @@
+import { COMMUNITY_VERSION, COMMUNITY_TEXT } from './features/CommunityGuidelines';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, AppState, KeyboardAvoidingView, Platform, Pressable, ScrollView,
   StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
@@ -13,6 +14,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [confirmation, setConfirmation] = useState('');
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState('🦋');
+  const [communityAccepted,setCommunityAccepted] = useState(false);
   const [aiConsent, setAiConsent] = useState(false);
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
@@ -84,13 +86,17 @@ export function AuthGate({ children }: { children: ReactNode }) {
             accessibilityRole="radio" accessibilityLabel={{ '🦋': 'Butterfly', '🐝': 'Bee', '🐦': 'Bird' }[choice]}
             accessibilityState={{ selected: avatar === choice }} disabled={working} onPress={() => setAvatar(choice)}
             style={[styles.avatar, avatar === choice && styles.selected]}><Text style={styles.avatarText}>{choice}</Text></Pressable>)}</View>
+          <Text style={styles.body}>{COMMUNITY_TEXT}</Text>
+          <Pressable accessibilityRole="checkbox" accessibilityLabel="Accept Community Guidelines" accessibilityState={{checked:communityAccepted}} disabled={working} onPress={()=>setCommunityAccepted(!communityAccepted)} style={styles.consent}>
+            <Text style={styles.label}>{communityAccepted ? '☑' : '☐'} I accept the Community Guidelines</Text>
+          </Pressable>
           <Pressable accessibilityRole="checkbox" accessibilityLabel="Allow AI processing of my Events"
             accessibilityState={{ checked: aiConsent, disabled: working }} disabled={working}
             onPress={() => setAiConsent(!aiConsent)} style={styles.consent}>
             <Text style={styles.label}>{aiConsent ? '☑' : '☐'} Allow AI processing of my Events</Text>
           </Pressable>
           <Text style={styles.hint}>Optional. Off by default. This does not enable long-term memory.</Text>
-          {button(working ? 'Saving…' : 'Continue to PetalPal', () => auth.completeProfile({ name, avatar, aiConsent }), !name.trim())}
+          {button(working ? 'Saving…' : 'Continue to PetalPal', () => auth.completeProfile({ name, avatar, aiConsent, communityTermsVersion: communityAccepted ? COMMUNITY_VERSION : undefined }), !name.trim() || !communityAccepted)}
           {button('Use another account', auth.logout, false, true)}
         </> : <>
           {field('Email', { value: email, onChangeText: setEmail, keyboardType: 'email-address', autoCapitalize: 'none',

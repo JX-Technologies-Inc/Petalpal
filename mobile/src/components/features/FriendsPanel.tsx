@@ -1,3 +1,4 @@
+import { CommunityGuidelines } from './CommunityGuidelines';
 import { SafetyActions, BlockedUsers } from './SafetyActions';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -163,6 +164,7 @@ export function FriendsPanel({ addingFriend = false, onAddFriend = () => {}, onC
         </View>;
       })}
     </View> : null}
+    <CommunityGuidelines />
     <BlockedUsers />
     <Text style={styles.sectionTitle}>Friend Requests  ·  {requests.incoming.length}</Text>
     {requests.incoming.map(request => <View key={request.id} style={styles.listRow}>

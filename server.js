@@ -1,3 +1,5 @@
+import { assertContentAllowed, contentSafetyResponse, CONTENT_REJECTED } from './lib/content-safety.js';
+import { COMMUNITY_VERSION, assertSocialContent, requireCommunityAcceptance, installCommunityPolicy } from './lib/community-policy.js';
 import { installSocialSafety } from "./lib/social-safety.js";
 import { requireSocialPair, hiddenSocialIds, filterSocialPayload } from "./lib/garden-access.js";
 import { isWebShellRequest } from "./lib/web-shell.js";
@@ -705,6 +707,7 @@ async function getGardenResponse(userId, { includePrivate = false, viewerUserId 
 }
 
 
+installCommunityPolicy(app, prisma);
 installSocialSafety(app, { db: prisma, realtime, clearVisitors: async (tx, a, b) => {
   for (const [ownerId, visitorId] of [[a,b],[b,a]]) {
     const garden = await tx.garden.findUnique({ where: { ownerId }, select: { id: true } });
@@ -991,6 +994,9 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
         if (!validOptionalString(req.body?.avatar, MAX_AVATAR_LENGTH)) {
           return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
         }
+        if (req.body.communityTermsVersion !== COMMUNITY_VERSION) return res.status(428).json({error:'Accept the Community Guidelines before creating a public profile.',code:'COMMUNITY_ACCEPTANCE_REQUIRED'});
+        assertSocialContent(requestedName);
+        assertSocialContent(req.body.avatar || '🦋');
         const now = Date.now();
         const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
         const preferredLocale = req.body?.preferredLocale === undefined
@@ -1010,6 +1016,8 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
             accountId: `PP${String(now).slice(-8)}`,
             firebaseUid: identity.uid,
             name: requestedName,
+            communityTermsVersion: COMMUNITY_VERSION,
+            communityAcceptedAt: new Date(),
             email: normalizedEmail,
             emailVerifiedAt: new Date(),
             avatar: req.body?.avatar || "🦋",
@@ -1045,6 +1053,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
       fairyEvent
     });
   } catch (error) {
+    if (error?.code === "CONTENT_REJECTED") return res.status(422).json({error:"Please choose a profile that follows the Community Guidelines.",code:error.code});
     logServerError("POST /auth/session error", error);
     return res.status(500).json({ error: "Unable to create PetalPal session" });
   }
@@ -1380,6 +1389,8 @@ app.post("/legacy-register-disabled", async (req, res) => {
         return res.status(400).json({ error: `Avatar must be 1-${MAX_AVATAR_LENGTH} characters` });
       }
   
+      await requireCommunityAcceptance(prisma, userId);
+      assertSocialContent(avatar);
       const user = await prisma.user.update({
         where: {
           id: userId
@@ -1391,6 +1402,7 @@ app.post("/legacy-register-disabled", async (req, res) => {
   
       res.json(user);
     } catch (err) {
+      if (err?.code === "CONTENT_REJECTED" || sendSocialError(res, err)) { if (!res.headersSent) res.status(422).json({error:"Please revise your profile.",code:err.code}); return; }
       logServerError("PUT /users/avatar error", err);
   
       res.status(500).json({
@@ -1502,6 +1514,7 @@ app.post("/users/:userId/journals",
     return res.status(400).json({ error: "Write something before saving your journal" });
   }
   if (content.length > 2000) return res.status(413).json({ error: "Journal must be 2000 characters or fewer" });
+  try { assertContentAllowed(content); } catch (error) { if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error)); throw error; }
   const journal = await prisma.journal.create({
     data: { userId: req.auth.userId, content: content.trim() }
   });
@@ -1995,6 +2008,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (error?.code === "INVALID_IDEMPOTENCY_KEY" || error?.code === "INVALID_EVENT") {
       return res.status(400).json({ error: error.message });
     }
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
     if (error?.code === "EVENT_TOO_LARGE") return res.status(413).json({ error: error.message });
     if (error?.code === "IDEMPOTENCY_CONFLICT") return res.status(409).json({ error: error.message });
     logServerError("POST /events error", error);
@@ -2587,6 +2601,7 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
         event: journalText
       });
     } catch (error) {
+      if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
       if ([400, 403, 413].includes(error?.status)) {
         return res.status(error.status).json({ error: error.message });
       }
@@ -2947,6 +2962,7 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
         res.json(socialFlower);
   
       } catch (err) {
+        if (err?.code === "CONTENT_REJECTED") return res.status(422).json({error:"Please revise this message to follow the Community Guidelines.",code:err.code});
         if (err instanceof FlowerSupportError) return res.status(err.status).json({ error: err.message });
     if (sendSocialError(res, err)) return;
         logServerError("POST /users/:userId/flowers/:flowerId/message error", err, {

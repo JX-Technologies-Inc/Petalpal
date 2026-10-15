@@ -10,6 +10,7 @@ export interface ProfileInput {
   avatar?: string;
   preferredLocale?: string;
   aiConsent?: boolean;
+  communityTermsVersion?: string;
 }
 export function profileError(profile: ProfileInput): string {
   if (!profile.name.trim()) return 'Enter a display name.';

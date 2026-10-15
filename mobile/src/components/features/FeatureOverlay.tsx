@@ -1,3 +1,4 @@
+import { CommunityGuidelines } from './CommunityGuidelines';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import { useEffect, useState } from 'react';
 import { SymbolView } from 'expo-symbols';
@@ -106,6 +107,7 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
         </View>
         {themeError ? <Text accessibilityRole="alert" style={[ui.caption, { color: theme.text }]}>{themeError}</Text> : null}
       </FeatureSection>
+      <CommunityGuidelines />
       <GardenPrivacySettings key={session?.user.id} />
       {error ? <Text accessibilityRole="alert" style={[ui.text, { color: theme.text }]}>{error}</Text> : null}
       <FeatureActionButton title={busy ? 'Signing out…' : 'Sign out'} disabled={busy} onPress={async () => {

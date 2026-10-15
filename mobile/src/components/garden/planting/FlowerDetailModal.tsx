@@ -1,3 +1,4 @@
+import { CommunityGuidelines } from '../../features/CommunityGuidelines';
 import { SafetyActions } from '../../features/SafetyActions';
 import React, { useEffect, useState } from 'react';
 import {
@@ -187,7 +188,7 @@ export default function FlowerDetailModal() {
             </Pressable>
             </>}
           </View>
-          {!selectedFlowerIsOwner && <View style={styles.messageForm}>
+          {!selectedFlowerIsOwner && <View style={styles.messageForm}><CommunityGuidelines />
             <TextInput accessibilityLabel="Leave a kind message" multiline maxLength={300}
               placeholder="Leave a kind message..." value={messageText} onChangeText={setMessageText}
               editable={!!currentUserId && !isDetailWorking} style={styles.messageInput} />

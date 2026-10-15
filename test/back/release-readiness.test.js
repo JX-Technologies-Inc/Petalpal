@@ -73,3 +73,17 @@ test('A: Socket.IO evicts a blocked visitor and denies rejoin; message reports r
  } finally {socket.disconnect();}
  await db.userBlock.deleteMany();
 });
+
+test('B: acceptance and screening run before message, visit record or notification side effects',async()=>{
+ await db.friendship.createMany({data:[{userId:'a',friendId:'b'},{userId:'b',friendId:'a'}],skipDuplicates:true});
+ const path='/users/a/flowers/social-flower/message';
+ assert.equal((await api('b',path,'POST',{text:'Hello'})).status,428);
+ assert.equal((await api('b','/users/me/community-acceptance','PUT',{version:'stale',accepted:true})).status,400);
+ const version='petalpal-community-2026-10-15';
+ assert.equal((await api('b','/users/me/community-acceptance','PUT',{version,accepted:true})).status,200);
+ const count=await db.message.count(),visits=await db.visitRecord.count();
+ for(const text of ['f u c k you','ＦＵＣＫ you','You are an idiot','我今晚要杀了你','send me nudes']) assert.equal((await api('b',path,'POST',{text})).status,422);
+ assert.equal(await db.message.count(),count);assert.equal(await db.visitRecord.count(),visits);
+ assert.equal((await api('b',path,'POST',{text:'I am sad and need help. 我很难过，想寻求帮助。'})).status,200);
+ assert.equal(await db.message.count(),count+1);
+});

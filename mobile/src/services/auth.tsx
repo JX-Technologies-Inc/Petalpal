@@ -127,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await apiRequest<{ user: SessionUser | null; needsProfile?: boolean }>('/auth/session', 'POST', profile
         ? { name: profile.name.trim(), avatar: profile.avatar || '🦋',
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-          preferredLocale: profile.preferredLocale || 'en', aiConsent: profile.aiConsent === true }
+          preferredLocale: profile.preferredLocale || 'en', communityTermsVersion: profile.communityTermsVersion, aiConsent: profile.aiConsent === true }
         : { deferProfileCreation: true });
       if (!isCurrent(user, generation)) return;
       if (result.needsProfile) {
