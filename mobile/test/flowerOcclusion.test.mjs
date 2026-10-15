@@ -15,6 +15,8 @@ function load(file, overrides = {}) {
   } }).outputText;
   vm.runInNewContext(code, { module, exports: module.exports, __DEV__: true, require: name => {
     if (overrides[name]) return overrides[name];
+    if (name.endsWith('/performance/runtimeAudit')) return {runtimeAudit:{render(){}}};
+    if (name.endsWith('/performance/GardenRuntimePanel')) return {GardenProfile:'PerformanceBoundary'};
     if (name === 'react/jsx-runtime') return { jsx, jsxs: jsx };
     if (name === 'react') return { memo: fn => fn, useMemo: fn => fn() };
     if (name === '@shopify/react-native-skia') return new Proxy({}, { get: (_, key) => key === 'useImage' ? () => 'image' : key });
@@ -54,12 +56,16 @@ const tree = landmark({ waterfallVersion: 'v2', behindTeaSet: preview, teaSetPla
 const children = tree.props.children;
 const index = children.indexOf(preview);
 assert.ok(index >= 0);
-const teaGroup = children[index + 1];
+const teaBoundary = children[index + 1];
+assert.equal(teaBoundary.props.enabled,true);
+const teaGroup = teaBoundary.props.children;
 assert.equal(teaGroup.props.children.type, './TeaSetEntity');
-assert.deepEqual(clean(teaGroup.props.children.props), { x: 10, y: 20, scale: 0.5 });
+const {fairy,...teaTransform}=teaGroup.props.children.props;
+assert.deepEqual(clean(teaTransform), { x: 10, y: 20, scale: 0.5 });
+assert.equal(fairy.type,'./fairy/TeaFairy','MAIN tea fairy remains attached');
 assert.equal(nodes(tree).filter(node => node.type === './TeaSetEntity').length, 1);
 const previousTree = landmark({ waterfallVersion: 'v2', teaSetPlacement: placement });
-assert.deepEqual(clean(teaGroup), clean(previousTree.props.children[index + 1]), 'Tea artwork and transform unchanged');
+assert.deepEqual(clean(teaGroup), clean(previousTree.props.children[index + 1].props.children), 'Tea artwork and transform unchanged');
 
 // The same unchanged slot receives all Chamomile and mixed-species preview objects.
 const speciesReview=loadPlantingModules()('../flower-density-sandbox/speciesReviewModel');
@@ -72,7 +78,7 @@ for(const species of ['CHAMOMILE','MIXED','MIXED_SML','HYDRANGEA']) {
   assert.ok(flowers.length>0);
   const scene=landmark({waterfallVersion:'v2',behindTeaSet:slot});
   const order=scene.props.children, i=order.indexOf(content);
-  assert.equal(order[i+1].props.children.type,'./TeaSetEntity');
+  assert.equal(order[i+1].props.children.props.children.type,'./TeaSetEntity');
   assert.equal(JSON.stringify(flowers),before,'Occlusion does not transform or mutate Chamomile anchors');
 }
 
@@ -84,7 +90,7 @@ const batchBackdrop=backdrop({month:6,showMask:false,children:batchContent});
 const batchSlot=nodes(batchBackdrop).find(n=>n.type==='../LandmarkLayer').props.behindTeaSet;
 assert.equal(batchSlot,batchContent);assert.equal(batchSlot.props.flowers.length,30);
 const batchScene=landmark({waterfallVersion:'v2',behindTeaSet:batchSlot}).props.children;
-assert.equal(batchScene[batchScene.indexOf(batchContent)+1].props.children.type,'./TeaSetEntity');
+assert.equal(batchScene[batchScene.indexOf(batchContent)+1].props.children.props.children.type,'./TeaSetEntity');
 assert.equal(JSON.stringify(batchFlowers),batchBefore);
 const mixedV2=loadPlantingModules()('../flower-density-sandbox/mixedV2ReviewModel').generateMixedV2Review(6,30);
 const richerContent={type:'MixedV2',props:{flowers:mixedV2.flowers}};
@@ -92,7 +98,7 @@ const richerBackdrop=backdrop({month:6,showMask:false,children:richerContent});
 const richerSlot=nodes(richerBackdrop).find(n=>n.type==='../LandmarkLayer').props.behindTeaSet;
 assert.equal(richerSlot,richerContent);
 const richerOrder=landmark({waterfallVersion:'v2',behindTeaSet:richerSlot}).props.children;
-assert.equal(richerOrder[richerOrder.indexOf(richerContent)+1].props.children.type,'./TeaSetEntity');
+assert.equal(richerOrder[richerOrder.indexOf(richerContent)+1].props.children.props.children.type,'./TeaSetEntity');
 const growthModel=loadPlantingModules()('../flower-density-sandbox/monthly-growth/monthlyGrowthModel');
 const monthly=growthModel.buildMonthlyGrowth(growthModel.monthlyGrowthRecords(6,30),6);
 const growthContent={type:'MonthlyGrowth',props:{primary:monthly.primary,companions:monthly.companions,filler:monthly.filler}};
@@ -100,29 +106,37 @@ const growthBackdrop=backdrop({month:6,showMask:false,children:growthContent});
 const growthSlot=nodes(growthBackdrop).find(n=>n.type==='../LandmarkLayer').props.behindTeaSet;
 assert.equal(growthSlot,growthContent);
 const growthOrder=landmark({waterfallVersion:'v2',behindTeaSet:growthSlot}).props.children;
-assert.equal(growthOrder[growthOrder.indexOf(growthContent)+1].props.children.type,'./TeaSetEntity');
+assert.equal(growthOrder[growthOrder.indexOf(growthContent)+1].props.children.props.children.type,'./TeaSetEntity');
 const layered=loadPlantingModules()('../flower-density-sandbox/monthly-growth/layeredBedModel').buildLayeredBed(monthly,6);
 const layeredContent={type:'LayeredBed',props:{growth:layered}};
 const layeredSlot=nodes(backdrop({month:6,showMask:false,children:layeredContent})).find(n=>n.type==='../LandmarkLayer').props.behindTeaSet;
 assert.equal(layeredSlot,layeredContent);
 const layeredOrder=landmark({waterfallVersion:'v2',behindTeaSet:layeredSlot}).props.children;
-assert.equal(layeredOrder[layeredOrder.indexOf(layeredContent)+1].props.children.type,'./TeaSetEntity','All V1.1 layers remain behind Tea Set');
+assert.equal(layeredOrder[layeredOrder.indexOf(layeredContent)+1].props.children.props.children.type,'./TeaSetEntity','All V1.1 layers remain behind Tea Set');
 
 const records = [6, 10, 6].map((month, i) => ({ id: String(i), month, worldX: 50 + i, worldY: 100 - i, flowerName: 'Tulip' }));
 const state = { placements: records, activeMode: 'normal' };
 const render = load('planting/PlantedFlowerLayer.tsx', {
+  '../flower-visuals/BotanicalFlowerImage': { BotanicalFlowerImage: props => jsx('BotanicalFlowerImage', props) },
+  '../flower-visuals/botanicalPresentationPose': loadPlantingModules()('../flower-visuals/botanicalPresentationPose'),
   '../flowerOcclusion': rule,
   './PlantingContext': { usePlanting: () => state },
   './flowerFootprintConfig': { getFlowerPlacementDefinition: () => ({ visualWidth: 40, visualHeight: 60, footprintRadius: 12 }) },
 }).LegacyPlantedFlowerLayer;
-const images = pass => nodes(render({ depthPass: pass })).filter(node => node.type === 'Image').map(node => clean(node.props));
+function renderedNodes(node) {
+  if (Array.isArray(node)) return node.flatMap(renderedNodes);
+  if (!node || typeof node !== 'object') return [];
+  if (typeof node.type === 'function') return renderedNodes(node.type(node.props));
+  return [node, ...renderedNodes(node.props?.children)];
+}
+const images = pass => renderedNodes(render({ depthPass: pass })).filter(node => node.type === 'BotanicalFlowerImage').map(node => clean(node.props));
 const saved = JSON.stringify(records);
 const all = images('all'), behind = images('behind-tea-set'), front = images('foreground');
 assert.equal(behind.length, 2); assert.equal(front.length, 1);
 assert.deepEqual(behind, [all[0], all[2]], 'Land06 keeps its sorted anchors, dimensions and art');
 assert.deepEqual(front, [all[1]]);
 for (const month of [6, 10]) {
-  state.activeMode = 'planting'; state.targetFlower = { month, flowerName: 'Tulip' };
+  state.activeMode = 'planting'; state.targetFlower = { id: 'pending-flower', month, flowerName: 'Tulip' };
   state.previewCoords = { worldX: 25, worldY: 35 };
   assert.equal(images('behind-tea-set').length, 2 + Number(month === 6));
   assert.equal(images('foreground').length, 1 + Number(month !== 6));

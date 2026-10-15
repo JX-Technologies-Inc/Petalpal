@@ -42,7 +42,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "node ./test/plantingSystem.test.mjs && node ./test/plantingMaskRefinement.test.mjs && node ./test/flowerDetail.test.mjs"
+    "test": "node ./test/plantingSystem.test.mjs && node ./test/plantingMaskRefinement.test.mjs && node ./test/flowerDetail.test.mjs && node ./test/flowerMoodEffects.test.mjs && node ./test/mailboxSystem.test.mjs"
   },
   "private": true
 }

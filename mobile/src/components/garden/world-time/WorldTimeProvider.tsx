@@ -1,3 +1,4 @@
+import {runtimeAudit} from '../performance/runtimeAudit';
 import {
   createContext,
   type ReactNode,
@@ -38,6 +39,7 @@ export function getWorldTimePhase(localHour: number): WorldTimePhase {
 const WorldTimeContext = createContext<WorldTimeState | null>(null);
 
 export function WorldTimeProvider({ children }: { children: ReactNode }) {
+  runtimeAudit.render('WorldTimeProvider');
   const [now, setNow] = useState(() => new Date());
   const [devOverride, setDevOverride] = useState<WorldTimeOverride>('auto');
 

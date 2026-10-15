@@ -1,9 +1,10 @@
 import { DarkTheme, DefaultTheme, Slot, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { FeedbackDraftProvider, GlobalHelpFeedback } from '@/components/feedback';
 import { WorldTimeProvider } from '@/components/garden/world-time';
 
 SplashScreen.preventAutoHideAsync();
@@ -19,13 +20,17 @@ export default function TabLayout() {
     content = (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AnimatedSplashOverlay />
-        <Stack>
-          <Stack.Screen name="index" options={{ title: 'Home' }} />
-          <Stack.Screen name="garden-test" options={{ title: 'Garden preview' }} />
-          <Stack.Screen name="treehouse-test" options={{ title: 'Treehouse preview' }} />
-          <Stack.Screen name="swing-test" options={{ title: 'Swing preview' }} />
-          <Stack.Screen name="moon-bed-test" options={{ title: 'Moon Bed preview' }} />
-          <Stack.Screen name="water-test" options={{ title: 'Water preview' }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="player-preview" />
+          <Stack.Screen name="garden-test" />
+          <Stack.Screen name="treehouse-test" />
+          <Stack.Screen name="swing-test" />
+          <Stack.Screen name="moon-bed-test" />
+          <Stack.Screen name="water-test" />
+          <Stack.Screen name="flower-effects-test" />
+          <Stack.Screen name="mailbox" />
+          <Stack.Screen name="journal" />
         </Stack>
       </ThemeProvider>
     );
@@ -40,5 +45,23 @@ export default function TabLayout() {
     );
   }
 
-  return <WorldTimeProvider>{content}</WorldTimeProvider>;
+  return (
+    <WorldTimeProvider>
+      <FeedbackDraftProvider>
+        <View style={styles.rootShell}>
+          {content}
+          <GlobalHelpFeedback />
+        </View>
+      </FeedbackDraftProvider>
+    </WorldTimeProvider>
+  );
 }
+
+const styles = StyleSheet.create({
+  rootShell: {
+    flex: 1,
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+});

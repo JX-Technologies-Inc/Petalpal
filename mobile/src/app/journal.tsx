@@ -47,7 +47,7 @@ export default function JournalScreen() {
 
   const handlePlantFlower = (entry: JournalEntry) => {
     router.push({
-      pathname: '/garden-test',
+      pathname: '/player-preview',
       params: {
         mode: 'plant',
         flowerId: entry.flowerId,
@@ -63,7 +63,7 @@ export default function JournalScreen() {
 
   const handleAdjustPosition = (flowerId: string) => {
     router.push({
-      pathname: '/garden-test',
+      pathname: '/player-preview',
       params: {
         mode: 'adjust',
         flowerId: flowerId,
@@ -76,7 +76,10 @@ export default function JournalScreen() {
       <View style={styles.header}>
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push('/garden-test')}
+          onPress={() => {
+            if (router.canGoBack()) router.back();
+            else router.push('/player-preview');
+          }}
           style={styles.gardenButton}
         >
           <Text style={styles.gardenButtonText}>🌸 Open Garden</Text>

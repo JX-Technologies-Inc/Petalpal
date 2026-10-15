@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url),ts=require('typescript');
+const source=fs.readFileSync(new URL('../src/components/garden/performance/runtimeAudit.ts',import.meta.url),'utf8');
+const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+function load(dev){const context={exports:{},__DEV__:dev,Date,performance:{now:()=>100}};vm.runInNewContext(compiled,context);return context.exports;}
+const api=load(true),clean=x=>JSON.parse(JSON.stringify(x));
+assert.equal(api.DEFAULT_ISOLATION.Environment,false);
+assert.ok(Object.entries(api.DEFAULT_ISOLATION).filter(([k])=>k!=='Environment').every(([,v])=>v));
+const summary=api.frameSummary([10,10,20,60,NaN,-2],10);
+assert.equal(summary.samples,4);assert.equal(summary.p50Ms,10);assert.equal(summary.p95Ms,60);
+assert.equal(summary.longFrames50ms,1);assert.equal(summary.estimatedMissedIntervals,6);
+assert.equal(api.runtimeAudit.start({parents:30}),true);
+for(let i=0;i<api.MAX_AUDIT_SAMPLES+20;i++){api.runtimeAudit.frame(16);api.runtimeAudit.longTask(51);}
+api.runtimeAudit.render('GardenScene');api.runtimeAudit.commit('Flowers',2);
+assert.equal(api.timeGardenWork('generation',()=>591),591);
+const result=api.runtimeAudit.stop([16,16]);
+assert.equal(result.jsCallbackCadence.samples,api.MAX_AUDIT_SAMPLES);assert.equal(result.longTasks.length,api.MAX_AUDIT_SAMPLES);
+assert.equal(result.componentFunctionCalls.GardenScene,1);assert.equal(result.gpuTiming,null);assert.equal(result.skiaRedraws,null);
+assert.equal(result.jsWork.generation.calls,1);api.runtimeAudit.render('GardenScene');
+assert.equal(result.componentFunctionCalls.GardenScene,1,'No collection after Stop');
+assert.equal(load(false).runtimeAudit.start(),false,'Release instrumentation remains disabled');
+const garden=fs.readFileSync(new URL('../src/components/garden/GardenScene.tsx',import.meta.url),'utf8');
+assert.ok(garden.includes('const perf=__DEV__&&isDev?perfFlags:{...DEFAULT_ISOLATION,DebugUI:false}'));
+assert.ok(garden.includes('if(perfFixtureRef.current)return;'));
+assert.ok(garden.includes('fixtureParents===null&&<PlantingPlacementControls'));
+assert.ok(garden.includes("canChangeFixture={activeMode==='normal'}"));
+assert.ok(garden.includes('behindTeaSet={<GardenProfile name="Flowers behind Tea Set"'));
+const landmark=fs.readFileSync(new URL('../src/components/garden/LandmarkLayer.tsx',import.meta.url),'utf8');
+assert.ok(landmark.indexOf('{behindTeaSet}')<landmark.indexOf('<TeaSetEntity'));
+assert.ok(!/localStorage|fetch\(/.test(source));
+console.log('Runtime audit: bounded statistics, percentiles, explicit unavailable GPU/redraw metrics, disabled release collector, unchanged visual defaults, read-only fixtures and Tea Set order passed.');

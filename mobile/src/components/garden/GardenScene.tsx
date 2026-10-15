@@ -201,11 +201,24 @@ const CHECKED_IN_TEA_SET: TeaSetMapPlacement = {
 
 
 
-export type GardenSceneHandle = { returnFromTreehouse: () => boolean; returnFromMailbox: () => boolean };
+export type MailboxInteractionPhase =
+  | 'idle'
+  | 'walking'
+  | 'retrieving'
+  | 'transitioning';
+
+export type GardenSceneHandle = {
+  returnFromTreehouse: () => boolean;
+  returnFromMailbox: () => boolean;
+  visitMailbox: () => boolean;
+  isMailboxBusy: () => boolean;
+};
 
 export type GardenSceneProps = {
   /** Fired after the front-facing opened-letter pose and its 800 ms hold. */
   onMailboxOpened?: () => void;
+  /** Notifies when the mailbox interaction phase changes. */
+  onMailboxPhaseChange?: (phase: MailboxInteractionPhase) => void;
   /** Future interior scene handoff. Entry is complete and the fairy is hidden. */
   onTreehouseEntered?: () => void;
   onTreehouseExited?: () => void;
@@ -213,14 +226,26 @@ export type GardenSceneProps = {
   initialPreviewMode?: boolean;
   initialWaterfallVersion?: WaterfallVersion;
   gardenOwnerUserId?: string;
+  mode?: 'development' | 'player';
 };
 
-function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', onTreehouseEntered, onTreehouseExited, onMailboxOpened, interactionRef }: GardenSceneProps & {interactionRef?:Ref<GardenSceneHandle>} = {}) {
+function GardenSceneContent({
+  enableFairyWalk = false,
+  initialPreviewMode = true,
+  initialWaterfallVersion = 'legacy',
+  onTreehouseEntered,
+  onTreehouseExited,
+  onMailboxOpened,
+  onMailboxPhaseChange,
+  interactionRef,
+  mode = 'development',
+}: GardenSceneProps & { interactionRef?: Ref<GardenSceneHandle> } = {}) {
+  const isDev = mode === 'development';
   runtimeAudit.render('GardenScene');
   const planting = usePlanting();
   const [perfFlags,setPerfFlags]=useState<GardenIsolation>({...DEFAULT_ISOLATION});
   const [perfCount,setPerfCount]=useState<number|null>(null);
-  const perf=__DEV__?perfFlags:DEFAULT_ISOLATION;
+  const perf=__DEV__&&isDev?perfFlags:{...DEFAULT_ISOLATION,DebugUI:false};
   const fixtureParents=useMemo(()=>__DEV__&&perfCount!==null?productionQARecords(perfCount):null,[perfCount]);
   const drawnPlanting=fixtureParents?{...planting,placements:fixtureParents,activeMode:'normal' as const,
     targetFlower:null,previewCoords:null,validationResult:null}:planting;
@@ -277,8 +302,34 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   }>();
 
   const fairyRef = useRef<FairyHandle>(null);
-  useImperativeHandle(interactionRef,()=>({returnFromTreehouse:()=>fairyRef.current?.returnFromTreehouse()??false,returnFromMailbox:()=>fairyRef.current?.returnFromMailbox()??false}),[]);
+  useImperativeHandle(
+    interactionRef,
+    () => ({
+      returnFromTreehouse: () => fairyRef.current?.returnFromTreehouse() ?? false,
+      returnFromMailbox: () => fairyRef.current?.returnFromMailbox() ?? false,
+      visitMailbox: () => fairyRef.current?.visitMailbox() ?? false,
+      isMailboxBusy: () => fairyRef.current?.isMailboxBusy() ?? false,
+    }),
+    []
+  );
   const [fairyState, setFairyState] = useState<FairyState>('idle');
+
+  const mailboxPhase: MailboxInteractionPhase = useMemo(() => {
+    if (fairyState === 'movingToMailbox' || fairyState === 'flyingToMailbox') return 'walking';
+    if (
+      fairyState === 'aligningToMailbox' ||
+      fairyState === 'retrievingMail' ||
+      fairyState === 'turningWithMail' ||
+      fairyState === 'presentingMail'
+    )
+      return 'retrieving';
+    if (fairyState === 'mailboxTransition') return 'transitioning';
+    return 'idle';
+  }, [fairyState]);
+
+  useEffect(() => {
+    onMailboxPhaseChange?.(mailboxPhase);
+  }, [mailboxPhase, onMailboxPhaseChange]);
   const fairyOnMoonBed = fairyState === 'sleepingOnMoonBed';
   const fairyOnSwing = fairyState === 'sittingOnSwing';
   const [fairyDebug, setFairyDebug] = useState(false);
@@ -288,7 +339,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   const [waterfallVersion, setWaterfallVersion] = useState<WaterfallVersion>(initialWaterfallVersion);
   const worldTime = useWorldTime();
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
-  const [previewMode, setPreviewMode] = useState(initialPreviewMode);
+  const [previewMode, setPreviewMode] = useState(isDev ? initialPreviewMode : true);
   const [treehouseStatus, setTreehouseStatus] = useState('Waiting for TreehouseEntity effect');
   const [showLandmarks, setShowLandmarks] = useState(true);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
@@ -783,7 +834,11 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         return;
       }
       if (enableFairyWalk && hitsTreehouse({x:worldX,y:worldY},treehousePlacement)) {
-        fairyRef.current?.visitTreehouse();
+        if (fairyState === 'insideTreehouse' || fairyState === 'enteringTreehouse') {
+          fairyRef.current?.returnFromTreehouse();
+        } else {
+          fairyRef.current?.visitTreehouse();
+        }
         return;
       }
       if (enableFairyWalk && hitsSwing({x:worldX,y:worldY}, swingPlacement)) {
@@ -1321,18 +1376,18 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
                 topWaterShowCliff={topWaterShowCliff}
                 topWaterShowBank={topWaterShowBank}
                 waterfallVisible={waterfallVisible && perf.Waterfall}
-                onDebugStatus={__DEV__ ? setTreehouseStatus : undefined}
+                onDebugStatus={isDev && __DEV__ ? setTreehouseStatus : undefined}
               />
             )}
             {/* Planted Flowers & Active Placement Preview Layer */}
             <GardenProfile name="Flower foreground" enabled={perf.Flowers}><PlantedFlowerLayer depthPass={showLandmarks ? 'foreground' : 'all'} useMonthlyGrowth={useMonthlyGrowth} /></GardenProfile>
-            {__DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'impact' && (
+            {isDev && __DEV__ && perf.DebugUI && !previewMode && calibrationMode === 'impact' && (
               <WaterfallImpactOverlay placement={waterfallImpactPlacement} />
             )}
             {/* TOP Z Diagnostic Copy: above LandmarkLayer / above WaterfallEntity */}
-            {__DEV__ && perf.DebugUI && <BridgeDebugOverlay placement={bridgePlacement}
+            {isDev && __DEV__ && perf.DebugUI && <BridgeDebugOverlay placement={bridgePlacement}
               debug={showBridgeDebug} walkPath={showBridgeWalkPath} />}
-            {__DEV__ && underlayDebugMode === 'top-z' && (
+            {isDev && __DEV__ && underlayDebugMode === 'top-z' && (
               <WaterfallImpactDebugShape placement={waterfallImpactPlacement} />
             )}
           </GardenCanvasPlane>
@@ -1345,7 +1400,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         <Pressable accessibilityRole="button" accessibilityLabel="Zoom in Garden" onPress={() => zoomAt(1.25)}
           style={styles.zoomButton}><Text style={styles.zoomButtonText}>+</Text></Pressable>
       </View>
-      {__DEV__&&<GardenRuntimePanel flags={perfFlags} onFlags={setPerfFlags} count={perfCount} onCount={setPerfCount}
+      {isDev && __DEV__ && <GardenRuntimePanel flags={perfFlags} onFlags={setPerfFlags} count={perfCount} onCount={setPerfCount}
         canChangeFixture={activeMode==='normal'} metadata={{realParentCount:placements.length,renderedParentCount:drawnPlanting.placements.length,
           viewport,waterfallVersion,growthV11:useMonthlyGrowth,previewMode,environmentEnabled,worldPhase:worldTime.phase}}/>}
       {/* Planting Placement Controls Banner & Action Bar */}
@@ -1355,13 +1410,13 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       {fixtureParents===null&&<FlowerDetailModal />}
 
       {/* Floating button when in Preview Mode */}
-      {enableFairyWalk && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
+      {isDev && enableFairyWalk && <View style={{ position: 'absolute', top: 12, left: 12, padding: 10, borderRadius: 8, backgroundColor: '#f6f2e7', maxWidth: 260 }}>
         <Text style={{ color: '#365b42', fontSize: 12 }}>{fairyStatus}</Text>
         {__DEV__ && <Pressable accessibilityRole="button" accessibilityLabel="Toggle fairy path debug" onPress={() => { setFairyDebug(v => !v); setFairyStatus("Tap dry ground to move"); }}>
           <Text style={{ color: '#365b42', fontSize: 12, marginTop: 6 }}>Path debug: {fairyDebug ? 'ON' : 'OFF'}</Text>
         </Pressable>}
       </View>}
-      {__DEV__ && perf.DebugUI && previewMode && (
+      {isDev && __DEV__ && perf.DebugUI && previewMode && (
         <Pressable
           accessibilityRole="button"
           onPress={() => setPreviewMode(false)}
@@ -1372,7 +1427,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       )}
 
       {/* Full DEV Control Panels when Preview Mode is OFF */}
-      {__DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && calibrationMode !== 'impact' && calibrationMode !== 'water-top' && calibrationMode !== 'bridge' && calibrationMode !== 'planting-regions' && (
+      {isDev && __DEV__ && perf.DebugUI && !previewMode && !waterfallFocus && calibrationMode !== 'impact' && calibrationMode !== 'water-top' && calibrationMode !== 'bridge' && calibrationMode !== 'planting-regions' && (
         <View style={styles.controls}>
           <View style={styles.controlRow}>
             <ToggleButton
@@ -1907,8 +1962,8 @@ const styles = StyleSheet.create({
   diagnosticText: { color: '#172219', fontSize: 11 },
   floatingToggleButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
+    top: 150,
+    right: 154,
     backgroundColor: '#1E2B22E6',
     paddingVertical: 7,
     paddingHorizontal: 12,

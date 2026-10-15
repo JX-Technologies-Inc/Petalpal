@@ -44,12 +44,18 @@ const STONE_REST_GAPS = [
   [1,4,8], [1,2,4,5], [2,5,9,12], [0,3,6,8],
   [1,5,9,12], [2,6,8], [1,4,6],
 ] as const;
+let cachedFloorSnapshot: any = null;
+
 function makeFloor() {
   // A raster snapshot is portable between the web view's graphics context and
   // this one-time floor builder; a separate GPU context cannot share textures.
-  const surface=Skia.Surface.Make(2250,2064);
-  if (!surface) return null;
-  const canvas=surface.getCanvas();
+  const surface = Skia.Surface.Make(2250, 2064);
+  if (!surface || !(surface as any).ref) return null;
+  const canvas = surface.getCanvas();
+  if (!canvas) {
+    surface.dispose();
+    return null;
+  }
   canvas.clear(Skia.Color('transparent'));
   canvas.scale(0.75,0.75);
   canvas.translate(-FLOOR_BOUNDS.x,-FLOOR_BOUNDS.y);
@@ -149,9 +155,17 @@ half4 main(float2 p) {
   return stones.eval(p+waterRefraction(p,seconds)*mask);
 }
 `);
+function getFloorSnapshot() {
+  if (cachedFloorSnapshot && (cachedFloorSnapshot as any).ref && !(cachedFloorSnapshot as any).ref.isDeleted?.()) {
+    return cachedFloorSnapshot;
+  }
+  cachedFloorSnapshot = makeFloor();
+  return cachedFloorSnapshot;
+}
+
 function GardenSubmergedRocks({ flow }: { flow: WaterTopFlow }) {
   // Retained draw nodes own the snapshot lifetime (including Strict Mode).
-  const floor=useMemo(makeFloor,[]);
+  const floor = useMemo(getFloorSnapshot, []);
   const shore=useImage(require('./assets/garden-shore-distance.png'));
   const wet=useImage(require('./assets/water-surface-mask.png'));
   const uniforms=useDerivedValue(() => ({

@@ -3,6 +3,7 @@ import { memo, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { installGardenWebPaintLifecycle } from './rendering/installGardenWebPaintLifecycle';
 import GardenRightPondShore from './GardenRightPondShore';
+import GardenUpperRightScenery, { ScenicExclusion } from './GardenUpperRightScenery';
 
 type Bounds = { x: number; y: number; width: number; height: number };
 // The alpha opening meets the existing compact waterfall's painted inlet at
@@ -104,13 +105,38 @@ half4 main(float2 p) {
   return mix(original, moved, entrancePlacement(p));
 }
 `);
+// Restyle the terrain without moving its established shoreline or changing
+// the alpha used by the baked dry-ground navigation mask. Replacement PNGs
+// provide color only; uncovered edge pixels retain the original rock color.
+const PERIMETER_PAINT = Skia.RuntimeEffect.Make(`
+uniform shader originalTerrain;
+uniform shader newPainting;
+half4 main(float2 p) {
+  half4 original = originalTerrain.eval(p);
+  half4 painted = newPainting.eval(p);
+  half3 base = original.rgb / max(original.a, 0.001);
+  half3 fresh = painted.rgb / max(painted.a, 0.001);
+  half3 color = mix(base, fresh, smoothstep(0.02, 0.95, painted.a));
+  return half4(color * original.a, original.a);
+}
+`);
+function PerimeterPaint({ image, painting, bounds, tile = 'decal' }: {
+  image: SkImage; painting?: SkImage | null; bounds: Bounds; tile?: 'decal' | 'clamp';
+}) {
+  const original = <ImageShader image={image} rect={bounds} fit="fill" tx={tile} ty={tile} />;
+  if (!painting || !PERIMETER_PAINT) return original;
+  return <Shader source={PERIMETER_PAINT}>
+    {original}
+    <ImageShader image={painting} rect={bounds} fit="fill" tx={tile} ty={tile} />
+  </Shader>;
+}
 function InletMask({ image }: { image: SkImage }) {
   return <ImageShader image={image} rect={INLET_BOUNDS} fit="fill" tx="clamp" ty="mirror" />;
 }
-function TerrainJoin({image, inlet, bounds, top = 0, right = 0, lowerPlacement = 0}: {image: SkImage; inlet: SkImage; bounds: Bounds; top?: number; right?: number; lowerPlacement?: number}) {
+function TerrainJoin({image, painting, inlet, bounds, scenicEnabled = false, top = 0, right = 0, lowerPlacement = 0}: {image: SkImage; painting?: SkImage | null; inlet: SkImage; bounds: Bounds; scenicEnabled?: boolean; top?: number; right?: number; lowerPlacement?: number}) {
   if (!JOIN) return <Image image={image} {...bounds} fit="fill" />;
   return <Rect {...bounds}><Shader source={JOIN} uniforms={{bounds:[bounds.x,bounds.y,bounds.width,bounds.height],feather:[top,right],lowerPlacement}}>
-    <ImageShader image={image} rect={bounds} fit="fill" tx="decal" ty="decal" />
+    <ScenicExclusion enabled={scenicEnabled}><PerimeterPaint image={image} painting={painting} bounds={bounds} /></ScenicExclusion>
     <InletMask image={inlet} />
   </Shader></Rect>;
 }
@@ -121,7 +147,11 @@ function GardenOuterBasin() {
   useEffect(() => {
     if (Platform.OS === 'web') installGardenWebPaintLifecycle(Skia);
   }, []);
+  const scenic = useImage(require('./terrain/upper-right-scenic-v2.png'));
   const basin = useImage(require('./terrain/outer-basin-v2.png'));
+  const floralBasin = useImage(require('./terrain/outer-basin-floral-v3.png'));
+  const floralRightBank = useImage(require('./terrain/outer-right-bank-floral-v2.png'));
+  const floralPass = useImage(require('./terrain/entrance-floral-banks-v2.png'));
   const treeCliffs = useImage(require('./terrain/treehouse-cliff-backing-v1.png'));
   const rightBank = useImage(require('./terrain/outer-right-bank-v1.png'));
   const upland = useImage(require('./terrain/outer-upland-v1.png'));
@@ -131,28 +161,31 @@ function GardenOuterBasin() {
   return <>
     {upland && OUTER_GROUND && <Rect x={-2400} y={-2400} width={7200} height={7000}>
       <Shader source={OUTER_GROUND}>
-        <ImageShader image={upland} rect={{x:-1700,y:-2250,width:3000,height:2000}} fit="fill" tx="mirror" ty="mirror" />
+        <ScenicExclusion enabled={!!scenic}><ImageShader image={upland} rect={{x:-1700,y:-2250,width:3000,height:2000}} fit="fill" tx="mirror" ty="mirror" /></ScenicExclusion>
         <InletMask image={inlet} />
       </Shader>
     </Rect>}
     {pass && DRY_PASS && <Rect x={-2400} y={1790} width={7200} height={3280}>
       <Shader source={DRY_PASS}>
-        <ImageShader image={pass} rect={{x:0,y:0,width:1536,height:1024}} fit="fill" tx="clamp" ty="clamp" />
+        <PerimeterPaint image={pass} painting={floralPass} bounds={{x:0,y:0,width:1536,height:1024}} tile="clamp" />
         <InletMask image={inlet} />
       </Shader>
     </Rect>}
     <GardenRightPondShore />
-    {basin && <TerrainJoin image={basin} inlet={inlet} bounds={{x:-700,y:-800,width:3800,height:3400}} lowerPlacement={1} />}
+    {basin && <TerrainJoin scenicEnabled={!!scenic} image={basin} painting={floralBasin} inlet={inlet} bounds={{x:-700,y:-800,width:3800,height:3400}} lowerPlacement={1} />}
     {/* Continuous planted cliff directly behind the original tree silhouette. */}
     {treeCliffs && <TerrainJoin image={treeCliffs} inlet={inlet} bounds={{x:-350,y:-200,width:1300,height:1100}} top={75} />}
     {/* The right shoulder joins the waterfall to the upper enclosure while
         ending above the impact pool; it never crosses the open outflow. */}
-    {rightBank && <TerrainJoin image={rightBank} inlet={inlet} bounds={{x:1010,y:-1480,width:550,height:1660}} right={150} />}
+    {rightBank && <TerrainJoin scenicEnabled={!!scenic} image={rightBank} painting={floralRightBank} inlet={inlet} bounds={{x:1010,y:-1480,width:550,height:1660}} right={150} />}
     {SOURCE_BANKS && <Rect x={645} y={-2400} width={600} height={2140}>
       <Shader source={SOURCE_BANKS}><InletMask image={inlet} /></Shader>
     </Rect>}
     {/* Keep the perimeter beyond the existing lotus and crescent landmarks. */}
-    {rightBank && <Image image={rightBank} x={2140} y={-260} width={680} height={2300} fit="fill" />}
+    {rightBank && <Rect x={2140} y={-260} width={680} height={2300}>
+      <PerimeterPaint image={rightBank} painting={floralRightBank} bounds={{x:2140,y:-260,width:680,height:2300}} />
+    </Rect>}
+    {scenic && <GardenUpperRightScenery image={scenic} />}
   </>;
 }
 export default memo(GardenOuterBasin);

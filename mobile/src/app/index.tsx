@@ -66,13 +66,17 @@ export default function HomeScreen() {
 
 const DEV_ROUTES = [
   { label: '🌸 Open Journal (Planting & Entries)', href: '/journal' },
-  { label: 'Open native garden preview', href: '/garden-test' },
+  { label: '🧚 Player Preview (Clean Experience)', href: '/player-preview' },
+  { label: '🛠️ Native Garden Preview (Dev & Sandboxes)', href: '/garden-test' },
   { label: 'Open Treehouse test', href: '/treehouse-test' },
   { label: 'Open Swing test', href: '/swing-test' },
+  { label: 'Open Fairy Swing Test', href: '/fairy-swing-test' },
   { label: 'Open Moon Bed test', href: '/moon-bed-test' },
   { label: 'Open Tea Set test', href: '/tea-set-test' },
   { label: 'Open Waterfall test', href: '/waterfall-test' },
   { label: 'Open Water preview', href: '/water-test' },
+  { label: '✨ Open Flower Mood Effects Lab', href: '/flower-effects-test' },
+  { label: '📬 Open Mailbox (Fairy Letters POV)', href: '/mailbox' },
 ] as const;
 
 function DevHomeScreen() {

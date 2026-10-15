@@ -1,0 +1,21 @@
+// Extracted source pixels only; all layers share the original 1254px canvas.
+export const FIRST_APPROVED_LAYERS=[
+  {id:'dress_back_petals',source:require('@/assets/garden/fairy/first-approved/dress_back_petals.png')},
+  {id:'wing_left',source:require('@/assets/garden/fairy/first-approved/wing_left.png')},
+  {id:'wing_right',source:require('@/assets/garden/fairy/first-approved/wing_right.png')},
+  {id:'dress_side_petals',source:require('@/assets/garden/fairy/first-approved/dress_side_petals.png')},
+  {id:'dress_base',source:require('@/assets/garden/fairy/first-approved/dress_base.png')},
+  {id:'body_base',source:require('@/assets/garden/fairy/first-approved/body_base.png')},
+  {id:'leg_left',source:require('@/assets/garden/fairy/first-approved/leg_left.png')},
+  {id:'leg_right',source:require('@/assets/garden/fairy/first-approved/leg_right.png')},
+  {id:'dress_front_petals',source:require('@/assets/garden/fairy/first-approved/dress_front_petals.png')},
+  {id:'arm_right_upper',source:require('@/assets/garden/fairy/first-approved/arm_right_upper.png')},
+  {id:'arm_right_lower',source:require('@/assets/garden/fairy/first-approved/arm_right_lower.png')},
+  {id:'arm_left_upper',source:require('@/assets/garden/fairy/first-approved/arm_left_upper.png')},
+  {id:'arm_left_lower',source:require('@/assets/garden/fairy/first-approved/arm_left_lower.png')},
+  {id:'hair_back',source:require('@/assets/garden/fairy/first-approved/hair_back.png')},
+  {id:'head_face',source:require('@/assets/garden/fairy/first-approved/head_face.png')},
+  {id:'braided_updo',source:require('@/assets/garden/fairy/first-approved/braided_updo.png')},
+  {id:'hair_front',source:require('@/assets/garden/fairy/first-approved/hair_front.png')},
+  {id:'flower_accessory',source:require('@/assets/garden/fairy/first-approved/flower_accessory.png')},
+] as const;

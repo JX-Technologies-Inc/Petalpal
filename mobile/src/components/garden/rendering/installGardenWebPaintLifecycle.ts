@@ -17,11 +17,56 @@ function deleteRaw(paint: RawPaint | null) {
   if (paint && !paint.isDeleted?.()) paint.delete();
 }
 
+function installWebSkiaViewProtection() {
+  const api = (globalThis as any).SkiaViewApi;
+  if (!api || api[INSTALLED]) return;
+  api[INSTALLED] = true;
+
+  const originalRegisterView = api.registerView;
+  const originalSetJsiProperty = api.setJsiProperty;
+
+  api.registerView = function (nativeId: string | number, view: any) {
+    if (view && typeof view.setPicture === 'function') {
+      const origSetPic = view.setPicture;
+      let activePicture: any = null;
+      view.setPicture = function (newPic: any) {
+        if (activePicture && activePicture !== newPic) {
+          try {
+            if (activePicture.ref && !activePicture.ref.isDeleted?.()) {
+              activePicture.dispose();
+            }
+          } catch {}
+        }
+        activePicture = newPic;
+        return origSetPic.apply(this, arguments);
+      };
+    }
+    return originalRegisterView.apply(this, arguments);
+  };
+
+  api.setJsiProperty = function (nativeId: string | number, name: string, value: any) {
+    if (name === 'picture') {
+      if (!this.views[`${nativeId}`]) {
+        // Target canvas view is unmounted; dispose immediately to prevent WebAssembly heap exhaustion
+        try {
+          if (value?.ref && !value.ref.isDeleted?.()) {
+            value.dispose();
+          }
+        } catch {}
+        return;
+      }
+    }
+    return originalSetJsiProperty.apply(this, arguments);
+  };
+}
+
 /** Web-only compatibility for the installed Skia raw CanvasKit Paint wrapper.
  * Call behind the app's Platform.OS guard. Native Paint objects are untouched.
  * CanvasKit already finalizes smart-pointer pictures/shaders; Paint is raw.
  */
 export function installGardenWebPaintLifecycle(provider: PaintProvider): boolean {
+  installWebSkiaViewProtection();
+
   const skia = provider as { Paint(): WebPaint };
   const originalFactory = skia.Paint;
   if ((originalFactory as unknown as Record<symbol, unknown>)[INSTALLED]) return false;

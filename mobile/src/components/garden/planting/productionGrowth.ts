@@ -8,7 +8,7 @@ import { bindLandAwareGrowth } from './landAwareGrowth';
 
 // Initial integration: DEV comparison/recovery toggle; release rollout awaits
 // manual verification. This flag never changes stored records or collision.
-export const USE_MONTHLY_GARDEN_GROWTH_V1_1 = __DEV__;
+export const USE_MONTHLY_GARDEN_GROWTH_V1_1 = true;
 // Visual composition metadata ONLY. Production planting uses flowerFootprintConfig.
 export const VISUAL_CLASS_RADII = {S:9,M:12,L:16} as const;
 export interface ProductionMonth {

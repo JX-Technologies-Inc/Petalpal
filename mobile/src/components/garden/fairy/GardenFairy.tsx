@@ -84,8 +84,8 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
       const accepted=nav.current.returnFromTreehouse();if(!accepted)return false;
       elapsed.current=0;facing.value=1;lean.value=0;frame.value=3;publish();return true;
     },
-    isMailboxBusy:()=>nav.current.mailboxSequenceActive,
-    visitMailbox:()=>requestMove({x:0,y:0},false,false,false,false,true),
+    isMailboxBusy:()=>nav.current.mailboxSequenceActive||nav.current.state==='movingToMailbox'||nav.current.state==='flyingToMailbox',
+    visitMailbox:()=>(nav.current.mailboxSequenceActive||nav.current.state==='movingToMailbox'||nav.current.state==='flyingToMailbox')?false:requestMove({x:0,y:0},false,false,false,false,true),
     returnFromMailbox:()=>{const accepted=nav.current.returnFromMailbox();if(accepted){elapsed.current=0;frame.value=3;publish();}return accepted;},
     visitTreehouse:()=>requestMove({x:0,y:0},false,false,false,true),
     visitSwing:()=>requestMove(SWING_APPROACH,true),
