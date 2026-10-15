@@ -112,9 +112,9 @@ async function seedOwner(prisma, ownerId, rows, { memoryEnabled = true } = {}) {
   }
 }
 
-async function runReport({ prisma, worker, ownerId, jobType = "WEEKLY_REPORT", periodKey = WEEK }) {
+async function runReport({ prisma, worker, ownerId, jobType = "WEEKLY_REPORT", periodKey = WEEK, maxAttempts = 1 }) {
   const job = await prisma.aiJob.create({ data: { id: `${ownerId}-${jobType}-${periodKey}`, ownerId, jobType,
-    resourceId: periodKey, idempotencyKey: `${jobType}:${periodKey}:${REPORT_NARRATIVE_GENERATION_VERSION}`, maxAttempts: 1 } });
+    resourceId: periodKey, idempotencyKey: `${jobType}:${periodKey}:${REPORT_NARRATIVE_GENERATION_VERSION}`, maxAttempts } });
   return { job, result: await worker.runJob({ jobId: job.id, ownerId, jobType }) };
 }
 
@@ -246,11 +246,12 @@ try {
     // Ungrounded output (unsupported digit): rejected, nothing saved, no retry or repair call, re-run cannot re-buy.
     await seedOwner(prisma, "zh-acceptance-erin", ALICE);
     mock.ungrounded = true; before = gateway.calls;
-    const ungrounded = await runReport({ prisma, worker: relaxed, ownerId: "zh-acceptance-erin" });
+    const ungrounded = await runReport({ prisma, worker: relaxed, ownerId: "zh-acceptance-erin", maxAttempts: 2 });
     assert.equal(gateway.calls - before, 1, "no repair or retry call"); assert.equal(ungrounded.result.succeeded, false);
     assert.equal(await reportCount(prisma, "zh-acceptance-erin"), 0);
-    // Simulate a scheduler re-run of the failed job: the deterministic cost reservation blocks it before dispatch.
-    await prisma.aiJob.updateMany({ where: { id: ungrounded.job.id }, data: { status: "PENDING", maxAttempts: 2, nextAttemptAt: new Date(0) } });
+    // The job allows a second attempt, so the worker reschedules it (terminal jobs are immutable by DB trigger).
+    // The scheduler re-run is blocked by the deterministic cost reservation before any dispatch.
+    assert.equal(ungrounded.result.rescheduled, true, "failed attempt rescheduled by the worker");
     const replay = await relaxed.runJob({ jobId: ungrounded.job.id, ownerId: "zh-acceptance-erin", jobType: "WEEKLY_REPORT" });
     mock.ungrounded = false;
     assert.equal(replay.claimed, true); assert.equal(replay.succeeded, false);
@@ -265,7 +266,7 @@ try {
   summary.result = "FAIL";
   // Synthetic-only messages; assertion text names the failed check.
   summary.failure = error instanceof assert.AssertionError ? `ASSERTION: ${String(error.message).split("\n")[0].slice(0, 200)}`
-    : error?.code || (error?.message === "REPORT_FAILED" ? "REPORT_FAILED" : "UNEXPECTED_ERROR");
+    : error?.code || (error?.message === "REPORT_FAILED" ? "REPORT_FAILED" : `UNEXPECTED_ERROR:${String(error?.name || "Error").slice(0, 40)}`);
   process.exitCode = 1;
 } finally {
   await prisma.$disconnect();
