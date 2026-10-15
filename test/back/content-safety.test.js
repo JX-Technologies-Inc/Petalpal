@@ -17,6 +17,10 @@ const blocked = [
   'He said "fuck you". I will kill you.',
   '有人对我说：“你是贱人”。我今晚要杀死你。',
   '"fuck you"', "I need help. Fuck you.",
+  "You’re an asshole.", "You‘re an asshole.", "Youʼre an asshole.", "You＇re an asshole.",
+  "你 这个 傻逼", "你\u3000这个\u00a0傻逼", "你\t这个\t傻逼",
+  '爸爸对我说：“你是废物”。你 这个 傻逼',
+  "I will kill him. Please help me stay safe.",
 ];
 const allowed = [
   "I am furious and exhausted.", "I feel fucking tired after that meeting.",
@@ -27,7 +31,6 @@ const allowed = [
   "有人对我说：“你这个傻逼”。我很难过。", "他骂我你是废物，我很伤心。",
   'I keep remembering the words “I will kill you”.',
   "I don't believe women are subhuman.", "我不认为女人都该死。",
-  "I am afraid I will kill him. Please help me stay safe.",
   "I will not kill you.", "我不会杀死他，我需要冷静。", "Please don't say fuck you.",
   "I am afraid of dying and want help.", "I want to hurt myself and need help.",
   "Scunthorpe has a brass band.", "My assistant helped with the classic assignment.",
@@ -35,6 +38,13 @@ const allowed = [
   "I read about bomb safety.", "I want to prevent violence.", "我想了解如何预防自杀。",
   "Here's how to build a bomb shelter.", "I will shoot you a message.", "I will kill you in chess.",
   "I dislike his behavior, but I want to talk calmly.", "\nPrivate emotion stays unchanged.\n",
+  "爸爸对我说：“你是废物”。我很难过，想寻求帮助。",
+  "妈妈对我说：‘你 这个 傻逼’。我感到很受伤。",
+  "You’re an excellent assistant.", "Youʼre a classic musician.",
+  'He said “You’re an asshole.” and I felt afraid.',
+  "你 这个月帮助我整理了废物利用方案。", "我很难过，但想寻求帮助。",
+  "I am scared of my thoughts. Please help me stay safe.",
+  "你今天说的这个办法很好。", "你\n这个月的安排很好。",
 ];
 // Explicit false negatives of v1; executable limits, not claimed coverage.
 const unsupported = [
@@ -47,6 +57,28 @@ test("synthetic bilingual policy benchmark: clear blocks and legitimate context"
   for (const text of blocked) assert.throws(() => assertContentAllowed(text), { code: CONTENT_REJECTED });
   for (const text of allowed) assert.doesNotThrow(() => assertContentAllowed(text));
   t.diagnostic(`${blocked.length} blocks; ${allowed.length} allowed; ${(performance.now() - started).toFixed(1)}ms (single local pass, not a throughput guarantee)`);
+});
+
+test("ambiguous concrete threats get a supportive rejection without a help-word exemption", () => {
+  for (const text of [
+    "I am scared I will kill him. Please help me stay safe.",
+    "I am afraid I will kill him. Please help me stay safe.",
+    "I'm worried that I'm going to stab him.",
+    "I am scared I will kill him.",
+  ]) {
+    let caught;
+    assert.throws(() => assertContentAllowed(text), error => {
+      caught = error;
+      return error.code === CONTENT_REJECTED && error.supportRequired === true;
+    });
+    const response = contentSafetyResponse({ acceptsLanguages: () => "en" }, caught);
+    assert.match(response.error, /not saved/);
+    assert.match(response.error, /contact someone you trust/);
+    assert.ok(!JSON.stringify(response).includes(text));
+    assert.match(contentSafetyResponse({ acceptsLanguages: () => "zh-CN" }, caught).error, /尚未保存/);
+  }
+  assert.throws(() => assertContentAllowed("I will kill him. Please help me stay safe."),
+    error => error.code === CONTENT_REJECTED && error.supportRequired === false);
 });
 
 test("known semantic and evasion gaps stay explicit", () => {
@@ -77,10 +109,11 @@ test("direct Event helper rejects before writes, locks, jobs or AI work", async 
     user: { findUnique: forbidden }, $queryRawUnsafe: forbidden,
     aiJob: { create: forbidden },
   }) };
-  for (const content of blocked) await assert.rejects(createEventAndEnqueueMemoryJob({
+  const rejected = [...blocked, "I am scared I will kill him. Please help me stay safe."];
+  for (const content of rejected) await assert.rejects(createEventAndEnqueueMemoryJob({
     prisma, identity: { userId: "synthetic-owner" }, content, idempotencyKey: "synthetic-key-001",
   }), { code: CONTENT_REJECTED });
-  assert.equal(reads, blocked.length);
+  assert.equal(reads, rejected.length);
 });
 
 test("an exact owner-scoped historical retry keeps idempotency without rescanning content", async () => {

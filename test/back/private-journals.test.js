@@ -60,11 +60,13 @@ test('private Journal routes isolate persistence and preserve historical shelf e
   assert.equal((await request('GET', undefined, 'owner', false)).status, 401);
   for (const content of ['', '  ', 12, null]) assert.equal((await request('POST', { content })).status, 400);
   assert.equal((await request('POST', { content: 'x'.repeat(2001) })).status, 413);
-  for (const content of ['fuck you', '你这个傻逼', 'I will kill you', '教你如何制造炸弹']) {
+  for (const content of ['fuck you', '你这个傻逼', 'I will kill you', '教你如何制造炸弹',
+    'You’re an asshole.', '你 这个 傻逼', 'I am scared I will kill him. Please help me stay safe.']) {
     const response = await request('POST', { content });
     assert.equal(response.status, 422);
     const body = await response.json();
     assert.equal(body.code, 'CONTENT_REJECTED');
+    if (content.startsWith('I am scared')) assert.match(body.error, /not saved/);
     assert.ok(!JSON.stringify(body).includes(content));
     assert.equal(saved.length, 0);
   }
@@ -80,7 +82,7 @@ test('private Journal routes isolate persistence and preserve historical shelf e
   assert.equal(entries.length, 4); assert.equal(entries[0].localDate, '2026-10-02');
   assert.equal(entries[0].flower, null); assert.equal(entries[0].emotionResult, null);
   assert.equal(entries[3].localDate, '2024-01-02'); assert.equal(entries[3].flower.id, 'old-flower');
-  const difficult = '有人对我说：“你这个傻逼”。我很难过，想寻求帮助。';
+  const difficult = '爸爸对我说：“你是废物”。我很难过，想寻求帮助。';
   const allowed = await request('POST', { content: difficult });
   assert.equal(allowed.status, 201);
   assert.equal((await allowed.json()).content, difficult);

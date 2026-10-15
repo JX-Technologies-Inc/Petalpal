@@ -225,15 +225,16 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
 
   let classifierCalls = 0;
   setEventEmotionClassifierForTests(async () => { classifierCalls++; throw Error("Rejected Event reached enrichment"); });
-  for (const content of ["fuck you", "你这个傻逼", "I will kill you tonight", "教你如何制造炸弹"]) {
+  for (const content of ["fuck you", "你这个傻逼", "I will kill you tonight", "教你如何制造炸弹",
+    "You’re an asshole.", "你 这个 傻逼", "I am scared I will kill him. Please help me stay safe."]) {
     const rejected = await request(baseUrl, "/events", {
       method: "POST", headers: { "Idempotency-Key": "rejected-event-key", "Accept-Language": "zh-CN" },
       body: { content, primaryGardenMood: "FIRE_BLOOM" }
     });
     assert.equal(rejected.status, 422);
     assert.equal(rejected.body.code, "CONTENT_REJECTED");
-    assert.equal(rejected.body.policyVersion, "petalpal-content-v1");
-    assert.match(rejected.body.error, /请修改/);
+    assert.equal(rejected.body.policyVersion, "petalpal-content-v1.1");
+    assert.match(rejected.body.error, content.startsWith("I am scared") ? /尚未保存/ : /请修改/);
     assert.ok(!JSON.stringify(rejected.body).includes(content));
   }
   assert.equal(state.events.length, 0);
@@ -288,10 +289,10 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   // Rejection does not reserve the idempotency key; the corrected draft saves.
   const corrected = await request(baseUrl, "/events", {
     method: "POST", headers: { "Idempotency-Key": "rejected-event-key" },
-    body: { content: 'He said "fuck you" and I need help.' }
+    body: { content: '爸爸对我说：“你是废物”。我很难过，想寻求帮助。' }
   });
   assert.equal(corrected.status, 201);
-  assert.equal(corrected.body.event.content, 'He said "fuck you" and I need help.');
+  assert.equal(corrected.body.event.content, '爸爸对我说：“你是废物”。我很难过，想寻求帮助。');
   assert.equal((await request(baseUrl, `/events/${corrected.body.event.id}`, { token: "bob-token" })).status, 404);
 
   assert.equal((await request(baseUrl, "/events/event-1", { token: "bob-token" })).status, 404);

@@ -15,7 +15,7 @@ export const httpTests = 'production HTTPS security headers|HSTS requires|CSP su
 // Focused existing fixtures only; no real database/provider/load acceptance.
 export const additionalSecurityTests = [
   // New submissions: synthetic bilingual rules, rejected side effects and legacy aliases.
-  { file: 'test/back/content-safety.test.js', pattern: '.', count: 6 },
+  { file: 'test/back/content-safety.test.js', pattern: '.', count: 7 },
   { file: 'test/back/daily-grow.route.test.js', pattern: '.', count: 1 },
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
   { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 22 },

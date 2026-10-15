@@ -1,6 +1,44 @@
 # Event and Journal content safety
 
-Policy: `petalpal-content-v1` (2026-10-14). Local development candidate only.
+Policy: `petalpal-content-v1.1` (2026-10-15). Local development candidate only.
+
+## P2 corrections — 2026-10-15
+
+- Reporting frames now recognize a bounded set of Chinese family roles, including
+  爸爸/妈妈/父亲/母亲. The confirmed paternal abuse report is accepted unchanged.
+  Only the attributed phrase/quotation is protected; a subsequent direct attack
+  remains rejected. This still cannot verify the truth of an attribution.
+- Curly left/right and modifier apostrophes are folded only between Latin letters;
+  NFKC already handles fullwidth apostrophes. This closes `You’re`/`Youʼre` evasions
+  while preserving paired quotation delimiters. Chinese direct-address components
+  accept up to three horizontal Unicode spaces/tabs before the optional connector;
+  existing bounded gaps handle the connector/insult boundary. No global whitespace
+  removal or new substring dictionary is introduced.
+- Concrete English first-person violent actions immediately framed by
+  `I am scared/afraid/worried` are **rejected with supportive safety wording**, not
+  treated as ordinary abuse or silently allowed. This supersedes v1's fear-prefix
+  exemption. `help` elsewhere never changes a decision. The exact reported
+  high-risk example gets 422/`CONTENT_REJECTED` before any write/job/AI work, with
+  fixed English/Chinese advice to create distance and contact trusted support or
+  local emergency services if someone is in immediate danger. No contact is made
+  by the app. A fear disclosure without a matched concrete violent action remains
+  allowed. Intent and imminence cannot be established by these rules.
+- Policy/API regressions cover 46 ordinary blocks, 42 allowed cases, four supportive
+  threat rejections and six explicitly documented false negatives. API tests assert
+  zero rejected writes/jobs/classification/dispatch and preserve accepted paternal
+  reporting text exactly. The response keeps status/code compatibility and exposes
+  policy version v1.1; no raw text, new logging, network call or persistence field.
+- Focused policy, API, private Journal, legacy, AI-foundation, CI-contract and
+  environment tests: **76/76 passed**. The temporary local test runtime copies
+  bundled Node 24.19.0 (tzdata 2026b) and links the existing npm beside it, satisfying
+  the startup fixture's adjacency requirement without system/runtime/test changes.
+  Full-runner results are recorded after validation in SECURITY.md. The earlier v1
+  evidence below remains historical and is not overwritten.
+- Full security runner: **208 selected tests passed, zero failures, exit 0** in one
+  run using that temporary runtime; DAST made **261 loopback requests** with zero
+  external attempts/unexpected DB calls. No selected local test remains blocked.
+  Temporary runtime/dependency links were removed after validation. No push,
+  hosted workflow, merge, deployment or production/paid-provider test was performed.
 
 ## Enforcement and privacy
 
@@ -35,8 +73,9 @@ substring blacklist or global whitespace removal.
 
 Original allowed wording is preserved, including reported abuse. Existing outer
 whitespace trimming remains unchanged. Explicit reporting frames protect only the
-immediately attributed phrase or paired quotation. Nearby fear and rejection-of-
-claim frames have narrow exceptions. A help-seeking word or quotation elsewhere
+immediately attributed phrase or paired quotation. Rejection-of-claim frames have
+narrow exceptions; concrete fear-framed threats receive a supportive rejection.
+A help-seeking word or quotation elsewhere
 does not exempt a separate attack. Emotional distress, trauma, anger, sexual/medical
 discussion and requests for support are not themselves prohibited. Plain quotations
 without a recognized reporting frame may still be rejected.
@@ -63,6 +102,7 @@ strong expletives are rejected; expletives inside emotional reflection are allow
 These false positives/negatives are intentional coverage limits, not solved risks.
 No claim of comprehensive safety or commercial-release readiness is made.
 
+Original v1 benchmark evidence (superseded by the v1.1 results above):
 `test/back/content-safety.test.js` contains only independently authored synthetic
 examples: 37 blocked and 33 allowed bilingual cases, plus 6 documented false
 negatives. A local single-pass run took about 65ms including regex startup;
@@ -78,7 +118,7 @@ HTTP, injected provider stubs and disposable PGlite. No production API/database,
 live LLM evaluation, private records or credentials are used. No existing Graphify
 graph was available; no full graph rebuild was performed.
 
-Final local results:
+Original v1 local results (historical):
 
 - Focused policy/API/Journal/legacy/AI-foundation selection: **62/62 passed** on
   bundled Node 24.19.0; CI contract: **6/6 passed**; syntax/diff checks passed.

@@ -1492,7 +1492,7 @@ app.post("/users/:userId/journals",
   if (content.length > 2000) return res.status(413).json({ error: "Journal must be 2000 characters or fewer" });
   try { assertContentAllowed(content); }
   catch (error) {
-    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req));
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req, error));
     throw error;
   }
   const journal = await prisma.journal.create({
@@ -1988,7 +1988,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (error?.code === "INVALID_IDEMPOTENCY_KEY" || error?.code === "INVALID_EVENT") {
       return res.status(400).json({ error: error.message });
     }
-    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req));
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req, error));
     if (error?.code === "EVENT_TOO_LARGE") return res.status(413).json({ error: error.message });
     if (error?.code === "IDEMPOTENCY_CONFLICT") return res.status(409).json({ error: error.message });
     logServerError("POST /events error", error);
@@ -2837,7 +2837,7 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
         event: journalText
       });
     } catch (error) {
-      if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req));
+      if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req, error));
       if ([400, 403, 413].includes(error?.status)) {
         return res.status(error.status).json({ error: error.message });
       }

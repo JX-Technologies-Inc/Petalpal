@@ -1,5 +1,32 @@
 # PetalPal Security
 
+## Content-safety P2 corrections — 2026-10-15
+
+Policy `petalpal-content-v1.1` fixes the confirmed family-abuse-report false positive
+and typographic-apostrophe/Chinese-spacing bypasses. Attributed reporting is scoped
+to the immediately reported phrase/quotation; separate abuse still fails. Analysis
+normalization never changes accepted stored text. Concrete English violent actions
+framed by fear now produce a fixed supportive 422 rejection instead of the former
+fear-prefix exemption; `help` is never a blanket allowance. Rejected requests cause
+no persistence, AI job, enrichment or dispatch. Journal remains isolated from Event
+memory and Weekly/Monthly; no logging, external service, dependency, data migration
+or production pipeline change is introduced.
+
+Local focused/contract/environment validation passed **76/76** tests, including the
+exact confirmed cases, four ambiguous-threat cases, owner/privacy/idempotency checks
+and startup/timezone regressions. The previous runner blockers were environmental:
+shell Node 24.7.0 has old timezone data; bundled Node 24.19.0 lacks adjacent npm.
+A temporary isolated copy of bundled Node (tzdata 2026b), with the existing npm
+linked beside it, satisfies both fixtures without global timezone/runtime changes
+or weakened tests. Historical evidence below is preserved. Details and remaining
+finite-grammar/context limits: [content-safety policy](docs/content-safety.md).
+
+Full `scripts/security-ci.js` subsequently completed in one isolated run: **208
+selected tests passed, zero failures, exit 0**. DAST made **261 loopback requests**,
+zero external attempts/unexpected DB calls. No selected local tests remain blocked.
+These results supersede the historical v1 single-runner limitation below; hosted
+CI, production and paid-provider acceptance remain outside this local task.
+
 ## Local Event/Journal content-safety candidate — 2026-10-14
 
 `petalpal-content-v1` adds shared offline checks for new `/events`, private
