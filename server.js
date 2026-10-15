@@ -1,3 +1,4 @@
+import { requestAccountDeletion } from './lib/account-deletion-workflow.js';
 import { aiDisclosure, AI_DISCLOSURE_VERSION } from './lib/ai-disclosure.js';
 import { installAiOutputReporting } from './lib/ai-output-reporting.js';
 import { assertContentAllowed, contentSafetyResponse, CONTENT_REJECTED } from './lib/content-safety.js';
@@ -959,6 +960,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
       });
     }
 
+    if (await prisma.accountDeletion.findUnique({where:{firebaseUid:identity.uid},select:{userId:true}})) return res.status(403).json({error:"Account deletion is pending or complete",code:"ACCOUNT_DELETED"});
     const normalizedEmail = identity.email.trim().toLowerCase();
     let user = await prisma.user.findUnique({
       where: { firebaseUid: identity.uid }
@@ -3362,21 +3364,10 @@ app.delete("/users/:id", async (req, res) => {
         return res.status(503).json({ error: "Account deletion is temporarily unavailable" });
       }
 
-      const deleted = await realtime.withRevocation({ userId: id }, () => prisma.$transaction(async (tx) => {
-        const user = await deleteAccountDataInTransaction(tx, { id });
-        if (!user) return false;
-        if (user.firebaseUid) await firebaseUserDeleter(user.firebaseUid);
-        return true;
-      }));
-
-      if (!deleted) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      res.json({
-        success: true,
-        message: "User deleted successfully"
-      });
+      const deletion = await realtime.withRevocation({ userId: id }, () => requestAccountDeletion(prisma,
+        { userId:id, firebaseUid:req.auth.firebaseUid }, firebaseUserDeleter));
+      res.status(deletion.success ? 200 : 202).json(deletion);
+      if (!deletion.success) return;
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_COMPLETED", outcome: "COMPLETED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch {

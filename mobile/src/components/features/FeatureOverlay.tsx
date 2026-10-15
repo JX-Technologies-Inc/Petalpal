@@ -1,3 +1,4 @@
+import { DeleteAccountSettings } from './DeleteAccountSettings';
 import { AiPrivacySettings } from './AiPrivacySettings';
 import { CommunityGuidelines } from './CommunityGuidelines';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
@@ -110,6 +111,7 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
       </FeatureSection>
       <CommunityGuidelines />
       <GardenPrivacySettings key={session?.user.id} />
+      <DeleteAccountSettings key={`delete-${session?.user.id}`} />
       {error ? <Text accessibilityRole="alert" style={[ui.text, { color: theme.text }]}>{error}</Text> : null}
       <FeatureActionButton title={busy ? 'Signing out…' : 'Sign out'} disabled={busy} onPress={async () => {
         setBusy(true); setError('');

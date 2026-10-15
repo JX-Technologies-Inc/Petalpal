@@ -717,3 +717,11 @@ model UserBlock {
   @@id([blockerId, blockedId])
   @@index([blockedId])
 }
+
+// No FK: must survive account erasure to retry identity deletion and deny replay.
+model AccountDeletion {
+  userId String @id
+  firebaseUid String @unique
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+}

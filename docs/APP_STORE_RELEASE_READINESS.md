@@ -36,7 +36,11 @@ Evidence: integrated PostgreSQL/API 4/4; consent/worker/Haiku/speech focused reg
 
 ## D — Deletion
 
-IN PROGRESS.
+IMPLEMENTED / TESTED: Settings has a prominent destructive confirmation and existing five-minute recent-authentication requirement. PostgreSQL erasure and a durable identity-deletion record commit together; Firebase deletion follows with idempotent recovery. Database failures roll back all relational work. Identity failures return pending, clear local account-controlled caches and leave a retry task; they do not restore private data. A database trigger serializes account creation/relink with deletion and rejects old-UID resurrection. Owner-scoped cascades remove Journals/photos, Events, memories, vectors, evidence, jobs, social content, blocks and applicable reports; unrelated owners remain. Non-cascading security/cost and deletion records are explicitly retained.
+
+Policy: Apple 5.1.1(v), Google deletion/User Data. Evidence: disposable real PostgreSQL with all migrations, actual DELETE API, vector cleanup and partial failures (integrated 5/5); updated deletion regressions 2/2. Initial vector test omitted the required GENERATED state/timestamp; fixed without weakening constraints. Signed-device cache erasure remains NOT VERIFIED.
+
+External resource: `docs/release/account-deletion.html` opens a deletion-request email without reinstalling the app. NOT PUBLISHED; inbox delivery, identity verification/recovery process, retention limits, backup restoration exclusions and provider erasure must be approved/tested. `DELETION_OPERATIONS.md` includes the bounded operator retry command. No production identity was created/deleted.
 
 ## E — Policies and disclosures
 
@@ -56,3 +60,5 @@ NOT VERIFIED: full Xcode is absent; Command Line Tools cannot produce a signed i
 - B: phase B checkpoint — reused content-safety suite 7/7, integrated PostgreSQL/API A+B 3/3; TypeScript passed. Initial selective reuse omitted the Event helper hook; corrected before PASS.
 
 - C: phase C checkpoint — evidence above. No unauthorized external network calls in isolated API tests.
+
+- D: phase D checkpoint — PostgreSQL integration 5/5 and deletion contract 2/2. Added final social raw-message filtering and in-flight user-room revocation fences found during integration.

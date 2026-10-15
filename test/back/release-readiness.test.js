@@ -11,10 +11,10 @@ net.Socket.prototype.connect=function(...args){const a=args[0]; const host=typeo
 syncBuiltinESMExports();
 const {default:db}=await import('../../lib/prisma.js');
 const {setFirebaseTokenVerifierForTests}=await import('../../lib/auth.js');
-const {server}=await import('../../server.js');
+const {server,setFirebaseUserDeleterForTests}=await import('../../server.js');
 const {io:connectSocket}=await import('socket.io-client');
 const {canVisitGarden}=await import('../../lib/garden-access.js');
-setFirebaseTokenVerifierForTests(async token=>({uid:token,email_verified:true,auth_time:Math.floor(Date.now()/1000)}));
+setFirebaseTokenVerifierForTests(async token=>({uid:token==='stale-deleting'?'deleting':token,email_verified:true,auth_time:Math.floor(Date.now()/1000)-(token==='stale-deleting'?600:0)}));
 server.listen(0,'127.0.0.1'); await new Promise(r=>server.once('listening',r));
 const base=`http://127.0.0.1:${server.address().port}`;
 async function api(who,path,method='GET',body){const r=await fetch(base+path,{method,headers:{Authorization:`Bearer ${who}`,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};}
@@ -103,4 +103,33 @@ test('C: explicit versioned consent, withdrawal epoch, output ownership and no p
  assert.equal((await api('a','/users/a/ai-consent','PUT',{aiProcessing:true,disclosureVersion:disclosure.body.version})).status,200);
  await assert.rejects(gate.checkProcessingConsent({identity:{userId:'a'},consentUpdatedAt:consent.body.updatedAt}),{code:'AI_FORBIDDEN'});
  assert.ok(await db.event.findUnique({where:{id:event.id}}));
+});
+
+test('D: real PostgreSQL erasure, vector cascade, Firebase failure recovery and anti-resurrection',async()=>{
+ const id='deleting';await db.user.create({data:{id,name:'Disposable',firebaseUid:id,garden:{create:{id:'deleting-garden'}}}});
+ await db.journal.create({data:{id:'deleting-journal',userId:id,content:'Synthetic private diary'}});
+ const event=await db.event.create({data:{id:'deleting-event',ownerId:id,content:'Synthetic private event',occurredAt:new Date(),localDate:'2026-10-15',timezone:'UTC',idempotencyKey:'deletion-fixture'}});
+ await db.eventMemory.create({data:{id:'deleting-memory',ownerId:id,sourceEventId:event.id,memoryType:'EVENT',summary:'Synthetic memory',eventDate:new Date()}});
+ await db.eventMemoryEmbedding.create({data:{eventMemoryId:'deleting-memory',ownerId:id,profileKey:'fixture',model:'fixture',modelRevision:'1',inputVersion:'1',inputRevision:1}});
+ await db.$executeRawUnsafe(`UPDATE "EventMemoryEmbedding" SET embedding=$1::vector, status='GENERATED', "embeddedAt"=CURRENT_TIMESTAMP WHERE "eventMemoryId"=$2`,'['+Array(384).fill(0).join(',')+']','deleting-memory');
+ await db.report.create({data:{reporterId:'a',reportedUserId:id,category:'OTHER'}});
+ const journalB=await db.journal.create({data:{userId:'b',content:'Unrelated synthetic diary'}});
+ let calls=0;setFirebaseUserDeleterForTests(async()=>{calls++;throw new Error('Injected identity outage');});
+ assert.equal((await api('b','/users/deleting','DELETE')).status,403);assert.equal(calls,0);
+ assert.equal((await api('stale-deleting','/users/deleting','DELETE')).status,403);assert.equal(calls,0);
+ const result=await api(id,'/users/deleting','DELETE');assert.equal(result.status,202);assert.equal(result.body.dataDeleted,true);assert.equal(calls,1);
+ assert.equal(await db.user.findUnique({where:{id}}),null);assert.equal(await db.journal.findUnique({where:{id:'deleting-journal'}}),null);
+ assert.equal(await db.eventMemory.count({where:{ownerId:id}}),0);assert.equal(await db.eventMemoryEmbedding.count({where:{ownerId:id}}),0);
+ assert.equal(await db.report.count({where:{reportedUserId:id}}),0);assert.ok(await db.journal.findUnique({where:{id:journalB.id}}));
+ await assert.rejects(db.user.create({data:{id:'resurrection',name:'No',firebaseUid:id}}));
+ assert.equal((await api(id,'/events')).status,403);
+ setFirebaseUserDeleterForTests(async()=>{calls++;});
+ assert.equal((await api(id,'/users/deleting','DELETE')).status,200);assert.ok((await db.accountDeletion.findUnique({where:{userId:id}})).completedAt);
+ assert.equal((await api(id,'/users/deleting','DELETE')).status,200);assert.equal(calls,2);
+ // A failed relational transaction leaves both account and retry queue unchanged.
+ const {requestAccountDeletion}=await import('../../lib/account-deletion-workflow.js');
+ await db.user.create({data:{id:'rollback',name:'Rollback',firebaseUid:'rollback'}});
+ const proxy=new Proxy(db,{get(target,key){if(key==='$transaction')return fn=>target.$transaction(tx=>fn(new Proxy(tx,{get(t,k){if(k==='report')return {deleteMany:async()=>{throw new Error('Injected DB failure');}};return t[k];}})));return target[key];}});
+ await assert.rejects(requestAccountDeletion(proxy,{userId:'rollback',firebaseUid:'rollback'},async()=>{throw new Error('Must not call Firebase');}));
+ assert.ok(await db.user.findUnique({where:{id:'rollback'}}));assert.equal(await db.accountDeletion.findUnique({where:{userId:'rollback'}}),null);
 });

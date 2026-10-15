@@ -78,9 +78,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const generation = version.current;
     if (!user || !owner || state.identity?.uid !== user.uid || !isCurrent(user, generation)) throw new Error('Sign in to delete your account.');
     // Backend owns remote/Firebase deletion. Failure must not claim deletion.
-    const result = await apiRequest<{ success: boolean }>(`/users/${encodeURIComponent(owner)}`, 'DELETE');
-    if (!result.success) throw new Error('Account deletion was not confirmed.');
-    if (isCurrent(user, generation)) await logout();
+    const result = await apiRequest<{ success: boolean; pending?: boolean; dataDeleted?: boolean; message?: string }>(`/users/${encodeURIComponent(owner)}`, 'DELETE');
+    if (!result.success && !result.dataDeleted) throw new Error(result.message || 'Account deletion was not confirmed.');
+    if (isCurrent(user, generation)) await logout(result.pending ? result.message || 'Identity deletion is pending. Contact support.' : 'Your account was deleted.');
   }
 
   async function sync(profile?: ProfileInput) {

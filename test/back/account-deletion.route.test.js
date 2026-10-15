@@ -18,6 +18,12 @@ function deletionTransaction() {
     userMessages: 1
   };
   const tx = {
+    $queryRawUnsafe: async () => [],
+    report: { deleteMany: async () => ({count:0}) },
+    accountDeletion: {
+      findUnique: async () => state.deletionRecord || null,
+      create: async ({data}) => { state.deletionRecord = {...data,completedAt:null}; return state.deletionRecord; }
+    },
     user: {
       findUnique: async () => state.user
         ? { id: "owner-1", firebaseUid: "firebase-owner" }
@@ -50,11 +56,13 @@ function deletionTransaction() {
   return { state, tx };
 }
 
-test("account deletion is owner-only, deletes all related data and rolls back on Firebase failure", async (t) => {
+test("account deletion is owner-only, deletes all related data and retains a durable retry after Firebase failure", async (t) => {
   const originalFindUnique = prisma.user.findUnique;
+  const originalDeletionUpdate = prisma.accountDeletion.update;
   const originalAuditCreate = prisma.auditEvent.create;
   const originalTransaction = prisma.$transaction;
   let current = deletionTransaction();
+  prisma.accountDeletion.update = async ({data}) => Object.assign(current.state.deletionRecord,data);
   let firebaseUid = null;
   let audits = 0, transactions = 0;
   prisma.auditEvent.create = async () => { audits++; return { id: "audit-1" }; };
@@ -68,6 +76,7 @@ test("account deletion is owner-only, deletes all related data and rolls back on
     try {
       return await callback(current.tx);
     } catch (error) {
+      for (const key of Object.keys(current.state)) delete current.state[key];
       Object.assign(current.state, snapshot);
       throw error;
     }
@@ -86,6 +95,7 @@ test("account deletion is owner-only, deletes all related data and rolls back on
   await new Promise((resolve) => server.once("listening", resolve));
   t.after(async () => {
     prisma.user.findUnique = originalFindUnique;
+    prisma.accountDeletion.update = originalDeletionUpdate;
     prisma.auditEvent.create = originalAuditCreate;
     prisma.$transaction = originalTransaction;
     setFirebaseTokenVerifierForTests();
@@ -123,12 +133,25 @@ test("account deletion is owner-only, deletes all related data and rolls back on
     gardenVisits: 0,
     garden: false,
     userVisits: 0,
-    userMessages: 0
+    userMessages: 0,
+    deletionRecord: {userId:"owner-1",firebaseUid:"firebase-owner",completedAt:current.state.deletionRecord.completedAt}
   });
+  assert.ok(current.state.deletionRecord.completedAt);
 
   current = deletionTransaction();
   setFirebaseUserDeleterForTests(async () => { throw new Error("Firebase unavailable"); });
   const failed = await remove("owner-token");
-  assert.equal(failed.status, 500);
-  assert.deepEqual(current.state, deletionTransaction().state);
+  assert.equal(failed.status, 202);
+  assert.equal((await failed.json()).dataDeleted, true);
+  assert.equal(current.state.user,false);
+  assert.equal(current.state.deletionRecord.completedAt,null);
+  const erased=structuredClone(current.state);
+  setFirebaseUserDeleterForTests(async () => {});
+  const recovered=await remove("owner-token");assert.equal(recovered.status,200);
+  assert.ok(current.state.deletionRecord.completedAt);
+  assert.deepEqual({...current.state,deletionRecord:erased.deletionRecord},erased);
+  current = deletionTransaction();
+  current.tx.report.deleteMany = async()=>{throw new Error("Injected database failure");};
+  const rolledBack=await remove("owner-token");assert.equal(rolledBack.status,500);
+  assert.deepEqual(current.state,deletionTransaction().state);
 });
