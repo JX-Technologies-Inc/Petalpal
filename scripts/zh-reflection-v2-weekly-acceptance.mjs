@@ -137,8 +137,13 @@ async function verifyReport({ prisma, worker, gateway, ownerId, job }) {
   }
   const evidence = await prisma.aiEvidence.findMany({ where: { weeklyReportId: row.id } });
   assert.ok(evidence.length >= 2);
-  assert.ok(evidence.every(item => item.ownerId === ownerId && seeded.has(item.sourceEventId) && item.claimType === "NARRATIVE_CITED"),
-    "evidence is owner-scoped and cited");
+  assert.ok(evidence.every(item => item.ownerId === ownerId && seeded.has(item.sourceEventId) &&
+    ["NARRATIVE_CITED", "NARRATIVE_SELECTED"].includes(item.claimType)), "evidence is owner-scoped");
+  // Selected-but-uncited provenance is NARRATIVE_SELECTED; cited rows must equal exactly what the sentences cite.
+  const citedRows = new Set(evidence.filter(item => item.claimType === "NARRATIVE_CITED").map(item => item.sourceEventId));
+  const citedRefs = new Set(sections.flatMap(section => section.evidenceRefs.map(ref => ref.sourceEventId)));
+  assert.ok(citedRows.size >= 2, "Weekly cites at least two Events");
+  assert.deepEqual([...citedRows].sort(), [...citedRefs].sort(), "cited evidence rows match sentence citations");
   const repo = new PrivateReportRepository(prisma), calls = gateway.calls, reserved = await reservations(prisma);
   const first = await repo.getWeeklyReportById({ identity: { userId: ownerId }, reportId: row.id });
   const second = await repo.getWeeklyReportById({ identity: { userId: ownerId }, reportId: row.id });
