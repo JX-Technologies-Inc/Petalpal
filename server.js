@@ -130,7 +130,7 @@ if (process.env.NATIVE_SECURITY_TEST === '1') {
 }
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
-const { general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
+const { admission: admissionRateLimit, general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
 
 app.use((req, res, next) => {
   req.requestId = requestId();
@@ -259,11 +259,13 @@ app.use(cors({
   origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
-// Authenticate and rate-limit before accepting the larger voice-only body.
-app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
+// Admit before Firebase/profile work; authenticate and apply user/AI limits
+// before accepting the larger voice-only body. These early routes terminate
+// here, so each request consumes the shared admission budget exactly once.
+app.post("/speech/transcribe", admissionRateLimit, authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
   requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
-app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
+app.put("/users/:userId/journals/:journalId/cover", admissionRateLimit, authenticateRequest, generalRateLimit,
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
   requireJsonContentType, express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
     let coverImage;
@@ -340,7 +342,9 @@ app.use((req, res, next) => {
     return next();
   }
 
-  return authenticateRequest(req, res, next);
+  // Public/session setup exceptions retain their existing handling above.
+  // Service-executor routes terminate earlier and have separate workload policy.
+  return admissionRateLimit(req, res, () => authenticateRequest(req, res, next));
 });
 app.use(generalRateLimit);
 

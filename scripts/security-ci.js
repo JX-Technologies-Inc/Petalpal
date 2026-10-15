@@ -6,6 +6,9 @@ import { existsSync } from 'node:fs';
 export const securityTests = [
   'test/back/auth.test.js',
   'test/back/security-config.test.js',
+  'test/back/rate-limit.test.js',
+  'test/back/auth-abuse.route.test.js',
+  'test/back/preauth-admission.route.test.js',
   // Native provider contracts use injected fetch and disposable PGlite only.
   'test/back/ai-gateway.test.js',
 ];
