@@ -1,0 +1,55 @@
+name: zh acceptance offline (isolated branch)
+
+# Offline only: mocked Gateway responses, synthetic data, ephemeral CI PostgreSQL. No secrets are referenced.
+on:
+  push:
+    branches: [test/zh-report-acceptance]
+    paths: [.github/workflows/zh-acceptance-offline.yml, scripts/zh-report-acceptance.mjs]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zh-acceptance-offline
+  cancel-in-progress: false
+
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-disposable
+          POSTGRES_DB: petalpal_acceptance_offline_test
+        ports: ['55432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ci" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prisma Client and migrations (disposable database)
+        shell: bash
+        run: |
+          db=postgresql://ci:ci-disposable@127.0.0.1:55432/petalpal_acceptance_offline_test
+          env -i PATH="$PATH" HOME="$HOME" NODE_ENV=test DEV_DATABASE_URL="$db" npx prisma generate
+          env -i PATH="$PATH" HOME="$HOME" NODE_ENV=test DEV_DATABASE_URL="$db" npx prisma migrate deploy
+      - name: zh-Hans Weekly/Monthly offline acceptance (real PostgreSQL)
+        shell: bash
+        run: |
+          env -i PATH="$PATH" HOME="$HOME" NODE_ENV=test \
+            DEV_DATABASE_URL=postgresql://ci:ci-disposable@127.0.0.1:55432/petalpal_acceptance_offline_test \
+            node scripts/zh-report-acceptance.mjs offline
