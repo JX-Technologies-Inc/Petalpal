@@ -63,7 +63,7 @@ test('persisted privacy enforces confirmed-friend reads, visits, direct access a
     const id = where.firebaseUid || where.id;
     const row = (await db.query('SELECT * FROM "User" WHERE id = $1', [id])).rows[0];
     if (!row) return null;
-    return project({ ...row, ...(include ? { garden: { id: 'garden-owner' } } : {}) }, select);
+    return project({ ...row, communityTermsVersion: "petalpal-community-2026-10-15", ...(include ? { garden: { id: 'garden-owner' } } : {}) }, select);
   });
   stub('user', 'update', async ({ where, data, select }) => {
     assert.deepEqual(Object.keys(data), ['allowGardenVisits']);

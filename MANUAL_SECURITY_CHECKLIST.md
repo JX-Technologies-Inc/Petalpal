@@ -672,3 +672,8 @@ Historical outcomes above remain point-in-time evidence. These new release actio
 - [ ] Assign moderator/deletion queue coverage, configure server-only moderator Firebase UID allowlist, and test authenticated actions with isolated identities. Approve residual deletion/audit/cost retention and backup/provider-copy handling.
 - [ ] Review/apply the four release migrations through the normal approved rollout: historical AI consent is revoked and pending/running jobs are cancelled. Coordinate compatible mobile/web clients before enforcement; verify current clients offer re-consent and Community acceptance.
 - [ ] Complete signed iOS/Android build, permissions/manifests, accessibility/device/cache/performance checks and store questionnaires in docs/release/STORE_SUBMISSION_CHECKLIST.md. Historical Expo Go passes are not a signed-release pass. Submission/publication remains separately authorized.
+
+### Unified App Store / #59 / #60 integration — 2026-10-15
+
+- [ ] Independently review CodeQL #29/#30 and obtain authorized disposition; exact #60 findings check remains failed. Re-run analysis for any subsequently published unified SHA; do not suppress/dismiss automatically.
+- [ ] Approve the additional `202610150005_ai_disclosure_grant_guard` migration, with the original four unchanged. Follow docs/release/INTEGRATION_ROLLOUT.md: close every ingress/executor path, drain and stop all old API/workers, migrate while quiesced, verify constraints/tombstones, start only the reviewed new SHA, then perform separately authorized acceptance before reopening. No live process, migration or rollout evidence exists for this local task.

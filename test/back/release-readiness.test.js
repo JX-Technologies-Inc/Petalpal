@@ -145,3 +145,51 @@ test('D: real PostgreSQL erasure, vector cascade, Firebase failure recovery and 
  await assert.rejects(requestAccountDeletion(proxy,{userId:'rollback',firebaseUid:'rollback'},async()=>{throw new Error('Must not call Firebase');}));
  assert.ok(await db.user.findUnique({where:{id:'rollback'}}));assert.equal(await db.accountDeletion.findUnique({where:{userId:'rollback'}}),null);
 });
+
+test('integration: server avatars, Community gates, A/B/C HTTP/socket filtering and leave authorization',async()=>{
+ assert.equal((await api('a','/analyze-mood','POST',{})).status,400,'Legacy route remains available and rejects before inference');
+ const ids=['va','vb','vc','vx'];
+ for(const id of ids)await db.user.create({data:{id,name:'Person '+id,avatar:'🐝',firebaseUid:id,communityTermsVersion:id==='vx'?null:'petalpal-community-2026-10-15',garden:{create:{id:'garden-'+id}}}});
+ for(const actor of ['va','vb','vx'])await db.friendship.createMany({data:[{userId:'vc',friendId:actor},{userId:actor,friendId:'vc'}]});
+ const flower=await db.flower.create({data:{id:'visit-flower',userId:'vc',gardenId:'garden-vc',mood:'joy',name:'Flower',meaning:'Test',img:'flower.png',left:0,top:0}});
+ await db.message.create({data:{flowerId:flower.id,userId:'vb',author:'Person vb',text:'A kind message'}});
+ assert.equal((await api('va','/users/me/blocks/vb','PUT',{})).status,200);
+ const socket=connectSocket(base,{auth:{token:'vc'},transports:['websocket'],reconnection:false});
+ const observer=connectSocket(base,{auth:{token:'va'},transports:['websocket'],reconnection:false});
+ const events=[],filtered=[];
+ try{
+  for(const client of [socket,observer]){
+   await new Promise((resolve,reject)=>{if(client.connected)return resolve();client.once('connect',resolve);client.once('connect_error',reject);});
+   await new Promise((resolve,reject)=>client.timeout(2000).emit('join-garden','vc',(err,reply)=>{if(err)return reject(err);assert.equal(reply.ok,true);resolve();}));
+  }
+  socket.onAny((name,data)=>events.push({name,data}));observer.onAny((name,data)=>filtered.push({name,data}));
+  const bad={visitorAvatar:'send me nudes'};
+  const visited=await api('vb','/visit','POST',{hostUserId:'vc',...bad});assert.equal(visited.status,200);
+  assert.equal(visited.body.activeVisitors.find(v=>v.visitorId==='vb').avatar,'🐝');
+  const ownVisit=await api('va','/visit','POST',{hostUserId:'vc',...bad});assert.equal(ownVisit.status,200);
+  assert.ok(!JSON.stringify(ownVisit.body).includes('vb'));
+  const moved=await api('va','/visit/move','POST',{hostUserId:'vc',x:100,y:100,...bad});assert.equal(moved.status,200);assert.ok(!JSON.stringify(moved.body).includes('vb'));
+  assert.equal((await api('vb','/visit/move','POST',{hostUserId:'vc',x:101,y:101,...bad})).status,200);
+  const support=await api('va',`/users/vc/flowers/${flower.id}/support`,'POST',bad);assert.equal(support.status,200);assert.equal(support.body.messages.length,0);
+  const left=await api('va','/leave','POST',{hostUserId:'vc',...bad});assert.equal(left.status,200);assert.ok(!JSON.stringify(left.body).includes('vb'));
+  await new Promise(r=>setTimeout(r,40));
+  assert.ok(events.length>0);assert.ok(!JSON.stringify(events).includes(bad.visitorAvatar));
+  assert.ok(!JSON.stringify(filtered).includes('vb'),'No blocked identity in any realtime delivery');
+  assert.ok(filtered.every(e=>e.data?.record!==null),'Blocked records do not produce empty notifications');
+  assert.ok((await db.visitRecord.findMany({where:{gardenId:'garden-vc'}})).every(r=>r.visitorAvatar==='🐝'));
+  events.length=0;
+  const before=await db.visitRecord.count();
+  for(const [path,body] of [['/visit',{hostUserId:'vc'}],['/visit/move',{hostUserId:'vc',x:1,y:1}],['/leave',{hostUserId:'vc'}],[`/users/vc/flowers/${flower.id}/support`,{}]])assert.equal((await api('vx',path,'POST',body)).status,428);
+  assert.equal((await api('vb','/leave','POST',{hostUserId:'va',...bad})).status,403);
+  await db.user.update({where:{id:'vc'},data:{allowGardenVisits:false}});
+  const cleanup=await api('vb','/leave','POST',{hostUserId:'vc',...bad});assert.equal(cleanup.status,200);assert.deepEqual(cleanup.body,{success:true,activeVisitors:[],record:null});
+  assert.equal(await db.visitRecord.count(),before);await new Promise(r=>setTimeout(r,40));assert.equal(events.length,0);
+  await db.user.update({where:{id:'vc'},data:{allowGardenVisits:true}});
+  const afterCleanup=await api('vc','/users/vc/garden');assert.equal(afterCleanup.status,200);assert.ok(!afterCleanup.body.activeVisitors.some(v=>v.visitorId==='vb'));
+  // A commit failure must not publish a successful departure or persisted record.
+  const transact=db.$transaction;
+  db.$transaction=fn=>transact.call(db,async tx=>{await fn(tx);throw Error('Injected rollback');});
+  try{const result=await api('va','/leave','POST',{hostUserId:'vc'});assert.equal(result.status,500);}finally{db.$transaction=transact;}
+  assert.equal(await db.visitRecord.count(),before);await new Promise(r=>setTimeout(r,40));assert.equal(events.length,0);
+ }finally{socket.disconnect();observer.disconnect();}
+});

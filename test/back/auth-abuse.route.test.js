@@ -10,7 +10,8 @@ process.env.TRUST_PROXY = 'loopback';
 const { app } = await import('../../server.js');
 
 async function fixture(t) {
-  const original = prisma.user.findUnique;
+  const original = prisma.user.findUnique, originalDeletion = prisma.accountDeletion.findUnique;
+  prisma.accountDeletion.findUnique = async () => null;
   const counts = { verification: 0, profiles: 0 };
   setFirebaseTokenVerifierForTests(async token => {
     counts.verification++;
@@ -25,7 +26,7 @@ async function fixture(t) {
   const server = app.listen(0, '127.0.0.1');
   await new Promise(resolve => server.once('listening', resolve));
   t.after(async () => {
-    prisma.user.findUnique = original; setFirebaseTokenVerifierForTests();
+    prisma.user.findUnique = original; prisma.accountDeletion.findUnique = originalDeletion; setFirebaseTokenVerifierForTests();
     await new Promise(resolve => server.close(resolve));
   });
   return {

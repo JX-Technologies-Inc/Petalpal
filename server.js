@@ -137,7 +137,7 @@ if (process.env.NATIVE_SECURITY_TEST === '1') {
 }
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
-const { general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
+const { admission: admissionRateLimit, general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
 
 app.use((req, res, next) => {
   req.requestId = requestId();
@@ -266,11 +266,13 @@ app.use(cors({
   origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
-// Authenticate and rate-limit before accepting the larger voice-only body.
-app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
+// Admit before Firebase/profile work; authenticate and apply user/AI limits
+// before accepting the larger voice-only body. These early routes terminate
+// here, so each request consumes the shared admission budget exactly once.
+app.post("/speech/transcribe", admissionRateLimit, authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
   requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
-app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
+app.put("/users/:userId/journals/:journalId/cover", admissionRateLimit, authenticateRequest, generalRateLimit,
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
   requireJsonContentType, express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
     let coverImage;
@@ -347,7 +349,9 @@ app.use((req, res, next) => {
     return next();
   }
 
-  return authenticateRequest(req, res, next);
+  // Public/session setup exceptions retain their existing handling above.
+  // Service-executor routes terminate earlier and have separate workload policy.
+  return admissionRateLimit(req, res, () => authenticateRequest(req, res, next));
 });
 app.use(generalRateLimit);
 
@@ -2911,6 +2915,7 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
     }
     res.json(filterSocialPayload(result.flower, await hiddenSocialIds(prisma, req.auth.userId)));
   } catch (error) {
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
     if (error instanceof FlowerSupportError) {
       return res.status(error.status).json({ error: error.message, code: error.code });
     }
@@ -3058,13 +3063,15 @@ app.post("/visit", async (req, res) => {
       const host = await tx.user.findUnique({ where: { id: hostUserId } });
       const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
       if (!visitor) throw new SocialAccessError("User not found", 404);
+      await requireCommunityAcceptance(tx, visitorUserId);
+      assertSocialContent(visitor.name);
+      assertSocialContent(visitor.avatar || "🦋");
       const hostGarden = await ensureGarden(host.id, tx);
       const newVisitRecord = await tx.visitRecord.create({
         data: {
           visitorId: visitor.id,
           visitorName: visitor.name,
           visitorAvatar:
-            visitorAvatar ||
             visitor.avatar ||
             "🦋",
           action: "started visiting your garden",
@@ -3089,13 +3096,13 @@ app.post("/visit", async (req, res) => {
       if (existing) {
         existing.x = x;
         existing.y = y;
-        existing.avatar = visitorAvatar || visitor.avatar;
+        existing.avatar = visitor.avatar || "🦋";
         existing.name = visitor.name;
       } else {
         visitors.push({
           visitorId: visitor.id,
           name: visitor.name,
-          avatar: visitorAvatar || visitor.avatar,
+          avatar: visitor.avatar || "🦋",
           x,
           y,
         });
@@ -3114,10 +3121,11 @@ app.post("/visit", async (req, res) => {
         record: result.newVisitRecord
       });
 
-    res.json({ success: true, activeVisitors: result.activeVisitors, visitRecords: result.visitRecords });
+    res.json(filterSocialPayload({ success: true, activeVisitors: result.activeVisitors, visitRecords: result.visitRecords }, await hiddenSocialIds(prisma, visitorUserId)));
   } catch (err) {
     if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
     if (sendSocialError(res, err)) return;
+    if (err?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,err));
     logServerError("POST /visit error", err);
     res.status(500).json({ error: "Failed to visit garden" });
   }
@@ -3139,6 +3147,9 @@ app.post("/visit/move", async (req, res) => {
     const result = await withSocialAuthorization(prisma, hostUserId, visitorUserId, async tx => {
       const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
       if (!visitor) throw new SocialAccessError("User not found", 404);
+      await requireCommunityAcceptance(tx, visitorUserId);
+      assertSocialContent(visitor.name);
+      assertSocialContent(visitor.avatar || "🦋");
       const hostGarden = await ensureGarden(hostUserId, tx);
       const visitors = getActiveVisitors(hostGarden.id).map(v => ({ ...v }));
       const activeVisitor = visitors.find(
@@ -3152,9 +3163,7 @@ app.post("/visit/move", async (req, res) => {
       activeVisitor.x = x;
       activeVisitor.y = y;
 
-      if (visitorAvatar) {
-        activeVisitor.avatar = visitorAvatar;
-      }
+      activeVisitor.avatar = visitor.avatar || "🦋";
 
       setActiveVisitors(hostGarden.id, visitors);
       publishedGardenId = hostGarden.id;
@@ -3170,135 +3179,61 @@ app.post("/visit/move", async (req, res) => {
       return { movedVisitor, visitors };
     });
     realtime.to(`garden:${hostUserId}`).emit("avatarMoved", result.movedVisitor);
-    res.json({ success: true, activeVisitors: result.visitors });
+    res.json(filterSocialPayload({ success: true, activeVisitors: result.visitors }, await hiddenSocialIds(prisma, visitorUserId)));
 
   } catch (err) {
     if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
     if (sendSocialError(res, err)) return;
+    if (err?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,err));
     logServerError("POST /visit/move error", err);
     res.status(500).json({ error: "Failed to move visitor" });
   }
 });
 
 app.post("/leave", async (req, res) => {
-    try {
-      const {
-        hostUserId,
-        visitorAvatar
-      } = req.body;
-      const visitorUserId = req.auth.userId;
-      if (!validId(hostUserId)) {
-        return res.status(400).json({ error: "Invalid host user" });
+  let publishedGardenId;
+  try {
+    const { hostUserId, visitorAvatar } = req.body;
+    const visitorUserId = req.auth.userId;
+    if (!validId(hostUserId)) return res.status(400).json({ error: "Invalid host user" });
+    if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
+    const result = await withSocialLocks(prisma, [hostUserId, visitorUserId], async tx => {
+      await requireSocialPair(tx, hostUserId, visitorUserId);
+      const host = await tx.user.findUnique({ where: { id: hostUserId } });
+      const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
+      if (!host || !visitor) throw new SocialAccessError("User not found", 404);
+      if (!await canVisitGarden(tx, host, visitorUserId)) {
+        // Revoked visitors may remove only their own cached presence. No Garden
+        // contents, record, broadcast, or other visitor identity is returned.
+        const garden = await tx.garden.findUnique({ where: { ownerId: hostUserId }, select: { id: true } });
+        if (garden) setActiveVisitors(garden.id, getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorUserId));
+        return { cleanupOnly: true };
       }
-      if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
-        return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
-      }
-  
-      const [host, visitor] =
-        await Promise.all([
-          prisma.user.findUnique({
-            where: {
-              id: hostUserId
-            }
-          }),
-  
-          prisma.user.findUnique({
-            where: {
-              id: visitorUserId
-            }
-          })
-        ]);
-  
-      if (!host || !visitor) {
-        return res
-          .status(404)
-          .json({
-            error: "User not found"
-          });
-      }
-  
-      const hostGarden =
-        await ensureGarden(host.id);
-  
-      const currentVisitors =
-        getActiveVisitors(
-          hostGarden.id
-        );
-  
-      const remainingVisitors =
-        currentVisitors.filter(
-          (item) =>
-            item.visitorId !==
-            visitor.id
-        );
-  
-      setActiveVisitors(
-        hostGarden.id,
-        remainingVisitors
-      );
-  
-      const newVisitRecord =
-        await prisma.visitRecord.create({
-          data: {
-            visitorId: visitor.id,
-            visitorName: visitor.name,
-            visitorAvatar:
-              visitorAvatar ||
-              visitor.avatar ||
-              "🦋",
-            action:
-              "left your garden",
-            gardenId:
-              hostGarden.id,
-            userId:
-              visitor.id
-          }
-        });
-  
-      const payload = {
-        gardenOwnerId:
-          host.id,
-        visitorId:
-          visitor.id,
-        record:
-          newVisitRecord,
-        activeVisitors:
-          remainingVisitors
-      };
-  
-      realtime
-        .to(`garden:${host.id}`)
-        .to(`user:${host.id}`)
-        .emit(
-          "visitorLeft",
-          payload
-        );
-  
-      realtime
-        .to(`garden:${host.id}`)
-        .to(`user:${host.id}`)
-        .emit(
-          "visitRecordAdded",
-          payload
-        );
-  
-      res.json({
-        success: true,
-        activeVisitors:
-          remainingVisitors,
-        record:
-          newVisitRecord
-      });
-  
-    } catch (err) {
-      logServerError("POST /leave error", err);
-  
-      res.status(500).json({
-        error:
-          "Failed to leave garden"
-      });
-    }
-  });
+      await requireCommunityAcceptance(tx, visitorUserId);
+      assertSocialContent(visitor.name);
+      assertSocialContent(visitor.avatar || "🦋");
+      const garden = await ensureGarden(host.id, tx);
+      const remaining = getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorUserId);
+      const record = await tx.visitRecord.create({ data: {
+        visitorId: visitor.id, visitorName: visitor.name, visitorAvatar: visitor.avatar || "🦋",
+        action: "left your garden", gardenId: garden.id, userId: visitor.id
+      } });
+      setActiveVisitors(garden.id, remaining);
+      publishedGardenId = garden.id;
+      return { gardenOwnerId: host.id, visitorId: visitor.id, record, activeVisitors: remaining };
+    });
+    if (result.cleanupOnly) return res.json({ success: true, activeVisitors: [], record: null });
+    await realtime.to(`garden:${hostUserId}`).to(`user:${hostUserId}`).emit("visitorLeft", result);
+    await realtime.to(`garden:${hostUserId}`).to(`user:${hostUserId}`).emit("visitRecordAdded", result);
+    res.json(filterSocialPayload({ success: true, activeVisitors: result.activeVisitors, record: result.record }, await hiddenSocialIds(prisma, visitorUserId)));
+  } catch (error) {
+    if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
+    if (sendSocialError(res, error)) return;
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
+    logServerError("POST /leave error", error);
+    res.status(500).json({ error: "Failed to leave Garden" });
+  }
+});
 
 app.post("/analyze-mood", aiRateLimit, async (req, res) => {
   try {

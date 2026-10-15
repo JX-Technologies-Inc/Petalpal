@@ -6,7 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
-import { sendSocialError } from "../../lib/garden-access.js";
+import { filterSocialPayload, hiddenSocialIds, sendSocialError } from "../../lib/garden-access.js";
 import { PGlite } from "@electric-sql/pglite";
 import { vector } from "@electric-sql/pglite/vector";
 import {
@@ -16,6 +16,8 @@ import {
   giveFlowerSupport,
   withGardenFlowerSupportState
 } from "../../lib/flower-support.js";
+
+import { contentSafetyResponse, CONTENT_REJECTED } from "../../lib/content-safety.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -40,9 +42,15 @@ function prismaAdapter(database, fault = { failIncrement: false }) {
   }
   return {
     $queryRawUnsafe: async (sql, ...params) => (await database.query(sql, params)).rows,
+    userBlock: {
+      findFirst: ({where}) => first('SELECT "blockerId" FROM "UserBlock" WHERE ("blockerId"=$1 AND "blockedId"=$2) OR ("blockerId"=$2 AND "blockedId"=$1)',[where.OR[0].blockerId,where.OR[0].blockedId]),
+      findMany: async ({where}) => (await database.query('SELECT * FROM "UserBlock" WHERE "blockerId"=$1 OR "blockedId"=$1',[where.OR[0].blockerId])).rows
+    },
     friendship: { findUnique: ({ where }) => first('SELECT id FROM "Friendship" WHERE "userId"=$1 AND "friendId"=$2', [where.userId_friendId.userId, where.userId_friendId.friendId]) },
     user: {
-      findUnique: ({ where }) => first('SELECT * FROM "User" WHERE "id" = $1', [where.id])
+      findUnique: ({ where }) => first('SELECT * FROM "User" WHERE "id" = $1', [where.id]),
+      findFirst: ({where}) => first('SELECT id FROM "User" WHERE "socialRestricted"=true AND id=ANY($1::text[])',[where.id.in]),
+      findMany: async () => (await database.query('SELECT id FROM "User" WHERE "socialRestricted"=true')).rows
     },
     flower: {
       findFirst: async ({ where }) => includeFlower(await first(
@@ -96,7 +104,7 @@ async function routeHandlers(database, events) {
     },
     prisma: database,
     io, realtime: io, requireSocialGardenAccess: (_req, _res, next) => next(), sendSocialError,
-    getFlowerDetail,
+    getFlowerDetail, filterSocialPayload, hiddenSocialIds, contentSafetyResponse, CONTENT_REJECTED,
     giveFlowerSupport,
     FlowerSupportError,
     MAX_AVATAR_LENGTH: 256,
@@ -136,7 +144,8 @@ test("a competing committed record returns its current count rather than the ear
     user: { findUnique: async () => ({ id: "visitor", timezone: "UTC", name: "Visitor" }) },
     $transaction: async (callback) => callback({
       $queryRawUnsafe: async () => [],
-      user: { findUnique: async () => ({ id: "owner", allowGardenVisits: true }) },
+      user: { findUnique: async () => ({ id: "owner", allowGardenVisits: true, communityTermsVersion: "petalpal-community-2026-10-15" }), findFirst: async () => null },
+      userBlock: { findFirst: async () => null },
       friendship: { findUnique: async () => ({ id: "confirmed" }) },
       flower: { findFirst: async () => ({
         id: "flower-x", userId: "owner", gardenId: "garden-owner",
@@ -178,6 +187,7 @@ test("Daily Support reuses persisted visit history with atomic counts and author
       INSERT INTO "User" ("id", "name", "timezone") VALUES
         ('owner', 'Owner', 'UTC'), ('visitor', 'Visitor', 'America/Vancouver'),
         ('other-visitor', 'Other Visitor', 'UTC');
+      UPDATE "User" SET "communityTermsVersion"='petalpal-community-2026-10-15';
       INSERT INTO "Friendship" (id, "userId", "friendId") VALUES
         ('friend-a', 'owner', 'visitor'), ('friend-b', 'visitor', 'owner'),
         ('friend-c', 'owner', 'other-visitor'), ('friend-d', 'other-visitor', 'owner');
