@@ -1,3 +1,10 @@
+import { requestAccountDeletion } from './lib/account-deletion-workflow.js';
+import { aiDisclosure, AI_DISCLOSURE_VERSION } from './lib/ai-disclosure.js';
+import { installAiOutputReporting } from './lib/ai-output-reporting.js';
+import { assertContentAllowed, contentSafetyResponse, CONTENT_REJECTED } from './lib/content-safety.js';
+import { COMMUNITY_VERSION, assertSocialContent, requireCommunityAcceptance, installCommunityPolicy } from './lib/community-policy.js';
+import { installSocialSafety } from "./lib/social-safety.js";
+import { requireSocialPair, hiddenSocialIds, filterSocialPayload } from "./lib/garden-access.js";
 import { isWebShellRequest } from "./lib/web-shell.js";
 import { parseJournalPage, journalPageCursor } from "./lib/journal-pagination.js";
 import { updateAiConsent } from "./lib/ai-consent.js";
@@ -130,7 +137,7 @@ if (process.env.NATIVE_SECURITY_TEST === '1') {
 }
 const PORT = Number(process.env.PORT) || 3000;
 const server = http.createServer(app);
-const { general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
+const { admission: admissionRateLimit, general: generalRateLimit, auth: authRateLimit, authAccount: authAccountRateLimit, ai: aiRateLimit } = rateLimiters();
 
 app.use((req, res, next) => {
   req.requestId = requestId();
@@ -259,11 +266,13 @@ app.use(cors({
   origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
-// Authenticate and rate-limit before accepting the larger voice-only body.
-app.post("/speech/transcribe", authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
+// Admit before Firebase/profile work; authenticate and apply user/AI limits
+// before accepting the larger voice-only body. These early routes terminate
+// here, so each request consumes the shared admission budget exactly once.
+app.post("/speech/transcribe", admissionRateLimit, authenticateRequest, generalRateLimit, aiRateLimit, speechAdmission(),
   requireJsonContentType, express.json({ limit: "12mb" }), requireJsonObject, allowBodyFields(["audio", "mimeType"]), speechTranscriptionHandler());
 // This owner-only photo route is the sole Journal path accepting a larger body.
-app.put("/users/:userId/journals/:journalId/cover", authenticateRequest, generalRateLimit,
+app.put("/users/:userId/journals/:journalId/cover", admissionRateLimit, authenticateRequest, generalRateLimit,
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
   requireJsonContentType, express.json({ limit: "700kb" }), requireJsonObject, allowBodyFields(["coverImage"]), async (req, res) => {
     let coverImage;
@@ -340,7 +349,9 @@ app.use((req, res, next) => {
     return next();
   }
 
-  return authenticateRequest(req, res, next);
+  // Public/session setup exceptions retain their existing handling above.
+  // Service-executor routes terminate earlier and have separate workload policy.
+  return admissionRateLimit(req, res, () => authenticateRequest(req, res, next));
 });
 app.use(generalRateLimit);
 
@@ -354,7 +365,7 @@ function setActiveVisitors(gardenId, visitors) {
   activeVisitorsByGarden[gardenId] = visitors;
 }
 
-const AI_TERMS_VERSION = "2026-08-25";
+const AI_TERMS_VERSION = AI_DISCLOSURE_VERSION;
 const REPORT_CATEGORIES = new Set([
   "HARASSMENT",
   "HATE_SPEECH",
@@ -694,14 +705,24 @@ async function getGardenResponse(userId, { includePrivate = false, viewerUserId 
     },
   });
 
-  return serializeGardenResponse({
+  return filterSocialPayload(serializeGardenResponse({
     owner: user,
     garden: { ...fullGarden, flowers: await withGardenFlowerSupportState(database, fullGarden.flowers, viewerUserId) },
     activeVisitors: getActiveVisitors(fullGarden.id),
     includePrivate
-  });
+  }), await hiddenSocialIds(database, viewerUserId));
 }
 
+
+installCommunityPolicy(app, prisma);
+installAiOutputReporting(app, prisma);
+app.get("/ai/disclosure", (_req,res) => res.json(aiDisclosure()));
+installSocialSafety(app, { db: prisma, realtime, clearVisitors: async (tx, a, b) => {
+  for (const [ownerId, visitorId] of [[a,b],[b,a]]) {
+    const garden = await tx.garden.findUnique({ where: { ownerId }, select: { id: true } });
+    if (garden) setActiveVisitors(garden.id, getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorId));
+  }
+} });
 
 app.get("/users", async (req, res) => {
   try {
@@ -717,7 +738,8 @@ app.get("/users", async (req, res) => {
       take: 100,
     });
 
-    res.json(users);
+    const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+    res.json(users.filter(user => !hidden.has(user.id)));
   } catch (err) {
     logServerError("GET /users error", err);
     res.status(500).json({ error: "Failed to get users" });
@@ -765,7 +787,8 @@ app.get("/users/search", async (req, res) => {
         take: 20
       });
   
-      res.json(users);
+      const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+    res.json(users.filter(user => !hidden.has(user.id)));
   
     } catch (err) {
   
@@ -831,6 +854,7 @@ app.get("/users/:userId/garden-access", async (req, res) => {
 
 app.get("/users/:userId", async (req, res) => {
   try {
+    await requireSocialPair(prisma, req.auth.userId, req.params.userId);
     const user = await prisma.user.findUnique({
       where: {
         id: req.params.userId,
@@ -853,6 +877,7 @@ app.get("/users/:userId", async (req, res) => {
         : {}),
     });
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("GET /users/:userId error", err);
     res.status(500).json({ error: "Failed to get user" });
   }
@@ -889,7 +914,8 @@ app.get("/users/:userId/friends", async (req, res) => {
       take: 500,
     });
 
-    res.json(friendships.map((item) => item.friend));
+    const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+    res.json(friendships.map((item) => item.friend).filter(user => !hidden.has(user.id)));
   } catch (err) {
     logServerError("GET /users/:userId/friends error", err);
     res.status(500).json({ error: "Failed to get friends" });
@@ -923,7 +949,7 @@ app.get("/users/:userId/garden", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json(gardenResponse);
+    res.json(filterSocialPayload(gardenResponse, await hiddenSocialIds(prisma, req.auth.userId)));
   } catch (err) {
     if (sendSocialError(res, err)) return;
     logServerError("GET /users/:userId/garden error", err);
@@ -939,6 +965,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
       });
     }
 
+    if (await prisma.accountDeletion.findUnique({where:{firebaseUid:identity.uid},select:{userId:true}})) return res.status(403).json({error:"Account deletion is pending or complete",code:"ACCOUNT_DELETED"});
     const normalizedEmail = identity.email.trim().toLowerCase();
     let user = await prisma.user.findUnique({
       where: { firebaseUid: identity.uid }
@@ -978,6 +1005,9 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
         if (!validOptionalString(req.body?.avatar, MAX_AVATAR_LENGTH)) {
           return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
         }
+        if (req.body.communityTermsVersion !== COMMUNITY_VERSION) return res.status(428).json({error:'Accept the Community Guidelines before creating a public profile.',code:'COMMUNITY_ACCEPTANCE_REQUIRED'});
+        assertSocialContent(requestedName);
+        assertSocialContent(req.body.avatar || '🦋');
         const now = Date.now();
         const timezone = normalizeTimezone(req.body?.timezone) || "UTC";
         const preferredLocale = req.body?.preferredLocale === undefined
@@ -997,6 +1027,8 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
             accountId: `PP${String(now).slice(-8)}`,
             firebaseUid: identity.uid,
             name: requestedName,
+            communityTermsVersion: COMMUNITY_VERSION,
+            communityAcceptedAt: new Date(),
             email: normalizedEmail,
             emailVerifiedAt: new Date(),
             avatar: req.body?.avatar || "🦋",
@@ -1007,8 +1039,8 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
             aiConsent: {
               create: {
                 termsVersion: AI_TERMS_VERSION,
-                aiProcessing: Boolean(req.body?.aiConsent),
-                grantedAt: req.body?.aiConsent ? new Date() : null
+                aiProcessing: false,
+                grantedAt: null
               }
             },
             subscriptionEntitlement: { create: {} }
@@ -1032,6 +1064,7 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
       fairyEvent
     });
   } catch (error) {
+    if (error?.code === "CONTENT_REJECTED") return res.status(422).json({error:"Please choose a profile that follows the Community Guidelines.",code:error.code});
     logServerError("POST /auth/session error", error);
     return res.status(500).json({ error: "Unable to create PetalPal session" });
   }
@@ -1367,6 +1400,8 @@ app.post("/legacy-register-disabled", async (req, res) => {
         return res.status(400).json({ error: `Avatar must be 1-${MAX_AVATAR_LENGTH} characters` });
       }
   
+      await requireCommunityAcceptance(prisma, userId);
+      assertSocialContent(avatar);
       const user = await prisma.user.update({
         where: {
           id: userId
@@ -1378,6 +1413,7 @@ app.post("/legacy-register-disabled", async (req, res) => {
   
       res.json(user);
     } catch (err) {
+      if (err?.code === "CONTENT_REJECTED" || sendSocialError(res, err)) { if (!res.headersSent) res.status(422).json({error:"Please revise your profile.",code:err.code}); return; }
       logServerError("PUT /users/avatar error", err);
   
       res.status(500).json({
@@ -1489,6 +1525,7 @@ app.post("/users/:userId/journals",
     return res.status(400).json({ error: "Write something before saving your journal" });
   }
   if (content.length > 2000) return res.status(413).json({ error: "Journal must be 2000 characters or fewer" });
+  try { assertContentAllowed(content); } catch (error) { if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error)); throw error; }
   const journal = await prisma.journal.create({
     data: { userId: req.auth.userId, content: content.trim() }
   });
@@ -1774,12 +1811,13 @@ app.get("/users/:userId/ai-consent", async (req, res) => {
 
 app.put("/users/:userId/ai-consent",
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
-  allowBodyFields(["aiProcessing", "personalization", "memoryEnabled"]), async (req, res) => {
+  allowBodyFields(["aiProcessing", "personalization", "memoryEnabled", "disclosureVersion"]), async (req, res) => {
 
   if (!hasOnlyBooleans(req.body, ["aiProcessing", "personalization", "memoryEnabled"])) {
     return res.status(400).json({ error: "AI consent fields must be booleans" });
   }
 
+  if (req.body.aiProcessing === true && req.body.disclosureVersion !== AI_DISCLOSURE_VERSION) return res.status(428).json({error:"Read the current AI processing disclosure before enabling AI.",code:"AI_DISCLOSURE_REQUIRED"});
   const aiProcessing = Boolean(req.body.aiProcessing);
   const personalization = aiProcessing && Boolean(req.body.personalization);
   const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
@@ -1832,8 +1870,12 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
     { attempted: false, status: "SKIPPED", fallbackReason: "FEATURE_DISABLED" });
   let result;
   let inferenceStarted = false;
+  let processingEpoch = null;
   try {
     const reservation = await aiCostGate.reserve({ identity: { userId }, action: "EVENT_EMOTION", key: eventId ? `${eventId}:${EVENT_SECONDARY_MODEL_VERSION}` : null });
+    if (new Date(reservation.consentUpdatedAt).getTime() !== new Date(createdConsentUpdatedAt).getTime()) throw Object.assign(new Error("Consent changed"), {code:"AI_FORBIDDEN"});
+    await aiCostGate.checkProcessingConsent({ identity: { userId }, consentUpdatedAt: reservation.consentUpdatedAt });
+    processingEpoch = reservation.consentUpdatedAt;
     inferenceStarted = true;
     result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood,
       ...(includeDiagnostics ? { includeDiagnostics: true } : {}) });
@@ -1847,7 +1889,7 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
   if (labels === null) return withEmotionLabDiagnostics(
     { status: "FAILED", labels: [], latencyMs: result?.latencyMs || 0, fallbackReason: "INVALID_MODEL_OUTPUT" }, includeDiagnostics,
     { ...result?.diagnostics, attempted: true, status: "INVALID_RESPONSE", fallbackReason: "INVALID_MODEL_OUTPUT", validatedLabels: [] });
-  return withEmotionLabDiagnostics({ ...result, labels }, includeDiagnostics);
+  return withEmotionLabDiagnostics({ ...result, labels, consentUpdatedAt: processingEpoch }, includeDiagnostics);
 }
 
 function eventEmotionMetadata(emotion) {
@@ -1902,8 +1944,7 @@ async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed,
     return { emotion: safeEmotion, flower };
   };
   try {
-    return !haikuSelected ? await persist(prisma, emotion)
-      : await withHaikuEventWriteFence(prisma, { event, emotion }, persist);
+    return await withHaikuEventWriteFence(prisma, { event, emotion }, persist);
   } catch {
     console.info("Event enrichment persistence failed", { eventId: event.id, status: "FAILED" });
     try {
@@ -1982,6 +2023,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (error?.code === "INVALID_IDEMPOTENCY_KEY" || error?.code === "INVALID_EVENT") {
       return res.status(400).json({ error: error.message });
     }
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
     if (error?.code === "EVENT_TOO_LARGE") return res.status(413).json({ error: error.message });
     if (error?.code === "IDEMPOTENCY_CONFLICT") return res.status(409).json({ error: error.message });
     logServerError("POST /events error", error);
@@ -2218,261 +2260,6 @@ app.get("/users/:userId/subscription", async (req, res) => {
   res.json(entitlement);
 });
 
-app.post("/reports", async (req, res) => {
-  const { reportedUserId, messageId, category, details } = req.body;
-
-  if ((reportedUserId !== undefined && !validId(reportedUserId)) ||
-      (messageId !== undefined && !validId(messageId))) {
-    return res.status(400).json({ error: "Invalid reported resource identifier" });
-  }
-  if (!validOptionalString(details, MAX_REPORT_DETAILS_LENGTH)) {
-    return res.status(413).json({ error: `Report details must be ${MAX_REPORT_DETAILS_LENGTH} characters or fewer` });
-  }
-
-  if (!REPORT_CATEGORIES.has(category)) {
-    return res.status(400).json({ error: "Invalid report category" });
-  }
-
-  if (!reportedUserId && !messageId) {
-    return res.status(400).json({
-      error: "A reported user or message is required"
-    });
-  }
-
-  if (reportedUserId === req.auth.userId) {
-    return res.status(400).json({ error: "You cannot report yourself" });
-  }
-
-  const [reportedUser, message] = await Promise.all([
-    reportedUserId
-      ? prisma.user.findUnique({ where: { id: reportedUserId } })
-      : Promise.resolve(null),
-    messageId
-      ? prisma.message.findUnique({ where: { id: messageId } })
-      : Promise.resolve(null)
-  ]);
-
-  if ((reportedUserId && !reportedUser) || (messageId && !message)) {
-    return res.status(404).json({ error: "Reported content was not found" });
-  }
-
-  const report = await prisma.report.create({
-    data: {
-      reporterId: req.auth.userId,
-      reportedUserId: reportedUserId || null,
-      messageId: messageId || null,
-      category,
-      details:
-        typeof details === "string" && details.trim()
-          ? details.trim()
-          : null
-    }
-  });
-
-  res.status(201).json(report);
-});
-
-// =========================================================
-// FRIEND REQUESTS
-// =========================================================
-
-// Send a friend request
-app.post("/friends/request", async (req, res) => {
-    try {
-      const {
-        receiverId
-      } = req.body;
-      const senderId = req.auth.userId;
-  
-      if (!senderId || !receiverId) {
-        return res.status(400).json({
-          error: "Sender and receiver are required"
-        });
-      }
-      if (!validId(receiverId)) {
-        return res.status(400).json({ error: "Invalid receiver" });
-      }
-  
-      if (
-        String(senderId) ===
-        String(receiverId)
-      ) {
-        return res.status(400).json({
-          error: "You cannot send a friend request to yourself"
-        });
-      }
-  
-      const [sender, receiver] =
-        await Promise.all([
-          prisma.user.findUnique({
-            where: {
-              id: senderId
-            }
-          }),
-  
-          prisma.user.findUnique({
-            where: {
-              id: receiverId
-            }
-          })
-        ]);
-  
-      if (!sender || !receiver) {
-        return res.status(404).json({
-          error: "User not found"
-        });
-      }
-  
-      // Check whether they are already friends
-      const existingFriendship =
-        await prisma.friendship.findFirst({
-          where: {
-            OR: [
-              {
-                userId: senderId,
-                friendId: receiverId
-              },
-              {
-                userId: receiverId,
-                friendId: senderId
-              }
-            ]
-          }
-        });
-  
-      if (existingFriendship) {
-        return res.status(409).json({
-          error: "You are already friends"
-        });
-      }
-  
-      // Check for an outgoing pending request
-      const existingOutgoingRequest =
-        await prisma.friendRequest.findUnique({
-          where: {
-            senderId_receiverId: {
-              senderId,
-              receiverId
-            }
-          }
-        });
-  
-      if (
-        existingOutgoingRequest &&
-        existingOutgoingRequest.status ===
-          "pending"
-      ) {
-        return res.status(409).json({
-          error: "Friend request already sent"
-        });
-      }
-  
-      // Check whether the other user already sent a request
-      const existingIncomingRequest =
-        await prisma.friendRequest.findUnique({
-          where: {
-            senderId_receiverId: {
-              senderId: receiverId,
-              receiverId: senderId
-            }
-          }
-        });
-  
-      if (
-        existingIncomingRequest &&
-        existingIncomingRequest.status ===
-          "pending"
-      ) {
-        return res.status(409).json({
-          error:
-            "This user has already sent you a friend request. Check your incoming requests."
-        });
-      }
-  
-      let friendRequest;
-  
-      if (existingOutgoingRequest) {
-        friendRequest =
-          await prisma.friendRequest.update({
-            where: {
-              id: existingOutgoingRequest.id
-            },
-            data: {
-              status: "pending"
-            },
-            include: {
-              sender: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              },
-              receiver: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              }
-            }
-          });
-      } else {
-        friendRequest =
-          await prisma.friendRequest.create({
-            data: {
-              senderId,
-              receiverId,
-              status: "pending"
-            },
-            include: {
-              sender: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              },
-              receiver: {
-                select: {
-                  id: true,
-                  name: true,
-                  accountId: true,
-                  avatar: true
-                }
-              }
-            }
-          });
-      }
-  
-      // Optional real-time notification for the receiver
-      realtime
-  .to(`user:${senderId}`)
-  .to(`user:${receiverId}`)
-  .emit("friendRequestUpdated", {
-    type: "request-sent",
-    request: friendRequest,
-    senderId,
-    receiverId
-  });
-  
-      res.status(201).json({
-        success: true,
-        message: "Friend request sent",
-        request: friendRequest
-      });
-    } catch (err) {
-      logServerError("POST /friends/request error", err);
-  
-      res.status(500).json({
-        error: "Failed to send friend request"
-      });
-    }
-  });
-  
   // Get incoming and outgoing requests
   app.get(
     "/friends/requests/:userId",
@@ -2541,10 +2328,8 @@ app.post("/friends/request", async (req, res) => {
             })
           ]);
   
-        res.json({
-          incoming,
-          outgoing
-        });
+        const hidden = await hiddenSocialIds(prisma, req.auth.userId);
+        res.json(filterSocialPayload({ incoming, outgoing }, hidden));
       } catch (err) {
         logServerError("GET /friends/requests/:userId error", err);
   
@@ -2605,6 +2390,7 @@ app.post("/friends/request", async (req, res) => {
   
         await withSocialLocks(prisma, [senderId, receiverId], async tx => {
           await tx.$queryRawUnsafe('SELECT id FROM "FriendRequest" WHERE id=$1 FOR UPDATE', friendRequest.id);
+          await requireSocialPair(tx, senderId, receiverId);
           const current = await tx.friendRequest.findUnique({ where: { id: friendRequest.id } });
           if (!current || current.status !== "pending" || current.senderId !== senderId || current.receiverId !== receiverId) {
             throw new SocialAccessError("Friend request not found or no longer pending", 404);
@@ -2830,6 +2616,7 @@ app.post("/users/:userId/flowers", aiRateLimit, async (req, res) => {
         event: journalText
       });
     } catch (error) {
+      if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
       if ([400, 403, 413].includes(error?.status)) {
         return res.status(error.status).json({ error: error.message });
       }
@@ -3126,8 +2913,9 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
       realtime.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
         .emit("visitRecordAdded", result.visitRecord);
     }
-    res.json(result.flower);
+    res.json(filterSocialPayload(result.flower, await hiddenSocialIds(prisma, req.auth.userId)));
   } catch (error) {
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
     if (error instanceof FlowerSupportError) {
       return res.status(error.status).json({ error: error.message, code: error.code });
     }
@@ -3187,9 +2975,10 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
           `message completed in ${Date.now() - startTime}ms`
         );
   
-        res.json(socialFlower);
+        res.json(filterSocialPayload(socialFlower, await hiddenSocialIds(prisma, visitorUserId)));
   
       } catch (err) {
+        if (err?.code === "CONTENT_REJECTED") return res.status(422).json({error:"Please revise this message to follow the Community Guidelines.",code:err.code});
         if (err instanceof FlowerSupportError) return res.status(err.status).json({ error: err.message });
     if (sendSocialError(res, err)) return;
         logServerError("POST /users/:userId/flowers/:flowerId/message error", err, {
@@ -3274,13 +3063,15 @@ app.post("/visit", async (req, res) => {
       const host = await tx.user.findUnique({ where: { id: hostUserId } });
       const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
       if (!visitor) throw new SocialAccessError("User not found", 404);
+      await requireCommunityAcceptance(tx, visitorUserId);
+      assertSocialContent(visitor.name);
+      assertSocialContent(visitor.avatar || "🦋");
       const hostGarden = await ensureGarden(host.id, tx);
       const newVisitRecord = await tx.visitRecord.create({
         data: {
           visitorId: visitor.id,
           visitorName: visitor.name,
           visitorAvatar:
-            visitorAvatar ||
             visitor.avatar ||
             "🦋",
           action: "started visiting your garden",
@@ -3305,13 +3096,13 @@ app.post("/visit", async (req, res) => {
       if (existing) {
         existing.x = x;
         existing.y = y;
-        existing.avatar = visitorAvatar || visitor.avatar;
+        existing.avatar = visitor.avatar || "🦋";
         existing.name = visitor.name;
       } else {
         visitors.push({
           visitorId: visitor.id,
           name: visitor.name,
-          avatar: visitorAvatar || visitor.avatar,
+          avatar: visitor.avatar || "🦋",
           x,
           y,
         });
@@ -3330,10 +3121,11 @@ app.post("/visit", async (req, res) => {
         record: result.newVisitRecord
       });
 
-    res.json({ success: true, activeVisitors: result.activeVisitors, visitRecords: result.visitRecords });
+    res.json(filterSocialPayload({ success: true, activeVisitors: result.activeVisitors, visitRecords: result.visitRecords }, await hiddenSocialIds(prisma, visitorUserId)));
   } catch (err) {
     if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
     if (sendSocialError(res, err)) return;
+    if (err?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,err));
     logServerError("POST /visit error", err);
     res.status(500).json({ error: "Failed to visit garden" });
   }
@@ -3355,6 +3147,9 @@ app.post("/visit/move", async (req, res) => {
     const result = await withSocialAuthorization(prisma, hostUserId, visitorUserId, async tx => {
       const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
       if (!visitor) throw new SocialAccessError("User not found", 404);
+      await requireCommunityAcceptance(tx, visitorUserId);
+      assertSocialContent(visitor.name);
+      assertSocialContent(visitor.avatar || "🦋");
       const hostGarden = await ensureGarden(hostUserId, tx);
       const visitors = getActiveVisitors(hostGarden.id).map(v => ({ ...v }));
       const activeVisitor = visitors.find(
@@ -3368,9 +3163,7 @@ app.post("/visit/move", async (req, res) => {
       activeVisitor.x = x;
       activeVisitor.y = y;
 
-      if (visitorAvatar) {
-        activeVisitor.avatar = visitorAvatar;
-      }
+      activeVisitor.avatar = visitor.avatar || "🦋";
 
       setActiveVisitors(hostGarden.id, visitors);
       publishedGardenId = hostGarden.id;
@@ -3386,135 +3179,61 @@ app.post("/visit/move", async (req, res) => {
       return { movedVisitor, visitors };
     });
     realtime.to(`garden:${hostUserId}`).emit("avatarMoved", result.movedVisitor);
-    res.json({ success: true, activeVisitors: result.visitors });
+    res.json(filterSocialPayload({ success: true, activeVisitors: result.visitors }, await hiddenSocialIds(prisma, visitorUserId)));
 
   } catch (err) {
     if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
     if (sendSocialError(res, err)) return;
+    if (err?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,err));
     logServerError("POST /visit/move error", err);
     res.status(500).json({ error: "Failed to move visitor" });
   }
 });
 
 app.post("/leave", async (req, res) => {
-    try {
-      const {
-        hostUserId,
-        visitorAvatar
-      } = req.body;
-      const visitorUserId = req.auth.userId;
-      if (!validId(hostUserId)) {
-        return res.status(400).json({ error: "Invalid host user" });
+  let publishedGardenId;
+  try {
+    const { hostUserId, visitorAvatar } = req.body;
+    const visitorUserId = req.auth.userId;
+    if (!validId(hostUserId)) return res.status(400).json({ error: "Invalid host user" });
+    if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
+    const result = await withSocialLocks(prisma, [hostUserId, visitorUserId], async tx => {
+      await requireSocialPair(tx, hostUserId, visitorUserId);
+      const host = await tx.user.findUnique({ where: { id: hostUserId } });
+      const visitor = await tx.user.findUnique({ where: { id: visitorUserId } });
+      if (!host || !visitor) throw new SocialAccessError("User not found", 404);
+      if (!await canVisitGarden(tx, host, visitorUserId)) {
+        // Revoked visitors may remove only their own cached presence. No Garden
+        // contents, record, broadcast, or other visitor identity is returned.
+        const garden = await tx.garden.findUnique({ where: { ownerId: hostUserId }, select: { id: true } });
+        if (garden) setActiveVisitors(garden.id, getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorUserId));
+        return { cleanupOnly: true };
       }
-      if (!validOptionalString(visitorAvatar, MAX_AVATAR_LENGTH)) {
-        return res.status(413).json({ error: `Avatar must be ${MAX_AVATAR_LENGTH} characters or fewer` });
-      }
-  
-      const [host, visitor] =
-        await Promise.all([
-          prisma.user.findUnique({
-            where: {
-              id: hostUserId
-            }
-          }),
-  
-          prisma.user.findUnique({
-            where: {
-              id: visitorUserId
-            }
-          })
-        ]);
-  
-      if (!host || !visitor) {
-        return res
-          .status(404)
-          .json({
-            error: "User not found"
-          });
-      }
-  
-      const hostGarden =
-        await ensureGarden(host.id);
-  
-      const currentVisitors =
-        getActiveVisitors(
-          hostGarden.id
-        );
-  
-      const remainingVisitors =
-        currentVisitors.filter(
-          (item) =>
-            item.visitorId !==
-            visitor.id
-        );
-  
-      setActiveVisitors(
-        hostGarden.id,
-        remainingVisitors
-      );
-  
-      const newVisitRecord =
-        await prisma.visitRecord.create({
-          data: {
-            visitorId: visitor.id,
-            visitorName: visitor.name,
-            visitorAvatar:
-              visitorAvatar ||
-              visitor.avatar ||
-              "🦋",
-            action:
-              "left your garden",
-            gardenId:
-              hostGarden.id,
-            userId:
-              visitor.id
-          }
-        });
-  
-      const payload = {
-        gardenOwnerId:
-          host.id,
-        visitorId:
-          visitor.id,
-        record:
-          newVisitRecord,
-        activeVisitors:
-          remainingVisitors
-      };
-  
-      realtime
-        .to(`garden:${host.id}`)
-        .to(`user:${host.id}`)
-        .emit(
-          "visitorLeft",
-          payload
-        );
-  
-      realtime
-        .to(`garden:${host.id}`)
-        .to(`user:${host.id}`)
-        .emit(
-          "visitRecordAdded",
-          payload
-        );
-  
-      res.json({
-        success: true,
-        activeVisitors:
-          remainingVisitors,
-        record:
-          newVisitRecord
-      });
-  
-    } catch (err) {
-      logServerError("POST /leave error", err);
-  
-      res.status(500).json({
-        error:
-          "Failed to leave garden"
-      });
-    }
-  });
+      await requireCommunityAcceptance(tx, visitorUserId);
+      assertSocialContent(visitor.name);
+      assertSocialContent(visitor.avatar || "🦋");
+      const garden = await ensureGarden(host.id, tx);
+      const remaining = getActiveVisitors(garden.id).filter(v => v.visitorId !== visitorUserId);
+      const record = await tx.visitRecord.create({ data: {
+        visitorId: visitor.id, visitorName: visitor.name, visitorAvatar: visitor.avatar || "🦋",
+        action: "left your garden", gardenId: garden.id, userId: visitor.id
+      } });
+      setActiveVisitors(garden.id, remaining);
+      publishedGardenId = garden.id;
+      return { gardenOwnerId: host.id, visitorId: visitor.id, record, activeVisitors: remaining };
+    });
+    if (result.cleanupOnly) return res.json({ success: true, activeVisitors: [], record: null });
+    await realtime.to(`garden:${hostUserId}`).to(`user:${hostUserId}`).emit("visitorLeft", result);
+    await realtime.to(`garden:${hostUserId}`).to(`user:${hostUserId}`).emit("visitRecordAdded", result);
+    res.json(filterSocialPayload({ success: true, activeVisitors: result.activeVisitors, record: result.record }, await hiddenSocialIds(prisma, visitorUserId)));
+  } catch (error) {
+    if (publishedGardenId) setActiveVisitors(publishedGardenId, getActiveVisitors(publishedGardenId).filter(v => v.visitorId !== req.auth.userId));
+    if (sendSocialError(res, error)) return;
+    if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
+    logServerError("POST /leave error", error);
+    res.status(500).json({ error: "Failed to leave Garden" });
+  }
+});
 
 app.post("/analyze-mood", aiRateLimit, async (req, res) => {
   try {
@@ -3581,21 +3300,10 @@ app.delete("/users/:id", async (req, res) => {
         return res.status(503).json({ error: "Account deletion is temporarily unavailable" });
       }
 
-      const deleted = await realtime.withRevocation({ userId: id }, () => prisma.$transaction(async (tx) => {
-        const user = await deleteAccountDataInTransaction(tx, { id });
-        if (!user) return false;
-        if (user.firebaseUid) await firebaseUserDeleter(user.firebaseUid);
-        return true;
-      }));
-
-      if (!deleted) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      res.json({
-        success: true,
-        message: "User deleted successfully"
-      });
+      const deletion = await realtime.withRevocation({ userId: id }, () => requestAccountDeletion(prisma,
+        { userId:id, firebaseUid:req.auth.firebaseUid }, firebaseUserDeleter));
+      res.status(deletion.success ? 200 : 202).json(deletion);
+      if (!deletion.success) return;
       try {
         await createAuditEvent({ eventType: "ACCOUNT_DELETION_COMPLETED", outcome: "COMPLETED", correlationId: req.requestId, actorUserId: req.auth.userId, targetClass: "account", targetSafeId: id, actionCode: "ACCOUNT_DELETION" });
       } catch {

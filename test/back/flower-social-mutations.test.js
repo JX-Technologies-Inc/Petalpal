@@ -67,6 +67,7 @@ function assertSocialFlower(flower) {
   assert.deepEqual(flower.messages[0], {
     id: message.id,
     author: message.author,
+    authorUserId: message.userId,
     text: message.text,
     createdAt: message.createdAt
   });
@@ -88,9 +89,15 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
     queryRaw: prisma.$queryRawUnsafe,
     transaction: prisma.$transaction
   };
+  const socialRestores = [];
+  for (const [model, method, value] of [['userBlock','findFirst',null],['userBlock','findMany',[]],['user','findFirst',null],['user','findMany',[]]]) {
+    const original=prisma[model][method]; prisma[model][method]=async()=>value;
+    socialRestores.push(()=>{prisma[model][method]=original;});
+  }
+  t.after(()=>socialRestores.forEach(restore=>restore()));
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? { id: "visitor-1" }
-    : { id: where.id, name: "Visitor", avatar: "🦋", allowGardenVisits: true };
+    : { id: where.id, name: "Visitor", avatar: "🦋", allowGardenVisits: true, communityTermsVersion: "petalpal-community-2026-10-15" };
   prisma.friendship.findUnique = async () => ({ id: "confirmed-friendship" });
   prisma.flower.findFirst = async () => privateFlower;
   prisma.flower.update = async () => privateFlower;
@@ -163,6 +170,7 @@ test("support and message HTTP/socket payloads expose only social Flower data", 
   assert.deepEqual(emitted.message, {
     id: message.id,
     author: message.author,
+    authorUserId: message.userId,
     text: message.text,
     createdAt: message.createdAt
   });

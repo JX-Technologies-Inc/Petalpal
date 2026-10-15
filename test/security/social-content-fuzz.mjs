@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 export async function socialCorpus(t, { prisma, replace, send, rawSend }) {
   const writes = [];
   const users = Object.fromEntries(['alice', 'bob', 'carol', 'dave', 'off', 'content', 'headers'].map(id => [id, {
-    id, name: id, accountId: id, avatar: '🦋', timezone: 'UTC', allowGardenVisits: id !== 'off',
+    id, name: id, accountId: id, communityTermsVersion: 'petalpal-community-2026-10-15', socialRestricted: false, avatar: '🦋', timezone: 'UTC', allowGardenVisits: id !== 'off',
     email: 'social-private-canary@example.test', garden: { id: 'garden-' + id, ownerId: id },
   }]));
   let friendships = [['bob', 'alice'], ['alice', 'bob'], ['off', 'alice'], ['alice', 'off']].map(([userId, friendId]) => ({ userId, friendId }));
@@ -39,6 +39,9 @@ export async function socialCorpus(t, { prisma, replace, send, rawSend }) {
     if (where.firebaseUid && !users[id]) users[id] = { ...users.content, id, name: id };
     return project(users[id], select, include);
   });
+  replace(prisma.userBlock, 'findFirst', async () => null);
+  replace(prisma.userBlock, 'findMany', async () => []);
+  replace(prisma.user, 'findFirst', async ({where,select}) => project(Object.values(users).find(row=>matches(row,where)),select));
   replace(prisma.user, 'findMany', async ({ where, select, take }) => Object.values(users).filter(row => matches(row, where)).slice(0, take).map(row => project(row, select)));
   replace(prisma.user, 'update', async ({ where, data, select }) => {
     writes.push({ model: 'user', where, data }); Object.assign(users[where.id], data); return project(users[where.id], select);
@@ -49,6 +52,8 @@ export async function socialCorpus(t, { prisma, replace, send, rawSend }) {
   replace(prisma.friendship, 'upsert', async ({ create }) => { writes.push({ model: 'friendship', data: create }); friendships.push({ ...create }); return create; });
   replace(prisma.friendship, 'deleteMany', async ({ where }) => { writes.push({ model: 'friendship-delete', where }); const old = friendships.length; friendships = friendships.filter(row => !matches(row, where)); return { count: old - friendships.length }; });
   replace(prisma.friendRequest, 'findUnique', async ({ where }) => pending.find(row => matches(row, where)) ?? null);
+  replace(prisma.friendRequest, 'findFirst', async ({where}) => pending.find(row=>matches(row,where)) ?? null);
+  replace(prisma.friendRequest, 'upsert', async ({where,create,update,include}) => {const row=pending.find(row=>matches(row,where));if(row){writes.push({model:'request',data:update});Object.assign(row,update);return project(row,undefined,include);}return prisma.friendRequest.create({data:create,include});});
   replace(prisma.friendRequest, 'findMany', async ({ where, include }) => pending.filter(row => matches(row, where)).map(row => project(row, undefined, include)));
   replace(prisma.friendRequest, 'create', async ({ data, include }) => { writes.push({ model: 'request', data }); const row = { id: 'created-' + writes.length, ...data }; pending.push(row); return project(row, undefined, include); });
   for (const method of ['delete', 'deleteMany']) replace(prisma.friendRequest, method, async ({ where }) => { writes.push({ model: 'request-delete', where }); pending = pending.filter(row => !matches(row, where)); return { count: 1 }; });

@@ -44,6 +44,7 @@ for (const [name, delegate] of Object.entries(prisma)) {
   }
 }
 for (const method of ['$transaction', '$queryRaw', '$queryRawUnsafe', '$executeRaw', '$executeRawUnsafe', '$connect']) replace(prisma, method, failDb(method));
+replace(prisma.accountDeletion, 'findUnique', async () => null);
 replace(prisma.user, 'findUnique', async ({ where }) => ({ id: where.firebaseUid ?? where.id, name: 'Fixture', email: 'fixture@example.test' }));
 const records = [{ id: 'owner-event', ownerId: 'owner', content: 'owner-private' }, { id: 'other-event', ownerId: 'other', content: 'other-private-canary' }];
 const findPrivate = async ({ where }) => {

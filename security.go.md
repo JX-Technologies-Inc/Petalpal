@@ -1,0 +1,13 @@
+# Unified release candidate gate — 2026-10-15
+
+Scope: local integration of pinned App Store candidate 7fa0a81, PR #59 933200a and PR #60 993dae8. No production or store approval is granted by this document.
+
+Local validation is recorded in docs/APP_STORE_RELEASE_READINESS.md and SECURITY.md. Rollout requires docs/release/INTEGRATION_ROLLOUT.md, including all old API/worker instances drained and stopped before migrations/new traffic. The four original migrations are unchanged; one additional disclosure-grant constraint migration closes old-backend regrant behavior and preserves deletion protections.
+
+CodeQL #29/#30 remain unresolved. The exact PR #60 head's findings check is FAILURE (two High annotations), while its JS/TS/Python/Actions analysis jobs and isolated regression jobs succeeded. Current integration middleware preserves admission before Firebase/profile work, followed by existing user/AI/concurrency limits and large-body parsing. Synthetic tests verify denied admission causes no Firebase/profile/database work. This supports the existing likely-false-positive review evidence; it does not close alerts. An independent authorized reviewer must inspect the two findings and decide whether correction or an approved false-positive disposition is appropriate. No dismissal, suppression, CodeQL configuration change or failed-check bypass was made. A fresh unified-head analysis is still required after any separately authorized publication.
+
+Store release remains NO-GO: signed builds/device acceptance, legal publisher, support/policy/deletion URLs and inbox delivery, audience/regions, final assets/rights, provider/retention decisions and staffed moderation/deletion operations are unverified. Draft PR publication, merge, deployment and App Store submission are separate decisions; this task authorizes only local preparation.
+
+Local validation: 36 focused, 17 auth/Support, 36 consent/deletion/realtime, 3 upgrade, 6 fresh API/socket, 34 PostgreSQL race and 6 CI-contract tests passed; DAST passed 17 tests / 261 loopback requests. Final security-runner completion and local checkpoint are recorded in docs/APP_STORE_RELEASE_READINESS.md. No failed hosted check is represented as passed.
+
+Final affected security runner: PASS (exit 0), 233/233 reported test executions across 23 subprocess summaries, zero failures/cancellations/skips. **GO for a Draft integration PR for independent review only**, with unresolved CodeQL #29/#30 disclosed. **NO-GO for merge, deployment or store submission** pending independent findings disposition, unified-head hosted checks and the listed human/operator gates. No publication occurred in this task.

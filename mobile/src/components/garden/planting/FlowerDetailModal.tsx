@@ -1,3 +1,6 @@
+import { AiOutputReport } from '../../features/AiPrivacySettings';
+import { CommunityGuidelines } from '../../features/CommunityGuidelines';
+import { SafetyActions } from '../../features/SafetyActions';
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -141,12 +144,13 @@ export default function FlowerDetailModal() {
             <Text style={styles.notesText}>{detail.meaning}</Text>
           </View> : null}
 
+          {selectedFlowerIsOwner && selectedFlower?.sourceEventId ? <AiOutputReport kind="event" outputId={selectedFlower.sourceEventId} /> : null}
           <Text style={styles.receivedSupport}>♥ Support received: {detail.supportCount}</Text>
           {detail.messages.length > 0 && <View style={styles.notesContainer}>
             <Text style={styles.detailLabel}>Messages</Text>
-            {detail.messages.map((message, index) => <Text key={message.id || index} style={styles.messageText}>
+            {detail.messages.map((message, index) => <View key={message.id || index}><Text style={styles.messageText}>
               {message.author || message.senderName || 'Friend'}: {message.text}{message.pending ? ' (sending...)' : ''}
-            </Text>)}
+            </Text>{message.id && !message.pending ? <SafetyActions messageId={message.id} userId={message.authorUserId || message.userId} onBlocked={closeFlowerDetail} /> : null}</View>)}
           </View>}
           {isDetailLoading && <Text style={styles.statusText}>Loading flower details…</Text>}
 
@@ -186,7 +190,7 @@ export default function FlowerDetailModal() {
             </Pressable>
             </>}
           </View>
-          {!selectedFlowerIsOwner && <View style={styles.messageForm}>
+          {!selectedFlowerIsOwner && <View style={styles.messageForm}><CommunityGuidelines />
             <TextInput accessibilityLabel="Leave a kind message" multiline maxLength={300}
               placeholder="Leave a kind message..." value={messageText} onChangeText={setMessageText}
               editable={!!currentUserId && !isDetailWorking} style={styles.messageInput} />

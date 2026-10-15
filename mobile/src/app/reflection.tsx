@@ -1,3 +1,5 @@
+import { EmotionalSafetyNote } from '../components/features/EmotionalSafetyNote';
+import { AiOutputReport } from '../components/features/AiPrivacySettings';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, ActivityIndicator, Animated, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -123,6 +125,8 @@ export default function Reflection() {
                 <Image source={require('../../assets/garden/environment/flowers/ivory_wildflowers.png')} resizeMode="contain" style={{ width: 105, height: 80, marginTop: 8, opacity: .8 }} accessible={false} />
               </View>}
               {currentDetail && <>
+                <EmotionalSafetyNote />
+                <AiOutputReport kind={type} outputId={currentDetail.id} />
                 {section === 'Summary' && <Text selectable style={s.body}>{currentDetail.summary || currentDetail.narrativeSections?.map(item => item.claim).join('\n\n') || 'No written reflection is available for this saved report.'}</Text>}
                 {(section === 'Summary' || section === 'Topics') && <>
                   <Text style={s.sectionHeading}>Your {title(type)} Themes</Text>

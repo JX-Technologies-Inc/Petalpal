@@ -49,6 +49,10 @@ test('persisted privacy enforces confirmed-friend reads, visits, direct access a
     const original = prisma[model][method]; restore.push(() => { prisma[model][method] = original; });
     prisma[model][method] = implementation;
   }
+  stub('userBlock', 'findFirst', async () => null);
+  stub('userBlock', 'findMany', async () => []);
+  stub('user', 'findFirst', async () => null);
+  stub('user', 'findMany', async () => []);
   const transaction = prisma.$transaction, raw = prisma.$queryRawUnsafe;
   restore.push(() => { prisma.$transaction = transaction; prisma.$queryRawUnsafe = raw; });
   // Single-connection fixture; independent PostgreSQL tests prove lock behavior.
@@ -59,7 +63,7 @@ test('persisted privacy enforces confirmed-friend reads, visits, direct access a
     const id = where.firebaseUid || where.id;
     const row = (await db.query('SELECT * FROM "User" WHERE id = $1', [id])).rows[0];
     if (!row) return null;
-    return project({ ...row, ...(include ? { garden: { id: 'garden-owner' } } : {}) }, select);
+    return project({ ...row, communityTermsVersion: "petalpal-community-2026-10-15", ...(include ? { garden: { id: 'garden-owner' } } : {}) }, select);
   });
   stub('user', 'update', async ({ where, data, select }) => {
     assert.deepEqual(Object.keys(data), ['allowGardenVisits']);

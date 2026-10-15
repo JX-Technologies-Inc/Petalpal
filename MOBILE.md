@@ -850,3 +850,9 @@ After intentional terrain/layout/infrastructure geometry changes, use a Python
 runtime with NumPy and Pillow to run `python3 scripts/bakeGardenGround.py` from
 `mobile/`; review both existing generated ground-mask files. This is local asset generation, not deployment or migration. Preserve historical checkpoint
 evidence; missing approved checkpoint files must not be invented as test fixtures.
+
+## App Store candidate — 2026-10-15
+
+Local candidate worktree: `/Users/xingranma/Documents/ChatGPT/jev/petalpal-appstore-release-readiness`, branch `codex/appstore-release-readiness`. Earlier device/Expo Go evidence above remains historical and does not verify this candidate. Do not use earlier production login steps as authorization for this release review.
+
+Production build metadata now comes from owner-verified variables in `mobile/app.config.js`; `mobile/eas.json` defines preview and store profiles. See `docs/release/STORE_SUBMISSION_CHECKLIST.md` for all required names, exact signing/operator steps and acceptance matrix. Missing production metadata fails the build configuration check; no identifiers or URLs were invented. Full Xcode/signing/device acceptance is NOT VERIFIED. The current Expo template icon/splash requires approved PetalPal assets.

@@ -47,6 +47,7 @@ const privateFlower = {
   messages: [{
     id: "message-1",
     author: "Friend",
+    authorUserId: "friend-1",
     text: "Beautiful!",
     createdAt: "2026-09-03T01:00:00.000Z",
     flowerId: "flower-1",
@@ -80,6 +81,7 @@ test("social garden response excludes Journal, AI and internal relation fields",
   assert.deepEqual(flower.messages[0], {
     id: "message-1",
     author: "Friend",
+    authorUserId: "friend-1",
     text: "Beautiful!",
     createdAt: "2026-09-03T01:00:00.000Z"
   });

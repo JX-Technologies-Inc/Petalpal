@@ -662,3 +662,18 @@ Supersedes prior TEST-not-run / TEST-not-live items only; all historical records
 
 - [x] Owner attests `petalpal-web-production` exists with Worker-level Access (all traffic, `xma38@jastrevia.com` only), workers.dev/Preview URLs off, no routes/domains, and a Worker-limited Editor token (attestation only; no screenshots reached the agent). Application version `d5a0c01d-f26f-4eca-af82-c7150978e39d` is active at 100% per workflow run 38172872348; fallback `e7947f5a-9eca-4fb1-b830-05e956a2cd7d` retained. Supersedes the "create Worker/token/environment" setup items above.
 - [ ] Still open (owner/provider): confirm old `DATABASE_URL` revocation; approve and add `https://app.jastrevia.com` to `PetalPal_v2` CORS (keep existing origins); attach the custom domain under Access; production test identity for private acceptance; final public GO. Optionally share Dashboard screenshots (no secret values) for the evidence record.
+
+### PetalPal App Store candidate — 2026-10-15 (local only)
+
+Historical outcomes above remain point-in-time evidence. These new release actions are NOT VERIFIED:
+
+- [ ] Confirm legal publisher/developer-account identity, supported ages/regions and commercial asset rights. Draft support contact@jastrevia.com requires delivery verification.
+- [ ] Approve final policies/retention/provider disclosures, then separately authorize HTTPS publication of policies/support/external deletion resource. Verify deletion requests without reinstall and an alternative when no mail client is configured.
+- [ ] Assign moderator/deletion queue coverage, configure server-only moderator Firebase UID allowlist, and test authenticated actions with isolated identities. Approve residual deletion/audit/cost retention and backup/provider-copy handling.
+- [ ] Review/apply the four release migrations through the normal approved rollout: historical AI consent is revoked and pending/running jobs are cancelled. Coordinate compatible mobile/web clients before enforcement; verify current clients offer re-consent and Community acceptance.
+- [ ] Complete signed iOS/Android build, permissions/manifests, accessibility/device/cache/performance checks and store questionnaires in docs/release/STORE_SUBMISSION_CHECKLIST.md. Historical Expo Go passes are not a signed-release pass. Submission/publication remains separately authorized.
+
+### Unified App Store / #59 / #60 integration — 2026-10-15
+
+- [ ] Independently review CodeQL #29/#30 and obtain authorized disposition; exact #60 findings check remains failed. Re-run analysis for any subsequently published unified SHA; do not suppress/dismiss automatically.
+- [ ] Approve the additional `202610150005_ai_disclosure_grant_guard` migration, with the original four unchanged. Follow docs/release/INTEGRATION_ROLLOUT.md: close every ingress/executor path, drain and stop all old API/workers, migrate while quiesced, verify constraints/tombstones, start only the reviewed new SHA, then perform separately authorized acceptance before reopening. No live process, migration or rollout evidence exists for this local task.

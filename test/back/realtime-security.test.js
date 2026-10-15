@@ -13,7 +13,13 @@ async function fixture(t) {
     id, firebaseUid: `firebase-${id}`, name: `${id} name`, avatar: "🦋", allowGardenVisits: true
   }])), friends: new Set(["owner:friend", "friend:owner"]), revoked: new Set(), pauseFriend: null, calls: 0 };
   const restore = [], clients = [];
+  const deletions = new Map();
   function stub(object, method, fn) { const original = object[method]; object[method] = fn; restore.push(() => { object[method] = original; }); }
+  stub(prisma.userBlock, "findFirst", async () => null);
+  stub(prisma.userBlock, "findMany", async () => []);
+  stub(prisma.user, "findFirst", async () => null);
+  stub(prisma.user, "findMany", async () => []);
+  stub(prisma.accountDeletion, "update", async ({where,data}) => Object.assign(deletions.get(where.userId),data));
   stub(prisma.user, "findUnique", async ({ where }) => {
     state.calls += 1;
     const id = where.id || Object.keys(state.users).find(key => state.users[key].firebaseUid === where.firebaseUid);
@@ -48,6 +54,7 @@ async function fixture(t) {
     const users = structuredClone(state.users), friends = new Set(state.friends);
     const result = await callback({
       $queryRawUnsafe: async (sql, ...ids) => {
+        if (sql === "SELECT pg_advisory_xact_lock(73001605)::text") { assert.equal(options, undefined); return []; }
         assert.deepEqual(options, { isolationLevel: "ReadCommitted", maxWait: 2000, timeout: 5000 });
         if (sql === "SELECT set_config('lock_timeout', '1500ms', true), set_config('statement_timeout', '4000ms', true)") {
           assert.equal(ids.length, 0); return [{ set_config: "4000ms" }];
@@ -56,6 +63,8 @@ async function fixture(t) {
         assert.equal(sql, `SELECT id FROM "User" WHERE id IN (${ids.map((_, i) => '$' + (i + 1)).join(',')}) ORDER BY id COLLATE "C" FOR NO KEY UPDATE`);
         return [...new Set(ids)].filter(id => users[id]).sort().map(id => ({ id }));
       },
+      accountDeletion: { findUnique: async ({where}) => deletions.get(where.userId), create: async ({data}) => { deletions.set(data.userId, {...data}); return deletions.get(data.userId); } },
+      report: { deleteMany: async () => ({count:0}) },
       user: {
         findUnique: async ({ where }) => users[where.id] ? { ...users[where.id] } : null,
         update: async ({ where, data, select }) => {

@@ -4,6 +4,8 @@ import type { FlowerPlacementRecord } from './plantingPersistence';
 export interface FlowerMessage {
   id?: string;
   author?: string;
+  authorUserId?: string;
+  userId?: string;
   senderName?: string;
   text: string;
   pending?: boolean;
