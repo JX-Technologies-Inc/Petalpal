@@ -60,6 +60,8 @@ TESTED: source TypeScript, release configuration guard, production route policy,
 
 ### Checkpoint evidence
 
+- G / final integration: `4ea40fd` — release configuration, integrated safety corrections, 255/255 regressions, 34/34 independent PostgreSQL race tests, 5/5 migrated PostgreSQL/pgvector scenarios, 7/7 HTTP security tests, TypeScript and final iOS/Android/web JavaScript export.
+
 - A: `139938e` — PostgreSQL/Express/Socket.IO 2/2; UI harness 28/28; TypeScript passed. Initial fixture omission (required Flower coordinates) and UI mock assumption (DELETE/PUT without body) were corrected; these were not production passes.
 - B: `f1ae5f2` — reused content-safety suite 7/7, integrated PostgreSQL/API A+B 3/3; TypeScript passed. Initial selective reuse omitted the Event helper hook; corrected before PASS.
 

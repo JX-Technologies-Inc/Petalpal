@@ -1,5 +1,7 @@
 # Local release test evidence — 2026-10-15
 
+Final implementation checkpoint: `4ea40fd`.
+
 All runs are from the isolated `codex/appstore-release-readiness` worktree. They use synthetic data and mock identity/provider behavior; no real Firebase users, private data, paid inference, production databases or external deployment. Passing source tests do not establish native device, production provider or store approval.
 
 ## Final integrated regression — 255 passed, 0 failed/cancelled/skipped
