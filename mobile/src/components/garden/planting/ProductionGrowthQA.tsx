@@ -38,7 +38,7 @@ export default function ProductionGrowthQA({onClose}:{onClose:()=>void}) {
     <Pressable onPress={()=>setShowMask(v=>!v)}><Text>Final Mask {showMask?'ON':'OFF'}</Text></Pressable>
     <Canvas style={{width:canvasWidth,height}}><Group transform={[
       {translateX:25-region.x*scale},{translateY:25-region.y*scale},{scale}]}>
-      <SandboxGardenBackdrop month={6} showMask={showMask}><ProductionGrowthLayer growth={display}/>
+      <SandboxGardenBackdrop month={6} showMask={showMask}><ProductionGrowthLayer growth={display} month={showReference ? undefined : scene.month}/>
         {grid&&display.mask.points.map(p=><Rect key={`${p.x}:${p.y}`} x={p.x-2} y={p.y-2} width={4} height={4}
           color={covered.has(`${p.x}:${p.y}`)?palette[sectors.indexOf(sectorFor(p))]:'#88948b'}
           opacity={covered.has(`${p.x}:${p.y}`) ? .45 : .15}/>)}

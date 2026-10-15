@@ -1,4 +1,5 @@
 import { CanonicalFlowerArt, CanonicalFlowerEffects } from './CanonicalFlowerArt';
+import {runtimeAudit,timeGardenWork} from '../performance/runtimeAudit';
 import { Circle, Group } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { usePlanting } from './PlantingContext';
@@ -13,23 +14,26 @@ export function growthPreviewParents(placements:readonly FlowerPlacementRecord[]
   return adjusting&&target&&preview?placements.map(p=>p.id===target.id?{...p,...preview}:p):placements;
 }
 export function ProductionPlantedFlowers({depthPass='all'}:{depthPass?:FlowerDepthPass}) {
+  runtimeAudit.render('ProductionPlantedFlowers');
   const {placements,activeMode,targetFlower,previewCoords,validationResult,showDevFootprints,showDevHitboxes}=usePlanting();
-  const parents=useMemo(()=>growthPreviewParents(placements,targetFlower,previewCoords,activeMode==='adjusting'),
-    [placements,targetFlower,previewCoords,activeMode]);
-  const scenes=useMemo(()=>productionGrowth(parents),[parents]);
+  // Drag changes only the lightweight validated parent rings. The committed
+  // botanical picture remains authoritative until provider Confirm changes
+  // placements. Cancel reuses the same field immediately.
+  const parents=placements;
+  const scenes=useMemo(()=>timeGardenWork('productionGrowth',()=>productionGrowth(parents)),[parents]);
   // Unconfirmed Plant preview never contributes to the committed month's count.
   const pending=useMemo(()=>activeMode==='planting'&&targetFlower&&previewCoords
-    ? productionGrowth([{...targetFlower,...previewCoords}]):[],[activeMode,targetFlower,previewCoords]);
+    ? timeGardenWork('pendingGrowth',()=>productionGrowth([{...targetFlower,...previewCoords}])):[],[activeMode,targetFlower,previewCoords]);
   const active=activeMode!=='normal'&&targetFlower&&previewCoords&&flowerInDepthPass(targetFlower.month,depthPass);
   const color=validationResult?.isValid?'#22c55e':'#ef4444';
   return <Group>
     {scenes.filter(s=>flowerInDepthPass(s.month,depthPass)).map(scene=><Group key={scene.month}>
-      <ProductionGrowthLayer growth={scene.growth} cacheStatic/>
+      <ProductionGrowthLayer growth={scene.growth} month={scene.month} cacheStatic/>
       {scene.unresolved.map(p => p.sourceType || p.sourceEventId ? <CanonicalFlowerArt key={p.id} flower={p} />
         : __DEV__ ? <Circle key={p.id} cx={p.worldX} cy={p.worldY} r={4} color="#a6643c" style="stroke" strokeWidth={1.5}/> : null)}
     </Group>)}
     {pending.filter(s=>flowerInDepthPass(s.month,depthPass)).map(s=><Group key={`preview-${s.month}`} opacity={validationResult?.isValid ? .92 : .65}>
-      <ProductionGrowthLayer growth={{...s.growth,pieces:s.growth.primary,companions:[],filler:[]}}/>
+      <ProductionGrowthLayer month={s.month} growth={{...s.growth,pieces:s.growth.primary,companions:[],filler:[]}}/>
       {s.unresolved.map(p => p.sourceType || p.sourceEventId ? <CanonicalFlowerArt key={p.id} flower={p} />
         : __DEV__ ? <Circle key={p.id} cx={p.worldX} cy={p.worldY} r={4} color="#a6643c" style="stroke" strokeWidth={1.5}/> : null)}
     </Group>)}

@@ -3,13 +3,14 @@ import React, { useMemo } from 'react';
 import {
   Circle,
   Group,
-  Image,
   useImage,
 } from '@shopify/react-native-skia';
 import { usePlanting } from './PlantingContext';
 import { getFlowerPlacementDefinition } from './flowerFootprintConfig';
 import { flowerInDepthPass, type FlowerDepthPass } from '../flowerOcclusion';
 import { ProductionPlantedFlowers } from './ProductionPlantedFlowers';
+import { BotanicalFlowerImage } from '../flower-visuals/BotanicalFlowerImage';
+import { botanicalPresentationPose } from '../flower-visuals/botanicalPresentationPose';
 
 const FLOWER_ASSETS: Record<string, any> = {
   pink: require('../../../../assets/garden/flowers/pink.png'),
@@ -76,26 +77,27 @@ export function LegacyPlantedFlowerLayer({ depthPass = 'all' }: { depthPass?: Fl
         const h = def.visualHeight;
         const drawX = flower.worldX - w / 2;
         const drawY = flower.worldY - h * 0.82;
+        const pose = botanicalPresentationPose(flower.id);
 
         return (
           <Group key={flower.id}>
-            {/* Ground shadow / root base */}
-            <Circle
-              cx={flower.worldX}
-              cy={flower.worldY}
-              r={def.footprintRadius * 0.6}
-              color="rgba(20, 45, 25, 0.22)"
-            />
-
             {/* Visual flower art */}
-            <Image
-              image={img}
-              x={drawX}
-              y={drawY}
-              width={w}
-              height={h}
-              fit="contain"
-            />
+            <Group origin={{ x: flower.worldX, y: flower.worldY }} transform={pose.transform}>
+              <BotanicalFlowerImage
+                image={img}
+                x={drawX}
+                y={drawY}
+                width={w}
+                height={h}
+                fit="contain"
+                rootX={flower.worldX}
+                rootY={flower.worldY}
+                rootWidth={w * .24}
+                seed={pose.seed}
+                plantWidth={w}
+                plantHeight={h}
+              />
+            </Group>
 
             {/* DEV Footprint Collision Overlay */}
             {showDevFootprints && (
@@ -143,6 +145,7 @@ export function LegacyPlantedFlowerLayer({ depthPass = 'all' }: { depthPass?: Fl
             const h = def.visualHeight;
             const drawX = previewCoords.worldX - w / 2;
             const drawY = previewCoords.worldY - h * 0.82;
+            const pose = botanicalPresentationPose(targetFlower.id);
 
             const ringColor = isValid
               ? 'rgba(34, 197, 94, 0.85)'
@@ -171,14 +174,21 @@ export function LegacyPlantedFlowerLayer({ depthPass = 'all' }: { depthPass?: Fl
 
                 {/* Preview flower image (slightly translucent) */}
                 {(targetFlower.sourceType || targetFlower.sourceEventId) ? <CanonicalFlowerArt flower={{ ...targetFlower, ...previewCoords }} /> : img && (
-                  <Group opacity={isValid ? 0.92 : 0.65}>
-                    <Image
+                  <Group opacity={isValid ? 0.92 : 0.65}
+                    origin={{ x: previewCoords.worldX, y: previewCoords.worldY }} transform={pose.transform}>
+                    <BotanicalFlowerImage
                       image={img}
                       x={drawX}
                       y={drawY}
                       width={w}
                       height={h}
                       fit="contain"
+                      rootX={previewCoords.worldX}
+                      rootY={previewCoords.worldY}
+                      rootWidth={w * .24}
+                      seed={pose.seed}
+                      plantWidth={w}
+                      plantHeight={h}
                     />
                   </Group>
                 )}

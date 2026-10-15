@@ -105,7 +105,7 @@ export class FairyNavigation {
   }
   move(destination:Point,blocked:(p:Point)=>boolean,swing=false,visualHeight=walkVisualHeight(),moon=false,tea=false,treehouse=false,mailbox=false){
     // Entry owns the character until the future interior handoff/exit controller.
-    if(this.traversingTreehouse||this.state==='insideTreehouse'||this.mailboxSequenceActive)return false;
+    if(this.traversingTreehouse||this.state==='insideTreehouse'||this.mailboxSequenceActive||(mailbox&&(this.state==='movingToMailbox'||this.state==='flyingToMailbox')))return false;
     const requested=mailbox?mailboxApproachAnchor:treehouse?treehouseApproachAnchor:tea?TEA_EXIT:moon?MOON_EXIT:swing?SWING_EXIT:destination;
     const start=this.atTea?TEA_EXIT:this.state==='sleepingOnMoonBed'?MOON_EXIT:this.state==='sittingOnSwing'?SWING_EXIT:this.position;
     const b=GARDEN_WORLD_BOUNDS;

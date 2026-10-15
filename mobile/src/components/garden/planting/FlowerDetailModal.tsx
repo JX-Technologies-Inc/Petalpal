@@ -16,6 +16,7 @@ import { usePlanting } from './PlantingContext';
 import { MONTH_REGION_METAS } from './plantingRegionData';
 import { resolveFlowerDetail } from './flowerDetailData';
 import { sourceFlowerImageUri } from './flowerDetailApi';
+import { localFlowerArtwork } from './localFlowerArtwork';
 
 const FLOWER_ASSETS: Record<string, any> = {
   pink: require('../../../../assets/garden/flowers/pink.png'),
@@ -66,9 +67,15 @@ export default function FlowerDetailModal() {
 
   const existingImage = detail.image.split('/').pop()?.toLowerCase().replace('.png', '');
   const imageUri = sourceFlowerImageUri(detail.image);
-  const flowerImg = existingImage && FLOWER_ASSETS[existingImage]
+  const local = localFlowerArtwork(selectedFlower.speciesCode, detail.name);
+  const flowerImg = local?.source ?? (existingImage && FLOWER_ASSETS[existingImage]
     ? FLOWER_ASSETS[existingImage]
-    : imageUri ? { uri: imageUri } : getImage(detail.name);
+    : imageUri ? { uri: imageUri } : getImage(detail.name));
+  const bounds = local?.component.contentBounds;
+  const previewScale = bounds ? Math.min(90 / (bounds[2] - bounds[0]), 90 / (bounds[3] - bounds[1])) : 1;
+  const localPreviewStyle = local && bounds ? { position: 'absolute' as const,
+    width: local.component.canvasWidth * previewScale, height: local.component.canvasHeight * previewScale,
+    left: 45 - (bounds[0] + bounds[2]) * previewScale / 2, top: 45 - (bounds[1] + bounds[3]) * previewScale / 2 } : null;
 
   const plantedDate = new Date(selectedFlower.plantedDate);
   const formattedDate = Number.isNaN(plantedDate.getTime()) ? '' : plantedDate.toLocaleDateString(
@@ -109,11 +116,13 @@ export default function FlowerDetailModal() {
 
           <ScrollView style={styles.detailScroll} contentContainerStyle={styles.detailContent}>
           <View style={styles.imageWrapper}>
+            <View style={styles.flowerImage}>
             <Image
               source={flowerImg}
-              style={styles.flowerImage}
+              style={localPreviewStyle ?? styles.flowerImage}
               resizeMode="contain"
             />
+            </View>
           </View>
 
           {/* Details */}

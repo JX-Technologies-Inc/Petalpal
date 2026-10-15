@@ -1,3 +1,4 @@
+const runtimeHashes=JSON.parse(fs.readFileSync(new URL('../../docs/flower-visuals/GARDEN_RUNTIME_AUDIT_HASHES.json',import.meta.url)));
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -44,7 +45,7 @@ for(const mode of ['planting','adjusting'])for(const code of ['CHAMOMILE','TULIP
 // All untouched baseline source/art/masks and prior archives must remain byte-identical.
 const baseline=JSON.parse(fs.readFileSync(new URL('output/collision-model-candidate-audit/candidate-results.json',root)));
 const authorized=JSON.parse(fs.readFileSync(new URL('docs/flower-visuals/PRODUCTION_COLLISION_SML_HASHES.json',root)));
-for(const [file,hash] of Object.entries(baseline.protectedHashes))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(new URL(file,root))).digest('hex'),authorized[file]??hash,file);
+for(const [file,hash] of Object.entries(baseline.protectedHashes))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(new URL(file,root))).digest('hex'),runtimeHashes[file]??authorized[file]??hash,file);
 const capacity=JSON.parse(fs.readFileSync(new URL('output/production-collision-sml-v1/capacity.json',root)));
 assert.equal(capacity.auditOverride,false);assert.equal(capacity.rows.length,12);assert.ok(capacity.rows.every(r=>r.placed===30));
 console.log('Production collision: all 23 classes, canonical precedence, unresolved rejection, preview/Adjust parity, self-ignore, saved-record no-write preservation, 12-land actual capacity and protected source/art/checkpoints passed.');

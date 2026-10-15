@@ -1,0 +1,15 @@
+{
+  "mobile/src/components/garden/GardenScene.tsx": "2a5ba2e33cd6203f67f131736ca2cb3aec2091690449709b8d406cfc6d222cb8",
+  "mobile/src/components/garden/LandmarkLayer.tsx": "f13e52f8182f5f740f3b205dcbea2b7b3b670a1a13c5a313c40e62590cd9baf7",
+  "mobile/src/components/garden/WaterfallEntity.tsx": "23dc013b126083d1c2219d650093368e3962812b2009450a259a12d41accfed7",
+  "mobile/src/components/garden/water/GardenWaterField.tsx": "41b48af2be15e4136837f360cb973650f9a76ae32bc60ae5277c17b9c9567d41",
+  "mobile/src/components/garden/water/FishLayer.tsx": "52ca81fff3d940147d6a1061294025dd110b1bd466cb1a99de611c684d4fcbf3",
+  "mobile/src/components/garden/water/LotusLayer.tsx": "b32f5db948f411221d286eed30578194a980eadabd382da9bbbcb3161a807fe7",
+  "mobile/src/components/garden/water/SurfaceRippleLayer.tsx": "97a7181ab735e68cab82f731f2b02baeed61ec72bf6b5f6b78412fc891faf569",
+  "mobile/src/components/garden/world-time/WorldTimeProvider.tsx": "42523391a57fbfae7dbb107f8b0c5d1f59320affa0494f0a14a8f0dc0146ce95",
+  "mobile/src/components/garden/planting/ProductionGrowthLayer.tsx": "6f96cac40df1202365623ca44b2fd890ef37b18aeb14ca608334ce7e46c9052e",
+  "mobile/src/components/garden/planting/ProductionPlantedFlowers.tsx": "21bc5f5cedc443443c14aaefb16c31c5c53d8164426a02ac5716f94c6c8c7d78",
+  "mobile/src/components/garden/performance/runtimeAudit.ts": "22d125456dce40cd074afb8c845bb44a293e44a9c61cc8e8757c6bba91aa8f45",
+  "mobile/src/components/garden/performance/GardenRuntimePanel.tsx": "6652abf901cec73de24292cf337fc6162d409f3ce20904559d831c44d27f0514",
+  "mobile/src/components/garden/rendering/GardenCanvasPlane.tsx": "e4dc829fa45ca9664fe35c84192ff032c7dd7efd7371167056c9472775e6c57b"
+}

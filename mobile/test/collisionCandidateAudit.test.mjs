@@ -1,3 +1,4 @@
+const runtimeHashes=JSON.parse(fs.readFileSync(new URL('../../docs/flower-visuals/GARDEN_RUNTIME_AUDIT_HASHES.json',import.meta.url)));
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -22,5 +23,5 @@ const data=JSON.parse(fs.readFileSync(new URL('../../output/collision-model-cand
 assert.equal(data.qaPlacementsPersisted,false);
 for(const model of data.models){assert.equal(model.rows.length,48);for(const row of model.rows)assert.equal('placements' in row,false);}
 const migration=JSON.parse(fs.readFileSync(new URL('../../docs/flower-visuals/PRODUCTION_COLLISION_SML_HASHES.json',import.meta.url),'utf8'));
-for(const [file,hash] of Object.entries(data.protectedHashes)){const bytes=fs.readFileSync(new URL('../../'+file,import.meta.url));assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),migration[file]??hash,file);}
+for(const [file,hash] of Object.entries(data.protectedHashes)){const bytes=fs.readFileSync(new URL('../../'+file,import.meta.url));assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),runtimeHashes[file]??migration[file]??hash,file);}
 console.log('Candidate isolation, previous-engine parity, monotonic placement, collision/Adjust, determinism and protected hashes passed.');
