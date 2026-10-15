@@ -1,0 +1,94 @@
+{
+  "origin": "New synthetic data authored during the same implementation task. Not blind, externally authored, representative, or independent semantic ground truth.",
+  "purpose": "Hold identical source text and source envelopes constant across four contracts; reveal abstention, quoting, and unsupported semantic scope without tuning a parser.",
+  "scenarios": [
+    {
+      "id": "work-study",
+      "domain": "work and study",
+      "sources": [
+        "I read 12 pages.",
+        "今天把课堂笔记整理好了，但还没开始练习题；明天可能试两题。",
+        "I asked a colleague to check the outline, not to finish the assignment for me.",
+        "報告交出去了。我有點高興，也不確定老師會不會理解最後一段。"
+      ],
+      "risks": ["Pages read is not mastery", "Possible future practice is not completed work", "Requested help does not prove help was given", "Mixed emotions and uncertainty must both survive"]
+    },
+    {
+      "id": "technical-project",
+      "domain": "projects and technical difficulties",
+      "sources": [
+        "I fixed the bug.",
+        "Tests passed locally, but I did not deploy the change. I felt relieved and still worried about production.",
+        "今天和同事一起查到了报错原因；修复方案只是写在纸上，还没有试。",
+        "這次測試又失敗了。我想休息一下，不是打算放棄這個專案。"
+      ],
+      "risks": ["Local tests do not imply deployment", "Finding a cause does not imply a completed fix", "Rest intention is not abandonment", "No recovery trajectory from the earlier bug fix"]
+    },
+    {
+      "id": "friendship",
+      "domain": "friendship and relationships",
+      "sources": [
+        "I met a project partner for lunch; we talked about deadlines, not dating.",
+        "朋友说她可能搬走。我有点难过，但她还没有决定。",
+        "I wanted to reply to Sam, but I did not send a message.",
+        "今晚和哥哥通了電話。他說自己很累；我沒有說我的心情。"
+      ],
+      "risks": ["Project partner is not romantic partner", "Friend's possible move is not an event that happened", "Reply intention is not contact", "Brother's tiredness is not the user's emotion"]
+    },
+    {
+      "id": "daily-life",
+      "domain": "daily life",
+      "sources": [
+        "The bus arrived late, so I walked to the shop. I did not feel angry about it.",
+        "买了三颗苹果，给邻居两颗；剩下的一颗还没吃。",
+        "Yesterday I planned to cook, but tonight I might order noodles instead.",
+        "洗衣機修好了，是房東請人修的。我只是把衣服拿回來。"
+      ],
+      "risks": ["Explicit cause is scoped only to the walk", "Bought, gave, and ate quantities differ", "Time of planning differs from time of cooking", "Landlord and repairer are not the user"]
+    },
+    {
+      "id": "creative",
+      "domain": "creative activities",
+      "sources": [
+        "I sketched the kitchen window. I liked the uneven lines, though the reflection was hard to draw.",
+        "今天给短篇小说换了一个开头，还没决定用哪一版；写的时候既兴奋又烦躁。",
+        "I returned to the window sketch and added the cup on the sill. I still liked the uneven lines.",
+        "把短篇小說的兩個開頭讀給朋友聽了。她喜歡第二版，我還沒有選好。"
+      ],
+      "risks": ["Same sketch identity is explicitly supported, artistic improvement is not", "Unchosen draft is not finished work", "Excitement and irritation coexist", "Friend's preference is not the user's decision"]
+    },
+    {
+      "id": "rest-leisure",
+      "domain": "rest and leisure",
+      "sources": [
+        "我休息了。",
+        "I stayed home with a puzzle. I was not lonely; I just did not want company that evening.",
+        "週末可能去海邊，如果下雨就留在家。現在還沒訂車票。",
+        "I walked by the water with Mei today. It was relaxing, but I cannot tell whether I slept better because of it."
+      ],
+      "risks": ["Being alone is not loneliness", "Conditional trip is not a completed trip", "No booked ticket may be invented", "Relaxation does not prove improved sleep or causation"]
+    },
+    {
+      "id": "mixed-emotions",
+      "domain": "positive, negative, mixed, and uncertain feelings",
+      "sources": [
+        "I felt proud of saying no, and guilty about it at the same time.",
+        "今天收到好消息，却没有想象中开心。我也说不清为什么。",
+        "The quiet room felt like a storm had finally left, but I still felt sad.",
+        "I felt not a little nervous before the call；結束後只是覺得餓，沒有說自己放心了。"
+      ],
+      "risks": ["Do not collapse mixed feelings into positive growth", "Unknown cause must remain unknown", "Storm is figurative, not weather evidence", "Not a little is an intensity idiom, and hunger is not relief"]
+    },
+    {
+      "id": "sensitive-ordinary",
+      "domain": "sensitive but ordinary personal experiences",
+      "sources": [
+        "I booked a routine appointment, but I have not attended it yet. I am uneasy about the waiting room.",
+        "今天想起去年的失业经历，有点难受；现在的工作并没有出问题。",
+        "After checking the bill, I asked for a payment extension. They have not replied, so I do not know whether it is approved.",
+        "和家人談到界線時，我停了一下。談話沒有吵起來，也沒有解決所有事情。"
+      ],
+      "risks": ["No diagnosis or appointment attendance", "Past unemployment does not imply current job loss", "Request is not approval", "Pause is not proof of recovery, safety, or resolved conflict"]
+    }
+  ]
+}

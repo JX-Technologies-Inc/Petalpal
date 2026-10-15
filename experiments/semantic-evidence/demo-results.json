@@ -1,0 +1,270 @@
+{
+  "origin": "Same-task developer-authored synthetic sources, annotations and text; not Claude output or independent review.",
+  "decision": "REVISE_ARCHITECTURE",
+  "productionEligible": false,
+  "originalSourceTexts": [
+    {
+      "eventId": "event-alpha",
+      "text": "On 2026-10-02, I tested the cedar-cache patch on two staging devices. The reconnect timeout did not recur. I felt somewhat relieved because the reconnect timeout did not recur, but I still felt uneasy about the untested offline path. After testing the patch, I inspected the trace. I planned to test the offline path on Friday. 🌱"
+    },
+    {
+      "eventId": "event-beta",
+      "text": "2026年10月7日，我在一台测试设备上测试了 cedar-cache 补丁；没有提交到生产环境。我有点期待，也仍不确定。I wanted to ask Mira to review the offline path; I might run a longer check tomorrow."
+    }
+  ],
+  "composedPlan": {
+    "op": "and",
+    "args": [
+      {
+        "op": "recurs",
+        "args": [
+          {
+            "op": "atom",
+            "annotationId": "tested-alpha",
+            "meaning": {
+              "kind": "recorded-fact",
+              "actor": "synthetic-user",
+              "predicate": "tested",
+              "object": "cedar-cache patch",
+              "polarity": "positive",
+              "modality": "actual",
+              "intensity": null,
+              "quantity": {
+                "value": 2,
+                "unit": "devices"
+              },
+              "time": {
+                "kind": "explicit",
+                "start": "2026-10-02T00:00:00.000Z",
+                "end": "2026-10-02T23:59:59.999Z",
+                "scope": "activity"
+              },
+              "qualifiers": [
+                "staging"
+              ]
+            }
+          },
+          {
+            "op": "atom",
+            "annotationId": "tested-beta",
+            "meaning": {
+              "kind": "recorded-fact",
+              "actor": "synthetic-user",
+              "predicate": "tested",
+              "object": "cedar-cache patch",
+              "polarity": "positive",
+              "modality": "actual",
+              "intensity": null,
+              "quantity": {
+                "value": 1,
+                "unit": "devices"
+              },
+              "time": {
+                "kind": "explicit",
+                "start": "2026-10-07T00:00:00.000Z",
+                "end": "2026-10-07T23:59:59.999Z",
+                "scope": "activity"
+              },
+              "qualifiers": [
+                "test device"
+              ]
+            }
+          }
+        ],
+        "subject": {
+          "actor": "synthetic-user",
+          "predicate": "tested",
+          "object": "cedar-cache patch"
+        },
+        "scope": "selected-records"
+      },
+      {
+        "op": "relation",
+        "annotationId": "cause-relief",
+        "left": {
+          "op": "atom",
+          "annotationId": "no-timeout",
+          "meaning": {
+            "kind": "recorded-fact",
+            "actor": "reconnect timeout",
+            "predicate": "recurred",
+            "object": null,
+            "polarity": "negative",
+            "modality": "actual",
+            "intensity": null,
+            "quantity": null,
+            "time": {
+              "kind": "unknown"
+            },
+            "qualifiers": []
+          }
+        },
+        "right": {
+          "op": "atom",
+          "annotationId": "relieved",
+          "meaning": {
+            "kind": "self-reported-emotion",
+            "actor": "synthetic-user",
+            "predicate": "felt",
+            "object": "relief",
+            "polarity": "positive",
+            "modality": "actual",
+            "intensity": "somewhat",
+            "quantity": null,
+            "time": {
+              "kind": "unknown"
+            },
+            "qualifiers": []
+          }
+        }
+      },
+      {
+        "op": "relation",
+        "annotationId": "contrast-feelings",
+        "left": {
+          "op": "atom",
+          "annotationId": "relieved",
+          "meaning": {
+            "kind": "self-reported-emotion",
+            "actor": "synthetic-user",
+            "predicate": "felt",
+            "object": "relief",
+            "polarity": "positive",
+            "modality": "actual",
+            "intensity": "somewhat",
+            "quantity": null,
+            "time": {
+              "kind": "unknown"
+            },
+            "qualifiers": []
+          }
+        },
+        "right": {
+          "op": "atom",
+          "annotationId": "uneasy",
+          "meaning": {
+            "kind": "self-reported-emotion",
+            "actor": "synthetic-user",
+            "predicate": "felt",
+            "object": "unease about the untested offline path",
+            "polarity": "positive",
+            "modality": "actual",
+            "intensity": null,
+            "quantity": null,
+            "time": {
+              "kind": "unknown"
+            },
+            "qualifiers": []
+          }
+        }
+      }
+    ]
+  },
+  "candidateText": "You tested the cedar-cache patch in both records. The reconnect timeout not recurring left you somewhat relieved, but you still felt uneasy about the untested offline path.",
+  "results": {
+    "arbitraryPredicateComposition": {
+      "status": "CONDITIONAL_SEMANTIC_PLAN",
+      "productionEligible": false,
+      "sources": [
+        "event-alpha",
+        "event-beta"
+      ],
+      "assumptions": [
+        "tested-alpha",
+        "tested-beta",
+        "no-timeout",
+        "relieved",
+        "cause-relief",
+        "uneasy",
+        "contrast-feelings"
+      ],
+      "rules": [
+        "exact-annotated-atom",
+        "distinct-recorded-subject",
+        "reported-cause",
+        "explicit-contrast",
+        "neutral-conjunction"
+      ],
+      "limitation": "Source-to-meaning fixture judgements are not independently verified."
+    },
+    "fixtureTextMatch": {
+      "status": "CONDITIONAL_FIXTURE_TEXT",
+      "productionEligible": false,
+      "assumptions": [
+        "tested-alpha",
+        "tested-beta",
+        "no-timeout",
+        "relieved",
+        "cause-relief",
+        "uneasy",
+        "contrast-feelings",
+        "fixture-en-weekly"
+      ],
+      "limitation": "Exact fixture realization match; same-task authorship is not independent semantic proof."
+    },
+    "correctPlanFalseProse": {
+      "status": "UNVERIFIED_FREE_TEXT",
+      "reason": "NO_INDEPENDENT_TEXT_ALIGNMENT",
+      "semanticPlan": "CONDITIONAL_SEMANTIC_PLAN",
+      "productionEligible": false
+    },
+    "changedActor": {
+      "status": "REJECTED",
+      "reason": "ATOM_NOT_ESTABLISHED",
+      "productionEligible": false
+    },
+    "removedExplicitCause": {
+      "status": "REJECTED",
+      "reason": "RELATION_NOT_ESTABLISHED",
+      "productionEligible": false
+    },
+    "occurrenceOrderWithExplicitActivityDates": {
+      "status": "CONDITIONAL_SEMANTIC_PLAN",
+      "productionEligible": false,
+      "sources": [
+        "event-alpha",
+        "event-beta"
+      ],
+      "assumptions": [
+        "tested-alpha",
+        "tested-beta"
+      ],
+      "rules": [
+        "exact-annotated-atom",
+        "occurred-before"
+      ],
+      "limitation": "Source-to-meaning fixture judgements are not independently verified."
+    },
+    "recordTimesCannotEstablishActivityOrder": {
+      "status": "REJECTED",
+      "reason": "ACTIVITY_ORDER_NOT_ESTABLISHED",
+      "productionEligible": false
+    },
+    "exactAttributedSource": {
+      "status": "EXACT_ATTRIBUTED_SOURCE",
+      "productionEligible": false,
+      "claim": "The synthetic Event snapshot contains this exact text.",
+      "source": {
+        "kind": "EVENT",
+        "ownerId": "synthetic-user",
+        "eventId": "event-beta",
+        "memoryId": "memory-beta",
+        "revision": 2,
+        "memoryRevision": 2,
+        "recordedAt": "2026-10-09T12:00:00.000Z",
+        "updatedAt": "2026-10-09T12:00:00.000Z",
+        "memoryUpdatedAt": "2026-10-09T12:00:00.000Z",
+        "sourceLanguage": "mixed",
+        "text": "2026年10月7日，我在一台测试设备上测试了 cedar-cache 补丁；没有提交到生产环境。我有点期待，也仍不确定。I wanted to ask Mira to review the offline path; I might run a longer check tomorrow.",
+        "memoryText": "2026年10月7日，我在一台测试设备上测试了 cedar-cache 补丁；没有提交到生产环境。我有点期待，也仍不确定。I wanted to ask Mira to review the offline path; I might run a longer check tomorrow.",
+        "consentEpoch": 3,
+        "allowed": true
+      },
+      "text": "2026年10月7日，我在一台测试设备上测试了 cedar-cache 补丁；没有提交到生产环境。我有点期待，也仍不确定。I wanted to ask Mira to review the offline path; I might run a longer check tomorrow.",
+      "outputLocale": "en",
+      "languagePreserved": true,
+      "externalWorldTruth": "NOT_ESTABLISHED"
+    }
+  },
+  "limitation": "Conditional derivation is not independent source entailment or whole-text semantic validation. No result can enter production."
+}
