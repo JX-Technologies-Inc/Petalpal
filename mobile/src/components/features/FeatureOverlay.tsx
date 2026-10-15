@@ -1,3 +1,4 @@
+import { PrivacyAndSupport } from './PrivacyAndSupport';
 import { DeleteAccountSettings } from './DeleteAccountSettings';
 import { AiPrivacySettings } from './AiPrivacySettings';
 import { CommunityGuidelines } from './CommunityGuidelines';
@@ -109,6 +110,7 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
         </View>
         {themeError ? <Text accessibilityRole="alert" style={[ui.caption, { color: theme.text }]}>{themeError}</Text> : null}
       </FeatureSection>
+      <PrivacyAndSupport />
       <CommunityGuidelines />
       <GardenPrivacySettings key={session?.user.id} />
       <DeleteAccountSettings key={`delete-${session?.user.id}`} />

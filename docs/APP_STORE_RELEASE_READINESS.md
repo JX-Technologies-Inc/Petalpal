@@ -44,7 +44,7 @@ External resource: `docs/release/account-deletion.html` opens a deletion-request
 
 ## E — Policies and disclosures
 
-IN PROGRESS. Owner confirmed draft brand PetalPal/Jastrevia and proposed `contact@jastrevia.com`; delivery remains unverified. Legal publisher: [LEGAL PUBLISHER NAME — OWNER CONFIRMATION REQUIRED]. Internal “JX Technology Inc.” is not evidence of incorporation. No address, registration number or legal jurisdiction is asserted.
+DRAFTS IMPLEMENTED; PUBLICATION BLOCKED. `docs/release/POLICY_DRAFTS.md` contains Privacy, Terms, Community, Deletion, AI Sharing and Support documents, English with selected Simplified Chinese summaries. `STORE_PRIVACY_WORKSHEETS.md` maps actual fields/flows to Apple/Google questionnaires; `AUDIENCE_PERMISSIONS_RIGHTS.md` covers audience, permissions and commercial rights. In-app privacy/support is reachable from onboarding and Settings, with configurable public links and safe missing-link/error states. TypeScript passed. Final legal review, deployed-data reconciliation, working URLs, seller identity, audience decision, retention schedules and asset/SDK rights remain human blockers. Owner confirmed draft brand PetalPal/Jastrevia and proposed `contact@jastrevia.com`; delivery remains unverified. Legal publisher: [LEGAL PUBLISHER NAME — OWNER CONFIRMATION REQUIRED]. Internal “JX Technology Inc.” is not evidence of incorporation. No address, registration number or legal jurisdiction is asserted.
 
 ## F — Emotional safety
 
@@ -62,3 +62,5 @@ NOT VERIFIED: full Xcode is absent; Command Line Tools cannot produce a signed i
 - C: phase C checkpoint — evidence above. No unauthorized external network calls in isolated API tests.
 
 - D: phase D checkpoint — PostgreSQL integration 5/5 and deletion contract 2/2. Added final social raw-message filtering and in-flight user-room revocation fences found during integration.
+
+- E: phase E checkpoint — source-backed drafts and TypeScript validation; legal sufficiency, public URL delivery and store questionnaire answers NOT VERIFIED.
