@@ -87,3 +87,20 @@ test('B: acceptance and screening run before message, visit record or notificati
  assert.equal((await api('b',path,'POST',{text:'I am sad and need help. 我很难过，想寻求帮助。'})).status,200);
  assert.equal(await db.message.count(),count+1);
 });
+
+test('C: explicit versioned consent, withdrawal epoch, output ownership and no private report text',async()=>{
+ const disclosure=await api('a','/ai/disclosure');assert.equal(disclosure.status,200);assert.ok(disclosure.body.features.every(f=>!f.configured));
+ assert.equal((await api('a','/users/a/ai-consent','PUT',{aiProcessing:true})).status,428);
+ const consent=await api('a','/users/a/ai-consent','PUT',{aiProcessing:true,personalization:true,memoryEnabled:true,disclosureVersion:disclosure.body.version});assert.equal(consent.status,200);
+ const {PrismaAiCostGate}=await import('../../lib/ai-cost-gate.js');const gate=new PrismaAiCostGate(db);
+ await gate.checkProcessingConsent({identity:{userId:'a'},consentUpdatedAt:consent.body.updatedAt});
+ const event=await db.event.create({data:{id:'private-event',ownerId:'a',content:'Synthetic private reflection',occurredAt:new Date(),localDate:'2026-10-15',timezone:'UTC',idempotencyKey:'privacy-fixture'}});
+ assert.equal((await api('b','/ai-output-reports','POST',{kind:'event',outputId:event.id,category:'OTHER'})).status,404);
+ assert.equal((await api('a','/ai-output-reports','POST',{kind:'event',outputId:event.id,category:'OTHER'})).status,202);
+ const queue=await api('moderator','/moderation/reports');assert.ok(!JSON.stringify(queue.body).includes(event.content));
+ assert.equal((await api('a','/users/a/ai-consent','PUT',{aiProcessing:false})).status,200);
+ await assert.rejects(gate.checkProcessingConsent({identity:{userId:'a'},consentUpdatedAt:consent.body.updatedAt}),{code:'AI_FORBIDDEN'});
+ assert.equal((await api('a','/users/a/ai-consent','PUT',{aiProcessing:true,disclosureVersion:disclosure.body.version})).status,200);
+ await assert.rejects(gate.checkProcessingConsent({identity:{userId:'a'},consentUpdatedAt:consent.body.updatedAt}),{code:'AI_FORBIDDEN'});
+ assert.ok(await db.event.findUnique({where:{id:event.id}}));
+});

@@ -1,3 +1,4 @@
+import { AiOutputReport } from '../../features/AiPrivacySettings';
 import { CommunityGuidelines } from '../../features/CommunityGuidelines';
 import { SafetyActions } from '../../features/SafetyActions';
 import React, { useEffect, useState } from 'react';
@@ -143,6 +144,7 @@ export default function FlowerDetailModal() {
             <Text style={styles.notesText}>{detail.meaning}</Text>
           </View> : null}
 
+          {selectedFlowerIsOwner && selectedFlower?.sourceEventId ? <AiOutputReport kind="event" outputId={selectedFlower.sourceEventId} /> : null}
           <Text style={styles.receivedSupport}>♥ Support received: {detail.supportCount}</Text>
           {detail.messages.length > 0 && <View style={styles.notesContainer}>
             <Text style={styles.detailLabel}>Messages</Text>

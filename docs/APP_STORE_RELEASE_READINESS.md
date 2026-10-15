@@ -28,7 +28,11 @@ Policy: Apple 1.2, Google UGC. Deterministic coverage is bounded; this is not co
 
 ## C — AI privacy and reporting
 
-IN PROGRESS.
+IMPLEMENTED / TESTED: onboarding no longer grants AI through the insufficient old disclosure. Settings provides non-prechecked Processing, Personalization and Memory controls, named processors/configured-feature status, explicit version on grant and withdrawal. Migration revokes historical grants and cancels pending/running jobs; original content is retained. Existing epoch, cost reservation and worker/source fences remain, and the Workers AI emotion final write now shares the source/consent fence. Speech rechecks immediately before dispatch and after response; recording requires prior disclosed consent. Journal text/photos never enter Event Memory or Reflection, but optional voice composition is external transcription and is clearly disclosed. In-app Reflection/Event-emotion reporting stores reference/reason only, validates ownership, and routes metadata to moderators without full private content.
+
+Policy: Apple 5.1 and Google User Data/AI content. No new processor, routing, budget or secret changes. Provider retention/regional settings and current contractual protections require owner verification; no no-training/zero-retention claims. Already dispatched requests cannot be recalled. A processor or materially different use requires new owner approval and consent version.
+
+Evidence: integrated PostgreSQL/API 4/4; consent/worker/Haiku/speech focused regression 32/32; TypeScript and UI harness. Initial migration used the Prisma model name instead of mapped `AIJob` table; corrected and applied successfully to a fresh disposable database before PASS.
 
 ## D — Deletion
 
@@ -50,3 +54,5 @@ NOT VERIFIED: full Xcode is absent; Command Line Tools cannot produce a signed i
 
 - A: `139938e` — PostgreSQL/Express/Socket.IO 2/2; UI harness 28/28; TypeScript passed. Initial fixture omission (required Flower coordinates) and UI mock assumption (DELETE/PUT without body) were corrected; these were not production passes.
 - B: phase B checkpoint — reused content-safety suite 7/7, integrated PostgreSQL/API A+B 3/3; TypeScript passed. Initial selective reuse omitted the Event helper hook; corrected before PASS.
+
+- C: phase C checkpoint — evidence above. No unauthorized external network calls in isolated API tests.

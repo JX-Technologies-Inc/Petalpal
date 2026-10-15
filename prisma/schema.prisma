@@ -311,6 +311,8 @@ model Report {
   reporterId     String
   reportedUserId String?
   messageId      String?
+  aiOutputKind   String? @db.VarChar(16)
+  aiOutputId     String? @db.VarChar(128)
   category       ReportCategory
   details        String?        @db.Text
   status         ReportStatus   @default(PENDING)

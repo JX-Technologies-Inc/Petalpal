@@ -15,7 +15,6 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState('🦋');
   const [communityAccepted,setCommunityAccepted] = useState(false);
-  const [aiConsent, setAiConsent] = useState(false);
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
   const checkVerification = useRef(auth.checkVerification);
@@ -23,7 +22,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setEmail(''); setPassword(''); setConfirmation(''); setName('');
-    setAvatar('🦋'); setAiConsent(false); setMode('signIn');
+    setAvatar('🦋'); setCommunityAccepted(false); setMode('signIn');
   }, [auth.identity?.uid]);
   useEffect(() => {
     if (!auth.loading) void SplashScreen.hideAsync().catch(() => {});
@@ -90,13 +89,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
           <Pressable accessibilityRole="checkbox" accessibilityLabel="Accept Community Guidelines" accessibilityState={{checked:communityAccepted}} disabled={working} onPress={()=>setCommunityAccepted(!communityAccepted)} style={styles.consent}>
             <Text style={styles.label}>{communityAccepted ? '☑' : '☐'} I accept the Community Guidelines</Text>
           </Pressable>
-          <Pressable accessibilityRole="checkbox" accessibilityLabel="Allow AI processing of my Events"
-            accessibilityState={{ checked: aiConsent, disabled: working }} disabled={working}
-            onPress={() => setAiConsent(!aiConsent)} style={styles.consent}>
-            <Text style={styles.label}>{aiConsent ? '☑' : '☐'} Allow AI processing of my Events</Text>
-          </Pressable>
-          <Text style={styles.hint}>Optional. Off by default. This does not enable long-term memory.</Text>
-          {button(working ? 'Saving…' : 'Continue to PetalPal', () => auth.completeProfile({ name, avatar, aiConsent, communityTermsVersion: communityAccepted ? COMMUNITY_VERSION : undefined }), !name.trim() || !communityAccepted)}
+          <Text style={styles.hint}>AI is off by default. Read the processor disclosure and choose optional AI features in Settings. You can journal without AI.</Text>
+          {button(working ? 'Saving…' : 'Continue to PetalPal', () => auth.completeProfile({ name, avatar, aiConsent: false, communityTermsVersion: communityAccepted ? COMMUNITY_VERSION : undefined }), !name.trim() || !communityAccepted)}
           {button('Use another account', auth.logout, false, true)}
         </> : <>
           {field('Email', { value: email, onChangeText: setEmail, keyboardType: 'email-address', autoCapitalize: 'none',

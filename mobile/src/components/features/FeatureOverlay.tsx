@@ -1,3 +1,4 @@
+import { AiPrivacySettings } from './AiPrivacySettings';
 import { CommunityGuidelines } from './CommunityGuidelines';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import { useEffect, useState } from 'react';
@@ -97,7 +98,7 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
         <Text style={[ui.caption, { color: theme.muted }]}>Signing out keeps your saved Garden safe.</Text>
       </FeatureSection>
       <FeatureSection title="AI & privacy">
-        <Text style={[ui.text, { color: theme.text }]}>Your existing consent settings are preserved. Consent controls are being connected.</Text>
+        <AiPrivacySettings key={session?.user.id} />
       </FeatureSection>
       <FeatureSection title="Background">
         <View style={ui.row}>

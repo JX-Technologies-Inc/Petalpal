@@ -1,3 +1,5 @@
+import { aiDisclosure, AI_DISCLOSURE_VERSION } from './lib/ai-disclosure.js';
+import { installAiOutputReporting } from './lib/ai-output-reporting.js';
 import { assertContentAllowed, contentSafetyResponse, CONTENT_REJECTED } from './lib/content-safety.js';
 import { COMMUNITY_VERSION, assertSocialContent, requireCommunityAcceptance, installCommunityPolicy } from './lib/community-policy.js';
 import { installSocialSafety } from "./lib/social-safety.js";
@@ -358,7 +360,7 @@ function setActiveVisitors(gardenId, visitors) {
   activeVisitorsByGarden[gardenId] = visitors;
 }
 
-const AI_TERMS_VERSION = "2026-08-25";
+const AI_TERMS_VERSION = AI_DISCLOSURE_VERSION;
 const REPORT_CATEGORIES = new Set([
   "HARASSMENT",
   "HATE_SPEECH",
@@ -708,6 +710,8 @@ async function getGardenResponse(userId, { includePrivate = false, viewerUserId 
 
 
 installCommunityPolicy(app, prisma);
+installAiOutputReporting(app, prisma);
+app.get("/ai/disclosure", (_req,res) => res.json(aiDisclosure()));
 installSocialSafety(app, { db: prisma, realtime, clearVisitors: async (tx, a, b) => {
   for (const [ownerId, visitorId] of [[a,b],[b,a]]) {
     const garden = await tx.garden.findUnique({ where: { ownerId }, select: { id: true } });
@@ -1028,8 +1032,8 @@ app.post("/auth/session", authenticateFirebaseIdentity, authAccountRateLimit, as
             aiConsent: {
               create: {
                 termsVersion: AI_TERMS_VERSION,
-                aiProcessing: Boolean(req.body?.aiConsent),
-                grantedAt: req.body?.aiConsent ? new Date() : null
+                aiProcessing: false,
+                grantedAt: null
               }
             },
             subscriptionEntitlement: { create: {} }
@@ -1800,12 +1804,13 @@ app.get("/users/:userId/ai-consent", async (req, res) => {
 
 app.put("/users/:userId/ai-consent",
   (req, res, next) => { if (requireOwnUser(req, res, req.params.userId)) next(); },
-  allowBodyFields(["aiProcessing", "personalization", "memoryEnabled"]), async (req, res) => {
+  allowBodyFields(["aiProcessing", "personalization", "memoryEnabled", "disclosureVersion"]), async (req, res) => {
 
   if (!hasOnlyBooleans(req.body, ["aiProcessing", "personalization", "memoryEnabled"])) {
     return res.status(400).json({ error: "AI consent fields must be booleans" });
   }
 
+  if (req.body.aiProcessing === true && req.body.disclosureVersion !== AI_DISCLOSURE_VERSION) return res.status(428).json({error:"Read the current AI processing disclosure before enabling AI.",code:"AI_DISCLOSURE_REQUIRED"});
   const aiProcessing = Boolean(req.body.aiProcessing);
   const personalization = aiProcessing && Boolean(req.body.personalization);
   const memoryEnabled = personalization && Boolean(req.body.memoryEnabled);
@@ -1858,8 +1863,12 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
     { attempted: false, status: "SKIPPED", fallbackReason: "FEATURE_DISABLED" });
   let result;
   let inferenceStarted = false;
+  let processingEpoch = null;
   try {
     const reservation = await aiCostGate.reserve({ identity: { userId }, action: "EVENT_EMOTION", key: eventId ? `${eventId}:${EVENT_SECONDARY_MODEL_VERSION}` : null });
+    if (new Date(reservation.consentUpdatedAt).getTime() !== new Date(createdConsentUpdatedAt).getTime()) throw Object.assign(new Error("Consent changed"), {code:"AI_FORBIDDEN"});
+    await aiCostGate.checkProcessingConsent({ identity: { userId }, consentUpdatedAt: reservation.consentUpdatedAt });
+    processingEpoch = reservation.consentUpdatedAt;
     inferenceStarted = true;
     result = await eventEmotionClassifier({ userId, eventId, text, primaryGardenMood,
       ...(includeDiagnostics ? { includeDiagnostics: true } : {}) });
@@ -1873,7 +1882,7 @@ async function eventEmotionResult({ userId, eventId, text, primaryGardenMood, ai
   if (labels === null) return withEmotionLabDiagnostics(
     { status: "FAILED", labels: [], latencyMs: result?.latencyMs || 0, fallbackReason: "INVALID_MODEL_OUTPUT" }, includeDiagnostics,
     { ...result?.diagnostics, attempted: true, status: "INVALID_RESPONSE", fallbackReason: "INVALID_MODEL_OUTPUT", validatedLabels: [] });
-  return withEmotionLabDiagnostics({ ...result, labels }, includeDiagnostics);
+  return withEmotionLabDiagnostics({ ...result, labels, consentUpdatedAt: processingEpoch }, includeDiagnostics);
 }
 
 function eventEmotionMetadata(emotion) {
@@ -1928,8 +1937,7 @@ async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed,
     return { emotion: safeEmotion, flower };
   };
   try {
-    return !haikuSelected ? await persist(prisma, emotion)
-      : await withHaikuEventWriteFence(prisma, { event, emotion }, persist);
+    return await withHaikuEventWriteFence(prisma, { event, emotion }, persist);
   } catch {
     console.info("Event enrichment persistence failed", { eventId: event.id, status: "FAILED" });
     try {
