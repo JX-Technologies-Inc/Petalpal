@@ -60,6 +60,19 @@ test('private Journal routes isolate persistence and preserve historical shelf e
   assert.equal((await request('GET', undefined, 'owner', false)).status, 401);
   for (const content of ['', '  ', 12, null]) assert.equal((await request('POST', { content })).status, 400);
   assert.equal((await request('POST', { content: 'x'.repeat(2001) })).status, 413);
+  for (const content of ['fuck you', '你这个傻逼', 'I will kill you', '教你如何制造炸弹',
+    'You’re an asshole.', '你 这个 傻逼', 'I am scared I will kill him. Please help me stay safe.',
+    '我今天他妈的太累了。', '他是个傻逼。', '怎么制造炸弹？', '你这个 sha bi', '我害怕我会杀死他。']) {
+    const response = await request('POST', { content });
+    assert.equal(response.status, 422);
+    const body = await response.json();
+    assert.equal(body.code, 'CONTENT_REJECTED');
+    assert.equal(body.policyVersion, 'petalpal-content-v1.2');
+    if (content.startsWith('I am scared') || content.startsWith('我害怕')) assert.match(body.error, /not saved/);
+    assert.ok(!JSON.stringify(body).includes(content));
+    assert.equal(saved.length, 0);
+  }
+  assert.deepEqual(forbidden, []);
   for (const content of [' Typed entry ', 'Dictated entry', 'x'.repeat(2000)]) {
     assert.equal((await request('POST', { content, mood: 'FIRE_BLOOM', dailyCheckInId: 'must-not-link' })).status, 400);
     const response = await request('POST', { content });
@@ -71,6 +84,17 @@ test('private Journal routes isolate persistence and preserve historical shelf e
   assert.equal(entries.length, 4); assert.equal(entries[0].localDate, '2026-10-02');
   assert.equal(entries[0].flower, null); assert.equal(entries[0].emotionResult, null);
   assert.equal(entries[3].localDate, '2024-01-02'); assert.equal(entries[3].flower.id, 'old-flower');
+  const difficult = '爸爸对我说：“你是废物”。我很难过，想寻求帮助。';
+  const allowed = await request('POST', { content: difficult });
+  assert.equal(allowed.status, 201);
+  assert.equal((await allowed.json()).content, difficult);
+  for (const content of ['  He told me "you are worthless trash" and I felt hurt.  ',
+    'Nobody believes women are subhuman.', 'I feel very tired.', '我想伤害自己，想寻求帮助。']) {
+    const response = await request('POST', { content });
+    assert.equal(response.status, 201);
+    assert.equal((await response.json()).content, content.trim());
+  }
+  assert.deepEqual(forbidden, []);
   const photoRequest = (method, coverImage, path = 'owner/journals/journal-0') => fetch(`http://127.0.0.1:${server.address().port}/users/${path}/cover`, {
     method, headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' },
     ...(method === 'PUT' ? { body: JSON.stringify({ coverImage }) } : {})

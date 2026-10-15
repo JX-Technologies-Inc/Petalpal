@@ -1,5 +1,90 @@
 # PetalPal Security
 
+## Content Safety Policy v1.2 — 2026-10-15
+
+The local patch strengthens new Event and Journal screening: selected explicit
+profanity is rejected inside sentences as well as alone; selected third-person
+abuse, hateful death wishes, dangerous questions, contracted/named-target/Chinese
+threats and common obfuscation are covered. Phrase-scoped reporting, negation and
+fictional/historical context protect legitimate disclosures without exempting
+separate attacks. Non-profane emotional expression, self-criticism, trauma and
+ordinary self-harm help-seeking remain accepted. Stored text is unchanged except
+for existing trimming; no schema, dependency, provider, logging or AI workflow
+change was made. Firebase ownership, consent, idempotency, deletion and Journal
+exclusion from memory/embeddings/Weekly/Monthly are preserved.
+
+Pending owner review, covered fear-framed concrete violent intentions receive a
+fixed supportive 422 in English or Simplified Chinese. This is a product boundary,
+not a determination of intent or dangerousness. Rejected private Journals are not
+saved. Novel phrasing, unsupported names/casing, deceptive attribution and ambiguous
+contexts remain false-negative/false-positive risks; no complete semantic safety
+or production readiness claim is made. See [scope and limitations](docs/content-safety.md).
+
+V1.2 final local validation: **76/76 focused/CI-contract/environment tests passed**,
+including **6/6 CI-contract tests**. The full security runner completed with **208
+selected tests passed, zero failures, exit 0**. Its DAST made **261 loopback requests**
+with zero external attempts/unexpected DB calls. The policy corpus covers 84 blocks,
+80 accepted cases and 7 supportive rejections; eight maximum-size adversarial inputs
+passed the bounded performance guard. The same isolated Node/npm strategy documented
+below was used, with matching-lockfile local dependencies and scrubbed child
+configuration. Added Event cases use a separate consent-enabled synthetic owner;
+rate limits and existing assertions remain active. Temporary runtime/dependency
+links were removed. Earlier results below are historical and preserved. No manual/
+provider status change, push, merge, deployment, production access or paid API call
+was performed.
+
+## Content-safety P2 corrections — 2026-10-15
+
+Policy `petalpal-content-v1.1` fixes the confirmed family-abuse-report false positive
+and typographic-apostrophe/Chinese-spacing bypasses. Attributed reporting is scoped
+to the immediately reported phrase/quotation; separate abuse still fails. Analysis
+normalization never changes accepted stored text. Concrete English violent actions
+framed by fear now produce a fixed supportive 422 rejection instead of the former
+fear-prefix exemption; `help` is never a blanket allowance. Rejected requests cause
+no persistence, AI job, enrichment or dispatch. Journal remains isolated from Event
+memory and Weekly/Monthly; no logging, external service, dependency, data migration
+or production pipeline change is introduced.
+
+Local focused/contract/environment validation passed **76/76** tests, including the
+exact confirmed cases, four ambiguous-threat cases, owner/privacy/idempotency checks
+and startup/timezone regressions. The previous runner blockers were environmental:
+shell Node 24.7.0 has old timezone data; bundled Node 24.19.0 lacks adjacent npm.
+A temporary isolated copy of bundled Node (tzdata 2026b), with the existing npm
+linked beside it, satisfies both fixtures without global timezone/runtime changes
+or weakened tests. Historical evidence below is preserved. Details and remaining
+finite-grammar/context limits: [content-safety policy](docs/content-safety.md).
+
+Full `scripts/security-ci.js` subsequently completed in one isolated run: **208
+selected tests passed, zero failures, exit 0**. DAST made **261 loopback requests**,
+zero external attempts/unexpected DB calls. No selected local tests remain blocked.
+These results supersede the historical v1 single-runner limitation below; hosted
+CI, production and paid-provider acceptance remain outside this local task.
+
+## Local Event/Journal content-safety candidate — 2026-10-14
+
+`petalpal-content-v1` adds shared offline checks for new `/events`, private
+`/users/:userId/journals`, and legacy Daily Grow `journalText`/`event` submissions,
+before persistence, job creation or enrichment. Fixed English/Simplified Chinese
+422 errors contain no submitted text. Owner authentication, consent, Event
+idempotency/transactions and Journal exclusion from AI remain intact. Existing
+matching Event retries are preserved; historical content is not scanned or changed.
+
+No moderation dependency/dictionary is adopted: the three requested MIT-code
+candidates have unresolved dataset provenance and/or inadequate bilingual scope.
+The fallback uses independently authored bounded phrase rules and synthetic tests.
+It cannot determine threat credibility or comprehensive semantic intent and can
+produce false positives and false negatives. See [policy, enforcement, tests and
+licensing assessment](docs/content-safety.md) and [notice scope](THIRD_PARTY_NOTICES.md).
+This is local synthetic evidence, not production acceptance or commercial legal
+clearance. No provider/manual setting or status changed; existing checklist evidence
+is preserved. No push, merge, deployment, production data access or paid call.
+
+Local validation: 62/62 focused tests and 6/6 CI-contract tests passed; 261-request
+loopback DAST made zero external attempts/unexpected DB calls. All selected security
+cases have passing evidence across local runtimes; a single successful full-runner
+result remains unverified due shell tzdata and bundled-npm fixture limitations
+documented in the policy report. No existing security gate or test was weakened.
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree
