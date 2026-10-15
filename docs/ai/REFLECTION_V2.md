@@ -63,3 +63,34 @@ Reservations are unchanged: Weekly ≈ US$0.041 (8,192-byte input allowance, 2,0
   - ungrounded output with no repair and no replay;
   - cross-owner isolation.
 - `live-weekly` makes exactly one real call. It needs a separate `APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL` approval naming the exact verified commit and a cap ≤ US$0.05 (the full reservation is US$0.04096). Gates are listed in `SECURITY.md`. Output is synthetic and must still receive human editorial review; it is not production acceptance.
+
+## Real Claude zh-Hans Weekly v2 acceptance — 2026-10-15
+
+Status: **LIVE WEEKLY V2 PASS — HUMAN EDITORIAL REVIEW PENDING**.
+
+- Tested commit: `7f519774a6cae614d8231e857e04fe8576b8b701`
+- Model: `claude-sonnet-5-5`
+- Gateway: `petalpal-integration`
+- Contract: `weekly-reflection-v2`
+- Locale: `zh-Hans`
+- Provider calls: 1
+- Generated and persisted: 2 Chinese paragraphs, 4 evidence records
+- Input/output tokens: 1,680 / 286; cached input: 0
+- Estimated usage cost: US$0.00622
+- Recorded reservation/liability: US$0.04096
+- Authorized cap: US$0.05
+- Synthetic, isolated PostgreSQL only; no production deployment or Monthly/Opus calls
+
+### Actual generated narrative
+
+周一画完了一幅素描，那个下午很安静。到了周三，这幅画被分享给了朋友，两个人聊起了彼此的近况。
+
+周五的考试成绩不太理想，心情有些低落。这份低落在文字里没有被解释，也没有被收起来。周日和朋友去公园跑步，感觉轻松多了。成绩那件事后来怎样，这几段记录里没有写。
+
+### Editorial assessment
+
+The Chinese is generally coherent and natural, with chronological references consistent with synthetic evidence. The phrase “这份低落在文字里没有被解释，也没有被收起来” sounds somewhat artificial. One successful sample does not establish general editorial or factual reliability.
+
+The call passed runtime validation, persistence, cited evidence and owner-scoped readback checks. Estimated usage is not a verified final provider invoice.
+
+Weekly v2 remains default-off and is NOT production-approved.
