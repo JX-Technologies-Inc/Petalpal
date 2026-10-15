@@ -38,7 +38,7 @@ function friendsHarness(fetch, initialSession = { user: { id: 'owner' } }, extra
   };
 }
 function setup(fetch, extras = {}, react) {
-  const load = loadPlantingModules(undefined, react, { getItem: async () => null }, false, { fetch, '../../hooks/useEventVoiceInput': { useEventVoiceInput: () => ({ phase: 'idle', active: false }) }, ...extras });
+  const load = loadPlantingModules(undefined, react, { getItem: async () => null, getAllKeys: async () => [], removeItem: async () => {} }, false, { fetch, '../../hooks/useEventVoiceInput': { useEventVoiceInput: () => ({ phase: 'idle', active: false }) }, ...extras });
   return { api: load('../../../services/api'), events: load('../../../services/events'), load };
 }
 test('authenticated requests refresh once on 401, preserve idempotency and reject anonymous requests', async () => {
@@ -99,15 +99,16 @@ test('layout storage isolates accounts and rejects a save across an account swit
   const nativeLoad = loadPlantingModules(undefined, undefined, {
     getItem: async (key) => deferredRead ? await deferredRead : items.get(key) || null,
     setItem: async (key, value) => items.set(key, value),
+    getAllKeys: async () => [...items.keys()], removeItem: async key => items.delete(key),
   }, false);
   const storage = nativeLoad('plantingPersistence');
-  storage.scopeFlowerPlacements('alice'); await storage.saveFlowerPlacements([{ id: 'alice-flower', flowerId: 'a' }]);
-  storage.scopeFlowerPlacements('bob'); assert.equal((await storage.loadFlowerPlacements()).length, 0);
-  storage.scopeFlowerPlacements('alice'); assert.equal((await storage.loadFlowerPlacements())[0].id, 'alice-flower');
+  await storage.scopeFlowerPlacements('alice'); await storage.saveFlowerPlacements([{ id: 'alice-flower', flowerId: 'a' }]);
+  await storage.scopeFlowerPlacements('bob'); assert.equal((await storage.loadFlowerPlacements()).length, 0);
+  await storage.scopeFlowerPlacements('alice'); assert.equal((await storage.loadFlowerPlacements()).length, 0, 'Returning to an account begins with a clean cache');
   let resolve; deferredRead = new Promise((done) => { resolve = done; });
   const saving = storage.addOrUpdateFlowerPlacement({ id: 'a2', flowerId: 'a2' });
-  storage.scopeFlowerPlacements('bob'); resolve(null);
-  await assert.rejects(saving, /account changed/);
+  const switching = storage.scopeFlowerPlacements('bob'); resolve(null);
+  assert.equal((await saving).length, 0, 'Stale save cannot cross account boundary'); await switching;
   assert.equal(items.has('petalpal_flower_placements_v1:bob'), false);
 });
 test('emotion pending, success and safe fallback remain distinct', () => {
@@ -251,7 +252,7 @@ test('current Event displays only its canonical Flower, retains old pending flow
   }
   visit(panel);
   const labels = nodes.filter(node => node.type === 'Text' && Array.isArray(node.props.children) &&
-    node.props.children[0] === 'Secondary emotions: ').map(node => node.props.children[1]);
+    node.props.children[0] === 'AI emotion suggestions (not a diagnosis): ').map(node => node.props.children[1]);
   assert.deepEqual(labels, ['fear, disappointment', 'fear, disappointment']);
   assert.equal(nodes.some(node => node.type === 'Image' && node.props.source?.uri), false, 'Backend emoji is artwork, not a URL');
   assert.equal(nodes.some(node => node.type === 'Text' && node.props.children === '🌷'), true);

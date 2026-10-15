@@ -49,6 +49,10 @@ test('persisted privacy enforces confirmed-friend reads, visits, direct access a
     const original = prisma[model][method]; restore.push(() => { prisma[model][method] = original; });
     prisma[model][method] = implementation;
   }
+  stub('userBlock', 'findFirst', async () => null);
+  stub('userBlock', 'findMany', async () => []);
+  stub('user', 'findFirst', async () => null);
+  stub('user', 'findMany', async () => []);
   const transaction = prisma.$transaction, raw = prisma.$queryRawUnsafe;
   restore.push(() => { prisma.$transaction = transaction; prisma.$queryRawUnsafe = raw; });
   // Single-connection fixture; independent PostgreSQL tests prove lock behavior.

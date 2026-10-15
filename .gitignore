@@ -389,3 +389,6 @@ id_ed25519
 credentials.json
 service-account*.json
 service_account*.json
+
+# Local release evidence and unreviewed license collection
+/release-artifacts/

@@ -701,12 +701,12 @@ async function getGardenResponse(userId, { includePrivate = false, viewerUserId 
     },
   });
 
-  return serializeGardenResponse({
+  return filterSocialPayload(serializeGardenResponse({
     owner: user,
     garden: { ...fullGarden, flowers: await withGardenFlowerSupportState(database, fullGarden.flowers, viewerUserId) },
     activeVisitors: getActiveVisitors(fullGarden.id),
     includePrivate
-  });
+  }), await hiddenSocialIds(database, viewerUserId));
 }
 
 
@@ -873,6 +873,7 @@ app.get("/users/:userId", async (req, res) => {
         : {}),
     });
   } catch (err) {
+    if (sendSocialError(res, err)) return;
     logServerError("GET /users/:userId error", err);
     res.status(500).json({ error: "Failed to get user" });
   }
@@ -2908,7 +2909,7 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
       realtime.to(`garden:${req.params.userId}`).to(`user:${req.params.userId}`)
         .emit("visitRecordAdded", result.visitRecord);
     }
-    res.json(result.flower);
+    res.json(filterSocialPayload(result.flower, await hiddenSocialIds(prisma, req.auth.userId)));
   } catch (error) {
     if (error instanceof FlowerSupportError) {
       return res.status(error.status).json({ error: error.message, code: error.code });
@@ -2969,7 +2970,7 @@ app.post("/users/:userId/flowers/:flowerId/support", requireSocialGardenAccess, 
           `message completed in ${Date.now() - startTime}ms`
         );
   
-        res.json(socialFlower);
+        res.json(filterSocialPayload(socialFlower, await hiddenSocialIds(prisma, visitorUserId)));
   
       } catch (err) {
         if (err?.code === "CONTENT_REJECTED") return res.status(422).json({error:"Please revise this message to follow the Community Guidelines.",code:err.code});

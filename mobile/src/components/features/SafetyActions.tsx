@@ -28,10 +28,10 @@ export function SafetyActions({ userId, messageId, onBlocked }: { userId?: strin
 }
 export function BlockedUsers() {
   const [users,setUsers] = useState<{id:string;name:string}[]>([]), [status,setStatus] = useState('');
-  const [busy,setBusy] = useState(false);
-  async function load() { setBusy(true); try { setUsers(await apiRequest('/users/me/blocks')); setStatus(''); } catch(e) { setStatus((e as Error).message); } finally { setBusy(false); } }
+  const [busy,setBusy] = useState(false),[cursor,setCursor]=useState<string|null>(null);
+  async function load(after?:string) { setBusy(true); try { const page=await apiRequest<{users:{id:string;name:string}[];nextCursor:string|null}>(`/users/me/blocks${after?'?after='+encodeURIComponent(after):''}`);setUsers(previous=>after?[...previous,...page.users]:page.users);setCursor(page.nextCursor);setStatus(''); } catch(e) { setStatus((e as Error).message); } finally { setBusy(false); } }
   return <View style={{gap:8}}><FeatureActionButton secondary title="Blocked users" onPress={() => void load()} disabled={busy} />
     {users.map(u => <FeatureActionButton key={u.id} secondary title={`Unblock ${u.name}`} disabled={busy} onPress={async () => {
       setBusy(true); try { await apiRequest(`/users/me/blocks/${encodeURIComponent(u.id)}`,'DELETE'); await load(); } catch(e) {setStatus((e as Error).message);} finally {setBusy(false);}
-    }} />)}<Text style={ui.caption}>{status || 'Unblocking does not restore friendship.'}</Text></View>;
+    }} />)}{cursor?<FeatureActionButton secondary title="More blocked users" disabled={busy} onPress={()=>void load(cursor)}/>:null}<Text style={ui.caption}>{status || 'Unblocking does not restore friendship.'}</Text></View>;
 }

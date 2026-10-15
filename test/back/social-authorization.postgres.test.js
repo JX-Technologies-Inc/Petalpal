@@ -48,7 +48,7 @@ function instrument(tx) {
 // Fixture tables follow the installed client's scalar layout. No app migration
 // command or existing database is used. Constraints exercise real FKs/rollback.
 async function fixtureSchema() {
-  const models = new Set(['User', 'Garden', 'Flower', 'Message', 'VisitRecord', 'Friendship', 'FriendRequest', 'DailyCheckIn', 'Journal', 'EmotionResult', 'Event']);
+  const models = new Set(['User', 'UserBlock', 'Garden', 'Flower', 'Message', 'VisitRecord', 'Friendship', 'FriendRequest', 'DailyCheckIn', 'Journal', 'EmotionResult', 'Event']);
   const quote = s => '"' + s.replaceAll('"', '""') + '"';
   const schema = await readFile(new URL('../../prisma/schema.prisma', import.meta.url), 'utf8');
   const enums = new Set([...schema.matchAll(/^enum (\w+)/gm)].map(m => m[1]));
@@ -72,6 +72,7 @@ async function fixtureSchema() {
     await observer.query('CREATE TABLE ' + quote(name) + ' (' + columns.join(',') + ')');
   }
   await observer.query(`
+    ALTER TABLE "UserBlock" ADD PRIMARY KEY ("blockerId", "blockedId");
     ALTER TABLE "User" ADD UNIQUE ("firebaseUid");
     ALTER TABLE "Garden" ADD UNIQUE ("ownerId"), ADD FOREIGN KEY ("ownerId") REFERENCES "User" (id);
     ALTER TABLE "Friendship" ADD UNIQUE ("userId", "friendId"),
@@ -85,8 +86,9 @@ async function fixtureSchema() {
 }
 async function seed() {
   gate = undefined; fault = undefined;
-  await observer.query(`TRUNCATE "User", "Garden", "Flower", "Message", "VisitRecord", "Friendship", "FriendRequest", "DailyCheckIn", "Journal", "EmotionResult", "Event" CASCADE;
+  await observer.query(`TRUNCATE "UserBlock", "User", "Garden", "Flower", "Message", "VisitRecord", "Friendship", "FriendRequest", "DailyCheckIn", "Journal", "EmotionResult", "Event" CASCADE;
     INSERT INTO "User" (id, name, "firebaseUid") VALUES ('owner','Owner','owner'), ('actor','Actor','actor'), ('outsider','Outsider','outsider');
+    UPDATE "User" SET "communityTermsVersion" = 'petalpal-community-2026-10-15';
     INSERT INTO "Garden" (id,"ownerId") VALUES ('garden','owner');
     INSERT INTO "Flower" (id,mood,name,meaning,img,"left","top","userId","gardenId") VALUES ('flower','SUNNY_BLOOM','Sunflower','Joy','🌻',0,0,'owner','garden');
     INSERT INTO "Friendship" (id,"userId","friendId") VALUES ('outbound','owner','actor'), ('inbound','actor','owner');`);

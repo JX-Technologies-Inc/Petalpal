@@ -36,6 +36,8 @@ test('A: actual API report privacy, dedup, moderator authorization and block rac
  assert.equal(await db.friendship.count(),0);assert.equal(await db.friendRequest.count(),0);
  assert.equal((await api('b','/friends/request','POST',{receiverId:'a'})).status,403);
  assert.equal((await api('a','/users/b/garden')).status,403);
+ assert.equal((await api('a','/users/b')).status,403);
+ assert.deepEqual((await api('a','/users/me/blocks')).body.users.map(u=>u.id),['b']);
  // Deliberately stale friendship cannot bypass the persistent block.
  await db.friendship.create({data:{userId:'b',friendId:'a'}});
  assert.equal(await canVisitGarden(db,{id:'b',allowGardenVisits:true},'a'),false);
@@ -70,6 +72,11 @@ test('A: Socket.IO evicts a blocked visitor and denies rejoin; message reports r
  assert.equal((await api('b',`/users/a/flowers/${flower.id}/message`,'POST',{text:'Bypass'})).status,403);
  assert.equal((await api('b',`/users/a/flowers/${flower.id}/support`,'POST',{})).status,403);
  assert.equal(await db.message.count(),1);
+ const garden=await api('a','/users/a/garden'); assert.equal(garden.status,200);
+ assert.equal(garden.body.flowers[0].messages.length,0,'Blocked author is removed from own Garden');
+ const session=await api('a','/session'); assert.equal(session.status,200);
+ assert.equal(session.body.garden.flowers[0].messages.length,0,'Session snapshot also filters blocked messages');
+
  } finally {socket.disconnect();}
  await db.userBlock.deleteMany();
 });
@@ -86,6 +93,11 @@ test('B: acceptance and screening run before message, visit record or notificati
  assert.equal(await db.message.count(),count);assert.equal(await db.visitRecord.count(),visits);
  assert.equal((await api('b',path,'POST',{text:'I am sad and need help. 我很难过，想寻求帮助。'})).status,200);
  assert.equal(await db.message.count(),count+1);
+ assert.equal((await api('b','/users/avatar','PUT',{avatar:'f u c k you'})).status,422);
+ const messageReport=await db.report.findFirst({where:{messageId:{not:null}}});
+ assert.equal((await api('moderator',`/moderation/reports/${messageReport.id}`,'POST',{action:'remove-message'})).status,200);
+ assert.equal(await db.message.findUnique({where:{id:messageReport.messageId}}),null);
+
 });
 
 test('C: explicit versioned consent, withdrawal epoch, output ownership and no private report text',async()=>{

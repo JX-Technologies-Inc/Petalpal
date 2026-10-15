@@ -18,3 +18,9 @@ Code inventory is not proof of commercial rights. Owner must provide license/cre
 `package-lock.json` and `mobile/package-lock.json` record dependencies; export the actual production dependency license notices and check redistribution obligations before release. Bundled system-font usage does not establish rights for any additional font assets. Verify Expo icon ownership, not merely file existence. Screenshots must be from the final signed build, use disposable accounts and synthetic content, and accurately depict available functionality. Remove unsupported therapeutic/medical and guaranteed-outcome claims.
 
 Publisher placeholder remains [LEGAL PUBLISHER NAME — OWNER CONFIRMATION REQUIRED]. Confirm the registered developer account owns or licenses the app and assets. JX Technology Inc. is an internal name supplied by the owner, not a verified legal conclusion.
+
+## Local dependency collection (2026-10-15)
+
+`scripts/release-license-inventory.mjs` collected installed production lockfile package metadata from backend/mobile: 1,242 entries, 38 missing or undeclared licenses, 191 without a top-level notice file, 1,054 notice texts. Duplicate versions across scopes are intentional. Local ignored outputs are `release-artifacts/dependency-license-inventory.json` and `release-artifacts/dependency-notices.txt`. These are unreviewed evidence, not a rights clearance or complete attribution determination. Review all missing/ambiguous metadata, transitive bundled notices and obligations before distributing. No dependency/lockfile changes were made.
+
+Visual inspection found the default Expo mark in `mobile/assets/images/icon.png`; the iOS icon directory also names Expo artwork. Approved final PetalPal icon/splash variants and signed-build screenshots remain missing.
