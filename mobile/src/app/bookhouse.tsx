@@ -1,3 +1,4 @@
+import { EmotionalSafetyNote } from '../components/features/EmotionalSafetyNote';
 import { BookhouseEnvironment, SceneLighting, SCENE_ASPECT, DESK_Y } from '../components/bookhouse/BookhouseEnvironment';
 import { useWorldTime } from '../components/garden/world-time';
 import { JournalCover } from '../components/bookhouse/JournalCover';
@@ -312,6 +313,7 @@ function JournalEditor({ userId, onClose, onSaved }: { userId: string; onClose: 
       <View pointerEvents="none" style={[StyleSheet.absoluteFill, { overflow: 'hidden', borderRadius: 8, backgroundColor: theme.input }]}>
         <View style={{ position: 'absolute', left: -paperSize.width * 1.3, top: -paperSize.height * .14, opacity: .8 }}><BookhouseArt index={12} width={paperSize.width * 2.5} height={paperSize.height * 1.4} /></View>
       </View>
+      <EmotionalSafetyNote text={text} />
       <TextInput accessibilityLabel="Private journal" placeholder="A moment to keep…" placeholderTextColor="#927653" value={text} onChangeText={setText} multiline maxLength={2000} editable={!busy}
         style={[s.input, { position: 'relative', zIndex: 1, minHeight: 260, padding: 22, paddingBottom: 76, fontFamily: serif, fontSize: 17, lineHeight: 26, color: '#584029', backgroundColor: 'transparent', borderColor: theme.gold, borderWidth: 2, borderRadius: 8, shadowColor: '#1B0E06', shadowOpacity: .35, shadowRadius: 4, shadowOffset: { width: 0, height: 4 } }]} />
       <Pressable accessibilityRole="button" accessibilityLabel="Dictate private journal" accessibilityHint="Record up to three minutes, then review before saving"

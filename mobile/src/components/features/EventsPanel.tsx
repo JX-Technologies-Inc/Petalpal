@@ -1,3 +1,5 @@
+import { EmotionalSafetyNote } from './EmotionalSafetyNote';
+import { AiOutputReport } from './AiPrivacySettings';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -15,6 +17,7 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
   const voice = useEventVoiceInput(journal.content, journal.setContent, journal.busy);
   return <View style={styles.body}>
     <Text style={styles.text}>A little moment, a new flower. Your Primary Mood is always your choice.</Text>
+    <EmotionalSafetyNote text={journal.content} />
     <EventSection title="What happened?">
       <View style={styles.inputWrap}><View pointerEvents="none" style={styles.inputLeaf}><Image accessible={false} source={require('../../../assets/garden/flowers/species/olive/components/batch/branch/leafy.png')} style={{ width: '100%', height: '100%' }} resizeMode="contain" /></View>
       <TextInput accessibilityLabel="Event" placeholder="A small moment from today…" placeholderTextColor="#84998E"
@@ -58,7 +61,7 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
       <Text style={styles.caption}>Emotion and memory processing follow your existing account consent.</Text>
     {journal.result ? <EventSection title="Your Event is saved">
       <Text style={styles.text}>{emotionMessage(journal.result.event.emotionStatus)}</Text>
-      <Text style={styles.caption}>Secondary emotions: {journal.result.event.secondaryEmotions.join(', ') || 'None'}</Text>
+      <Text style={styles.caption}>AI emotion suggestions (not a diagnosis): {journal.result.event.secondaryEmotions.join(', ') || 'None'}</Text>
       <Text style={styles.caption}>{memoryMessage(journal.result.memoryJob)}</Text>
       {journal.pollError ? <Text accessibilityRole="alert" style={styles.text}>{journal.pollError}</Text> : null}
       <EventAction secondary title="Refresh Event status" onPress={() => void journal.refreshEventStatus()} />
@@ -86,7 +89,8 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
           </View>
         </View>
         {flower.event ? <Text style={styles.text}>{flower.event}</Text> : null}
-        <Text style={styles.caption}>Secondary emotions: {flower.sourceEvent?.secondaryEmotions.join(', ') || 'None'}</Text>
+        <Text style={styles.caption}>AI emotion suggestions (not a diagnosis): {flower.sourceEvent?.secondaryEmotions.join(', ') || 'None'}</Text>
+        {flower.sourceEventId ? <AiOutputReport kind="event" outputId={flower.sourceEventId} /> : null}
         <EventAction secondary title={placed ? 'Adjust position' : 'Plant flower'} onPress={() => {
           onClose(); journal.placeFlower(flower);
         }} />

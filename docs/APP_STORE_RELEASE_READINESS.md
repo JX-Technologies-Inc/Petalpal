@@ -48,7 +48,9 @@ DRAFTS IMPLEMENTED; PUBLICATION BLOCKED. `docs/release/POLICY_DRAFTS.md` contain
 
 ## F — Emotional safety
 
-IN PROGRESS.
+IMPLEMENTED / TESTED within bounded coverage: supportive, nonblocking local guidance for explicit current danger in Event/Journal composition; always-visible emergency-service boundary; no location guess or emergency-monitoring promise. Emotion suggestions and Reflection UI state the non-diagnostic boundary and offer AI reporting. Existing grounded validation/closed output contracts are preserved; report prompts exclude treatment, clinical-authority and outcome guarantees. Ordinary sadness, anxiety, trauma disclosure and help-seeking remain permitted.
+
+Policy: Apple 1.4; relevant Google restricted/AI content requirements. Evidence: `mobile/test/emotionalSafety.test.mjs` 2/2 plus v1.2 synthetic bilingual coverage 7/7; TypeScript. Clinical/legal positioning, real-device presentation and complete language/risk coverage NOT VERIFIED. See `EMOTIONAL_SAFETY.md`.
 
 ## G — Build and review
 
@@ -64,3 +66,5 @@ NOT VERIFIED: full Xcode is absent; Command Line Tools cannot produce a signed i
 - D: phase D checkpoint — PostgreSQL integration 5/5 and deletion contract 2/2. Added final social raw-message filtering and in-flight user-room revocation fences found during integration.
 
 - E: phase E checkpoint — source-backed drafts and TypeScript validation; legal sufficiency, public URL delivery and store questionnaire answers NOT VERIFIED.
+
+- F: phase F checkpoint — local risk/benign UI policy 2/2, TypeScript passed.
