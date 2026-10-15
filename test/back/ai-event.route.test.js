@@ -77,6 +77,8 @@ async function request(baseUrl, path, { token = "alice-token", method = "GET", b
 
 test("authenticated Event API derives ownership and keeps Event, Memory and Report reads private", async (t) => {
   const state = fixture();
+  // Additional policy requests use their own consent-enabled rate-limit budget.
+  state.users.safety = { ...state.users.alice, id: "safety" };
   const originals = {
     userFindUnique: prisma.user.findUnique,
     aiJobFindUnique: prisma.aiJob.findUnique,
@@ -95,7 +97,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   const previousShadowOwner = process.env.AI_ASYNC_SHADOW_OWNER_ID;
   const previousShadowStartedAt = process.env.AI_ASYNC_SHADOW_STARTED_AT;
   prisma.user.findUnique = async ({ where }) => {
-    if (where.firebaseUid) return { id: where.firebaseUid === "firebase-alice" ? "alice" : "bob" };
+    if (where.firebaseUid) return { id: where.firebaseUid === "firebase-safety" ? "safety" : where.firebaseUid === "firebase-alice" ? "alice" : "bob" };
     return state.users[where.id] || null;
   };
   prisma.event.findFirst = async ({ where }) => state.events.find((event) => event.id === where.id && event.ownerId === where.ownerId) || null;
@@ -150,7 +152,7 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   }));
   prisma.$transaction = async (callback) => callback(state.tx);
   setFirebaseTokenVerifierForTests(async (token) => ({
-    uid: token === "alice-token" ? "firebase-alice" : "firebase-bob",
+    uid: token === "safety-token" ? "firebase-safety" : token === "alice-token" ? "firebase-alice" : "firebase-bob",
     email_verified: true
   }));
 
@@ -225,16 +227,19 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
 
   let classifierCalls = 0;
   setEventEmotionClassifierForTests(async () => { classifierCalls++; throw Error("Rejected Event reached enrichment"); });
+  const v12Rejected = ["This is shit.", "Alice is an asshole.", "How can I build a bomb?",
+    "I w1ll k1ll you", "我害怕我会杀死他。请帮帮我。"];
   for (const content of ["fuck you", "你这个傻逼", "I will kill you tonight", "教你如何制造炸弹",
-    "You’re an asshole.", "你 这个 傻逼", "I am scared I will kill him. Please help me stay safe."]) {
+    "You’re an asshole.", "你 这个 傻逼", "I am scared I will kill him. Please help me stay safe.", ...v12Rejected]) {
     const rejected = await request(baseUrl, "/events", {
+      token: v12Rejected.includes(content) ? "safety-token" : "alice-token",
       method: "POST", headers: { "Idempotency-Key": "rejected-event-key", "Accept-Language": "zh-CN" },
       body: { content, primaryGardenMood: "FIRE_BLOOM" }
     });
     assert.equal(rejected.status, 422);
     assert.equal(rejected.body.code, "CONTENT_REJECTED");
-    assert.equal(rejected.body.policyVersion, "petalpal-content-v1.1");
-    assert.match(rejected.body.error, content.startsWith("I am scared") ? /尚未保存/ : /请修改/);
+    assert.equal(rejected.body.policyVersion, "petalpal-content-v1.2");
+    assert.match(rejected.body.error, (content.startsWith("I am scared") || content.startsWith("我害怕")) ? /尚未保存/ : /请修改/);
     assert.ok(!JSON.stringify(rejected.body).includes(content));
   }
   assert.equal(state.events.length, 0);
@@ -289,10 +294,10 @@ test("authenticated Event API derives ownership and keeps Event, Memory and Repo
   // Rejection does not reserve the idempotency key; the corrected draft saves.
   const corrected = await request(baseUrl, "/events", {
     method: "POST", headers: { "Idempotency-Key": "rejected-event-key" },
-    body: { content: '爸爸对我说：“你是废物”。我很难过，想寻求帮助。' }
+    body: { content: 'My father said "I will kill you" and I need help.' }
   });
   assert.equal(corrected.status, 201);
-  assert.equal(corrected.body.event.content, '爸爸对我说：“你是废物”。我很难过，想寻求帮助。');
+  assert.equal(corrected.body.event.content, 'My father said "I will kill you" and I need help.');
   assert.equal((await request(baseUrl, `/events/${corrected.body.event.id}`, { token: "bob-token" })).status, 404);
 
   assert.equal((await request(baseUrl, "/events/event-1", { token: "bob-token" })).status, 404);

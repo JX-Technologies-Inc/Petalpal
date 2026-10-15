@@ -168,18 +168,20 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
 
   await t.test("both legacy Journal aliases reject before Garden, Journal or AI writes", async () => {
     for (const field of ["journalText", "event"]) {
-      resetState();
-      // Separate synthetic owner keeps the existing concurrency test's request
-      // budget intact; production rate limits remain active for every request.
-      const result = await api(baseUrl, "/users/friend-1/flowers", {
-        token: "friend-token", method: "POST", body: { mood: "FIRE_BLOOM", [field]: "你这个傻逼" }
-      });
-      assert.equal(result.status, 422);
-      assert.equal(result.body.code, "CONTENT_REJECTED");
-      assert.equal(transactionCalls, 0);
-      assert.equal(longTermAiWrites, 0);
-      assert.equal(state.journal, null);
-      assert.equal(state.flower, null);
+      for (const content of ["你这个傻逼", "This is shit.", "怎么制造炸弹？", "I w1ll k1ll you"]) {
+        resetState();
+        // Separate synthetic owner keeps the existing concurrency test's request
+        // budget intact; production rate limits remain active for every request.
+        const result = await api(baseUrl, "/users/friend-1/flowers", {
+          token: "friend-token", method: "POST", body: { mood: "FIRE_BLOOM", [field]: content }
+        });
+        assert.equal(result.status, 422);
+        assert.equal(result.body.code, "CONTENT_REJECTED");
+        assert.equal(transactionCalls, 0);
+        assert.equal(longTermAiWrites, 0);
+        assert.equal(state.journal, null);
+        assert.equal(state.flower, null);
+      }
     }
   });
 

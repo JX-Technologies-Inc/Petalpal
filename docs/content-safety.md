@@ -1,8 +1,61 @@
 # Event and Journal content safety
 
-Policy: `petalpal-content-v1.1` (2026-10-15). Local development candidate only.
+Policy: `petalpal-content-v1.2` (2026-10-15). Local development candidate only.
 
-## P2 corrections — 2026-10-15
+## v1.2 product-policy corrections — 2026-10-15
+
+Prohibited profanity now matches throughout unprotected text, including emotional
+sentences, selected inflections and compounds (`fucking`, `motherfucker`, `shit`,
+`他妈的`). Users can express the same feelings without that wording. This supersedes
+the v1/v1.1 emotional-profanity exemption; there is no whole-entry help-word exception.
+Selected third-person insults, death wishes using “be killed”, harmful questions,
+contracted/leet threats, capitalized Latin-name targets and Chinese “我要杀你” are
+also covered. The Cyrillic c lookalike is recognized only inside selected terms;
+repeated i is bounded to 2–4 within “bitch”, and sha/bi spacing is bounded. No global
+confusable folding, repetition collapsing, dependency or third-party list is added.
+
+Reporting frames include “My father said” and “He told me”; “Nobody believes” and
+bounded negative predicates protect clear negation. Explicit fictional/historical
+reporting is supported. Protection covers only the attributed quote or matched
+phrase, including nested profanity matches. A separate attack, even in the same
+submission, is still checked. Benign bomb-shelter/message/chess expressions,
+prevention questions, ordinary distress, trauma and self-harm help-seeking retain
+acceptance. Accepted wording is unchanged apart from existing caller trimming.
+
+**Pending owner review:** matched fear-framed first-person violent intentions
+continue to receive a supportive 422. This now applies to the covered Chinese
+threats and capitalized-name English threats as well. It is a product decision,
+not an assessment that the writer is dangerous or that harm is imminent. Both
+English and Simplified Chinese responses are fixed and disclose no submitted text.
+**Rejected private Journals are not saved**, including help-seeking entries rejected
+by this rule; rejected Events likewise create no jobs, enrichment or dispatch.
+
+Coverage remains finite. Named-target matching requires a capitalized Latin name
+of 2–30 characters; other scripts/casing, unfamiliar names, paraphrases, homophones,
+encoded attacks and unsupported inflections can escape. Unrecognized reporting,
+negation, fictional/medical/benign contexts can be falsely rejected. Attribution
+can be fabricated. Intent, credibility and comprehensive dangerous instructions
+cannot be reliably resolved by these rules; this patch is not production semantic
+moderation acceptance. Existing owner, consent, idempotency, deletion and Journal
+exclusion from memory/embeddings/Weekly/Monthly paths are unchanged.
+
+Final local v1.2 validation: **76/76 focused/CI-contract/environment tests passed**
+(including all **6 CI-contract tests**). The policy corpus has **84 rejection cases,
+80 accepted cases, 7 supportive-rejection cases**, and 3 explicit remaining
+ambiguous/unsupported examples. Eight 4,000-character adversarial inputs passed a
+2-second aggregate guard; this is a regression check, not a throughput guarantee.
+The **full security runner passed 208 selected tests, zero failures, exit 0**;
+its DAST completed **261 loopback requests**, zero external attempts/unexpected DB
+calls. No tests were weakened and no global runtime/timezone settings changed.
+Validation used
+matching-lockfile local dependencies, synthetic fixtures, disposable PGlite and a
+temporary copy of bundled Node 24.19.0 (tzdata 2026b) with existing npm linked beside
+it. Temporary runtime/dependency links were removed. Added Event API cases use a
+separate consent-enabled synthetic owner to preserve the existing rate-limit test
+budget. Earlier results remain historical; no provider/manual status or checklist
+changed. No push, merge, deployment, production access or paid calls.
+
+## Historical v1.1 P2 corrections — 2026-10-15
 
 - Reporting frames now recognize a bounded set of Chinese family roles, including
   爸爸/妈妈/父亲/母亲. The confirmed paternal abuse report is accepted unchanged.
@@ -64,8 +117,10 @@ This is a deliberately limited deterministic policy, not semantic moderation.
   handled before generic error logging. There is no new moderation logging,
   telemetry, inference, network request, database field or migration.
 
-Analysis applies NFKC, case folding, combining-mark/default-format removal and
-bounded punctuation/spacing/common-leet matching for a few English profane terms.
+Analysis applies NFKC, case-insensitive English matching,
+combining-mark/default-format removal and
+bounded punctuation/spacing/common-leet matching for selected English profane terms.
+Case is retained for the bounded proper-name threat rule.
 Chinese character gaps are bounded in direct-insult patterns. English uses Latin
 letter/number boundaries, so normal words containing short profane substrings are
 not blocked and adjacent Chinese/English abuse can be detected. There is no global
@@ -74,8 +129,8 @@ substring blacklist or global whitespace removal.
 Original allowed wording is preserved, including reported abuse. Existing outer
 whitespace trimming remains unchanged. Explicit reporting frames protect only the
 immediately attributed phrase or paired quotation. Rejection-of-claim frames have
-narrow exceptions; concrete fear-framed threats receive a supportive rejection.
-A help-seeking word or quotation elsewhere
+narrow exceptions; covered English/Chinese fear-framed threats receive a supportive
+rejection. A help-seeking word or quotation elsewhere
 does not exempt a separate attack. Emotional distress, trauma, anger, sexual/medical
 discussion and requests for support are not themselves prohibited. Plain quotations
 without a recognized reporting frame may still be rejected.
@@ -93,13 +148,12 @@ client-side dictionary is added. Transcription is not submission moderation.
 
 Only the finite grammar in `lib/content-safety.js` is enforced. It cannot establish
 threat credibility, speaker intent, truth of reported speech, or comprehensive hate
-or instruction semantics. It misses novel phrasing, named targets, many slurs,
+or instruction semantics. It misses novel phrasing, unsupported named targets, many slurs,
 pinyin/homophones, Traditional Chinese, arbitrary confusables, repeated-letter and
 encoded evasion, and actual harmful instructions without a recognized introduction.
 A malicious writer can falsely attribute an attack; an unrecognized legitimate
-quotation, negation, idiom or fictional description can be rejected. Standalone
-strong expletives are rejected; expletives inside emotional reflection are allowed.
-These false positives/negatives are intentional coverage limits, not solved risks.
+quotation, negation, idiom or fictional description can be rejected. The earlier
+v1/v1.1 allowance for expletives inside emotional reflection is superseded by v1.2. Remaining false positives/negatives are unresolved coverage risks.
 No claim of comprehensive safety or commercial-release readiness is made.
 
 Original v1 benchmark evidence (superseded by the v1.1 results above):

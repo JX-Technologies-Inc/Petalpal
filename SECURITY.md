@@ -1,5 +1,38 @@
 # PetalPal Security
 
+## Content Safety Policy v1.2 — 2026-10-15
+
+The local patch strengthens new Event and Journal screening: selected explicit
+profanity is rejected inside sentences as well as alone; selected third-person
+abuse, hateful death wishes, dangerous questions, contracted/named-target/Chinese
+threats and common obfuscation are covered. Phrase-scoped reporting, negation and
+fictional/historical context protect legitimate disclosures without exempting
+separate attacks. Non-profane emotional expression, self-criticism, trauma and
+ordinary self-harm help-seeking remain accepted. Stored text is unchanged except
+for existing trimming; no schema, dependency, provider, logging or AI workflow
+change was made. Firebase ownership, consent, idempotency, deletion and Journal
+exclusion from memory/embeddings/Weekly/Monthly are preserved.
+
+Pending owner review, covered fear-framed concrete violent intentions receive a
+fixed supportive 422 in English or Simplified Chinese. This is a product boundary,
+not a determination of intent or dangerousness. Rejected private Journals are not
+saved. Novel phrasing, unsupported names/casing, deceptive attribution and ambiguous
+contexts remain false-negative/false-positive risks; no complete semantic safety
+or production readiness claim is made. See [scope and limitations](docs/content-safety.md).
+
+V1.2 final local validation: **76/76 focused/CI-contract/environment tests passed**,
+including **6/6 CI-contract tests**. The full security runner completed with **208
+selected tests passed, zero failures, exit 0**. Its DAST made **261 loopback requests**
+with zero external attempts/unexpected DB calls. The policy corpus covers 84 blocks,
+80 accepted cases and 7 supportive rejections; eight maximum-size adversarial inputs
+passed the bounded performance guard. The same isolated Node/npm strategy documented
+below was used, with matching-lockfile local dependencies and scrubbed child
+configuration. Added Event cases use a separate consent-enabled synthetic owner;
+rate limits and existing assertions remain active. Temporary runtime/dependency
+links were removed. Earlier results below are historical and preserved. No manual/
+provider status change, push, merge, deployment, production access or paid API call
+was performed.
+
 ## Content-safety P2 corrections — 2026-10-15
 
 Policy `petalpal-content-v1.1` fixes the confirmed family-abuse-report false positive
