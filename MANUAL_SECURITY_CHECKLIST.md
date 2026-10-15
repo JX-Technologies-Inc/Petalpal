@@ -131,6 +131,20 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 - [x] Verify Workers Logs configuration. Evidence: Workers Logs, invocation logs, and persistence enabled; live invocation observed; traces intentionally disabled; Free-plan retention documented as 3 days. Status: `PASS`
 - [ ] Do not place private configuration values in this checklist. Evidence: final checklist review. Status: `NOT CHECKED / PASS / ACTION REQUIRED`
 - [ ] Before the single zh-Hans Reflection v2 Weekly Sonnet 5.5 acceptance call (`scripts/zh-reflection-v2-weekly-acceptance.mjs live-weekly`, added 2026-10-15): human operator confirms, without automation or secret-bearing screenshots, that the `petalpal-integration` Cloudflare AI Gateway has no retry, fallback, dynamic-routing or caching rule that could add or redirect Anthropic requests (the request also sends `cf-aig-max-attempts: 1` and skip-cache); then enters the integration-only Gateway token and Anthropic key at the hidden TTY prompt. Requires a separate `APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL` approval naming the exact commit and a ≤ US$0.05 cap. Status: `NOT PERFORMED / NOT AUTHORIZED`; no live call made.
+  - Gateway dashboard observation, 2026-10-15. A human operator viewed the `petalpal-integration` settings in the Cloudflare dashboard; no agent, browser automation or screenshot was used, and nothing was changed. Observations are the operator's report, not independently re-verified by the agent:
+    - Retry Requests OFF; Cache Responses OFF; Authenticated Gateway ON; Require Provider Credentials ON.
+    - Dynamic Routes showed only the initial route-creation screen, with no configured routes visible.
+    - No enabled fallback or routing rule was observed.
+    - Monthly Gateway spending limit US$1, enabled.
+  - Status: `GATEWAY NO-RETRY/NO-CACHE/NO-ROUTE OBSERVED (OPERATOR-REPORTED, POINT-IN-TIME)`.
+  - Not verified:
+    - That these settings stay unchanged until the run. Re-confirm immediately before the `PETALPAL_ZH_ACCEPTANCE_NO_RETRY_ATTESTATION` value is set.
+    - That the gateway and account the operator viewed are the ones that will be entered at the prompt.
+    - That an empty route screen proves no route exists through other means (API, account-level or other gateways).
+    - Gateway log-retention settings. Each request already sends collect-log off.
+    - Anthropic-side workspace spend limits or key scope.
+    - Exact enforcement timing and granularity of the US$1 Gateway limit. It is a coarse backstop above the runner's US$0.05 cap, not a substitute for it.
+  - This observation does not authorize the live call, approve a commit, or complete the TTY key-entry step; the parent item stays open.
 
 ## 8. Final Security P0 closure
 
