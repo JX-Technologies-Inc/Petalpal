@@ -1,5 +1,31 @@
 # PetalPal Security
 
+## Weekly quotation contract — offline clarification after live stop, 2026-10-15
+
+The approved editorial-freedom batch at runner
+`c0661ce3c08bf8541d3e0da3907481a56161851f` consumed one C01/en request and stopped
+with `VALIDATION_FAILED / REFLECTION_V2_QUOTE_UNSUPPORTED`; completed 0, dispatched
+1, estimated cost US$0.006284. C04 was not dispatched. Rejected prose was not
+retained. The private launcher had exited; the owner stopped all live evaluations.
+All ledgers/artifacts remain preserved and the batch must never be rerun.
+
+Offline tests found no demonstrated false positive against the existing exact
+quotation contract. Every recognized double/Chinese-quoted span is checked as an
+exact clause copy, even if intended as emphasis or paraphrase; ordinary punctuation
+and English apostrophes pass. Exact failed text/cause is unknown. Weekly now prefers
+idiomatic paraphrases without quotation marks and explicitly binds quoted text to
+an exact complete cited clause, never a translation/rewording. This addresses a
+prompt ambiguity without stripping marks or weakening validation. The prompt is
+slightly shorter. No actual model-compliance or quality improvement is claimed.
+
+64 scoped offline cases passed. Monthly, schemas, validator and content-free
+diagnostics are byte-identical to `ab523996…`; only Weekly instructions change.
+English and Simplified Chinese remain the only future output languages. Existing
+privacy, consent, ownership/deletion, references, idempotency and cost controls
+remain unchanged; semantic fidelity still requires human review. No additional
+provider/Cloudflare AI request, spend, production change or deployment was made.
+See [investigation, evidence limits and tests](docs/ai/REFLECTION_QUOTATION_CONTRACT_OFFLINE.md).
+
 ## Weekly editorial-freedom evaluation — offline preparation, 2026-10-15
 
 The new isolated runner pins `ab52399656904f4f698c5f2d731f9b98d9b658ff`
