@@ -1,0 +1,46 @@
+{
+  "authorship": "Handcrafted failure foils. Each targets a known failure dimension; several deliberately pass the structural validator to show what it cannot detect.",
+  "foils": [
+    { "id": "F1", "caseId": "E03", "locale": "en", "expect": { "cohesion": false, "synthesis": false }, "why": "weekday inventory", "paragraphs": [
+      { "sentences": [
+        { "text": "On Monday you started a lino print of the harbour and liked the crooked cranes.", "refs": ["E1"] },
+        { "text": "On Wednesday you cut thin channels through the dark water area.", "refs": ["E2"] },
+        { "text": "On Friday you redrew the cranes using the original sketch.", "refs": ["E3"] },
+        { "text": "On Sunday you put the latest test print on the shelf and haven't chosen the paper yet.", "refs": ["E4"] } ] } ] },
+    { "id": "F2", "caseId": "E03", "locale": "en", "expect": { "fidelity": false, "restraint": false }, "why": "invented life lesson", "paragraphs": [
+      { "sentences": [
+        { "text": "You liked the crooked cranes in your harbour sketch and wanted to keep them.", "refs": ["E1"] },
+        { "text": "Cutting thin channels through that dark water brought the water back, but the cranes looked too tidy.", "refs": ["E1", "E2"] },
+        { "text": "Along the way you learned to trust your instincts and regained your confidence.", "refs": ["E3", "E4"] },
+        { "text": "The paper for the final edition isn't chosen yet.", "refs": ["E4"] } ] } ] },
+    { "id": "F3", "caseId": "E03", "locale": "zh-Hans", "expect": { "cohesion": false, "synthesis": false, "naturalness": false }, "why": "weekday inventory with stock opening", "paragraphs": [
+      { "sentences": [
+        { "text": "这一周，周一你开始刻港口版画，喜欢歪歪的起重机。", "refs": ["E1"] },
+        { "text": "周三你给黑色水面刻了细线。", "refs": ["E2"] },
+        { "text": "周五你照着草图重画了起重机。", "refs": ["E3"] },
+        { "text": "周日你把试印摆上架子，纸还没选。", "refs": ["E4"] } ] } ] },
+    { "id": "F4", "caseId": "E06", "locale": "en", "expect": { "fidelity": false }, "why": "negation flip and dropped open decision", "paragraphs": [
+      { "sentences": [
+        { "text": "The writing residency rejected your application, and you were upset.", "refs": ["E1"] },
+        { "text": "Shortening the opening of the lock-keeper piece finally made the rejection feel fine.", "refs": ["E2", "E4"] } ] } ] },
+    { "id": "F5", "caseId": "E07", "locale": "zh-Hans", "expect": { "fidelity": false }, "why": "invented outcome", "paragraphs": [
+      { "sentences": [
+        { "text": "房东确认租金包含暖气，你松了口气。", "refs": ["E3"] },
+        { "text": "你最终答应了搬过去，和阿黎一起用那间工作室。", "refs": ["E3", "E4"] } ] } ] },
+    { "id": "F6", "caseId": "E08", "locale": "en", "expect": { "restraint": false, "fidelity": false }, "why": "forced theme and misattributed excitement", "paragraphs": [
+      { "sentences": [
+        { "text": "It was a week of new beginnings: you fixed a brake cable and were excited about the bakery job.", "refs": ["E1", "E2"] },
+        { "text": "The unfinished hand in the gallery and the boxes in the hallway showed things changing around you.", "refs": ["E3", "E4"] } ] } ] },
+    { "id": "F7", "caseId": "E09", "locale": "en", "expect": { "restraint": false, "fidelity": false }, "why": "padded sparse week", "paragraphs": [
+      { "sentences": [
+        { "text": "You bought juicy pears and settled in with a favourite book at home, a quiet stretch of rest that let you slow down and enjoy small comforts.", "refs": ["E1", "E2"] } ] } ] },
+    { "id": "F8", "caseId": "E04", "locale": "en", "expect": { "fidelity": false }, "why": "causal cure", "paragraphs": [
+      { "sentences": [
+        { "text": "The washing machine leaked again and you were fed up.", "refs": ["E3"] },
+        { "text": "The concert with Lee washed away the stress of the week.", "refs": ["E4", "E5"] } ] } ] },
+    { "id": "F9", "caseId": "E03", "locale": "en", "expect": { "fidelity": false }, "why": "reworded quotation (structural validator rejects)", "paragraphs": [
+      { "sentences": [
+        { "text": "You wrote “I loved the crooked cranes” about the harbour sketch.", "refs": ["E1"] },
+        { "text": "The paper for the final edition isn't chosen yet.", "refs": ["E4"] } ] } ] }
+  ]
+}

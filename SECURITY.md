@@ -1,5 +1,20 @@
 # PetalPal Security
 
+## Weekly narrative-thread prompt candidate — default OFF, offline only, 2026-10-16
+
+`AI_WEEKLY_REFLECTION_NARRATIVE_THREAD` is a new server-side opt-in on the Sonnet
+Weekly `weekly-reflection-v2` path. Unset or literal `false` keeps the existing prompt
+and packet. Any other value, use with v1, or use together with
+`AI_WEEKLY_REFLECTION_RETROSPECTIVE` fails with content-free `AI_GATEWAY_CONFIG_INVALID`
+before retrieval. No client input can set it. Monthly and Workers AI ignore it.
+It replaces only the composition paragraph of the system prompt. Evidence safeguards,
+quotation/ref rules, packet contents/privacy allowlist, trimming, Gateway byte
+admission (+306 bytes, inside the existing framing allowance), cost reservation,
+one-call/no-replay, consent/owner/source fences and the validator are unchanged.
+Evidence so far is offline and synthetic: actual-worker PGlite tests are added but
+still need a local run. No provider call, flag activation, deployment or manual-state
+change occurred. See [the candidate report](docs/ai/WEEKLY_NARRATIVE_THREAD_CANDIDATE.md).
+
 ## Weekly Selector V2 Integration planning — no execution, 2026-10-15
 
 The controlled-test proposal preserves the normal Integration server's manual

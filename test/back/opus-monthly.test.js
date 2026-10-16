@@ -57,7 +57,8 @@ test("Weekly selector OFF/ON does not change actual Monthly worker requests or s
             .map(e => ({ text: `“${e.text}”`, refs: [e.ref] })) }] })));
         const settings = { ...enabled, ...(contract ? { AI_MONTHLY_REFLECTION_CONTRACT: contract } : {}),
           ...(flag === undefined ? {} : { AI_WEEKLY_EVIDENCE_SELECTOR_V2: flag,
-            AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: flag, AI_WEEKLY_REFLECTION_RETROSPECTIVE: flag }) };
+            AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: flag, AI_WEEKLY_REFLECTION_RETROSPECTIVE: flag,
+            AI_WEEKLY_REFLECTION_NARRATIVE_THREAD: flag }) };
         const result = await f.run(settings); assert.equal(result.succeeded, true, result.error?.stack);
         assert.equal(f.calls.length, 1); assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
         const report = (await f.rows("MonthlyReport"))[0].document;
