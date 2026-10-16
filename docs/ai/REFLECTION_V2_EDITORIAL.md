@@ -1,3 +1,177 @@
+# Weekly editorial R2 — 2026-10-15
+
+**NEW REVISION · OFFLINE ONLY · NOT LIVE-EVALUATED · HUMAN EDITORIAL ACCEPTANCE PENDING**
+
+Branch: `codex/reflection-v2-editorial-r2`, isolated worktree
+`/Users/xingranma/Documents/ChatGPT/jev/petalpal-reflection-v2-editorial-r2`,
+starting at the pinned runner `b82c8019d01b844974bbc609e9c416bf78d07a5a`.
+The original `petalpal-reflection-v2-editorial` worktree and branch are preserved.
+Baseline `d80ab522d77c0c8483b45a7827e2fbf5561f5ee0` and candidate
+`c2d7a9d9a7d06f8291de5be7d890988fcdb5b9a8` remain the frozen Stage 1 arms.
+R2 is neither that candidate nor a new live result. No model requests, credential
+handling, database changes, provider changes, deployments, or evaluation-stage
+openings are part of this revision.
+
+## What the preserved Stage 1 evidence establishes
+
+Read-only inspection of the sanitized ledger, operator mapping, validated
+synthetic prose and review archive confirms:
+
+| Case | Mapping and outcome | Editorial observation |
+|---|---|---|
+| C01 English | A baseline, B candidate; both VALIDATED | Candidate repeats “not a little happy,” quotes complete Chinese clauses and walks through weekdays. Baseline also follows weekdays and copies Chinese; it additionally adds interpretive language. |
+| C04 Simplified Chinese | A candidate, B baseline; both VALIDATED | Candidate uses direct narration and ordinary phrasing. Baseline uses passive constructions, implies the same drawing across Events and adds unsupported 第一次. |
+| C05 Traditional Chinese | B baseline dispatched first; failed validation; A candidate never dispatched | No C05 output is available for editorial comparison. Do not attribute this failure to the candidate. |
+
+The batch stopped after five dispatches and four validated results. C05 baseline
+returned HTTP 200 with 1,680 input and 364 output tokens. The `VALIDATION_FAILED`
+path establishes that JSON parsing succeeded and `validateReflectionV2()` threw.
+The Stage 1 ledger remains consumed; the missing sixth call must never be resumed
+or replaced within this batch.
+
+Confirmed English prompt limitations: the frozen candidate asks to preserve
+negation/litotes without explicitly allowing a natural rendering of their meaning;
+its native-language guidance also permits code-switching, and the exact-quotation
+rule sits alongside factual safeguards. It already says weekday order is optional,
+yet the observed output still follows it. No runtime template inserts that prose:
+validated sentences are rendered as returned by the model.
+
+Hypothesis, not a measured causal finding: conservative copying may be the model's
+response to dense factual restrictions and quotation guidance; chronological
+packets may encourage weekday narration. One paired sample cannot isolate these
+causes or establish their frequency. The prompt never required literal Chinese
+copying. R2 makes the intended editorial freedom explicit while preserving factual
+boundaries.
+
+## Weekly prompt change and scope
+
+Only Weekly's rendered instructions change. R2 asks for contextual interpretation
+of negation and litotes, faithful paraphrase, native rendering of foreign-language
+clauses, second-person narration, and paragraphs organized around related details.
+Names and borrowed terms can remain recognizable. Direct quotations must still
+copy a whole source clause exactly. Trying something does not imply a first attempt.
+Joy may coexist with worry or uncertainty without an invented shared cause,
+psychological explanation or resolution. There is no lesson, encouragement,
+symbolism or personal-growth requirement.
+
+For C01, the intended readings remain distinct: the result made the person very
+happy (E2); going was undecided rather than a refusal (E3); denying having said
+that drawing stopped does not establish whether drawing continued (E4); not feeling
+that things improved does not prove that they worsened (E5). E1 explicitly links
+the bug fix and demo worry. The result in E2 is not identified as that bug fix.
+These are editorial judgments, not new semantic rules in the validator.
+
+Monthly instructions remain byte-for-byte identical to the frozen candidate.
+Schemas, packet construction, validation, evidence/source attribution, consent,
+ownership, privacy and deletion fences, default-off selection, model settings,
+budgets and retry/fallback behavior are unchanged. Weekly's serialized prompt is
+2,599 bytes versus the candidate's 2,602, so its packet allowance is not reduced.
+All frozen C01/C04/C05 evidence still fits intact. No few-shot examples are added
+to the prompt and no output is rewritten by application code.
+
+## C05 failure analysis and locale contracts
+
+The executor calls `validateReflectionV2()` inside a catch that emits only
+`VALIDATION_FAILED`. It saves prose/claims only after validation succeeds; the
+rejected JSON, detailed exception and raw provider envelope are intentionally not
+persisted. Inspection found only C01/C04 prose and claims in both the artifact
+directory and `review.zip`; C05 has an evidence packet only. The ledger alone
+cannot reconstruct the exact failed validation. No new collection of raw failed
+responses or provider logs is introduced.
+
+The v2 validator requires a canonical locale echo (`en`, `zh-Hans`, `zh-Hant`),
+matching version and closed JSON shape, valid distinct supplied aliases, at least
+two Weekly Event citations, supported digits, exact clause-aligned quotes, no
+forbidden controls/alias text/URLs/markup, and existing sentence/paragraph/narrative
+bounds. It joins Chinese sentences without inserted English spaces. V1's Chinese
+100–180-character rule does not apply to v2. V2 does not enforce character script,
+regional idiom or semantic entailment.
+
+Plausible C05 failure categories include altered quotations, wrong locale echo,
+reference errors, unsupported digits or length/shape violations. In particular,
+converting a Simplified source clause into Traditional characters inside direct
+quotation marks fails exact quotation support; an unquoted faithful Traditional
+paraphrase passes. This is a tested hypothesis, not the recovered response or a
+ranking of causes. No validator defect was established; it remains unchanged.
+
+## Deterministic offline checks
+
+`test/back/reflection-v2.test.js` reuses the frozen evidence constants without
+calling the paired planner/executor. New Codex-authored references are labeled as
+such, never as Claude samples or human acceptance. Coverage includes:
+
+- C01 litotes, undecided intent, denial of speech, cross-language English rendering
+  and mixed feelings, with per-sentence source attribution.
+- C04 ordinary Simplified Chinese with direct second-person narration and no first
+  attempt, shared-object identity, motivation or emotional conclusion added.
+- C05 native Traditional paraphrases; exact mixed-script quotes; rejection of
+  converted, wrong-source and negation-stripping quotes.
+- Closed-schema, canonical/wrong locale, missing version, unknown/duplicate/missing
+  refs, single-Event coverage, unsupported fullwidth digits, invisible controls,
+  paragraph size, empty output and insufficient evidence regressions.
+- Explicit semantic rejection examples that still pass structural validation:
+  inverted emotion, invented decision, conflated bug/result, drawing-status
+  inference, invented demo resolution, 第一次, and wrong-script prose. These tests
+  document why citations/schema validity cannot certify editorial correctness.
+- Exact Monthly prompt equality and unchanged schema/packet/validator source;
+  unchanged or greater Weekly packet allowance and full-request admission.
+
+Offline validation on 2026-10-15, Node v24.7.0, with an empty inherited
+environment apart from PATH:
+
+```sh
+env -i PATH="$PATH" node --test test/back/reflection-v2.test.js test/back/sonnet-weekly.test.js test/back/opus-monthly.test.js test/back/zh-reflection-v2-weekly-gates.test.js
+```
+
+Result in R2: **73 passed, 0 failed, 0 skipped**, including 12 C05 subtests
+(26 v2 tests including subtests, 16 Weekly, 23 Monthly, 8 acceptance-gate tests).
+Weekly/Monthly service tests use disposable in-memory PGlite and injected provider
+responses, including source deletion, consent, owner isolation, atomic persistence,
+finalized reuse, default-off behavior, budgets and no replay. No existing database
+is accessed. Dependencies were reused locally without install scripts or package
+changes. The first local run exposed an undersized length-test fixture; it was
+corrected to exceed the existing paragraph limit before this passing run.
+
+In the original frozen checkout only:
+
+```sh
+env -i PATH="$PATH" node --test test/back/reflection-v2-editorial-evaluation.test.js
+```
+
+Result: **20 passed, 0 failed, 0 skipped**. Its branch and candidate-source
+assertions intentionally reject R2. That restriction is preserved, not bypassed.
+All its dispatches use injected transport, temporary synthetic ledgers and a
+native-fetch trap; no consumed live batch is executed. The one-time real ledger,
+operator mapping, saved artifacts and frozen commits are untouched. No offline
+pass supplies a score for model-generated editorial quality.
+
+## Files and remaining decision
+
+- `lib/reflection-v2.js`: Weekly-only prompt wording; conditional lines preserve
+  the exact existing Monthly text. No schema/validator/runtime-policy change.
+- `test/back/reflection-v2.test.js`: the focused offline regressions above.
+- `docs/ai/REFLECTION_V2_EDITORIAL.md`: this R2 analysis and verification record;
+  earlier preparation evidence is retained below.
+
+`SECURITY.md` and `MANUAL_SECURITY_CHECKLIST.md` were reviewed and remain unchanged:
+no substantive security behavior, newly resolved security finding, provider action
+or manual verification state changed. The already documented semantic/script
+validation limits remain applicable. Historical records are not overwritten.
+
+A fresh, separately authorized live Weekly evaluation is justified before claiming
+model quality or adopting R2: offline authored examples cannot show whether Claude
+actually paraphrases naturally or follows the revised organization. It is not
+needed to identify C05's lost exception, which another response cannot recover.
+First review this revision, then separately authorize an exact-commit, fresh-batch
+scope and cap if desired. C01/C04/C05 would check English improvement, Simplified
+Chinese retention and the previously unobserved Traditional candidate behavior.
+No such batch is prepared, opened or authorized here; do not resume Stage 1 or
+open Monthly. Remaining risks include prompt adherence, emotional intensity,
+implicit cross-Event links, Chinese register, schema failure rate and repetitive
+prose. One output per case would remain limited evidence.
+
+---
+
 # Reflection v2 editorial standards — 2026-10-15
 
 **PROMPT IMPROVED · OFFLINE TESTED · REAL PROVIDER REVALIDATION PENDING · HUMAN EDITORIAL ACCEPTANCE PENDING · PRODUCTION DEFAULT OFF**

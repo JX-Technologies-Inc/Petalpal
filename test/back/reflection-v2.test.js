@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
 import { buildMonthlyReport, REPORT_EVIDENCE_LIMITS } from "../../lib/report-foundation.js";
 import { reportSourceSnapshot } from "../../lib/report-write-fence.js";
 import { monthlyPeriodFor } from "../../lib/ai-periods.js";
@@ -9,6 +12,7 @@ import { compileGatewaySchema } from "../../lib/ai-gateway-schema.js";
 import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS, REFLECTION_V2_SCHEMAS } from "../../lib/reflection-v2.js";
 import { buildWeeklyReflectionV2Packet, validateWeeklyReflectionV2, weeklyReflectionContract, WEEKLY_REFLECTION_CONTRACT } from "../../lib/sonnet-weekly.js";
 import { buildMonthlyReflectionV2Packet, validateMonthlyReflectionV2, monthlyReflectionContract, MONTHLY_REFLECTION_CONTRACT } from "../../lib/opus-monthly.js";
+import { CANDIDATE, MIXED_NEGATION, ORDINARY } from "../../scripts/reflection-v2-editorial-plan.mjs";
 
 // Authored synthetic Events reused verbatim from the Prompt-First v2 acceptance
 // matrix (Draft #51 experiments/prompt-first-reflection/fixtures.mjs). The
@@ -289,4 +293,136 @@ test("contract selection defaults to v1, accepts only the exact v2 opt-in and ke
   for (const [type, baselineBytes] of [["WEEKLY", 2614], ["MONTHLY", 2889]]) {
     assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS[type])) <= baselineBytes, type);
   }
+});
+
+// Editorial R2 references authored offline by Codex, NOT Claude output and NOT
+// human editorial acceptance. Reuse frozen Stage 1 evidence without invoking the
+// paired runner (which must continue to reject a modified candidate checkout).
+function stage1Input(id) {
+  const ordinary = id === "C04", locale = ({ C01: "en", C04: "zh-Hans", C05: "zh-Hant" })[id];
+  return weeklyInput(locale, ordinary ? ORDINARY[locale] : MIXED_NEGATION,
+    ordinary ? ["14", "16", "18", "20"] : ["14", "15", "16", "18", "20"]);
+}
+const R2_REFERENCES = {
+  C01: [
+    [["You finally fixed the bug and tested the login screen twice, though you were still worried about the next day's demo.", ["E1"]],
+      ["You were very happy about a result.", ["E2"]]],
+    [["You hadn't decided whether to go; it wasn't that you didn't want to.", ["E3"]],
+      ["You hadn't said you'd stopped drawing.", ["E4"]], ["You didn't feel things had improved.", ["E5"]]]
+  ],
+  C04: [
+    [["你在一个安静的下午画完了一幅素描。", ["E1"]], ["在画室，你试用了炭笔。", ["E3"]]],
+    [["和朋友分享画时，你们聊了聊彼此的近况。", ["E2"]]]
+  ],
+  C05: [
+    [["你終於修好了 bug，登入畫面也測了兩次，不過當時還在擔心隔天的 demo。", ["E1"]],
+      ["有個結果讓你很高興。", ["E2"]]],
+    [["你並不是不想去，只是還沒決定。", ["E3"]],
+      ["你沒有說過自己不再畫畫。", ["E4"]], ["你沒有覺得事情好轉了。", ["E5"]]]
+  ]
+};
+
+test("R2 C01/C04/C05 authored references render requested locales and exact sentence provenance", () => {
+  for (const id of Object.keys(R2_REFERENCES)) {
+    const input = stage1Input(id), built = buildWeeklyReflectionV2Packet(input);
+    const texts = id === "C04" ? ORDINARY["zh-Hans"] : MIXED_NEGATION;
+    assert.deepEqual(built.packet.evidence.map(e => e.text), texts, "frozen evidence stays whole and in order");
+    const output = plan(input.locale, "WEEKLY", R2_REFERENCES[id]);
+    const result = validateWeeklyReflectionV2(output, input, built);
+    assert.equal(result.narrative, output.paragraphs.map(p => p.sentences.map(s => s.text).join(input.locale === "en" ? " " : "")).join("\n\n"));
+    assert.deepEqual(result.sections.flatMap(s => s.claims.map(c => c.evidenceRefs)),
+      output.paragraphs.flatMap(p => p.sentences.map(s => s.refs.map(ref => ({
+        sourceEventId: `event-${ref.slice(1)}`, sourceMemoryId: `memory-${ref.slice(1)}`
+      })))));
+    const { wireSchema } = compileGatewaySchema(REFLECTION_V2_SCHEMAS.WEEKLY);
+    const body = { model: "claude-sonnet-5-5", system: REFLECTION_V2_INSTRUCTIONS.WEEKLY,
+      messages: [{ role: "user", content: JSON.stringify(built.packet) }], max_tokens: 2048,
+      output_config: { effort: "low", format: { type: "json_schema", schema: wireSchema } } };
+    assert.ok(Buffer.byteLength(JSON.stringify(body)) + 1024 <= GATEWAY_TASK_LIMITS.WEEKLY_REPORT.input);
+  }
+});
+
+test("Traditional locale echo and quote provenance are separate: native paraphrases pass, converted quotations fail", () => {
+  const input = stage1Input("C05"), valid = plan("zh-Hant", "WEEKLY", R2_REFERENCES.C05);
+  assert.ok(validateWeeklyReflectionV2(valid, input));
+  const exact = structuredClone(valid);
+  exact.paragraphs[1].sentences[0].text = "你寫下：「我不是不想去，只是还没决定。」";
+  assert.ok(validateWeeklyReflectionV2(exact, input), "an exact source quote may retain Simplified characters");
+  const converted = structuredClone(valid);
+  converted.paragraphs[1].sentences[0].text = "你寫下：「我不是不想去，只是還沒決定。」";
+  assert.throws(() => validateWeeklyReflectionV2(converted, input), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" },
+    "natural Traditional rendering belongs in paraphrase, not a silently converted direct quote");
+});
+
+test("C05 realistic structural failures remain rejected without repair or fallback", async t => {
+  const input = stage1Input("C05"), valid = plan("zh-Hant", "WEEKLY", R2_REFERENCES.C05);
+  // Plausible failure modes, NOT a reconstruction of the lost baseline response.
+  const mutations = {
+    "regional locale instead of canonical locale": o => { o.locale = "zh-TW"; },
+    "wrong locale echo": o => { o.locale = "zh-Hans"; },
+    "missing version": o => { delete o.version; },
+    "extra heading property": o => { o.paragraphs[0].heading = "本週回顧"; },
+    "unknown alias": o => { o.paragraphs[0].sentences[0].refs = ["E6"]; },
+    "duplicate alias": o => { o.paragraphs[0].sentences[0].refs = ["E1", "E1"]; },
+    "only one Event cited": o => { for (const p of o.paragraphs) for (const s of p.sentences) s.refs = ["E1"]; },
+    "unsupported fullwidth digit": o => { o.paragraphs[0].sentences[0].text = "你測了２次登入畫面。"; },
+    "negation removed inside quote": o => { o.paragraphs[1].sentences[2].text = "你寫下：「覺得事情變好了。」"; },
+    "quote assigned to wrong Event": o => { o.paragraphs[1].sentences[2].text = "你寫下：「我沒有覺得事情變好了。」"; o.paragraphs[1].sentences[2].refs = ["E1"]; },
+    "invisible format control": o => { o.paragraphs[0].sentences[0].text += "\u200b"; },
+    "paragraph over existing 700-character bound": o => { o.paragraphs[0].sentences = [
+      { text: "你還沒決定。".repeat(60), refs: ["E3"] }, { text: "你沒有覺得事情好轉。".repeat(35), refs: ["E5"] }
+    ]; }
+  };
+  for (const [name, mutate] of Object.entries(mutations)) await t.test(name, () => {
+    const output = structuredClone(valid); mutate(output);
+    assert.throws(() => validateWeeklyReflectionV2(output, input), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" });
+  });
+});
+
+test("Stage 1 insufficient evidence and nonexistent packet refs fail closed", () => {
+  for (const id of ["C01", "C04", "C05"]) {
+    const input = stage1Input(id), output = plan(input.locale, "WEEKLY", R2_REFERENCES[id]);
+    const empty = structuredClone(output); empty.paragraphs = [];
+    assert.throws(() => validateWeeklyReflectionV2(empty, input), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" });
+    const built = buildWeeklyReflectionV2Packet(input); built.refs.delete("E2");
+    assert.throws(() => validateWeeklyReflectionV2(output, input, built), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" });
+    for (const count of [0, 1]) {
+      const sparse = structuredClone(input); sparse.evidenceSelection.evidence.length = count;
+      assert.throws(() => buildWeeklyReflectionV2Packet(sparse), error =>
+        ["REPORT_NARRATIVE_INVALID_INPUT", "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE"].includes(error.code));
+    }
+  }
+});
+
+test("semantic and script errors still require editorial review even when structural validation passes", () => {
+  // These are explicit rejection examples for reviewers, never target prose.
+  // Passing here documents the validator's limits; it does not approve them.
+  for (const [id, text, refs] of [
+    ["C01", "You were unhappy about the result.", ["E2"]],
+    ["C01", "You decided to go.", ["E3"]],
+    ["C01", "You had stopped drawing.", ["E4"]],
+    ["C01", "The successful demo put your worries to rest.", ["E1"]],
+    ["C01", "The bug fix made you happy about the result.", ["E1", "E2"]],
+    ["C04", "你第一次在画室试用了炭笔。", ["E3"]],
+    ["C05", "你终于修好了问题。", ["E1"]]
+  ]) {
+    const input = stage1Input(id), output = plan(input.locale, "WEEKLY", R2_REFERENCES[id]);
+    output.paragraphs[0].sentences[0] = { text, refs };
+    assert.doesNotThrow(() => validateWeeklyReflectionV2(output, input), "human review must reject this structurally valid error");
+  }
+});
+
+test("R2 keeps Monthly instructions and all schema/packet/validator code identical to the frozen candidate", () => {
+  const root = new URL("../../", import.meta.url);
+  const frozen = execFileSync("git", ["show", `${CANDIDATE}:lib/reflection-v2.js`], { cwd: root, encoding: "utf8" });
+  const current = readFileSync(new URL("lib/reflection-v2.js", root), "utf8");
+  const end = frozen.indexOf("\nfunction schemaFor(type)");
+  const block = frozen.slice(frozen.indexOf("const shared = type =>"), end)
+    .replace("export const REFLECTION_V2_INSTRUCTIONS", "const REFLECTION_V2_INSTRUCTIONS");
+  const prompts = runInNewContext(`${block}\nREFLECTION_V2_INSTRUCTIONS`, Object.create(null), { timeout: 100 });
+  assert.equal(REFLECTION_V2_INSTRUCTIONS.MONTHLY, prompts.MONTHLY);
+  assert.notEqual(REFLECTION_V2_INSTRUCTIONS.WEEKLY, prompts.WEEKLY);
+  assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS.WEEKLY)) <= Buffer.byteLength(JSON.stringify(prompts.WEEKLY)),
+    "Weekly revision must not reduce the packet byte allowance");
+  assert.equal(current.slice(current.indexOf("\nfunction schemaFor(type)")), frozen.slice(end));
 });
