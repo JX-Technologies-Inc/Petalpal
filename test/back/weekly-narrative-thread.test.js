@@ -21,6 +21,9 @@ const body = (settings, packet, maxTokens = 2048) => ({ model: SONNET_WEEKLY_MOD
 const fits = request => bytes(request) + 1024 <= GATEWAY_TASK_LIMITS.WEEKLY_REPORT.input;
 const THREAD = { recordDaysSeparated: false, retrospective: false, narrativeThread: true };
 const OFF = { recordDaysSeparated: false, retrospective: false };
+// Fixture records carry review metadata (caseId). Only the contract fields are a model
+// response; the Weekly v2 schema (additionalProperties: false) correctly rejects the rest.
+const response = x => ({ version: x.version, locale: x.locale, paragraphs: x.paragraphs });
 
 test("candidate replaces only the composition paragraph with concrete decisions and carries no benchmark content", () => {
   const original = REFLECTION_V2_INSTRUCTIONS.WEEKLY.split("\n\n"), candidate = WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS.split("\n\n");
@@ -101,7 +104,7 @@ test("all 18 narrative exemplars pass the unchanged validator and every screenin
     for (const select of [undefined, selectWeeklyEvidenceV2]) {
       const built = buildWeeklyReflectionV2Packet(inputFor(c, e.locale, select?.(selectorArgs(c, e.locale))));
       assert.equal(built.packet.evidence.length, c.events.length, "all Events retained for these cases");
-      const result = score(e, { caseId: e.caseId, locale: e.locale, built });
+      const result = score(response(e), { caseId: e.caseId, locale: e.locale, built });
       for (const [dimension, value] of Object.entries(result)) assert.notEqual(value, false, `${e.caseId}/${e.locale}: ${dimension}`);
       assert.equal(result.synthesis, ["thread", "mixed"].includes(CLASS[e.caseId]) ? true : null);
     }
@@ -122,6 +125,21 @@ test("foils fail their targeted dimensions; most pass the structural validator, 
 test("existing provisional targets remain valid under the candidate's unchanged packet", () => {
   for (const t of targets.targets) {
     const c = corpus.cases.find(c => c.id === t.caseId), built = buildWeeklyReflectionV2Packet(inputFor(c, t.locale));
-    assert.equal(score(t, { caseId: t.caseId, locale: t.locale, built }).validator, true, `${t.caseId}/${t.locale}`);
+    assert.equal(score(response(t), { caseId: t.caseId, locale: t.locale, built }).validator, true, `${t.caseId}/${t.locale}`);
   }
+});
+
+test("regression: fixture metadata is not a valid response, and the all-quoted E03/en double exceeds the claim bound", () => {
+  const e03 = corpus.cases.find(c => c.id === "E03"), exemplar = exemplars.find(e => e.caseId === "E03" && e.locale === "en");
+  const built = buildWeeklyReflectionV2Packet(inputFor(e03, "en", selectWeeklyEvidenceV2(selectorArgs(e03, "en"))));
+  // Requires real ajv: an unknown top-level property must fail the unchanged schema.
+  assert.equal(score(exemplar, { caseId: "E03", locale: "en", built }).validator, false, "extra caseId must be rejected");
+  assert.equal(score(response(exemplar), { caseId: "E03", locale: "en", built }).validator, true);
+  // Quoting all four delivered E03/en Events in one paragraph is 709 > 700 maxClaimCharacters,
+  // so the sonnet-weekly quotedV2 double is not a valid OFF baseline for selector=true.
+  const quoted = { version: REFLECTION_V2.WEEKLY, locale: "en",
+    paragraphs: [{ sentences: built.packet.evidence.map(item => ({ text: `“${item.text}”`, refs: [item.ref] })) }] };
+  assert.equal(built.packet.evidence.length, 4);
+  assert.equal(quoted.paragraphs[0].sentences.map(s => s.text).join(" ").length, 709);
+  assert.equal(score(quoted, { caseId: "E03", locale: "en", built }).validator, false);
 });

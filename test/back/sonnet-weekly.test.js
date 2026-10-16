@@ -706,16 +706,21 @@ for (const locale of ["en", "zh-Hans"]) for (const selector of ["false", "true"]
       await f.pg.query('UPDATE "EventMemory" SET "summary"=$1,"topics"=$2 WHERE "id"=$3', [event[locale], JSON.stringify(event.topics), `memory-${i}`]);
     }
     const exemplar = threadExemplars.find(e => e.caseId === "E03" && e.locale === locale);
-    f.respond(packet => Response.json(native(selector === "true"
-      ? { version: exemplar.version, locale: exemplar.locale, paragraphs: exemplar.paragraphs } : quotedV2(packet))));
+    // Both arms get the same valid double. All-quoted E03/en with four V2 Events is 709 >
+    // 700 claim characters and is correctly rejected (AI_GATEWAY_GROUNDING_FAILED).
+    const reply = packet => Response.json(native(selector === "true"
+      ? { version: exemplar.version, locale: exemplar.locale, paragraphs: exemplar.paragraphs } : quotedV2(packet)));
+    f.respond(reply);
     const base = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY, AI_WEEKLY_EVIDENCE_SELECTOR_V2: selector };
     const off = await fixture(t, { locale, count: c.events.length });
     for (const [i, event] of c.events.entries()) {
       await off.pg.query('UPDATE "Event" SET "occurredAt"=$1 WHERE "id"=$2', [new Date(`2026-09-${event.day}T12:00:00Z`), `event-${i}`]);
       await off.pg.query('UPDATE "EventMemory" SET "summary"=$1,"topics"=$2 WHERE "id"=$3', [event[locale], JSON.stringify(event.topics), `memory-${i}`]);
     }
-    off.respond(packet => Response.json(native(quotedV2(packet))));
-    assert.equal((await off.run(base)).succeeded, true);
+    off.respond(reply);
+    const baseline = await off.run(base);
+    assert.equal(baseline.succeeded, true, `OFF baseline: ${baseline.error?.code}`);
+    assert.equal(off.calls.length, 1);
     const settings = { ...base, AI_WEEKLY_REFLECTION_NARRATIVE_THREAD: "true" };
     const result = await f.run(settings);
     assert.equal(result.succeeded, true, result.error?.stack);
