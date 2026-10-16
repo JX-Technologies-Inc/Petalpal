@@ -68,8 +68,9 @@ Compatibility risks before any separately authorized rollout:
   Chinese. Existing sign-in/profile reads do not rewrite those preferences.
 - An explicit `AI_REPORT_SUPPORTED_LOCALES` value containing the retired language
   now fails closed. Review configuration before rollout; no provider env was changed.
-- Profile/signup selections outside the two supported language families return 400;
-  allowed regional aliases keep their normal canonical form, not a content conversion.
+- Superseded 2026-10-16 (integration PR #62): profile/signup again accept any valid
+  BCP 47 locale, canonicalized as before. The two-language limit applies only to new
+  localized (Anthropic) Weekly/Monthly report generation, which fails closed.
 - Locale enums are language contracts, not proof of a model's actual script or prose
   fidelity. Mixed-language source text and names remain unchanged. Human review is
   still required; no character-conversion or language-detector shortcut is added.
