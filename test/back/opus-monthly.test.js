@@ -14,6 +14,7 @@ import { monthlyPeriodFor } from "../../lib/ai-periods.js";
 import { selectMonthlyEvidence, MONTHLY_EVIDENCE_POLICY, monthlyWeek } from "../../lib/monthly-evidence.js";
 import { buildMonthlyReflectionPacket, validateMonthlyReflection, monthlyReportProvider, monthlyTextLength,
   MONTHLY_REFLECTION_CONTRACT, OPUS_MONTHLY_MODEL, OpusMonthlyReflectionService } from "../../lib/opus-monthly.js";
+import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
 
 const enabled = { AI_MONTHLY_REPORT_PROVIDER: "anthropic", AI_MONTHLY_REPORT_MODEL: OPUS_MONTHLY_MODEL,
   AI_GATEWAY_ENABLED: "true", AI_GATEWAY_ANTHROPIC_ENABLED: "true",
@@ -39,6 +40,37 @@ function output(packet) {
 }
 const native = data => ({ model: OPUS_MONTHLY_MODEL, type: "message", role: "assistant", stop_reason: "end_turn",
   content: [{ type: "text", text: JSON.stringify(data) }], usage: { input_tokens: 500, output_tokens: 200 } });
+
+test("Weekly selector OFF/ON does not change actual Monthly worker requests or saved claims", async t => {
+  const mode = process.env.PETALPAL_WEEKLY_SELECTOR_TEST_MODE;
+  if (mode !== undefined && !["OFF", "ON"].includes(mode)) throw Error("Invalid selector test mode");
+  const flags = mode ? [mode === "ON" ? "true" : "false"] : ["false", "true", "invalid"];
+  for (const locale of ["en", "zh-CN"]) for (const contract of [undefined, REFLECTION_V2.MONTHLY]) {
+    const execute = async flag => {
+      let actual;
+      // Close each disposable database before constructing the next one. The
+      // deployment-image verification runs in a memory-bounded Docker VM.
+      await t.test(`${locale}/${contract ?? "v1"}/${flag ?? "default"}`, async child => {
+        const f = await fixture(child, { locale });
+        if (contract) f.respond(packet => Response.json(native({ version: REFLECTION_V2.MONTHLY, locale: packet.locale,
+          paragraphs: [{ sentences: packet.evidence.filter(e => e.scope !== "previous")
+            .map(e => ({ text: `“${e.text}”`, refs: [e.ref] })) }] })));
+        const settings = { ...enabled, ...(contract ? { AI_MONTHLY_REFLECTION_CONTRACT: contract } : {}),
+          ...(flag === undefined ? {} : { AI_WEEKLY_EVIDENCE_SELECTOR_V2: flag,
+            AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: flag, AI_WEEKLY_REFLECTION_RETROSPECTIVE: flag,
+            AI_WEEKLY_REFLECTION_NARRATIVE_THREAD: flag }) };
+        const result = await f.run(settings); assert.equal(result.succeeded, true, result.error?.stack);
+        assert.equal(f.calls.length, 1); assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
+        const report = (await f.rows("MonthlyReport"))[0].document;
+        actual = { body: f.calls[0].body, summary: report.summary, sections: report.narrativeSections,
+          evidence: await f.rows("AIEvidence") };
+      });
+      return actual;
+    };
+    const baseline = await execute(undefined);
+    for (const flag of flags) assert.deepEqual(await execute(flag), baseline, `${locale}/${contract ?? "v1"}/${flag}`);
+  }
+});
 function source(id, date, topics = ["drawing"], ownerId = "alice", summary = `Synthetic moment ${id}.`) {
   return { id, ownerId, occurredAt: new Date(date), updatedAt: new Date("2026-10-01"), memoryProcessingAllowed: true,
     memory: { id: `memory-${id}`, ownerId, sourceEventId: id, updatedAt: new Date("2026-10-01"), embeddingInputRevision: 1,
@@ -58,8 +90,15 @@ function contractInput(locale = "zh-Hans") {
 // Disposable SQL engine and synthetic fixtures only; no real models, production
 // schema/migrations, accounts or external connections. SQL rollback is real;
 // independent-connection PostgreSQL row-lock scheduling is not simulated here.
+// Match Weekly's cleanup: node:test retains after-hook closures until file end.
+// Keep a holder, not the fixture/PGlite instance, reachable from those hooks.
+function closeAfter(t, pg) {
+  const holder = { pg };
+  t.after(async () => { const db = holder.pg; holder.pg = null; await db?.close(); });
+}
+
 async function fixture(t, { locale = "zh-CN", count = 4, previousCount = 1 } = {}) {
-  const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); t.after(() => pg.close());
+  const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); closeAfter(t, pg);
   await pg.exec(`CREATE TYPE "AIJobType" AS ENUM ('WEEKLY_REPORT','MONTHLY_REPORT');
     CREATE TYPE "AIJobStatus" AS ENUM ('PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED');
     CREATE TABLE "User" ("id" text PRIMARY KEY,"timezone" text,"preferredLocale" text);
@@ -175,7 +214,7 @@ async function fixture(t, { locale = "zh-CN", count = 4, previousCount = 1 } = {
 }
 
 test("Monthly contract composes localized grounded patterns, sample changes and closing without source quotations", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), packet = buildMonthlyReflectionPacket(input), raw = output(packet);
     const result = validateMonthlyReflection(raw, input);
     assert.equal(packet.facts.some(fact => fact.kind === "CROSS_WEEK_MOMENTS"), false, "supported synthesis takes precedence over quotations");
@@ -190,7 +229,7 @@ test("Monthly contract composes localized grounded patterns, sample changes and 
 });
 
 test("Monthly schema rejects invented multilingual facts, altered counts, unknown cards and unsupported interpretations", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), packet = buildMonthlyReflectionPacket(input), valid = output(packet);
     for (const mutate of [raw => { raw.version = "v2"; }, raw => { raw.locale = "ja"; }, raw => { raw.overview = "O99"; },
       raw => { raw.text = "You became happier / 你的情绪改善了 / 你的情緒改善了"; },
@@ -284,14 +323,14 @@ test("English Opus preserves BGE retrieval and reserves durable provider-aware b
   assert.equal(ledger.find(row => row.eventType === "AI_COST_RESERVED").reasonCode, "2");
 });
 
-test("Simplified and Traditional Chinese Monthly use independently bounded owned memories without multilingual embeddings", async t => {
-  for (const locale of ["zh-CN", "zh-TW"]) {
+test("Simplified Chinese Monthly aliases use independently bounded owned memories without multilingual embeddings", async t => {
+  for (const locale of ["zh-CN", "zh-Hans"]) {
     const f = await fixture(t, { locale }), result = await f.run();
     assert.equal(result.succeeded, true, result.error?.stack); assert.equal(f.retrievalCalls, 0); assert.equal(f.calls.length, 1);
     const report = (await f.rows("MonthlyReport"))[0].document;
     assert.ok(monthlyTextLength(report.summary) >= 250 && monthlyTextLength(report.summary) <= 350);
     assert.equal(report.narrativeSections[0].locale, monthlyReportLocale(locale));
-    assert.ok(report.summary.includes(locale === "zh-TW" ? "這個月" : "这个月"));
+    assert.ok(report.summary.includes("这个月"));
     const input = await new ReportInputService({ prisma: f.db, semanticRetrieval: { retrieve: () => assert.fail("no Chinese embedding") }, localizedMonthly: true })
       .buildMonthlyInput({ identity: { userId: "alice" }, year: 2026, month: 9 });
     await assert.rejects(f.db.$transaction(tx => assertReportSources(tx, "alice", {
@@ -305,9 +344,11 @@ test("invalid Monthly provider, model, flags, token and locale configuration fai
     { AI_MONTHLY_REPORT_MODEL: "claude-sonnet-5-5" }, { AI_GATEWAY_ENABLED: undefined }, { AI_GATEWAY_ANTHROPIC_ENABLED: undefined },
     { AI_USER_DAILY_USD_LIMIT: undefined }, { AI_MONTHLY_REPORT_TIMEOUT_MS: "20001" }, { AI_MONTHLY_REPORT_TIMEOUT_MS: "0" },
     { AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS: "8193" }, { AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS: "2.5" },
-    { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }]) {
-    const f = await fixture(t, { locale: "en" }), result = await f.run({ ...enabled, ...change });
-    assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }, { AI_REPORT_SUPPORTED_LOCALES: "en,zh-Hans,zh-Hant" }]) {
+    await t.test(JSON.stringify(change), async child => {
+      const f = await fixture(child, { locale: "en" }), result = await f.run({ ...enabled, ...change });
+      assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    });
   }
 });
 
@@ -442,7 +483,7 @@ test("deleting a saved Monthly comparison source removes its report but preserve
 });
 
 test("canonical deterministic extraction without topics supports verified cross-week Monthly moments in every locale", async t => {
-  for (const locale of ["en", "zh-CN", "zh-TW"]) {
+  for (const locale of ["en", "zh-CN"]) {
     const extracted = await new DeterministicMemoryExtractor().extract({ kind: "EVENT", id: "ordinary", content: summaries(monthlyReportLocale(locale))[0] });
     assert.deepEqual(extracted.topics, []);
     const f = await fixture(t, { locale, previousCount: 0 });
@@ -461,7 +502,7 @@ test("canonical deterministic extraction without topics supports verified cross-
 });
 
 test("Monthly moment cards preserve whole-source negation and numbers and reject altered or truncated evidence", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), quotes = locale === "en" ? ["I did not run 3 miles.", "I walked 2 miles, without racing."]
       : locale === "zh-Hant" ? ["我沒有升職，也沒有加薪。", "我走了２公里，沒有參加比賽。"] : ["我没有升职，也没有加薪。", "我走了２公里，没有参加比赛。"];
     for (const source of input.sourceFence.sources) { source.memory.topics = []; }
@@ -480,4 +521,56 @@ test("Monthly moment cards preserve whole-source negation and numbers and reject
     }
     assert.throws(() => buildMonthlyReflectionPacket(input), { code: "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE" });
   }
+});
+
+test("opt-in monthly-reflection-v2 saves cited cross-week Claude prose; v1 stays default and finalized reports are reused", async t => {
+  const v2env = { ...enabled, AI_MONTHLY_REFLECTION_CONTRACT: REFLECTION_V2.MONTHLY };
+  const written = packet => ({ version: REFLECTION_V2.MONTHLY, locale: packet.locale, paragraphs: [{ sentences: packet.evidence
+    .filter(item => item.scope !== "previous").map(item => ({ text: packet.locale === "en" ? `You wrote: “${item.text}”` : `你写下：“${item.text}”`, refs: [item.ref] })) }] });
+  const f = await fixture(t); f.respond(packet => Response.json(native(written(packet))));
+  const result = await f.run(v2env); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 1); assert.equal(f.calls[0].body.system, REFLECTION_V2_INSTRUCTIONS.MONTHLY);
+  const packet = f.calls[0].packet; assert.equal(packet.version, REFLECTION_V2.MONTHLY);
+  for (const hidden of ["alice", "event-", "memory-", "prior-", "eventCount"]) assert.equal(JSON.stringify(packet).includes(hidden), false, hidden);
+  const report = (await f.rows("MonthlyReport"))[0].document;
+  assert.equal(report.generationVersion, REPORT_NARRATIVE_GENERATION_VERSION);
+  assert.ok(report.narrativeSections.every(section => section.contractVersion === REFLECTION_V2.MONTHLY && section.claims.length));
+  assert.equal(report.summary, written(packet).paragraphs[0].sentences.map(item => item.text).join(""));
+  assert.deepEqual(packet.evidence.map(item => item.week ?? item.scope), ["previous", "W1", "W2", "W3", "W4"]);
+  assert.deepEqual((await f.rows("AIEvidence")).map(row => row.claimType).sort(), ["NARRATIVE_CITED", "NARRATIVE_CITED", "NARRATIVE_CITED", "NARRATIVE_CITED", "NARRATIVE_SELECTED"]);
+  assert.equal((await f.rows("AIJob"))[0].status, "SUCCEEDED");
+  const invalid = await fixture(t), failed = await invalid.run({ ...enabled, AI_MONTHLY_REFLECTION_CONTRACT: "monthly-reflection-v3" });
+  assert.equal(failed.succeeded, false); assert.equal(invalid.calls.length, 0); assert.equal(invalid.retrievalCalls, 0); assert.equal(invalid.legacyCalls, 0);
+  // A finalized v1 report is reused, never regenerated, after the v2 opt-in.
+  const old = await fixture(t); assert.equal((await old.run()).succeeded, true);
+  const before = (await old.rows("MonthlyReport"))[0].document;
+  await old.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  const reused = await old.run(v2env); assert.equal(reused.result.skipped, true); assert.equal(old.calls.length, 1);
+  assert.deepEqual((await old.rows("MonthlyReport"))[0].document, before);
+  assert.equal(before.narrativeSections[0].contractVersion, MONTHLY_REFLECTION_CONTRACT);
+});
+
+
+test("Monthly refuses retired preferences for new v1/v2 generation before any provider request", async t => {
+  for (const contract of ['monthly-reflection-v1', 'monthly-reflection-v2']) {
+    const f=await fixture(t);
+    await f.pg.exec(`UPDATE "User" SET "preferredLocale"='zh-Hant' WHERE "id"='alice'`);
+    const result=await f.run({...enabled, AI_MONTHLY_REFLECTION_CONTRACT:contract});
+    assert.equal(result.succeeded,false); assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
+    assert.equal((await f.rows('MonthlyReport')).length,0);
+    assert.equal((await f.rows('User')).find(u=>u.id==='alice').preferredLocale,'zh-Hant');
+  }
+});
+
+test("Monthly reuses a historical Traditional report before enforcing new generation language rules", async t => {
+  const f=await fixture(t);
+  const document={ownerId:'alice',periodKey:'2026-09',narrativeStatus:'GENERATED',
+    generationVersion:REPORT_NARRATIVE_GENERATION_VERSION,summary:'你沒有說過自己不再畫畫。',
+    narrativeSections:[{locale:'zh-Hant',contractVersion:'monthly-reflection-v2',claim:'你沒有說過自己不再畫畫。'}]};
+  await f.pg.query('INSERT INTO "MonthlyReport" VALUES ($1,$2,$3,$4)', ['historical-report','alice','2026-09',JSON.stringify(document)]);
+  await f.pg.exec(`UPDATE "User" SET "preferredLocale"='zh-TW' WHERE "id"='alice'`);
+  const result=await f.run({...enabled, AI_MONTHLY_REFLECTION_CONTRACT:'monthly-reflection-v2'});
+  assert.equal(result.succeeded,true,result.error?.stack); assert.equal(result.result.skipped,true);
+  assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
+  assert.deepEqual((await f.rows('MonthlyReport'))[0].document,document);
 });

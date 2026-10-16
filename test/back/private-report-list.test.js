@@ -13,14 +13,15 @@ test('saved report discovery is authenticated, owner-only, bounded and metadata-
     id: `report-${String(i).padStart(2, '0')}`, ownerId: 'owner',
     periodKey: '2026-09', periodStartUtc: new Date(Date.UTC(2026, 8, 27 - i)),
     periodEndUtc: new Date('2026-10-01'), createdAt: new Date('2026-10-01'),
-    status: 'COMPLETE', summary: 'Must not be returned by discovery',
+    status: 'COMPLETE', summary: '這週，你留下了一幅素描。',
+    narrativeSections: [{ locale: 'zh-Hant', contractVersion: 'weekly-reflection-v2', claim: '這週，你留下了一幅素描。' }],
   }));
   const forbidden = [];
   for (const model of ['weeklyReport', 'monthlyReport', 'aiJob', 'eventMemory']) {
     for (const method of ['create', 'update', 'upsert', 'delete']) stub(prisma[model], method, async () => { forbidden.push(`${model}.${method}`); throw Error('Write forbidden'); });
   }
   setFirebaseTokenVerifierForTests(async () => ({ uid: 'owner-firebase', email_verified: true }));
-  stub(prisma.user, 'findUnique', async () => ({ id: 'owner' }));
+  stub(prisma.user, 'findUnique', async () => ({ id: 'owner', preferredLocale: 'zh-Hant' }));
   const keys = ['createdAt', 'id', 'periodEndUtc', 'periodKey', 'periodStartUtc', 'status'];
   for (const model of ['weeklyReport', 'monthlyReport']) {
     stub(prisma[model], 'findMany', async ({ where, select, orderBy, take }) => {
@@ -61,7 +62,11 @@ test('saved report discovery is authenticated, owner-only, bounded and metadata-
   assert.deepEqual(all.slice(0, 2).map(row => row.type), ['monthly', 'weekly']);
   assert.ok(all.every((row, i) => !i || row.periodStartUtc <= all[i - 1].periodStartUtc));
   for (const type of ['weekly', 'monthly']) {
-    assert.equal((await request(`/${type}/report-00`)).status, 200);
+    const response = await request(`/${type}/report-00`);
+    assert.equal(response.status, 200);
+    const saved = await response.json();
+    assert.equal(saved.summary, rows[0].summary);
+    assert.deepEqual(saved.narrativeSections, rows[0].narrativeSections);
     assert.equal((await request(`/${type}/foreign-report`)).status, 404);
   }
   rows.length = 0;

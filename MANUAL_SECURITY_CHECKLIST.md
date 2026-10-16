@@ -124,12 +124,64 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 
 ## 7. AI provider / data handling
 
+- [ ] Before separately authorized rollout of two-language Reflection support,
+  confirm any explicit `AI_REPORT_SUPPORTED_LOCALES` uses only `en`/`zh-Hans`;
+  configurations containing the retired language will fail closed. Confirm owners
+  with unsupported existing preferences can explicitly select a supported language,
+  while historical Traditional reports remain readable under existing owner/consent
+  rules. No automatic profile/content conversion or evidence/ledger cleanup.
+  Status: `OFFLINE CHECKED / PROVIDER CONFIGURATION AND ROLLOUT NOT PERFORMED`.
+
 - [x] Verify Workers AI Customer Content training/data-use policy. Evidence: Cloudflare states Customer Content is not used to train Workers AI models or improve Cloudflare/third-party services without explicit consent. Status: `PASS`
 - [x] Verify applicable Cloudflare DPA. Evidence: Customer DPA v6.4 effective 2026-04-03; processor/subprocessor terms limit processing to service provision and prohibit marketing/advertising use of personal data. Status: `PASS`
 - [ ] Record ordinary Workers AI inference retention. Evidence: official documentation does not specify a general retention period for ordinary prompts/outputs; Customer Content may be stored when a Cloudflare storage service is specifically used. Status: `PARTIAL / EXACT INFERENCE RETENTION NOT SPECIFIED`
 - [ ] Verify data residency and subprocessors. Evidence: published subprocessors include US and England operations; no Canada-only or single-region guarantee is configured. Status: `NOT VERIFIED / OPTIONAL HARDENING`
 - [x] Verify Workers Logs configuration. Evidence: Workers Logs, invocation logs, and persistence enabled; live invocation observed; traces intentionally disabled; Free-plan retention documented as 3 days. Status: `PASS`
 - [ ] Do not place private configuration values in this checklist. Evidence: final checklist review. Status: `NOT CHECKED / PASS / ACTION REQUIRED`
+- [ ] Before the single zh-Hans Reflection v2 Weekly Sonnet 5.5 acceptance call (`scripts/zh-reflection-v2-weekly-acceptance.mjs live-weekly`, added 2026-10-15): human operator confirms, without automation or secret-bearing screenshots, that the `petalpal-integration` Cloudflare AI Gateway has no retry, fallback, dynamic-routing or caching rule that could add or redirect Anthropic requests (the request also sends `cf-aig-max-attempts: 1` and skip-cache); then enters the integration-only Gateway token and Anthropic key at the hidden TTY prompt. Requires a separate `APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL` approval naming the exact commit and a ≤ US$0.05 cap. Status: `NOT PERFORMED / NOT AUTHORIZED`; no live call made.
+  - Gateway dashboard observation, 2026-10-15. Provenance (corrected 2026-10-15):
+    - The operator viewed the `petalpal-integration` settings in the Cloudflare dashboard and changed nothing.
+    - The operator shared dashboard screenshots in a separate ChatGPT conversation, where ChatGPT reviewed the visible settings.
+    - Kiro did not access Cloudflare or the screenshots and has not independently verified any setting.
+    - No browser automation was used.
+    
+    Observed settings, as reported by the operator and reviewed by ChatGPT from the screenshots:
+    - Retry Requests OFF; Cache Responses OFF; Authenticated Gateway ON; Require Provider Credentials ON.
+    - Dynamic Routes showed only the initial route-creation screen, with no configured routes visible.
+    - No enabled fallback or routing rule was observed.
+    - Monthly Gateway spending limit US$1, enabled.
+  - Status: `GATEWAY NO-RETRY/NO-CACHE/NO-ROUTE OBSERVED (OPERATOR-REPORTED, POINT-IN-TIME)`.
+  - Not verified:
+    - That these settings stay unchanged until the run. Re-confirm immediately before the `PETALPAL_ZH_ACCEPTANCE_NO_RETRY_ATTESTATION` value is set.
+    - That the gateway and account the operator viewed are the ones that will be entered at the prompt.
+    - That an empty route screen proves no route exists through other means (API, account-level or other gateways).
+    - Gateway log-retention settings. Each request already sends collect-log off.
+    - Anthropic-side workspace spend limits or key scope.
+    - Exact enforcement timing and granularity of the US$1 Gateway limit. It is a coarse backstop above the runner's US$0.05 cap, not a substitute for it.
+    - That the shared screenshots showed no tokens, keys or other secret values (WARNING.md §2). Kiro did not see them.
+  - This observation does not authorize the live call, approve a commit, or complete the TTY key-entry step; the parent item stays open.
+  - Read-only pre-live checklist. Run every item immediately before an approved run, in the checkout that will run it.
+    - Do not print secrets, connection strings or database rows. Record PASS/FAIL only.
+    - Nothing here sets the attestation, enters keys or runs `live-weekly`.
+    1. [ ] **Gateway identity.** The runner hard-codes Gateway ID `petalpal-integration` and accepts only a 32-hex account ID at the hidden prompt. The human confirms both match the dashboard gateway just inspected; compare visually, never paste or record the account ID.
+    2. [ ] **Fresh Gateway settings.** The human re-confirms in the dashboard, without automation: Retry Requests OFF, Cache Responses OFF, no Dynamic Routes, no fallback or routing rule, Authenticated Gateway ON. Record the date and time; any difference from the observation above means STOP.
+    3. [ ] **Live database.** It must be a fresh disposable PostgreSQL at `127.0.0.1:55432/petalpal_acceptance_v2_live_test`, created only for this run, with migrations applied and zero `User` and `AuditEvent` rows. It must not be a production, integration or reused database. The runner re-checks the name, loopback host/port and emptiness, and stops otherwise.
+    4. [ ] **Exact commit.** `git rev-parse HEAD` equals the approved full SHA. `git status --porcelain` is empty. That SHA's offline CI passed, or the only changes since the last passing CI are docs and that is stated in the approval. No `.env` file exists in the checkout.
+    5. [ ] **Ledger and budget.** `<git common dir>/petalpal-acceptance/zh-weekly-v2-sonnet-live.jsonl` does not exist; check this with `test -e` only and never delete or move an existing ledger. The approved cap is ≤ US$0.05 and ≥ the US$0.04096 full reservation. The environment carries no `CI`, `GITHUB_ACTIONS`, `DATABASE_URL`, `AI_*`, Render, Anthropic, Gateway, OpenAI, Firebase or Cloudflare variables.
+    6. [ ] **Remaining human steps.** These must happen in this order:
+       1. A separate owner approval containing `APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL`, the exact SHA from item 4 and the cap from item 5.
+       2. The operator sets `PETALPAL_ZH_ACCEPTANCE_NO_RETRY_ATTESTATION`, but only after item 2.
+       3. The operator enters the integration-only Gateway token and Anthropic key at the TTY prompt.
+       4. After the run, human editorial review of the synthetic output.
+
+- [ ] **New isolated Weekly Candidate vs R2 A/B batch (prepared 2026-10-15):** before any paid request, owner separately approves `APPROVE-6-WEEKLY-CANDIDATE-VS-R2-C01-C04-C05-CALLS`, the exact clean runner commit and US$0.24576 cap. Immediately before attesting, human confirms the integration-only Gateway/account/credential scope, Retry Requests OFF, Cache Responses OFF, no fallback/dynamic routing, direct `claude-sonnet-5-5` routing and current standard rates. Use hidden human TTY entry only after runner gates pass. Batch `reflection-v2-weekly-candidate-vs-r2-99f471cb` must have no existing real ledger or artifact directory. Never resume, reset or modify the original consumed Stage 1 batch. See [the new execution plan](docs/ai/REFLECTION_V2_R2_EVALUATION.md). Status: `NOT AUTHORIZED / NOT PERFORMED`; offline preparation and mocked checks only. Historical observations above do not complete this new verification.
+
+  - 2026-10-15 execution history (supersedes the preparation-only status above for the old runner): the owner approved runner `21b87fac94e404d9b86f05854ab627a6d72de23e` and confirmed the listed Gateway settings. Preflight stopped at `ENVIRONMENT_NOT_ISOLATED` before credential entry; zero requests and no real batch ledger. The sanitized preflight stop record is preserved.
+  - Current macOS correction: **FRESH OWNER APPROVAL REQUIRED / NOT LAUNCHED**. The correction permits only macOS `__CF_USER_TEXT_ENCODING` metadata on Darwin. Obtain approval tied to the corrected runner's new full commit and reconfirm Gateway/credential-scope/rate attestations before any later launch. The old approval and point-in-time settings confirmation do not authorize the corrected commit.
+
+- [ ] **Weekly editorial-freedom batch — NOT AUTHORIZED / NOT EXECUTED (prepared 2026-10-15):** obtain new owner approval of the exact clean runner SHA, `APPROVE-2-WEEKLY-EDITORIAL-FREEDOM-AB523996-C01-C04-CALLS` and US$0.08192 cap. Freshly verify the exact integration Gateway/account, integration-only credentials, direct Sonnet 5.5 routing, no retries/fallback/dynamic routing/cache/log or payload collection, and applicable US$2/million input and US$10/million output rates. Hidden human Terminal entry only after all gates pass. New ledger/artifact names must be unused; preserve all consumed batches. Only C01/en then C04/zh-Hans; no resume or rerun. Historical confirmations do not satisfy this new gate. See [execution plan](docs/ai/REFLECTION_EDITORIAL_FREEDOM_EVALUATION.md) and [human review guide](docs/ai/REFLECTION_EDITORIAL_FREEDOM_REVIEW.md).
+
+  - Execution history superseding the preparation-only status: owner approved exact runner `c0661ce3c08bf8541d3e0da3907481a56161851f`, US$0.08192 and the two cases, then freshly confirmed all Gateway/scope/rate items. Public Sonnet 5.5 standard pricing was independently checked. Hidden human Terminal entry was used. C01/en stopped `VALIDATION_FAILED / REFLECTION_V2_QUOTE_UNSUPPORTED`, completed 0/dispatched 1, estimated cost US$0.006284; C04 was not dispatched. No rejected prose/claims were retained. The private launcher exited with code 2. The owner subsequently **STOPPED ALL LIVE EVALUATIONS**; the batch is consumed, must never rerun, and no new paid batch is authorized. Offline prompt clarification preserves the validator and all historical evidence. See [investigation](docs/ai/REFLECTION_QUOTATION_CONTRACT_OFFLINE.md). Prior checklist text remains historical preparation evidence.
 
 ## 8. Final Security P0 closure
 

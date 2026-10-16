@@ -21,9 +21,17 @@ export const additionalSecurityTests = [
   { file: 'test/back/content-safety.test.js', pattern: '.', count: 7 },
   { file: 'test/back/daily-grow.route.test.js', pattern: '.', count: 1 },
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
-  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 22 },
+  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 26 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
-  { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 15 },
+  // One file in four children (same tests) so each stays under the 90 s child limit.
+  // Node name patterns cannot exclude (the file-level root matches a lookahead), so the core
+  // security cases are named by their title prefixes.
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(selector flag|versioned localized|Chinese and|Sonnet stays|English Sonnet|Chinese Weekly|explicit invalid|zero USD/shared|insufficient evidence|malformed/refused/unselected/ungrounded responses|timeout during|late noncooperative|consent revocation/regrant,|duplicate execution|evidence write|localized source|opt-in weekly-reflection-v2|Weekly composition|Weekly refuses|Weekly reuses) ', count: 20 },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^selector OFF/', count: 0 },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^selector ON/', count: 0 },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(editorial |narrative thread |both editorial |evidence significance ON)', count: 4 },
+  // Opt-in Prompt-First v2 reflection contracts: pure offline validators, no inference.
+  { file: 'test/back/reflection-v2.test.js', pattern: '.', count: 16 },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
   { file: 'test/back/haiku-event-emotion.test.js', pattern: '.', count: 16 },
   { file: 'test/back/speech-admission.test.js', pattern: '^speech admission ', count: 4 },

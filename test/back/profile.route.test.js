@@ -49,6 +49,14 @@ test("profile locale is validated, canonicalized and owner-only", async (t) => {
     body: JSON.stringify({ preferredLocale })
   });
 
+  // General profile settings accept any valid BCP 47 locale. Only new Anthropic report
+  // generation is limited to en/zh-Hans (lib/report-locale.js); profiles are not restricted.
+  for (const [locale, canonical] of [["zh-Hant", "zh-Hant"], ["zh-tw", "zh-TW"], ["zh-hans", "zh-Hans"], ["fr-ca", "fr-CA"], ["ja", "ja"]]) {
+    const accepted = await send("owner-token", locale);
+    assert.equal(accepted.status, 200, locale);
+    assert.equal((await accepted.json()).user.preferredLocale, canonical);
+    assert.equal(persistedLocale, canonical);
+  }
   const updated = await send("owner-token", "en-ca");
   assert.equal(updated.status, 200);
   assert.equal((await updated.json()).user.preferredLocale, "en-CA");

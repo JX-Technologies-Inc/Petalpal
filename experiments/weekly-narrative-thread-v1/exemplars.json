@@ -1,0 +1,125 @@
+{
+  "authorship": "Handcrafted by Kiro as narrative-thread style test doubles for E01-E09. NOT Claude output, NOT owner-approved references, NOT prompt few-shots. Never included in model input.",
+  "exemplars": [
+    { "caseId": "E01", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "You'd worried the staffing explanation in the library proposal was too dense; when Jo returned it, she liked the floor plan but couldn't see how the evening shift would work.", "refs": ["E1", "E2"] },
+        { "text": "You were embarrassed at first, then grateful she'd pointed to something specific.", "refs": ["E2"] },
+        { "text": "Turning the evening-shift section into a worked example exposed a gap in the handover, so the rota changed too; redoing it was frustrating, but you could finally explain who would be there.", "refs": ["E4"] } ] },
+      { "sentences": [
+        { "text": "Jo read the revision and said the evening cover was clear now.", "refs": ["E5"] },
+        { "text": "You were pleased with that change and tired of looking at the document, and you're still nervous about next week's committee presentation.", "refs": ["E5"] } ] } ] },
+    { "caseId": "E01", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "你原本担心图书馆提案里人员安排那段写得太绕；小乔发回来时，喜欢平面图，却没看懂晚班怎么安排。", "refs": ["E1", "E2"] },
+        { "text": "你先是有点不好意思，后来又很感谢她指得这么具体。", "refs": ["E2"] },
+        { "text": "把晚班安排改成具体例子后，才发现交接还有空档，连排班表也重做了；返工挺烦，但终于能说清楚谁在什么时段值班。", "refs": ["E4"] } ] },
+      { "sentences": [
+        { "text": "小乔再看时，说晚班安排清楚了。", "refs": ["E5"] },
+        { "text": "你对这处修改挺满意，也实在不想再盯着这份文档；下周向委员会展示，想到还是紧张。", "refs": ["E5"] } ] } ] },
+    { "caseId": "E02", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "You know Sam is caring for her dad and don't blame her for cancelling dinner again, but you still felt hurt after keeping the evening free.", "refs": ["E1"] },
+        { "text": "You told her you missed her and felt disappointed and asked whether a short walk would be easier, nervous about sounding demanding; she said a walk would be easier and thanked you for saying how you felt, which relieved you.", "refs": ["E2", "E3"] },
+        { "text": "There's no time picked for the walk yet, and you still wish you'd had the dinner.", "refs": ["E3"] } ] },
+      { "sentences": [
+        { "text": "On the bus, a funny essay made you laugh at the bit about the missing suitcase.", "refs": ["E4"] } ] } ] },
+    { "caseId": "E02", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "你知道小珊在照顾爸爸，也不怪她又取消晚饭，可特意空出了晚上，还是有点受伤。", "refs": ["E1"] },
+        { "text": "你给她发消息，说想她、有点失落，问短时间散个步会不会方便些，发完又忐忑，怕显得要求太多；她回复说散步方便些，也谢谢你把感受告诉她，你松了口气。", "refs": ["E2", "E3"] },
+        { "text": "没能一起吃那顿饭，仍有点遗憾，散步的时间也还没定。", "refs": ["E3"] } ] },
+      { "sentences": [
+        { "text": "在公交车上读到一篇好笑的散文，写丢行李箱那段让你笑出了声。", "refs": ["E4"] } ] } ] },
+    { "caseId": "E03", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "You liked the crooked cranes in your harbour sketch and wanted to keep them.", "refs": ["E1"] },
+        { "text": "The first test print lost the water completely in a dark block, and you were disappointed.", "refs": ["E1"] },
+        { "text": "Cutting thin channels through that dark water brought the water back, but the cranes looked too tidy, and you missed their crookedness.", "refs": ["E1", "E2"] },
+        { "text": "You redrew them from the original sketch and cut them unevenly; the new test kept the water lines and brought back the awkward cranes, closer to what you'd wanted, and you were pleased.", "refs": ["E3"] } ] },
+      { "sentences": [
+        { "text": "The latest test print is on the shelf, and you like looking at it there; the paper for the final edition isn't chosen yet.", "refs": ["E4"] } ] } ] },
+    { "caseId": "E03", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "港口版画一开始，你就喜欢草图里那些歪歪的起重机，想把它们留下来。", "refs": ["E1"] },
+        { "text": "第一次试印，水面全糊成了黑块，你有点失望。", "refs": ["E1"] },
+        { "text": "在黑色水面刻出细线后，水出来了，起重机却显得太规整，你还是喜欢原来歪歪的样子。", "refs": ["E1", "E2"] },
+        { "text": "你照着最初的草图重画起重机，刻得不那么齐；这次试印，水面的线还在，歪歪的起重机也回来了，比较像一开始想做的，你挺开心。", "refs": ["E3"] } ] },
+      { "sentences": [
+        { "text": "最新那张试印摆上了架子，你看着挺喜欢；正式印制用什么纸，还没选。", "refs": ["E4"] } ] } ] },
+    { "caseId": "E04", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "The washing machine leaked again and you spent the evening drying the floor, fed up; you were still irritated about it later, and the repair visit is booked but the machine isn't fixed.", "refs": ["E3", "E5"] } ] },
+      { "sentences": [
+        { "text": "You also kept remembering the last song from the small concert with Lee, which you both loved; you enjoyed walking back together talking about the drummer, and it was a lovely evening.", "refs": ["E4", "E5"] } ] },
+      { "sentences": [
+        { "text": "Covering the early shift at short notice left you annoyed and tired.", "refs": ["E1"] },
+        { "text": "The first ripe tomato from your balcony, eaten with toast, was so sweet you were absurdly pleased.", "refs": ["E2"] } ] } ] },
+    { "caseId": "E04", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "洗衣机又漏水，你擦了一晚上地，真有点烦透了，后来想到还是烦；维修约好了，人还没来，机器也还没修好。", "refs": ["E3", "E5"] } ] },
+      { "sentences": [
+        { "text": "你也总会想起和小黎听的那场小演出：你们都很喜欢最后那首歌，回去一起走路聊鼓手，那天晚上确实很开心。", "refs": ["E4", "E5"] } ] },
+      { "sentences": [
+        { "text": "临时顶早班让你有点恼火，到的时候也很累。", "refs": ["E1"] },
+        { "text": "阳台上第一颗番茄熟了，配吐司吃掉，甜得你特别高兴。", "refs": ["E2"] } ] } ] },
+    { "caseId": "E05", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "The lentil soup needed more lemon than the recipe said, and you liked it with yesterday's bread.", "refs": ["E1"] },
+        { "text": "The loose button is back on your blue coat; the thread doesn't quite match, but it stays put.", "refs": ["E2"] },
+        { "text": "A detective story's surprising ending sent you back to reread the conversation in the kitchen scene.", "refs": ["E3"] } ] } ] },
+    { "caseId": "E05", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "扁豆汤里的柠檬汁比方子多放了些，配昨天剩的面包，你挺喜欢。", "refs": ["E1"] },
+        { "text": "蓝外套上松掉的扣子缝好了，线颜色不太配，扣子倒很牢。", "refs": ["E2"] },
+        { "text": "侦探小说的结尾挺意外，你又翻回去读了厨房里对话那段。", "refs": ["E3"] } ] } ] },
+    { "caseId": "E06", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "The writing residency rejected your application, and you'd wanted that time away for the canal essays; you were upset and didn't open the essay folder that day.", "refs": ["E1"] },
+        { "text": "When you did open them, you shortened the opening of the lock-keeper piece and liked the new opening, though the rejection still upset you.", "refs": ["E1", "E2"] },
+        { "text": "You enjoyed the editing, but it hasn't made the rejection feel fine.", "refs": ["E4"] } ] },
+      { "sentences": [
+        { "text": "You told Noor about it over noodles; she listened without trying to make it sound like good news, and you were glad you'd told her.", "refs": ["E3"] },
+        { "text": "Whether to apply elsewhere is still undecided.", "refs": ["E4"] } ] } ] },
+    { "caseId": "E06", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "写作驻留的申请没通过，你本来很想用那段时间专心写运河散文；那天挺难受，没打开散文文件夹。", "refs": ["E1"] },
+        { "text": "后来打开运河散文，你把写船闸管理员那篇的开头删短了，挺喜欢新开头，但落选的事还是让你难受。", "refs": ["E1", "E2"] },
+        { "text": "改散文是开心的，却并没有因此觉得落选也没什么。", "refs": ["E4"] } ] },
+      { "sentences": [
+        { "text": "和小诺吃面时你说了这件事，她听着，没有非要把它说成好事，你挺庆幸跟她说了。", "refs": ["E3"] },
+        { "text": "要不要申请别的地方，你还没决定。", "refs": ["E4"] } ] } ] },
+    { "caseId": "E07", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "Space for larger drawings is what excites you about the studio across town Ari suggested sharing; the rent is what worried you.", "refs": ["E1", "E4"] },
+        { "text": "You didn't know whether the price included heating, and the landlord wasn't there when you visited, though you liked the north window and left interested and uneasy.", "refs": ["E1", "E2"] },
+        { "text": "The landlord has since confirmed heating is included, which relieved you about that particular cost.", "refs": ["E3"] } ] },
+      { "sentences": [
+        { "text": "Whether the total rent fits your budget is still to be worked out.", "refs": ["E3"] },
+        { "text": "You told Ari you'd like another visit before deciding, and you haven't agreed to move.", "refs": ["E4"] } ] } ] },
+    { "caseId": "E07", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "城另一头那间工作室能让你画大画，你一直挺期待；让你担心的是租金。", "refs": ["E1", "E4"] },
+        { "text": "起初不知道报价包不包暖气，看房时房东不在，也没问清楚；你喜欢那扇朝北的窗，出来时很有兴趣，又有点不踏实。", "refs": ["E1", "E2"] },
+        { "text": "后来房东确认租金包含暖气，这笔费用让你松了口气。", "refs": ["E3"] } ] },
+      { "sentences": [
+        { "text": "总租金能不能负担，还得算一算。", "refs": ["E3"] },
+        { "text": "你跟阿黎说，决定之前还想再看一次，也没有答应搬过去。", "refs": ["E4"] } ] } ] },
+    { "caseId": "E08", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "At the workshop you learned to replace a bicycle brake cable, and you were pleased when the brake worked on the test ride.", "refs": ["E1"] },
+        { "text": "Your cousin called to say she'd got the bakery job and sounded excited; you congratulated her while waiting for the bus.", "refs": ["E2"] },
+        { "text": "In the gallery, you liked the unfinished hand of a charcoal portrait more than the face, and you didn't make any drawings of your own that day.", "refs": ["E3"] },
+        { "text": "The upstairs neighbours moved out; the hallway was full of boxes when you went for the post, and you don't know who is moving in.", "refs": ["E4"] } ] } ] },
+    { "caseId": "E08", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [
+        { "text": "修车课上你学着换了自行车刹车线，试骑时刹车正常，挺高兴。", "refs": ["E1"] },
+        { "text": "表姐打电话说拿到了面包店的工作，听起来很兴奋，你等公交时跟她说了恭喜。", "refs": ["E2"] },
+        { "text": "在画廊看炭笔肖像时，比起脸，你更喜欢那只没画完的手；那天你自己没有画画。", "refs": ["E3"] },
+        { "text": "楼上的邻居搬走了，你去拿信时走廊里都是箱子，还不知道接下来谁搬来。", "refs": ["E4"] } ] } ] },
+    { "caseId": "E09", "locale": "en", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [ { "text": "You bought pears and read at home.", "refs": ["E1", "E2"] } ] } ] },
+    { "caseId": "E09", "locale": "zh-Hans", "version": "weekly-reflection-v2", "paragraphs": [
+      { "sentences": [ { "text": "买了梨，也在家看了书。", "refs": ["E1", "E2"] } ] } ] }
+  ]
+}

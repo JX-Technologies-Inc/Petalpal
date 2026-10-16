@@ -1,0 +1,131 @@
+{
+  "status": "GO_FOR_FUTURE_CONTROLLED_INTEGRATION_TEST_PENDING_OWNER_REVIEW",
+  "runtimeSourceCommit": "957c6c2de713e1c3b2219ab5d661c14971a747d3",
+  "runtimeChanged": false,
+  "liveProviderCalls": 0,
+  "productionWrites": 0,
+  "productionConfigurationChanged": false,
+  "native": {
+    "node": "v24.21.0",
+    "icu": "78.3",
+    "platform": "darwin",
+    "arch": "arm64",
+    "completeAffectedSuite": {
+      "OFF": {
+        "tests": 366,
+        "pass": 366,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "ON": {
+        "tests": 366,
+        "pass": 366,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "finalMonthlyCleanupRecheck": {
+      "OFF": {
+        "tests": 46,
+        "pass": 46,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "ON": {
+        "tests": 46,
+        "pass": 46,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    }
+  },
+  "linux": {
+    "node": "v24.21.0",
+    "icu": "78.3",
+    "platform": "linux",
+    "arch": "arm64",
+    "image": "node:24.21.0-bookworm-slim",
+    "network": "none",
+    "sourceAndDependenciesReadOnly": true,
+    "testMaxOldSpaceMiB": 256,
+    "affectedWorkerSuite": {
+      "OFF": {
+        "tests": 233,
+        "pass": 233,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "ON": {
+        "tests": 233,
+        "pass": 233,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "gitReferenceChecks": "Three Git-dependent reference checks run natively; slim image has no Git. Explicit test-skip-pattern excludes them."
+  },
+  "frozenComparison": {
+    "equalToPreservedCandidateArtifactOnBothPlatforms": true,
+    "semantic": {
+      "original": {
+        "evidence": 32,
+        "meaningful": 18,
+        "followups": 0
+      },
+      "v2": {
+        "evidence": 32,
+        "meaningful": 18,
+        "followups": 0
+      },
+      "corrected": {
+        "evidence": 32,
+        "meaningful": 18,
+        "followups": 0
+      }
+    },
+    "editorial": {
+      "original": {
+        "evidence": 44,
+        "meaningful": 22,
+        "followups": 0
+      },
+      "v2": {
+        "evidence": 56,
+        "meaningful": 32,
+        "followups": 10
+      },
+      "corrected": {
+        "evidence": 54,
+        "meaningful": 32,
+        "followups": 10
+      }
+    },
+    "maximumContextCharacters": 1492,
+    "maximumRequestBytesWithReserve": 4694,
+    "deterministic": true,
+    "topicDiversityPreserved": true,
+    "narrativeQualityMeasured": false
+  },
+  "verificationFindings": [
+    "Initial Linux attempts suffered PGlite test-process OOM kills; observed first-container oom_kill=1. Resolved through per-case subtests and the existing Weekly holder-and-clear cleanup pattern for Monthly. Assertions unchanged; final image suites pass.",
+    "Three historical evaluation-runner test imports refused their original-branch/runtime guards. Guards and historical evidence unchanged; these are outside the affected selector runtime suite.",
+    "New worker configuration-error assertions were corrected to match existing Gateway sanitization; dispatch remained blocked. No runtime change."
+  ],
+  "remainingLimits": [
+    "Lexical linkage is not semantic scoring.",
+    "Saturated initial allocation and hard budgets can still omit follow-ups.",
+    "Hosted PostgreSQL lock scheduling, deployed settings and actual provider writing quality remain unverified."
+  ]
+}

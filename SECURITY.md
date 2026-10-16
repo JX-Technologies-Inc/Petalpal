@@ -1,5 +1,363 @@
 # PetalPal Security
 
+## Weekly evidence significance — default OFF, offline only, 2026-10-16
+
+`AI_WEEKLY_EVIDENCE_SIGNIFICANCE` is a new server-side opt-in that requires
+`AI_WEEKLY_EVIDENCE_SELECTOR_V2=true`. Any other value, or use without V2, fails
+with `AI_GATEWAY_CONFIG_INVALID` before retrieval. No client input can set it.
+When ON, the existing 32-row Weekly candidate pool is ranked from the already
+consent-checked, owner-scoped period rows instead of the last 32 rows (zh) or
+retrieval order (en). English retrieval still runs once, and its rows are still
+reconciled, with stale or forged content refused.
+Ranking reads only summary words, topics, dates, similarity and importance. It
+never rewrites text, never adds ranking metadata to the provider packet, and makes
+no extra model or API call.
+These existing controls are unchanged: source fence, deletion/consent rechecks,
+8-source/4,000-character and Gateway limits, one call, idempotency and atomic
+persistence. Monthly is unchanged.
+Evidence is offline and synthetic. Actual-worker PGlite tests are added but still
+need a local run. No flag, deployment or manual-state change. See
+[the report](docs/ai/WEEKLY_EVIDENCE_SIGNIFICANCE.md).
+
+## Weekly narrative-thread prompt candidate — default OFF, offline only, 2026-10-16
+
+`AI_WEEKLY_REFLECTION_NARRATIVE_THREAD` is a new server-side opt-in on the Sonnet
+Weekly `weekly-reflection-v2` path. Unset or literal `false` keeps the existing prompt
+and packet. Any other value, use with v1, or use together with
+`AI_WEEKLY_REFLECTION_RETROSPECTIVE` fails with content-free `AI_GATEWAY_CONFIG_INVALID`
+before retrieval. No client input can set it. Monthly and Workers AI ignore it.
+It replaces only the composition paragraph of the system prompt. Evidence safeguards,
+quotation/ref rules, packet contents/privacy allowlist, trimming, Gateway byte
+admission (+291 bytes after the 2026-10-16 final selective revision, inside the
+existing framing allowance), cost reservation,
+one-call/no-replay, consent/owner/source fences and the validator are unchanged.
+Evidence so far is offline and synthetic: actual-worker PGlite tests are added but
+still need a local run. No provider call, flag activation, deployment or manual-state
+change occurred. See [the candidate report](docs/ai/WEEKLY_NARRATIVE_THREAD_CANDIDATE.md).
+
+## Weekly Selector V2 Integration planning — no execution, 2026-10-15
+
+The controlled-test proposal preserves the normal Integration server's manual
+execution and three zero shared call limits. Source inspection confirms that
+literal selector true alone neither authorizes Claude nor supplies Integration
+English embedding bindings. A finite, owner/job-scoped evaluation capability must
+be separately implemented/reviewed before any positive process-local budget; no
+server guard, provider setting or Production configuration was changed.
+
+Fresh GitHub main metadata differs from the verified selector branch in server,
+schema and five migration files; this does not establish the live TEST schema.
+Direct deployment of the older full branch is not proposed. The anonymous TEST
+metadata probe was unavailable from this host, so no live service/resource binding
+or manual status is upgraded. Existing Node 24.21.0 readiness evidence is reused.
+The [Integration plan](docs/ai/WEEKLY_EVIDENCE_SELECTOR_V2_INTEGRATION_PLAN.md)
+separates zero-inference SQL/owner checks from an optional 4-call pilot and 16-call
+continuation, with $0.81920 total Claude reservation, independent call slots and
+an OFF rollback. No paid inference, hosted mutation or historical-ledger reuse
+occurred. Owner review remains required before implementation/execution scopes.
+
+## Weekly Selector V2 exact-runtime offline verification — 2026-10-15
+
+Candidate runtime `957c6c2de713e1c3b2219ab5d661c14971a747d3` was verified on
+Node 24.21.0 / ICU 78.3: complete affected native matrices passed 366 tests each
+with the selector OFF and ON; the configured Linux image passed 233 selected
+selector/service/worker/Monthly/fence tests per state with networking disabled.
+Default-OFF matches the pinned previous Weekly input and packet on all 28 frozen
+cases. Actual worker tests retain consent/source/owner fences, exact provenance,
+packet privacy headers and count/character/byte limits. Monthly requests, claims
+and provenance are unchanged. These are synthetic/mocked results, not hosted
+provider or narrative-quality acceptance. Test-only PGlite cleanup fixes resolved
+memory kills in the bounded image; application code and configuration are unchanged.
+Historical evidence and consumed ledgers remain preserved. See the
+[readiness report](docs/ai/WEEKLY_EVIDENCE_SELECTOR_V2_READINESS.md).
+Enabling V2 remains pending owner review; no flag, deployment or production state
+was changed.
+
+## Weekly Selector V2 integration candidate — default OFF, 2026-10-15
+
+`AI_WEEKLY_EVIDENCE_SELECTOR_V2` is a new server-side opt-in for localized Weekly
+input selection under `weekly-reflection-v2`. Unset/`false` uses the existing
+selector; only literal `true` opts in, incompatible output contracts and other
+flag values fail closed on that path. Monthly and unlocalized Workers AI Weekly
+selection ignore this flag. No environment, provider or deployment was changed.
+
+The candidate replaces fuzzy duplicate suppression with exact normalized-text
+matching, preserving changes in negation, speaker, quantities and outcomes.
+Backfill requires specific lexical overlap within an initial topic group and a
+new sentence; this is selection guidance, not semantic verification or permission
+to infer identity, emotion or causation. Count, character, byte, locale and
+minimum-evidence bounds remain. No scoring service or extra model request is added.
+
+When enabled, retrieved candidates are reconciled against the already consent-
+checked, owner-scoped Event/Memory versions before packet construction. Ambiguous
+source versions, missing/foreign owners and explicit source opt-out are refused.
+Existing consent rechecks, deletion/revision fences, selected/cited provenance,
+atomic persistence, idempotency, output validation and privacy allowlists remain.
+Only synthetic offline and mocked/in-memory evidence was used. Default-OFF parity
+is checked against the pinned previous implementation; no narrative-quality gain
+is claimed. Historical evaluations and consumed ledgers are untouched. See the
+[candidate report](docs/ai/WEEKLY_EVIDENCE_SELECTOR_V2_CANDIDATE.md). Enabling remains
+pending owner review and is outside this preparation task.
+
+## Weekly quotation contract — offline clarification after live stop, 2026-10-15
+
+The approved editorial-freedom batch at runner
+`c0661ce3c08bf8541d3e0da3907481a56161851f` consumed one C01/en request and stopped
+with `VALIDATION_FAILED / REFLECTION_V2_QUOTE_UNSUPPORTED`; completed 0, dispatched
+1, estimated cost US$0.006284. C04 was not dispatched. Rejected prose was not
+retained. The private launcher had exited; the owner stopped all live evaluations.
+All ledgers/artifacts remain preserved and the batch must never be rerun.
+
+Offline tests found no demonstrated false positive against the existing exact
+quotation contract. Every recognized double/Chinese-quoted span is checked as an
+exact clause copy, even if intended as emphasis or paraphrase; ordinary punctuation
+and English apostrophes pass. Exact failed text/cause is unknown. Weekly now prefers
+idiomatic paraphrases without quotation marks and explicitly binds quoted text to
+an exact complete cited clause, never a translation/rewording. This addresses a
+prompt ambiguity without stripping marks or weakening validation. The prompt is
+slightly shorter. No actual model-compliance or quality improvement is claimed.
+
+64 scoped offline cases passed. Monthly, schemas, validator and content-free
+diagnostics are byte-identical to `ab523996…`; only Weekly instructions change.
+English and Simplified Chinese remain the only future output languages. Existing
+privacy, consent, ownership/deletion, references, idempotency and cost controls
+remain unchanged; semantic fidelity still requires human review. No additional
+provider/Cloudflare AI request, spend, production change or deployment was made.
+See [investigation, evidence limits and tests](docs/ai/REFLECTION_QUOTATION_CONTRACT_OFFLINE.md).
+
+## Weekly editorial-freedom evaluation — offline preparation, 2026-10-15
+
+The new isolated runner pins `ab52399656904f4f698c5f2d731f9b98d9b658ff`
+without runtime changes. It schedules only C01 English and C04 Simplified Chinese,
+one direct Sonnet 5.5 request each, on the unchanged frozen UNV evidence. Its fresh
+batch/ledger namespace cannot reuse or resume any historical evaluation. Proposed
+maximum US$0.08192 uses the existing US$2/US$10 per-million-token assumptions;
+applicable live rates and integration Gateway/credential scope need fresh human
+verification. No historical approval carries forward.
+
+20 mocked runner tests and 5 Weekly diagnostic checks passed offline, with native
+fetch trapped. New ledger/artifact paths are absent; the shared parent is owned by
+the current user, owner-only and not a symlink. Existing strict JSON/grounding,
+content-free diagnostics, bounded transport, durable attempt reservations, private
+artifact/credential handling and no-replay protections are unchanged. Tests also
+refuse unsafe parent permissions and symlinks before dispatch. Saved prose names
+and a human comparison worksheet are prepared; no new prose exists or quality
+improvement is claimed. No live calls, credentials, spend, deployment or production
+change. **OWNER APPROVAL AND FRESH EXTERNAL VERIFICATION PENDING.** See the
+[execution plan](docs/ai/REFLECTION_EDITORIAL_FREEDOM_EVALUATION.md).
+
+## Reflection editorial freedom and two output languages — offline only, 2026-10-15
+
+Future Weekly/Monthly v1/v2 output enums, packet admission, service language defaults
+and new signup/profile language selections allow English and Simplified Chinese.
+Traditional/regional Traditional preferences and explicit configurations containing
+the retired output language fail closed for new generation; no fallback or silent
+content/profile conversion occurs. Historical report retrieval remains owner- and
+consent-checked, bypasses new-generation locale validation and preserves saved
+Traditional v1/v2 prose/metadata. Finalized reuse still precedes new input preparation.
+No migration, record deletion, generation-key or provider setting changed.
+
+Weekly uses concise understanding/writing/fidelity instructions. Factual grounding,
+strict JSON shape, reference/quote/digit/coverage/length guards and content-free
+rejection diagnostics remain intact. Native calls, models, budgets, consent,
+source/deletion fences, privacy, atomic persistence and no-replay rules are unchanged.
+Monthly's supported-language writing code is unchanged; its prompt loses only the
+retired-language guidance. Semantics and actual language/script remain human-review
+limits, not machine-proven facts.
+
+137 distinct offline cases passed across the scoped runs, including historical
+Traditional v1/v2 retrieval, explicit unsupported-locale/config rejection, zero-call
+finalized reuse, owner/consent boundaries and existing worker/cost/source fences.
+Only synthetic in-memory/stubbed data and loopback HTTP were used. No live inference,
+paid evaluation, production change or historical evidence/ledger mutation occurred.
+Before any future rollout, review locale configuration and the explicit language
+selection required for owners with unsupported stored preferences. See
+[scope, compatibility and verification](docs/ai/REFLECTION_EDITORIAL_FREEDOM_TWO_LANGUAGES.md).
+
+## Reflection v2 evaluation validation diagnostics — offline only, 2026-10-15
+
+The R2 evaluation runner keeps `VALIDATION_FAILED` as its stop code and adds a
+fixed `validationCode` to stopped-ledger metadata and the CLI result. The new
+`scripts/reflection-v2-validation-diagnostics.mjs` classifies the first failed
+guard only after the unchanged authoritative validator rejects the response.
+It cannot accept, repair, retry or replace output. Production `lib/`, prompt pins,
+schemas, model/budget controls, credential/environment gates and consumed-batch
+protection are unchanged; no new batch identity or real ledger is created.
+
+Codes are fixed constants. AJV messages/params/instance paths, arbitrary JSON keys,
+actual refs, rejected text, source content, exception messages/stacks/causes,
+headers, credentials and raw provider responses are never included. Unexpected
+internal cases return `REFLECTION_V2_UNKNOWN`. Existing validated synthetic
+artifact handling is unchanged; rejected payload retention is not expanded.
+Differential offline tests compare diagnostic categories with the real validator
+across Weekly/Monthly and all three locales; mocked runner tests verify code-only
+persistence, no content/credential/thinking leakage, immediate stop and no resume.
+A future validator change requires keeping the diagnostic mirror and parity tests
+in sync; UNKNOWN is never permission to proceed.
+
+Both historical batches remain consumed and immutable. The latest run on
+`39976d99685198fa91a1a0f50eeba555e127d644` stopped on C01 English previous
+Candidate after HTTP 200: one dispatch, zero validated, estimated US$0.00645.
+The old payload was not retained; these new diagnostics cannot recover its cause.
+This revision is offline only. Another paid batch requires fresh explicit owner
+authorization and must not reuse either consumed batch. See the updated
+[evaluation record](docs/ai/REFLECTION_V2_R2_EVALUATION.md).
+
+## R2 runner macOS portability correction — offline only, 2026-10-15
+
+The environment gate now permits only the exact `__CF_USER_TEXT_ENCODING` name
+on Darwin, where macOS injects text-encoding metadata even after `env -i`.
+Other platforms still reject it; no prefix/wildcard exception or environment
+stripping is used. All other unlisted names and existing approval, exact-commit,
+TTY, `.env`, budget, attestation, ledger and artifact gates remain enforced.
+Sixteen offline/mocked tests pass, including the exception on Darwin, rejection on
+Linux/Windows, near-match/injection variables and all remaining gates with the
+exception present. No output validation or production/provider configuration changes.
+
+Runner `21b87fac94e404d9b86f05854ab627a6d72de23e` stopped before credential
+entry or dispatch with `ENVIRONMENT_NOT_ISOLATED`; its sanitized stop record and
+all prior evaluation evidence are preserved. No real batch ledger was created.
+The corrected commit requires fresh owner approval and fresh Gateway attestations.
+No live evaluation or paid request was launched for this correction.
+
+## Weekly Candidate vs R2 evaluation — offline preparation, 2026-10-15
+
+**No paid requests authorized or dispatched.** The separate
+`scripts/reflection-v2-r2-evaluation.mjs` pins the previous candidate and R2, only
+C01/C04/C05 Weekly cases, six Sonnet requests and the exact US$0.24576 reservation.
+It uses a new batch/ledger namespace without reading, resuming or editing the
+consumed Stage 1 ledger. The historical runner and evidence remain unchanged.
+Default/check modes are network-free and create no real ledger/artifacts.
+
+Live requires a new case-bound owner approval, exact clean runner HEAD on its
+dedicated branch, isolated allowlisted environment, no `.env`, private TTY,
+integration-only credentials and fresh human no-retry/no-fallback/no-cache/routing
+and standard-rate attestations. Each attempt is fsynced before a sequential send;
+any existing ledger/artifacts prevent replay, and failure stops without repair or
+replacement. Private ledger/artifact permissions, blinded review, output bounds,
+20-second deadlines and rejection of invalid output/cache usage are covered by
+14 mocked tests with native fetch trapped. Raw failed responses, headers,
+credentials and thinking are not saved. Provider-side settings remain human-only
+and unverified by this preparation; these are local controls, not cross-clone
+replay protection or provider billing certification.
+
+Runtime schemas, validation, consent, ownership, deletion and production settings
+are unchanged. No database is used. Existing semantic/script validation limits
+remain. See [the new plan](docs/ai/REFLECTION_V2_R2_EVALUATION.md); approval and human
+editorial acceptance are still pending.
+
+## Staged editorial evaluation — offline revision, 2026-10-15
+
+The paired executor now requires an explicit stage, exact case-bound approval
+and exact reservation: Stage 1 is six Sonnet calls / US$0.24576; Stage 2 is six
+Opus calls / US$0.98304 after completed Stage 1 evidence and separate human-review
+attestation. Optional Stage 3 accepts only an explicitly approved subset of the
+six unused pairs with its exact budget. The original 24-call matrix remains
+available offline; the old unscoped live command/approval cannot dispatch.
+
+Each stage has an independent exclusive append-only/fsynced ledger. Empty,
+partial, corrupt, wrong-commit or unassessed prerequisite evidence fails closed;
+existing legacy batch evidence blocks staged replay. No stage continues, retries,
+resumes or repairs automatically. Human editorial review and real Gateway
+configuration remain owner-verified attestations, not machine-proven facts.
+
+Twenty targeted mocked tests passed, including separate six-call stages, a
+two-call early follow-up, optional full coverage through three approvals,
+cross-stage replay/approval/budget rejection and existing transport/durability
+failure paths. ZERO real provider calls; no live ledgers or historical evidence
+changed. Final prompts and production runtime remain frozen. See the updated
+[staged plan](docs/ai/REFLECTION_V2_PAIRED_EVALUATION.md) and
+[human decision sheet](docs/ai/REFLECTION_V2_BLIND_SCORE_SHEET.md).
+
+## Paired Reflection v2 editorial executor — offline preparation, 2026-10-15
+
+`scripts/reflection-v2-editorial-evaluation.mjs` prepares 12 paired synthetic
+cases (24 calls), with zero real inference during implementation. Default/check
+mode has no network or ledger side effects. Live requires separate owner approval
+of the exact clean executor commit, a cap between US$2.45760 and US$2.46, private
+integration-only credentials and explicit Gateway retry/fallback/cache/routing
+attestations. Remote settings are not machine-verified.
+
+The fixed new clone-local ledger uses exclusive creation, O_APPEND and fsync
+before each send. A failed/ambiguous/interrupted attempt is never retried or
+refunded; a partial or empty ledger cannot be resumed. The first failure stops
+the batch. The historical one-call ledger is never reused. Sequential sends keep
+the existing 20-second timeout, model/token bounds, schemas and validation.
+No database or production code changes are involved; this is not new persistence
+or consent acceptance. Protected operator metadata is separate from blinded
+synthetic prose. No raw headers, provider errors, thinking blocks or secrets are
+saved. Mocked tests cover timeout/late responses, interruption, invalid output,
+budget/replay gates and fsync failure before dispatch. See
+[the execution plan](docs/ai/REFLECTION_V2_PAIRED_EVALUATION.md).
+
+## Isolated zh-Hans Reflection v2 Weekly acceptance runner — 2026-10-15
+
+**Preparation and offline/mocked validation only; no paid inference, deployment,
+migration, credential, provider or production-data change.** Branch
+`test/zh-reflection-v2-live-weekly` (based on PR #57) reuses the unmerged
+`test/zh-report-acceptance` runner (commits cherry-picked with `-x`) and narrows it
+to `weekly-reflection-v2` on `claude-sonnet-5-5`. It calls the real worker, cost gate,
+Gateway client, v2 validator and persistence. No `AI_MONTHLY_*` name is set, so no
+Opus service exists; a Monthly job is refused before any reservation or dispatch.
+
+Live mode (`live-weekly`) is fail-closed before any database or provider module loads
+(`scripts/zh-reflection-v2-weekly-gates.mjs`). It requires all of the following:
+- `NODE_ENV=test`, no `.env`, and no inherited `DATABASE_URL`, `AI_*`, Render,
+  Anthropic, Gateway, OpenAI, Firebase or Cloudflare variables;
+- a fresh loopback `petalpal_acceptance_v2_live_test` database on port 55432 with
+  zero users and audit rows;
+- no `CI`/`GITHUB_ACTIONS`, and a TTY for hidden secret entry;
+- `PETALPAL_ZH_ACCEPTANCE_APPROVAL=APPROVE-1-ZH-WEEKLY-V2-SONNET-CALL`;
+- a full approved commit SHA equal to a clean `HEAD`;
+- a budget cap ≤ US$0.05 that is at least the US$0.04096 full reservation;
+- the human Gateway no-retry attestation (manual checklist §7);
+- an unconsumed ledger.
+
+Exactly-one-dispatch controls:
+- The in-process dispatch guard allows one exact URL and one call. It creates
+  `<git-common-dir>/petalpal-acceptance/zh-weekly-v2-sonnet-live.jsonl` exclusively
+  (`wx`) and fsyncs an `attempt` entry before the send, so a crash, timeout or
+  unknown outcome still consumes the run. The ledger records only commit, cap,
+  model, HTTP status and sanitized cost, never bodies, headers or secrets. It is a
+  local control, not cross-machine replay prevention.
+- The Gateway client keeps `fallback`/`maxAttempts` replay blocks and sends
+  `cf-aig-max-attempts: 1`.
+- Single-report database limits allow 2 calls and 1 Weekly action, with all USD
+  limits set to the cap, so a second report is refused before dispatch.
+- The deterministic cost reservation blocks scheduler re-runs.
+- Ungrounded output fails without a repair call.
+
+Gateway-side retry/fallback configuration is **not** machine-verified. This is a
+residual risk covered only by the manual attestation.
+
+The offline CI workflow uses a disposable pgvector service, `contents: read` and no
+secrets, and never invokes live mode.
+
+## Opt-in Prompt-First reflection v2 — 2026-10-15
+
+**Default off; offline source and mocked tests only; no paid inference, deployment,
+migration, credential or provider change.** `weekly-reflection-v2` and
+`monthly-reflection-v2` let Claude write the visible prose as evidence-linked
+sentences. They are selected only by exact `AI_WEEKLY_REFLECTION_CONTRACT` /
+`AI_MONTHLY_REFLECTION_CONTRACT` values; unset keeps v1 and other values fail closed
+before retrieval or dispatch. Consent, owner scope, Journal exclusion, source/deletion
+fences, job claims/leases, atomic report/evidence/job writes, the no-replay cost
+ledger, budgets, timeouts and the unchanged Gateway byte admission all still apply.
+Finalized reports are reused and never regenerated by the opt-in.
+
+- The provider packet contains only Event text, topics, local weekday, month-week or
+  previous-month labels and aliases: no owner, Event/memory IDs, counts or timestamps.
+  Event text is untrusted data. Over-budget packets drop whole optional Events; text is
+  never truncated.
+- Fail-closed checks cover schema, version/locale echo, supplied aliases, Weekly
+  two-Event and Monthly every-week citation coverage, previous-month comparison-only
+  use, digit support in cited text, exact clause-aligned quotations, alias/URL/markup
+  rejection and existing length bounds.
+- **Residual risk:** paraphrased negation, speaker, cause, chronology, uncertainty,
+  feelings, spelled-out numbers, invented times/durations and locale script are not
+  machine-verified. Valid citations are traceability, not proof. Human editorial
+  acceptance of approved live outputs is required before any production use. No
+  manual/provider action is added, so MANUAL_SECURITY_CHECKLIST.md is unchanged.
+
 ## Phase 4 Opus Monthly integration — 2026-10-13
 
 **Disabled by default; source and mocked acceptance only.** New isolated worktree
