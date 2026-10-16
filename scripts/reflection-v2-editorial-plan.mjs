@@ -15,6 +15,11 @@ import { OPUS_MONTHLY_MODEL } from "../lib/opus-monthly.js";
 
 export const BASELINE = "d80ab522d77c0c8483b45a7827e2fbf5561f5ee0";
 export const CANDIDATE = "c2d7a9d9a7d06f8291de5be7d890988fcdb5b9a8";
+export const STAGES = Object.freeze({
+  stage1: Object.freeze({ ids: Object.freeze(["C01", "C04", "C05"]), budgetNanoUsd: 245_760_000 }),
+  stage2: Object.freeze({ ids: Object.freeze(["C08", "C09", "C12"]), budgetNanoUsd: 983_040_000 }),
+  stage3: Object.freeze({ ids: Object.freeze(["C02", "C03", "C06", "C07", "C10", "C11"]), budgetNanoUsd: 1_228_800_000 })
+});
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const git = args => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trimEnd();
 
@@ -93,6 +98,21 @@ export function prepareEvaluation() {
   const budgetNanoUsd = cases.reduce((sum, c) => sum + 2 * c.reservationNanoUsd, 0);
   assert.equal(budgetNanoUsd, 2_457_600_000, "changed pricing/limits require a new approval plan");
   return { cases, calls: 24, budgetNanoUsd };
+}
+
+// Preserve the full matrix offline. Live stages never default to all cases;
+// expansion requires an explicit, canonical subset of the six unused pairs.
+export function prepareStage(stage, selectedIds) {
+  const spec = STAGES[stage]; assert.ok(spec, "explicit stage required");
+  const ids = stage === "stage3" ? selectedIds : spec.ids;
+  if (stage !== "stage3") assert.equal(selectedIds, undefined);
+  assert.ok(Array.isArray(ids) && ids.length > 0);
+  assert.deepEqual(ids, spec.ids.filter(id => ids.includes(id)), "unique canonical allowed cases required");
+  const cases = prepareEvaluation().cases.filter(c => ids.includes(c.id));
+  const budgetNanoUsd = cases.reduce((sum, c) => sum + 2 * c.reservationNanoUsd, 0);
+  assert.ok(budgetNanoUsd <= spec.budgetNanoUsd);
+  if (stage !== "stage3") assert.equal(budgetNanoUsd, spec.budgetNanoUsd);
+  return { stage, cases, calls: cases.length * 2, budgetNanoUsd };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

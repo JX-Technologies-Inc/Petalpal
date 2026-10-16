@@ -1,5 +1,28 @@
 # PetalPal Security
 
+## Staged editorial evaluation — offline revision, 2026-10-15
+
+The paired executor now requires an explicit stage, exact case-bound approval
+and exact reservation: Stage 1 is six Sonnet calls / US$0.24576; Stage 2 is six
+Opus calls / US$0.98304 after completed Stage 1 evidence and separate human-review
+attestation. Optional Stage 3 accepts only an explicitly approved subset of the
+six unused pairs with its exact budget. The original 24-call matrix remains
+available offline; the old unscoped live command/approval cannot dispatch.
+
+Each stage has an independent exclusive append-only/fsynced ledger. Empty,
+partial, corrupt, wrong-commit or unassessed prerequisite evidence fails closed;
+existing legacy batch evidence blocks staged replay. No stage continues, retries,
+resumes or repairs automatically. Human editorial review and real Gateway
+configuration remain owner-verified attestations, not machine-proven facts.
+
+Twenty targeted mocked tests passed, including separate six-call stages, a
+two-call early follow-up, optional full coverage through three approvals,
+cross-stage replay/approval/budget rejection and existing transport/durability
+failure paths. ZERO real provider calls; no live ledgers or historical evidence
+changed. Final prompts and production runtime remain frozen. See the updated
+[staged plan](docs/ai/REFLECTION_V2_PAIRED_EVALUATION.md) and
+[human decision sheet](docs/ai/REFLECTION_V2_BLIND_SCORE_SHEET.md).
+
 ## Paired Reflection v2 editorial executor — offline preparation, 2026-10-15
 
 `scripts/reflection-v2-editorial-evaluation.mjs` prepares 12 paired synthetic

@@ -4,7 +4,7 @@ Reviewer ID: ______  Date: ______  Native output locale/register: ______
 
 Independence confirmed (not a prompt author; no arm identities or prompt diff seen): ______
 
-Use an independent copy per reviewer. The coordinator supplies each case's exact synthetic Events with aliases and two unedited outputs labeled A/B. Do not infer which version is newer. Do not discuss scores until both reviewers submit and lock their sheets. Ignore model names, cost and latency; the coordinator withholds those metadata.
+Use an independent copy per reviewer for each stage. The coordinator supplies only the selected cases' exact synthetic Events with aliases and two unedited outputs labeled A/B. Leave unrun rows blank. Do not infer which version is newer. Do not discuss scores until both reviewers submit and lock their sheets. Ignore model names, cost and latency; the coordinator withholds those metadata. Reviewers must be qualified native-language editors/readers in the output register, able to understand the mixed-language evidence, and independent of prompt authorship. Use two reviewers per locale, with blinded third-person adjudication when needed.
 
 First read each narrative for naturalness, specificity, comfort and style; record scores before seeing sentence citations. Then inspect every meaningful clause against its cited Events and complete factual scoring. Finally compare the pair. Both outputs may be acceptable, or neither may be acceptable. Do not reward more words or more emotion.
 
@@ -26,7 +26,7 @@ Technical gate: invalid schema, wrong locale, insufficient citations or missing 
 
 ## Pair scoring
 
-Enter five separate scores in N/F/P/C/V order. Preference: A, B, tie, or neither. Fill only the four rows for your assigned output locale. For failure notes, use the audit table below.
+Enter five separate scores in N/F/P/C/V order. Preference: A, B, tie, or neither. Fill only supplied cases for your assigned output locale. For failure notes, use the audit table below. Stage 1 supplies C01/C04/C05; Stage 2 supplies C08/C09/C12 only after review and separate approval. Other rows are optional targeted follow-ups, not required samples.
 
 | Case | Type | Locale | Material | A N/F/P/C/V | B N/F/P/C/V | Auto-fail A/B? | Preferred | Reason / note ID |
 |---|---|---|---|---|---|---|---|---|
@@ -55,10 +55,22 @@ Scores locked at: ______  Reviewer signature/ID: ______
 
 ## Coordinator decision — only after blinded scores are locked
 
-- Every candidate sample must pass technical validation and the relevant coverage check, have **zero material factual failures**, F=4 and N/P/C/V>=3 after blinded adjudication. No aggregate average can hide a failing sample.
-- To call the candidate a clear editorial improvement in this small matrix, require adjudicated preference for it in at least **8 of 12 pairs**, including at least **2 of 4 in every locale** and **3 of 6 for each report type**. Candidate naturalness must not be rated below baseline in any case. Ties are not wins. Otherwise report inconclusive or revise-needed; do not loosen thresholds after unblinding.
-- Failure, missing output or unassessed coverage means the complete evaluation has not passed. Retain the record; no repair calls are included. Passing this matrix is human editorial acceptance for these samples only, not production approval or proof of general reliability.
+- Every evaluated candidate must pass technical validation and the relevant coverage check, have **zero material factual failures**, F=4 and N/P/C/V>=3 after blinded adjudication. No aggregate average can hide a failing sample. A major unsupported claim automatically fails that arm. Candidate material error, poor writing or meaningful language regression means **STOP**: recommend the smallest justified prompt revision as a separate task before more paid evaluation. Never repair a generated sample.
+- After Stage 1's three pairs, lock scores and explicitly decide whether the evidence justifies Monthly testing. Stage 1 alone cannot satisfy a six-pair signal. Stage 2 requires separate owner approval after this review; successful technical execution is insufficient. Ambiguous judgments should first be adjudicated without further inference. If uncertainty remains, recommend the smallest targeted follow-up instead of automatically purchasing six Opus calls.
+- Across the **six preselected pairs from Stages 1 and 2**, at least **5/6 adjudicated preferences for the improved prompt**, no material factual errors and no meaningful language regression constitute a **preliminary positive signal only**. Ties are not wins. Any lower naturalness score requires explicit blinded adjudication of whether it is a meaningful regression; unresolved disagreement is inconclusive. This small, reused-fixture sample cannot establish universal reliability or production quality.
+- Stage 3 has no automatic allocation. Identify the exact unresolved question and start with **one unused pair (two calls)** if it can resolve that question. More pairs need individual justification, a separate owner-approved case list and budget. Prioritize missing scenario coverage, factual fidelity/negation, unsupported identity links and unnatural language in the affected locale. Do not replace failed/missing outputs or rerun an ambiguous call. Targeted follow-ups remain exploratory: do not pool them into the preselected 5/6 denominator or selectively remove earlier failures.
+- Missing output, failed technical execution or unassessed coverage makes that stage incomplete. Retain all evidence and stop; no retry/resume is included. An early Stage 3 follow-up does not automatically unlock Stage 2. If the available unused fixtures cannot answer the uncertainty, report it and propose the smallest separately reviewed plan change.
 
 Case decisions locked: ______  Mapping revealed at: ______
 
-Adjudicator: ______  Final decision (pass / inconclusive / fail / incomplete): ______
+Adjudicator: ______  Reviewed stage(s): ______
+
+Decision (continue-to-Monthly / preliminary-positive / inconclusive / stop-revise / incomplete): ______
+
+Material errors / meaningful language regressions, including clause and source: ______
+
+Unresolved question and why existing evidence cannot resolve it: ______
+
+Minimum additional case IDs (or smallest proposed revision), justification per case: ______
+
+Separate owner approval reference, exact executor commit and additional budget: ______

@@ -1,25 +1,37 @@
-# Reflection v2 paired editorial evaluation — preparation only
+# Reflection v2 staged editorial evaluation — offline preparation only
 
-Verified starting point on 2026-10-15: worktree `petalpal-reflection-v2-editorial`, branch `codex/reflection-v2-editorial-quality`, prompt commit `c2d7a9d9a7d06f8291de5be7d890988fcdb5b9a8`. Baseline prompt source: `d80ab522d77c0c8483b45a7827e2fbf5561f5ee0`. The preparation-only executor commit must be approved separately. Final prompts, runtime code, historical evidence and live ledgers are untouched. No provider call, database connection, migration or deployment has occurred during this preparation.
+Starting evaluation commit verified: `4096f70f7e154c0433d86dd733b4e3bc029cf222`, clean worktree `petalpal-reflection-v2-editorial`, branch `codex/reflection-v2-editorial-quality`. Baseline prompts remain `d80ab522d77c0c8483b45a7827e2fbf5561f5ee0`; improved prompts remain `c2d7a9d9a7d06f8291de5be7d890988fcdb5b9a8`. The revised executor commit needs separate owner approval. No inference is authorized by this document. Final prompts, production runtime, historical real evidence and consumed ledgers are untouched.
 
-## Exact cases and comparison
+## Smallest planned evaluation and stop points
 
-Twelve **paired cases require 24 fresh calls**, one baseline and one candidate per case. The historical Chinese Weekly sample has different evidence and cannot substitute for a baseline arm. Offline authored reference prose is not a model baseline.
+Each row is one baseline/improved pair (two calls). Only the system prompt differs within a pair; evidence, locale, model, schema, token limits and all other parameters are identical. The full original 12-pair/24-call matrix remains available offline as an optional expansion. It is never executed by default or by the old unscoped `live` command.
 
-| Case | Type | Output locale | Evidence |
-|---|---|---|---|
-| C01 | Weekly | en | M |
-| C02 | Weekly | en | O-en |
-| C03 | Weekly | zh-Hans | M |
-| C04 | Weekly | zh-Hans | O-zh-Hans |
-| C05 | Weekly | zh-Hant | M |
-| C06 | Weekly | zh-Hant | O-zh-Hant |
-| C07 | Monthly | en | M |
-| C08 | Monthly | en | O-en |
-| C09 | Monthly | zh-Hans | M |
-| C10 | Monthly | zh-Hans | O-zh-Hans |
-| C11 | Monthly | zh-Hant | M |
-| C12 | Monthly | zh-Hant | O-zh-Hant |
+| Stage | Cases | Model | Exact calls on success | Maximum reservation |
+|---|---|---|---:|---:|
+| 1 | C01, C04, C05 | claude-sonnet-5-5 | 6 | **US$0.24576** |
+| 2, separately approved after Stage 1 review | C08, C09, C12 | claude-opus-5-5 | 6 | **US$0.98304** |
+| 3, only justified selected pairs | Explicit subset of C02, C03, C06, C07, C10, C11 | Per selected case | 2 × selected pairs | Exact sum; no default allocation |
+
+Stages 1 + 2 would cost at most **US$1.22880 reserved for 12 calls**, half the original reservation. Stage 1 is the only initial request. Stage 2 is not pre-authorized, even if Stage 1 completes technically. A failure stops a stage before its planned count; there are no replacement calls.
+
+| Case | Report | Locale | Evidence | Planned stage |
+|---|---|---|---|---|
+| C01 | Weekly | en | M | 1 |
+| C02 | Weekly | en | O-en | Optional targeted 3 |
+| C03 | Weekly | zh-Hans | M | Optional targeted 3 |
+| C04 | Weekly | zh-Hans | O-zh-Hans | 1 |
+| C05 | Weekly | zh-Hant | M | 1 |
+| C06 | Weekly | zh-Hant | O-zh-Hant | Optional targeted 3 |
+| C07 | Monthly | en | M | Optional targeted 3 |
+| C08 | Monthly | en | O-en | 2 |
+| C09 | Monthly | zh-Hans | M | 2 |
+| C10 | Monthly | zh-Hans | O-zh-Hans | Optional targeted 3 |
+| C11 | Monthly | zh-Hant | M | Optional targeted 3 |
+| C12 | Monthly | zh-Hant | O-zh-Hant | 2 |
+
+Selection rationale: Stage 1 exercises English negation/litotes and Traditional Chinese emotional nuance, while Simplified Chinese ordinary experiences probe the documented risks of artificial language, chronological inventory and unsupported drawing identity links. Stage 2 reverses the scenario in each locale: ordinary English/Traditional Chinese experiences test Monthly narrative restraint; Simplified Chinese tests mixed feelings and negation across weeks. Across six pairs, every locale has both scenarios and both report types. This deliberately does not cover every scenario × locale × report interaction; the unused counterpart cases are available only if that missing coverage matters to an observed uncertainty.
+
+## Exact unchanged synthetic evidence
 
 M reuses five complete existing synthetic Events, in this order:
 
@@ -40,83 +52,86 @@ O reuses the four localized drawing Events from `test/back/opus-monthly.test.js`
 
 All dates are September 2026 at 12:00 UTC, timezone UTC, with empty topics. Weekly M dates: 14, 15, 16, 18, 20; Weekly O: 14, 16, 18, 20. Monthly M: 02, 09, 16, 23, 27; Monthly O: 02, 09, 16, 27. Monthly evidence spans four represented weeks; the two final M Events share W4. No previous-month evidence. Stable aliases E1 onward. The ordinary variants are locale-specific fixtures, not exact translations of one another; baseline and candidate within each pair receive byte-identical evidence.
 
-## Verified preparation runner
+## Offline checks and implementation
 
 ```sh
 env -i PATH="$PATH" node scripts/reflection-v2-editorial-plan.mjs
+env -i PATH="$PATH" node scripts/reflection-v2-editorial-evaluation.mjs check stage1
+env -i PATH="$PATH" node scripts/reflection-v2-editorial-evaluation.mjs check stage2
+env -i PATH="$PATH" node scripts/reflection-v2-editorial-evaluation.mjs check stage3 C02
+env -i PATH="$PATH" node --test test/back/reflection-v2-editorial-evaluation.test.js
 ```
 
-This is a **network-free preparation check, not a live executor**. It has no live mode, credentials, database or ledger access. It loads the baseline instruction strings directly from the pinned Git object, uses unchanged production packet/schema code, and constructs all 24 requests in memory. Assertions verify pinned prompt source, branch and candidate ancestry, unchanged runtime dependencies, no dropped/truncated Events, identical request bodies except system instructions, four-week Monthly coverage, and complete request byte admission with existing framing allowance. A later preparation-only commit is permitted, but future live execution must separately pin its reviewed runner revision. Result: PASS, 12 pairs, 24 planned calls, zero actual calls. The CLI rejects `live` before preparation.
+The plan generator and executor's default/`check` modes are network-free, with no credential prompts, database access or ledger creation. Default/`check` without a stage inspects the optional full matrix only. Stage 3 requires a nonempty, unique case list in the table's canonical order; no implicit selection is allowed. Checks print the exact scope, reservation and approval string for later owner review.
 
-The new executor is `scripts/reflection-v2-editorial-evaluation.mjs`. Its default mode and `check` mode are network-free and never open a ledger or prompt for credentials. The original plan generator remains available unchanged in purpose; its existing fixture arrays are now protected against caller mutation.
+The existing executor reuses frozen production packet/schema/validation/pricing code and Gateway conventions. It uses synthetic evidence and a local cost ledger, not a database. It does not test production consent, persistence, worker locking or saved-report behavior. No database provisioning or migrations are needed. The historical single-call runner and its ledger must not be repurposed for these stages.
 
-```sh
-env -i PATH="$PATH" node scripts/reflection-v2-editorial-evaluation.mjs check
-env -i PATH="$PATH" node --test test/back/reflection-v2-editorial-evaluation.test.js test/back/zh-reflection-v2-weekly-gates.test.js
-```
+Targeted staged validation: **20 mocked tests passed, 0 failed; ZERO real provider calls**. This includes exact complementary case selection, rejection of old/full/wrong-stage approvals, stage budgets and call limits, prerequisite evidence and review gates, one-pair early follow-up, and an optional 24-response matrix exercised through three separately approved mocked invocations. Existing tests still cover sequential dispatch, durable attempts before network, fsync failure, exhausted budgets, consumed ledgers, interruption, invalid/oversized responses, unexpected cache use, changed checkout and private blinded artifacts. Weekly and Monthly retain the **20,000 ms** deadline, including stalled bodies and noncooperative late responses. Monthly still caps output at **4,096 tokens**. Native fetch is trapped in tests, including CLI subprocesses. No live ledger was created or consumed; all test artifacts were disposable synthetic files.
 
-Targeted tests cover all 24 mocked responses, exact paired bodies and case list, preflight rejection, cumulative budget exhaustion, duplicate/25th attempts, exclusive ledgers, an attempt-fsync failure, mid-batch transport failure, malformed/oversized/refused/ungrounded responses, token limits, unexpected cache usage, interruption, consumed/partial ledgers, changed checkout, blind mapping and secret-free artifacts. Weekly and Monthly both use fake timers to verify the unchanged **20,000 ms** deadline, including body stalls and noncooperative late responses. The Monthly output cap remains **4,096 tokens**. Native fetch is trapped in tests; CLI checks also run with a network trap. These checks do not establish real Opus latency or human prose quality.
+### Earlier preparation validation, retained for history
+
+The following record belongs to the original 24-call executor at `4096f70f`, not a new live evaluation:
 
 Offline validation on 2026-10-15: **24 tests passed, 0 failed** (16 paired-executor tests plus 8 existing single-call gate tests), with **zero real provider calls**. The full-batch test supplied all 24 responses through injected mocked transport. Test ledgers and artifacts were confined to disposable synthetic temporary directories; no live ledger was created or consumed.
 
-## Models and maximum reservation
+## Reservation calculation and unchanged model settings
 
-Use production defaults identically in both arms: `claude-sonnet-5-5` for Weekly, `claude-opus-5-5` for Monthly; `output_config.effort=low`; the same JSON schema; 20,000 ms deadline; no temperature/top-p/top-k overrides, tools, batching, fast mode or explicit cache writes.
+Both arms use the same model, `output_config.effort=low`, JSON schema and 20,000 ms deadline. No temperature/top-p/top-k overrides, tools, fast mode, batching or explicit cache writes.
 
-| Model/use | Calls | Reserved input allowance | Output cap | Reservation/call | Total |
-|---|---:|---:|---:|---:|---:|
-| Sonnet / Weekly | 12 | 8,192 | 2,048 | US$0.04096 | US$0.49152 |
-| Opus / Monthly | 12 | 16,384 | 4,096 | US$0.16384 | US$1.96608 |
-| Complete paired evaluation | 24 | | | | **US$2.45760** |
+| Use | Input allowance | Output cap | Reservation/call | Reservation/pair |
+|---|---:|---:|---:|---:|
+| Weekly Sonnet | 8,192 | 2,048 | US$0.04096 | **US$0.08192** |
+| Monthly Opus | 16,384 | 4,096 | US$0.16384 | **US$0.32768** |
 
 Calculation uses `gatewayQuote`: input allowance × input rate × 1.25, plus output cap × output rate. Standard rates checked against official [Sonnet documentation](https://platform.claude.com/docs/en/models/sonnet-5-5/overview) and [Opus documentation](https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5): respectively US$2/10 and US$4/20 per million input/output tokens. The input allowance is the application's conservative byte-based admission proxy, not a tokenizer or guaranteed final invoice. No cache discount is assumed.
 
-Proposed owner ceiling: **US$2.46**, at most 24 sends. This is a requested future ceiling, not authorization. Twelve candidate-only outputs would reserve US$1.22880 but would not provide the requested paired comparison. Stop and recalculate if rates, models, output caps or Gateway routing change. Confirm no additional paid Gateway feature/tax is included in the intended budget; the calculation covers inference reservations only.
+Each live stage requires a cap **equal to its exact full reservation**; higher/lower caps fail closed. Stage 3 requires a new, explicitly approved case list and its calculated budget: US$0.08192 per Weekly pair plus US$0.32768 per Monthly pair. Start with one pair when it answers the unresolved question. All six unused pairs would add US$1.22880/12 calls; that is a maximum optional expansion, not a recommendation or default. Across all three stages, unique pairs cannot exceed the original **24 calls / US$2.45760 reservation**, below the old US$2.46 ceiling. No prior budget authorization carries into a new stage.
 
-## Safe execution method and verified infrastructure limits
+Owner must verify current model access, standard rates and no additional paid Gateway features/charges before approval. Changed rates, caps, models or routing require a revised plan, not automatic spending. Real Opus latency and editorial quality remain unverified.
 
-The existing exact live runner is `scripts/zh-reflection-v2-weekly-acceptance.mjs live-weekly`. It supports only zh-Hans Weekly, one Sonnet call, one fixed ledger and a cap no higher than US$0.05. It deliberately leaves Monthly unconfigured. **Do not run it repeatedly, widen its old approval, or reset its ledger to execute this matrix.** The old offline shell wrapper is also unsuitable: it checks another branch and runs migrations/container cleanup, which are outside this request.
+## Fail-closed execution and separate authorization
 
-The new executor performs direct synthetic prompt evaluation with **no database**. It reuses the frozen plan, production schema compiler and Reflection validator, pricing helpers and existing Gateway attestation. Its transport follows the existing Gateway client's wire format, headers, Anthropic envelope checks and response bounds (512 KiB response / 32 KiB generated JSON). The production client requires a Prisma cost/consent database, so the executor uses its own narrowly scoped batch ledger instead; it does not claim to exercise production consent, persistence, owner readback or SQL locking. The ledger follows the existing exclusive/fsync pattern and adds `O_APPEND`; the historical single-call helper and ledger are unchanged.
-
-Implemented behavior, verified with mocked transport:
-
-1. Pin reviewed runner source plus both prompt commits; accept only a clean approved checkout. Refuse inherited provider/database configuration, `.env`, CI and missing explicit owner authorization. Human operator enters integration-only secrets through a hidden TTY; never arguments, logs, chat or saved artifacts.
-2. Allowlist the `petalpal-integration` Anthropic Messages endpoint. Retain `cf-aig-max-attempts: 1`, `cf-aig-skip-cache: true`, disabled payload logging, `redirect: error`, the existing bounded response reader and deadline. Human operator verifies Gateway retries, fallbacks, caching and routing separately; a header alone cannot prove upstream configuration.
-3. Create the **new, fixed batch ledger** `<git-common-dir>/petalpal-acceptance/reflection-v2-editorial-paired-c2d7a9d9.jsonl` using exclusive create, append-only writes and fsync. Never touch `zh-weekly-v2-sonnet-live.jsonl`. Record the approved complete schedule's reservation once, then debit each attempt conservatively before dispatch. Before each send, fsync case, arm, model, output cap and cumulative liability; never credentials or raw request headers. A consumed, empty or partial batch ledger blocks all reruns. A crash, timeout, refusal, invalid JSON or validation failure consumes that attempt; no refund, repair, fallback, retry or automatic resume. Disk failure prevents dispatch; the existing ledger continues to block replay even if a final stop entry cannot be written.
-4. Sequential sends, at most two distinct arms per case and 24 total, with per-model caps and total US$2.46 enforcement before dispatch. Stop the batch on a transport/provider/validation failure and retain partial results; do not spend remaining authorization on replacement samples. Any recovery needs a new scoped approval; do not erase old evidence.
-5. Preserve the exact synthetic packet and generated sentence citations. Record technical validation, usage, reservation, latency, response model and failure codes independently of prose scores. Write only synthetic output and sanitized metadata to private evaluation artifacts. Native reviewers receive the blinded material, not prompts, arm identities, cost/latency hints or the mapping key.
-
-Exactly one HTTP attempt is permitted **per case/arm**, meaning two per paired case. Neither a failed arm nor a missing sample can be replaced within this authorization. The executor requires zero reported cache read/write tokens; unexpected cache usage stops the batch. Malformed/unvalidated generated text and provider error bodies are not saved. A structurally valid output missing the sheet's additional Weekly mixed/negation coverage is recorded as `UNASSESSED`; it is not repaired or treated as complete editorial acceptance.
-
-Before live execution, an owner must explicitly approve the exact **executor commit** (not merely the earlier prompt commit), 24 calls and the cap. This command is a future owner-run procedure, **not authorization to execute it now**. Replace the literal commit placeholder only with the owner's approved full SHA; do not auto-fill it from arbitrary current HEAD.
+A human owner must approve the exact revised executor commit, selected stage/cases, call count and exact budget. This future Stage 1 example is **not authorization to execute now**:
 
 ```sh
 env -i PATH="$PATH" NODE_ENV=test \
-  PETALPAL_EDITORIAL_APPROVAL=APPROVE-24-PAIRED-REFLECTION-V2-CALLS \
+  PETALPAL_EDITORIAL_APPROVAL=APPROVE-STAGE1-6-REFLECTION-V2-CALLS-C01-C04-C05 \
   PETALPAL_EDITORIAL_COMMIT=OWNER_APPROVED_40_HEX_EXECUTOR_COMMIT \
-  PETALPAL_EDITORIAL_BUDGET_USD=2.46 \
+  PETALPAL_EDITORIAL_BUDGET_USD=0.24576 \
   PETALPAL_EDITORIAL_GATEWAY_VERIFIED=petalpal-integration-no-retry-no-fallback-no-cache-verified \
   PETALPAL_EDITORIAL_SCOPE_VERIFIED=integration-only-credentials-direct-model-routing-standard-rates-verified \
-  node scripts/reflection-v2-editorial-evaluation.mjs live
+  node scripts/reflection-v2-editorial-evaluation.mjs live stage1
 ```
 
-The attestations require actual human verification of integration-only credentials, direct routing to the pinned models, standard rates, retries/fallbacks disabled and caching disabled. They do not inspect or prove remote settings. Live also requires a clean expected branch, approved HEAD, no `.env`, no inherited provider/database/CI variables and a private terminal. Only then are the integration account, Gateway token and Anthropic key requested through hidden TTY input. Neither keys nor headers are saved. SIGINT/SIGTERM stop an active batch; a hard kill leaves the already-fsynced ledger consumed. The exact commit and clean state are rechecked before every attempt.
+Do not auto-fill the commit from arbitrary HEAD. No `.env`, inherited provider/database/CI variables or non-TTY credential entry is allowed. The human enters integration-only Cloudflare account/Gateway token/Anthropic key through hidden private terminal prompts. No keys, tokens, authorization headers, thinking blocks or provider error bodies are saved or printed.
 
-Artifacts are created exclusively under `<git-common-dir>/petalpal-acceptance/reflection-v2-editorial-paired-c2d7a9d9/` with 0700 directories and 0600 files:
+| Requested scope | Separate approval | Budget | Additional human attestation |
+|---|---|---|---|
+| `live stage2` | `APPROVE-STAGE2-6-REFLECTION-V2-CALLS-C08-C09-C12` | `0.98304` | `PETALPAL_EDITORIAL_REVIEW=stage1-blind-reviewed-clear-for-monthly` |
+| Example only: `live stage3 C02` | `APPROVE-STAGE3-2-REFLECTION-V2-CALLS-C02` | `0.08192` | `PETALPAL_EDITORIAL_REVIEW=prior-stages-blind-reviewed-targeted-followup-justified` |
 
-- `operator-mapping.json`: protected A/B-to-arm mapping and separately counterbalanced generation order. The stored map reproduces the assignment; it must not enter the reviewer bundle.
-- `review/prose/Cxx-A.txt` and `Cxx-B.txt`: validated synthetic narratives only.
-- `review/claims/Cxx-A.json` and `Cxx-B.json`: sentence citations for the second review pass.
-- `review/evidence/Cxx.json`: exact shared synthetic input packet.
-- The sibling batch ledger holds timing, model, usage, estimated costs, coverage and failure metadata. Keep it with the coordinator, not reviewers.
+For Stage 2, the attestation means qualified independent reviewers have locked and adjudicated Stage 1 scores, found no material candidate factual error or meaningful language regression, and judged Monthly spending justified. For Stage 3, it means reviewers have assessed all completed earlier stages, identified a specific unresolved risk or contradiction, and justified the selected minimum follow-up. Poor candidate performance requires STOP and the smallest justified revision, not an expansion attestation. Retain the signed/dated scoring sheets with the coordinator before approving either attestation. The executor records the attestation but cannot independently prove human review or remote configuration.
 
-Give reviewers only `review/` and a copy of the unchanged scoring sheet, revealing evidence/claims after their first prose pass. Existing artifacts or ledgers are never overwritten. File permissions and a clone-local ledger do not prevent the owner from copying files, deleting controls or running another clone; they are not cross-machine authorization enforcement.
+Stage 2 requires a complete, assessed Stage 1 ledger from the same approved executor commit; Stage 3 requires complete, assessed Stage 1 and, if present, complete Stage 2. Missing, partial, corrupt, wrong-commit or unassessed predecessor evidence blocks execution. A completed ledger is only a technical prerequisite, never editorial approval. Stage 3 may be separately approved after Stage 1 alone to resolve a narrow uncertainty without buying six Opus calls. It can select only the six reserved optional cases. If that early Stage 3 is used, this executor blocks later Stage 2: review the new evidence and prepare a separately approved follow-on plan if warranted. Stage 3 itself is a single one-time allocation and cannot be resumed or expanded by a second invocation.
 
-If full worker/persistence revalidation is required instead, the existing runner requires a **fresh, empty, already schema-initialized disposable PostgreSQL with pgvector**, loopback host `127.0.0.1`, port `55432`, exact database name `petalpal_acceptance_v2_live_test`, and generated Prisma Client. It rejects existing user/audit rows. These are the existing single-case requirements, not proof that an available database meets them. A matrix adapter would need separately named fresh isolation and unique synthetic owners/jobs for each arm to avoid saved-report reuse. No database availability or credentials were inspected; provisioning/migrations remain separately authorized prerequisites. No production DB may be used.
+Execution protections:
 
-## Independent human acceptance and remaining prerequisites
+- Independent fixed ledgers `<git-common-dir>/petalpal-acceptance/reflection-v2-editorial-paired-c2d7a9d9-stage1.jsonl`, `-stage2.jsonl`, and `-stage3.jsonl`. Exclusive creation, `O_APPEND`, fsync of each attempt before dispatch, private 0600 files/0700 directories. A stopped, partial or even empty ledger consumes that stage. Later stages never modify predecessor ledgers.
+- The original `reflection-v2-editorial-paired-c2d7a9d9.jsonl` and artifact directory are never read for results, reused or reset. If either exists, staged execution fails closed to avoid duplicating an older evaluation. The unrelated historical `zh-weekly-v2-sonnet-live.jsonl` remains untouched.
+- Exactly one HTTP attempt per selected case/arm, sequentially. Enforce pinned cases/models/schema/settings and cumulative reservations before every send, and recheck approved commit/clean checkout and predecessor gates. No automatic next stage, retry, resume, repair, fallback, refund or replacement of an ambiguous call.
+- Fixed `petalpal-integration` Anthropic endpoint, `redirect: error`, max-attempts 1, cache skip, logging disabled, Gateway timeout header 19,900 ms and client deadline 20,000 ms. Response limits remain 512 KiB envelope / 32 KiB generated JSON. Unexpected cache usage or invalid model/schema/usage stops the batch. These headers require separate owner verification of actual Gateway retry/fallback/cache/direct-routing settings; they do not prove remote behavior.
+- Abort on SIGINT/SIGTERM, timeout, provider/validation error or storage failure. Record sanitized failure code, latency, token usage and estimated cost when known. Do not repeat an ambiguous attempt. A hard kill leaves its fsynced ledger consumed. Missing Weekly mixed-negation coverage is recorded as `UNASSESSED` and blocks progression; generated text is never repaired.
 
-Use the separate [blind scoring sheet](REFLECTION_V2_BLIND_SCORE_SHEET.md); reviewers must not see this operator plan or the prompt diff until scores are locked. A coordinator randomizes A/B separately for each pair, balanced within each type/locale (one baseline-A and one baseline-B across M/O); generation order is separately counterbalanced. Keep the mapping outside the reviewer bundle. Two independent reviewers per locale must be fluent in the output register and able to read the mixed-language sources. Neither prompt author nor generation model can supply independent acceptance. Resolve disagreements with a third reviewer while still blinded.
+## Blinded artifacts and evidence-driven decisions
 
-Remaining prerequisites: review and explicitly approve the committed executor revision; owner confirms integration credentials, model access, standard pricing and Gateway no-retry/no-fallback/no-cache/direct-routing configuration; confirm the fixed new ledger and artifact paths are unused; recruit independent bilingual/native reviewers; explicitly authorize the 24-call/US$2.46 scope. No live call is authorized by this document. Production remains default-off, even if the editorial evaluation passes. This small reused-fixture study is a directional paired check, not a statistically conclusive or unseen-data production evaluation.
+Artifacts use the matching stage directory beside its ledger. `operator-mapping.json` holds private randomized A/B identities and independent generation order. Within each invocation adjacent selected pairs are counterbalanced; an odd final pair is randomized. A three-pair stage therefore has a 2:1 or 1:2 balance, not a claimed per-locale balance. The stored mapping reproduces identities/order. Labels from one stage do not imply identities in another.
+
+Reviewers receive only `review/prose/Cxx-A.txt` / `Cxx-B.txt` first, then `review/claims/*.json` and `review/evidence/*.json` for factual audit, plus the [blind scoring sheet](REFLECTION_V2_BLIND_SCORE_SHEET.md). Keep mapping, prompts, timing, usage, model metadata and operator runbook private until scores are locked. File permissions and clone-local ledgers are not cross-machine authorization enforcement.
+
+Use two independent qualified native-language reviewers per locale, with a blinded third reviewer to resolve disagreements. Assess naturalness, factual fidelity, specificity/personalization, emotional comfort and stylistic variation. A major unsupported claim automatically fails the sample. Stop on candidate material factual error or meaningful language regression and recommend the smallest justified revision before further paid calls.
+
+Across the six fixed Stage 1 + Stage 2 pairs, **at least 5/6 improved-prompt preferences with no material errors or meaningful language regression** is only a preliminary positive signal. Ties are not wins. Stage 1 alone cannot meet this threshold. The sample is too small and too familiar to establish universal or production quality. Production remains default-off.
+
+For inconclusive results, first adjudicate existing outputs without inference. Then name the unresolved question and propose the minimum unused pair(s): C02/C06 for ordinary Weekly voice and drawing identity in English/Traditional Chinese; C03 for Simplified Chinese Weekly negation; C07/C11 for English/Traditional Chinese Monthly negation and unsupported temporal interpretation; C10 for Simplified Chinese Monthly ordinary specificity and identity links. Prioritize the affected language/report/scenario, not filling the matrix. Keep exploratory follow-ups separate from the preselected 5/6 denominator. If no unused fixture addresses the question, report inconclusive and propose a new reviewed plan rather than repeat a call.
+
+Remaining prerequisites: explicit stage-specific owner authorization of the new executor commit and budget; real Gateway/credential/pricing verification by the owner; unused stage ledger/artifact paths; completed predecessor evidence where required; qualified reviewers and locked human review decisions before further approval. **ZERO paid calls are authorized or performed during this preparation.**

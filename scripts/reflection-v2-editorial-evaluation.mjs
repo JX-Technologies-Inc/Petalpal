@@ -4,16 +4,18 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { randomInt } from "node:crypto";
-import { constants, closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, openSync, writeFileSync } from "node:fs";
+import { constants, closeSync, existsSync, fsyncSync, lstatSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { BASELINE, CANDIDATE, prepareEvaluation } from "./reflection-v2-editorial-plan.mjs";
+import { BASELINE, CANDIDATE, STAGES, prepareEvaluation, prepareStage } from "./reflection-v2-editorial-plan.mjs";
 import { GATEWAY_ATTESTATION } from "./zh-reflection-v2-weekly-gates.mjs";
 import { GATEWAY_MODELS, GATEWAY_TASK_LIMITS, usdLimitNano } from "../lib/ai-gateway-config.js";
 import { validateReflectionV2 } from "../lib/reflection-v2.js";
 
 export { GATEWAY_ATTESTATION };
-export const APPROVAL = "APPROVE-24-PAIRED-REFLECTION-V2-CALLS";
+export const approvalFor = plan => `APPROVE-${plan.stage.toUpperCase()}-${plan.calls}-REFLECTION-V2-CALLS-${plan.cases.map(c => c.id).join("-")}`;
+export const REVIEW = Object.freeze({ stage2: "stage1-blind-reviewed-clear-for-monthly",
+  stage3: "prior-stages-blind-reviewed-targeted-followup-justified" });
 export const SCOPE_ATTESTATION = "integration-only-credentials-direct-model-routing-standard-rates-verified";
 export const BRANCH = "codex/reflection-v2-editorial-quality";
 export const BATCH = "reflection-v2-editorial-paired-c2d7a9d9";
@@ -22,47 +24,92 @@ export const MAX_RESPONSE_BYTES = 512 * 1024, MAX_JSON_BYTES = 32 * 1024;
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const allowedEnv = new Set(["PATH", "TERM", "LANG", "LC_ALL", "TMPDIR", "NODE_ENV",
   "PETALPAL_EDITORIAL_APPROVAL", "PETALPAL_EDITORIAL_COMMIT", "PETALPAL_EDITORIAL_BUDGET_USD",
-  "PETALPAL_EDITORIAL_GATEWAY_VERIFIED", "PETALPAL_EDITORIAL_SCOPE_VERIFIED"]);
+  "PETALPAL_EDITORIAL_GATEWAY_VERIFIED", "PETALPAL_EDITORIAL_SCOPE_VERIFIED", "PETALPAL_EDITORIAL_REVIEW"]);
 const CODES = new Set(["ENVIRONMENT_NOT_ISOLATED", "DOTENV_PRESENT", "TTY_REQUIRED", "APPROVAL_REQUIRED", "COMMIT_MISMATCH",
   "WORKTREE_NOT_CLEAN", "BUDGET_INVALID", "BUDGET_EXHAUSTED", "GATEWAY_UNVERIFIED", "SCOPE_UNVERIFIED", "LEDGER_CONSUMED",
   "ARTIFACTS_EXIST", "PLAN_MISMATCH", "CREDENTIALS_INVALID", "LEDGER_UNAVAILABLE", "ARTIFACT_WRITE_FAILED", "INTERRUPTED",
   "TIMEOUT", "TRANSPORT_FAILED", "HTTP_FAILED", "INVALID_RESPONSE", "RESPONSE_TOO_LARGE", "USAGE_INVALID",
-  "CACHE_USAGE_UNEXPECTED", "VALIDATION_FAILED", "REPLAY_BLOCKED", "CHECKOUT_CHANGED", "EVALUATION_FAILED"]);
+  "CACHE_USAGE_UNEXPECTED", "VALIDATION_FAILED", "REPLAY_BLOCKED", "CHECKOUT_CHANGED", "EVALUATION_FAILED",
+  "PRIOR_STAGE_INCOMPLETE", "HUMAN_REVIEW_REQUIRED", "STAGE_ORDER_BLOCKED"]);
 function fail(code) { throw Object.assign(new Error(code), { code }); }
 const safeCode = error => CODES.has(error?.code) ? error.code : "EVALUATION_FAILED";
-const paths = state => ({ parent: path.join(state.common, "petalpal-acceptance"),
-  ledger: path.join(state.common, "petalpal-acceptance", `${BATCH}.jsonl`),
-  artifacts: path.join(state.common, "petalpal-acceptance", BATCH) });
+const paths = (state, stage) => ({ parent: path.join(state.common, "petalpal-acceptance"),
+  ledger: path.join(state.common, "petalpal-acceptance", `${BATCH}-${stage}.jsonl`),
+  artifacts: path.join(state.common, "petalpal-acceptance", `${BATCH}-${stage}`) });
 
-export function checkoutState() {
+// Read only bounded, sanitized completion metadata from our fixed predecessor
+// ledgers. Never append to, repair or resume them. Empty/corrupt/partial = closed.
+export function stageState(state, stage) {
+  const p = paths(state, stage), prior = {};
+  for (const name of ["stage1", "stage2", "stage3"]) {
+    const file = paths(state, name).ledger;
+    prior[name] = { exists: existsSync(file), complete: false };
+    if (!prior[name].exists || name === stage || name === "stage3") continue;
+    try {
+      const stat = lstatSync(file); assert.ok(stat.isFile() && !stat.isSymbolicLink() && stat.size <= 128 * 1024);
+      const entries = readFileSync(file, "utf8").trim().split("\n").map(JSON.parse), spec = STAGES[name];
+      const run = entries[0], end = entries.at(-1);
+      assert.equal(run.entry, "run"); assert.equal(run.stage, name); assert.equal(run.runnerCommit, state.head);
+      assert.equal(run.baseline, BASELINE); assert.equal(run.candidate, CANDIDATE); assert.deepEqual(run.caseIds, spec.ids);
+      assert.equal(run.plannedCalls, 6); assert.equal(run.plannedReservationNanoUsd, spec.budgetNanoUsd);
+      assert.deepEqual(end, { entry: "complete", completed: 6, dispatched: 6, reservedNanoUsd: spec.budgetNanoUsd });
+      assert.equal(entries.length, 14);
+      const expected = new Set(spec.ids.flatMap(id => [`${id}/baseline`, `${id}/candidate`]));
+      for (let i = 1; i < 13; i += 2) {
+        const attempt = entries[i], result = entries[i + 1];
+        assert.equal(attempt.entry, "attempt"); assert.equal(attempt.ordinal, (i + 1) / 2);
+        assert.ok(expected.delete(`${attempt.caseId}/${attempt.arm}`));
+        assert.equal(result.entry, "result"); assert.equal(result.status, "VALIDATED");
+        assert.equal(result.caseId, attempt.caseId); assert.equal(result.label, attempt.label);
+        assert.equal(result.editorialCoverage, "ASSESSED");
+      }
+      assert.equal(expected.size, 0); prior[name].complete = true;
+    } catch { /* Only false completion leaves this boundary. */ }
+  }
+  return { ...state, prior, ledgerExists: existsSync(p.ledger), artifactsExist: existsSync(p.artifacts),
+    legacyExists: existsSync(path.join(p.parent, `${BATCH}.jsonl`)) || existsSync(path.join(p.parent, BATCH)) };
+}
+
+export function checkoutState(stage) {
   const git = args => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   const state = { head: git(["rev-parse", "HEAD"]), branch: git(["branch", "--show-current"]),
     clean: git(["status", "--porcelain"]) === "", common: git(["rev-parse", "--path-format=absolute", "--git-common-dir"]),
     dotenv: existsSync(path.join(root, ".env")) };
-  const p = paths(state);
-  return { ...state, ledgerExists: existsSync(p.ledger), artifactsExist: existsSync(p.artifacts) };
+  return stageState(state, stage);
 }
 
-export function preflight({ env, state, tty }) {
+function stageGate(plan, state, env) {
+  if (state.legacyExists !== false) return "LEDGER_CONSUMED";
+  if (!state.prior) return "PRIOR_STAGE_INCOMPLETE";
+  if (plan.stage === "stage1" && (state.prior.stage2?.exists !== false || state.prior.stage3?.exists !== false)) return "STAGE_ORDER_BLOCKED";
+  if (plan.stage !== "stage1" && !state.prior.stage1?.complete) return "PRIOR_STAGE_INCOMPLETE";
+  if (plan.stage === "stage2" && state.prior.stage3?.exists !== false) return "STAGE_ORDER_BLOCKED";
+  if (plan.stage === "stage3" && state.prior.stage2?.exists !== false && !state.prior.stage2?.complete) return "PRIOR_STAGE_INCOMPLETE";
+  if (plan.stage !== "stage1" && env.PETALPAL_EDITORIAL_REVIEW !== REVIEW[plan.stage]) return "HUMAN_REVIEW_REQUIRED";
+  if (plan.stage === "stage1" && env.PETALPAL_EDITORIAL_REVIEW !== undefined) return "HUMAN_REVIEW_REQUIRED";
+  return null;
+}
+
+export function preflight({ plan, env, state, tty }) {
+  if (!Object.hasOwn(STAGES, plan?.stage)) return "PLAN_MISMATCH";
   if (env.NODE_ENV !== "test" || Object.keys(env).some(key => !allowedEnv.has(key))) return "ENVIRONMENT_NOT_ISOLATED";
   if (state?.dotenv) return "DOTENV_PRESENT";
   if (!tty) return "TTY_REQUIRED";
-  if (env.PETALPAL_EDITORIAL_APPROVAL !== APPROVAL) return "APPROVAL_REQUIRED";
+  if (env.PETALPAL_EDITORIAL_APPROVAL !== approvalFor(plan)) return "APPROVAL_REQUIRED";
   if (!/^[a-f0-9]{40}$/.test(env.PETALPAL_EDITORIAL_COMMIT || "") || state?.head !== env.PETALPAL_EDITORIAL_COMMIT || state.branch !== BRANCH) return "COMMIT_MISMATCH";
   if (!state.clean) return "WORKTREE_NOT_CLEAN";
   let cap; try { cap = usdLimitNano(env, "PETALPAL_EDITORIAL_BUDGET_USD"); } catch { return "BUDGET_INVALID"; }
-  if (cap < TOTAL_NANO_USD || cap > MAX_NANO_USD) return "BUDGET_INVALID";
+  if (cap !== plan.budgetNanoUsd) return "BUDGET_INVALID";
   if (env.PETALPAL_EDITORIAL_GATEWAY_VERIFIED !== GATEWAY_ATTESTATION) return "GATEWAY_UNVERIFIED";
   if (env.PETALPAL_EDITORIAL_SCOPE_VERIFIED !== SCOPE_ATTESTATION) return "SCOPE_UNVERIFIED";
   if (state.ledgerExists) return "LEDGER_CONSUMED";
   if (state.artifactsExist) return "ARTIFACTS_EXIST";
-  return null;
+  return stageGate(plan, state, env);
 }
 
 export function validatePlan(plan) {
   try {
-    assert.deepEqual(plan, prepareEvaluation()); // Includes exact fixtures, refs, case IDs, schemas, settings and prompts.
-    assert.equal(plan.calls, 24); assert.equal(plan.budgetNanoUsd, TOTAL_NANO_USD);
+    assert.deepEqual(plan, plan.stage ? prepareStage(plan.stage, plan.stage === "stage3" ? plan.cases.map(c => c.id) : undefined) : prepareEvaluation());
     for (const c of plan.cases) {
       assert.equal(c.model, c.type === "WEEKLY" ? "claude-sonnet-5-5" : "claude-opus-5-5");
       assert.equal(c.timeoutMs, 20000);
@@ -101,10 +148,10 @@ function save(file, value) {
 
 export function makeSchedule(plan, bit = () => randomInt(2)) {
   const schedule = [], mapping = [];
-  for (let i = 0; i < 12; i += 2) {
+  for (let i = 0; i < plan.cases.length; i += 2) {
     const labelBit = bit(), orderBit = bit();
     if (![0, 1].includes(labelBit) || ![0, 1].includes(orderBit)) fail("PLAN_MISMATCH");
-    for (let j = 0; j < 2; j++) {
+    for (let j = 0; j < Math.min(2, plan.cases.length - i); j++) {
       const c = plan.cases[i + j], a = labelBit ^ j, first = orderBit ^ j;
       mapping.push({ caseId: c.id, A: c.arms[a].arm, B: c.arms[1 - a].arm, firstArm: c.arms[first].arm });
       for (const index of [first, 1 - first]) schedule.push({ c, arm: c.arms[index], label: index === a ? "A" : "B" });
@@ -113,13 +160,14 @@ export function makeSchedule(plan, bit = () => randomInt(2)) {
   return { schedule, mapping }; // Persist before dispatch; replaying this map reproduces all labels/order without regenerating.
 }
 
-export function attemptBudget(cap) {
+export function attemptBudget(cap, callLimit = 24) {
   if (!Number.isSafeInteger(cap) || cap < 0 || cap > MAX_NANO_USD) fail("BUDGET_INVALID");
+  if (!Number.isSafeInteger(callLimit) || callLimit < 2 || callLimit > 24 || callLimit % 2) fail("PLAN_MISMATCH");
   let reservedNanoUsd = 0; const seen = new Set();
   return { get reservedNanoUsd() { return reservedNanoUsd; }, get attempts() { return seen.size; },
     reserve(c, arm) {
       const id = `${c.id}/${arm.arm}`;
-      if (seen.has(id) || seen.size >= 24) fail("REPLAY_BLOCKED");
+      if (seen.has(id) || seen.size >= callLimit) fail("REPLAY_BLOCKED");
       if (!Number.isSafeInteger(c.reservationNanoUsd) || c.reservationNanoUsd <= 0 || reservedNanoUsd + c.reservationNanoUsd > cap) fail("BUDGET_EXHAUSTED");
       seen.add(id); reservedNanoUsd += c.reservationNanoUsd;
     }
@@ -198,7 +246,7 @@ async function requestOnce({ c, arm, send, url, headers, signal, receipt, onDisp
 // Dependency-injected core: no default transport. Only main's approved live
 // branch supplies native fetch; tests must supply mocks and private temp paths.
 export async function executeBatch({ plan, env, readState, tty, credentials, send, signal, bit }) {
-  const state = readState(), blocked = preflight({ env, state, tty }); if (blocked) fail(blocked);
+  const state = readState(), blocked = preflight({ plan, env, state, tty }); if (blocked) fail(blocked);
   validatePlan(plan); plan = structuredClone(plan); // Caller mutation cannot change scheduled bodies during awaits.
   if (typeof send !== "function" || !/^[a-f0-9]{32}$/.test(credentials?.account || "") ||
       ![credentials?.token, credentials?.key].every(s => typeof s === "string" && /^[\x21-\x7e]{1,4096}$/.test(s))) fail("CREDENTIALS_INVALID");
@@ -206,14 +254,15 @@ export async function executeBatch({ plan, env, readState, tty, credentials, sen
   const headers = { "Content-Type": "application/json", "cf-aig-authorization": `Bearer ${credentials.token}`, "x-api-key": credentials.key,
     "anthropic-version": "2023-06-01", "cf-aig-max-attempts": "1", "cf-aig-skip-cache": "true",
     "cf-aig-collect-log": "false", "cf-aig-collect-log-payload": "false", "cf-aig-request-timeout": "19900" };
-  const budget = attemptBudget(usdLimitNano(env, "PETALPAL_EDITORIAL_BUDGET_USD")), p = paths(state);
+  const budget = attemptBudget(usdLimitNano(env, "PETALPAL_EDITORIAL_BUDGET_USD"), plan.calls), p = paths(state, plan.stage);
   const { schedule, mapping } = makeSchedule(plan, bit);
   let ledger, completed = 0, dispatched = 0, current = null, started = null, receipt = {};
   try {
     try { privateDirectory(p.parent, true); } catch { fail("LEDGER_UNAVAILABLE"); }
     ledger = createLedger(p.ledger); // Consumed even if setup later fails or the process dies before its first send.
-    ledger.write({ entry: "run", runnerCommit: state.head, baseline: BASELINE, candidate: CANDIDATE,
-      plannedCalls: 24, plannedReservationNanoUsd: TOTAL_NANO_USD, capNanoUsd: usdLimitNano(env, "PETALPAL_EDITORIAL_BUDGET_USD") });
+    ledger.write({ entry: "run", stage: plan.stage, caseIds: plan.cases.map(c => c.id), runnerCommit: state.head, baseline: BASELINE, candidate: CANDIDATE,
+      reviewAttestation: env.PETALPAL_EDITORIAL_REVIEW ?? null, plannedCalls: plan.calls,
+      plannedReservationNanoUsd: plan.budgetNanoUsd, capNanoUsd: usdLimitNano(env, "PETALPAL_EDITORIAL_BUDGET_USD") });
     try {
       for (const dir of [p.artifacts, path.join(p.artifacts, "review"), ...["prose", "claims", "evidence"].map(d => path.join(p.artifacts, "review", d))]) privateDirectory(dir);
     } catch { fail("ARTIFACT_WRITE_FAILED"); }
@@ -223,6 +272,7 @@ export async function executeBatch({ plan, env, readState, tty, credentials, sen
       current = item; receipt = {}; started = performance.now();
       const next = readState();
       if (next.head !== state.head || next.branch !== BRANCH || !next.clean || next.dotenv || next.common !== state.common) fail("CHECKOUT_CHANGED");
+      const stageBlocked = stageGate(plan, next, env); if (stageBlocked) fail(stageBlocked);
       if (signal?.aborted) fail("INTERRUPTED");
       budget.reserve(item.c, item.arm);
       ledger.write({ entry: "attempt", ordinal: budget.attempts, caseId: item.c.id, arm: item.arm.arm, label: item.label,
@@ -238,7 +288,7 @@ export async function executeBatch({ plan, env, readState, tty, credentials, sen
       ledger.write({ entry: "result", caseId: item.c.id, label: item.label, status: "VALIDATED", durationMs: Math.round(performance.now() - started), ...receipt });
       completed++;
     }
-    if (completed !== 24 || dispatched !== 24 || budget.reservedNanoUsd !== TOTAL_NANO_USD) fail("PLAN_MISMATCH");
+    if (completed !== plan.calls || dispatched !== plan.calls || budget.reservedNanoUsd !== plan.budgetNanoUsd) fail("PLAN_MISMATCH");
     ledger.write({ entry: "complete", completed, dispatched, reservedNanoUsd: budget.reservedNanoUsd });
     return { status: "COMPLETE", completed, dispatched, attempts: budget.attempts, reservedNanoUsd: budget.reservedNanoUsd };
   } catch (error) {
@@ -277,19 +327,25 @@ async function privateInput(label) {
 
 async function main() {
   const args = process.argv.slice(2);
-  if (args.length > 1 || (args.length && !["check", "live"].includes(args[0]))) fail("PLAN_MISMATCH");
+  if (args.length > 3 || (args.length && !["check", "live"].includes(args[0]))) fail("PLAN_MISMATCH");
+  if (args.length === 3 && args[1] !== "stage3") fail("PLAN_MISMATCH");
+  if (args[0] === "live" && !Object.hasOwn(STAGES, args[1])) fail("PLAN_MISMATCH");
+  if (args[1] && !Object.hasOwn(STAGES, args[1])) fail("PLAN_MISMATCH");
+  const plan = args[1] ? prepareStage(args[1], args[2]?.split(",")) : prepareEvaluation();
+  validatePlan(plan);
   if (args[0] !== "live") {
-    const plan = prepareEvaluation(); validatePlan(plan);
-    return { status: "OFFLINE_PREPARATION_PASS", providerCalls: 0, plannedCalls: 24, reservationUsd: TOTAL_NANO_USD / 1e9 };
+    return { status: "OFFLINE_PREPARATION_PASS", providerCalls: 0, stage: plan.stage ?? "optional-full-matrix",
+      plannedCalls: plan.calls, reservationUsd: plan.budgetNanoUsd / 1e9,
+      cases: plan.cases.map(c => c.id), approval: plan.stage ? approvalFor(plan) : null };
   }
   const env = Object.freeze({ ...process.env }), tty = Boolean(process.stdin.isTTY && process.stdout.isTTY);
-  const blocked = preflight({ env, state: checkoutState(), tty }); if (blocked) fail(blocked);
-  const plan = prepareEvaluation(); validatePlan(plan);
+  const readState = () => checkoutState(plan.stage);
+  const blocked = preflight({ plan, env, state: readState(), tty }); if (blocked) fail(blocked);
   const credentials = { account: await privateInput("Cloudflare account ID"), token: await privateInput("petalpal-integration Gateway token"),
     key: await privateInput("PetalPal-Integration Anthropic API key") };
   const controller = new AbortController(), interrupt = () => controller.abort();
   process.on("SIGINT", interrupt); process.on("SIGTERM", interrupt);
-  try { return await executeBatch({ plan, env, readState: checkoutState, tty, credentials, send: (url, options) => fetch(url, options), signal: controller.signal }); }
+  try { return await executeBatch({ plan, env, readState, tty, credentials, send: (url, options) => fetch(url, options), signal: controller.signal }); }
   finally { process.off("SIGINT", interrupt); process.off("SIGTERM", interrupt); }
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
