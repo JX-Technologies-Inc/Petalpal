@@ -24,7 +24,9 @@ export const additionalSecurityTests = [
   { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 26 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
   // One file in four children (same tests) so each stays under the 90 s child limit.
-  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(?!selector O(FF|N)/|editorial |narrative thread |both editorial |evidence significance ON)', count: 20 },
+  // Node name patterns cannot exclude (the file-level root matches a lookahead), so the core
+  // security cases are named by their title prefixes.
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(selector flag|versioned localized|Chinese and|Sonnet stays|English Sonnet|Chinese Weekly|explicit invalid|zero USD/shared|insufficient evidence|malformed/refused/unselected/ungrounded responses|timeout during|late noncooperative|consent revocation/regrant,|duplicate execution|evidence write|localized source|opt-in weekly-reflection-v2|Weekly composition|Weekly refuses|Weekly reuses) ', count: 20 },
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^selector OFF/', count: 0 },
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^selector ON/', count: 0 },
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^(editorial |narrative thread |both editorial |evidence significance ON)', count: 4 },
