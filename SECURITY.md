@@ -1,5 +1,26 @@
 # PetalPal Security
 
+## Paired Reflection v2 editorial executor — offline preparation, 2026-10-15
+
+`scripts/reflection-v2-editorial-evaluation.mjs` prepares 12 paired synthetic
+cases (24 calls), with zero real inference during implementation. Default/check
+mode has no network or ledger side effects. Live requires separate owner approval
+of the exact clean executor commit, a cap between US$2.45760 and US$2.46, private
+integration-only credentials and explicit Gateway retry/fallback/cache/routing
+attestations. Remote settings are not machine-verified.
+
+The fixed new clone-local ledger uses exclusive creation, O_APPEND and fsync
+before each send. A failed/ambiguous/interrupted attempt is never retried or
+refunded; a partial or empty ledger cannot be resumed. The first failure stops
+the batch. The historical one-call ledger is never reused. Sequential sends keep
+the existing 20-second timeout, model/token bounds, schemas and validation.
+No database or production code changes are involved; this is not new persistence
+or consent acceptance. Protected operator metadata is separate from blinded
+synthetic prose. No raw headers, provider errors, thinking blocks or secrets are
+saved. Mocked tests cover timeout/late responses, interruption, invalid output,
+budget/replay gates and fsync failure before dispatch. See
+[the execution plan](docs/ai/REFLECTION_V2_PAIRED_EVALUATION.md).
+
 ## Isolated zh-Hans Reflection v2 Weekly acceptance runner — 2026-10-15
 
 **Preparation and offline/mocked validation only; no paid inference, deployment,
