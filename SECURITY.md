@@ -1,5 +1,25 @@
 # PetalPal Security
 
+## Weekly Selector V2 Integration planning — no execution, 2026-10-15
+
+The controlled-test proposal preserves the normal Integration server's manual
+execution and three zero shared call limits. Source inspection confirms that
+literal selector true alone neither authorizes Claude nor supplies Integration
+English embedding bindings. A finite, owner/job-scoped evaluation capability must
+be separately implemented/reviewed before any positive process-local budget; no
+server guard, provider setting or Production configuration was changed.
+
+Fresh GitHub main metadata differs from the verified selector branch in server,
+schema and five migration files; this does not establish the live TEST schema.
+Direct deployment of the older full branch is not proposed. The anonymous TEST
+metadata probe was unavailable from this host, so no live service/resource binding
+or manual status is upgraded. Existing Node 24.21.0 readiness evidence is reused.
+The [Integration plan](docs/ai/WEEKLY_EVIDENCE_SELECTOR_V2_INTEGRATION_PLAN.md)
+separates zero-inference SQL/owner checks from an optional 4-call pilot and 16-call
+continuation, with $0.81920 total Claude reservation, independent call slots and
+an OFF rollback. No paid inference, hosted mutation or historical-ledger reuse
+occurred. Owner review remains required before implementation/execution scopes.
+
 ## Weekly Selector V2 exact-runtime offline verification — 2026-10-15
 
 Candidate runtime `957c6c2de713e1c3b2219ab5d661c14971a747d3` was verified on
