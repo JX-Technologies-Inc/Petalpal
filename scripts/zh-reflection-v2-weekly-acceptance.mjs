@@ -10,6 +10,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DATABASES, MAX_BUDGET_USD, MODEL, QUOTE, costFromUsage, dispatchGuard, gitState, preflight } from "./zh-reflection-v2-weekly-gates.mjs";
+import { AI_DISCLOSURE_VERSION } from "../lib/ai-disclosure.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const mode = process.argv[2], live = mode === "live-weekly";
@@ -101,7 +102,7 @@ function mockSend(state) {
 
 async function seedOwner(prisma, ownerId, rows, { memoryEnabled = true } = {}) {
   await prisma.user.create({ data: { id: ownerId, name: `Synthetic ${ownerId}`, preferredLocale: "zh-Hans", timezone: "UTC" } });
-  await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "synthetic-acceptance", aiProcessing: true,
+  await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true,
     personalization: true, memoryEnabled, grantedAt: new Date() } });
   for (const [index, [localDate, summary, topics, importanceScore]] of rows.entries()) {
     const occurredAt = new Date(`${localDate}T12:00:00.000Z`), id = `${ownerId}-event-${index}`;

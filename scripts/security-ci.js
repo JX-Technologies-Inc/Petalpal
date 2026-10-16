@@ -23,7 +23,9 @@ export const additionalSecurityTests = [
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
   { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 26 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
-  { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 24 },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(?!editorial |narrative thread |both editorial |evidence significance ON)', count: 20 },
+  // Same file, editorial/selector opt-in cases in a second child so each stays under the 90 s child limit.
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '^(editorial |narrative thread |both editorial |evidence significance ON)', count: 4 },
   // Opt-in Prompt-First v2 reflection contracts: pure offline validators, no inference.
   { file: 'test/back/reflection-v2.test.js', pattern: '.', count: 16 },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
