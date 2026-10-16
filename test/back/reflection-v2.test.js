@@ -412,7 +412,83 @@ test("semantic and script errors still require editorial review even when struct
   }
 });
 
-test("R2 keeps Monthly instructions and all schema/packet/validator code identical to the frozen candidate", () => {
+// Authored contract fixtures, NOT model output or runtime few-shot examples.
+// E1/E3 explicitly identify the same book; other Events have no causal link.
+const COMPOSITION = {
+  en: {
+    texts: ["I started a novel and enjoyed reading it.", "My friend was worried about her presentation. I did not say I stopped drawing.",
+      "I finished the same novel. I was happy to finish it, but disappointed by its ending."],
+    grouped: "You enjoyed starting a novel and were happy to finish it, though its ending disappointed you.",
+    speaker: "Your friend was worried about her presentation; you hadn't said you'd stopped drawing.",
+    nuance: ["You hadn't decided whether to go; it wasn't that you didn't want to.", "You were very happy about a result.", "You didn't feel things had improved."],
+    wrong: ["You were worried about your presentation.", "You had stopped drawing.", "You decided to go.", "Things got worse.", "Finishing the novel made you happy about the result."]
+  },
+  "zh-Hans": {
+    texts: ["我开始读一本小说，读得很开心。", "朋友在担心她的演示。我没有说我不再画画了。",
+      "我读完了同一本小说。读完很高兴，但对结尾有点失望。"],
+    grouped: "你开始读一本小说时读得很开心，读完也很高兴，只是对结尾有点失望。",
+    speaker: "朋友在担心她的演示；你并没有说自己不再画画了。",
+    nuance: ["你不是不想去，只是还没决定。", "有个结果让你很高兴。", "你没有觉得事情变好了。"],
+    wrong: ["你在担心自己的演示。", "你已经不再画画了。", "你决定去了。", "事情变得更糟了。", "读完小说让你对那个结果很高兴。"]
+  },
+  "zh-Hant": {
+    texts: ["我開始看一本小說，看得很開心。", "朋友在擔心她的簡報。我沒有說我不再畫畫了。",
+      "我看完了同一本小說。看完很高興，但對結尾有點失望。"],
+    grouped: "你開始看一本小說時看得很開心，看完也很高興，只是對結尾有點失望。",
+    speaker: "朋友在擔心她的簡報；你並沒有說自己不再畫畫了。",
+    nuance: ["你並不是不想去，只是還沒決定。", "有個結果讓你很高興。", "你沒有覺得事情變好了。"],
+    wrong: ["你在擔心自己的簡報。", "你已經不再畫畫了。", "你決定去了。", "事情變得更糟了。", "看完小說讓你對那個結果很高興。"]
+  }
+};
+
+test("Weekly thematic composition groups explicitly linked Events across an intervening Event in all locales", async t => {
+  for (const locale of LOCALES) await t.test(locale, () => {
+    const fixture = COMPOSITION[locale], input = weeklyInput(locale, fixture.texts, ["14", "15", "18"]);
+    const built = buildWeeklyReflectionV2Packet(input);
+    const output = plan(locale, "WEEKLY", [
+      [[fixture.grouped, ["E1", "E3"]]], [[fixture.speaker, ["E2"]]]
+    ]);
+    const result = validateWeeklyReflectionV2(output, input, built);
+    assert.deepEqual(built.packet.evidence.map(e => e.text), fixture.texts, "source order and content stay intact");
+    assert.equal(result.narrative, `${fixture.grouped}\n\n${fixture.speaker}`);
+    assert.deepEqual(result.sections.map(s => s.evidenceRefs.map(ref => ref.sourceEventId)),
+      [["event-1", "event-3"], ["event-2"]]);
+    assert.deepEqual(result.sections[0].claims[0].evidenceRefs, [
+      { sourceEventId: "event-1", sourceMemoryId: "memory-1" }, { sourceEventId: "event-3", sourceMemoryId: "memory-3" }
+    ]);
+    // An internal understanding/outline must never enter the saved contract.
+    for (const field of ["understanding", "outline", "analysis"]) {
+      const extra = structuredClone(output); extra[field] = "synthetic plan";
+      assert.throws(() => validateWeeklyReflectionV2(extra, input, built), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" });
+    }
+  });
+});
+
+test("Weekly multilingual semantic references keep uncertainty, litotes, speaker and mixed feelings without claiming semantic enforcement", async t => {
+  for (const locale of LOCALES) await t.test(locale, () => {
+    const fixture = COMPOSITION[locale];
+    const texts = [...fixture.texts, "我不是不想去，只是还没决定。", "I was not a little happy about the result.", "我沒有覺得事情變好了。"];
+    const input = weeklyInput(locale, texts, ["14", "15", "16", "17", "18", "20"]);
+    const output = plan(locale, "WEEKLY", [
+      [[fixture.grouped, ["E1", "E3"]]], [[fixture.speaker, ["E2"]]],
+      [4, 5, 6].map((ref, i) => [fixture.nuance[i], [`E${ref}`]])
+    ]);
+    const result = validateWeeklyReflectionV2(output, input);
+    assert.deepEqual(result.sections.flatMap(s => s.claims.map(c => c.text)), [fixture.grouped, fixture.speaker, ...fixture.nuance]);
+    assert.deepEqual(result.sections[2].claims.map(c => c.evidenceRefs), [4, 5, 6].map(i => [
+      { sourceEventId: `event-${i}`, sourceMemoryId: `memory-${i}` }
+    ]));
+    if (locale === "en") assert.equal(/\p{Script=Han}/u.test(result.narrative), false, "authored translation renders meaning in English");
+    // These errors REQUIRE human rejection. Valid refs do not prove semantics;
+    // preserving acceptance here explicitly records the unchanged limitation.
+    for (const [i, refs] of [[0, ["E2"]], [1, ["E2"]], [2, ["E4"]], [3, ["E6"]], [4, ["E3", "E5"]]]) {
+      const wrong = structuredClone(output); wrong.paragraphs[0].sentences[0] = { text: fixture.wrong[i], refs };
+      assert.doesNotThrow(() => validateWeeklyReflectionV2(wrong, input), "semantic review remains unverified offline");
+    }
+  });
+});
+
+test("Weekly composition keeps Monthly instructions and all schema/packet/validator code identical to the frozen candidate", () => {
   const root = new URL("../../", import.meta.url);
   const frozen = execFileSync("git", ["show", `${CANDIDATE}:lib/reflection-v2.js`], { cwd: root, encoding: "utf8" });
   const current = readFileSync(new URL("lib/reflection-v2.js", root), "utf8");
@@ -425,4 +501,15 @@ test("R2 keeps Monthly instructions and all schema/packet/validator code identic
   assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS.WEEKLY)) <= Buffer.byteLength(JSON.stringify(prompts.WEEKLY)),
     "Weekly revision must not reduce the packet byte allowance");
   assert.equal(current.slice(current.indexOf("\nfunction schemaFor(type)")), frozen.slice(end));
+  // Compare with the immediate R2+diagnostics parent too: exact Monthly prompt,
+  // unchanged validators and no smaller packet allowance than R2.
+  const parent = execFileSync("git", ["show", "5083abf0f22070cb780d8264d1652f347be7adfa:lib/reflection-v2.js"], { cwd: root, encoding: "utf8" });
+  const parentEnd = parent.indexOf("\nfunction schemaFor(type)");
+  const parentBlock = parent.slice(parent.indexOf("const shared = type =>"), parentEnd)
+    .replace("export const REFLECTION_V2_INSTRUCTIONS", "const REFLECTION_V2_INSTRUCTIONS");
+  const parentPrompts = runInNewContext(`${parentBlock}\nREFLECTION_V2_INSTRUCTIONS`, Object.create(null), { timeout: 100 });
+  assert.equal(REFLECTION_V2_INSTRUCTIONS.MONTHLY, parentPrompts.MONTHLY);
+  assert.notEqual(REFLECTION_V2_INSTRUCTIONS.WEEKLY, parentPrompts.WEEKLY);
+  assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS.WEEKLY)) <= Buffer.byteLength(JSON.stringify(parentPrompts.WEEKLY)));
+  assert.equal(current.slice(current.indexOf("\nfunction schemaFor(type)")), parent.slice(parentEnd));
 });

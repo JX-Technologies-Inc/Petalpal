@@ -385,3 +385,39 @@ test("opt-in weekly-reflection-v2 saves cited Claude prose without identifiers; 
   assert.deepEqual((await old.rows("WeeklyReport"))[0].document, before);
   assert.equal(before.narrativeSections[0].contractVersion, WEEKLY_REFLECTION_CONTRACT);
 });
+
+test("Weekly composition uses one mocked dispatch per locale and never repairs a rejected plan", async t => {
+  const v2env = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY };
+  // Authored combined prose; two drawings are not asserted to be the same object.
+  const prose = {
+    en: "You shared a drawing with a friend and finished a sketch on a quiet afternoon.",
+    "zh-Hans": "你和朋友分享了一幅画，聊了彼此的近况，也在一个安静的下午画完了一幅素描。",
+    "zh-Hant": "你和朋友分享了一幅畫，聊了彼此的近況，也在一個安靜的下午畫完了一幅素描。"
+  };
+  for (const locale of Object.keys(prose)) await t.test(locale, async t => {
+    for (const rejected of [false, true]) {
+      const f = await fixture(t, { locale });
+      f.respond(packet => Response.json(native({ version: REFLECTION_V2.WEEKLY, locale: packet.locale,
+        paragraphs: [{ sentences: [{ text: prose[locale], refs: ["E2", "E1"] }] }],
+        ...(rejected ? { analysis: "SYNTHETIC_PRIVATE_PLAN" } : {}) })));
+      const first = await f.run(v2env);
+      assert.equal(first.succeeded, !rejected);
+      assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0);
+      assert.equal(f.calls[0].body.system, REFLECTION_V2_INSTRUCTIONS.WEEKLY);
+      assert.equal(f.calls[0].body.model, SONNET_WEEKLY_MODEL);
+      assert.equal(f.calls[0].body.max_tokens, 2048);
+      if (rejected) {
+        assert.equal((await f.rows("WeeklyReport")).length, 0);
+        assert.equal((await f.rows("AIEvidence")).length, 0);
+        assert.equal((await f.run(v2env)).error.code, "AI_INFERENCE_ALREADY_RESERVED");
+        assert.equal(JSON.stringify(f.logs).includes("SYNTHETIC_PRIVATE_PLAN"), false);
+      } else {
+        assert.equal((await f.rows("WeeklyReport"))[0].document.summary, prose[locale]);
+        assert.equal((await f.rows("AIEvidence")).length, 2);
+        await f.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+        assert.equal((await f.run(v2env)).result.skipped, true);
+      }
+      assert.equal(f.calls.length, 1, "finalized reuse and invalid output cannot buy another call");
+    }
+  });
+});

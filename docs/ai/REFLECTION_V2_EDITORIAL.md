@@ -1,3 +1,129 @@
+# Weekly Understand → Narrate → Validate — 2026-10-15
+
+**OFFLINE ONLY · NOT LIVE-EVALUATED · HUMAN EDITORIAL ACCEPTANCE PENDING**
+
+Branch: `codex/reflection-v2-understand-narrate`; isolated worktree
+`/Users/xingranma/Documents/ChatGPT/jev/petalpal-reflection-v2-understand-narrate`.
+Parent: `5083abf0f22070cb780d8264d1652f347be7adfa` (R2 plus content-free
+validation diagnostics). The original Editorial, R2 implementation and R2 evaluation
+worktrees are untouched, including the evaluation checkout's pre-existing local
+changes. Both consumed batches and all historical commits/evidence remain preserved.
+No new evaluation runner, batch, approval, ledger or paid request is prepared.
+
+## Architectural diagnosis: evidence and hypothesis
+
+Source inspection confirms that Weekly v2 sends chronological Event text and local
+weekday labels in one request. Its R2 prompt interleaves semantic fidelity, prose
+style and citation rules, then asks for complete sentences with individual refs.
+There is no explicit whole-packet understanding step before sentence composition.
+The unchanged validator checks structure, refs, coverage, exact quotations, digits
+and bounds; it neither requires chronological prose nor requires quoting/paraphrase
+copying. R2 already permits thematic organization and native-language paraphrases.
+
+The preserved evaluation documentation reports mechanical English, copied Chinese
+clauses and literal double negation in the earlier Candidate. R2 was never dispatched
+in the later failed batch. These observations do not establish that JSON, citations
+or a particular rule caused the writing pattern. The working hypothesis is that
+chronological input plus interleaved prohibitions and sentence-level attribution
+encourages local entry-by-entry composition before a coherent account is formed.
+There is no evidence that weakening validation, adding a paid planning call or
+reordering evidence would improve quality. Neither failed historical response was
+retained, so this revision cannot diagnose its exact rejection cause.
+
+## Smallest implementation
+
+Only the opt-in Weekly v2 instruction changes at runtime. Weekly has its own prompt;
+Monthly's former shared-template branch is made a literal with byte-identical output.
+Within the existing single Claude request, Weekly is instructed to:
+
+1. **Understand:** read the Events together, distinguish facts, explicit feelings and
+   uncertainty, interpret negation in context, preserve speakers and identify only
+   text-supported identities/links. Sequence and common topics do not establish cause.
+2. **Narrate:** choose a few moments, group supported experiences and keep mixed
+   feelings together; use chronology only when it matters. Render foreign-language
+   meaning naturally in the requested English, Simplified or Traditional Chinese.
+   Ordinary/sparse weeks may be concise, without lessons or invented meaning.
+3. **Validate:** check every claim against its refs before emitting only the existing
+   JSON. This instruction is a model self-check, not a new semantic verifier; the
+   authoritative application validator still runs unchanged and rejects failures.
+
+No intermediate plan is requested, exposed as a contract field, saved or logged.
+No new request, retry, rewrite, fallback, thinking/effort option or model configuration
+is introduced. Serialized Weekly instructions are **2,581 bytes**, versus R2's
+**2,599**; the unchanged packet-budget formula therefore reserves 18 more bytes for
+evidence. This is a byte-admission fact, not a token/cost or quality measurement.
+Whole-Event trimming and chronological packet order are unchanged.
+
+## Offline verification
+
+The impact run passed **90/90**, with no failures, skips or cancellations:
+
+```sh
+env -i PATH="$PATH" node --test test/back/reflection-v2.test.js test/back/reflection-v2-validation-diagnostics.test.js test/back/sonnet-weekly.test.js test/back/opus-monthly.test.js test/back/zh-reflection-v2-weekly-gates.test.js
+```
+
+That run covers 34 v2 cases including subtests, 9 diagnostic cases, 16 Weekly
+service cases, 23 Monthly cases and 8 acceptance-gate cases. New authored fixtures
+in all three locales check a combined sentence citing explicitly linked Events
+across an intervening Event, exact per-sentence provenance, mixed feelings,
+multilingual litotes/negation/uncertainty and speaker attribution. Existing tests
+retain sparse-week minimums, quotation/script distinctions, number/length bounds
+and full-request admission. Semantic counterexamples that still pass are explicitly
+marked for human rejection; they are not accepted quality targets or runtime examples.
+Git-object regressions compare Monthly's rendered prompt and every schema/packet/
+validator byte after the prompt against both Candidate and the immediate parent.
+
+A further focused service test exercises successful combined prose and a rejected
+extra planning field in all three locales, using injected transport and disposable
+in-memory PGlite. It passed **4/4** including subtests, bringing the distinct impact
+set to **94 passed, 0 failed, 0 skipped** across the two final passing runs.
+It verifies one dispatch, unchanged model/token settings,
+no plan leakage/persistence, no repair/replay after rejection and finalized reuse.
+Its initial fixture incorrectly expected an already-completed job to execute;
+the fixture now requeues that synthetic job before checking finalized reuse.
+No production code change was needed for that fixture correction.
+
+```sh
+env -i PATH="$PATH" node --test --test-name-pattern='Weekly composition uses one mocked dispatch' test/back/sonnet-weekly.test.js
+```
+
+All examples are authored synthetic contract fixtures, not Claude output. Dependencies
+were installed with `npm ci --offline --ignore-scripts`; no package or lockfile changed.
+No live database connection, production migration, credentials or provider request
+was used. The service fixtures use only disposable in-memory test tables.
+JavaScript syntax and `git diff --check` pass. The local code graph is refreshed
+with credential-free `graphify update . --no-cluster` (AST only, no model calls);
+ignored graph output is not part of the revision.
+
+## Preserved boundaries and remaining uncertainty
+
+Monthly prompts, schema, packet selection, validation and service implementation
+remain unchanged. Weekly v1 remains the default; this revision does not enable v2.
+Schemas, reference checks, owner isolation, Journal exclusion, consent/source/deletion
+fences, privacy rules, idempotency, finalized reuse, model prices, token limits,
+budget admission and content-free rejection diagnostics are unchanged. Existing
+service regressions cover these runtime boundaries; diagnostic parity tests still
+cover both periods and all three locales. This is scoped offline evidence, not a
+new production/security certification.
+
+`SECURITY.md` and `MANUAL_SECURITY_CHECKLIST.md` were reviewed. They are unchanged:
+this prompt-only revision adds no security boundary or provider/manual requirement,
+changes no verification status and preserves the documented semantic/script limits.
+
+Without a separately authorized live Claude test, actual coherence, native-language
+quality, interpretation fidelity, schema adherence rate, latency and token/cost use
+remain unverified. The instructions cannot guarantee that Claude follows the stages
+or interprets every claim faithfully. Stop after offline verification and commit;
+wait for owner instructions before any paid evaluation preparation or execution.
+
+Changed files for this revision:
+- `lib/reflection-v2.js`
+- `test/back/reflection-v2.test.js`
+- `test/back/sonnet-weekly.test.js`
+- `docs/ai/REFLECTION_V2_EDITORIAL.md`
+
+---
+
 # Weekly editorial R2 — 2026-10-15
 
 **NEW REVISION · OFFLINE ONLY · NOT LIVE-EVALUATED · HUMAN EDITORIAL ACCEPTANCE PENDING**
