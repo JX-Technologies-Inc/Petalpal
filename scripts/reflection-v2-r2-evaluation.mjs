@@ -94,7 +94,10 @@ export function checkoutState() {
 }
 export function preflight({ plan, env, state, tty }) {
   if (plan?.batch !== BATCH || plan.calls !== 6 || plan.budgetNanoUsd !== MAX_NANO_USD) return "PLAN_MISMATCH";
-  if (env.NODE_ENV !== "test" || Object.keys(env).some(key => !allowedEnv.has(key))) return "ENVIRONMENT_NOT_ISOLATED";
+  // macOS adds this text-encoding metadata even after env -i; allow only this
+  // exact name on Darwin. Every other unlisted variable still fails closed.
+  if (env.NODE_ENV !== "test" || Object.keys(env).some(key => !allowedEnv.has(key) &&
+      !(process.platform === "darwin" && key === "__CF_USER_TEXT_ENCODING"))) return "ENVIRONMENT_NOT_ISOLATED";
   if (state?.dotenv) return "DOTENV_PRESENT";
   if (!tty) return "TTY_REQUIRED";
   if (env.PETALPAL_R2_EVAL_APPROVAL !== APPROVAL) return "APPROVAL_REQUIRED";

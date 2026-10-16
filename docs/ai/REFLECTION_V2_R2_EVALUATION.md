@@ -2,6 +2,34 @@
 
 **OFFLINE CHECKED · OWNER APPROVAL PENDING · ZERO REAL REQUESTS · NO PRODUCTION CHANGE**
 
+
+## macOS portability correction — 2026-10-15
+
+Historical runner `21b87fac94e404d9b86f05854ab627a6d72de23e` received owner
+approval but stopped at `ENVIRONMENT_NOT_ISOLATED` before credential entry:
+macOS injected `__CF_USER_TEXT_ENCODING`. Zero requests were dispatched, and no
+real batch ledger/artifact directory was created. The private sanitized
+`<git-common-dir>/petalpal-acceptance/reflection-v2-weekly-candidate-vs-r2-99f471cb-preflight-stop.json`
+and original evaluation evidence remain unchanged.
+
+The correction permits only that exact variable name on Darwin. It does not
+strip environment variables or allow any other name, prefix or platform. Prompt
+pins, cases, schema/validation, six-call cap, US$0.24576 reservation, batch paths
+and all approval/TTY/commit/attestation/no-replay gates are unchanged.
+
+Offline verification: **16 tests passed, 0 failed, 0 skipped** using the test
+command below; `check` passes with zero provider calls. New regressions exercise
+Darwin/Linux/Windows, exact-name versus near-match/injection variables, immutable
+input environment and every other gate while the macOS exception is present.
+The earlier 14-test preparation record below is retained as history.
+
+This correction is a separate descendant commit; the original runner commit is
+preserved. No live evaluation is launched. Approval of `21b87fac...` does not
+authorize the corrected runner: a fresh owner approval must name its new full SHA,
+and Gateway settings must be freshly confirmed before a later execution.
+
+## Original preparation record
+
 Prepared 2026-10-15 in branch `codex/reflection-v2-r2-evaluation`, worktree
 `/Users/xingranma/Documents/ChatGPT/jev/petalpal-reflection-v2-r2-evaluation`.
 This is a new synthetic batch, not a continuation of the consumed Stage 1 batch.

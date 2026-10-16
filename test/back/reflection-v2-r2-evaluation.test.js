@@ -81,6 +81,45 @@ test("preflight rejects old approvals, wrong commit/branch, nonisolated env, TTY
   assert.equal(gate({}, {}, false), "TTY_REQUIRED");
 });
 
+test("macOS exception permits only the exact text-encoding name on Darwin without mutating the environment", () => {
+  const original = Object.getOwnPropertyDescriptor(process, "platform");
+  const environment = Object.freeze({ ...env, __CF_USER_TEXT_ENCODING: "synthetic-platform-metadata" });
+  try {
+    for (const platform of ["darwin", "linux", "win32"]) {
+      Object.defineProperty(process, "platform", { value: platform });
+      const gate = e => preflight({ plan, env: e, state: clean, tty: true });
+      assert.equal(gate(environment), platform === "darwin" ? null : "ENVIRONMENT_NOT_ISOLATED");
+      for (const key of ["__CF_USER_TEXT_ENCODING_EXTRA", "__CF_USER_TEXT_ENCODIN", "__cf_user_text_encoding",
+        "__CF_OTHER", "CI", "GITHUB_ACTIONS", "DATABASE_URL", "AI_WEEKLY_REPORT_PROVIDER", "ANTHROPIC_API_KEY",
+        "CLOUDFLARE_AI_GATEWAY_TOKEN", "NODE_OPTIONS", "NODE_PATH", "DYLD_INSERT_LIBRARIES", "UNEXPECTED_VARIABLE"])
+        assert.equal(gate({ ...environment, [key]: "synthetic" }), "ENVIRONMENT_NOT_ISOLATED");
+    }
+  } finally { Object.defineProperty(process, "platform", original); }
+  assert.equal(environment.__CF_USER_TEXT_ENCODING, "synthetic-platform-metadata");
+});
+
+test("macOS text-encoding exception preserves approval, commit, budget, TTY and evidence gates", () => {
+  const original = Object.getOwnPropertyDescriptor(process, "platform");
+  try {
+    Object.defineProperty(process, "platform", { value: "darwin" });
+    const gate = (e = {}, s = {}, tty = true) => preflight({ plan,
+      env: { ...env, __CF_USER_TEXT_ENCODING: "synthetic-platform-metadata", ...e }, state: { ...clean, ...s }, tty });
+    for (const [e, s, expected] of [
+      [{ NODE_ENV: "production" }, {}, "ENVIRONMENT_NOT_ISOLATED"],
+      [{ PETALPAL_R2_EVAL_APPROVAL: undefined }, {}, "APPROVAL_REQUIRED"],
+      [{ PETALPAL_R2_EVAL_COMMIT: "21b87fac94e404d9b86f05854ab627a6d72de23e" }, {}, "COMMIT_MISMATCH"],
+      [{}, { branch: "other" }, "COMMIT_MISMATCH"], [{}, { clean: false }, "WORKTREE_NOT_CLEAN"],
+      [{}, { dotenv: true }, "DOTENV_PRESENT"],
+      [{ PETALPAL_R2_EVAL_BUDGET_USD: "0.25" }, {}, "BUDGET_INVALID"],
+      [{ PETALPAL_R2_EVAL_BUDGET_USD: "0.24575" }, {}, "BUDGET_INVALID"],
+      [{ PETALPAL_R2_EVAL_GATEWAY_VERIFIED: undefined }, {}, "GATEWAY_UNVERIFIED"],
+      [{ PETALPAL_R2_EVAL_SCOPE_VERIFIED: undefined }, {}, "SCOPE_UNVERIFIED"],
+      [{}, { ledgerExists: true }, "LEDGER_CONSUMED"], [{}, { artifactsExist: true }, "ARTIFACTS_EXIST"]
+    ]) assert.equal(gate(e, s), expected);
+    assert.equal(gate({}, {}, false), "TTY_REQUIRED");
+  } finally { Object.defineProperty(process, "platform", original); }
+});
+
 test("new ledger namespace ignores and preserves consumed historical evidence", async t => {
   const f = fixture(t); mkdirSync(f.parent, { mode: 0o700 });
   const historical = path.join(f.parent, "reflection-v2-editorial-paired-c2d7a9d9-stage1.jsonl");

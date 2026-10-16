@@ -1,5 +1,22 @@
 # PetalPal Security
 
+## R2 runner macOS portability correction — offline only, 2026-10-15
+
+The environment gate now permits only the exact `__CF_USER_TEXT_ENCODING` name
+on Darwin, where macOS injects text-encoding metadata even after `env -i`.
+Other platforms still reject it; no prefix/wildcard exception or environment
+stripping is used. All other unlisted names and existing approval, exact-commit,
+TTY, `.env`, budget, attestation, ledger and artifact gates remain enforced.
+Sixteen offline/mocked tests pass, including the exception on Darwin, rejection on
+Linux/Windows, near-match/injection variables and all remaining gates with the
+exception present. No output validation or production/provider configuration changes.
+
+Runner `21b87fac94e404d9b86f05854ab627a6d72de23e` stopped before credential
+entry or dispatch with `ENVIRONMENT_NOT_ISOLATED`; its sanitized stop record and
+all prior evaluation evidence are preserved. No real batch ledger was created.
+The corrected commit requires fresh owner approval and fresh Gateway attestations.
+No live evaluation or paid request was launched for this correction.
+
 ## Weekly Candidate vs R2 evaluation — offline preparation, 2026-10-15
 
 **No paid requests authorized or dispatched.** The separate
