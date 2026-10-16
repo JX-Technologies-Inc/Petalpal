@@ -1,3 +1,91 @@
+# Content-free validation diagnostics — 2026-10-15
+
+**OFFLINE ONLY · BOTH HISTORICAL BATCHES CONSUMED · NO NEW PAID BATCH AUTHORIZED**
+
+The run at `39976d99685198fa91a1a0f50eeba555e127d644` stopped on its first
+request: C01 English, label A, previous Candidate (`c2d7a9d9...`). HTTP 200,
+successful JSON parsing, 1,670 input and 311 output tokens, `VALIDATION_FAILED`,
+zero validated responses. Estimated token cost US$0.00645; reservation US$0.04096.
+R2 and the remaining five requests were not dispatched. Its ledger, mapping,
+evidence packets, separate preflight stop record and offline investigation are
+preserved. The earlier Stage 1 batch remains preserved and consumed as well.
+
+## Diagnostic contract
+
+The runner still invokes the unchanged `validateReflectionV2()` first. Only its
+catch branch calls `reflectionV2ValidationCode()` in
+`scripts/reflection-v2-validation-diagnostics.mjs`. The helper mirrors the frozen
+guards and returns a fixed code; it does not determine acceptance or repair the
+response. `lib/`, prompts, schemas and production validators remain byte-identical.
+The top-level code stays `VALIDATION_FAILED`; the terminal result and stopped
+ledger receive one additional `validationCode` field, for example:
+
+```json
+{"code":"VALIDATION_FAILED","validationCode":"REFLECTION_V2_QUOTE_UNSUPPORTED"}
+```
+
+The example is hypothetical, not a reconstruction of either past failure.
+
+| Fixed code suffix (all prefixed `REFLECTION_V2_`) | Failed rule |
+|---|---|
+| `SCHEMA_REQUIRED`, `SCHEMA_ADDITIONAL_PROPERTY`, `SCHEMA_TYPE` | Missing required field, forbidden extra field or incorrect JSON type |
+| `SCHEMA_MIN_ITEMS`, `SCHEMA_MAX_ITEMS`, `SCHEMA_MIN_LENGTH`, `SCHEMA_MAX_LENGTH` | Existing schema array/string bounds |
+| `VERSION_MISMATCH`, `LOCALE_UNSUPPORTED`, `REF_OUT_OF_RANGE` | Fixed version, supported-locale or schema reference enum |
+| `SCHEMA_ENUM`, `SCHEMA_INVALID` | Defensive classification of other schema errors |
+| `LOCALE_MISMATCH` | Schema-valid locale differs from requested locale |
+| `EMPTY_SENTENCE`, `REFS_DUPLICATE`, `REF_NOT_SUPPLIED` | Whitespace-only text, repeated refs or refs absent from packet |
+| `CONTROL_CHARACTER`, `ALIAS_IN_TEXT`, `URL_IN_TEXT`, `MARKUP_PREFIX` | Existing forbidden prose syntax/control rules |
+| `PREVIOUS_ONLY_SENTENCE` | Previous-period evidence cited without current evidence |
+| `DIGIT_UNSUPPORTED` | Digit token absent from cited evidence/topics after existing normalization |
+| `QUOTE_EMPTY`, `QUOTE_UNSUPPORTED` | Empty quote or nonexact/wrong-source/non-clause/clipped quotation |
+| `PARAGRAPH_TOO_LONG`, `NARRATIVE_TOO_LONG` | Existing joined-text bounds |
+| `WEEKLY_EVENT_COVERAGE`, `MONTHLY_WEEK_COVERAGE` | Missing two-Event Weekly or represented-week Monthly coverage |
+| `UNKNOWN` | No known guard identified or diagnostic internal failure |
+
+If more than one condition fails, the first detected guard in validator order is
+reported. This is a rule category, not the offending text, value, field name,
+reference, position or sentence. Only fixed schema paths/keywords are inspected
+internally, and neither those paths nor AJV error objects are returned. No raw
+error message, stack, cause, JSON key or response-supplied diagnostic is forwarded.
+The helper performs no logging, persistence, network or environment inspection.
+
+The mirror must stay synchronized with the frozen validator. Tests check each
+relevant category against an actual authoritative rejection, plus accepted boundary
+cases. Unexpected cases retain generic rejection and `REFLECTION_V2_UNKNOWN`;
+they never permit acceptance. No content is retained to improve diagnosis.
+
+## Offline verification
+
+```sh
+env -i PATH="$PATH" node --test test/back/reflection-v2-validation-diagnostics.test.js test/back/reflection-v2-r2-evaluation.test.js test/back/reflection-v2.test.js
+```
+
+Result: **52 passed, 0 failed, 0 skipped** (17 runner, 9 diagnostic, 26 existing
+v2 tests including subtests), with zero real provider requests.
+
+Coverage includes 30 rejection mutations across Weekly/Monthly and all three
+locales, period coverage, clipped quotes, supported digits, normalization and exact
+paragraph/narrative boundaries; exception-content suppression; mocked C01/C04/C05
+code-only stopped-ledger/CLI receipts with no rejected-content or credential
+markers; preserved environment/budget/approval/TTY/timeout/invalid-response/no-replay
+gates. Native fetch is trapped; all dispatches are injected mocks in disposable
+private test directories. CLI checks inspect existing real batch paths only for
+existence and never write them. The previous assumption that the batch paths must
+be absent was removed from the offline CLI test because they are now consumed.
+
+Offline passes establish rejection parity for the tested rules and sanitized
+metadata behavior, not model editorial quality. Historical failed responses were
+intentionally not persisted; their exact causes remain unknowable from current
+evidence. No live evaluation, retry, resume, production change or new batch is
+performed or authorized by this revision. `check` can still inspect the consumed
+plan, while any attempt to execute that batch remains blocked by its ledger.
+
+`SECURITY.md` records the new diagnostic handling. The manual provider checklist
+was reviewed and left unchanged: diagnostics introduce no provider/manual action
+or fresh verification status. The historical preparation records below are kept.
+
+---
+
 # Weekly Candidate vs Editorial R2 — isolated evaluation preparation
 
 **OFFLINE CHECKED · OWNER APPROVAL PENDING · ZERO REAL REQUESTS · NO PRODUCTION CHANGE**

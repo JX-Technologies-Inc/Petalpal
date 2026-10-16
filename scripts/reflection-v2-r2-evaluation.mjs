@@ -12,6 +12,7 @@ import { CANDIDATE as PREVIOUS, MIXED_NEGATION, ORDINARY } from "./reflection-v2
 import { GATEWAY_MODELS, GATEWAY_TASK_LIMITS, gatewayQuote, usdLimitNano } from "../lib/ai-gateway-config.js";
 import { REFLECTION_V2_SCHEMAS, buildReflectionV2, validateReflectionV2 } from "../lib/reflection-v2.js";
 import { compileGatewaySchema } from "../lib/ai-gateway-schema.js";
+import { reflectionV2ValidationCode } from "./reflection-v2-validation-diagnostics.mjs";
 
 export { PREVIOUS, GATEWAY_ATTESTATION, SCOPE_ATTESTATION };
 export const R2 = "99f471cb4345868cfc29de0395e52d7e93f17d43";
@@ -161,7 +162,10 @@ function normalize(raw, c, arm, receipt) {
   let data; try { data = JSON.parse(blocks[0].text); } catch { fail("INVALID_RESPONSE"); }
   let rendered;
   try { rendered = validateReflectionV2(data, { type: c.type, locale: c.locale, built: c.built, model: c.model }); }
-  catch { fail("VALIDATION_FAILED"); }
+  catch {
+    receipt.validationCode = reflectionV2ValidationCode(data, { type: c.type, locale: c.locale, built: c.built });
+    fail("VALIDATION_FAILED");
+  }
   const refs = new Set(data.paragraphs.flatMap(p => p.sentences.flatMap(s => s.refs)));
   receipt.editorialCoverage = c.type !== "WEEKLY" || c.scenario !== "mixed-negation" ||
     (refs.has("E1") && ["E2", "E3", "E4", "E5"].some(ref => refs.has(ref))) ? "ASSESSED" : "UNASSESSED";
@@ -248,7 +252,8 @@ export async function executeBatch({ plan, env, readState, tty, credentials, sen
     try { ledger?.write({ entry: "stopped", code, caseId: current?.c.id ?? null, label: current?.label ?? null,
       durationMs: started === null ? null : Math.round(performance.now() - started), completed, dispatched,
       reservedNanoUsd: budget.reservedNanoUsd, ...receipt }); } catch {}
-    return { status: "STOP", code, completed, dispatched, attempts: budget.attempts, reservedNanoUsd: budget.reservedNanoUsd };
+    return { status: "STOP", code, ...(receipt.validationCode ? { validationCode: receipt.validationCode } : {}),
+      completed, dispatched, attempts: budget.attempts, reservedNanoUsd: budget.reservedNanoUsd };
   } finally { ledger?.close(); }
 }
 

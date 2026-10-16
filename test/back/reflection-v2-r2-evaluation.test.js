@@ -8,7 +8,7 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, 
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { preparePlan, validatePlan, preflight, batchState, batchPaths, executeBatch, PREVIOUS, R2,
-  BRANCH, BATCH, APPROVAL, MAX_NANO_USD, GATEWAY_ATTESTATION, SCOPE_ATTESTATION } from "../../scripts/reflection-v2-r2-evaluation.mjs";
+  BRANCH, BATCH, APPROVAL, MAX_NANO_USD, GATEWAY_ATTESTATION, SCOPE_ATTESTATION, checkoutState } from "../../scripts/reflection-v2-r2-evaluation.mjs";
 import { createLedger, makeSchedule, attemptBudget, MAX_RESPONSE_BYTES, MAX_JSON_BYTES } from "../../scripts/reflection-v2-editorial-evaluation.mjs";
 import { MIXED_NEGATION, ORDINARY } from "../../scripts/reflection-v2-editorial-plan.mjs";
 
@@ -195,6 +195,42 @@ test("mid-batch transport error stops at that attempt; raw errors/credentials ne
   await assert.rejects(executeBatch({ ...f.options, send: () => assert.fail("no resume") }), { code: "LEDGER_CONSUMED" });
 });
 
+test("validation diagnostics persist only a fixed code and stop each frozen locale without rejected content", async t => {
+  const marker = "SYNTHETIC_REJECTED_PERSONAL_CONTENT_DO_NOT_RETAIN";
+  for (const [caseId, expectedCalls, expectedCode] of [
+    ["C01", 1, "REFLECTION_V2_DIGIT_UNSUPPORTED"],
+    ["C04", 3, "REFLECTION_V2_SCHEMA_ADDITIONAL_PROPERTY"],
+    ["C05", 5, "REFLECTION_V2_QUOTE_UNSUPPORTED"]
+  ]) {
+    const f = fixture(t); let calls = 0;
+    const result = await executeBatch({ ...f.options, send: async (_, options) => {
+      calls++; const raw = envelope(JSON.parse(options.body));
+      if (calls === expectedCalls) {
+        const data = JSON.parse(raw.content[1].text);
+        data.paragraphs[0].sentences[0].text = `${marker} 999`;
+        if (caseId === "C04") data[marker] = marker;
+        if (caseId === "C05") data.paragraphs[0].sentences[0].text = `“${marker}”`;
+        // A response-provided field must never be forwarded as a diagnostic.
+        raw.validationCode = marker;
+        raw.content[1].text = JSON.stringify(data);
+      }
+      return Response.json(raw);
+    } });
+    assert.equal(result.code, "VALIDATION_FAILED"); assert.equal(result.validationCode, expectedCode);
+    assert.equal(result.dispatched, expectedCalls); assert.equal(result.completed, expectedCalls - 1);
+    const stopped = lines(f.ledger).at(-1);
+    assert.equal(stopped.caseId, caseId); assert.equal(stopped.httpStatus, 200);
+    assert.equal(stopped.validationCode, result.validationCode);
+    const saved = [JSON.stringify(result), readFileSync(f.ledger, "utf8"), ...allFiles(f.artifacts).map(p => readFileSync(p, "utf8"))].join("\n");
+    for (const forbidden of [marker, credentials.key, credentials.token, "SYNTHETIC_THINKING_DO_NOT_SAVE"])
+      assert.equal(saved.includes(forbidden), false);
+    const failedName = `${caseId}-${stopped.label}`;
+    assert.equal(existsSync(path.join(f.artifacts, "review", "prose", `${failedName}.txt`)), false);
+    assert.equal(existsSync(path.join(f.artifacts, "review", "claims", `${failedName}.json`)), false);
+    await assert.rejects(executeBatch({ ...f.options, send: () => assert.fail("no resume") }), { code: "LEDGER_CONSUMED" });
+  }
+});
+
 test("an attempt fsync failure prevents network dispatch and leaves the ledger consumed", async t => {
   const f = fixture(t), original = fs.fsyncSync;
   t.mock.method(fs, "fsyncSync", fd => {
@@ -223,6 +259,7 @@ test("invalid envelopes, schema/grounding, usage, cache and HTTP responses all s
       calls++; const raw = envelope(JSON.parse(options.body)); mutate(raw); return Response.json(raw);
     } });
     assert.equal(result.code, code); assert.equal(calls, 1); assert.equal(result.completed, 0);
+    assert.equal(Object.hasOwn(result, "validationCode"), code === "VALIDATION_FAILED");
   }
   for (const response of [new Response(credentials.key, { status: 503 }), new Response("not json", { headers: { "Content-Type": "application/json" } }),
     new Response("{}", { headers: { "Content-Type": "text/html" } }), new Response("x".repeat(MAX_RESPONSE_BYTES + 1), { headers: { "Content-Type": "application/json" } })]) {
@@ -290,11 +327,12 @@ test("changed checkout and insufficient approval stop before the next network at
 test("CLI defaults/check are network-free and refuse live without approval or any stage expansion", t => {
   const f = fixture(t), guard = path.join(f.common, "network-guard.mjs");
   writeFileSync(guard, 'globalThis.fetch = () => { throw new Error("NETWORK_FORBIDDEN"); };');
+  const stateBefore = checkoutState();
   for (const args of [[], ["check"]]) {
     const result = spawnSync(process.execPath, ["--import", guard, "scripts/reflection-v2-r2-evaluation.mjs", ...args], { encoding: "utf8", env: { PATH: process.env.PATH } });
     assert.equal(result.status, 0); const output = JSON.parse(result.stdout);
     assert.equal(output.providerCalls, 0); assert.equal(output.plannedCalls, 6); assert.equal(output.maximumUsd, 0.24576);
-    assert.equal(output.ledgerAbsent, true); assert.equal(output.artifactsAbsent, true);
+    assert.equal(output.ledgerAbsent, !stateBefore.ledgerExists); assert.equal(output.artifactsAbsent, !stateBefore.artifactsExist);
   }
   for (const args of [["live"], ["live", "stage1"], ["live", "stage2"], ["check", "C02"], ["resume"], ["reset"]]) {
     const result = spawnSync(process.execPath, ["--import", guard, "scripts/reflection-v2-r2-evaluation.mjs", ...args], { encoding: "utf8", env: { NODE_ENV: "test", PATH: process.env.PATH } });

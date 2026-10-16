@@ -1,5 +1,34 @@
 # PetalPal Security
 
+## Reflection v2 evaluation validation diagnostics — offline only, 2026-10-15
+
+The R2 evaluation runner keeps `VALIDATION_FAILED` as its stop code and adds a
+fixed `validationCode` to stopped-ledger metadata and the CLI result. The new
+`scripts/reflection-v2-validation-diagnostics.mjs` classifies the first failed
+guard only after the unchanged authoritative validator rejects the response.
+It cannot accept, repair, retry or replace output. Production `lib/`, prompt pins,
+schemas, model/budget controls, credential/environment gates and consumed-batch
+protection are unchanged; no new batch identity or real ledger is created.
+
+Codes are fixed constants. AJV messages/params/instance paths, arbitrary JSON keys,
+actual refs, rejected text, source content, exception messages/stacks/causes,
+headers, credentials and raw provider responses are never included. Unexpected
+internal cases return `REFLECTION_V2_UNKNOWN`. Existing validated synthetic
+artifact handling is unchanged; rejected payload retention is not expanded.
+Differential offline tests compare diagnostic categories with the real validator
+across Weekly/Monthly and all three locales; mocked runner tests verify code-only
+persistence, no content/credential/thinking leakage, immediate stop and no resume.
+A future validator change requires keeping the diagnostic mirror and parity tests
+in sync; UNKNOWN is never permission to proceed.
+
+Both historical batches remain consumed and immutable. The latest run on
+`39976d99685198fa91a1a0f50eeba555e127d644` stopped on C01 English previous
+Candidate after HTTP 200: one dispatch, zero validated, estimated US$0.00645.
+The old payload was not retained; these new diagnostics cannot recover its cause.
+This revision is offline only. Another paid batch requires fresh explicit owner
+authorization and must not reuse either consumed batch. See the updated
+[evaluation record](docs/ai/REFLECTION_V2_R2_EVALUATION.md).
+
 ## R2 runner macOS portability correction — offline only, 2026-10-15
 
 The environment gate now permits only the exact `__CF_USER_TEXT_ENCODING` name
