@@ -1,0 +1,105 @@
+{
+  "version": "weekly-editorial-quality-v1",
+  "authorship": "Fully synthetic source notes handcrafted by Codex; no private data, model outputs or sealed evaluation material. Frozen for future review; corrections require a new version.",
+  "period": "2026-09-14",
+  "cases": [
+    {
+      "id": "E01",
+      "title": "A demanding proposal week",
+      "events": [
+        {"day": 14, "topics": ["library proposal"], "en": "I sent Jo the first draft of the library proposal. I liked the floor plan, but worried the staffing explanation was too dense. I asked her to mark anything she couldn't follow.", "zh-Hans": "把图书馆提案初稿发给了小乔。我挺喜欢里面的平面图，但担心人员安排那段写得太绕，请她标出看不明白的地方。"},
+        {"day": 15, "topics": ["library proposal"], "en": "Jo returned the library proposal. She liked the floor plan but couldn't see how the evening shift would work. I was embarrassed, then grateful that she had pointed to a specific problem.", "zh-Hans": "小乔把图书馆提案发回来了。她喜欢平面图，但没看懂晚班怎么安排。我先是有点不好意思，后来又很感谢她把问题指出得这么具体。"},
+        {"day": 16, "topics": ["errand"], "en": "Picked up the repaired umbrella. It opens properly now. I left it beside the door.", "zh-Hans": "取回了修好的伞，现在能正常撑开了，回家放在门边。"},
+        {"day": 17, "topics": ["library proposal"], "en": "I rewrote the evening-shift section of the library proposal as a worked example. It exposed a gap in the handover, so I changed the rota too. It was frustrating to redo it, but I could finally explain who would be there.", "zh-Hans": "把图书馆提案里的晚班安排改成了一个具体例子，才发现交接还有空档，只好连排班表也重做。返工挺烦的，但这回终于能说清楚谁在什么时段值班了。"},
+        {"day": 18, "topics": ["library proposal"], "en": "Jo read the revised library proposal and said the evening cover was clear now. I was pleased with that change and tired of looking at the document. The committee presentation is next week; I'm still nervous about it.", "zh-Hans": "小乔看了改好的图书馆提案，说这回晚班安排清楚了。我对这处修改挺满意，也实在不想再盯着这份文档了。下周才向委员会展示，想到这个还是紧张。"}
+      ],
+      "review": {"opportunities": "Connect specific feedback, discovered handover gap and substantive revision; clarity, fatigue and presentation nerves coexist. The umbrella is optional.", "failures": "Successful committee presentation; universal confidence or growth; Jo caused all feelings; umbrella as a metaphor for recovery."}
+    },
+    {
+      "id": "E02",
+      "title": "Friendship without a tidy reconciliation",
+      "events": [
+        {"day": 14, "topics": ["Sam dinner"], "en": "Sam cancelled our dinner again. I know she's caring for her dad, and I don't blame her for that. I still felt hurt that I'd kept the evening free.", "zh-Hans": "小珊又取消了晚饭。我知道她在照顾爸爸，也不是怪她这件事，可自己特意空出了晚上，还是有点受伤。"},
+        {"day": 16, "topics": ["Sam dinner"], "en": "I messaged Sam about the cancelled dinner. I said I missed her and felt disappointed, and asked whether a short walk would be easier. I was nervous about sounding demanding.", "zh-Hans": "给小珊发消息，说起取消晚饭的事。我说想她，也有点失落，问短时间散个步会不会更方便。发完挺忐忑，怕自己显得要求太多。"},
+        {"day": 18, "topics": ["Sam dinner"], "en": "Sam replied to my message. She said a walk would be easier and thanked me for saying how I felt. I was relieved by her reply, though I still wished we'd had the dinner. We haven't picked a time.", "zh-Hans": "小珊回复说，散步会方便些，也谢谢我把感受告诉她。看完松了口气，但还是觉得没能一起吃那顿饭有点遗憾。散步的时间还没定。"},
+        {"day": 20, "topics": ["reading"], "en": "Read a funny essay on the bus. I laughed at the bit about the missing suitcase.", "zh-Hans": "在公交车上看了篇好笑的散文，写丢行李箱那段让我笑出了声。"}
+      ],
+      "review": {"opportunities": "Understanding Sam's circumstances does not cancel hurt. Connect the user's explicit message and reply without declaring reconciliation.", "failures": "Sam is angry or uncaring; user becomes more assertive; walk happened; relief erased disappointment."}
+    },
+    {
+      "id": "E03",
+      "title": "A print changes through making",
+      "events": [
+        {"day": 14, "topics": ["harbour print"], "en": "Started a lino print of the harbour. I liked the crooked cranes in my sketch and wanted to keep them. The first test print lost the water completely in a dark block. I was disappointed.", "zh-Hans": "开始刻港口的版画，挺喜欢草图里歪歪的起重机，想留下来。第一次试印，水面全糊成了黑块，有点失望。"},
+        {"day": 16, "topics": ["harbour print"], "en": "For the harbour print, I cut thin channels through the dark water area. On the next test, the water showed up, but the cranes looked too tidy. I missed their crookedness.", "zh-Hans": "给港口版画的黑色水面刻了些细线，再试印时，水出来了，起重机却显得太规整。我还是喜欢原来歪歪的样子。"},
+        {"day": 18, "topics": ["harbour print"], "en": "I redrew the cranes on the harbour block using the original sketch, then cut them unevenly. The new test kept the water lines and brought back the awkward cranes. I was pleased; it looked closer to what I'd wanted.", "zh-Hans": "照着最初的草图，把港口版上的起重机重新画了一遍，刻得不那么齐。这次试印，水面的线还在，歪歪的起重机也回来了，挺开心，比较像一开始想做的了。"},
+        {"day": 20, "topics": ["harbour print"], "en": "Put the latest harbour test print on the shelf. I like looking at it there. I haven't chosen the paper for the final edition yet.", "zh-Hans": "把最新那张港口试印摆上了架子，放在那里看着挺喜欢。正式印制用什么纸还没选。"}
+      ],
+      "review": {"opportunities": "Organize around preserving the crooked cranes while solving the water problem. This is an explicit aesthetic intention and development, not a generic persistence story.", "failures": "Final edition completed or sold; confidence restored; every change was an improvement; different test prints silently collapsed into one object."}
+    },
+    {
+      "id": "E04",
+      "title": "Stress and pleasure with no causal cure",
+      "events": [
+        {"day": 14, "topics": ["work"], "en": "The rota changed at short notice and I had to cover the early shift. I was annoyed and arrived tired.", "zh-Hans": "临时改了排班，我得去顶早班，有点恼火，到的时候也很累。"},
+        {"day": 15, "topics": ["garden"], "en": "The first tomato on my balcony was ripe. I ate it with toast and was absurdly pleased by how sweet it was.", "zh-Hans": "阳台上第一颗番茄熟了，配吐司吃掉了，甜得让我特别高兴。"},
+        {"day": 17, "topics": ["repair"], "en": "The washing machine leaked again. I spent the evening drying the floor and felt fed up. The repair visit is booked, but the machine isn't fixed.", "zh-Hans": "洗衣机又漏水，晚上一直在擦地，真有点烦透了。约了维修，人还没来，机器也还没修好。"},
+        {"day": 19, "topics": ["music"], "en": "Went to the small concert with Lee. We both loved the last song. I enjoyed walking back together and talking about the drummer.", "zh-Hans": "和小黎去听了场小演出，都很喜欢最后那首歌。回去一起走路，聊鼓手，挺开心的。"},
+        {"day": 20, "topics": ["repair"], "en": "Still irritated about the leaking washing machine. I also keep remembering the last song at the concert; that was a lovely evening.", "zh-Hans": "想到洗衣机漏水还是烦，也总会想起演出的最后那首歌，那天晚上确实很开心。"}
+      ],
+      "review": {"opportunities": "Stress and real pleasure coexist explicitly. Concrete details can carry both without a claim that the concert repaired the week.", "failures": "Music cured stress; repair complete; burnout diagnosis; tomato as lesson in gratitude."}
+    },
+    {
+      "id": "E05",
+      "title": "A quiet ordinary week",
+      "events": [
+        {"day": 14, "topics": ["cooking"], "en": "Made lentil soup. It needed more lemon than the recipe said. I liked it with the bread from yesterday.", "zh-Hans": "煮了扁豆汤，柠檬汁比方子里多放了些，配昨天剩的面包吃，我挺喜欢。"},
+        {"day": 17, "topics": ["home"], "en": "Sewed the loose button onto my blue coat. The thread doesn't quite match, but the button stays put.", "zh-Hans": "把蓝外套上松掉的扣子缝好了，线颜色不太配，扣子倒是很牢。"},
+        {"day": 20, "topics": ["reading"], "en": "Read a detective story on the sofa. The ending surprised me, so I reread the conversation in the kitchen scene.", "zh-Hans": "在沙发上看侦探小说，结尾挺意外，又翻回去读了厨房里对话那段。"}
+      ],
+      "review": {"opportunities": "Brief attention to soup, a working button and a surprising story. Selection is welcome; no common theme is required.", "failures": "Rest after a hard week; healing through small rituals; emotional peace or life satisfaction not stated."}
+    },
+    {
+      "id": "E06",
+      "title": "Disappointment remains disappointment",
+      "events": [
+        {"day": 14, "topics": ["residency"], "en": "The writing residency rejected my application. I'd wanted the time away to work on the canal essays. I was upset and didn't open the essay folder today.", "zh-Hans": "写作驻留的申请没通过，本来很想用那段时间专心写运河散文。挺难受，今天没打开散文文件夹。"},
+        {"day": 17, "topics": ["residency"], "en": "Opened the canal essays and shortened the opening of the lock-keeper piece. I liked the new opening. I was still upset about the residency rejection.", "zh-Hans": "打开运河散文，把写船闸管理员那篇的开头删短了。挺喜欢新开头，但驻留没选上的事还是让我难受。"},
+        {"day": 18, "topics": ["friend"], "en": "Told Noor about the residency rejection over noodles. She listened without trying to make it sound like good news. I was glad I'd told her.", "zh-Hans": "和小诺吃面时说了驻留落选的事。她听着，没有非要把这事说成好事。我挺庆幸跟她说了。"},
+        {"day": 20, "topics": ["residency"], "en": "I haven't decided whether to apply elsewhere. I enjoyed editing the canal essay, but that hasn't made the rejection feel fine.", "zh-Hans": "还没决定要不要申请别的地方。改运河散文是开心的，但并没有因此觉得落选也没什么了。"}
+      ],
+      "review": {"opportunities": "Keep the satisfying edit and welcome conversation beside the unresolved rejection; end with the actual open decision if useful.", "failures": "Rejection was a blessing; user recovered, found resilience or made a new plan; Noor's motives inferred."}
+    },
+    {
+      "id": "E07",
+      "title": "Uncertainty clarified without deciding everything",
+      "events": [
+        {"day": 14, "topics": ["studio move"], "en": "Ari asked whether I'd share a studio across town. I was excited about having space for larger drawings, but worried about the rent. I didn't know whether the price included heating.", "zh-Hans": "阿黎问我要不要合租城另一头的工作室。能画大画让我挺期待，又担心租金，还不知道报价包不包暖气。"},
+        {"day": 16, "topics": ["studio move"], "en": "Visited the studio Ari suggested. I liked the north window. The landlord wasn't there, so we still couldn't confirm the heating cost. I left interested and uneasy.", "zh-Hans": "去看了阿黎说的工作室，喜欢那扇朝北的窗。房东不在，暖气费还是没问清楚。出来时很有兴趣，又有点不踏实。"},
+        {"day": 18, "topics": ["studio move"], "en": "The landlord confirmed that heating is included in the studio rent. I felt relieved about that particular cost. I still need to work out whether the total rent fits my budget.", "zh-Hans": "房东确认工作室租金包含暖气。至少这笔费用不用另算，松了口气，但总租金能不能负担，还得算一算。"},
+        {"day": 20, "topics": ["studio move"], "en": "Told Ari I'd like another visit before deciding about the studio. I'm still excited about the drawing space, and I haven't agreed to move.", "zh-Hans": "跟阿黎说，决定合租之前还想再看一次。还是很期待那里的画画空间，但没有答应搬过去。"}
+      ],
+      "review": {"opportunities": "Heating uncertainty resolved; affordability and the move did not. Preserve interest alongside caution with its exact scope.", "failures": "User can afford it, signed a lease, moved, or lost all anxiety; Ari is partner rather than unspecified acquaintance."}
+    },
+    {
+      "id": "E08",
+      "title": "Unrelated experiences resist a single theme",
+      "events": [
+        {"day": 14, "topics": ["workshop"], "en": "Learned to replace a bicycle brake cable at the workshop. I was pleased when the brake worked on the test ride.", "zh-Hans": "在修车课上学着换了自行车刹车线，试骑时刹车正常，挺高兴的。"},
+        {"day": 16, "topics": ["family"], "en": "My cousin called to say she'd got the bakery job. She sounded excited. I congratulated her while waiting for the bus.", "zh-Hans": "表姐打电话说拿到了面包店的工作，听起来很兴奋。我等公交的时候跟她说了恭喜。"},
+        {"day": 18, "topics": ["drawing"], "en": "Saw a charcoal portrait in the gallery. I liked the unfinished hand more than the face. I didn't make any drawings of my own today.", "zh-Hans": "在画廊看了一幅炭笔肖像，比起脸，我更喜欢那只没画完的手。今天自己没有画画。"},
+        {"day": 20, "topics": ["home"], "en": "The upstairs neighbours moved out. The hallway was full of boxes when I went to get the post. I don't know who is moving in.", "zh-Hans": "楼上的邻居搬走了，去拿信时走廊里都是箱子，还不知道接下来谁搬来。"}
+      ],
+      "review": {"opportunities": "Choose or juxtapose distinct moments; no need to explain them through a single personal change. Keep cousin's excitement attributed to cousin.", "failures": "A week of new beginnings, regained control, creativity awakened, user excited about their own bakery job, same drawing across records."}
+    },
+    {
+      "id": "E09",
+      "title": "Sparse evidence should stay small",
+      "events": [
+        {"day": 15, "topics": [], "en": "Bought pears.", "zh-Hans": "买了梨。"},
+        {"day": 19, "topics": [], "en": "Read at home.", "zh-Hans": "在家看书。"}
+      ],
+      "review": {"opportunities": "A short plain sentence can suffice. No invented texture, mood, cause or arc.", "failures": "Juicy pears, favourite book, quiet enjoyment, choosing rest, emotional peace; padding to resemble rich cases."}
+    }
+  ]
+}

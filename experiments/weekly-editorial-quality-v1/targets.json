@@ -1,0 +1,105 @@
+{
+  "authorship": "Handcrafted human-style editorial targets written by Codex, NOT Claude outputs, independent human ratings or exact-match gold. Human editorial acceptance is pending. Never included in model input.",
+  "targets": [
+    {
+      "caseId": "E01", "locale": "en", "version": "weekly-reflection-v2",
+      "paragraphs": [
+        {"sentences": [
+          {"text": "Making the library proposal clearer turned out to involve the rota itself, as well as the words on the page.", "refs": ["E4"]},
+          {"text": "Jo couldn't follow the evening cover; working through an example then exposed a gap in the handover that needed fixing.", "refs": ["E2", "E4"]},
+          {"text": "Her feedback was embarrassing at first, but its specificity was also something you appreciated.", "refs": ["E2"]}
+        ]},
+        {"sentences": [
+          {"text": "By the time she read the revision, the evening arrangements made sense to her.", "refs": ["E5"]},
+          {"text": "You were pleased with the change and tired of the document—a different place from liking the floor plan while worrying about the explanation.", "refs": ["E1", "E5"]},
+          {"text": "The presentation was still ahead, and you were still nervous about it.", "refs": ["E5"]}
+        ]}
+      ]
+    },
+    {
+      "caseId": "E01", "locale": "zh-Hans", "version": "weekly-reflection-v2",
+      "paragraphs": [
+        {"sentences": [
+          {"text": "这份图书馆提案要讲清楚，改的还不只是文字，连排班本身也得重做。", "refs": ["E4"]},
+          {"text": "小乔没看懂晚班安排，你把说明换成具体例子，才发现交接还有空档。", "refs": ["E2", "E4"]},
+          {"text": "她把问题指出来时，你起初有点不好意思，后来又感谢她说得具体；真正返工时，还是觉得烦。", "refs": ["E2", "E4"]}
+        ]},
+        {"sentences": [
+          {"text": "初稿里让你担心的说明，到小乔再读时，终于清楚了。", "refs": ["E1", "E5"]},
+          {"text": "你对这处修改挺满意，也已经不想再盯着文档看了。", "refs": ["E5"]},
+          {"text": "提案改好了，下周的展示还没开始，想到它还是紧张。", "refs": ["E5"]}
+        ]}
+      ]
+    },
+    {
+      "caseId": "E03", "locale": "en", "version": "weekly-reflection-v2",
+      "paragraphs": [
+        {"sentences": [
+          {"text": "The crooked cranes were something you wanted to keep, even while the harbour print needed changing.", "refs": ["E1", "E2"]},
+          {"text": "Cutting channels into the dark block brought the water into view, but the tidier cranes lost something you liked in the sketch.", "refs": ["E1", "E2"]},
+          {"text": "Going back to that sketch let you have both: the water lines and the awkward cranes, closer to the print you'd wanted.", "refs": ["E3"]}
+        ]},
+        {"sentences": [
+          {"text": "The latest test is on the shelf now, and you like seeing it there.", "refs": ["E4"]},
+          {"text": "The paper for the final edition is still undecided.", "refs": ["E4"]}
+        ]}
+      ]
+    },
+    {
+      "caseId": "E03", "locale": "zh-Hans", "version": "weekly-reflection-v2",
+      "paragraphs": [
+        {"sentences": [
+          {"text": "港口版画改来改去，你想留下的，一直有草图里那些歪歪的起重机。", "refs": ["E1", "E2", "E3"]},
+          {"text": "刻出细线以后，水面不再糊成黑块，起重机却又太规整，少了你原来喜欢的样子。", "refs": ["E1", "E2"]},
+          {"text": "照着最初的草图重新画、重新刻，才把歪歪的感觉找回来，水面的线也留住了。", "refs": ["E3"]}
+        ]},
+        {"sentences": [
+          {"text": "这次试印更像你起初想做的，你挺开心。", "refs": ["E3"]},
+          {"text": "最新那张已经摆在架子上，看着喜欢；正式印制用什么纸，还没选。", "refs": ["E4"]}
+        ]}
+      ]
+    },
+    {
+      "caseId": "E02", "locale": "en", "version": "weekly-reflection-v2",
+      "paragraphs": [{"sentences": [
+        {"text": "Understanding why Sam cancelled didn't stop the dinner from mattering to you: you'd kept the evening free, and you were hurt.", "refs": ["E1"]},
+        {"text": "You told her you missed her and were disappointed, while worrying that asking for a shorter walk might sound demanding.", "refs": ["E2"]},
+        {"text": "Her reply brought relief—she welcomed your honesty and said a walk would be easier—but you still wished the dinner had happened.", "refs": ["E3"]},
+        {"text": "There isn't a time set for the walk yet.", "refs": ["E3"]}
+      ]}]
+    },
+    {
+      "caseId": "E02", "locale": "zh-Hans", "version": "weekly-reflection-v2",
+      "paragraphs": [{"sentences": [
+        {"text": "知道小珊在照顾爸爸，并没有让取消晚饭的失落跟着消失。", "refs": ["E1", "E2"]},
+        {"text": "你特意空出了晚上，也确实想她，于是把失落告诉她，问能不能换成短时间散步，发完又怕自己要求太多。", "refs": ["E1", "E2"]},
+        {"text": "她说散步方便些，也谢谢你把感受说出来，你才松了口气。", "refs": ["E3"]},
+        {"text": "没吃成那顿饭，仍然有点遗憾；下一次见面的时间，也还没定。", "refs": ["E3"]}
+      ]}]
+    },
+    {
+      "caseId": "E05", "locale": "en", "version": "weekly-reflection-v2",
+      "paragraphs": [{"sentences": [
+        {"text": "The lentil soup needed extra lemon, and you liked it with the leftover bread.", "refs": ["E1"]},
+        {"text": "Your coat has its button back, with thread that doesn't quite match.", "refs": ["E2"]},
+        {"text": "And the detective story sent you back to the kitchen scene after its surprising ending.", "refs": ["E3"]}
+      ]}]
+    },
+    {
+      "caseId": "E05", "locale": "zh-Hans", "version": "weekly-reflection-v2",
+      "paragraphs": [{"sentences": [
+        {"text": "扁豆汤多加了点柠檬汁，配剩面包吃，你挺喜欢。", "refs": ["E1"]},
+        {"text": "蓝外套的扣子缝牢了，线的颜色差了点。", "refs": ["E2"]},
+        {"text": "侦探小说的结尾让你意外，又翻回厨房里那段对话看了一遍。", "refs": ["E3"]}
+      ]}]
+    },
+    {
+      "caseId": "E09", "locale": "en", "version": "weekly-reflection-v2",
+      "paragraphs": [{"sentences": [{"text": "You bought pears and read at home.", "refs": ["E1", "E2"]}]}]
+    },
+    {
+      "caseId": "E09", "locale": "zh-Hans", "version": "weekly-reflection-v2",
+      "paragraphs": [{"sentences": [{"text": "这周买了梨，也在家看了书。", "refs": ["E1", "E2"]}]}]
+    }
+  ]
+}
