@@ -9,6 +9,8 @@ function runtime(path, development = false, signedIn = true) {
   const Stack = Object.assign(() => { mounts++; return 'ROUTED_SCREEN'; }, { Screen: () => null });
   const NativeTabs = Object.assign(() => { mounts++; return 'ROUTED_SCREEN'; }, { Trigger: Object.assign(Pass, { Label: Pass, Icon: () => null }) });
   const deps = {
+    './features/CommunityGuidelines': { COMMUNITY_VERSION: 'fixture-version', COMMUNITY_TEXT: 'Guidelines' },
+    './features/PrivacyAndSupport': { PrivacyAndSupport: () => null },
     'expo-router': { Redirect: 'Redirect', ThemeProvider: Pass, DarkTheme: {}, DefaultTheme: {}, Stack, Slot: Stack, usePathname: () => path, router: { dismissTo: to => navigation.push(to) }, useLocalSearchParams: () => ({ feature: 'fairy' }) },
     'react-native': { Text: 'Text', View: 'View', Pressable: 'Pressable', ScrollView: 'ScrollView', TextInput: 'TextInput', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'ActivityIndicator', Platform: { OS: 'web' }, StyleSheet: { create: value => value }, AppState: {}, useColorScheme: () => 'light' },
     'expo-splash-screen': { preventAutoHideAsync() {}, hideAsync: async () => {} },

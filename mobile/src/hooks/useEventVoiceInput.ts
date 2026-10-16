@@ -1,3 +1,4 @@
+import { apiRequest } from '../services/api';
 import { useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder } from 'expo-audio';
@@ -95,6 +96,9 @@ export function useEventVoiceInput(content: string, setContent: (text: string) =
     const id = ++operation.current;
     setCurrentPhase('preparing'); setError(''); setOverflow(''); setSeconds(0);
     try {
+      const consent = await apiRequest<{aiProcessing:boolean}>(`/users/${session.user.id}/ai-consent`);
+      if (!consent.aiProcessing) throw new Error('Voice input sends your recording to Cloudflare Workers AI. Read the AI disclosure and enable AI Processing in Settings first, or type instead.');
+      if (id !== operation.current) return;
       const permission = await AudioModule.requestRecordingPermissionsAsync();
       if (id !== operation.current) return;
       if (!permission.granted) throw new Error(`Microphone permission is needed for voice input. You can still type your ${inputName}.`);

@@ -1,3 +1,7 @@
+import { PrivacyAndSupport } from './PrivacyAndSupport';
+import { DeleteAccountSettings } from './DeleteAccountSettings';
+import { AiPrivacySettings } from './AiPrivacySettings';
+import { CommunityGuidelines } from './CommunityGuidelines';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import { useEffect, useState } from 'react';
 import { SymbolView } from 'expo-symbols';
@@ -96,7 +100,7 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
         <Text style={[ui.caption, { color: theme.muted }]}>Signing out keeps your saved Garden safe.</Text>
       </FeatureSection>
       <FeatureSection title="AI & privacy">
-        <Text style={[ui.text, { color: theme.text }]}>Your existing consent settings are preserved. Consent controls are being connected.</Text>
+        <AiPrivacySettings key={session?.user.id} />
       </FeatureSection>
       <FeatureSection title="Background">
         <View style={ui.row}>
@@ -106,7 +110,10 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
         </View>
         {themeError ? <Text accessibilityRole="alert" style={[ui.caption, { color: theme.text }]}>{themeError}</Text> : null}
       </FeatureSection>
+      <PrivacyAndSupport />
+      <CommunityGuidelines />
       <GardenPrivacySettings key={session?.user.id} />
+      <DeleteAccountSettings key={`delete-${session?.user.id}`} />
       {error ? <Text accessibilityRole="alert" style={[ui.text, { color: theme.text }]}>{error}</Text> : null}
       <FeatureActionButton title={busy ? 'Signing out…' : 'Sign out'} disabled={busy} onPress={async () => {
         setBusy(true); setError('');

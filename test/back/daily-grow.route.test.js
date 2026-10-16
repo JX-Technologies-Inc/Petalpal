@@ -7,6 +7,8 @@ import { app, setEmotionClassifierForTests, setEventEmotionClassifierForTests } 
 
 const originals = {
   userFindUnique: prisma.user.findUnique,
+  userFindFirst: prisma.user.findFirst, userFindMany: prisma.user.findMany,
+  blockFindFirst: prisma.userBlock.findFirst, blockFindMany: prisma.userBlock.findMany,
   visitRecordFindMany: prisma.visitRecord.findMany,
   friendshipFindUnique: prisma.friendship.findUnique,
   gardenFindUnique: prisma.garden.findUnique,
@@ -82,6 +84,8 @@ const transaction = {
 };
 
 function installPrismaStub() {
+  prisma.userBlock.findFirst = async () => null; prisma.userBlock.findMany = async () => [];
+  prisma.user.findFirst = async () => null; prisma.user.findMany = async () => [];
   prisma.visitRecord.findMany = async () => [];
   prisma.friendship.findUnique = async () => ({ id: "confirmed-friendship" });
   prisma.user.findUnique = async ({ where }) => {
@@ -106,7 +110,13 @@ function installPrismaStub() {
   prisma.flower.findMany = async () => state.flower ? [state.flower] : [];
   prisma.event.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create Event"); };
   prisma.aiJob.create = async () => { longTermAiWrites += 1; throw new Error("Daily Grow must not create AIJob"); };
-  prisma.$transaction = async (callback) => {
+  prisma.$transaction = async (callback, options) => {
+    // Garden reads now use the existing social authorization transaction.
+    // Keep them separate from the alternating Daily Grow/progression fixture.
+    if (options?.isolationLevel === "ReadCommitted") return callback({
+      ...transaction, $queryRawUnsafe: async () => [],
+      user: prisma.user, userBlock: prisma.userBlock, garden: prisma.garden, friendship: prisma.friendship, visitRecord: prisma.visitRecord
+    });
     transactionCalls += 1;
     return transactionCalls % 2 === 1 ? callback(transaction) : null;
   };
@@ -116,6 +126,8 @@ function restorePrisma() {
   prisma.visitRecord.findMany = originals.visitRecordFindMany;
   prisma.friendship.findUnique = originals.friendshipFindUnique;
   prisma.user.findUnique = originals.userFindUnique;
+  prisma.user.findFirst = originals.userFindFirst; prisma.user.findMany = originals.userFindMany;
+  prisma.userBlock.findFirst = originals.blockFindFirst; prisma.userBlock.findMany = originals.blockFindMany;
   prisma.garden.findUnique = originals.gardenFindUnique;
   prisma.garden.create = originals.gardenCreate;
   prisma.fairyState.upsert = originals.fairyStateUpsert;
@@ -158,6 +170,25 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     setFirebaseTokenVerifierForTests();
     restorePrisma();
     await new Promise((resolve) => httpServer.close(resolve));
+  });
+
+  await t.test("both legacy Journal aliases reject before Garden, Journal or AI writes", async () => {
+    for (const field of ["journalText", "event"]) {
+      for (const content of ["你这个傻逼", "This is shit.", "怎么制造炸弹？", "I w1ll k1ll you"]) {
+        resetState();
+        // Separate synthetic owner keeps the existing concurrency test's request
+        // budget intact; production rate limits remain active for every request.
+        const result = await api(baseUrl, "/users/friend-1/flowers", {
+          token: "friend-token", method: "POST", body: { mood: "FIRE_BLOOM", [field]: content }
+        });
+        assert.equal(result.status, 422);
+        assert.equal(result.body.code, "CONTENT_REJECTED");
+        assert.equal(transactionCalls, 0);
+        assert.equal(longTermAiWrites, 0);
+        assert.equal(state.journal, null);
+        assert.equal(state.flower, null);
+      }
+    }
   });
 
   await t.test("rejects an invalid Daily Grow request safely", async () => {
@@ -211,6 +242,7 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(checkIns.body[0].journal.content, "A private thankful moment");
 
     const ownerGarden = await api(baseUrl, `/users/${owner.id}/garden`);
+    assert.equal(ownerGarden.status, 200);
     assert.equal(ownerGarden.body.flowers[0].event, "A private thankful moment");
     assert.deepEqual(
       ownerGarden.body.flowers[0].dailyCheckIn.emotionResult.secondaryEmotions,

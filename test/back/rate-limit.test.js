@@ -98,3 +98,126 @@ test("capacity pressure cannot evict an active budget; expired buckets free capa
   timestamp = 2000;
   assert.equal((await run(limiter, { ip: "new" })).statusCode, 200);
 });
+
+test("admission counts successful shared-IP work independently of user/auth quotas", async () => {
+  const { admission } = rateLimiters({ RATE_LIMIT_ADMISSION_MAX: "2", RATE_LIMIT_ADMISSION_WINDOW_MS: "5000" });
+  const req = { ip: "192.0.2.50", auth: { userId: "one" } };
+  assert.equal((await run(admission, req, 200)).statusCode, 200);
+  assert.equal((await run(admission, { ...req, auth: { userId: "two" } }, 200)).statusCode, 200);
+  const denied = await run(admission, { ...req, auth: { userId: "three" } });
+  assert.equal(denied.statusCode, 429);
+  assert.equal(denied.headers["Retry-After"], "5");
+  assert.equal((await run(admission, { ip: "192.0.2.51" })).statusCode, 200);
+});
+
+test("admission uses normalized IPs, ignores submitted identity/headers and groups IPv6 /56", async () => {
+  const { admission } = rateLimiters({ RATE_LIMIT_ADMISSION_MAX: "1" });
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).statusCode, 200);
+  assert.equal((await run(admission, { ip: "::ffff:c000:201", headers: { "x-forwarded-for": "192.0.2.2" }, body: { userId: "other" } })).statusCode, 429);
+  assert.equal((await run(admission, { ip: "2001:db8:abcd:1200::1" })).statusCode, 200);
+  assert.equal((await run(admission, { ip: "2001:0db8:abcd:12ff:0000:0000:0000:0002" })).statusCode, 429);
+  assert.equal((await run(admission, { ip: "2001:db8:abcd:1300::1" })).statusCode, 200);
+});
+
+test("admission defaults to 1200/minute independently of the existing quota window", async t => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1000 });
+  const { admission } = rateLimiters({ RATE_LIMIT_WINDOW_MS: "900000" });
+  const first = await run(admission, { ip: "192.0.2.1" });
+  assert.equal(first.headers["RateLimit-Limit"], "1200");
+  assert.equal(first.headers["RateLimit-Reset"], "61");
+  t.mock.timers.tick(60_000);
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).headers["RateLimit-Remaining"], "1199");
+});
+
+test("admission keeps at most 10000 active keys, retains budgets and reclaims expired capacity", async t => {
+  t.mock.timers.enable({ apis: ["Date"], now: 1000 });
+  const { admission } = rateLimiters({ RATE_LIMIT_ADMISSION_MAX: "1", RATE_LIMIT_ADMISSION_WINDOW_MS: "1000" });
+  for (let i = 0; i < 10_000; i++) {
+    assert.equal((await run(admission, { ip: `10.0.${i >> 8}.${i & 255}` })).statusCode, 200);
+  }
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).statusCode, 429);
+  assert.equal((await run(admission, { ip: "10.0.0.0" })).statusCode, 429);
+  t.mock.timers.tick(1000);
+  assert.equal((await run(admission, { ip: "192.0.2.1" })).statusCode, 200);
+  assert.equal((await run(admission, { ip: "10.0.0.0" })).statusCode, 200);
+});
+
+test("10000 saturated denials do not traverse the map before expiration", async t => {
+  let timestamp = 1000, traversals = 0, events = 0;
+  const iterator = Map.prototype[Symbol.iterator], values = Map.prototype.values;
+  // Restore explicitly: Node 24.7's mock restoration mishandles this symbol.
+  t.after(() => {
+    Map.prototype[Symbol.iterator] = iterator;
+    Map.prototype.values = values;
+  });
+  Map.prototype[Symbol.iterator] = function () {
+    if (this.has("bucket-0")) traversals++;
+    return iterator.call(this);
+  };
+  Map.prototype.values = function () {
+    if (this.has("bucket-0")) traversals++;
+    return values.call(this);
+  };
+  t.mock.method(console, "log", value => {
+    assert.equal(JSON.parse(value).eventType, "rate_limit_exceeded");
+    events++;
+  });
+  const limiter = createRateLimiter({ limit: 1, windowMs: 60000, key: req => req.ip, now: () => timestamp });
+  for (let i = 0; i < 10000; i++) assert.equal((await run(limiter, { ip: `bucket-${i}` })).statusCode, 200);
+  for (let i = 0; i < 10000; i++) {
+    const denied = await run(limiter, { ip: `new-${i % 100}` });
+    assert.equal(denied.statusCode, 429);
+    assert.equal(denied.headers["Retry-After"], "60");
+    assert.deepEqual(denied.body, { error: "Too many requests. Try again later." });
+  }
+  assert.equal(traversals, 0);
+  assert.equal(events, 10000);
+  assert.equal((await run(limiter, { ip: "bucket-0" })).statusCode, 429);
+  timestamp = 61000;
+  assert.equal((await run(limiter, { ip: "new" })).statusCode, 200);
+  assert.equal(traversals, 1);
+});
+
+test("capacity Retry-After follows earliest bucket reset without evicting active budgets", async () => {
+  let timestamp = 0;
+  const limiter = createRateLimiter({ limit: 1, windowMs: 10000, maxKeys: 2, key: req => req.ip, now: () => timestamp });
+  await run(limiter, { ip: "first" });
+  timestamp = 5000; await run(limiter, { ip: "second" });
+  timestamp = 10000;
+  assert.equal((await run(limiter, { ip: "first" })).statusCode, 200);
+  assert.equal((await run(limiter, { ip: "new" })).headers["Retry-After"], "5");
+  timestamp = 15000;
+  assert.equal((await run(limiter, { ip: "new" })).statusCode, 200);
+  assert.equal((await run(limiter, { ip: "first" })).statusCode, 429);
+});
+
+test("capacity expiration metadata handles successful deletion and stale finish callbacks", async () => {
+  for (const resetBeforeFinish of [false, true]) {
+    let timestamp = 0, finish;
+    const limiter = createRateLimiter({ limit: 1, windowMs: 10000, maxKeys: 2, skipSuccessfulRequests: true, key: req => req.ip, now: () => timestamp });
+    limiter({ ip: "first" }, { statusCode: 200, set() {}, once(_event, callback) { finish = callback; } }, () => {});
+    timestamp = 5000; await run(limiter, { ip: "second" });
+    timestamp = resetBeforeFinish ? 10000 : 6000;
+    if (resetBeforeFinish) assert.equal((await run(limiter, { ip: "first" })).statusCode, 200);
+    finish();
+    if (resetBeforeFinish) assert.equal((await run(limiter, { ip: "first" })).statusCode, 429);
+    else assert.equal((await run(limiter, { ip: "replacement" })).statusCode, 200);
+    const denied = await run(limiter, { ip: "new" });
+    assert.equal(denied.statusCode, 429);
+    assert.equal(denied.headers["Retry-After"], resetBeforeFinish ? "5" : "9");
+  }
+});
+
+test("capacity metadata follows backward and forward clock changes", async () => {
+  let timestamp = 10000;
+  const limiter = createRateLimiter({ limit: 1, windowMs: 10000, maxKeys: 2, key: req => req.ip, now: () => timestamp });
+  await run(limiter, { ip: "later" });
+  timestamp = 0; await run(limiter, { ip: "earlier" });
+  timestamp = -1000;
+  assert.equal((await run(limiter, { ip: "new" })).headers["Retry-After"], "11");
+  timestamp = 10000;
+  assert.equal((await run(limiter, { ip: "new" })).statusCode, 200);
+  assert.equal((await run(limiter, { ip: "later" })).statusCode, 429);
+  timestamp = 100000;
+  assert.equal((await run(limiter, { ip: "after-jump" })).statusCode, 200);
+});

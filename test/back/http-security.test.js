@@ -69,7 +69,8 @@ test("actual HTTP app preserves public caching and marks anonymous/auth/CORS err
   await new Promise(r => listener.once("listening", r));
   t.after(async () => { await new Promise(r => listener.close(r)); keys.forEach((k,i) => previous[i] === undefined ? delete process.env[k] : process.env[k] = previous[i]); });
   const base = `http://127.0.0.1:${listener.address().port}`;
-  for (const path of ["/", "/favicon.svg"]) {
+  // Expo emits favicon.ico; exercise the actual generated static asset.
+  for (const path of ["/", "/favicon.ico"]) {
     const response = await fetch(base + path, { headers: { "X-Forwarded-Proto": "https" } });
     assert.equal(response.status, 200);
     assert.match(response.headers.get("cache-control"), /public/);

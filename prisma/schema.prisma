@@ -21,6 +21,11 @@ model User {
   timezone        String    @default("UTC") @db.VarChar(64)
   preferredLocale String    @default("en") @db.VarChar(35)
   allowGardenVisits Boolean @default(true)
+  socialRestricted Boolean @default(false)
+  communityTermsVersion String? @db.VarChar(64)
+  communityAcceptedAt DateTime?
+  blocksMade UserBlock[] @relation("Blocker")
+  blocksReceived UserBlock[] @relation("Blocked")
   createdAt       DateTime  @default(now())
 
   garden       Garden?
@@ -306,6 +311,8 @@ model Report {
   reporterId     String
   reportedUserId String?
   messageId      String?
+  aiOutputKind   String? @db.VarChar(16)
+  aiOutputId     String? @db.VarChar(128)
   category       ReportCategory
   details        String?        @db.Text
   status         ReportStatus   @default(PENDING)
@@ -699,4 +706,22 @@ enum AIReportNarrativeStatus {
   NOT_GENERATED
   GENERATED
   INSUFFICIENT_EVIDENCE
+}
+
+model UserBlock {
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  blocker User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  @@id([blockerId, blockedId])
+  @@index([blockedId])
+}
+
+// No FK: must survive account erasure to retry identity deletion and deny replay.
+model AccountDeletion {
+  userId String @id
+  firebaseUid String @unique
+  createdAt DateTime @default(now())
+  completedAt DateTime?
 }

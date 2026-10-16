@@ -1,3 +1,5 @@
+import { PrivacyAndSupport } from './features/PrivacyAndSupport';
+import { COMMUNITY_VERSION, COMMUNITY_TEXT } from './features/CommunityGuidelines';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, AppState, KeyboardAvoidingView, Platform, Pressable, ScrollView,
   StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
@@ -13,7 +15,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [confirmation, setConfirmation] = useState('');
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState('🦋');
-  const [aiConsent, setAiConsent] = useState(false);
+  const [communityAccepted,setCommunityAccepted] = useState(false);
   const [working, setWorking] = useState(false);
   const busy = useRef(false);
   const checkVerification = useRef(auth.checkVerification);
@@ -21,7 +23,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setEmail(''); setPassword(''); setConfirmation(''); setName('');
-    setAvatar('🦋'); setAiConsent(false); setMode('signIn');
+    setAvatar('🦋'); setCommunityAccepted(false); setMode('signIn');
   }, [auth.identity?.uid]);
   useEffect(() => {
     if (!auth.loading) void SplashScreen.hideAsync().catch(() => {});
@@ -73,6 +75,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
           : registering ? 'Create your PetalPal account' : 'Sign in to PetalPal'}</Text>
         <Text style={styles.body}>{verification ? `Check your inbox at ${auth.identity?.email || 'your email address'}.`
           : profile ? 'Choose how you’ll appear in PetalPal.' : 'Your feelings, your flowers, your little place to grow.'}</Text>
+        <PrivacyAndSupport />
         {verification ? <>
           {button(working ? 'Checking…' : 'I’ve verified my email', auth.checkVerification)}
           {button('Resend verification email', auth.resendVerification, false, true)}
@@ -84,13 +87,12 @@ export function AuthGate({ children }: { children: ReactNode }) {
             accessibilityRole="radio" accessibilityLabel={{ '🦋': 'Butterfly', '🐝': 'Bee', '🐦': 'Bird' }[choice]}
             accessibilityState={{ selected: avatar === choice }} disabled={working} onPress={() => setAvatar(choice)}
             style={[styles.avatar, avatar === choice && styles.selected]}><Text style={styles.avatarText}>{choice}</Text></Pressable>)}</View>
-          <Pressable accessibilityRole="checkbox" accessibilityLabel="Allow AI processing of my Events"
-            accessibilityState={{ checked: aiConsent, disabled: working }} disabled={working}
-            onPress={() => setAiConsent(!aiConsent)} style={styles.consent}>
-            <Text style={styles.label}>{aiConsent ? '☑' : '☐'} Allow AI processing of my Events</Text>
+          <Text style={styles.body}>{COMMUNITY_TEXT}</Text>
+          <Pressable accessibilityRole="checkbox" accessibilityLabel="Accept Community Guidelines" accessibilityState={{checked:communityAccepted}} disabled={working} onPress={()=>setCommunityAccepted(!communityAccepted)} style={styles.consent}>
+            <Text style={styles.label}>{communityAccepted ? '☑' : '☐'} I accept the Community Guidelines</Text>
           </Pressable>
-          <Text style={styles.hint}>Optional. Off by default. This does not enable long-term memory.</Text>
-          {button(working ? 'Saving…' : 'Continue to PetalPal', () => auth.completeProfile({ name, avatar, aiConsent }), !name.trim())}
+          <Text style={styles.hint}>AI is off by default. Read the processor disclosure and choose optional AI features in Settings. You can journal without AI.</Text>
+          {button(working ? 'Saving…' : 'Continue to PetalPal', () => auth.completeProfile({ name, avatar, aiConsent: false, communityTermsVersion: communityAccepted ? COMMUNITY_VERSION : undefined }), !name.trim() || !communityAccepted)}
           {button('Use another account', auth.logout, false, true)}
         </> : <>
           {field('Email', { value: email, onChangeText: setEmail, keyboardType: 'email-address', autoCapitalize: 'none',

@@ -6,6 +6,9 @@ import { existsSync } from 'node:fs';
 export const securityTests = [
   'test/back/auth.test.js',
   'test/back/security-config.test.js',
+  'test/back/rate-limit.test.js',
+  'test/back/auth-abuse.route.test.js',
+  'test/back/preauth-admission.route.test.js',
   // Native provider contracts use injected fetch and disposable PGlite only.
   'test/back/ai-gateway.test.js',
 ];
@@ -14,6 +17,9 @@ export const httpTests = 'production HTTPS security headers|HSTS requires|CSP su
 
 // Focused existing fixtures only; no real database/provider/load acceptance.
 export const additionalSecurityTests = [
+  // New submissions: synthetic bilingual rules, rejected side effects and legacy aliases.
+  { file: 'test/back/content-safety.test.js', pattern: '.', count: 7 },
+  { file: 'test/back/daily-grow.route.test.js', pattern: '.', count: 1 },
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
   { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 26 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.

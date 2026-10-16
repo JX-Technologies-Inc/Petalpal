@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "PetalPal",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -30,7 +30,7 @@
         {
           "photosPermission": "Allow PetalPal to attach a photo to your private journal.",
           "cameraPermission": false,
-          "microphonePermission": "Allow PetalPal to record voice input for your Event."
+          "microphonePermission": "Allow PetalPal to record voice input for your entry. With your AI consent, your recording is sent to Cloudflare Workers AI for transcription. You can type instead."
         }
       ],
       [
@@ -44,7 +44,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow PetalPal to record voice input for your Event.",
+          "microphonePermission": "Allow PetalPal to record voice input for your entry. With your AI consent, your recording is sent to Cloudflare Workers AI for transcription. You can type instead.",
           "enableBackgroundRecording": false,
           "enableBackgroundPlayback": false
         }

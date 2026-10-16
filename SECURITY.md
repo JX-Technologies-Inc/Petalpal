@@ -2864,3 +2864,284 @@ unresolved dependency-security gate to the readiness report; readiness remains N
 - **Tests:** `test/back/ai-event.route.test.js` asserts 400 with zero Event/job/dispatch for past, far-past, near-future (+1 h), far-future, `null` and empty values; 403 for the header; 400 when both are sent; and server-time local dates for accepted Events. The file was previously run by no workflow on `main`, so it is added to `scripts/security-ci.js` (whole file, one top-level test). Local run: BLOCKED (backend dependencies unavailable in the preparation sandbox); requires PR CI.
 - **TEST clock (PR #37, unmerged):** when combined, the unconditional header 403 is replaced by PR #37's server-enforced gate (still 403 whenever the gate fails). Client `occurredAt` stays rejected first, and Event time becomes `simulatedOccurredAt ?? new Date()`.
 - **Not done:** no push, PR, merge, deploy, migration, provider change or production write. Release follows the Render API lane after separate approval.
+
+## Local App Store readiness candidate — 2026-10-15
+
+See `docs/APP_STORE_RELEASE_READINESS.md` for additive evidence. Persistent user blocks are enforced with existing pair locks and realtime revocation. Reports use structured references, owner/visibility checks, deduplication and bounded submission volume. Moderator APIs require a verified Firebase identity on an operator-managed UID allowlist and omit reporter identity. Historical backlog counts and earlier evidence are unchanged; this candidate has not been deployed.
+
+The local candidate also adds versioned Community acceptance, AI disclosure re-consent, private AI-output reporting and a shared final consent/source fence for Workers AI emotion output. Account erasure now uses a durable identity-deletion retry record and database anti-resurrection trigger. Firebase failure no longer rolls back already committed app-data erasure; pending identity deletion is explicit. Disposable PostgreSQL verifies vectors/cascades, rollback, unrelated-owner preservation and identity retries. Completed deletion/cost records have no new automatic expiry; approved retention and reconciliation remain operator release blockers. Additional social filtering covers raw owner-visible messages and revokes in-flight user-room deliveries. These controls are not deployed.
+
+
+## Preserved PR #59 evidence — imported for local integration
+
+## Content Safety Policy v1.2 — 2026-10-15
+
+The local patch strengthens new Event and Journal screening: selected explicit
+profanity is rejected inside sentences as well as alone; selected third-person
+abuse, hateful death wishes, dangerous questions, contracted/named-target/Chinese
+threats and common obfuscation are covered. Phrase-scoped reporting, negation and
+fictional/historical context protect legitimate disclosures without exempting
+separate attacks. Non-profane emotional expression, self-criticism, trauma and
+ordinary self-harm help-seeking remain accepted. Stored text is unchanged except
+for existing trimming; no schema, dependency, provider, logging or AI workflow
+change was made. Firebase ownership, consent, idempotency, deletion and Journal
+exclusion from memory/embeddings/Weekly/Monthly are preserved.
+
+Pending owner review, covered fear-framed concrete violent intentions receive a
+fixed supportive 422 in English or Simplified Chinese. This is a product boundary,
+not a determination of intent or dangerousness. Rejected private Journals are not
+saved. Novel phrasing, unsupported names/casing, deceptive attribution and ambiguous
+contexts remain false-negative/false-positive risks; no complete semantic safety
+or production readiness claim is made. See [scope and limitations](docs/content-safety.md).
+
+V1.2 final local validation: **76/76 focused/CI-contract/environment tests passed**,
+including **6/6 CI-contract tests**. The full security runner completed with **208
+selected tests passed, zero failures, exit 0**. Its DAST made **261 loopback requests**
+with zero external attempts/unexpected DB calls. The policy corpus covers 84 blocks,
+80 accepted cases and 7 supportive rejections; eight maximum-size adversarial inputs
+passed the bounded performance guard. The same isolated Node/npm strategy documented
+below was used, with matching-lockfile local dependencies and scrubbed child
+configuration. Added Event cases use a separate consent-enabled synthetic owner;
+rate limits and existing assertions remain active. Temporary runtime/dependency
+links were removed. Earlier results below are historical and preserved. No manual/
+provider status change, push, merge, deployment, production access or paid API call
+was performed.
+
+## Content-safety P2 corrections — 2026-10-15
+
+Policy `petalpal-content-v1.1` fixes the confirmed family-abuse-report false positive
+and typographic-apostrophe/Chinese-spacing bypasses. Attributed reporting is scoped
+to the immediately reported phrase/quotation; separate abuse still fails. Analysis
+normalization never changes accepted stored text. Concrete English violent actions
+framed by fear now produce a fixed supportive 422 rejection instead of the former
+fear-prefix exemption; `help` is never a blanket allowance. Rejected requests cause
+no persistence, AI job, enrichment or dispatch. Journal remains isolated from Event
+memory and Weekly/Monthly; no logging, external service, dependency, data migration
+or production pipeline change is introduced.
+
+Local focused/contract/environment validation passed **76/76** tests, including the
+exact confirmed cases, four ambiguous-threat cases, owner/privacy/idempotency checks
+and startup/timezone regressions. The previous runner blockers were environmental:
+shell Node 24.7.0 has old timezone data; bundled Node 24.19.0 lacks adjacent npm.
+A temporary isolated copy of bundled Node (tzdata 2026b), with the existing npm
+linked beside it, satisfies both fixtures without global timezone/runtime changes
+or weakened tests. Historical evidence below is preserved. Details and remaining
+finite-grammar/context limits: [content-safety policy](docs/content-safety.md).
+
+Full `scripts/security-ci.js` subsequently completed in one isolated run: **208
+selected tests passed, zero failures, exit 0**. DAST made **261 loopback requests**,
+zero external attempts/unexpected DB calls. No selected local tests remain blocked.
+These results supersede the historical v1 single-runner limitation below; hosted
+CI, production and paid-provider acceptance remain outside this local task.
+
+## Local Event/Journal content-safety candidate — 2026-10-14
+
+`petalpal-content-v1` adds shared offline checks for new `/events`, private
+`/users/:userId/journals`, and legacy Daily Grow `journalText`/`event` submissions,
+before persistence, job creation or enrichment. Fixed English/Simplified Chinese
+422 errors contain no submitted text. Owner authentication, consent, Event
+idempotency/transactions and Journal exclusion from AI remain intact. Existing
+matching Event retries are preserved; historical content is not scanned or changed.
+
+No moderation dependency/dictionary is adopted: the three requested MIT-code
+candidates have unresolved dataset provenance and/or inadequate bilingual scope.
+The fallback uses independently authored bounded phrase rules and synthetic tests.
+It cannot determine threat credibility or comprehensive semantic intent and can
+produce false positives and false negatives. See [policy, enforcement, tests and
+licensing assessment](docs/content-safety.md) and [notice scope](THIRD_PARTY_NOTICES.md).
+This is local synthetic evidence, not production acceptance or commercial legal
+clearance. No provider/manual setting or status changed; existing checklist evidence
+is preserved. No push, merge, deployment, production data access or paid call.
+
+Local validation: 62/62 focused tests and 6/6 CI-contract tests passed; 261-request
+loopback DAST made zero external attempts/unexpected DB calls. All selected security
+cases have passing evidence across local runtimes; a single successful full-runner
+result remains unverified due shell tzdata and bundled-npm fixture limitations
+documented in the policy report. No existing security gate or test was weakened.
+
+
+
+## Preserved PR #60 evidence — imported for local integration
+
+
+## 2026-10-15 — Pre-authentication API admission (CodeQL #19–21; local, not released)
+
+- **Finding:** the speech POST, Journal-cover PUT and general authenticated API
+  middleware invoked Firebase verification and profile lookup before the general
+  user limiter. Failed authentication never reached that limiter. This is a
+  resource-exhaustion gap, not evidence of an authentication bypass.
+- **Ordering:** speech now runs shared IP admission → Firebase verification /
+  verified-email check / profile lookup → existing general user quota → AI quota
+  → speech concurrency admission → large-body parsing → existing validation,
+  consent/cost gate and provider handling. Cover PUT runs IP admission → the same
+  authentication → general user quota → owner check → large-body parsing and
+  existing validation/write. Other authenticated API paths (including cover GET)
+  retain bounded 32 KB parsing, then run IP admission → authentication/profile →
+  general user quota → existing route authorization and limits.
+- **Budget:** `RATE_LIMIT_ADMISSION_MAX=1200` attempts per
+  `RATE_LIMIT_ADMISSION_WINDOW_MS=60000` by default, independent of
+  `RATE_LIMIT_WINDOW_MS`. These positive-integer options use the existing parser
+  and fallback behavior. The generous coarse ceiling leaves shared-IP headroom
+  above the existing 300/user/15-minute general and 30/user/15-minute AI defaults;
+  it is not a measured production-capacity guarantee. All outcomes consume
+  admission because successful verification also costs work. One limiter instance
+  shares the budget across routes; each matching request enters it once. The
+  early speech/cover handlers terminate before the general authentication layer.
+- **Preserved policy:** `/auth` and `/session` retain the existing pre-verification
+  failure limiter, successful-session refunds and verified-UID session quota.
+  Authenticated session reads also receive the new coarse all-attempt ceiling;
+  this intentionally supplements their tighter failure quota with a separate
+  counter. Public pages and session-setup exceptions are unchanged. The existing
+  `/internal/ai-jobs/*` service authentication and executor routes run separately,
+  before interactive admission. Worker admission/workload limits remain a
+  separate security decision. Firebase authorization, ownership, consent,
+  provider budgets and existing response bodies are unchanged; admission denial
+  uses the existing 429 JSON, rate-limit headers and `Retry-After` contract.
+- **IP and storage assumptions:** only Express `req.ip` is keyed, under the
+  existing `TRUST_PROXY` configuration (`false` by default; blanket `true` is
+  rejected). The locked `ipKeyGenerator` normalizes mapped IPv4 and groups IPv6
+  /56 prefixes. No raw forwarding header is trusted by the limiter. A configured
+  trusted proxy must overwrite/append the real peer address and all ingress paths
+  must match the verified topology; hop counts are safe only with invariant
+  path lengths. Actual deployed topology/configuration was not accessed or
+  verified. Reuse of `createRateLimiter` caps this map at 10,000 keys: expired
+  entries reset on access and are reclaimed at capacity, active entries are not
+  evicted, and new keys receive 429 if all entries are active. Idle entries can
+  remain until capacity cleanup, but cannot grow beyond that cap.
+- **Limits:** per-process fixed windows reset on restart, allow window-boundary
+  bursts, and do not coordinate replicas or defend against distributed DDoS.
+  A heavily shared IP or a full key table can cause collateral rejection. Before
+  rollout, validate capacity/fairness and trusted ingress; use upstream edge/WAF
+  rate and connection controls, and a coordinated store if fleet-wide quotas are
+  required. No new dependency, Redis, provider setting or production action was
+  introduced. The existing open proxy/topology/scaling verification item in
+  `MANUAL_SECURITY_CHECKLIST.md` remains applicable and unchanged; the two new
+  optional settings above need no provider change to take effect at defaults.
+- **Local evidence (synthetic only, Node 24.21.0):** 37/37 focused tests passed
+  across rate-limit, preauth-admission routes, auth-abuse routes, auth,
+  security-config and security-CI runner tests. Coverage includes invalid/missing
+  tokens, zero verification/profile/route work after admission denial, concurrent
+  and cross-route attempts, single counting, shared-IP successes, user/AI quotas,
+  owner isolation, existing session limits, spoofed forwarding prefixes under a
+  trusted loopback proxy and ignored headers without proxy trust, mapped IPv4,
+  IPv6 /56, 10,000-key capacity/expiration, and separate executor traffic.
+  Added these rate-limit regression files to the existing security-CI selection.
+- **Additional product regression:** 33/33 tests passed across Daily Grow,
+  security-baseline, account deletion, Fairy onboarding/progress/runtime and
+  Garden response tests. Two stale fixtures failed identically with the untouched
+  base server loaded: Daily Grow lacked transactional Garden-read delegates, and
+  the deletion-error test lacked a recent verified `auth_time`. Repaired only
+  those synthetic fixtures, retained every assertion and added an explicit owner
+  Garden 200 assertion. Existing missing/stale-login rejection tests also pass.
+- **Full security gate PASS:** `npm run test:security:ci` completed successfully
+  on the final isolated run: 214/214 tests across all 21 command batches, zero
+  failures, cancellations or skips. This covers AI Gateway, HTTP security,
+  offline API fuzzing, Event AI, Weekly/Monthly AI, speech admission, AI quotas /
+  consent, private Journals, realtime privacy, cross-origin boundaries and
+  integration/deployment guards. Two earlier runs hit the unchanged 90-second
+  subprocess ceiling in unchanged `ai-gateway.test.js`; the final run used no
+  concurrent test processes and passed that batch (75/75) within the same limit.
+  All 20 following commands also passed separately (139/139). No timeout or
+  assertion was weakened and no test was disabled. Syntax and `git diff --check`
+  passed. No production access or paid API calls were used; package manifests
+  and lockfiles are unchanged.
+- **Isolation:** prepared from verified `origin/main` at
+  `ba867045c0c044a25b04e99dee93c53f10351506` on an independent worktree/branch.
+  Existing dirty work, the content-safety worktree, PRs #58/#59 and the malformed
+  local `main 2` ref were not changed. CodeQL Default setup and historical evidence
+  are preserved; this local change does not claim that GitHub alerts are closed.
+
+## 2026-10-15 — Saturated admission limiter CPU amplification (local follow-up)
+
+- **Defect:** at the 10,000-key cap, each untracked-key rejection scanned the
+  entire map and allocated an expiration array to calculate Retry-After, even
+  when no entry could have expired. The preceding isolated benchmark measured
+  4.52 CPU seconds for 10,000 such denials (about 53 times known-key CPU/request).
+  This is a conditional resource-exhaustion weakness, not authentication bypass.
+- **Correction:** keep one scalar earliest-expiration cache. New entries update
+  the minimum, including after backward wall-clock movement. Resetting or
+  successfully refunding away the earliest bucket invalidates the cache;
+  capacity pressure lazily recomputes it. At capacity, scan/reclaim only when
+  expiration is due or the cache is invalid. Repeated denials before expiration
+  use constant-time map lookup and cached Retry-After, without table traversal
+  or an expiration array. Existing stale-finish identity checks remain intact.
+- **Preserved:** fail-closed capacity, active budgets, bounded key storage,
+  synchronous admission/counting, HTTP 429 bodies and security events, all
+  user/auth/AI quotas, 1,200/minute default, IPv6 /56, proxy trust and middleware
+  order. No dependency, provider or deployment configuration changed.
+- **Deterministic coverage:** instrumented map traversal verifies zero scans
+  across 10,000 saturated denials and one reclamation scan at expiration;
+  assertions also cover response body, Retry-After, security events, active
+  budget preservation, earliest-bucket reset/deletion, stale successful finishes,
+  backward/forward clock changes and capacity recovery. No timing assertions.
+- **CPU/latency benchmark:** one sequential before/after pair on Apple M2 arm64,
+  Node 24.7.0, using the original `c1af23b4` limiter and this correction in
+  separate isolated processes. Synthetic normalized IPv4 keys; fixed injected
+  clock; 10,000 active buckets; 4,000 known-key denials followed by five batches
+  of 2,000 untracked-key denials. Real security-event serialization remained
+  enabled, with stdout directed to the null device. No network/provider work.
+  Untracked-key CPU fell from **5,586.353 ms to 131.192 ms** (42.6x, 97.7% lower);
+  wall time fell from **7,813.965 ms to 74.600 ms**. Relative to the earlier
+  4.52-second observation, measured CPU is 34.5x lower (97.1%). Per-batch median
+  latency fell from 0.349–0.605 ms to 0.006–0.007 ms; p95 from 0.597–3.059 ms to
+  0.006–0.010 ms, p99 from 0.903–8.116 ms to 0.008–0.030 ms. Known-key CPU for
+  4,000 denials was 37.155 ms before / 48.994 ms after; corrected unknown-key
+  CPU/request was about 1.07x the corrected known-key cost. These noisy local
+  measurements are evidence of improvement, not CI timing thresholds or SLOs.
+- **Memory/recovery benchmark:** corrected forced-GC heap was 5.251 MiB before
+  population, 6.593 MiB at capacity, 6.802–6.810 MiB across denial batches and
+  5.673 MiB after expiration. RSS reached 70.125 MiB and remained 69.859 MiB
+  after recovery; retained heap was stable under pressure, not proof that RSS
+  immediately returns to baseline. Full expiration/recovery took 3.363 ms
+  versus 2.998 ms before; linear reclamation is intentionally retained. The
+  harness includes assertions/normalization and excludes HTTP transport,
+  production log collection, Firebase/database cost and deployment load.
+- **Focused/product verification:** focused limiter, admission, auth-abuse,
+  auth, security-config and CI-runner tests **41/41 PASS** on Node 24.7.0 and
+  24.19.0. Selected Daily Grow, security-baseline, account-deletion, Fairy
+  onboarding/progress/runtime and Garden response regressions **34/34 PASS**
+  on Node 24.7.0. Existing actual-route fixtures retain concurrent exact-quota,
+  zero verifier/profile/database work after denial, shared-IP, mapped IPv4,
+  IPv6 /56, forwarding-spoof, user/AI quota and executor-separation assertions.
+  An initial new test's symbol-mock cleanup interference was corrected using
+  explicit restoration; no assertion was relaxed.
+- **Runtime validation history:** the first full-run attempt on system Node
+  24.7.0 failed the two unchanged Vancouver tests because it contains tzdata
+  2025b. The available bundled Node 24.19.0 contains tzdata 2026b, but its bare
+  binary directory lacks adjacent npm, causing four unchanged integration-startup
+  tests to fail in the next attempt. A temporary directory containing a copy of
+  that existing Node binary and a link to existing npm supplies the expected
+  runtime layout without installing/upgrading dependencies or altering installed
+  tools. Startup/timezone prerequisites then passed **7/7**. No test, timeout,
+  workflow or provider configuration was changed to address these environment
+  failures. CI's exact Node 24.21.0 verification remains a subsequent GitHub gate.
+- **Full security gate PASS:** the unchanged `scripts/security-ci.js` completed
+  all 21 command batches on that Node 24.19.0 / tzdata 2026b runtime:
+  **218/218 PASS**, zero failures, cancellations or skips, retaining the existing
+  90-second subprocess ceiling. This includes AI Gateway, HTTP security/offline
+  fuzzing, Event/Weekly/Monthly AI, speech/AI-cost/consent, private Journal and
+  realtime/cross-origin tests, integration/deployment guards and timezone tests.
+  Syntax and diff checks passed. Only the limiter, its tests and this appended
+  evidence changed; no source deployment, production request, push, alert
+  dismissal or provider-setting change was performed.
+- **Limits unchanged:** expiry-triggered scans remain O(maxKeys); this is not a
+  general replacement of the limiter's storage algorithm. Wall-clock changes
+  still affect fixed-window duration as before. Shared-IP collateral rejection,
+  window-boundary bursts, process restarts, replica-independent budgets and the
+  need for verified client-IP/proxy topology and upstream controls remain.
+  Existing manual/provider checklist items still apply; no new provider action
+  or verified provider status is introduced by this local optimization.
+
+## Unified App Store / #59 / #60 integration — 2026-10-15
+
+Local integration is based on App Store `7fa0a81`, #59 `933200a` and #60 `993dae8`; all exact commits and clean candidate state were verified. Original worktrees/PRs remain unchanged. Equivalent content-safety hooks are retained once; missing #59 tests/notices/CI coverage and #60's unchanged admission limiter/CPU optimization are included. Six reviewed conflicts are reconciled without dropping historical evidence or assertions.
+
+Confirmed social publication gaps are closed: support/visit/move/leave use screened stored profile fields and current Community acceptance. Per-viewer HTTP/socket filtering excludes blocked identities; filtered records do not become empty realtime notifications. /leave now serializes authorization and record creation with block/privacy/friendship changes. Revoked visitors may clean up only their own cached presence without private data, new records or broadcasts; blocked/restricted operations are denied. Database failure does not publish a successful departure. Legacy mood-analysis/deletion handlers and all mobile/rendering code are preserved.
+
+The four release migrations are unchanged. New migration `202610150005_ai_disclosure_grant_guard` atomically revokes obsolete enabled grants and their pending/running jobs, then constrains enabled consent to `ai-2026-10-15`. Old API grant transactions using their hardcoded older terms fail and roll back. Current grants and pending/completed AccountDeletion records remain; migration-004 identity insert/relink protections are unchanged. Production must follow the quiesced rollout in docs/release/INTEGRATION_ROLLOUT.md; this DB safeguard does not authorize old/new APIs to coexist. No production migration was applied.
+
+Focused evidence: 36/36 Daily Grow/Event/Journal/admission/rate/Garden; 17/17 auth/Support persistence; 36/36 consent/deletion/realtime/baseline; 3/3 real PostgreSQL upgrade; 6/6 fresh migrated API/socket/deletion; 34/34 independent PostgreSQL races (43 loopback requests); 6/6 CI contract; DAST 17/17 (261 loopback requests, zero external attempts/unexpected DB calls). Final security runner status is recorded in docs/APP_STORE_RELEASE_READINESS.md. Temporary fixture/runtime/readiness failures were corrected, not suppressed; assertions/timeouts and historical results remain intact.
+
+CodeQL #29/#30: exact #60 findings check still FAILURE with two High annotations; managed analysis/regression success is not alert closure. Middleware ordering and tests support the existing likely-false-positive review evidence, but independent authorized disposition and new unified-head hosted analysis remain required. No suppression, dismissal, configuration change or check bypass occurred. No push, merge, deployment, live identity/data access or paid inference occurred. See security.go.md for release gates; original canonical backlog counts and historical evidence above are unchanged.
+
+Final follow-up evidence: the affected security runner completed **exit 0, 233/233 reported executions across 23 subprocess summaries**, zero failures/cancellations/skips; DAST made 261 loopback requests with zero external attempts/unexpected DB calls. The installed Node 24.19 executable and existing npm were assembled in a temporary directory solely to satisfy startup-fixture layout; no runtime/dependency upgrade or timeout/assertion change occurred. The temporary runtime/dependency links were removed after testing. This supports Draft PR review readiness only; CodeQL #29/#30 and unified hosted validation still gate merge/release.
