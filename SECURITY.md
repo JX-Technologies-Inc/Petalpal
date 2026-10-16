@@ -1,5 +1,24 @@
 # PetalPal Security
 
+## Weekly evidence significance — default OFF, offline only, 2026-10-16
+
+`AI_WEEKLY_EVIDENCE_SIGNIFICANCE` is a new server-side opt-in that requires
+`AI_WEEKLY_EVIDENCE_SELECTOR_V2=true`. Any other value, or use without V2, fails
+with `AI_GATEWAY_CONFIG_INVALID` before retrieval. No client input can set it.
+When ON, the existing 32-row Weekly candidate pool is ranked from the already
+consent-checked, owner-scoped period rows instead of the last 32 rows (zh) or
+retrieval order (en). English retrieval still runs once, and its rows are still
+reconciled, with stale or forged content refused.
+Ranking reads only summary words, topics, dates, similarity and importance. It
+never rewrites text, never adds ranking metadata to the provider packet, and makes
+no extra model or API call.
+These existing controls are unchanged: source fence, deletion/consent rechecks,
+8-source/4,000-character and Gateway limits, one call, idempotency and atomic
+persistence. Monthly is unchanged.
+Evidence is offline and synthetic. Actual-worker PGlite tests are added but still
+need a local run. No flag, deployment or manual-state change. See
+[the report](docs/ai/WEEKLY_EVIDENCE_SIGNIFICANCE.md).
+
 ## Weekly narrative-thread prompt candidate — default OFF, offline only, 2026-10-16
 
 `AI_WEEKLY_REFLECTION_NARRATIVE_THREAD` is a new server-side opt-in on the Sonnet

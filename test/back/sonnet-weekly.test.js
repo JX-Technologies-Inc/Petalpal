@@ -769,3 +769,43 @@ test("narrative thread rejects invalid or ambiguous settings before retrieval an
     if (mutation === "bad-output") { assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1); }
   });
 });
+
+// Opt-in evidence significance (Selector V2 refinement): actual worker keeps one call and all fences.
+test("evidence significance ON keeps one-call generation, provenance, privacy and every safeguard", async t => {
+  const settings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY,
+    AI_WEEKLY_EVIDENCE_SELECTOR_V2: "true", AI_WEEKLY_EVIDENCE_SIGNIFICANCE: "true" };
+  for (const locale of ["en", "zh-Hans"]) await t.test(`success/${locale}`, async child => {
+    const f = await fixture(child, { locale });
+    f.respond(packet => Response.json(native(quotedV2(packet))));
+    const result = await f.run(settings);
+    assert.equal(result.succeeded, true, result.error?.stack);
+    assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0); assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
+    assert.equal(f.calls[0].body.system, REFLECTION_V2_INSTRUCTIONS.WEEKLY, "prompt untouched by the selector flag");
+    for (const hidden of ["alice", "sourceEventId", "sourceMemoryId", "event-", "memory-", "importanceScore", "similarity"])
+      assert.equal(JSON.stringify(f.calls[0].packet).includes(hidden), false);
+    const saved = (await f.rows("WeeklyReport"))[0].document;
+    assert.ok(saved.narrativeSections.every(section => section.claims.every(claim => claim.evidenceRefs.every(ref => ref.sourceEventId.startsWith("event-")))));
+  });
+  for (const change of [{ AI_WEEKLY_EVIDENCE_SIGNIFICANCE: "TRUE" }, { AI_WEEKLY_EVIDENCE_SELECTOR_V2: "false" }]) await t.test(`invalid ${JSON.stringify(change)}`, async child => {
+    const f = await fixture(child, { locale: "en" });
+    const result = await f.run({ ...settings, ...change });
+    // Gateway hides the prepareInput configuration error behind this fixed code (as for Selector V2).
+    assert.equal(result.error.code, "AI_GATEWAY_INVALID_INPUT"); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0);
+  });
+  for (const mutation of ["budget", "bad-output", "delete", "consent"]) await t.test(mutation, async child => {
+    const f = await fixture(child, { locale: "en" });
+    if (mutation !== "budget") f.respond(async packet => {
+      if (mutation === "delete") await f.pg.exec('DELETE FROM "Event" WHERE "id"=\'event-0\'');
+      if (mutation === "consent") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
+      const data = quotedV2(packet); if (mutation === "bad-output") data.extra = "SYNTHETIC_PRIVATE_PLAN";
+      return Response.json(native(data));
+    });
+    const result = await f.run({ ...settings, ...(mutation === "budget" ? { AI_WEEKLY_REPORT_DAILY_LIMIT: "0" } : {}) });
+    if (mutation === "consent") assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+    else assert.equal(result.succeeded, false);
+    assert.equal(f.calls.length, mutation === "budget" ? 0 : 1);
+    assert.equal((await f.rows("WeeklyReport")).length, 0); assert.equal((await f.rows("AIEvidence")).length, 0);
+    if (mutation === "budget") { assert.equal(result.error.code, "AI_QUOTA_EXCEEDED"); assert.equal(f.retrievalCalls, 0); }
+    if (mutation === "bad-output") { assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1); }
+  });
+});
