@@ -1,5 +1,26 @@
 # PetalPal Security
 
+## Weekly editorial-freedom evaluation — offline preparation, 2026-10-15
+
+The new isolated runner pins `ab52399656904f4f698c5f2d731f9b98d9b658ff`
+without runtime changes. It schedules only C01 English and C04 Simplified Chinese,
+one direct Sonnet 5.5 request each, on the unchanged frozen UNV evidence. Its fresh
+batch/ledger namespace cannot reuse or resume any historical evaluation. Proposed
+maximum US$0.08192 uses the existing US$2/US$10 per-million-token assumptions;
+applicable live rates and integration Gateway/credential scope need fresh human
+verification. No historical approval carries forward.
+
+20 mocked runner tests and 5 Weekly diagnostic checks passed offline, with native
+fetch trapped. New ledger/artifact paths are absent; the shared parent is owned by
+the current user, owner-only and not a symlink. Existing strict JSON/grounding,
+content-free diagnostics, bounded transport, durable attempt reservations, private
+artifact/credential handling and no-replay protections are unchanged. Tests also
+refuse unsafe parent permissions and symlinks before dispatch. Saved prose names
+and a human comparison worksheet are prepared; no new prose exists or quality
+improvement is claimed. No live calls, credentials, spend, deployment or production
+change. **OWNER APPROVAL AND FRESH EXTERNAL VERIFICATION PENDING.** See the
+[execution plan](docs/ai/REFLECTION_EDITORIAL_FREEDOM_EVALUATION.md).
+
 ## Reflection editorial freedom and two output languages — offline only, 2026-10-15
 
 Future Weekly/Monthly v1/v2 output enums, packet admission, service language defaults
