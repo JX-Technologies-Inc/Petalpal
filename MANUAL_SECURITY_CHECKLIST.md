@@ -124,6 +124,14 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
 
 ## 7. AI provider / data handling
 
+- [ ] Before separately authorized rollout of two-language Reflection support,
+  confirm any explicit `AI_REPORT_SUPPORTED_LOCALES` uses only `en`/`zh-Hans`;
+  configurations containing the retired language will fail closed. Confirm owners
+  with unsupported existing preferences can explicitly select a supported language,
+  while historical Traditional reports remain readable under existing owner/consent
+  rules. No automatic profile/content conversion or evidence/ledger cleanup.
+  Status: `OFFLINE CHECKED / PROVIDER CONFIGURATION AND ROLLOUT NOT PERFORMED`.
+
 - [x] Verify Workers AI Customer Content training/data-use policy. Evidence: Cloudflare states Customer Content is not used to train Workers AI models or improve Cloudflare/third-party services without explicit consent. Status: `PASS`
 - [x] Verify applicable Cloudflare DPA. Evidence: Customer DPA v6.4 effective 2026-04-03; processor/subprocessor terms limit processing to service provision and prohibit marketing/advertising use of personal data. Status: `PASS`
 - [ ] Record ordinary Workers AI inference retention. Evidence: official documentation does not specify a general retention period for ordinary prompts/outputs; Customer Content may be stored when a Cloudflare storage service is specifically used. Status: `PARTIAL / EXACT INFERENCE RETENTION NOT SPECIFIED`

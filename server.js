@@ -1,4 +1,5 @@
 import { isWebShellRequest } from "./lib/web-shell.js";
+import { weeklyReportLocale } from "./lib/report-locale.js";
 import { parseJournalPage, journalPageCursor } from "./lib/journal-pagination.js";
 import { updateAiConsent } from "./lib/ai-consent.js";
 import { validateJournalCover } from './lib/journal-cover.js';
@@ -433,7 +434,9 @@ function normalizeLocale(value) {
     return null;
   }
   try {
-    return new Intl.Locale(value.trim()).toString();
+    const locale = new Intl.Locale(value.trim()).toString();
+    weeklyReportLocale(locale); // Validate new selections; never rewrite existing profiles/reports.
+    return locale;
   } catch {
     return null;
   }

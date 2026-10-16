@@ -1,5 +1,33 @@
 # PetalPal Security
 
+## Reflection editorial freedom and two output languages — offline only, 2026-10-15
+
+Future Weekly/Monthly v1/v2 output enums, packet admission, service language defaults
+and new signup/profile language selections allow English and Simplified Chinese.
+Traditional/regional Traditional preferences and explicit configurations containing
+the retired output language fail closed for new generation; no fallback or silent
+content/profile conversion occurs. Historical report retrieval remains owner- and
+consent-checked, bypasses new-generation locale validation and preserves saved
+Traditional v1/v2 prose/metadata. Finalized reuse still precedes new input preparation.
+No migration, record deletion, generation-key or provider setting changed.
+
+Weekly uses concise understanding/writing/fidelity instructions. Factual grounding,
+strict JSON shape, reference/quote/digit/coverage/length guards and content-free
+rejection diagnostics remain intact. Native calls, models, budgets, consent,
+source/deletion fences, privacy, atomic persistence and no-replay rules are unchanged.
+Monthly's supported-language writing code is unchanged; its prompt loses only the
+retired-language guidance. Semantics and actual language/script remain human-review
+limits, not machine-proven facts.
+
+137 distinct offline cases passed across the scoped runs, including historical
+Traditional v1/v2 retrieval, explicit unsupported-locale/config rejection, zero-call
+finalized reuse, owner/consent boundaries and existing worker/cost/source fences.
+Only synthetic in-memory/stubbed data and loopback HTTP were used. No live inference,
+paid evaluation, production change or historical evidence/ledger mutation occurred.
+Before any future rollout, review locale configuration and the explicit language
+selection required for owners with unsupported stored preferences. See
+[scope, compatibility and verification](docs/ai/REFLECTION_EDITORIAL_FREEDOM_TWO_LANGUAGES.md).
+
 ## Reflection v2 evaluation validation diagnostics — offline only, 2026-10-15
 
 The R2 evaluation runner keeps `VALIDATION_FAILED` as its stop code and adds a

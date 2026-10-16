@@ -8,7 +8,7 @@ import { app } from "../../server.js";
 test("profile locale is validated, canonicalized and owner-only", async (t) => {
   const originalFindUnique = prisma.user.findUnique;
   const originalUpdate = prisma.user.update;
-  let persistedLocale = "en";
+  let persistedLocale = "zh-Hant"; // Existing preferences are not migrated implicitly.
 
   prisma.user.findUnique = async ({ where }) => where.firebaseUid
     ? { id: where.firebaseUid === "owner-firebase" ? "owner-1" : "other-1" }
@@ -49,6 +49,13 @@ test("profile locale is validated, canonicalized and owner-only", async (t) => {
     body: JSON.stringify({ preferredLocale })
   });
 
+  for (const locale of ["zh-Hant", "zh-TW", "zh-HK", "zh-MO", "fr-CA", "ja"]) {
+    assert.equal((await send("owner-token", locale)).status, 400);
+    assert.equal(persistedLocale, "zh-Hant");
+  }
+  const simplified = await send("owner-token", "zh-hans");
+  assert.equal(simplified.status, 200);
+  assert.equal((await simplified.json()).user.preferredLocale, "zh-Hans");
   const updated = await send("owner-token", "en-ca");
   assert.equal(updated.status, 200);
   assert.equal((await updated.json()).user.preferredLocale, "en-CA");

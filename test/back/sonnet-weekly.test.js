@@ -156,7 +156,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
 }
 
 test("versioned localized contract renders concise grounded English and Chinese with cited overview/insights", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), packet = buildWeeklyReflectionPacket(input), raw = output(packet);
     raw.insights = [{ kind: "RECURRING_TOPIC", topic: packet.evidence[0].topics[0], refs: ["E1", "E2"] }];
     const result = validateWeeklyReflection(raw, input, packet);
@@ -165,7 +165,7 @@ test("versioned localized contract renders concise grounded English and Chinese 
     for (const moment of raw.moments) assert.ok(result.narrative.includes(moment.quote));
     if (locale !== "en") assert.ok([...result.narrative].length >= 100 && [...result.narrative].length <= 180);
   }
-  assert.equal(weeklyReportLocale("en-CA"), "en"); assert.equal(weeklyReportLocale("zh-TW"), "zh-Hant");
+  assert.equal(weeklyReportLocale("en-CA"), "en"); assert.throws(() => weeklyReportLocale("zh-TW"), { code: "REPORT_NARRATIVE_INVALID_INPUT" });
   assert.equal(weeklyReportLocale("zh-CN"), "zh-Hans"); assert.throws(() => weeklyReportLocale("ja"));
   for (const [locale, quote] of [["en", "I ran 3.5 kilometres, not a marathon."], ["zh-Hans", "我跑了３公里，没有参加比赛。"]]) {
     const input = contractInput(locale); input.evidenceSelection.evidence[0].summary = quote;
@@ -175,7 +175,7 @@ test("versioned localized contract renders concise grounded English and Chinese 
 });
 
 test("Chinese and English grounding rejects fabricated facts, partial negation, numerals, unsupported insights and output fields", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), packet = buildWeeklyReflectionPacket(input), valid = output(packet);
     for (const mutate of [data => { data.version = "invented-v2"; }, data => { data.locale = "ja"; },
       data => { data.overview = "You are improving emotionally / 你的情绪越来越好"; },
@@ -222,12 +222,12 @@ test("English Sonnet runs after durable admission, reuses semantic RAG and atomi
 });
 
 test("Chinese Weekly uses owned period memories without embedding Chinese; no Journal or cross-owner source", async t => {
-  const f = await fixture(t, { locale: "zh-TW" });
+  const f = await fixture(t, { locale: "zh-CN" });
   const result = await f.run();
   assert.equal(result.succeeded, true, result.error?.stack); assert.equal(f.retrievalCalls, 0); assert.equal(f.calls.length, 1);
   const report = (await f.rows("WeeklyReport"))[0].document;
   assert.ok([...report.summary].length >= 100 && [...report.summary].length <= 180);
-  assert.equal(report.narrativeSections[0].locale, "zh-Hant"); assert.ok(report.summary.includes("這週"));
+  assert.equal(report.narrativeSections[0].locale, "zh-Hans"); assert.ok(report.summary.includes("这周"));
   assert.equal(report.eventCount, 2); assert.equal(f.legacyCalls, 0);
   const input = await new ReportInputService({ prisma: f.db, semanticRetrieval: { retrieve: () => assert.fail("no Chinese query") }, localizedWeekly: true })
     .buildWeeklyInput({ identity: { userId: "alice" }, localDate: "2026-09-14" });
@@ -239,7 +239,7 @@ test("Chinese Weekly uses owned period memories without embedding Chinese; no Jo
 test("explicit invalid route/model/flags/config never switches to legacy or starts retrieval", async t => {
   for (const change of [{ AI_WEEKLY_REPORT_PROVIDER: "openai" }, { AI_WEEKLY_REPORT_MODEL: "claude-opus-5-5" },
     { AI_GATEWAY_ENABLED: undefined }, { AI_GATEWAY_ANTHROPIC_ENABLED: undefined }, { AI_USER_DAILY_USD_LIMIT: undefined },
-    { AI_WEEKLY_REPORT_TIMEOUT_MS: "20001" }, { AI_WEEKLY_REPORT_MAX_OUTPUT_TOKENS: "4097" }, { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }]) {
+    { AI_WEEKLY_REPORT_TIMEOUT_MS: "20001" }, { AI_WEEKLY_REPORT_MAX_OUTPUT_TOKENS: "4097" }, { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }, { AI_REPORT_SUPPORTED_LOCALES: "en,zh-Hans,zh-Hant" }]) {
     const f = await fixture(t, { locale: "en" }), result = await f.run({ ...enabled, ...change });
     assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
   }
@@ -392,7 +392,7 @@ test("Weekly composition uses one mocked dispatch per locale and never repairs a
   const prose = {
     en: "You shared a drawing with a friend and finished a sketch on a quiet afternoon.",
     "zh-Hans": "你和朋友分享了一幅画，聊了彼此的近况，也在一个安静的下午画完了一幅素描。",
-    "zh-Hant": "你和朋友分享了一幅畫，聊了彼此的近況，也在一個安靜的下午畫完了一幅素描。"
+
   };
   for (const locale of Object.keys(prose)) await t.test(locale, async t => {
     for (const rejected of [false, true]) {
@@ -420,4 +420,29 @@ test("Weekly composition uses one mocked dispatch per locale and never repairs a
       assert.equal(f.calls.length, 1, "finalized reuse and invalid output cannot buy another call");
     }
   });
+});
+
+
+test("Weekly refuses retired preferences for new v1/v2 generation before any provider request", async t => {
+  for (const contract of ['weekly-reflection-v1', 'weekly-reflection-v2']) {
+    const f=await fixture(t);
+    await f.pg.exec(`UPDATE "User" SET "preferredLocale"='zh-Hant' WHERE "id"='alice'`);
+    const result=await f.run({...enabled, AI_WEEKLY_REFLECTION_CONTRACT:contract});
+    assert.equal(result.succeeded,false); assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
+    assert.equal((await f.rows('WeeklyReport')).length,0);
+    assert.equal((await f.rows('User')).find(u=>u.id==='alice').preferredLocale,'zh-Hant');
+  }
+});
+
+test("Weekly reuses a historical Traditional report before enforcing new generation language rules", async t => {
+  const f=await fixture(t);
+  const document={ownerId:'alice',periodKey:'2026-09-14',narrativeStatus:'GENERATED',
+    generationVersion:REPORT_NARRATIVE_GENERATION_VERSION,summary:'你沒有說過自己不再畫畫。',
+    narrativeSections:[{locale:'zh-Hant',contractVersion:'weekly-reflection-v2',claim:'你沒有說過自己不再畫畫。'}]};
+  await f.pg.query('INSERT INTO "WeeklyReport" VALUES ($1,$2,$3,$4)', ['historical-report','alice','2026-09-14',JSON.stringify(document)]);
+  await f.pg.exec(`UPDATE "User" SET "preferredLocale"='zh-TW' WHERE "id"='alice'`);
+  const result=await f.run({...enabled, AI_WEEKLY_REFLECTION_CONTRACT:'weekly-reflection-v2'});
+  assert.equal(result.succeeded,true,result.error?.stack); assert.equal(result.result.skipped,true);
+  assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
+  assert.deepEqual((await f.rows('WeeklyReport'))[0].document,document);
 });

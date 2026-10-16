@@ -176,7 +176,7 @@ async function fixture(t, { locale = "zh-CN", count = 4, previousCount = 1 } = {
 }
 
 test("Monthly contract composes localized grounded patterns, sample changes and closing without source quotations", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), packet = buildMonthlyReflectionPacket(input), raw = output(packet);
     const result = validateMonthlyReflection(raw, input);
     assert.equal(packet.facts.some(fact => fact.kind === "CROSS_WEEK_MOMENTS"), false, "supported synthesis takes precedence over quotations");
@@ -191,7 +191,7 @@ test("Monthly contract composes localized grounded patterns, sample changes and 
 });
 
 test("Monthly schema rejects invented multilingual facts, altered counts, unknown cards and unsupported interpretations", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), packet = buildMonthlyReflectionPacket(input), valid = output(packet);
     for (const mutate of [raw => { raw.version = "v2"; }, raw => { raw.locale = "ja"; }, raw => { raw.overview = "O99"; },
       raw => { raw.text = "You became happier / 你的情绪改善了 / 你的情緒改善了"; },
@@ -285,14 +285,14 @@ test("English Opus preserves BGE retrieval and reserves durable provider-aware b
   assert.equal(ledger.find(row => row.eventType === "AI_COST_RESERVED").reasonCode, "2");
 });
 
-test("Simplified and Traditional Chinese Monthly use independently bounded owned memories without multilingual embeddings", async t => {
-  for (const locale of ["zh-CN", "zh-TW"]) {
+test("Simplified Chinese Monthly aliases use independently bounded owned memories without multilingual embeddings", async t => {
+  for (const locale of ["zh-CN", "zh-Hans"]) {
     const f = await fixture(t, { locale }), result = await f.run();
     assert.equal(result.succeeded, true, result.error?.stack); assert.equal(f.retrievalCalls, 0); assert.equal(f.calls.length, 1);
     const report = (await f.rows("MonthlyReport"))[0].document;
     assert.ok(monthlyTextLength(report.summary) >= 250 && monthlyTextLength(report.summary) <= 350);
     assert.equal(report.narrativeSections[0].locale, monthlyReportLocale(locale));
-    assert.ok(report.summary.includes(locale === "zh-TW" ? "這個月" : "这个月"));
+    assert.ok(report.summary.includes("这个月"));
     const input = await new ReportInputService({ prisma: f.db, semanticRetrieval: { retrieve: () => assert.fail("no Chinese embedding") }, localizedMonthly: true })
       .buildMonthlyInput({ identity: { userId: "alice" }, year: 2026, month: 9 });
     await assert.rejects(f.db.$transaction(tx => assertReportSources(tx, "alice", {
@@ -306,7 +306,7 @@ test("invalid Monthly provider, model, flags, token and locale configuration fai
     { AI_MONTHLY_REPORT_MODEL: "claude-sonnet-5-5" }, { AI_GATEWAY_ENABLED: undefined }, { AI_GATEWAY_ANTHROPIC_ENABLED: undefined },
     { AI_USER_DAILY_USD_LIMIT: undefined }, { AI_MONTHLY_REPORT_TIMEOUT_MS: "20001" }, { AI_MONTHLY_REPORT_TIMEOUT_MS: "0" },
     { AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS: "8193" }, { AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS: "2.5" },
-    { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }]) {
+    { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }, { AI_REPORT_SUPPORTED_LOCALES: "en,zh-Hans,zh-Hant" }]) {
     const f = await fixture(t, { locale: "en" }), result = await f.run({ ...enabled, ...change });
     assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
   }
@@ -443,7 +443,7 @@ test("deleting a saved Monthly comparison source removes its report but preserve
 });
 
 test("canonical deterministic extraction without topics supports verified cross-week Monthly moments in every locale", async t => {
-  for (const locale of ["en", "zh-CN", "zh-TW"]) {
+  for (const locale of ["en", "zh-CN"]) {
     const extracted = await new DeterministicMemoryExtractor().extract({ kind: "EVENT", id: "ordinary", content: summaries(monthlyReportLocale(locale))[0] });
     assert.deepEqual(extracted.topics, []);
     const f = await fixture(t, { locale, previousCount: 0 });
@@ -462,7 +462,7 @@ test("canonical deterministic extraction without topics supports verified cross-
 });
 
 test("Monthly moment cards preserve whole-source negation and numbers and reject altered or truncated evidence", () => {
-  for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const input = contractInput(locale), quotes = locale === "en" ? ["I did not run 3 miles.", "I walked 2 miles, without racing."]
       : locale === "zh-Hant" ? ["我沒有升職，也沒有加薪。", "我走了２公里，沒有參加比賽。"] : ["我没有升职，也没有加薪。", "我走了２公里，没有参加比赛。"];
     for (const source of input.sourceFence.sources) { source.memory.topics = []; }
@@ -508,4 +508,29 @@ test("opt-in monthly-reflection-v2 saves cited cross-week Claude prose; v1 stays
   const reused = await old.run(v2env); assert.equal(reused.result.skipped, true); assert.equal(old.calls.length, 1);
   assert.deepEqual((await old.rows("MonthlyReport"))[0].document, before);
   assert.equal(before.narrativeSections[0].contractVersion, MONTHLY_REFLECTION_CONTRACT);
+});
+
+
+test("Monthly refuses retired preferences for new v1/v2 generation before any provider request", async t => {
+  for (const contract of ['monthly-reflection-v1', 'monthly-reflection-v2']) {
+    const f=await fixture(t);
+    await f.pg.exec(`UPDATE "User" SET "preferredLocale"='zh-Hant' WHERE "id"='alice'`);
+    const result=await f.run({...enabled, AI_MONTHLY_REFLECTION_CONTRACT:contract});
+    assert.equal(result.succeeded,false); assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
+    assert.equal((await f.rows('MonthlyReport')).length,0);
+    assert.equal((await f.rows('User')).find(u=>u.id==='alice').preferredLocale,'zh-Hant');
+  }
+});
+
+test("Monthly reuses a historical Traditional report before enforcing new generation language rules", async t => {
+  const f=await fixture(t);
+  const document={ownerId:'alice',periodKey:'2026-09',narrativeStatus:'GENERATED',
+    generationVersion:REPORT_NARRATIVE_GENERATION_VERSION,summary:'你沒有說過自己不再畫畫。',
+    narrativeSections:[{locale:'zh-Hant',contractVersion:'monthly-reflection-v2',claim:'你沒有說過自己不再畫畫。'}]};
+  await f.pg.query('INSERT INTO "MonthlyReport" VALUES ($1,$2,$3,$4)', ['historical-report','alice','2026-09',JSON.stringify(document)]);
+  await f.pg.exec(`UPDATE "User" SET "preferredLocale"='zh-TW' WHERE "id"='alice'`);
+  const result=await f.run({...enabled, AI_MONTHLY_REFLECTION_CONTRACT:'monthly-reflection-v2'});
+  assert.equal(result.succeeded,true,result.error?.stack); assert.equal(result.result.skipped,true);
+  assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
+  assert.deepEqual((await f.rows('MonthlyReport'))[0].document,document);
 });

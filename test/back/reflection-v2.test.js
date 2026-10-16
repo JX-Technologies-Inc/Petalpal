@@ -110,7 +110,7 @@ const AUTHORED = {
     }
   }
 };
-const LOCALES = ["en", "zh-Hans", "zh-Hant"];
+const LOCALES = ["en", "zh-Hans"];
 const cases = () => ["WEEKLY", "MONTHLY"].flatMap(type => Object.keys(SCENARIOS).flatMap(scenario => LOCALES.map(locale => {
   const input = type === "WEEKLY" ? weeklyInput(locale, SCENARIOS[scenario].slice(0, 2)) : monthlyInput(locale, SCENARIOS[scenario]);
   const validate = type === "WEEKLY" ? validateWeeklyReflectionV2 : validateMonthlyReflectionV2;
@@ -132,7 +132,7 @@ test("v2 packets carry Event text, weekday and week labels without identifiers, 
 });
 
 test("historical authored Prompt-First references render verbatim with sentence evidence, without proving editorial quality", () => {
-  const all = cases(); assert.equal(all.length, 12);
+  const all = cases(); assert.equal(all.length, 8);
   for (const { type, locale, valid, check } of all) {
     const result = check(structuredClone(valid));
     assert.equal(result.sections.length, valid.paragraphs.length);
@@ -265,7 +265,7 @@ test("v2 trimming stays inside the unchanged Gateway admission without truncatin
   const long = i => `第${i}段：${"今天很安静，我把没写完的东西留在桌上，没有决定明天要不要继续。".repeat(12)}`.slice(0, 420) + "。";
   // Seven 421-character Chinese Events stay within the existing 4,000-character Weekly context bound.
   const weekly = weeklyInput("zh-Hans", Array.from({ length: 7 }, (_, i) => long(i)), ["14", "15", "16", "17", "18", "19", "20"]);
-  const monthly = monthlyInput("zh-Hant", Array.from({ length: 12 }, (_, i) => long(i)),
+  const monthly = monthlyInput("zh-Hans", Array.from({ length: 12 }, (_, i) => long(i)),
     Array.from({ length: 12 }, (_, i) => `2026-09-${String([1, 2, 3, 8, 9, 10, 15, 16, 17, 22, 23, 24][i]).padStart(2, "0")}T12:00:00Z`));
   for (const [type, input, build] of [["WEEKLY", weekly, buildWeeklyReflectionV2Packet], ["MONTHLY", monthly, buildMonthlyReflectionV2Packet]]) {
     const { packet } = build(input), selected = input.evidenceSelection.evidence.map(item => item.summary);
@@ -322,8 +322,8 @@ const R2_REFERENCES = {
   ]
 };
 
-test("R2 C01/C04/C05 authored references render requested locales and exact sentence provenance", () => {
-  for (const id of Object.keys(R2_REFERENCES)) {
+test("Retained C01/C04 authored references render requested locales and exact sentence provenance", () => {
+  for (const id of ["C01", "C04"]) {
     const input = stage1Input(id), built = buildWeeklyReflectionV2Packet(input);
     const texts = id === "C04" ? ORDINARY["zh-Hans"] : MIXED_NEGATION;
     assert.deepEqual(built.packet.evidence.map(e => e.text), texts, "frozen evidence stays whole and in order");
@@ -342,20 +342,20 @@ test("R2 C01/C04/C05 authored references render requested locales and exact sent
   }
 });
 
-test("Traditional locale echo and quote provenance are separate: native paraphrases pass, converted quotations fail", () => {
-  const input = stage1Input("C05"), valid = plan("zh-Hant", "WEEKLY", R2_REFERENCES.C05);
+test("source script and output locale are separate: paraphrases pass, converted quotations fail", () => {
+  const input = weeklyInput("zh-Hans", SCENARIOS.negation.slice(0, 2));
+  const valid = plan("zh-Hans", "WEEKLY", [[["那个结果让你很高兴。", ["E1"]], ["你不是不想去，只是还没决定。", ["E2"]]]]);
   assert.ok(validateWeeklyReflectionV2(valid, input));
   const exact = structuredClone(valid);
-  exact.paragraphs[1].sentences[0].text = "你寫下：「我不是不想去，只是还没决定。」";
-  assert.ok(validateWeeklyReflectionV2(exact, input), "an exact source quote may retain Simplified characters");
+  exact.paragraphs[0].sentences[1].text = "你写下：“我不是不想去，只是还没决定。”";
+  assert.ok(validateWeeklyReflectionV2(exact, input));
   const converted = structuredClone(valid);
-  converted.paragraphs[1].sentences[0].text = "你寫下：「我不是不想去，只是還沒決定。」";
-  assert.throws(() => validateWeeklyReflectionV2(converted, input), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" },
-    "natural Traditional rendering belongs in paraphrase, not a silently converted direct quote");
+  converted.paragraphs[0].sentences[1].text = "你写下：“我不是不想去，只是還沒決定。”";
+  assert.throws(() => validateWeeklyReflectionV2(converted, input), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" });
 });
 
-test("C05 realistic structural failures remain rejected without repair or fallback", async t => {
-  const input = stage1Input("C05"), valid = plan("zh-Hant", "WEEKLY", R2_REFERENCES.C05);
+test("Weekly structural failures remain rejected without repair or fallback", async t => {
+  const input = stage1Input("C01"), valid = plan("en", "WEEKLY", R2_REFERENCES.C01);
   // Plausible failure modes, NOT a reconstruction of the lost baseline response.
   const mutations = {
     "regional locale instead of canonical locale": o => { o.locale = "zh-TW"; },
@@ -380,7 +380,7 @@ test("C05 realistic structural failures remain rejected without repair or fallba
 });
 
 test("Stage 1 insufficient evidence and nonexistent packet refs fail closed", () => {
-  for (const id of ["C01", "C04", "C05"]) {
+  for (const id of ["C01", "C04"]) {
     const input = stage1Input(id), output = plan(input.locale, "WEEKLY", R2_REFERENCES[id]);
     const empty = structuredClone(output); empty.paragraphs = [];
     assert.throws(() => validateWeeklyReflectionV2(empty, input), { code: "REPORT_NARRATIVE_GROUNDING_FAILED" });
@@ -404,7 +404,7 @@ test("semantic and script errors still require editorial review even when struct
     ["C01", "The successful demo put your worries to rest.", ["E1"]],
     ["C01", "The bug fix made you happy about the result.", ["E1", "E2"]],
     ["C04", "你第一次在画室试用了炭笔。", ["E3"]],
-    ["C05", "你终于修好了问题。", ["E1"]]
+    ["C01", "你終於修好了問題。", ["E1"]]
   ]) {
     const input = stage1Input(id), output = plan(input.locale, "WEEKLY", R2_REFERENCES[id]);
     output.paragraphs[0].sentences[0] = { text, refs };
@@ -488,7 +488,7 @@ test("Weekly multilingual semantic references keep uncertainty, litotes, speaker
   });
 });
 
-test("Weekly composition keeps Monthly instructions and all schema/packet/validator code identical to the frozen candidate", () => {
+test("Weekly editorial freedom changes Monthly only by retiring its language guidance, keeping schema shape and validation code", () => {
   const root = new URL("../../", import.meta.url);
   const frozen = execFileSync("git", ["show", `${CANDIDATE}:lib/reflection-v2.js`], { cwd: root, encoding: "utf8" });
   const current = readFileSync(new URL("lib/reflection-v2.js", root), "utf8");
@@ -496,7 +496,8 @@ test("Weekly composition keeps Monthly instructions and all schema/packet/valida
   const block = frozen.slice(frozen.indexOf("const shared = type =>"), end)
     .replace("export const REFLECTION_V2_INSTRUCTIONS", "const REFLECTION_V2_INSTRUCTIONS");
   const prompts = runInNewContext(`${block}\nREFLECTION_V2_INSTRUCTIONS`, Object.create(null), { timeout: 100 });
-  assert.equal(REFLECTION_V2_INSTRUCTIONS.MONTHLY, prompts.MONTHLY);
+  const retire = text => text.replace(/^- zh-Hant:.*\n/m, "");
+  assert.equal(REFLECTION_V2_INSTRUCTIONS.MONTHLY, retire(prompts.MONTHLY));
   assert.notEqual(REFLECTION_V2_INSTRUCTIONS.WEEKLY, prompts.WEEKLY);
   assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS.WEEKLY)) <= Buffer.byteLength(JSON.stringify(prompts.WEEKLY)),
     "Weekly revision must not reduce the packet byte allowance");
@@ -508,7 +509,7 @@ test("Weekly composition keeps Monthly instructions and all schema/packet/valida
   const parentBlock = parent.slice(parent.indexOf("const shared = type =>"), parentEnd)
     .replace("export const REFLECTION_V2_INSTRUCTIONS", "const REFLECTION_V2_INSTRUCTIONS");
   const parentPrompts = runInNewContext(`${parentBlock}\nREFLECTION_V2_INSTRUCTIONS`, Object.create(null), { timeout: 100 });
-  assert.equal(REFLECTION_V2_INSTRUCTIONS.MONTHLY, parentPrompts.MONTHLY);
+  assert.equal(REFLECTION_V2_INSTRUCTIONS.MONTHLY, retire(parentPrompts.MONTHLY));
   assert.notEqual(REFLECTION_V2_INSTRUCTIONS.WEEKLY, parentPrompts.WEEKLY);
   assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS.WEEKLY)) <= Buffer.byteLength(JSON.stringify(parentPrompts.WEEKLY)));
   assert.equal(current.slice(current.indexOf("\nfunction schemaFor(type)")), parent.slice(parentEnd));

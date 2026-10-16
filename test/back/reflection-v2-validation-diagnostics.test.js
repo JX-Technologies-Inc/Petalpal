@@ -26,7 +26,8 @@ const rejections = [
   ["additional property", o => { o.SYNTHETIC_PRIVATE_PROPERTY = "SYNTHETIC_PRIVATE_VALUE"; }, C.SCHEMA_ADDITIONAL_PROPERTY],
   ["wrong version", o => { o.version = "wrong"; }, C.VERSION_MISMATCH],
   ["unsupported locale", o => { o.locale = "zh-TW"; }, C.LOCALE_UNSUPPORTED],
-  ["wrong supported locale", o => { o.locale = o.locale === "en" ? "zh-Hant" : "en"; }, C.LOCALE_MISMATCH],
+  ["retired canonical locale", o => { o.locale = "zh-Hant"; }, C.LOCALE_UNSUPPORTED],
+  ["wrong supported locale", o => { o.locale = o.locale === "en" ? "zh-Hans" : "en"; }, C.LOCALE_MISMATCH],
   ["array below minimum", o => { o.paragraphs = []; }, C.SCHEMA_MIN_ITEMS],
   ["array above maximum", o => { o.paragraphs = Array.from({ length: 5 }, () => structuredClone(o.paragraphs[0])); }, C.SCHEMA_MAX_ITEMS],
   ["text below minimum", o => { first(o).text = "x"; }, C.SCHEMA_MIN_LENGTH],
@@ -57,7 +58,7 @@ const rejections = [
   ] })); }, C.NARRATIVE_TOO_LONG]
 ];
 
-for (const type of ["WEEKLY", "MONTHLY"]) for (const locale of ["en", "zh-Hans", "zh-Hant"]) {
+for (const type of ["WEEKLY", "MONTHLY"]) for (const locale of ["en", "zh-Hans"]) {
   test(`${type}/${locale}: diagnostic codes match authoritative rejections without changing output`, () => {
     const { context, output } = fixture(type, locale);
     const before = structuredClone(output), rendered = validateReflectionV2(output, context);
@@ -101,7 +102,7 @@ test("supported digits, normalization and paragraph/narrative boundaries keep ex
   context.built.refs.get("E1").digits.add("2"); first(output).text = "你測了２次。";
   assert.doesNotThrow(() => validateReflectionV2(output, context));
   assert.equal(reflectionV2ValidationCode(output, context), C.UNKNOWN);
-  for (const locale of ["en", "zh-Hant"]) {
+  for (const locale of ["en", "zh-Hans"]) {
     const f = fixture("WEEKLY", locale);
     const space = locale === "en" ? 1 : 0;
     f.output.paragraphs = [{ sentences: [{ text: "x".repeat(350), refs: ["E1"] }, { text: "y".repeat(350 - space), refs: ["E2"] }] }];

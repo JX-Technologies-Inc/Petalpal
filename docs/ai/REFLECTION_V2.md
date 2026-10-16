@@ -1,3 +1,22 @@
+# Current Reflection policy — English and Simplified Chinese only
+
+New Weekly/Monthly generation and language selections support `en` and `zh-Hans`.
+Saved Traditional Chinese reports, evidence and preferences remain unchanged and
+owner/consent-scoped. Unsupported existing preferences require explicit selection
+of a supported language for new generation. Weekly's prompt is shorter and gives
+editorial freedom; Monthly changes only as needed for language support.
+See [implementation, final prompt and offline evidence](REFLECTION_EDITORIAL_FREEDOM_TWO_LANGUAGES.md).
+
+**Editorial quality remains outstanding:** real UNV English/Simplified outputs passed
+validation but stayed chronological. No live output has tested this new prompt.
+
+The three-language matrices, proposed follow-ups and acceptance records below are
+historical. They are superseded for future planning: any new evaluation may include
+only English/Simplified Chinese and requires separate owner authorization. Existing
+consumed batches must never be resumed, reset or repeated.
+
+---
+
 # Opt-in Prompt-First reflection v2 — 2026-10-15
 
 Status: **PROMPT IMPROVED · OFFLINE TESTED · REAL PROVIDER REVALIDATION PENDING · HUMAN EDITORIAL ACCEPTANCE PENDING · PRODUCTION DEFAULT OFF.** The historical single-call Weekly acceptance below used the earlier prompt. The editorial revision has had zero provider calls and is not production-ready.
