@@ -40,6 +40,35 @@ function output(packet) {
 }
 const native = data => ({ model: OPUS_MONTHLY_MODEL, type: "message", role: "assistant", stop_reason: "end_turn",
   content: [{ type: "text", text: JSON.stringify(data) }], usage: { input_tokens: 500, output_tokens: 200 } });
+
+test("Weekly selector OFF/ON does not change actual Monthly worker requests or saved claims", async t => {
+  const mode = process.env.PETALPAL_WEEKLY_SELECTOR_TEST_MODE;
+  if (mode !== undefined && !["OFF", "ON"].includes(mode)) throw Error("Invalid selector test mode");
+  const flags = mode ? [mode === "ON" ? "true" : "false"] : ["false", "true", "invalid"];
+  for (const locale of ["en", "zh-CN"]) for (const contract of [undefined, REFLECTION_V2.MONTHLY]) {
+    const execute = async flag => {
+      let actual;
+      // Close each disposable database before constructing the next one. The
+      // deployment-image verification runs in a memory-bounded Docker VM.
+      await t.test(`${locale}/${contract ?? "v1"}/${flag ?? "default"}`, async child => {
+        const f = await fixture(child, { locale });
+        if (contract) f.respond(packet => Response.json(native({ version: REFLECTION_V2.MONTHLY, locale: packet.locale,
+          paragraphs: [{ sentences: packet.evidence.filter(e => e.scope !== "previous")
+            .map(e => ({ text: `“${e.text}”`, refs: [e.ref] })) }] })));
+        const settings = { ...enabled, ...(contract ? { AI_MONTHLY_REFLECTION_CONTRACT: contract } : {}),
+          ...(flag === undefined ? {} : { AI_WEEKLY_EVIDENCE_SELECTOR_V2: flag }) };
+        const result = await f.run(settings); assert.equal(result.succeeded, true, result.error?.stack);
+        assert.equal(f.calls.length, 1); assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
+        const report = (await f.rows("MonthlyReport"))[0].document;
+        actual = { body: f.calls[0].body, summary: report.summary, sections: report.narrativeSections,
+          evidence: await f.rows("AIEvidence") };
+      });
+      return actual;
+    };
+    const baseline = await execute(undefined);
+    for (const flag of flags) assert.deepEqual(await execute(flag), baseline, `${locale}/${contract ?? "v1"}/${flag}`);
+  }
+});
 function source(id, date, topics = ["drawing"], ownerId = "alice", summary = `Synthetic moment ${id}.`) {
   return { id, ownerId, occurredAt: new Date(date), updatedAt: new Date("2026-10-01"), memoryProcessingAllowed: true,
     memory: { id: `memory-${id}`, ownerId, sourceEventId: id, updatedAt: new Date("2026-10-01"), embeddingInputRevision: 1,
@@ -59,8 +88,15 @@ function contractInput(locale = "zh-Hans") {
 // Disposable SQL engine and synthetic fixtures only; no real models, production
 // schema/migrations, accounts or external connections. SQL rollback is real;
 // independent-connection PostgreSQL row-lock scheduling is not simulated here.
+// Match Weekly's cleanup: node:test retains after-hook closures until file end.
+// Keep a holder, not the fixture/PGlite instance, reachable from those hooks.
+function closeAfter(t, pg) {
+  const holder = { pg };
+  t.after(async () => { const db = holder.pg; holder.pg = null; await db?.close(); });
+}
+
 async function fixture(t, { locale = "zh-CN", count = 4, previousCount = 1 } = {}) {
-  const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); t.after(() => pg.close());
+  const pg = new PGlite({ parsers: { 1114: value => new Date(`${value}Z`) } }); closeAfter(t, pg);
   await pg.exec(`CREATE TYPE "AIJobType" AS ENUM ('WEEKLY_REPORT','MONTHLY_REPORT');
     CREATE TYPE "AIJobStatus" AS ENUM ('PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED');
     CREATE TABLE "User" ("id" text PRIMARY KEY,"timezone" text,"preferredLocale" text);
@@ -307,8 +343,10 @@ test("invalid Monthly provider, model, flags, token and locale configuration fai
     { AI_USER_DAILY_USD_LIMIT: undefined }, { AI_MONTHLY_REPORT_TIMEOUT_MS: "20001" }, { AI_MONTHLY_REPORT_TIMEOUT_MS: "0" },
     { AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS: "8193" }, { AI_MONTHLY_REPORT_MAX_OUTPUT_TOKENS: "2.5" },
     { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }, { AI_REPORT_SUPPORTED_LOCALES: "en,zh-Hans,zh-Hant" }]) {
-    const f = await fixture(t, { locale: "en" }), result = await f.run({ ...enabled, ...change });
-    assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    await t.test(JSON.stringify(change), async child => {
+      const f = await fixture(child, { locale: "en" }), result = await f.run({ ...enabled, ...change });
+      assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    });
   }
 });
 

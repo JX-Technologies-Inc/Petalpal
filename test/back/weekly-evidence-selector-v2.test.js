@@ -192,7 +192,7 @@ test("default-OFF and explicit false match pinned Weekly input and packets on al
   });
 });
 test("flag ON routes the actual input service to corrected V2 in both locales without altering retrieval", async () => {
-  for (const c of frozenInputs().filter(c => c.id === "Q01")) {
+  for (const c of frozenInputs()) {
     const f = serviceFixture(c, "true"), result = await f.weekly();
     assert.deepEqual(result.evidenceSelection, selectWeeklyEvidenceV2(c.args));
     assert.equal(f.state.retrievals, c.locale === "en" ? 1 : 0);

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { PGlite } from "@electric-sql/pglite";
 import { createProductionAiWorker } from "../../lib/ai-worker.js";
-import { ReportInputService } from "../../lib/report-foundation.js";
+import { ReportInputService, REPORT_EVIDENCE_LIMITS } from "../../lib/report-foundation.js";
 import { getEmbeddingProfile, PRODUCTION_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import { REPORT_NARRATIVE_GENERATION_VERSION } from "../../lib/report-narrative.js";
 import { weeklyReportLocale } from "../../lib/report-locale.js";
@@ -11,6 +11,7 @@ import { assertReportSources } from "../../lib/report-write-fence.js";
 import { buildWeeklyReflectionPacket, validateWeeklyReflection, weeklyReportProvider,
   WEEKLY_REFLECTION_CONTRACT, SONNET_WEEKLY_MODEL, SonnetWeeklyReflectionService } from "../../lib/sonnet-weekly.js";
 import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
+import { GATEWAY_TASK_LIMITS } from "../../lib/ai-gateway-config.js";
 
 const enabled = { AI_WEEKLY_REPORT_PROVIDER: "anthropic", AI_WEEKLY_REPORT_MODEL: SONNET_WEEKLY_MODEL,
   AI_GATEWAY_ENABLED: "true", AI_GATEWAY_ANTHROPIC_ENABLED: "true",
@@ -27,6 +28,131 @@ function output(packet) {
 }
 const native = data => ({ model: SONNET_WEEKLY_MODEL, type: "message", role: "assistant", stop_reason: "end_turn",
   content: [{ type: "text", text: JSON.stringify(data) }], usage: { input_tokens: 300, output_tokens: 100 } });
+
+// This test-only matrix passes the flag into the actual worker factory. Ambient
+// production flags cannot override the explicit v1/default-routing regressions.
+const matrixMode = process.env.PETALPAL_WEEKLY_SELECTOR_TEST_MODE;
+if (matrixMode !== undefined && !["OFF", "ON"].includes(matrixMode)) throw Error("Invalid selector test mode");
+const matrixModes = matrixMode ? [matrixMode] : ["OFF", "ON"];
+const quotedV2 = packet => ({ version: REFLECTION_V2.WEEKLY, locale: packet.locale,
+  paragraphs: [{ sentences: packet.evidence.map(item => ({ text: `“${item.text}”`, refs: [item.ref] })) }] });
+for (const mode of matrixModes) for (const locale of ["en", "zh-CN"]) {
+  const settings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY,
+    AI_WEEKLY_EVIDENCE_SELECTOR_V2: mode === "ON" ? "true" : "false" };
+  test(`selector ${mode}/${locale}: realistic week reaches worker with exact provenance and budgets`, async t => {
+    const f = await fixture(t, { locale, count: 7 });
+    const texts = locale === "en" ? [
+      "I sent the bridge proposal to Mina.", "I shared a charcoal sketch with Lee.",
+      "Mina marked the cost section in the bridge proposal.", "An unrelated coupon arrived in my mailbox.",
+      "I rewrote the bridge proposal using Mina's cost notes.",
+      "I did not approve the bridge proposal cost plan; the missing fees remain unresolved.", "I bought groceries for dinner."
+    ] : ["我把桥梁方案发给了小敏。", "我把炭笔素描分享给了小林。", "小敏在桥梁方案的费用部分做了标记。",
+      "信箱里收到一张无关的优惠券。", "我根据小敏的费用意见修改了桥梁方案。",
+      "我没有同意桥梁方案的费用计划，漏掉的费用还没解决。", "我买了晚饭要用的蔬菜。"];
+    for (let i = 0; i < texts.length; i++) {
+      await f.pg.query('UPDATE "Event" SET "occurredAt"=$1 WHERE "id"=$2', [new Date(`2026-09-${14 + i}T12:00:00Z`), `event-${i}`]);
+      await f.pg.query('UPDATE "EventMemory" SET "summary"=$1,"topics"=$2 WHERE "id"=$3',
+        [texts[i], JSON.stringify([i === 1 ? "drawing" : i === 6 ? "errands" : "proposal"]), `memory-${i}`]);
+    }
+    f.respond(packet => Response.json(native(quotedV2(packet))));
+    const result = await f.run(settings); assert.equal(result.succeeded, true, result.error?.stack);
+    assert.equal(f.calls.length, 1); assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0); assert.equal(f.legacyCalls, 0);
+    const indices = mode === "ON" ? [0, 1, 2, 4, 5, 6] : [0, 1, 2, 6];
+    const { packet, body, options } = f.calls[0];
+    assert.deepEqual(packet.evidence.map(e => e.text), indices.map(i => texts[i]));
+    assert.ok(packet.evidence.length <= REPORT_EVIDENCE_LIMITS.WEEKLY.maxEvidence);
+    assert.ok(packet.evidence.reduce((n, e) => n + e.text.length + 96, 0) <= REPORT_EVIDENCE_LIMITS.WEEKLY.maxContextCharacters);
+    assert.ok(Buffer.byteLength(JSON.stringify(body)) + 1024 <= GATEWAY_TASK_LIMITS.WEEKLY_REPORT.input);
+    assert.doesNotMatch(JSON.stringify(packet), /alice|bob|event-\d|memory-\d|sourceFence|ownerId|Journal/);
+    assert.equal(body.system, REFLECTION_V2_INSTRUCTIONS.WEEKLY);
+    assert.equal(options.headers["cf-aig-collect-log-payload"], "false");
+    assert.equal(options.headers["cf-aig-max-attempts"], "1");
+    const evidence = await f.rows("AIEvidence");
+    assert.deepEqual(evidence.map(e => e.sourceEventId).sort(), indices.map(i => `event-${i}`).sort());
+    for (const e of evidence) { assert.equal(e.ownerId, "alice"); assert.equal(e.sourceMemoryId, e.sourceEventId.replace("event-", "memory-")); }
+    const saved = (await f.rows("WeeklyReport"))[0].document;
+    await f.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+    assert.equal((await f.run(settings)).result.skipped, true); assert.equal(f.calls.length, 1);
+    assert.deepEqual((await f.rows("WeeklyReport"))[0].document, saved);
+  });
+  for (const mutation of ["consent", "owner", "optout", "journal", "window", "budget"]) {
+    test(`selector ${mode}/${locale}: ${mutation} blocks dispatch`, async t => {
+      const f = await fixture(t, { locale });
+      if (mutation === "consent") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
+      if (mutation === "owner") await f.pg.exec('UPDATE "EventMemory" SET "ownerId"=\'bob\'');
+      if (mutation === "optout") await f.pg.exec('UPDATE "Event" SET "memoryProcessingAllowed"=false');
+      if (mutation === "journal") await f.pg.exec('UPDATE "EventMemory" SET "memoryType"=\'JOURNAL\'');
+      if (mutation === "window") await f.pg.exec('UPDATE "Event" SET "occurredAt"=\'2026-09-21\'');
+      const result = await f.run({ ...settings, ...(mutation === "budget" ? { AI_WEEKLY_REPORT_DAILY_LIMIT: "0" } : {}) });
+      assert.equal(f.calls.length, 0);
+      assert.equal(f.retrievalCalls, locale === "en" && !["consent", "budget"].includes(mutation) ? 1 : 0);
+      assert.ok(result.succeeded === false || ["INSUFFICIENT_EVIDENCE", "CONSENT_INELIGIBLE"].includes(result.result?.status));
+      assert.equal((await f.rows("AIEvidence")).length, 0);
+    });
+  }
+  for (const mutation of ["revoke", "epoch", "delete", "memory", "locale"]) {
+    test(`selector ${mode}/${locale}: ${mutation} fences a late mocked response`, async t => {
+      const f = await fixture(t, { locale });
+      f.respond(async packet => {
+        if (mutation === "revoke") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
+        if (mutation === "epoch") await f.pg.exec('UPDATE "AiConsent" SET "updatedAt"=\'2099-01-01\'');
+        if (mutation === "delete") await f.pg.exec('DELETE FROM "Event" WHERE "id"=\'event-0\'');
+        if (mutation === "memory") await f.pg.exec('UPDATE "EventMemory" SET "summary"=\'Changed source\'');
+        if (mutation === "locale") await f.pg.exec('UPDATE "User" SET "preferredLocale"=\'ja\'');
+        return Response.json(native(quotedV2(packet)));
+      });
+      const result = await f.run(settings);
+      assert.ok(result.succeeded === false || result.result?.status === "CONSENT_INELIGIBLE");
+      assert.equal(f.calls.length, 1); assert.equal((await f.rows("WeeklyReport")).length, 0);
+      assert.equal((await f.rows("AIEvidence")).length, 0);
+    });
+  }
+  for (const stage of ["evidence", "completion"]) {
+    test(`selector ${mode}/${locale}: ${stage} failure rolls back the entire write`, async t => {
+      const f = await fixture(t, { locale }); f.respond(packet => Response.json(native(quotedV2(packet))));
+      if (stage === "evidence") f.failEvidence(); else f.expireCompletion();
+      assert.equal((await f.run(settings)).succeeded, false); assert.equal(f.calls.length, 1);
+      assert.equal((await f.rows("WeeklyReport")).length, 0); assert.equal((await f.rows("AIEvidence")).length, 0);
+      assert.notEqual((await f.rows("AIJob"))[0].status, "SUCCEEDED");
+    });
+  }
+  for (const count of [0, 1]) test(`selector ${mode}/${locale}: sparse week ${count} makes no request`, async t => {
+    const f = await fixture(t, { locale, count }), result = await f.run(settings);
+    assert.equal(result.succeeded, true, result.error?.stack); assert.equal(result.result.status, "INSUFFICIENT_EVIDENCE");
+    assert.equal(f.calls.length, 0); assert.equal((await f.rows("WeeklyReport"))[0].document.summary, null);
+  });
+  for (const kind of ["malformed", "unknown-ref"]) test(`selector ${mode}/${locale}: ${kind} fails without a repair or replay`, async t => {
+    const f = await fixture(t, { locale });
+    f.respond(packet => {
+      if (kind === "malformed") return new Response("invalid", { headers: { "content-type": "application/json" } });
+      const data = quotedV2(packet); data.paragraphs[0].sentences[0].refs = ["E99"];
+      return Response.json(native(data));
+    });
+    assert.equal((await f.run(settings)).succeeded, false);
+    assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED");
+    assert.equal(f.calls.length, 1); assert.equal((await f.rows("WeeklyReport")).length, 0);
+  });
+  test(`selector ${mode}/${locale}: late response cannot persist after the deadline`, async t => {
+    const f = await fixture(t, { locale }); let release, packet;
+    f.respond(value => { packet = value; return new Promise(resolve => { release = resolve; }); });
+    const result = await f.run({ ...settings, AI_WEEKLY_REPORT_TIMEOUT_MS: "250" });
+    assert.equal(result.error.code, "AI_GATEWAY_TIMEOUT");
+    const response = Response.json(native(quotedV2(packet))), reader = t.mock.method(response.body, "getReader");
+    release(response); await new Promise(setImmediate); await new Promise(setImmediate);
+    assert.equal(reader.mock.callCount(), 0); assert.equal((await f.rows("WeeklyReport")).length, 0);
+    assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1);
+  });
+  test(`selector ${mode}/${locale}: invalid selector settings fail closed in the worker`, async t => {
+    for (const change of [{ AI_WEEKLY_EVIDENCE_SELECTOR_V2: "TRUE" },
+      { AI_WEEKLY_EVIDENCE_SELECTOR_V2: "true", AI_WEEKLY_REFLECTION_CONTRACT: WEEKLY_REFLECTION_CONTRACT }]) {
+      const f = await fixture(t, { locale }), result = await f.run({ ...settings, ...change });
+      // Gateway intentionally hides prepareInput errors behind this fixed code;
+      // direct service tests assert the underlying configuration error.
+      assert.equal(result.error.code, "AI_GATEWAY_INVALID_INPUT");
+      assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    }
+  });
+}
 
 test("selector flag reaches the worker: corrected evidence, one mocked request, provenance and finalized reuse", async t => {
   const texts = [
@@ -229,9 +355,12 @@ test("Chinese and English grounding rejects fabricated facts, partial negation, 
 test("Sonnet stays off by default; existing Weekly provider, generation key and semantic route remain", async t => {
   assert.equal(weeklyReportProvider({}), "workers-ai");
   assert.equal(JSON.stringify(new SonnetWeeklyReflectionService({ env: enabled })), "{}");
-  const f = await fixture(t, { locale: "en" }), result = await f.run({});
-  assert.equal(result.succeeded, true, result.error?.stack); assert.equal(f.legacyCalls, 1); assert.equal(f.calls.length, 0);
-  assert.equal(f.retrievalCalls, 1); assert.equal((await f.rows("WeeklyReport"))[0].document.generationVersion, REPORT_NARRATIVE_GENERATION_VERSION);
+  for (const flag of [undefined, "false", "true", "invalid"]) {
+    const f = await fixture(t, { locale: "en" });
+    const result = await f.run(flag === undefined ? {} : { AI_WEEKLY_EVIDENCE_SELECTOR_V2: flag });
+    assert.equal(result.succeeded, true, result.error?.stack); assert.equal(f.legacyCalls, 1); assert.equal(f.calls.length, 0);
+    assert.equal(f.retrievalCalls, 1); assert.equal((await f.rows("WeeklyReport"))[0].document.generationVersion, REPORT_NARRATIVE_GENERATION_VERSION);
+  }
 });
 
 test("English Sonnet runs after durable admission, reuses semantic RAG and atomically saves evidence/completion", async t => {
@@ -270,8 +399,10 @@ test("explicit invalid route/model/flags/config never switches to legacy or star
   for (const change of [{ AI_WEEKLY_REPORT_PROVIDER: "openai" }, { AI_WEEKLY_REPORT_MODEL: "claude-opus-5-5" },
     { AI_GATEWAY_ENABLED: undefined }, { AI_GATEWAY_ANTHROPIC_ENABLED: undefined }, { AI_USER_DAILY_USD_LIMIT: undefined },
     { AI_WEEKLY_REPORT_TIMEOUT_MS: "20001" }, { AI_WEEKLY_REPORT_MAX_OUTPUT_TOKENS: "4097" }, { AI_REPORT_SUPPORTED_LOCALES: "en,ja" }, { AI_REPORT_SUPPORTED_LOCALES: "en,zh-Hans,zh-Hant" }]) {
-    const f = await fixture(t, { locale: "en" }), result = await f.run({ ...enabled, ...change });
-    assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    await t.test(JSON.stringify(change), async child => {
+      const f = await fixture(child, { locale: "en" }), result = await f.run({ ...enabled, ...change });
+      assert.equal(result.succeeded, false); assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+    });
   }
 });
 

@@ -1,5 +1,22 @@
 # PetalPal Security
 
+## Weekly Selector V2 exact-runtime offline verification — 2026-10-15
+
+Candidate runtime `957c6c2de713e1c3b2219ab5d661c14971a747d3` was verified on
+Node 24.21.0 / ICU 78.3: complete affected native matrices passed 366 tests each
+with the selector OFF and ON; the configured Linux image passed 233 selected
+selector/service/worker/Monthly/fence tests per state with networking disabled.
+Default-OFF matches the pinned previous Weekly input and packet on all 28 frozen
+cases. Actual worker tests retain consent/source/owner fences, exact provenance,
+packet privacy headers and count/character/byte limits. Monthly requests, claims
+and provenance are unchanged. These are synthetic/mocked results, not hosted
+provider or narrative-quality acceptance. Test-only PGlite cleanup fixes resolved
+memory kills in the bounded image; application code and configuration are unchanged.
+Historical evidence and consumed ledgers remain preserved. See the
+[readiness report](docs/ai/WEEKLY_EVIDENCE_SELECTOR_V2_READINESS.md).
+Enabling V2 remains pending owner review; no flag, deployment or production state
+was changed.
+
 ## Weekly Selector V2 integration candidate — default OFF, 2026-10-15
 
 `AI_WEEKLY_EVIDENCE_SELECTOR_V2` is a new server-side opt-in for localized Weekly
