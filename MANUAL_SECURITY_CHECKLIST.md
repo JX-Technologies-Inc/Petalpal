@@ -166,6 +166,8 @@ Last reconciled: 2026-10-08. Existing checked provider evidence is retained; pro
        3. The operator enters the integration-only Gateway token and Anthropic key at the TTY prompt.
        4. After the run, human editorial review of the synthetic output.
 
+- [ ] **New isolated Weekly Candidate vs R2 A/B batch (prepared 2026-10-15):** before any paid request, owner separately approves `APPROVE-6-WEEKLY-CANDIDATE-VS-R2-C01-C04-C05-CALLS`, the exact clean runner commit and US$0.24576 cap. Immediately before attesting, human confirms the integration-only Gateway/account/credential scope, Retry Requests OFF, Cache Responses OFF, no fallback/dynamic routing, direct `claude-sonnet-5-5` routing and current standard rates. Use hidden human TTY entry only after runner gates pass. Batch `reflection-v2-weekly-candidate-vs-r2-99f471cb` must have no existing real ledger or artifact directory. Never resume, reset or modify the original consumed Stage 1 batch. See [the new execution plan](docs/ai/REFLECTION_V2_R2_EVALUATION.md). Status: `NOT AUTHORIZED / NOT PERFORMED`; offline preparation and mocked checks only. Historical observations above do not complete this new verification.
+
 ## 8. Final Security P0 closure
 
 Historical 2026-09-16 repository P0 closure: `COMPLETE WITH DOCUMENTED LIMITATIONS`. No new P0 identified in the reviewed delta; current feature P1/P2 and deployment checks remain open. This is not current release approval.

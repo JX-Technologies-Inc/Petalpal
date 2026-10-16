@@ -1,5 +1,31 @@
 # PetalPal Security
 
+## Weekly Candidate vs R2 evaluation — offline preparation, 2026-10-15
+
+**No paid requests authorized or dispatched.** The separate
+`scripts/reflection-v2-r2-evaluation.mjs` pins the previous candidate and R2, only
+C01/C04/C05 Weekly cases, six Sonnet requests and the exact US$0.24576 reservation.
+It uses a new batch/ledger namespace without reading, resuming or editing the
+consumed Stage 1 ledger. The historical runner and evidence remain unchanged.
+Default/check modes are network-free and create no real ledger/artifacts.
+
+Live requires a new case-bound owner approval, exact clean runner HEAD on its
+dedicated branch, isolated allowlisted environment, no `.env`, private TTY,
+integration-only credentials and fresh human no-retry/no-fallback/no-cache/routing
+and standard-rate attestations. Each attempt is fsynced before a sequential send;
+any existing ledger/artifacts prevent replay, and failure stops without repair or
+replacement. Private ledger/artifact permissions, blinded review, output bounds,
+20-second deadlines and rejection of invalid output/cache usage are covered by
+14 mocked tests with native fetch trapped. Raw failed responses, headers,
+credentials and thinking are not saved. Provider-side settings remain human-only
+and unverified by this preparation; these are local controls, not cross-clone
+replay protection or provider billing certification.
+
+Runtime schemas, validation, consent, ownership, deletion and production settings
+are unchanged. No database is used. Existing semantic/script validation limits
+remain. See [the new plan](docs/ai/REFLECTION_V2_R2_EVALUATION.md); approval and human
+editorial acceptance are still pending.
+
 ## Staged editorial evaluation — offline revision, 2026-10-15
 
 The paired executor now requires an explicit stage, exact case-bound approval
