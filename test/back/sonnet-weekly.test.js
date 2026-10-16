@@ -12,6 +12,8 @@ import { buildWeeklyReflectionPacket, validateWeeklyReflection, weeklyReportProv
   WEEKLY_REFLECTION_CONTRACT, SONNET_WEEKLY_MODEL, SonnetWeeklyReflectionService } from "../../lib/sonnet-weekly.js";
 import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
 import { GATEWAY_TASK_LIMITS } from "../../lib/ai-gateway-config.js";
+import { WEEKLY_RETROSPECTIVE_INSTRUCTIONS } from "../../lib/weekly-editorial.js";
+import { corpus as editorialCorpus, targets as editorialTargets } from "../../experiments/weekly-editorial-quality-v1/fixtures.mjs";
 
 const enabled = { AI_WEEKLY_REPORT_PROVIDER: "anthropic", AI_WEEKLY_REPORT_MODEL: SONNET_WEEKLY_MODEL,
   AI_GATEWAY_ENABLED: "true", AI_GATEWAY_ANTHROPIC_ENABLED: "true",
@@ -606,4 +608,90 @@ test("Weekly reuses a historical Traditional report before enforcing new generat
   assert.equal(result.succeeded,true,result.error?.stack); assert.equal(result.result.skipped,true);
   assert.equal(f.calls.length,0); assert.equal(f.retrievalCalls,0);
   assert.deepEqual((await f.rows('WeeklyReport'))[0].document,document);
+});
+
+// Authored synthetic responses only: E03 is an owner-approved provisional quality
+// reference, not final human gold or evidence of actual Claude performance.
+for (const locale of ["en", "zh-Hans"]) for (const selector of ["false", "true"])
+  for (const format of ["false", "true"]) for (const composition of ["false", "true"]) {
+    test(`editorial E03/${locale}/selector=${selector}/format=${format}/composition=${composition}: actual worker preserves one-call grounding`, async t => {
+      const c = editorialCorpus.cases.find(c => c.id === "E03"), f = await fixture(t, { locale, count: c.events.length });
+      for (const [i, event] of c.events.entries()) {
+        await f.pg.query('UPDATE "Event" SET "occurredAt"=$1 WHERE "id"=$2', [new Date(`2026-09-${event.day}T12:00:00Z`), `event-${i}`]);
+        await f.pg.query('UPDATE "EventMemory" SET "summary"=$1,"topics"=$2 WHERE "id"=$3', [event[locale], JSON.stringify(event.topics), `memory-${i}`]);
+      }
+      const target = editorialTargets.targets.find(t => t.caseId === "E03" && t.locale === locale);
+      f.respond(packet => Response.json(native(selector === "true"
+        ? { version: target.version, locale: target.locale, paragraphs: target.paragraphs }
+        : quotedV2(packet))));
+      const settings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY,
+        AI_WEEKLY_EVIDENCE_SELECTOR_V2: selector, AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: format,
+        AI_WEEKLY_REFLECTION_RETROSPECTIVE: composition };
+      const result = await f.run(settings);
+      assert.equal(result.succeeded, true, result.error?.stack);
+      assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0);
+      assert.equal(f.retrievalCalls, locale === "en" ? 1 : 0);
+      const { body, packet } = f.calls[0];
+      assert.equal(body.system, composition === "true" ? WEEKLY_RETROSPECTIVE_INSTRUCTIONS : REFLECTION_V2_INSTRUCTIONS.WEEKLY);
+      assert.equal(Boolean(packet.recordDays), format === "true");
+      assert.equal(body.model, SONNET_WEEKLY_MODEL); assert.equal(body.max_tokens, 2048);
+      assert.ok(Buffer.byteLength(JSON.stringify(body)) + 1024 <= GATEWAY_TASK_LIMITS.WEEKLY_REPORT.input);
+      const expected = selector === "true" ? c.events : c.events.slice(0, 2);
+      assert.deepEqual(packet.evidence.map(e => e.text), expected.map(e => e[locale]));
+      for (const hidden of ["alice", "sourceEventId", "sourceMemoryId", "event-", "memory-", "review"]) assert.equal(JSON.stringify(packet).includes(hidden), false);
+      assert.equal((await f.rows("AIEvidence")).length, expected.length);
+      assert.equal((await f.rows("AIJob"))[0].status, "SUCCEEDED");
+      const saved = (await f.rows("WeeklyReport"))[0].document;
+      assert.ok(saved.narrativeSections.every(section => section.claims.every(claim => claim.evidenceRefs.every(ref => ref.sourceEventId.startsWith("event-")))));
+      await f.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+      assert.equal((await f.run(settings)).result.skipped, true);
+      assert.equal(f.calls.length, 1, "editorial settings do not authorize regeneration of finalized reports");
+      assert.deepEqual((await f.rows("WeeklyReport"))[0].document, saved);
+    });
+  }
+
+test("editorial flags reject invalid/incompatible settings before retrieval; legacy Workers AI ignores them", async t => {
+  for (const change of [
+    { AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: "invalid" },
+    { AI_WEEKLY_REFLECTION_RETROSPECTIVE: "TRUE" },
+    { AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: "true", AI_WEEKLY_REFLECTION_CONTRACT: WEEKLY_REFLECTION_CONTRACT },
+    { AI_WEEKLY_REFLECTION_RETROSPECTIVE: "true", AI_WEEKLY_REFLECTION_CONTRACT: WEEKLY_REFLECTION_CONTRACT }
+  ]) await t.test(JSON.stringify(change), async child => {
+    const f = await fixture(child, { locale: "en" });
+    const result = await f.run({ ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY, ...change });
+    assert.equal(result.error.code, "AI_GATEWAY_CONFIG_INVALID");
+    assert.equal(f.calls.length, 0); assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0);
+  });
+  await t.test("Workers AI remains independent", async child => {
+    const f = await fixture(child, { locale: "en" });
+    const result = await f.run({ AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: "true", AI_WEEKLY_REFLECTION_RETROSPECTIVE: "invalid" });
+    assert.equal(result.succeeded, true, result.error?.stack);
+    assert.equal(f.calls.length, 0); assert.equal(f.legacyCalls, 1);
+  });
+});
+
+test("both editorial factors preserve zero-budget admission, rejected-output liability and late source fences", async t => {
+  const settings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY,
+    AI_WEEKLY_EVIDENCE_SELECTOR_V2: "true", AI_WEEKLY_REFLECTION_RECORD_DAYS_SEPARATED: "true", AI_WEEKLY_REFLECTION_RETROSPECTIVE: "true" };
+  for (const mutation of ["budget", "bad-output", "delete", "consent"]) await t.test(mutation, async child => {
+    const f = await fixture(child, { locale: "en" });
+    if (mutation !== "budget") f.respond(async packet => {
+      if (mutation === "delete") await f.pg.exec('DELETE FROM "Event" WHERE "id"=\'event-0\'');
+      if (mutation === "consent") await f.pg.exec('UPDATE "AiConsent" SET "memoryEnabled"=false');
+      const data = quotedV2(packet); if (mutation === "bad-output") data.extra = "SYNTHETIC_PRIVATE_PLAN";
+      return Response.json(native(data));
+    });
+    const result = await f.run({ ...settings, ...(mutation === "budget" ? { AI_WEEKLY_REPORT_DAILY_LIMIT: "0" } : {}) });
+    if (mutation === "consent") {
+      assert.equal(result.result.status, "CONSENT_INELIGIBLE");
+      assert.equal((await f.rows("AIJob"))[0].status, "CANCELLED");
+    } else assert.equal(result.succeeded, false);
+    assert.equal(f.calls.length, mutation === "budget" ? 0 : 1);
+    assert.equal((await f.rows("WeeklyReport")).length, 0); assert.equal((await f.rows("AIEvidence")).length, 0);
+    assert.equal(JSON.stringify(f.logs).includes("SYNTHETIC_PRIVATE_PLAN"), false);
+    if (mutation === "budget") { assert.equal(result.error.code, "AI_QUOTA_EXCEEDED"); assert.equal(f.retrievalCalls, 0); }
+    if (mutation === "bad-output") {
+      assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1);
+    }
+  });
 });
