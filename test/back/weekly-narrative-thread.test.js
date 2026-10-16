@@ -27,16 +27,20 @@ test("candidate replaces only the composition paragraph with concrete decisions 
   assert.equal(candidate.length, 4);
   for (const i of [0, 1, 3]) assert.equal(candidate[i], original[i], `stage ${i} unchanged`);
   assert.equal(candidate[2], WEEKLY_NARRATIVE_THREAD_COMPOSITION);
-  for (const decision of ["not record order", "explicitly share a named project, person or object", "said they wanted, liked or worried about",
-    "fixed, kept or cost", "citing linked Events together", "latest stated state, including anything undecided",
-    "no shared theme", "one plain sentence", "stated intensity", "weekdays only when timing matters", "without quotation marks"])
-    assert.ok(WEEKLY_NARRATIVE_THREAD_COMPOSITION.includes(decision), decision);
+  // Owner-specified final production paragraph, verbatim.
+  assert.equal(WEEKLY_NARRATIVE_THREAD_COMPOSITION, "Treat Events as candidates, not a checklist. Select moments with stated significance: " +
+    "a wish, concern, choice, change, unresolved issue, or small detail valued by the user. One distinctive moment may matter more than " +
+    "routine entries; do not favor distress, recency, or equal coverage per day. Link Events only on textual evidence, not shared tags or " +
+    "dates; keep unrelated moments separate and omit filler. Organize by meaning, not weekdays. Preserve open outcomes and stated emotional " +
+    "intensity; infer no hidden motives, traits, diagnoses, lessons, growth, or whole-period trends from selected memories. Paraphrase " +
+    "naturally in English or Simplified Chinese without quotation marks, stock reassurance, or forced themes.");
   const benchmark = corpus.cases.flatMap(c => c.events.flatMap(e => [e.en, e["zh-Hans"]]));
   for (const word of ["crane", "harbour", "Jo ", "Sam", "residency", "studio", "起重机", "港口"]) assert.ok(!WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS.includes(word));
   assert.ok(benchmark.every(text => !WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS.includes(text)));
   // Builder reserves 512 bytes for framing beyond its own prompt; delta + real framing must fit.
   const delta = bytes(WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS) - bytes(REFLECTION_V2_INSTRUCTIONS.WEEKLY);
-  assert.equal(delta, 306);
+  assert.equal(delta, 291);
+  assert.equal(bytes(WEEKLY_NARRATIVE_THREAD_COMPOSITION), 721, "serialized paragraph bytes");
   for (const maxTokens of [1, 2048, GATEWAY_TASK_LIMITS.WEEKLY_REPORT.output]) {
     const b = body(OFF, { x: 1 }, maxTokens);
     const framing = bytes(b) - bytes(b.system) - bytes(wireSchema) - bytes(b.messages[0].content);

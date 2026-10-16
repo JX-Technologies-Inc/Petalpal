@@ -1,5 +1,7 @@
 # Weekly narrative-thread candidate (default OFF)
 
+> **Superseded composition paragraph:** the flag now uses the final selective paragraph (+291 bytes). See [the final revision](WEEKLY_SELECTIVE_REFLECTION_FINAL.md).
+
 Branch `feat/weekly-narrative-thread`, based on `45af54bd1e96c56361ab7d0f5c271513a804c1ae`.
 **This is an offline design only.** No provider call, live evaluation, deployment, migration or flag activation was made.
 The E03 runner branch, reports and ledgers are untouched.

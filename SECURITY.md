@@ -9,7 +9,8 @@ and packet. Any other value, use with v1, or use together with
 before retrieval. No client input can set it. Monthly and Workers AI ignore it.
 It replaces only the composition paragraph of the system prompt. Evidence safeguards,
 quotation/ref rules, packet contents/privacy allowlist, trimming, Gateway byte
-admission (+306 bytes, inside the existing framing allowance), cost reservation,
+admission (+291 bytes after the 2026-10-16 final selective revision, inside the
+existing framing allowance), cost reservation,
 one-call/no-replay, consent/owner/source fences and the validator are unchanged.
 Evidence so far is offline and synthetic: actual-worker PGlite tests are added but
 still need a local run. No provider call, flag activation, deployment or manual-state
