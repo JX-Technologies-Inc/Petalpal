@@ -481,3 +481,15 @@ test("Monthly moment cards preserve whole-source negation and numbers and reject
     assert.throws(() => buildMonthlyReflectionPacket(input), { code: "REPORT_NARRATIVE_INSUFFICIENT_EVIDENCE" });
   }
 });
+
+test("defaulted or Workers AI Monthly routing fails closed for Chinese before admission or retrieval", async t => {
+  for (const [locale, env] of [["zh-CN", {}], ["zh-TW", { AI_MONTHLY_REPORT_PROVIDER: "workers-ai" }]]) {
+    const f = await fixture(t, { locale });
+    const result = await f.run(env);
+    assert.equal(result.skipped, true); assert.equal(result.result.status, "REPORT_LOCALE_UNSUPPORTED");
+    assert.equal((await f.run(env)).claimed, false, "cancelled without retry");
+    const [job] = await f.rows("AIJob"); assert.equal(job.status, "CANCELLED"); assert.equal(job.lastError, "REPORT_LOCALE_UNSUPPORTED");
+    assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0); assert.equal(f.calls.length, 0);
+    assert.equal((await f.rows("MonthlyReport")).length, 0); assert.equal((await f.rows("AuditEvent")).length, 0);
+  }
+});

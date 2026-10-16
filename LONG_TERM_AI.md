@@ -1095,6 +1095,32 @@ ANN, backfill, multilingual data, and held-out data remain unused.
   profile/vectors, and PostgreSQL claim/lease/heartbeat/idempotency support
   throughout observation. Rollback remains available.
 
+### Report locale routing safety fix — 2026-10-14
+
+- Defect (code-traced): `AI_WEEKLY_REPORT_PROVIDER` / `AI_MONTHLY_REPORT_PROVIDER`
+  default to `workers-ai`, which disables localized report input. Chinese owners then
+  entered English-only BGE retrieval, whose SQL admits only `en`/`en-*` owners: one
+  query embedding was spent, zero candidates returned, and the report was saved as
+  `NO_ELIGIBLE_EVIDENCE` even when eligible Chinese EventMemory existed.
+- Fix: `ReportInputService.reportLocale` routes by the owner's locale. The legacy
+  English-only route accepts only `en`/`en-*` (the existing SQL and write-fence
+  predicate); other locales stop with `REPORT_LOCALE_UNSUPPORTED` before cost
+  admission, Event reads, or query embedding. The job is terminally `CANCELLED` with
+  `lastError = REPORT_LOCALE_UNSUPPORTED` (no retry, no report row) and only
+  `{ jobId, workerId, code }` is logged. Consent-ineligible owners still return
+  `CONSENT_INELIGIBLE` first.
+- This is interim fail-closed safety, **not Chinese report support**. Chinese
+  Weekly/Monthly reports are generated only with the localized Sonnet/Opus providers,
+  which keep the bounded owner-scoped EventMemory selection (no Chinese embeddings).
+- Unchanged: English BGE/pgvector retrieval, localized Chinese selection, Monthly week
+  coverage, evidence limits, consent, ownership, deletion, and write-fence checks.
+- Evidence: a dependency-free before/after check of `ReportInputService` produced
+  identical inputs and retrieval arguments for `en`, `en-GB`, and localized `zh-*`
+  (Weekly and Monthly). Legacy `zh-CN`/`zh-TW`/`fr` changed from a BGE call plus
+  `NO_ELIGIBLE_EVIDENCE` to `REPORT_LOCALE_UNSUPPORTED` with no retrieval and no Event
+  read. The PGlite worker tests run in security CI, because the sandbox npm registry
+  denied installing `ajv`/`@electric-sql/pglite` (403).
+
 ## 13. Decisions / ADR-style Log
 
 ### 2026-09-14 — Journal removed from long-term AI workflows

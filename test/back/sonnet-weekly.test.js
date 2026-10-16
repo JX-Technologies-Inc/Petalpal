@@ -351,3 +351,45 @@ test("localized source policy rejects wrong owners, Journal memories, unsupporte
     assert.ok(result.succeeded === false || result.result?.status === "INSUFFICIENT_EVIDENCE");
   }
 });
+
+test("defaulted or Workers AI Weekly routing fails closed for Chinese before admission or retrieval; English stays on BGE", async t => {
+  for (const [locale, env] of [["zh-CN", {}], ["zh-TW", {}], ["zh-Hant-HK", { AI_WEEKLY_REPORT_PROVIDER: "workers-ai" }]]) {
+    const f = await fixture(t, { locale });
+    const result = await f.run(env);
+    assert.equal(result.skipped, true); assert.equal(result.result.status, "REPORT_LOCALE_UNSUPPORTED");
+    assert.equal((await f.run(env)).claimed, false, "cancelled without retry");
+    const [job] = await f.rows("AIJob"); assert.equal(job.status, "CANCELLED"); assert.equal(job.lastError, "REPORT_LOCALE_UNSUPPORTED");
+    assert.ok(f.logs.some(([, meta]) => meta?.code === "REPORT_LOCALE_UNSUPPORTED"));
+    assert.equal(f.retrievalCalls, 0); assert.equal(f.legacyCalls, 0); assert.equal(f.calls.length, 0);
+    assert.equal((await f.rows("WeeklyReport")).length, 0); assert.equal((await f.rows("AuditEvent")).length, 0);
+  }
+  const revoked = await fixture(t, { locale: "zh-CN" });
+  await revoked.pg.exec(`UPDATE "AiConsent" SET "memoryEnabled"=false WHERE "userId"='alice'`);
+  const skipped = await revoked.run({});
+  assert.equal(skipped.succeeded, true); assert.equal(skipped.result.status, "CONSENT_INELIGIBLE"); assert.equal(revoked.retrievalCalls, 0);
+  const en = await fixture(t, { locale: "en-GB" });
+  await en.pg.query(`UPDATE "EventMemory" SET "summary"=$1 WHERE "id"='memory-1'`, ["I shared my drawing with a friend，她很喜欢。"]);
+  const english = await en.run({});
+  assert.equal(english.succeeded, true, english.error?.stack); assert.equal(en.retrievalCalls, 1); assert.equal(en.legacyCalls, 1);
+});
+
+test("localized Chinese Weekly keeps owned mixed-language memories and excludes deleted, foreign and ineligible sources", async t => {
+  const f = await fixture(t, { locale: "zh-TW" });
+  await f.pg.query(`UPDATE "EventMemory" SET "summary"=$1 WHERE "id"='memory-1'`, ["Finished the sketch，終於把 portfolio 第一頁畫完了。"]);
+  await f.pg.exec(`INSERT INTO "Event" VALUES ('event-bob','bob','2026-09-16','2026-09-21',true);
+    INSERT INTO "EventMemory" VALUES ('memory-bob','bob','event-bob','2026-09-21',1,'EVENT','bob synthetic','[]',0.9,'GENERATED',1)`);
+  const service = new ReportInputService({ prisma: f.db, semanticRetrieval: { retrieve: () => assert.fail("no Chinese query") }, localizedWeekly: true });
+  const build = () => service.buildWeeklyInput({ identity: { userId: "alice" }, localDate: "2026-09-14", asOf: new Date("2026-10-01") });
+  const memories = async () => (await build()).evidenceSelection.evidence.map(item => item.sourceMemoryId);
+  const ready = await build();
+  assert.equal(ready.locale, "zh-Hant"); assert.equal(ready.evidenceSelection.status, "READY");
+  assert.deepEqual(await memories(), ["memory-0", "memory-1"]);
+  await f.pg.exec(`DELETE FROM "EventMemory" WHERE "id"='memory-1';
+    INSERT INTO "EventMemory" VALUES ('memory-x','bob','event-1','2026-09-21',1,'EVENT','foreign','[]',0.9,'GENERATED',1)`);
+  assert.deepEqual(await memories(), ["memory-0"]);
+  await f.pg.exec(`UPDATE "Event" SET "memoryProcessingAllowed"=false WHERE "ownerId"='alice'`);
+  const empty = await build();
+  assert.equal(empty.evidenceSelection.status, "INSUFFICIENT_EVIDENCE"); assert.equal(empty.evidenceSelection.reason, "NO_ELIGIBLE_EVIDENCE");
+  await f.pg.exec(`UPDATE "AiConsent" SET "memoryEnabled"=false WHERE "userId"='alice'`);
+  await assert.rejects(build(), { code: "AI_FORBIDDEN" });
+});

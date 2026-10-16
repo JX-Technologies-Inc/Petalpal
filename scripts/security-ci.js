@@ -21,9 +21,9 @@ export const additionalSecurityTests = [
   { file: 'test/back/content-safety.test.js', pattern: '.', count: 7 },
   { file: 'test/back/daily-grow.route.test.js', pattern: '.', count: 1 },
   // Phase 4 cross-week Monthly grounding: mocked Gateway, disposable PGlite.
-  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 22 },
+  { file: 'test/back/opus-monthly.test.js', pattern: '.', count: 23 },
   // Phase 3 bilingual Weekly grounding: mocked inference, disposable PGlite.
-  { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 15 },
+  { file: 'test/back/sonnet-weekly.test.js', pattern: '.', count: 17 },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
   { file: 'test/back/haiku-event-emotion.test.js', pattern: '.', count: 16 },
   { file: 'test/back/speech-admission.test.js', pattern: '^speech admission ', count: 4 },
