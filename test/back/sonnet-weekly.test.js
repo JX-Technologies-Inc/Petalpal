@@ -28,6 +28,36 @@ function output(packet) {
 const native = data => ({ model: SONNET_WEEKLY_MODEL, type: "message", role: "assistant", stop_reason: "end_turn",
   content: [{ type: "text", text: JSON.stringify(data) }], usage: { input_tokens: 300, output_tokens: 100 } });
 
+test("selector flag reaches the worker: corrected evidence, one mocked request, provenance and finalized reuse", async t => {
+  const texts = [
+    "I am feeling calm about the upcoming presentation after reviewing the slides.",
+    "I am not feeling calm about the upcoming presentation after reviewing the slides.",
+    "I am no longer feeling calm about the upcoming presentation after reviewing the slides."
+  ];
+  const prepare = async f => {
+    for (let i = 0; i < texts.length; i++) await f.pg.query('UPDATE "EventMemory" SET "summary"=$1 WHERE "id"=$2', [texts[i], `memory-${i}`]);
+  };
+  const respond = packet => Response.json(native({ version: REFLECTION_V2.WEEKLY, locale: packet.locale,
+    paragraphs: [{ sentences: packet.evidence.map(item => ({ text: `“${item.text}”`, refs: [item.ref] })) }] }));
+  const off = await fixture(t, { locale: "en", count: 3 }); await prepare(off);
+  off.respond(respond);
+  const offResult = await off.run({ ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY });
+  assert.equal(offResult.succeeded, true, offResult.error?.stack); assert.equal(off.calls.length, 1);
+  assert.deepEqual(off.calls[0].packet.evidence.map(e => e.text), [texts[0], texts[2]]);
+  const on = await fixture(t, { locale: "en", count: 3 }); await prepare(on);
+  on.respond(respond);
+  const settings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY, AI_WEEKLY_EVIDENCE_SELECTOR_V2: "true" };
+  const result = await on.run(settings); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(on.calls.length, 1); assert.equal(on.retrievalCalls, 1);
+  assert.equal(on.calls[0].body.system, REFLECTION_V2_INSTRUCTIONS.WEEKLY);
+  assert.deepEqual(on.calls[0].packet.evidence.map(e => e.text), texts);
+  assert.equal((await on.rows("AIEvidence")).length, 3);
+  const saved = (await on.rows("WeeklyReport"))[0].document;
+  await on.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  const reused = await on.run(settings); assert.equal(reused.result.skipped, true); assert.equal(on.calls.length, 1);
+  assert.deepEqual((await on.rows("WeeklyReport"))[0].document, saved);
+});
+
 function contractInput(locale = "zh-Hans") {
   const evidence = summaries(locale).map((summary, i) => ({ ownerId: "alice", sourceEventId: `event-${i}`, sourceMemoryId: `memory-${i}`,
     summary, topics: [locale === "en" ? "drawing" : "画画"], eventDate: `2026-09-${15 + i}T00:00:00Z`,

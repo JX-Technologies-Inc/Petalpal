@@ -1,0 +1,2348 @@
+{
+  "status": "OFFLINE_COMPARISON_PASS",
+  "providerCalls": 0,
+  "semantic": {
+    "original": {
+      "evidence": 32,
+      "meaningful": 18,
+      "followups": 0
+    },
+    "v2": {
+      "evidence": 32,
+      "meaningful": 18,
+      "followups": 0
+    },
+    "corrected": {
+      "evidence": 32,
+      "meaningful": 18,
+      "followups": 0
+    }
+  },
+  "editorial": {
+    "original": {
+      "evidence": 44,
+      "meaningful": 22,
+      "followups": 0
+    },
+    "v2": {
+      "evidence": 56,
+      "meaningful": 32,
+      "followups": 10
+    },
+    "corrected": {
+      "evidence": 54,
+      "meaningful": 32,
+      "followups": 10
+    }
+  },
+  "cases": [
+    {
+      "id": "S01",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 265,
+        "requestBytesWithReserve": 3509
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 265,
+        "requestBytesWithReserve": 3509
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 265,
+        "requestBytesWithReserve": 3509
+      }
+    },
+    {
+      "id": "S01",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 211,
+        "requestBytesWithReserve": 3498
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 211,
+        "requestBytesWithReserve": 3498
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 211,
+        "requestBytesWithReserve": 3498
+      }
+    },
+    {
+      "id": "S02",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 274,
+        "requestBytesWithReserve": 3518
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 274,
+        "requestBytesWithReserve": 3518
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 274,
+        "requestBytesWithReserve": 3518
+      }
+    },
+    {
+      "id": "S02",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 214,
+        "requestBytesWithReserve": 3507
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 214,
+        "requestBytesWithReserve": 3507
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 214,
+        "requestBytesWithReserve": 3507
+      }
+    },
+    {
+      "id": "S03",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 257,
+        "requestBytesWithReserve": 3501
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 257,
+        "requestBytesWithReserve": 3501
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 257,
+        "requestBytesWithReserve": 3501
+      }
+    },
+    {
+      "id": "S03",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 210,
+        "requestBytesWithReserve": 3495
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 210,
+        "requestBytesWithReserve": 3495
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 210,
+        "requestBytesWithReserve": 3495
+      }
+    },
+    {
+      "id": "S04",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 258,
+        "requestBytesWithReserve": 3502
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 258,
+        "requestBytesWithReserve": 3502
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 258,
+        "requestBytesWithReserve": 3502
+      }
+    },
+    {
+      "id": "S04",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 214,
+        "requestBytesWithReserve": 3507
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 214,
+        "requestBytesWithReserve": 3507
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 214,
+        "requestBytesWithReserve": 3507
+      }
+    },
+    {
+      "id": "S05",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 328,
+        "requestBytesWithReserve": 3572
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 328,
+        "requestBytesWithReserve": 3572
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 328,
+        "requestBytesWithReserve": 3572
+      }
+    },
+    {
+      "id": "S05",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 231,
+        "requestBytesWithReserve": 3558
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 231,
+        "requestBytesWithReserve": 3558
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 231,
+        "requestBytesWithReserve": 3558
+      }
+    },
+    {
+      "id": "S06",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 321,
+        "requestBytesWithReserve": 3565
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 321,
+        "requestBytesWithReserve": 3565
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 321,
+        "requestBytesWithReserve": 3565
+      }
+    },
+    {
+      "id": "S06",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 233,
+        "requestBytesWithReserve": 3564
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 233,
+        "requestBytesWithReserve": 3564
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 233,
+        "requestBytesWithReserve": 3564
+      }
+    },
+    {
+      "id": "S07",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 2,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 287,
+        "requestBytesWithReserve": 3531
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 287,
+        "requestBytesWithReserve": 3531
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 287,
+        "requestBytesWithReserve": 3531
+      }
+    },
+    {
+      "id": "S07",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 2,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 221,
+        "requestBytesWithReserve": 3528
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 221,
+        "requestBytesWithReserve": 3528
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 221,
+        "requestBytesWithReserve": 3528
+      }
+    },
+    {
+      "id": "S08",
+      "category": "semantic",
+      "locale": "en",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 344,
+        "requestBytesWithReserve": 3588
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 344,
+        "requestBytesWithReserve": 3588
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 344,
+        "requestBytesWithReserve": 3588
+      }
+    },
+    {
+      "id": "S08",
+      "category": "semantic",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 1,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 238,
+        "requestBytesWithReserve": 3559
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 238,
+        "requestBytesWithReserve": 3559
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [
+          "E1"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 238,
+        "requestBytesWithReserve": 3559
+      }
+    },
+    {
+      "id": "Q01",
+      "category": "editorial",
+      "locale": "en",
+      "meaningfulTotal": 4,
+      "followupTotal": 2,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 7,
+        "deduplicatedCount": 7,
+        "selectedCount": 4,
+        "evidenceCoverage": 0.5714285714285714,
+        "meaningfulRetained": [
+          "E1",
+          "E3"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 921,
+        "requestBytesWithReserve": 4169
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6",
+          "E7"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6",
+          "E7"
+        ],
+        "candidateCount": 7,
+        "deduplicatedCount": 7,
+        "selectedCount": 7,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E5",
+          "E7"
+        ],
+        "followupsRetained": [
+          "E5",
+          "E7"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5714285714285714,
+        "contextCharacters": 1668,
+        "requestBytesWithReserve": 4846
+      },
+      "addedRefs": [
+        "E5",
+        "E6",
+        "E7"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E7"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E7"
+        ],
+        "selectedCount": 6,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E5",
+          "E7"
+        ],
+        "followupsRetained": [
+          "E5",
+          "E7"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.6666666666666666,
+        "contextCharacters": 1492,
+        "requestBytesWithReserve": 4694
+      }
+    },
+    {
+      "id": "Q01",
+      "category": "editorial",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 4,
+      "followupTotal": 2,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 7,
+        "deduplicatedCount": 7,
+        "selectedCount": 4,
+        "evidenceCoverage": 0.5714285714285714,
+        "meaningfulRetained": [
+          "E1",
+          "E3"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 545,
+        "requestBytesWithReserve": 4120
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6",
+          "E7"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6",
+          "E7"
+        ],
+        "candidateCount": 7,
+        "deduplicatedCount": 7,
+        "selectedCount": 7,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E5",
+          "E7"
+        ],
+        "followupsRetained": [
+          "E5",
+          "E7"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5714285714285714,
+        "contextCharacters": 956,
+        "requestBytesWithReserve": 4707
+      },
+      "addedRefs": [
+        "E5",
+        "E6",
+        "E7"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E7"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E7"
+        ],
+        "selectedCount": 6,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E5",
+          "E7"
+        ],
+        "followupsRetained": [
+          "E5",
+          "E7"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.6666666666666666,
+        "contextCharacters": 844,
+        "requestBytesWithReserve": 4587
+      }
+    },
+    {
+      "id": "Q02",
+      "category": "editorial",
+      "locale": "en",
+      "meaningfulTotal": 5,
+      "followupTotal": 1,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "candidateCount": 6,
+        "deduplicatedCount": 6,
+        "selectedCount": 5,
+        "evidenceCoverage": 0.8333333333333334,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E3",
+          "E5"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.4,
+        "contextCharacters": 1119,
+        "requestBytesWithReserve": 4333
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "candidateCount": 6,
+        "deduplicatedCount": 6,
+        "selectedCount": 6,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E3",
+          "E5",
+          "E6"
+        ],
+        "followupsRetained": [
+          "E6"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 1376,
+        "requestBytesWithReserve": 4564
+      },
+      "addedRefs": [
+        "E6"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "selectedCount": 6,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E3",
+          "E5",
+          "E6"
+        ],
+        "followupsRetained": [
+          "E6"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 1376,
+        "requestBytesWithReserve": 4564
+      }
+    },
+    {
+      "id": "Q02",
+      "category": "editorial",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 5,
+      "followupTotal": 1,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "candidateCount": 6,
+        "deduplicatedCount": 6,
+        "selectedCount": 5,
+        "evidenceCoverage": 0.8333333333333334,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E3",
+          "E5"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.4,
+        "contextCharacters": 656,
+        "requestBytesWithReserve": 4227
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "candidateCount": 6,
+        "deduplicatedCount": 6,
+        "selectedCount": 6,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E3",
+          "E5",
+          "E6"
+        ],
+        "followupsRetained": [
+          "E6"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 793,
+        "requestBytesWithReserve": 4420
+      },
+      "addedRefs": [
+        "E6"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "selectedCount": 6,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E3",
+          "E5",
+          "E6"
+        ],
+        "followupsRetained": [
+          "E6"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 793,
+        "requestBytesWithReserve": 4420
+      }
+    },
+    {
+      "id": "Q03",
+      "category": "editorial",
+      "locale": "en",
+      "meaningfulTotal": 0,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 4,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 4,
+        "largestThemeShare": 0.25,
+        "contextCharacters": 879,
+        "requestBytesWithReserve": 4121
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 4,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 4,
+        "largestThemeShare": 0.25,
+        "contextCharacters": 879,
+        "requestBytesWithReserve": 4121
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "selectedCount": 4,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 4,
+        "largestThemeShare": 0.25,
+        "contextCharacters": 879,
+        "requestBytesWithReserve": 4121
+      }
+    },
+    {
+      "id": "Q03",
+      "category": "editorial",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 0,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 4,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 4,
+        "largestThemeShare": 0.25,
+        "contextCharacters": 526,
+        "requestBytesWithReserve": 4057
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 4,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 4,
+        "largestThemeShare": 0.25,
+        "contextCharacters": 526,
+        "requestBytesWithReserve": 4057
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "selectedCount": 4,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 4,
+        "largestThemeShare": 0.25,
+        "contextCharacters": 526,
+        "requestBytesWithReserve": 4057
+      }
+    },
+    {
+      "id": "Q04",
+      "category": "editorial",
+      "locale": "en",
+      "meaningfulTotal": 0,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 279,
+        "requestBytesWithReserve": 3569
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 279,
+        "requestBytesWithReserve": 3569
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 279,
+        "requestBytesWithReserve": 3569
+      }
+    },
+    {
+      "id": "Q04",
+      "category": "editorial",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 0,
+      "followupTotal": 0,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 219,
+        "requestBytesWithReserve": 3568
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "candidateCount": 2,
+        "deduplicatedCount": 2,
+        "selectedCount": 2,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 219,
+        "requestBytesWithReserve": 3568
+      },
+      "addedRefs": [],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2"
+        ],
+        "selectedCount": 2,
+        "meaningfulRetained": [],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 219,
+        "requestBytesWithReserve": 3568
+      }
+    },
+    {
+      "id": "Q05",
+      "category": "editorial",
+      "locale": "en",
+      "meaningfulTotal": 3,
+      "followupTotal": 1,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 3,
+        "evidenceCoverage": 0.75,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.6666666666666666,
+        "contextCharacters": 710,
+        "requestBytesWithReserve": 3980
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 4,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E4"
+        ],
+        "followupsRetained": [
+          "E4"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.75,
+        "contextCharacters": 938,
+        "requestBytesWithReserve": 4184
+      },
+      "addedRefs": [
+        "E4"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "selectedCount": 4,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E4"
+        ],
+        "followupsRetained": [
+          "E4"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.75,
+        "contextCharacters": 938,
+        "requestBytesWithReserve": 4184
+      }
+    },
+    {
+      "id": "Q05",
+      "category": "editorial",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 3,
+      "followupTotal": 1,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 3,
+        "evidenceCoverage": 0.75,
+        "meaningfulRetained": [
+          "E1",
+          "E2"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.6666666666666666,
+        "contextCharacters": 394,
+        "requestBytesWithReserve": 3881
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 4,
+        "deduplicatedCount": 4,
+        "selectedCount": 4,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E4"
+        ],
+        "followupsRetained": [
+          "E4"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.75,
+        "contextCharacters": 535,
+        "requestBytesWithReserve": 4088
+      },
+      "addedRefs": [
+        "E4"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "selectedCount": 4,
+        "meaningfulRetained": [
+          "E1",
+          "E2",
+          "E4"
+        ],
+        "followupsRetained": [
+          "E4"
+        ],
+        "distinctThemes": 2,
+        "largestThemeShare": 0.75,
+        "contextCharacters": 535,
+        "requestBytesWithReserve": 4088
+      }
+    },
+    {
+      "id": "Q06",
+      "category": "editorial",
+      "locale": "en",
+      "meaningfulTotal": 4,
+      "followupTotal": 1,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 5,
+        "deduplicatedCount": 5,
+        "selectedCount": 4,
+        "evidenceCoverage": 0.8,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E4"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 958,
+        "requestBytesWithReserve": 4209
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "candidateCount": 5,
+        "deduplicatedCount": 5,
+        "selectedCount": 5,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "followupsRetained": [
+          "E5"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.6,
+        "contextCharacters": 1225,
+        "requestBytesWithReserve": 4455
+      },
+      "addedRefs": [
+        "E5"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "selectedCount": 5,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "followupsRetained": [
+          "E5"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.6,
+        "contextCharacters": 1225,
+        "requestBytesWithReserve": 4455
+      }
+    },
+    {
+      "id": "Q06",
+      "category": "editorial",
+      "locale": "zh-Hans",
+      "meaningfulTotal": 4,
+      "followupTotal": 1,
+      "original": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4"
+        ],
+        "candidateCount": 5,
+        "deduplicatedCount": 5,
+        "selectedCount": 4,
+        "evidenceCoverage": 0.8,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E4"
+        ],
+        "followupsRetained": [],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.5,
+        "contextCharacters": 533,
+        "requestBytesWithReserve": 4087
+      },
+      "v2": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "candidateCount": 5,
+        "deduplicatedCount": 5,
+        "selectedCount": 5,
+        "evidenceCoverage": 1,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "followupsRetained": [
+          "E5"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.6,
+        "contextCharacters": 677,
+        "requestBytesWithReserve": 4306
+      },
+      "addedRefs": [
+        "E5"
+      ],
+      "deterministic": true,
+      "budgetCompliant": true,
+      "corrected": {
+        "selectedRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "visibleRefs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "selectedCount": 5,
+        "meaningfulRetained": [
+          "E1",
+          "E3",
+          "E4",
+          "E5"
+        ],
+        "followupsRetained": [
+          "E5"
+        ],
+        "distinctThemes": 3,
+        "largestThemeShare": 0.6,
+        "contextCharacters": 677,
+        "requestBytesWithReserve": 4306
+      }
+    }
+  ]
+}

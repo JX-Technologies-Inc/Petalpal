@@ -1,5 +1,31 @@
 # PetalPal Security
 
+## Weekly Selector V2 integration candidate — default OFF, 2026-10-15
+
+`AI_WEEKLY_EVIDENCE_SELECTOR_V2` is a new server-side opt-in for localized Weekly
+input selection under `weekly-reflection-v2`. Unset/`false` uses the existing
+selector; only literal `true` opts in, incompatible output contracts and other
+flag values fail closed on that path. Monthly and unlocalized Workers AI Weekly
+selection ignore this flag. No environment, provider or deployment was changed.
+
+The candidate replaces fuzzy duplicate suppression with exact normalized-text
+matching, preserving changes in negation, speaker, quantities and outcomes.
+Backfill requires specific lexical overlap within an initial topic group and a
+new sentence; this is selection guidance, not semantic verification or permission
+to infer identity, emotion or causation. Count, character, byte, locale and
+minimum-evidence bounds remain. No scoring service or extra model request is added.
+
+When enabled, retrieved candidates are reconciled against the already consent-
+checked, owner-scoped Event/Memory versions before packet construction. Ambiguous
+source versions, missing/foreign owners and explicit source opt-out are refused.
+Existing consent rechecks, deletion/revision fences, selected/cited provenance,
+atomic persistence, idempotency, output validation and privacy allowlists remain.
+Only synthetic offline and mocked/in-memory evidence was used. Default-OFF parity
+is checked against the pinned previous implementation; no narrative-quality gain
+is claimed. Historical evaluations and consumed ledgers are untouched. See the
+[candidate report](docs/ai/WEEKLY_EVIDENCE_SELECTOR_V2_CANDIDATE.md). Enabling remains
+pending owner review and is outside this preparation task.
+
 ## Weekly quotation contract — offline clarification after live stop, 2026-10-15
 
 The approved editorial-freedom batch at runner
