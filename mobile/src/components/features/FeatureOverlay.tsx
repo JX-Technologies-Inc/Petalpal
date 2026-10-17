@@ -1,6 +1,7 @@
 import { PrivacyAndSupport } from './PrivacyAndSupport';
 import { DeleteAccountSettings } from './DeleteAccountSettings';
 import { AiPrivacySettings } from './AiPrivacySettings';
+import { ReportLanguageSettings } from './ReportLanguageSettings';
 import { CommunityGuidelines } from './CommunityGuidelines';
 import { usePanelTheme, type PanelTheme } from './PanelTheme';
 import { useEffect, useState } from 'react';
@@ -101,6 +102,9 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
       </FeatureSection>
       <FeatureSection title="AI & privacy">
         <AiPrivacySettings key={session?.user.id} />
+      </FeatureSection>
+      <FeatureSection title="Report language">
+        <ReportLanguageSettings key={session?.user.id} />
       </FeatureSection>
       <FeatureSection title="Background">
         <View style={ui.row}>

@@ -53,3 +53,25 @@ test('account deletion requires confirmation; cancellation and retry are operabl
  await f.press('Delete Account');await f.press('Permanently delete my account');assert.equal(count,1);
  assert.ok(f.all().some(n=>n.props?.children==='Sign in again'));await f.press('Permanently delete my account');assert.equal(count,2);
 });
+test('report language reads the session locale and saves only preferredLocale through the owner profile API',async()=>{
+ let locale='en';
+ const f=fixture(['ReportLanguageSettings','ReportLanguageSettings'],async(path,method,body)=>{if(method==='PUT'){locale=body.preferredLocale;return {user:{id:'owner',preferredLocale:locale}};}return {user:{id:'owner',preferredLocale:locale}};});
+ await f.flush();
+ const text=()=>f.all().filter(n=>n.type==='Text').map(n=>[].concat(n.props.children).join('')).join(' | ');
+ const button=title=>f.all().find(n=>n.props?.title===title);
+ assert.match(text(),/language: English/);assert.equal(button('English').props.disabled,true);
+ await f.press('简体中文');
+ assert.deepEqual(JSON.parse(JSON.stringify(f.calls.at(-1))),{path:'/users/owner/profile',method:'PUT',body:{preferredLocale:'zh-Hans'}});
+ assert.match(text(),/language: 简体中文/);assert.match(text(),/Report language saved\./);assert.equal(button('简体中文').props.disabled,true);
+ await f.press('English');
+ assert.deepEqual(JSON.parse(JSON.stringify(f.calls.at(-1).body)),{preferredLocale:'en'});assert.equal(f.calls.filter(c=>c.method==='PUT').length,2);
+});
+test('report language failure is shown once, not retried, and unsupported locales show as not set',async()=>{
+ const f=fixture(['ReportLanguageSettings','ReportLanguageSettings'],async(_path,method)=>{if(method==='PUT')throw Error('Profile update failed');return {user:{preferredLocale:'zh-Hant'}};});
+ await f.flush();
+ const text=()=>f.all().filter(n=>n.type==='Text').map(n=>[].concat(n.props.children).join('')).join(' | ');
+ assert.match(text(),/language: not set/);
+ await f.press('简体中文');
+ assert.match(text(),/Profile update failed/);assert.match(text(),/language: not set/);
+ assert.equal(f.calls.filter(c=>c.method==='PUT').length,1);
+});
