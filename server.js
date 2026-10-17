@@ -1961,6 +1961,9 @@ async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed,
 }
 
 app.post("/events", aiRateLimit, async (req, res) => {
+  // Diagnostics only: wall time spent in the Event + memory-job transaction call.
+  let transactionStartedAt = null;
+  let transactionElapsedMs = null;
   try {
     if (req.get("x-petalpal-emotion-lab") === "1") {
       try {
@@ -1989,6 +1992,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (primaryGardenMood !== null && !CANONICAL_PRIMARY_GARDEN_MOODS.includes(primaryGardenMood)) {
       return res.status(400).json({ error: "Unsupported Primary Garden Mood" });
     }
+    transactionStartedAt = Date.now();
     const result = await createEventAndEnqueueMemoryJob({
       prisma,
       identity: req.auth,
@@ -1998,6 +2002,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
       occurredAt: new Date(),
       idempotencyKey: req.get("idempotency-key")
     });
+    transactionElapsedMs = Date.now() - transactionStartedAt;
     const enrichment = result.created
       ? (primaryGardenMood
           ? await enrichCreatedEvent(result.event, primaryGardenMood, result.aiProcessingAllowed, result.aiProcessingConsentUpdatedAt)
@@ -2026,7 +2031,8 @@ app.post("/events", aiRateLimit, async (req, res) => {
     if (error?.code === CONTENT_REJECTED) return res.status(422).json(contentSafetyResponse(req,error));
     if (error?.code === "EVENT_TOO_LARGE") return res.status(413).json({ error: error.message });
     if (error?.code === "IDEMPOTENCY_CONFLICT") return res.status(409).json({ error: error.message });
-    logServerError("POST /events error", error);
+    if (transactionStartedAt !== null && transactionElapsedMs === null) transactionElapsedMs = Date.now() - transactionStartedAt;
+    logServerError("POST /events error", error, transactionElapsedMs === null ? {} : { transactionElapsedMs });
     return res.status(500).json({ error: "Failed to create Event" });
   }
 });
