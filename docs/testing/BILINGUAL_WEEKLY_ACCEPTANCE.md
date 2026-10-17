@@ -154,8 +154,9 @@ remove the budget variables and redeploy, and read the report owner-only.
    secret and the token email to equal the stored identity, plus locale `zh-Hans`,
    week `2026-10-12`, memory consent (report list 200) and no existing report for
    the week. Anything unconfirmed stops it.
-2. `phase=trigger` (protected environment `petalpal-weekly-trigger`, required
-   reviewers) runs only on `main` with `run_attempt == 1` and only at or after
+2. `phase=trigger` (same protected environment `petalpal-web-build-integration`,
+   which must have required reviewers; it already holds the verified TEST identity
+   secrets) runs only on `main` with `run_attempt == 1` and only at or after
    2026-10-19T00:00:00Z. It repeats every check, then sends exactly one request
    with no retry.
 

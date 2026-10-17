@@ -147,7 +147,9 @@ test("workflow keeps authorization in protected environments, not inputs", () =>
   assert.deepEqual(workflow.on.workflow_dispatch.inputs.phase.options, ["check", "trigger"]);
   assert.deepEqual(workflow.permissions, { contents: "read" });
   assert.equal(workflow.concurrency["cancel-in-progress"], false);
-  assert.equal(workflow.jobs.trigger.environment, "petalpal-weekly-trigger");
+  // Both phases use the protected environment that already holds the verified TEST identity.
+  assert.equal(workflow.jobs.check.environment, "petalpal-web-build-integration");
+  assert.equal(workflow.jobs.trigger.environment, "petalpal-web-build-integration");
   assert.match(workflow.jobs.trigger.if, /github\.ref == 'refs\/heads\/main'/);
   assert.match(workflow.jobs.trigger.if, /github\.run_attempt == 1/);
   assert.match(workflow.jobs.check.if, /github\.ref == 'refs\/heads\/main'/);
