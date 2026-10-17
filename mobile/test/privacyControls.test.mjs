@@ -23,6 +23,17 @@ test('AI choices start off, require an explicit save and include the disclosed v
  await f.press('Save my AI choices');assert.deepEqual(JSON.parse(JSON.stringify(f.calls.at(-1).body)),{...off,aiProcessing:true,disclosureVersion:disclosure.version});
  await f.press('Withdraw all AI consent');assert.deepEqual(JSON.parse(JSON.stringify(f.calls.at(-1).body)),{...off,disclosureVersion:disclosure.version});
 });
+test('saves send only the three flags even though the API returns the whole consent record',async()=>{
+ // Real GET/PUT responses include id, userId, termsVersion and timestamps; PUT rejects any of them (HTTP 400).
+ const record=c=>({id:'consent-1',userId:'owner',termsVersion:'ai-2026-10-15',...c,grantedAt:null,revokedAt:null,createdAt:'2026-10-16T00:00:00.000Z',updatedAt:'2026-10-16T00:00:00.000Z'});
+ const f=fixture(['AiPrivacySettings','AiPrivacySettings'],async(path,method,body)=>method==='PUT'?record({aiProcessing:body.aiProcessing,personalization:body.personalization,memoryEnabled:body.memoryEnabled}):path==='/ai/disclosure'?disclosure:record(off));
+ await f.flush();
+ for(const index of [0,1,2]){f.all().filter(n=>n.type==='Switch')[index].props.onValueChange(true);await f.flush();}
+ const all={aiProcessing:true,personalization:true,memoryEnabled:true};
+ await f.press('Save my AI choices');assert.deepEqual(JSON.parse(JSON.stringify(f.calls.at(-1).body)),{...all,disclosureVersion:disclosure.version});
+ await f.press('Save my AI choices');assert.deepEqual(JSON.parse(JSON.stringify(f.calls.at(-1).body)),{...all,disclosureVersion:disclosure.version});
+ assert.ok(f.all().filter(n=>n.type==='Switch').every(n=>n.props.value===true));
+});
 test('disclosure failure prevents a grant but never prevents withdrawal',async()=>{
  const f=fixture(['AiPrivacySettings','AiPrivacySettings'],async(path,method,body)=>{if(method==='PUT')return body;if(path==='/ai/disclosure')throw Error('Temporarily unavailable');return off;});
  await f.flush();assert.equal(f.all().find(n=>n.props?.title==='Save my AI choices').props.disabled,true);
