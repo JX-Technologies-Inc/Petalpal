@@ -178,8 +178,8 @@ realTest("real PostgreSQL stores and retrieves owner-scoped 384d Event embedding
     await seedUser(prisma, alice);
     await seedUser(prisma, bob);
     await prisma.aiConsent.createMany({ data: [
-      { userId: alice, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
-      { userId: bob, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() }
+      { userId: alice, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
+      { userId: bob, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() }
     ] });
     try {
       const aliceEvent = await prisma.event.create({
@@ -248,9 +248,9 @@ realTest("real PostgreSQL embedding backfill selects only eligible English missi
     for (const ownerId of Object.values(owners)) await seedUser(prisma, ownerId);
     await prisma.user.update({ where: { id: owners.chinese }, data: { preferredLocale: "zh-Hans" } });
     await prisma.aiConsent.createMany({ data: [
-      { userId: owners.alice, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
-      { userId: owners.bob, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
-      { userId: owners.chinese, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
+      { userId: owners.alice, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
+      { userId: owners.bob, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
+      { userId: owners.chinese, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
       { userId: owners.revoked, termsVersion: "v1", aiProcessing: false, personalization: false, memoryEnabled: false, revokedAt: new Date() }
     ] });
 
@@ -355,7 +355,7 @@ realTest("real PostgreSQL builds bounded owner-safe Monthly evidence input from 
     const revoked = `pg-evidence-revoked-${suffix}`;
     for (const ownerId of [alice, bob, revoked]) await seedUser(prisma, ownerId);
     await prisma.aiConsent.createMany({ data: [alice, bob, revoked].map((userId) => ({
-      userId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date()
+      userId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date()
     })) });
     const vectors = {
       exact: [1, ...Array(383).fill(0)],
@@ -438,7 +438,7 @@ realTest("real PostgreSQL report worker persists grounded narrative and provenan
     const ownerId = `pg-narrative-owner-${suffix}`;
     await seedUser(prisma, ownerId);
     await prisma.aiConsent.create({
-      data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() }
+      data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() }
     });
     try {
       const events = [];
@@ -529,8 +529,11 @@ realTest("real PostgreSQL report worker persists grounded narrative and provenan
       assert.equal(report.evidence.filter((item) => item.claimType === "NARRATIVE_CITED").length, 1);
       assert.equal((await prisma.aiJob.findUnique({ where: { id: job.id } })).status, "SUCCEEDED");
 
-      const replay = await worker.handlers[AI_JOB_TYPES.WEEKLY_REPORT]({ ...job, lockedAt: new Date("2026-09-22T00:00:00Z") });
-      assert.equal(replay.skipped, true);
+      // Replays: the finished job is not claimable again, and invoking the handler
+      // outside a current claim is fenced by the report write fence.
+      assert.equal((await worker.runJob({ jobId: job.id, ownerId, jobType: AI_JOB_TYPES.WEEKLY_REPORT, now: new Date("2026-09-22T00:00:00Z") })).claimed, false);
+      await assert.rejects(worker.handlers[AI_JOB_TYPES.WEEKLY_REPORT]({ ...job, lockedAt: new Date("2026-09-22T00:00:00Z") }, { workerId: "replay-check" }),
+        (error) => error.code === "REPORT_SOURCE_STALE");
       assert.equal(providerCalls, 1);
       assert.equal(await prisma.weeklyReport.count({ where: { ownerId, periodKey: "2026-09-14" } }), 1);
       assert.equal(await prisma.aiEvidence.count({ where: { ownerId, weeklyReportId: report.id } }), 3);
@@ -555,7 +558,7 @@ realTest("real report regeneration is atomic and leaves only B and C evidence", 
     const suffix = Date.now();
     const ownerId = `pg-report-owner-${suffix}`;
     await seedUser(prisma, ownerId, "America/Vancouver");
-    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true } });
     try {
       const common = { ownerId, timezone: "America/Vancouver", memoryProcessingAllowed: true };
       const eventA = await prisma.event.create({ data: { ...common, content: "A", occurredAt: new Date("2026-09-15T12:00:00Z"), localDate: "2026-09-15", idempotencyKey: `a-${suffix}` } });
@@ -724,7 +727,7 @@ realTest("Event and memory job intent are atomic, consent-aware and idempotent",
     await seedUser(prisma, enabled, "America/Vancouver");
     await seedUser(prisma, disabled, "UTC");
     await prisma.aiConsent.createMany({ data: [
-      { userId: enabled, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
+      { userId: enabled, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() },
       { userId: disabled, termsVersion: "v1", aiProcessing: false, personalization: false, memoryEnabled: false }
     ] });
     try {
@@ -812,7 +815,7 @@ realTest("actual worker child process survives crash through lease recovery and 
   let jobId;
   await withPrisma(async (prisma) => {
     await seedUser(prisma, ownerId);
-    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true } });
     const event = await prisma.event.create({ data: { ownerId, content: "worker runtime", occurredAt: new Date(), timezone: "UTC", localDate: "2026-09-14", idempotencyKey: `runtime-${Date.now()}`, memoryProcessingAllowed: true } });
     jobId = (await prisma.aiJob.create({ data: { ownerId, jobType: "MEMORY_EXTRACTION", resourceId: event.id, eventId: event.id, idempotencyKey: `memory:${event.id}:v1` } })).id;
   });
@@ -851,7 +854,7 @@ realTest("real report SQL uses Vancouver [startUtc, endUtc) across DST", async (
     const suffix = Date.now();
     const ownerId = `pg-timezone-${suffix}`;
     await seedUser(prisma, ownerId, "America/Vancouver");
-    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true } });
     try {
       const times = [
         ["start", "2026-03-02T08:00:00Z", "2026-03-02"],
@@ -878,7 +881,7 @@ realTest("revoke waits out claimed memory work, cancels it, and re-grant permits
   await withPrisma(async (prisma) => {
     const ownerId = `pg-regrant-${Date.now()}`;
     await seedUser(prisma, ownerId);
-    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true } });
     const client = new pg.Client({ connectionString: databaseUrl });
     await client.connect();
     let transactionOpen = false;
@@ -924,7 +927,7 @@ realTest("revoke blocks vector and Weekly/Monthly persistence until consent is r
   await withPrisma(async (prisma) => {
     const ownerId = `pg-persistence-race-${Date.now()}`;
     await seedUser(prisma, ownerId);
-    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: "v1", aiProcessing: true, personalization: true, memoryEnabled: true } });
+    await prisma.aiConsent.create({ data: { userId: ownerId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true } });
     const client = new pg.Client({ connectionString: databaseUrl });
     await client.connect();
     let transactionOpen = false;
