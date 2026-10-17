@@ -748,10 +748,11 @@ Ticks only what recorded evidence shows; earlier entries stay as history. Items 
 - [x] **Fairy advisory-lock fix** (`fix/events-p2028-root`, `c4946a4f`) merged to `main`; not yet deployed to TEST.
 - [ ] Still open for the Weekly trigger: TEST budget variables and one approved `phase=trigger` at or after 2026-10-19T00:00:00Z; then remove the variables and redeploy.
 
-**Most important open owner-only items** (provider actions the agent cannot do; nothing here was performed):
+Firebase Admin key retirement is **done** (user-confirmed 2026-10-08): the August 25 and September 25 keys were deleted, the October 8 key kept, and production sign-in passed afterwards (§ "Firebase old-key retirement — latest user confirmation"). Which old key had been exposed, and whether it was misused, stays unknown, but both are deleted.
 
-1. **Firebase Admin keys:** both older keys (August 25, September 25) were last reported **Active**, and it is unknown which one was exposed. Disable the confirmed-unused one, check production sign-in, then delete; repeat for the other (§ "Firebase old-key retirement").
-2. **Historical `DATABASE_URL`:** confirm at Prisma that the credential in Git history is revoked (PASS/FAIL only); otherwise rotate the current one.
-3. **Branch protection and auto-deploy (last recorded 2026-10-10):** "Protect main" matched no branch. Point it at `main` and require the security CI checks, and confirm production `PetalPal_v2` Auto-Deploy is OFF or not tracking `main`, so a merge cannot deploy production.
-4. **DNS / registrar:** MFA on the registrar and Cloudflare, restricted DNS members, DNSSEC where supported.
-5. **Production `TRUST_PROXY` and rate-limit values:** read their names and values on Render (no secrets), so client-IP throttling is known to work behind Cloudflare.
+**Most important open owner-only items** (provider actions the agent cannot do; nothing here was performed). Each is the latest recorded state; the owner may already have done it without a record.
+
+1. **Historical `DATABASE_URL`:** confirm at Prisma that the credential in Git history is revoked (PASS/FAIL only); otherwise rotate the current one.
+2. **Branch protection and auto-deploy (last recorded 2026-10-10):** "Protect main" matched no branch. Point it at `main` and require the security CI checks, and confirm production `PetalPal_v2` Auto-Deploy is OFF or not tracking `main`, so a merge cannot deploy production.
+3. **DNS / registrar:** MFA on the registrar and Cloudflare, restricted DNS members, DNSSEC where supported.
+4. **Production `TRUST_PROXY` and rate-limit values:** read their names and values on Render (no secrets), so client-IP throttling is known to work behind Cloudflare.
