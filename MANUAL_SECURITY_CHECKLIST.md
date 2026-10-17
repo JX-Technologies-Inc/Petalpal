@@ -737,3 +737,21 @@ Historical outcomes above remain point-in-time evidence. These new release actio
 - [ ] Run `phase=check` only after separate approval; run `phase=trigger` only after the TEST budget configuration is applied and separately approved, at or after 2026-10-19T00:00:00Z. Never re-run a trigger run.
 
 - [ ] (2026-10-17 update) Both workflow phases use the existing environment `petalpal-web-build-integration`, which already holds the verified TEST identity secrets. Confirm it has **Required reviewers** enabled and is limited to `main` (Settings → Environments). Add only the `INTEGRATION_WEEKLY_OWNER_ID` secret there; do not re-enter or rotate the identity secrets.
+
+### Status reconciliation — 2026-10-17
+
+Ticks only what recorded evidence shows; earlier entries stay as history. Items not listed are unchanged.
+
+- [x] **Superseded TEST setup items (2026-10-09/10: Firebase/PostgreSQL/Render/Cloudflare test resources, credential-binding reconfirmation, startup-script Docker command and redeploy, Worker deploy, CORS, e2e identity).** Closed by "Confirmed integration completion — 2026-10-10" above and by the TEST backend deploy of `709c94c4` on 2026-10-17 with startup `Integration environment isolation PASS`, anonymous smoke 10/10 and anonymous Weekly trigger/report list 401 (docs/testing/BILINGUAL_WEEKLY_ACCEPTANCE.md).
+- [x] **`INTEGRATION_WEEKLY_OWNER_ID` stored and correct.** `phase=check` [39064541788](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/39064541788) on `main` `275b6a1c` PASS; that phase stops unless the signed-in owner id equals the secret.
+- [x] **`phase=check` run once, after approval.** The same run waited for environment approval before starting, so `petalpal-web-build-integration` has a reviewer gate. Its deployment-branch restriction to `main` is not independently verified (the job itself only runs on `main`).
+- [x] **Fairy advisory-lock fix** (`fix/events-p2028-root`, `c4946a4f`) merged to `main`; not yet deployed to TEST.
+- [ ] Still open for the Weekly trigger: TEST budget variables and one approved `phase=trigger` at or after 2026-10-19T00:00:00Z; then remove the variables and redeploy.
+
+**Most important open owner-only items** (provider actions the agent cannot do; nothing here was performed):
+
+1. **Firebase Admin keys:** both older keys (August 25, September 25) were last reported **Active**, and it is unknown which one was exposed. Disable the confirmed-unused one, check production sign-in, then delete; repeat for the other (§ "Firebase old-key retirement").
+2. **Historical `DATABASE_URL`:** confirm at Prisma that the credential in Git history is revoked (PASS/FAIL only); otherwise rotate the current one.
+3. **Branch protection and auto-deploy (last recorded 2026-10-10):** "Protect main" matched no branch. Point it at `main` and require the security CI checks, and confirm production `PetalPal_v2` Auto-Deploy is OFF or not tracking `main`, so a merge cannot deploy production.
+4. **DNS / registrar:** MFA on the registrar and Cloudflare, restricted DNS members, DNSSEC where supported.
+5. **Production `TRUST_PROXY` and rate-limit values:** read their names and values on Render (no secrets), so client-IP throttling is known to work behind Cloudflare.

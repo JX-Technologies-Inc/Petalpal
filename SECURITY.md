@@ -996,6 +996,32 @@ what was inspected or tested; “manual” means platform/account action remains
 **Validation / limits.** Fresh `npm ci --ignore-scripts --no-audit --no-fund` succeeds for all three locks in temporary fixtures; every changed package version matches its lock entry, and direct manifest constraints are unchanged. Existing workspace dependency trees/symlinks were preserved, so their old installed versions are not represented as patched. Fixtures contain no `.env` files; copied generated Prisma client is reused without generation/migration. Backend affected tests **36/36 PASS** (including two new dependency regressions), web tests **17/17 PASS**, web build PASS, six mobile-tool assertions PASS; final full and omit-dev audits plus `git diff --check` checked. Remaining npm package counts are recorded separately above; registry results and installation do not certify deployed fixes or close main-branch GitHub alerts. Software Supply-Chain remains PARTIAL; canonical P0/P1/P2 counts unchanged. No manual-checklist or MOBILE.md change is required.
 
 
+## Dependency refresh: Prisma 7.10.1 — 2026-10-17
+
+**Change.** Root lockfile only (`package.json` ranges unchanged): `prisma`, `@prisma/client`,
+`@prisma/adapter-pg` 7.10.0 → 7.10.1. This moves Prisma's pinned `deepmerge-ts` 7.1.5 → 8.0.2 and
+`mysql2` 3.15.3 → 3.24.4, closing the two remaining-risk rows above (recursive-merge stack
+exhaustion; MySQL auth downgrade / compressed-protocol memory). Root `npm audit`: **16 → 12**
+(high **6 → 2**, moderate 10). Remaining high: `@huggingface/transformers` 3.8.1 → `sharp` 0.34.5
+(the fix needs Transformers 4.x, a major change to the embedding path; the inspected pipeline is text-only).
+Mobile is unchanged at 36 (24 high / 12 moderate); every remaining fix there needs an Expo / React
+Native / Firebase major upgrade.
+
+**Compatibility fix found by the real-PostgreSQL suite.** 7.10.1 reports a unique violation's
+constraint as `{ index: "<name>" }` instead of `{ fields: [...] }`. `isEventIdempotencyRace`
+(`lib/ai-jobs.js`) matched fields only, so two concurrent `POST /events` with one Idempotency-Key
+and different payloads would have surfaced a raw P2002 (500) instead of `IDEMPOTENCY_CONFLICT`
+(409). It now also accepts exactly `Event_ownerId_idempotencyKey_key`; any other index name is still
+not treated as the race, and the 7.10.0 field form keeps working.
+
+**Validation (local, $0).** Backend unit suite 975 tests: 922 pass / 21 fail / 32 skipped, with the
+**identical** failing set on 7.10.0 and on 7.10.1 (pre-existing, environment-dependent: no local
+database or IANA 2026b tzdata, eval-branch runners). Real PostgreSQL (disposable pgvector, one fresh
+database per suite): every suite gives the same result before and after, except
+`ai-p0.postgres` concurrent idempotency, which failed on 7.10.1 without the fix and passes with it
+(17/17 twice). The Weekly zh boundary, en local-BGE, Fairy advisory lock and embedding migration
+suites pass. Not deployed.
+
 ## Compatible Journal Pagination — 2026-10-08
 
 **Journal vertical slice: 4/4 checks PASS, NOT deployed.** The earlier 1/4 Privacy API Enumeration checkpoint below is historical evidence from before this explicitly authorized opt-in transition. Garden, nested messages and other endpoints are unchanged. Overall Privacy API Enumeration remains PARTIAL.
