@@ -160,6 +160,13 @@ remove the budget variables and redeploy, and read the report owner-only.
    2026-10-19T00:00:00Z. It repeats every check, then sends exactly one request
    with no retry.
 
+**`phase=check` PASS — 2026-10-17**, run
+[39064541788](https://github.com/JX-Technologies-Inc/Petalpal/actions/runs/39064541788)
+on `main` `275b6a1c` (environment approval granted; trigger job skipped):
+`CHECK PASS: identity matched; locale zh-Hans; week 2026-10-12; memory consent on;
+no existing report for the week`. The stored TEST identity is the owner of the two
+hosted zh-Hans Events.
+
 Duplicate generation is also blocked by the workflow concurrency group, the
 existing-report stop and server-side idempotency (one job per owner, period and
 version, `maxAttempts: 1`). Offline tests: `test/back/integration-weekly-trigger.test.js`
