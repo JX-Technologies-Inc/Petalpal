@@ -1,0 +1,73 @@
+name: Integration Weekly trigger (hosted TEST, zh-Hans, one call)
+
+# Manual only. Fixed TEST hosts and a fixed reviewed target (week 2026-10-12,
+# localDate 2026-10-17) in scripts/integration-weekly-trigger.mjs.
+#   phase=check    read-only identity/locale/consent/report-state check ($0).
+#   phase=trigger  the same checks, then at most one Weekly trigger request.
+# Authorization comes from protected GitHub Environments (required reviewers) and
+# their secrets, never from workflow inputs. Paid inference additionally requires the
+# separately approved TEST budget configuration on Render.
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: check (read-only) or trigger (one request)
+        required: true
+        type: choice
+        options: [check, trigger]
+
+permissions:
+  contents: read
+
+# One run at a time for this workflow; a queued run never cancels a running one.
+# Duplicate generation is also prevented server-side (one job per owner/period/version,
+# maxAttempts 1) and by the script's existing-report stop.
+concurrency:
+  group: petalpal-integration-weekly-trigger
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: inputs.phase == 'check' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: petalpal-web-build-integration
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Read-only identity, locale, consent and report-state check
+        env:
+          PHASE: check
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          INTEGRATION_TEST_EMAIL: ${{ secrets.INTEGRATION_TEST_EMAIL }}
+          INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+          INTEGRATION_WEEKLY_OWNER_ID: ${{ secrets.INTEGRATION_WEEKLY_OWNER_ID }}
+        run: node scripts/integration-weekly-trigger.mjs
+
+  trigger:
+    if: inputs.phase == 'trigger' && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # Required reviewers on this environment are the human approval for the paid step.
+    environment: petalpal-weekly-trigger
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Re-check, then at most one Weekly trigger (no retry)
+        env:
+          PHASE: trigger
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          INTEGRATION_TEST_EMAIL: ${{ secrets.INTEGRATION_TEST_EMAIL }}
+          INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+          INTEGRATION_WEEKLY_OWNER_ID: ${{ secrets.INTEGRATION_WEEKLY_OWNER_ID }}
+        run: node scripts/integration-weekly-trigger.mjs
