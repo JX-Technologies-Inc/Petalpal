@@ -67,7 +67,7 @@ test('integration guard keeps AI disconnected and kill-switched', () => {
 });
 
 const budgeted = () => ({ ...valid(), PETALPAL_TEST_AI_BUDGET: 'weekly-sonnet-v1',
-  AI_USER_DAILY_CALL_LIMIT: '1', AI_GLOBAL_DAILY_CALL_LIMIT: '1', AI_PROVIDER_DAILY_CALL_LIMIT: '1',
+  AI_USER_DAILY_CALL_LIMIT: '2', AI_GLOBAL_DAILY_CALL_LIMIT: '2', AI_PROVIDER_DAILY_CALL_LIMIT: '2', AI_WEEKLY_REPORT_DAILY_LIMIT: '1',
   AI_WEEKLY_REPORT_PROVIDER: 'anthropic', AI_WEEKLY_REPORT_MODEL: 'claude-sonnet-5-5',
   AI_WEEKLY_REFLECTION_CONTRACT: 'weekly-reflection-v2', CLOUDFLARE_AI_GATEWAY_ID: 'petalpal-integration',
   AI_USER_DAILY_USD_LIMIT: '0.05', AI_USER_MONTHLY_USD_LIMIT: '0.05', AI_GLOBAL_DAILY_USD_LIMIT: '0.05',
@@ -82,7 +82,10 @@ test('explicit TEST budget allows exactly one bounded Sonnet Weekly v2 call and 
   assert.equal(assertIntegrationEnvironment(budgeted()), true);
   assert.equal(assertIntegrationEnvironment({ ...budgeted(), AI_USER_DAILY_CALL_LIMIT: '0' }), true);
   budgetRejects({ PETALPAL_TEST_AI_BUDGET: 'unbounded' }, /PETALPAL_TEST_AI_BUDGET/);
-  budgetRejects({ AI_GLOBAL_DAILY_CALL_LIMIT: '2' }, /AI_GLOBAL_DAILY_CALL_LIMIT must be 0 or 1/);
+  // One Weekly generation reserves 2 calls; 3 is never allowed, and only one generation per day.
+  budgetRejects({ AI_GLOBAL_DAILY_CALL_LIMIT: '3' }, /AI_GLOBAL_DAILY_CALL_LIMIT must be 0, 1 or 2/);
+  assert.equal(assertIntegrationEnvironment({ ...budgeted(), AI_USER_DAILY_CALL_LIMIT: '1' }), true);
+  for (const daily of [undefined, '0', '2', '4']) budgetRejects({ AI_WEEKLY_REPORT_DAILY_LIMIT: daily }, /AI_WEEKLY_REPORT_DAILY_LIMIT must be 1/);
   budgetRejects({ AI_ASYNC_EXECUTION_MODE: 'cloudflare_queue' }, /manual/);
   budgetRejects({ AI_WEEKLY_REPORT_PROVIDER: undefined }, /only Sonnet Weekly reflection v2/);
   budgetRejects({ AI_WEEKLY_REPORT_MODEL: 'claude-opus-5-5' }, /only Sonnet Weekly reflection v2/);
