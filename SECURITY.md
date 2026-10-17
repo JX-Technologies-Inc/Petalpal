@@ -3153,3 +3153,7 @@ Final follow-up evidence: the affected security runner completed **exit 0, 233/2
 `scripts/integration-memory-run-once.mjs` is an owner-run, phrase-gated, one-shot runner for at most 10 PENDING `MEMORY_EXTRACTION` jobs of one TEST owner (deterministic extractor, no provider call). It refuses provider/dispatch credentials and `DEV_DATABASE_URL`, verifies the integration database marker with SELECT-only queries before importing Prisma, never loads `.env`, and prints counts only.
 
 Offline evidence: guard 15/15 and startup 5/5; runner preflight/marker/no-connect 3/3. The runner's database execution path is not yet exercised against PostgreSQL. No TEST write, provider call, configuration change or deployment.
+
+## 2026-10-17 — TEST Weekly budget opt-in: call limit corrected (local, not released)
+
+Correction to the 2026-10-16 `weekly-sonnet-v1` entry above (kept unchanged as history): one Weekly generation reserves **2** calls (`WEEKLY_REPORT` policy in `lib/ai-cost-gate.js`), so call limits capped at `1` would fail the reservation (`AI_QUOTA_EXCEEDED`) and, with `maxAttempts: 1`, consume the target week. Under the opt-in the TEST guard now allows call limits `0`, `1` or `2` and **requires** `AI_WEEKLY_REPORT_DAILY_LIMIT=1`; all other conditions are unchanged (Sonnet Weekly v2 only, TEST Gateway, Monthly/Event emotion off, every USD cap ≤ US$0.05). Without the opt-in every call limit must still be `0`. Evidence: `integration-environment` 15/15 (security-ci count unchanged), `integration-startup` 5/5. No hosted change.
