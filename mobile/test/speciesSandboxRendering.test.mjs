@@ -165,6 +165,8 @@ for(const label of ['Companion Growth ON','Bed Filler ON','Growth Coverage OFF',
 assert.equal(getGrowth().showCompanions,false);assert.equal(getGrowth().showFiller,false);assert.equal(getGrowth().showCoverage,true);
 const growthCatalog=load('../flower-density-sandbox/monthly-growth/growthCatalog');
 const growthDeps={'./growthCatalog':growthCatalog,'@shopify/react-native-skia':{...skia,Path:'Path'},
+  '../../flower-visuals/BotanicalFlowerImage':{BotanicalFlowerImage:'BotanicalFlowerImage'},
+  '../../flower-visuals/botanicalPresentationPose':load('../flower-visuals/botanicalPresentationPose'),
   react:{memo:fn=>fn,useState:()=>[{},()=>{}],useCallback:fn=>fn,useEffect:fn=>fn()}};
 const actualGrowth=compile('monthly-growth/MonthlyGrowthLayer.tsx',growthDeps);
 const scene=getGrowth().growth,rendered=actualGrowth.MonthlyGrowthLayer({growth:scene,showCoverage:true,showAnchors:true});
@@ -175,10 +177,24 @@ const loaders=nodes(rendered).filter(n=>n.type?.name==='ImageLoader');
 assert.equal(loaders.length,new Set(scene.pieces.map(p=>`${p.speciesCode}:${p.componentId}`)).size,'Load once per unique asset, not per visual child');
 for(const node of sprites){
   assert.equal(node.props.piece.interactive,false);
-  const sprite=node.type({...node.props,image:'decoded-art'}),image=sprite.props.children;
+  const before=JSON.stringify(node.props.piece);
+  const sprite=node.type({...node.props,image:'decoded-art'}),pose=sprite.props.children,image=pose.props.children;
   assert.ok(nodes(sprite).every(n=>n.props?.clip===undefined),'Actual botanical pixels are not clipped');
-  assert.equal(image.type,'Image');assert.equal(image.props.children,undefined);
+  assert.equal(image.type,'BotanicalFlowerImage');assert.equal(image.props.children,undefined);
+  assert.equal(image.props.role,node.props.piece.kind);
+  const c=growthCatalog.growthCatalog(node.props.piece.speciesCode).lookup(node.props.piece.componentId),p=node.props.piece;
+  assert.deepEqual(clean(sprite.props.transform),[{translateX:p.worldX},{translateY:p.worldY},{rotate:p.rotation}],
+    'Presentation variation preserves the world root and existing rotation');
+  assert.deepEqual(clean(pose.props.transform),clean(growthDeps['../../flower-visuals/botanicalPresentationPose'].botanicalPresentationPose(p.id).transform));
+  assert.equal(image.props.x,-c.anchorX*c.canvasWidth*p.scale);
+  assert.equal(image.props.y,-c.anchorY*c.canvasHeight*p.scale);
+  assert.equal(image.props.width,c.canvasWidth*p.scale);assert.equal(image.props.height,c.canvasHeight*p.scale);
+  assert.equal(image.props.rootX,0);assert.equal(image.props.rootY,0);
+  assert.equal(image.props.plantWidth,(c.contentBounds[2]-c.contentBounds[0])*p.scale);
+  assert.equal(image.props.plantHeight,(c.contentBounds[3]-c.contentBounds[1])*p.scale);
+  assert.ok(image.props.seed>=0&&image.props.seed<1);
   assert.equal(image.props.onPress,undefined);
+  assert.equal(JSON.stringify(p),before,'Art variation never writes back into the growth model');
 }
 const primaryOnly=actualGrowth.growthDrawOrder(scene,false,false);assert.equal(primaryOnly.length,scene.primary.length);
 assert.ok(primaryOnly.every(p=>p.kind==='primary'));

@@ -1,0 +1,15 @@
+{
+  "bounds": { "x": 1330, "y": -420, "width": 1200, "height": 700 },
+  "cutout": {
+    "leftStart": 1330,
+    "leftEnd": 1410,
+    "bottomBase": 120,
+    "bottomWaveAmplitude": 35,
+    "bottomWaveOriginX": 1370,
+    "bottomWaveScale": 150,
+    "rightRiseStartX": 2080,
+    "rightRiseSlope": 0.3,
+    "bottomFeather": 25
+  },
+  "decorativeOnly": true
+}

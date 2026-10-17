@@ -1,5 +1,14 @@
 # PetalPal Security
 
+## Local feedback transport logging — partner branch `updated-flower`, 2026-10-15
+
+The new mobile Help/Feedback local development transport no longer logs submitted
+email addresses or feedback subject text; in `__DEV__` it logs only category, message
+length, timestamp and route. No backend feedback endpoint exists yet: submissions stay
+in memory on the device. No production credentials, player storage or provider
+settings were accessed or changed. (Imported from partner commit
+`540bb76641fd308dd70767755f986df5993145a3`.)
+
 ## Weekly evidence significance — default OFF, offline only, 2026-10-16
 
 `AI_WEEKLY_EVIDENCE_SIGNIFICANCE` is a new server-side opt-in that requires

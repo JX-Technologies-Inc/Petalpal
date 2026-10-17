@@ -230,7 +230,7 @@ test('normal Garden taps prioritize placement and flower details before all Fair
   visit(scene); assert.ok(source);
   const calls = [], context = {
     readOnly: false, fit: 1, selectedFlower: null, cameraZoom: { value: 1 }, cameraX: { value: 0 }, cameraY: { value: 0 }, baseX: 0, baseY: 0,
-    __DEV__: false, perfFixtureRef: { current: false }, activeModeRef: { current: 'normal' }, placementsRef: { current: [] }, useMonthlyGrowth: true,
+    __DEV__: false, perfFixtureRef: { current: false }, fairyStateRef: { current: 'idle' }, activeModeRef: { current: 'normal' }, placementsRef: { current: [] }, useMonthlyGrowth: true,
     hitProductionFlower: () => null, updatePreview: () => calls.push('placement'), openFlowerDetail: () => calls.push('detail'),
     enableFairyWalk: true, treehousePlacement: {}, swingPlacement: {}, teaSetPlacement: {}, moonBedPlacement: {}, Platform: { OS: 'web' },
     canvasRef: { current: { redraw: () => calls.push('redraw') } },

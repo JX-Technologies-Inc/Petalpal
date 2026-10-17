@@ -20,6 +20,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--project', type=Path, default=Path(__file__).resolve().parents[1])
 parser.add_argument('--output', type=Path)
 parser.add_argument('--preview', type=Path)
+parser.add_argument('--scenic-config', type=Path,
+                    help='Optional config override for isolated scenery QA')
 args = parser.parse_args()
 root = args.project.resolve()
 output = args.output or root / 'src/components/garden/fairy/gardenGroundMask.json'
@@ -212,8 +214,31 @@ for start,end,scale,shift in [(0,767,.58,676.14),(767,1652,.6,660.8),(1652,2048,
     add(a*(wet<.08)*band)
     dry &= ~(band&(a>.7)&(wet>.08))
 
+# The upper-right bridge and distant rocks are background scenery, not playable
+# floors. Exclude every cell touched by the visual cutout, including its feather,
+# so removing the old banks cannot leave an invisible landing surface on water.
+# The exact envelope data is shared with the renderer; no PNG alpha is promoted
+# to walkable ground for this decorative background.
+scenic_path = 'src/components/garden/terrain/upper-right-scenic.json'
+scenic_bytes = (args.scenic_config or root/scenic_path).read_bytes()
+sources[scenic_path] = hashlib.sha256(scenic_bytes).hexdigest()
+scenic_config = json.loads(scenic_bytes)
+assert scenic_config['decorativeOnly'], 'Scenic ground policy must be explicit'
+scenic_cutout = scenic_config['cutout']
+scenic_bottom = (scenic_cutout['bottomBase']
+    + scenic_cutout['bottomWaveAmplitude'] * np.sin(
+        (X-scenic_cutout['bottomWaveOriginX']) / scenic_cutout['bottomWaveScale'])
+    + np.maximum(0, X-scenic_cutout['rightRiseStartX']) * scenic_cutout['rightRiseSlope'])
+scenic_weight = smooth(scenic_cutout['leftStart'], scenic_cutout['leftEnd'], X) * (
+    1-smooth(scenic_bottom-scenic_cutout['bottomFeather'],
+             scenic_bottom+scenic_cutout['bottomFeather'], Y))
+scenic_exclusion = scenic_weight > 0
+dry &= ~scenic_exclusion
+
 # Match scene draw order: land/infrastructure/floors paint above the waterfall.
 # The wet veto removes covered basin terrain, never those foreground surfaces.
+# Restore every original playable floor, including the upper island where it
+# overlaps the decorative cutout. Existing path/land geometry takes precedence.
 dry |= playable_ground
 
 # The final partial row stays clipped to the unchanged retained world bounds.
@@ -225,7 +250,7 @@ for row in dry:
 result={'x':X0,'y':Y0,'width':WIDTH,'height':HEIGHT,'cellSize':CELL,'columns':COLS,'rows':rows}
 output.parent.mkdir(parents=True,exist_ok=True)
 output.write_text(json.dumps(result,separators=(',',':'))+'\n')
-for code in ['gardenMapLayout.ts','GardenOuterBasin.tsx','GardenInfrastructureLayer.tsx','GardenConnectionLayer.tsx','GardenRoadApproachLayer.tsx','GardenRightPondShore.tsx','waterfallV2Placement.ts','waterfallV2Proportions.ts','swingMapPlacement.ts','SwingEntity.tsx']:
+for code in ['gardenMapLayout.ts','GardenOuterBasin.tsx','GardenUpperRightScenery.tsx','GardenInfrastructureLayer.tsx','GardenConnectionLayer.tsx','GardenRoadApproachLayer.tsx','GardenRightPondShore.tsx','waterfallV2Placement.ts','waterfallV2Proportions.ts','swingMapPlacement.ts','SwingEntity.tsx']:
     path='src/components/garden/'+code
     sources[path]=hashlib.sha256((root/path).read_bytes()).hexdigest()
 output.with_suffix('.sources.json').write_text(json.dumps({'generator':'scripts/bakeGardenGround.py','sample':'cell center; dry alpha >= 0.72','planting':'Subtract approvedPlantingMasks at runtime','sources':sources},indent=2)+'\n')

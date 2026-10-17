@@ -5,10 +5,11 @@ import { AuthGate } from "../components/AuthGate";
 import { nativeSecurityEnabled } from '../services/nativeSecurity';
 import { DarkTheme, DefaultTheme, Slot, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { FeedbackDraftProvider, GlobalHelpFeedback } from '../components/feedback';
 import { WorldTimeProvider } from '@/components/garden/world-time';
 
 SplashScreen.preventAutoHideAsync();
@@ -66,5 +67,23 @@ function TabLayout() {
     );
   }
 
-  return <PanelThemeProvider key={session?.user.id} userId={session?.user.id}><WorldTimeProvider key={session?.user.id}>{content}</WorldTimeProvider></PanelThemeProvider>;
+  // Partner Help/Feedback overlay: DEV-only until a real feedback backend and a
+  // production placement decision exist (its transport only records locally).
+  return <PanelThemeProvider key={session?.user.id} userId={session?.user.id}><WorldTimeProvider key={session?.user.id}>
+    {__DEV__ ? <FeedbackDraftProvider>
+      <View style={styles.rootShell}>
+        {content}
+        <GlobalHelpFeedback />
+      </View>
+    </FeedbackDraftProvider> : content}
+  </WorldTimeProvider></PanelThemeProvider>;
 }
+
+const styles = StyleSheet.create({
+  rootShell: {
+    flex: 1,
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+});

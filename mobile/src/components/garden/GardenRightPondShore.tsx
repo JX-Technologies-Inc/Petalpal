@@ -27,10 +27,16 @@ const MINERAL_FACES = [
   { x: 345, y: 1299, width: 48, height: 40 },
 ] as const;
 
+let cachedShoreSnapshot: { mineral: SkImage; image: SkImage } | null = null;
+
 function makeShore(mineral: SkImage) {
   const surface = Skia.Surface.Make(900, 720);
-  if (!surface) return null;
+  if (!surface || !(surface as any).ref) return null;
   const canvas = surface.getCanvas();
+  if (!canvas) {
+    surface.dispose();
+    return null;
+  }
   canvas.clear(Skia.Color('transparent'));
   canvas.scale(1.2, 1.2);
   canvas.translate(-BOUNDS.x, -BOUNDS.y);
@@ -149,7 +155,17 @@ function makeShore(mineral: SkImage) {
 function GardenRightPondShore({ mineral: shared }: { mineral?: SkImage | null }) {
   const fallback = useImage(shared === undefined ? require('./terrain/outer-right-bank-v1.png') : null);
   const mineral = shared === undefined ? fallback : shared;
-  const image = useMemo(() => mineral ? makeShore(mineral) : null, [mineral]);
+  const image = useMemo(() => {
+    if (!mineral) return null;
+    if (cachedShoreSnapshot && cachedShoreSnapshot.mineral === mineral && (cachedShoreSnapshot.image as any).ref && !(cachedShoreSnapshot.image as any).ref.isDeleted?.()) {
+      return cachedShoreSnapshot.image;
+    }
+    const created = makeShore(mineral);
+    if (created) {
+      cachedShoreSnapshot = { mineral, image: created };
+    }
+    return created;
+  }, [mineral]);
   return image ? <Image image={image} {...BOUNDS} fit="fill" /> : null;
 }
 export default memo(GardenRightPondShore);
