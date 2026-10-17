@@ -57,6 +57,25 @@ was corrected. Claude did not open the private artifacts (macOS folder access
 blocked), so this row is VERIFIED HISTORICAL, not re-verified. It proves isolated
 live quality of the merged prompt, not hosted TEST behavior.
 
+## EN full pipeline with local BGE — VERIFIED (2026-10-17)
+
+Hosted TEST has no embedding path, so the EN track was run end to end on the owner's Mac
+instead: disposable PostgreSQL + pgvector, real local BGE (`Xenova/bge-small-en-v1.5` q8 via
+Transformers.js, profile `production-bge-small-en-v1.5-v1`: same model, mean pooling and
+`summary-v1` input as production BGE), the production worker path, and the TEST runbook budget
+and default flags with `AI_REPORT_SUPPORTED_LOCALES=en`. Week 2026-10-12, six synthetic English
+Events (realistic weeks O + M), evaluated at 2026-10-19T00:00:00Z.
+
+| Step | Result |
+|---|---|
+| Offline (`test/back/weekly-en-local-bge.postgres.test.js`, mocked Gateway, $0) | **PASS**: 6 memory jobs → 6 embedding jobs → 6 GENERATED 384-dim vectors per owner; paraphrase queries rank the matching Event first, owner-scoped; one BGE query embedding for the report; every meaningful Event reaches the writer; report GENERATED once, not re-claimed; owner-only reads |
+| Live, one call (`scripts/weekly-en-local-bge-live.mjs` on eval-only branch `eval/weekly-en-local-bge`, runner `682f21d4`; owner-approved, hidden TTY credentials, integration Gateway `petalpal-integration`) | **COMPLETE**: dispatched 1, HTTP 200, 5.2 s, `claude-sonnet-5-5`, 1,299 input / 291 output tokens, no cache, estimated **US$0.0055** (cap US$0.04096); validated and persisted GENERATED, 6 evidence rows, owner-scoped, owner-readable |
+| Editorial review (Claude, line by line) | All 5 sentences grounded in a cited Event; weekdays correct; second person throughout; no speculation, diagnosis, advice or counts; the one-word "Groceries." entry left out. Weakness: a chronological walk-through with no synthesis (same base-prompt behavior as the zh track) |
+
+The private ledger and prose are in the owner's checkout
+(`.git/petalpal-acceptance/weekly-en-local-bge-dbe41065*`). This proves the EN pipeline
+locally, not hosted TEST behavior; hosted EN still needs a TEST embedding path.
+
 ## Weekly language gate
 
 The Sonnet Weekly path picks its language from `User.preferredLocale` (schema
