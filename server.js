@@ -470,7 +470,9 @@ function hashAiInput(text) {
 }
 
 async function lockTransaction(tx, namespace, value) {
-  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`${namespace}:${value}`}))`;
+  // pg_advisory_xact_lock returns void, which the PrismaPg adapter cannot
+  // deserialize (P2010 UnsupportedNativeDataType); select it as text instead.
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`${namespace}:${value}`}))::text AS "locked"`;
 }
 
 async function ensureStarterFairy(userId) {
