@@ -58,19 +58,33 @@ Only the prompt's exclusions and human editorial review stop the second group. N
 can guarantee zero hallucination; the guarantee is validator + prompt + blind review +
 in-app output reporting.
 
-## Live A/B plan (needs separate owner approval; not run)
+## Live A/B (prepared offline; needs separate owner approval; not run)
 
-- **Variants:** the configuration accepted in the final 8-call acceptance (baseline) vs.
-  this candidate.
-- **Weeks:** realistic M, N, O, P plus stress B (quiet positive moment), D (negation and
-  corrections) and L (open decision), × `en` and `zh-Hans` = 14 weeks × 2 variants =
-  **28 Sonnet calls**. Q abstains and is not sent.
-- **Cost:** reservation 28 × US$0.04096 ≈ **US$1.15** cap. Recorded actual use was about
-  US$0.006 per call, so the expected spend is about US$0.20. No retries; one-time ledger.
-- **Environment:** isolated disposable PostgreSQL with synthetic owners on the owner's
-  machine, same pattern as the final acceptance runner. No hosted TEST or production data.
-- **Review:** blind pairwise review using `experiments/weekly-editorial-quality-v1/RUBRIC.md`,
-  plus a line-by-line check for the "Passes" categories above.
+Runner: `scripts/weekly-pattern-insight-ab-evaluation.mjs` on the eval-only branch
+`eval/weekly-pattern-insight-ab` (commit `0cf47fcf`; never merge to `main`, because the
+runner asserts its branch). It is derived from the final 8-call acceptance runner, and
+only the plan differs.
+
+- **Arms:** baseline = narrative-thread prompt (the configuration accepted in the final
+  acceptance); candidate = this prompt. Both use Selector V2 with significance OFF and
+  byte-identical evidence packets; only the system prompt differs.
+- **Weeks:** stress B, D, L and realistic M, N, O, P, × `en` and `zh-Hans` = 14 weeks ×
+  2 arms = **28 Sonnet calls**. Q abstains and is not sent.
+- **Cost:** reservation cap 28 × US$0.04096 = **US$1.14688**. Recorded actual use was
+  about US$0.006 per call, so the expected spend is about US$0.20. No retries, no repairs;
+  one-time ledger.
+- **Offline evidence:** `check` mode PASS (28 cells, max request 3,694 bytes, 0 provider
+  calls); runner tests 6/6 with injected sends (blind labels, private mapping, consumed
+  ledger, rejection without retry, stop on HTTP/transport failure, no secret leakage).
+- **Live run (owner's Mac, separate approval):** check out the eval branch clean, then run
+  `node scripts/weekly-pattern-insight-ab-evaluation.mjs live` under `env -i` with
+  `NODE_ENV=test` and the `PETALPAL_PATTERN_INSIGHT_AB_*` variables (approval phrase
+  `APPROVE-28-WEEKLY-PATTERN-INSIGHT-AB-2773ACED-EN-ZH-USD-1.14688`, commit, budget
+  `1.14688`, Gateway and scope attestations). Credentials are entered at hidden prompts;
+  integration Gateway `petalpal-integration` only.
+- **Review:** blind pairwise review of `review/prose` per week using
+  `experiments/weekly-editorial-quality-v1/RUBRIC.md`, plus a line-by-line check for the
+  "Passes" categories above. Open `operator/mapping.json` only after scoring.
 - **Adopt only if:** zero validator failures, zero speculative, diagnostic or advice
   sentences, and the candidate wins most pairs in **both** languages. Otherwise keep
   the baseline.
