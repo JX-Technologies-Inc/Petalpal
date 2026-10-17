@@ -1,37 +1,33 @@
-// $0 hosted TEST acceptance of the Weekly Reflection trigger boundary, run from a
-// GitHub-hosted runner with the existing verified TEST identity. Fixed TEST hosts only.
-// The TEST backend is locked to AI_ASYNC_EXECUTION_MODE=manual with zero call limits
-// and no Worker/Gateway credentials, so the trigger runs the Weekly job inline and must
-// fail closed (REPORT_NARRATIVE_PROVIDER_NOT_CONFIGURED) before any provider call or
-// cost reservation. A 200/202 means a provider path exists on TEST and is a FAIL.
-// Writes (owner-authorized): AI consent grant then revoke, two synthetic Events
-// (idempotent per UTC day), one Weekly AiJob for the previous week.
+// Phase A, read-only hosted TEST preflight of the Weekly Reflection boundary, run from
+// a GitHub-hosted runner with the existing verified TEST identity. Fixed TEST hosts.
+// Zero writes: no consent change, no Event, no AiJob. Every authenticated Weekly
+// trigger request is rejected by validation before the consent transaction, because
+// TEST manual mode runs an accepted trigger inline and would leave a terminal job for
+// that period. Real generation is a separately approved Phase B.
 // Never prints the email, password, tokens or response bodies.
 import { randomUUID } from 'node:crypto';
-import { AI_DISCLOSURE_VERSION } from '../lib/ai-disclosure.js';
 
 const BACKEND = 'https://petalpal-backend-test.onrender.com';
 const WEB_ORIGIN = 'https://petalpal-web-integration.petalpal-jx.workers.dev';
 const PROJECT = 'petalpal-integration-test';
 const env = process.env;
-const stop = message => { console.log(`::error title=weekly acceptance::${message}`); process.exit(1); };
-if (env.AUTHORIZATION_PHRASE !== 'WRITE-TEST-WEEKLY-ACCEPTANCE') stop('write authorization phrase missing; nothing was sent');
+const stop = message => { console.log(`::error title=weekly preflight::${message}`); process.exit(1); };
 for (const name of ['EXPO_PUBLIC_FIREBASE_API_KEY', 'EXPO_PUBLIC_FIREBASE_PROJECT_ID', 'INTEGRATION_TEST_EMAIL', 'INTEGRATION_TEST_PASSWORD']) {
   if (!env[name]) stop(`missing ${name}`);
 }
 if (env.EXPO_PUBLIC_FIREBASE_PROJECT_ID !== PROJECT) stop('not the TEST Firebase project');
 
 const results = [];
-const check = (name, ok, detail = '') => { results.push(ok); console.log(`::${ok ? 'notice' : 'error'} title=weekly acceptance::${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ` (${detail})` : ''}`); };
-const safe = value => (/^[A-Za-z0-9 ._:-]{1,60}$/.test(String(value)) ? String(value) : 'redacted');
+const check = (name, ok, detail = '') => { results.push(ok); console.log(`::${ok ? 'notice' : 'error'} title=weekly preflight::${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ` (${detail})` : ''}`); };
 const claims = token => JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
-const api = async (path, { token, body, method = body ? 'POST' : 'GET', headers = {} } = {}) => {
+const api = async (path, { token, body, method = body ? 'POST' : 'GET' } = {}) => {
   const response = await fetch(BACKEND + path, {
     method, redirect: 'manual', signal: AbortSignal.timeout(60000),
-    headers: { Origin: WEB_ORIGIN, ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}), ...headers },
+    headers: { Origin: WEB_ORIGIN, ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
-  return { status: response.status, json: await response.json().catch(() => null) };
+  await response.arrayBuffer();
+  return response.status;
 };
 
 // Wake a sleeping Free instance (bounded).
@@ -50,52 +46,25 @@ if (!token) stop(`TEST Firebase sign-in failed (HTTP ${signIn.status})`);
 const c = claims(token);
 if (c.aud !== PROJECT || c.iss !== `https://securetoken.google.com/${PROJECT}` || c.email_verified !== true) stop('token is not a verified TEST identity');
 
-const session = await api('/auth/session', { token, body: { deferProfileCreation: true } });
-if (session.status !== 200 || session.json?.needsProfile) stop(`BLOCKED: TEST identity has no backend profile (status ${session.status}); none is created`);
-const userId = (await api('/session?view=metadata', { token })).json?.user?.id;
-if (!userId) stop('BLOCKED: could not resolve the TEST owner');
-const own = `/users/${encodeURIComponent(userId)}/ai-consent`;
+const trigger = '/ai/reports/weekly/trigger';
+const unknownReport = `/ai/reports/weekly/${randomUUID()}`;
+check('anonymous Weekly trigger rejected', await api(trigger, { body: {} }) === 401);
+check('anonymous report list rejected', await api('/ai/reports') === 401);
+check('anonymous report read rejected', await api(unknownReport) === 401);
+// requireOwnUser rejects before the consent read/upsert, so this writes nothing.
+check('other owner AI consent forbidden', await api(`/users/${randomUUID()}/ai-consent`, { token }) === 403);
+// Body and period validation both reject before the consent transaction and enqueue.
+check('trigger rejects caller-chosen ownership fields', await api(trigger, { token, body: { ownerId: randomUUID() } }) === 400);
+// A week ahead is open for every timezone, so the period guard rejects it.
+const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+check('trigger rejects a still-open period', await api(trigger, { token, body: { localDate: nextWeek } }) === 400);
 
-// Read-only preconditions: anonymous rejection and a revoked consent baseline.
-check('anonymous Weekly trigger rejected', (await api('/ai/reports/weekly/trigger', { body: {} })).status === 401);
-check('anonymous report list rejected', (await api('/ai/reports')).status === 401);
-check('other owner consent forbidden', (await api(`/users/${randomUUID()}/ai-consent`, { token })).status === 403);
-const baseline = await api(own, { token });
-if (baseline.status !== 200 || baseline.json?.aiProcessing !== false) stop(`BLOCKED: expected revoked AI consent baseline (status ${baseline.status}); no writes made`);
-check('Weekly trigger forbidden without memory consent', (await api('/ai/reports/weekly/trigger', { token, body: {} })).status === 403);
-
-const grant = await api(own, { token, method: 'PUT', body: { aiProcessing: true, personalization: true, memoryEnabled: true, disclosureVersion: AI_DISCLOSURE_VERSION } });
-check('owner granted AI processing, personalization and memory', grant.status === 200 && grant.json?.memoryEnabled === true, `status ${grant.status}`);
-try {
-  if (grant.status !== 200) throw new Error('consent grant failed');
-  const day = new Date().toISOString().slice(0, 10);
-  for (const n of [1, 2]) {
-    // No primaryGardenMood: emotion enrichment stays SKIPPED; the memory job stays PENDING in manual mode.
-    const event = await api('/events', { token, body: { content: `Synthetic TEST acceptance note ${n}: walked to the library and planned the week.` },
-      headers: { 'Idempotency-Key': `weekly-acceptance-${day}-${n}` } });
-    // 201 = created with a PENDING memory job; 200 = same-day idempotent replay.
-    check(`synthetic Event ${n} stored without AI`, event.json?.emotion?.status === 'SKIPPED' &&
-      (event.status === 201 ? event.json?.memoryJob?.status === 'PENDING' : event.status === 200), `status ${event.status}`);
-  }
-
-  const trigger = await api('/ai/reports/weekly/trigger', { token, body: {} });
-  const periodKey = trigger.json?.periodKey;
-  check('Weekly trigger fails closed before any provider call', trigger.status === 502 && trigger.json?.job?.status === 'FAILED' &&
-    trigger.json?.report === null && ['REPORT_NARRATIVE_PROVIDER_NOT_CONFIGURED', 'WEEKLY_REPORT_JOB_FAILED'].includes(trigger.json?.errorCode),
-  `status ${trigger.status} ${safe(trigger.json?.errorCode ?? 'none')}`);
-
-  const list = await api('/ai/reports?limit=50', { token });
-  check('owner report list readable; no Weekly report persisted', list.status === 200 && Array.isArray(list.json?.reports) &&
-    !list.json.reports.some(r => r.type === 'weekly' && r.periodKey === periodKey), `status ${list.status}`);
-  check('unknown Weekly report id not readable', (await api(`/ai/reports/weekly/${randomUUID()}`, { token })).status === 404);
-} catch (error) {
-  check('acceptance sequence completed', false, safe(error.message));
-} finally {
-  const revoke = await api(own, { token, method: 'PUT', body: { aiProcessing: false, personalization: false, memoryEnabled: false } });
-  check('consent revoked to baseline', revoke.status === 200 && revoke.json?.aiProcessing === false, `status ${revoke.status}`);
-  check('Weekly trigger forbidden again after revoke', (await api('/ai/reports/weekly/trigger', { token, body: {} })).status === 403);
-}
+// Memory-gated private reads: 403 without memory consent; with consent, unknown ids are 404, never readable.
+const list = await api('/ai/reports?limit=1', { token });
+check('owner report list consent-gated', [200, 403].includes(list), `status ${list}`);
+const consent = list === 200 ? 'granted' : 'not granted';
+check('unknown Weekly report id not readable', await api(unknownReport, { token }) === (list === 200 ? 404 : 403));
 
 const failed = results.filter(ok => !ok).length;
-console.log(`::${failed ? 'error' : 'notice'} title=weekly acceptance::${results.length - failed}/${results.length} checks passed; provider calls attempted by this script: 0`);
+console.log(`::${failed ? 'error' : 'notice'} title=weekly preflight::${results.length - failed}/${results.length} checks passed; memory consent ${consent}; writes 0; provider calls 0`);
 process.exit(failed ? 1 : 0);
