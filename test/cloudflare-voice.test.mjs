@@ -34,7 +34,7 @@ const adapters = {
           this.stream = destination.stream;
           // Same browser options as Expo's AudioRecorderWeb.createMediaRecorder.
           this.media = new MediaRecorder(this.stream, options.web);
-          window.fixture.recordedBytes = 0;
+          window.fixture.recordedBytes = 0; window.fixture.prepared++;
         },
         record() { this.media.start(); },
         getStatus() { return { isRecording: this.media?.state === 'recording' }; },
@@ -60,7 +60,7 @@ async function fixtureBundle() {
       import { createRoot } from 'react-dom/client';
       import { useEventVoiceInput } from './src/hooks/useEventVoiceInput';
       import { configureApi } from './src/services/api';
-      window.fixture = { violations: [], unauthorized: 0, recordedBytes: 0 };
+      window.fixture = { violations: [], unauthorized: 0, recordedBytes: 0, prepared: 0 };
       document.addEventListener('securitypolicyviolation', e => {
         window.fixture.violations.push({ directive: e.effectiveDirective, blocked: e.blockedURI });
       });
@@ -102,7 +102,19 @@ test('Events voice input: CSP failure is before API; blob correction preserves d
   const calls = [];
   const otherWrites = [];
   let apiStatus = 200;
+  const consentRequests = [];
+  let consentEnabled = true;
   const server = createServer(async (req, res) => {
+    // Owner-scoped AI consent, as the hook reads it before any recording.
+    const consentOwner = req.url.match(/^\/users\/([^/?]+)\/ai-consent$/)?.[1];
+    if (consentOwner) {
+      const authorized = req.headers.authorization === 'Bearer synthetic-test-identity';
+      consentRequests.push({ method: req.method, authorized, owner: consentOwner });
+      const status = req.method !== 'GET' ? 405 : !authorized ? 401 : consentOwner !== 'fixture-owner' ? 403 : 200;
+      res.writeHead(status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(status === 200 ? { aiProcessing: consentEnabled } : { error: 'Fixture consent rejected' }));
+      return;
+    }
     if (req.url === '/speech/transcribe') {
       let body = ''; for await (const chunk of req) body += chunk;
       const audio = JSON.parse(body);
@@ -182,6 +194,20 @@ test('Events voice input: CSP failure is before API; blob correction preserves d
       assert.deepEqual(otherWrites, [], 'dictation must not save Events or other application data');
     } finally { await page.close(); }
   });
+  await t.test('disabled AI Processing consent blocks recording and transcription', async () => {
+    consentEnabled = false;
+    const page = await open();
+    try {
+      const before = consentRequests.length;
+      await page.getByRole('button', { name: 'Record', exact: true }).click();
+      await page.waitForFunction(() => /enable AI Processing/.test(document.querySelector('[role=alert]').textContent) &&
+        document.querySelector('#phase').textContent === 'idle');
+      assert.deepEqual(consentRequests.slice(before), [{ method: 'GET', authorized: true, owner: 'fixture-owner' }]);
+      assert.equal(await page.evaluate(() => window.fixture.prepared), 0, 'no recorder may start without consent');
+      assert.equal(calls.length, 1, 'no transcription may be dispatched without consent');
+      assert.equal(await page.locator('textarea').inputValue(), 'Typed draft');
+    } finally { consentEnabled = true; await page.close(); }
+  });
   await t.test('API failure remains visible; draft is preserved independently of the CSP fix', async () => {
     apiStatus = 503;
     const page = await open();
@@ -197,7 +223,15 @@ test('Events voice input: CSP failure is before API; blob correction preserves d
     for (const query of ['?anonymous', '']) {
       const page = await open(query);
       try {
-        await record(page);
+        if (query) {
+          // Anonymous: the consent read is rejected locally, before any request or recording.
+          const before = consentRequests.length;
+          await page.getByRole('button', { name: 'Record', exact: true }).click();
+          await page.waitForFunction(() => /[Ss]ign in/.test(document.querySelector('[role=alert]').textContent) &&
+            document.querySelector('#phase').textContent === 'idle');
+          assert.equal(consentRequests.length, before);
+          assert.equal(await page.evaluate(() => window.fixture.prepared), 0);
+        } else await record(page);
         assert.match(await page.getByRole('alert').textContent(), /[Ss]ign in/);
         assert.equal(await page.locator('textarea').inputValue(), 'Typed draft');
         assert.equal(calls.length, query ? 2 : 4); // No anonymous request; one refresh on 401.
