@@ -4,8 +4,9 @@ name: Integration Weekly trigger (hosted TEST, zh-Hans, one call)
 # localDate 2026-10-17) in scripts/integration-weekly-trigger.mjs.
 #   phase=check    read-only identity/locale/consent/report-state check ($0).
 #   phase=trigger  the same checks, then at most one Weekly trigger request.
-# Authorization comes from protected GitHub Environments (required reviewers) and
-# their secrets, never from workflow inputs. Paid inference additionally requires the
+# Authorization comes from the protected GitHub Environment petalpal-web-build-integration
+# (required reviewers; it already holds the verified TEST identity secrets) and its
+# secrets, never from workflow inputs. Paid inference additionally requires the
 # separately approved TEST budget configuration on Render.
 on:
   workflow_dispatch:
@@ -54,7 +55,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     # Required reviewers on this environment are the human approval for the paid step.
-    environment: petalpal-weekly-trigger
+    # Same environment as check: it holds the stored TEST identity secrets.
+    environment: petalpal-web-build-integration
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:

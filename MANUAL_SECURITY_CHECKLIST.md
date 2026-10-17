@@ -733,5 +733,7 @@ Historical outcomes above remain point-in-time evidence. These new release actio
 ### Hosted TEST Weekly trigger workflow — 2026-10-17 (prepared, not configured)
 
 - [ ] Confirm the TEST owner id of the account holding the two 2026-10-17 zh-Hans Events (owner-only; never paste it into chat), and store it as the `INTEGRATION_WEEKLY_OWNER_ID` secret in `petalpal-web-build-integration` and in the new environment below.
-- [ ] Create GitHub Environment `petalpal-weekly-trigger` restricted to `main` with required reviewers. Add `EXPO_PUBLIC_FIREBASE_API_KEY`, `EXPO_PUBLIC_FIREBASE_PROJECT_ID`, `INTEGRATION_TEST_EMAIL`, `INTEGRATION_TEST_PASSWORD` and `INTEGRATION_WEEKLY_OWNER_ID` as environment secrets (TEST values only).
+- [ ] ~~SUPERSEDED 2026-10-17 (both phases reuse `petalpal-web-build-integration`; see below)~~ Create GitHub Environment `petalpal-weekly-trigger` restricted to `main` with required reviewers. Add `EXPO_PUBLIC_FIREBASE_API_KEY`, `EXPO_PUBLIC_FIREBASE_PROJECT_ID`, `INTEGRATION_TEST_EMAIL`, `INTEGRATION_TEST_PASSWORD` and `INTEGRATION_WEEKLY_OWNER_ID` as environment secrets (TEST values only).
 - [ ] Run `phase=check` only after separate approval; run `phase=trigger` only after the TEST budget configuration is applied and separately approved, at or after 2026-10-19T00:00:00Z. Never re-run a trigger run.
+
+- [ ] (2026-10-17 update) Both workflow phases use the existing environment `petalpal-web-build-integration`, which already holds the verified TEST identity secrets. Confirm it has **Required reviewers** enabled and is limited to `main` (Settings → Environments). Add only the `INTEGRATION_WEEKLY_OWNER_ID` secret there; do not re-enter or rotate the identity secrets.
