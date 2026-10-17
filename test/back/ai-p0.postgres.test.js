@@ -15,6 +15,7 @@ import {
   enqueueEventMemoryEmbeddingBackfill
 } from "../../lib/ai-jobs.js";
 import { AiJobWorker, createProductionAiWorker } from "../../lib/ai-worker.js";
+import { AI_DISCLOSURE_VERSION } from "../../lib/ai-disclosure.js";
 import { getEmbeddingProfile, LOCAL_EMBEDDING_PROFILE_KEY } from "../../lib/embedding-profiles.js";
 import { PrismaMemoryRepository } from "../../lib/event-memory.js";
 import { GroundedReportPersistenceService, ReportInputService, WeeklyReportService } from "../../lib/report-foundation.js";
@@ -750,6 +751,58 @@ realTest("Event and memory job intent are atomic, consent-aware and idempotent",
       await prisma.$executeRawUnsafe(`DROP FUNCTION "reject_jobs_${suffix}"()`);
     } finally {
       await prisma.user.deleteMany({ where: { id: { in: [enabled, disabled] } } });
+    }
+  });
+});
+
+realTest("concurrent Events with one Idempotency-Key create exactly one Event and one memory job", async () => {
+  await withPrisma(async (prisma) => {
+    const suffix = Date.now();
+    const owner = `pg-race-${suffix}`;
+    const other = `pg-race-other-${suffix}`;
+    await seedUser(prisma, owner);
+    await seedUser(prisma, other);
+    await prisma.aiConsent.createMany({ data: [owner, other].map((userId) => (
+      { userId, termsVersion: AI_DISCLOSURE_VERSION, aiProcessing: true, personalization: true, memoryEnabled: true, grantedAt: new Date() })) });
+    try {
+      const key = `race-${suffix}`;
+      const same = { prisma, identity: { userId: owner }, content: "same payload", idempotencyKey: key };
+      const results = await Promise.all(Array.from({ length: 5 }, () => createEventAndEnqueueMemoryJob(same)));
+      assert.equal(results.filter((result) => result.created).length, 1);
+      assert.equal(new Set(results.map((result) => result.event.id)).size, 1);
+      assert.equal(new Set(results.map((result) => result.job.id)).size, 1);
+      assert.equal(await prisma.event.count({ where: { ownerId: owner, idempotencyKey: key } }), 1);
+      assert.equal(await prisma.aiJob.count({ where: { ownerId: owner } }), 1);
+
+      // The same key under another owner is independent.
+      const otherResult = await createEventAndEnqueueMemoryJob({ ...same, identity: { userId: other } });
+      assert.equal(otherResult.created, true);
+      assert.notEqual(otherResult.event.id, results[0].event.id);
+
+      // A different payload racing on one key: one Event, the loser is a 409 conflict.
+      const conflictKey = `race-conflict-${suffix}`;
+      const settled = await Promise.allSettled(["first payload", "second payload"].map((content) =>
+        createEventAndEnqueueMemoryJob({ prisma, identity: { userId: owner }, content, idempotencyKey: conflictKey })));
+      assert.equal(settled.filter((result) => result.status === "fulfilled" && result.value.created).length, 1);
+      const rejected = settled.filter((result) => result.status === "rejected");
+      assert.equal(rejected.length, 1);
+      assert.equal(rejected[0].reason.code, "IDEMPOTENCY_CONFLICT");
+      assert.equal(await prisma.event.count({ where: { ownerId: owner, idempotencyKey: conflictKey } }), 1);
+      assert.equal(await prisma.aiJob.count({ where: { ownerId: owner } }), 2);
+
+      // Any other unique violation is not treated as the idempotency race.
+      await prisma.$executeRawUnsafe(`CREATE FUNCTION "reject_events_${suffix}"() RETURNS trigger AS $$ BEGIN RAISE unique_violation USING CONSTRAINT = 'synthetic_other_key'; END; $$ LANGUAGE plpgsql`);
+      await prisma.$executeRawUnsafe(`CREATE TRIGGER "reject_events_${suffix}" BEFORE INSERT ON "Event" FOR EACH ROW EXECUTE FUNCTION "reject_events_${suffix}"()`);
+      try {
+        await assert.rejects(createEventAndEnqueueMemoryJob({ prisma, identity: { userId: owner }, content: "other unique", idempotencyKey: `other-unique-${suffix}` }),
+          (error) => error.code === "P2002");
+      } finally {
+        await prisma.$executeRawUnsafe(`DROP TRIGGER "reject_events_${suffix}" ON "Event"`);
+        await prisma.$executeRawUnsafe(`DROP FUNCTION "reject_events_${suffix}"()`);
+      }
+      assert.equal(await prisma.event.count({ where: { ownerId: owner } }), 2);
+    } finally {
+      await prisma.user.deleteMany({ where: { id: { in: [owner, other] } } });
     }
   });
 });
