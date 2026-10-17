@@ -35,3 +35,18 @@ never weakens existing security, privacy or production safeguards.
 - Never silently retry a failed or ambiguous deployment.
 - Preserve WARNING.md, AGENTS.md, security restrictions and existing approval gates.
 - Report workflow results and stop for the user's next decision.
+- When deciding which tests, workflows or deployment lanes are needed, consult
+  [docs/integration/WORKFLOW_ROUTING.md](docs/integration/WORKFLOW_ROUTING.md);
+  [INTEGRATION_DEPLOYMENT.md](INTEGRATION_DEPLOYMENT.md) remains the canonical SOP.
+
+## Time and report periods
+
+- Before changing or reasoning about timestamps, timezones, `localDate`, Weekly/Monthly
+  periods, closed-period checks or time-dependent tests, read [time.md](time.md). Any such
+  change must update `time.md` and the relevant tests in the same change.
+- To test the Event → Memory → Weekly/Monthly lifecycle (real or simulated time, hosted
+  TEST phases and approval gates), follow
+  [docs/testing/TIME_WORKFLOW_TEST_PLAN.md](docs/testing/TIME_WORKFLOW_TEST_PLAN.md) and keep it current.
+- Before planning Weekly acceptance work, check the en / zh-Hans evidence matrix in
+  [docs/testing/BILINGUAL_WEEKLY_ACCEPTANCE.md](docs/testing/BILINGUAL_WEEKLY_ACCEPTANCE.md);
+  reuse unchanged passing evidence and run only missing tests.
