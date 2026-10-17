@@ -1,6 +1,6 @@
 # Weekly pattern-insight candidate (2026-10-17)
 
-Status: **OFFLINE TESTED · DEFAULT OFF · LIVE QUALITY UNPROVEN · NOT FOR PRODUCTION.**
+Status: **LIVE A/B COMPLETE (2026-10-17) · NOT ADOPTED · DEFAULT OFF · keep the baseline narrative-thread prompt.**
 Flag: `AI_WEEKLY_REFLECTION_PATTERN_INSIGHT=true` (requires `weekly-reflection-v2`;
 mutually exclusive with `AI_WEEKLY_REFLECTION_NARRATIVE_THREAD` and
 `AI_WEEKLY_REFLECTION_RETROSPECTIVE`). Source: `lib/weekly-editorial.js`.
@@ -89,3 +89,40 @@ only the plan differs.
   sentences, and the candidate wins most pairs in **both** languages. Otherwise keep
   the baseline.
 - Monthly is out of scope; it needs its own plan and Opus budget.
+
+## Live A/B result — 2026-10-17
+
+Run on the owner's Mac from `eval/weekly-pattern-insight-ab` (`0cf47fcf`), with
+integration credentials entered at hidden prompts. Ledger outcome: **COMPLETE**,
+dispatched 28, attempts 28, validated 26, rejected 2, no retries; reservation
+US$1.14688 (the cap), estimated actual use **US$0.1443** at configured rates (average
+1,416 input and 232 output tokens; slowest call 5.6 s). Private artifacts:
+`.git/petalpal-acceptance/weekly-pattern-insight-ab-2773aced*` in that checkout.
+
+| | Baseline (narrative thread) | Candidate (pattern insight) |
+|---|---|---|
+| Validator rejections | 0 | **2** (en B and L: `REFLECTION_V2_SCHEMA_MAX_ITEMS`) |
+| Blind pairwise wins, 12 comparable weeks | **8** | 4 |
+| en (5 comparable) | 4 | 1 |
+| zh-Hans (7) | 4 | 3 |
+| Speculation, diagnosis or advice sentences | none seen | none seen |
+
+The blind review was done by Claude before opening `operator/mapping.json`. Claude also
+wrote the candidate, so the owner should re-review `review/prose` before treating this
+as final.
+
+Observations:
+
+- The candidate's synthesis helped when the text supported it: "two things turned out
+  differently" (D en), the mother's call as the week's thread (M zh), joy and worry side
+  by side (O zh).
+- Its losses came from voice and framing. It referred to "the user" or 「用户」 instead
+  of "you" (N en/zh, O en), invented a gender ("herself", P en), added commentary about
+  missing information (L zh), and twice exceeded the output schema.
+- The baseline also lists weekdays at times (B), slips into "the user" (L en, P en), and
+  once misattributed the speaker as 「我」 (D zh, baseline B).
+
+**Decision:** not adopted; the flag stays OFF and the baseline stays. Possible follow-up
+for both prompts, each needing its own evaluation: always address the reader as
+"you"/「你」, never comment on what the records do not say, and add no gendered
+pronouns that the text does not give.
