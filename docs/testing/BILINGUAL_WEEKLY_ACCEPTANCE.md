@@ -32,12 +32,30 @@ guard and the Fairy lock only.
 | Embedding / RAG retrieval | Model choice VH; pgvector storage/retrieval VC; hosted **BLOCKED** | N/A by design; hosted 2 `EMBEDDING_GENERATION` PENDING (harmless, not executed) | BGE `summary-v1` 2026-09-17: Recall@1/3/5 0.549/0.708/0.750, MRR 0.673 (84 en dev queries / 120 Events; [LONG_TERM_AI.md](../../LONG_TERM_AI.md)); Cloudflare BGE cutover 2026-09-28 (recorded); `ai-p0.postgres` 384d owner-scoped retrieval + backfill (injected provider) | No held-out or multilingual set; hosted TEST has no embedding executor or provider | Leave the 2 zh jobs PENDING: live embedding has no language gate and would call Cloudflare BGE, and zh Weekly does not read embeddings. Hosted EN needs a TEST embedding path (design + approval) |
 | Evidence selection | VC | VC | `weekly-evidence-selector-v2`, `weekly-evidence-significance`, `weekly-narrative-thread`; Monthly semantic input (`ai-p0.postgres`); [WEEKLY_SELECTIVE_REFLECTION_FINAL.md](../ai/WEEKLY_SELECTIVE_REFLECTION_FINAL.md) (offline cases; en similarity approximated) | Real BGE ranking inside a live Weekly run | — |
 | Weekly time eligibility | VC | VC | `ai-p0.integration`, `vancouver-timezone`, `ai-p0.postgres` Vancouver DST SQL; helper check: week 2026-10-12 = `[2026-10-12T00:00Z, 2026-10-19T00:00Z)` | Hosted open-period 400 (route not called) | Wait for real boundary (no override) |
-| Sonnet generation | Mock VC · live VH | Mock VC · live VH | `sonnet-weekly`, `reflection-v2`; zh live 2026-10-15 single call (earlier prompt, [REFLECTION_V2.md](../ai/REFLECTION_V2.md)); UNV batch validated C01 en + C04 zh ([TWO_LANGUAGES](../ai/REFLECTION_EDITORIAL_FREEDOM_TWO_LANGUAGES.md)); PR #62 8/8 live + 4/4 blind (owner-recorded, per-language split not documented) | Live call on the merged prompt; R2 evaluation NOT PERFORMED ([R2](../ai/REFLECTION_V2_R2_EVALUATION.md)) | **BLOCKED**: one approved call per language |
+| Sonnet generation | Mock VC · live VH | Mock VC · live VH | `sonnet-weekly`, `reflection-v2`; zh live 2026-10-15 single call (earlier prompt, [REFLECTION_V2.md](../ai/REFLECTION_V2.md)); UNV batch validated C01 en + C04 zh ([TWO_LANGUAGES](../ai/REFLECTION_EDITORIAL_FREEDOM_TWO_LANGUAGES.md)); **final 8-call acceptance of the merged prompt** (see below) | Hosted live call; per-language split and editorial scores not in the repository; R2 evaluation NOT PERFORMED ([R2](../ai/REFLECTION_V2_R2_EVALUATION.md)) | **BLOCKED**: one approved call per language |
 | Grounding | Mock VC · live VH | Mock VC · live VH | Validators in `reflection-v2`/`sonnet-weekly` tests; historical live outputs passed validation | Human review on current prompt | With live call |
 | Report persistence | VC (local) | VC (local) | `ai-p0.postgres` report worker + atomic regeneration (17/17, 2026-10-17); `report-write-fence`; zh offline harness (CI path-filtered on PR #62; result not re-read locally) | Hosted | After live call |
 | Owner-only API read | VC · hosted negatives VC | VC · hosted negatives VC | `private-report-list`; Phase A run 38991251290 (401/403/400) | Hosted positive read | After hosted report |
 | Web/Mobile display | PARTIAL | PARTIAL | `mobile/src/app/reflection.tsx` implemented | No display test; no hosted report to display | After hosted report |
 | Automatic background | Production queue VH; hosted **BLOCKED** | Same | Dispatch/Queue/executor/cron in source; `ai-async-dispatch(.postgres)`; production cutover 2026-09-29 (recorded) | TEST lane absent; **no Weekly/Monthly scheduler** (NOT SUPPORTED) | Design only, separate approval |
+
+## Final Weekly editorial acceptance (merged prompt) — VERIFIED HISTORICAL
+
+| Item | Record |
+|---|---|
+| Candidate | `45145ceb54f07b944e8e4e479daaf2af78d652b3`, merged via PR #62 on 2026-10-16 (flags default OFF); report pipeline unchanged on `main` since |
+| Runner | `scripts/weekly-final-acceptance-evaluation.mjs` (branch `eval/weekly-final-acceptance-45145ceb`), `live` mode |
+| Environment | Owner's macOS machine, isolated local checkout; not GitHub Actions |
+| Result | COMPLETE: dispatched 8, attempts 8, rejected 0; budget reservation US$0.32768 (8 × US$0.04096) |
+| Quality | 4/4 blind comparison wins (submitter-reported in PR #62) |
+| Regression | Real-dependency suite 344/344 on macOS (PR #62) |
+| Artifacts | Private ledger/review files in that checkout's Git directory (`petalpal-acceptance/weekly-final-acceptance-45145ceb*`), not in the repository |
+
+Sources: PR #62 description and the owner's terminal record of the live run. An
+earlier attempt in the same workflow stopped with `LEDGER_UNAVAILABLE` before it
+was corrected. Claude did not open the private artifacts (macOS folder access
+blocked), so this row is VERIFIED HISTORICAL, not re-verified. It proves isolated
+live quality of the merged prompt, not hosted TEST behavior.
 
 ## Weekly language gate
 
@@ -84,7 +102,7 @@ Result: **17/17 pass**. No runtime code, hosted access or provider call.
 
 ## Hosted ZH Weekly runbook (prepared 2026-10-17, NOT executed)
 
-**Prerequisite — guard fix (fixed locally 2026-10-17 on `fix/test-weekly-budget-calls`; needs merge + TEST backend deploy).** One Weekly generation reserves **2**
+**Prerequisite — guard fix (merged in PR #72; TEST backend deployed at `709c94c4` on 2026-10-17, startup isolation PASS, anonymous smoke 10/10, anonymous Weekly trigger and report list 401; budget variables not yet set).** One Weekly generation reserves **2**
 calls (`WEEKLY_REPORT: { daily: 4, calls: 2 }`, `lib/ai-cost-gate.js`), and
 the verified single-call harness uses call limits `2` with
 `AI_WEEKLY_REPORT_DAILY_LIMIT=1`. The `weekly-sonnet-v1` TEST guard currently
