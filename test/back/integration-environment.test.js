@@ -62,6 +62,43 @@ test('integration guard keeps AI disconnected and kill-switched', () => {
   for (const name of ['CLOUDFLARE_WORKER_AI_URL', 'CLOUDFLARE_WORKER_AI_TOKEN', 'AI_JOB_DISPATCH_URL', 'AI_JOB_DISPATCH_TOKEN', 'AI_JOB_EXECUTOR_TOKEN']) {
     rejects({ [name]: 'x' }, new RegExp(name));
   }
+  // Without the explicit TEST budget, a single allowed call is still rejected.
+  rejects({ AI_USER_DAILY_CALL_LIMIT: '1' }, /AI_USER_DAILY_CALL_LIMIT must be 0$/);
+});
+
+const budgeted = () => ({ ...valid(), PETALPAL_TEST_AI_BUDGET: 'weekly-sonnet-v1',
+  AI_USER_DAILY_CALL_LIMIT: '1', AI_GLOBAL_DAILY_CALL_LIMIT: '1', AI_PROVIDER_DAILY_CALL_LIMIT: '1',
+  AI_WEEKLY_REPORT_PROVIDER: 'anthropic', AI_WEEKLY_REPORT_MODEL: 'claude-sonnet-5-5',
+  AI_WEEKLY_REFLECTION_CONTRACT: 'weekly-reflection-v2', CLOUDFLARE_AI_GATEWAY_ID: 'petalpal-integration',
+  AI_USER_DAILY_USD_LIMIT: '0.05', AI_USER_MONTHLY_USD_LIMIT: '0.05', AI_GLOBAL_DAILY_USD_LIMIT: '0.05',
+  AI_GLOBAL_MONTHLY_USD_LIMIT: '0.05', AI_ANTHROPIC_MONTHLY_USD_LIMIT: '0.05' });
+const budgetRejects = (change, pattern) => {
+  const env = { ...budgeted(), ...change };
+  for (const [key, value] of Object.entries(change)) if (value === undefined) delete env[key];
+  assert.throws(() => assertIntegrationEnvironment(env), pattern);
+};
+
+test('explicit TEST budget allows exactly one bounded Sonnet Weekly v2 call and nothing else', () => {
+  assert.equal(assertIntegrationEnvironment(budgeted()), true);
+  assert.equal(assertIntegrationEnvironment({ ...budgeted(), AI_USER_DAILY_CALL_LIMIT: '0' }), true);
+  budgetRejects({ PETALPAL_TEST_AI_BUDGET: 'unbounded' }, /PETALPAL_TEST_AI_BUDGET/);
+  budgetRejects({ AI_GLOBAL_DAILY_CALL_LIMIT: '2' }, /AI_GLOBAL_DAILY_CALL_LIMIT must be 0 or 1/);
+  budgetRejects({ AI_ASYNC_EXECUTION_MODE: 'cloudflare_queue' }, /manual/);
+  budgetRejects({ AI_WEEKLY_REPORT_PROVIDER: undefined }, /only Sonnet Weekly reflection v2/);
+  budgetRejects({ AI_WEEKLY_REPORT_MODEL: 'claude-opus-5-5' }, /only Sonnet Weekly reflection v2/);
+  budgetRejects({ AI_WEEKLY_REFLECTION_CONTRACT: undefined }, /only Sonnet Weekly reflection v2/);
+  budgetRejects({ AI_MONTHLY_REPORT_PROVIDER: 'anthropic' }, /AI_MONTHLY_REPORT_PROVIDER/);
+  budgetRejects({ AI_EVENT_EMOTION_PROVIDER: 'anthropic' }, /AI_EVENT_EMOTION_PROVIDER/);
+  budgetRejects({ CLOUDFLARE_AI_GATEWAY_ID: 'petalpal-production' }, /TEST Gateway/);
+  for (const name of ['AI_USER_DAILY_USD_LIMIT', 'AI_USER_MONTHLY_USD_LIMIT', 'AI_GLOBAL_DAILY_USD_LIMIT',
+    'AI_GLOBAL_MONTHLY_USD_LIMIT', 'AI_ANTHROPIC_MONTHLY_USD_LIMIT']) {
+    budgetRejects({ [name]: undefined }, new RegExp(name));
+    budgetRejects({ [name]: '0.051' }, new RegExp(name));
+    budgetRejects({ [name]: '5' }, new RegExp(name));
+  }
+  for (const name of ['CLOUDFLARE_WORKER_AI_URL', 'AI_JOB_DISPATCH_URL', 'AI_JOB_EXECUTOR_TOKEN']) {
+    budgetRejects({ [name]: 'x' }, new RegExp(name));
+  }
 });
 
 test('integration guard errors never echo configured values', () => {
