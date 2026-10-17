@@ -756,3 +756,10 @@ Firebase Admin key retirement is **done** (user-confirmed 2026-10-08): the Augus
 2. **Branch protection and auto-deploy (last recorded 2026-10-10):** "Protect main" matched no branch. Point it at `main` and require the security CI checks, and confirm production `PetalPal_v2` Auto-Deploy is OFF or not tracking `main`, so a merge cannot deploy production.
 3. **DNS / registrar:** MFA on the registrar and Cloudflare, restricted DNS members, DNSSEC where supported.
 4. **Production `TRUST_PROXY` and rate-limit values:** read their names and values on Render (no secrets), so client-IP throttling is known to work behind Cloudflare.
+
+**Owner confirmation — 2026-10-17.** The owner reports all four items above as already done. Recorded as **USER-CONFIRMED only**; the agent has no provider access, so none is independently verified and no values were shared.
+
+- [x] Historical `DATABASE_URL` revoked at Prisma — USER-CONFIRMED.
+- [x] "Protect main" targets `main` with the security checks, and production `PetalPal_v2` Auto-Deploy cannot deploy on a `main` merge — USER-CONFIRMED.
+- [x] Registrar and Cloudflare MFA, restricted DNS members, DNSSEC where supported — USER-CONFIRMED.
+- [x] Production `TRUST_PROXY` and rate-limit settings reviewed on Render — USER-CONFIRMED (values not recorded here).
