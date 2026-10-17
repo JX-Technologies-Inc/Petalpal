@@ -144,7 +144,23 @@ authenticated owner `POST /ai/reports/weekly/trigger` with body
 `{"localDate":"2026-10-17"}` (never an empty body). In manual mode it runs
 inline. Expect 200/202 with a report, or a typed failure. Do not retry. Then
 remove the budget variables and redeploy, and read the report owner-only.
-**Open:** password sign-in for the TEST identity currently fails (HTTP 400), so
-the trigger needs a working authenticated caller: a fixed sign-in, a
-phrase-gated workflow using the stored TEST identity secrets (confirm it is the
-same owner), or an in-app trigger.
+**Caller (prepared, offline-tested, not dispatched):**
+`.github/workflows/integration-weekly-trigger.yml` runs
+`scripts/integration-weekly-trigger.mjs` with the stored TEST identity.
+1. `phase=check` (environment `petalpal-web-build-integration`) is read-only.
+   It signs in, then calls `GET /session?view=metadata` and `GET /ai/reports`; it
+   never calls `/auth/session` or the consent GET, which can write. It requires the
+   signed-in owner id to equal the pre-confirmed `INTEGRATION_WEEKLY_OWNER_ID`
+   secret and the token email to equal the stored identity, plus locale `zh-Hans`,
+   week `2026-10-12`, memory consent (report list 200) and no existing report for
+   the week. Anything unconfirmed stops it.
+2. `phase=trigger` (protected environment `petalpal-weekly-trigger`, required
+   reviewers) runs only on `main` with `run_attempt == 1` and only at or after
+   2026-10-19T00:00:00Z. It repeats every check, then sends exactly one request
+   with no retry.
+
+Duplicate generation is also blocked by the workflow concurrency group, the
+existing-report stop and server-side idempotency (one job per owner, period and
+version, `maxAttempts: 1`). Offline tests: `test/back/integration-weekly-trigger.test.js`
+6/6. Manual setup is listed in `MANUAL_SECURITY_CHECKLIST.md`; each phase needs
+separate approval.
