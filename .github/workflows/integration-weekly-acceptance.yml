@@ -1,0 +1,40 @@
+name: Integration Weekly acceptance ($0, TEST backend, fail-closed trigger)
+
+# Manual only. Fixed TEST hosts; the existing verified TEST identity from the
+# integration build environment. Writes only TEST consent (granted, then revoked),
+# two synthetic Events and one Weekly AiJob. No provider call, deploy or flag change.
+on:
+  workflow_dispatch:
+    inputs:
+      authorization:
+        description: Type WRITE-TEST-WEEKLY-ACCEPTANCE after reviewing the TEST write scope
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: petalpal-integration-weekly-acceptance
+  cancel-in-progress: false
+
+jobs:
+  weekly:
+    if: github.ref == 'refs/heads/main' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    environment: petalpal-web-build-integration
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24.7.0'
+      - name: Consent-gated Weekly trigger, fail-closed generation and owner-only readback
+        env:
+          AUTHORIZATION_PHRASE: ${{ inputs.authorization }}
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          INTEGRATION_TEST_EMAIL: ${{ secrets.INTEGRATION_TEST_EMAIL }}
+          INTEGRATION_TEST_PASSWORD: ${{ secrets.INTEGRATION_TEST_PASSWORD }}
+        run: node scripts/integration-weekly-acceptance.mjs
