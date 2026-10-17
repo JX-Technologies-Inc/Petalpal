@@ -254,8 +254,8 @@ and approval, never bundled with Weekly.
 | C5 | Hosted TEST | Real | Hosted | Manual | — | Possible | Re-run runner → "No pending" | NOT RUN (do not repeat) | — | — |
 | D1 | Hosted TEST | Real | Hosted | Automatic | — | Yes | Event auto-processed | NOT SUPPORTED | Guard | Design + approval |
 | D2 | Hosted TEST | Real | Hosted | Automatic | — | Yes | Period close → report | NOT SUPPORTED | No scheduler | Design + approval |
-| E1a | Disposable PG | Sim 23:59:59Z | Synthetic | Auto test | Mock | Disposable | REJECT `AI_REPORT_PERIOD_OPEN` | PROPOSED | — | Code change |
-| E1b | Disposable PG | Sim 00:00:00Z | Synthetic | Auto test | Mock | Disposable | Report persisted | PROPOSED | — | Code change |
+| E1a | Disposable PG | Sim 23:59:59Z | Synthetic (real Event→Memory) | Auto test | Mock | Disposable | REJECT: job FAILED, `AI_GATEWAY_INVALID_INPUT`, 0 provider calls, reservation still counted | VERIFIED 2026-10-17 | `weekly-zh-time-boundary.postgres` (fresh DB via `WEEKLY_BOUNDARY_DATABASE_URL`) | None |
+| E1b | Disposable PG | Sim 00:00:00Z | Synthetic (real Event→Memory) | Auto test | Mock | Disposable | One mocked call, grounded zh-Hans report, owner-only, repeat reuses job | VERIFIED 2026-10-17 | `weekly-zh-time-boundary.postgres`, TEST runbook budget env | None |
 | E2 | Disposable PG | Fixture history | Synthetic | Manual | Real Sonnet | Disposable | Grounded zh-Hans report | VERIFIED (recorded 2026-10-15) | REFLECTION_V2.md | Paid-call approval |
 | E-route | Hosted TEST | Real (before close) | Hosted | Manual | — | No | 400 open period, no job | IMPLEMENTED BUT UNTESTED (hosted) | route code | Read-only call |
 | F1 | Hosted TEST | Real ≥ close | Hosted synthetic | Manual | Real Sonnet ×1 | Yes | Report persisted, grounded | PROPOSED | — | Config + deploy + 1 call ≤ US$0.05 |

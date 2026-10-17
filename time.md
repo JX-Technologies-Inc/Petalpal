@@ -154,6 +154,14 @@ period at `asOf`, independently of the HTTP trigger. The HTTP routes always use
 the real clock. The AI cost gate reads the **database** clock for its daily and
 monthly windows, so injected `now` never shifts budgets.
 
+**Reservation order (VERIFIED, `test/back/weekly-zh-time-boundary.postgres.test.js`):**
+on the Sonnet path the cost reservation (2 calls, one Weekly action, USD) is
+taken **before** report input is built. A run that then fails, such as on an open
+period (surfaced as `AI_GATEWAY_INVALID_INPUT`), makes no provider call, but its
+reservation is not released and still counts against that database day's budget.
+The HTTP trigger rejects an open period before creating a job, so this matters
+only for worker-level failures.
+
 **Hosted TEST has no report-time override.** The `real-ai-*` workflows set
 `PETALPAL_SIMULATED_TIME`/`PETALPAL_SIMULATED_TIME_EMAILS`, but no source file
 reads them in this build, and `POST /events` states that no simulated-time
