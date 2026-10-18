@@ -4,7 +4,7 @@ import {hitsTeaArea} from './fairy/teaDestination';
 import { hitsMoonBed } from './fairy/moonDestination';
 import { hitsSwing } from './fairy/swingDestination';
 import type { FairyState } from './fairy/FairyNavigation';
-import { constrainGardenCamera, zoomGardenAt } from './rendering/gardenWorldBounds';
+import { constrainGardenCamera, zoomGardenAt, GARDEN_WORLD_BOUNDS } from './rendering/gardenWorldBounds';
 import GardenFairy, { type FairyHandle } from './fairy/GardenFairy';
 import { GardenCalendar } from './GardenCalendar';
 import type { FlowerSession } from './planting/flowerDetailApi';
@@ -20,6 +20,7 @@ import Animated, {
   useAnimatedStyle,
   cancelAnimation,
   Easing,
+  useAnimatedReaction,
   useDerivedValue,
   useReducedMotion,
   useSharedValue,
@@ -481,7 +482,24 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   const cameraX = useSharedValue(0);
   const cameraY = useSharedValue(0);
   const cameraZoom = useSharedValue(1);
-  const maximumCameraZoom = 3;
+  // Partner camera contract: the Garden always covers the screen on any device.
+  // Clamp programmatic focus, resize and reset as well as direct gestures.
+  useAnimatedReaction(
+    () => constrainGardenCamera(viewport.width, viewport.height, fit, baseX, baseY,
+      cameraX.value, cameraY.value, cameraZoom.value),
+    next => {
+      if (cameraX.value !== next.x) cameraX.value = next.x;
+      if (cameraY.value !== next.y) cameraY.value = next.y;
+      if (cameraZoom.value !== next.zoom) cameraZoom.value = next.zoom;
+    }, [viewport.width, viewport.height, fit, baseX, baseY]);
+  const maximumCameraZoom = Math.max(3, fit > 0 ? Math.max(viewport.width / GARDEN_WORLD_BOUNDS.width, viewport.height / GARDEN_WORLD_BOUNDS.height) / fit * 3 : 3);
+  useEffect(() => {
+    if (fit <= 0) return;
+    const minimum = constrainGardenCamera(viewport.width, viewport.height, fit, baseX, baseY, 0, 0, 1).minimumZoom;
+    cameraZoom.value = minimum;
+    cameraX.value = viewport.width / 2 - baseX - (GARDEN_WORLD_BOUNDS.x + GARDEN_WORLD_BOUNDS.width / 2) * fit * minimum;
+    cameraY.value = viewport.height / 2 - baseY - (GARDEN_WORLD_BOUNDS.y + GARDEN_WORLD_BOUNDS.height / 2) * fit * minimum;
+  }, [viewport.width, viewport.height, fit, baseX, baseY, cameraX, cameraY, cameraZoom]);
   const sceneElement = useRef<View>(null);
   // Web fallback: a restored session can mount the scene without a non-zero
   // onLayout event, leaving fit at 0 and no canvas. Measure the element directly.
@@ -1159,10 +1177,11 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   }, [baseX, baseY, fit, cameraX, cameraY, cameraZoom, focalWorldX, focalWorldY,
     viewport.width, viewport.height, startX, startY, startZoom, handleGardenTap, enableFairyWalk, previewMode, calibrationMode, calSubMode, calDragMode, paintInteractionMode, maskPan, paintPan, moveMaskPan]);
   const resetView = useCallback(() => {
-    cameraX.value = 0;
-    cameraY.value = 0;
-    cameraZoom.value = 1;
-  }, [cameraX, cameraY, cameraZoom]);
+    const minimum = constrainGardenCamera(viewport.width, viewport.height, fit, baseX, baseY, 0, 0, 1).minimumZoom;
+    cameraZoom.value = minimum;
+    cameraX.value = viewport.width / 2 - baseX - (GARDEN_WORLD_BOUNDS.x + GARDEN_WORLD_BOUNDS.width / 2) * fit * minimum;
+    cameraY.value = viewport.height / 2 - baseY - (GARDEN_WORLD_BOUNDS.y + GARDEN_WORLD_BOUNDS.height / 2) * fit * minimum;
+  }, [viewport.width, viewport.height, fit, baseX, baseY, cameraX, cameraY, cameraZoom]);
 
   const focusImpactView = useCallback(() => {
     if (viewport.width === 0 || viewport.height === 0 || fit <= 0) return;
