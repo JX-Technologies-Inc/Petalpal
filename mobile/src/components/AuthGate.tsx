@@ -1,4 +1,4 @@
-import { PrivacyAndSupport } from './features/PrivacyAndSupport';
+import { PrivacyLinks } from './features/PrivacyAndSupport';
 import { COMMUNITY_VERSION, COMMUNITY_TEXT } from './features/CommunityGuidelines';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, AppState, KeyboardAvoidingView, Platform, Pressable, ScrollView,
@@ -75,7 +75,6 @@ export function AuthGate({ children }: { children: ReactNode }) {
           : registering ? 'Create your PetalPal account' : 'Sign in to PetalPal'}</Text>
         <Text style={styles.body}>{verification ? `Check your inbox at ${auth.identity?.email || 'your email address'}.`
           : profile ? 'Choose how you’ll appear in PetalPal.' : 'Your feelings, your flowers, your little place to grow.'}</Text>
-        <PrivacyAndSupport />
         {verification ? <>
           {button(working ? 'Checking…' : 'I’ve verified my email', auth.checkVerification)}
           {button('Resend verification email', auth.resendVerification, false, true)}
@@ -112,6 +111,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
         </>}
         {auth.message ? <Text accessibilityLiveRegion="polite" style={styles.body}>{auth.message}</Text> : null}
         {auth.error ? <Text accessibilityRole="alert" style={styles.error}>{auth.error}</Text> : null}
+        <PrivacyLinks />
       </View>
     </ScrollView>
   </KeyboardAvoidingView>;
