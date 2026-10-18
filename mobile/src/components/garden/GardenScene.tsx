@@ -28,6 +28,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { GardenLoadingOverlay } from './loading/GardenLoadingOverlay';
+import { publishWater, reportGardenLoadFailure } from './loading/gardenReadiness';
 import Canvas from './GardenCanvas';
 import PlantingRegionOverlay from './planting/PlantingRegionOverlay';
 import PlantingRegionCalibrationEditor, {
@@ -126,6 +127,8 @@ import {
 import { STATIC_LANDMARK_MAP_PLACEMENTS, type StaticLandmarkMapPlacement } from './staticLandmarkMapPlacements';
 import { TEA_SET_MAP_ROTATION, TEA_SET_MAP_SCALE, TEA_SET_MAP_X, TEA_SET_MAP_Y } from './teaSetMapPlacement';
 import { type WorldTimeOverride, useWorldTime } from './world-time';
+
+const reportWaterFailure = () => { publishWater('failed'); reportGardenLoadFailure('water'); };
 
 function cyclicWeight(phase: number, index: number, count: number): number {
   'worklet';
@@ -463,7 +466,8 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
   const surfaceFlow = useWaterTopFlow(worldActive && perf.Water && perf.WaterAnimation, waterRipplesVisible && perf.WaterAnimation);
 
-  const calmBaseImage = useImage(WATER_ASSETS.calmBase);
+  const calmBaseImage = useImage(WATER_ASSETS.calmBase, reportWaterFailure);
+  useEffect(() => { publishWater(calmBaseImage ? 'ready' : 'loading'); }, [calmBaseImage]);
 
 
   useFocusEffect(useCallback(() => {
@@ -1470,7 +1474,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         </Canvas>
         </GestureDetector>
       )}
-      <GardenLoadingOverlay waterReady={Boolean(calmBaseImage)} />
+      <GardenLoadingOverlay />
       <View style={{position:'absolute',left:12,bottom:90,flexDirection:'row',gap:6,zIndex:30}}>
         <Pressable accessibilityRole="button" accessibilityLabel="Zoom out Garden" onPress={() => zoomAt(1 / 1.25)}
           style={styles.zoomButton}><Text style={styles.zoomButtonText}>−</Text></Pressable>
