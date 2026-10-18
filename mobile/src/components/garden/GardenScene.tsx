@@ -27,6 +27,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { AppState, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { GardenLoadingOverlay } from './loading/GardenLoadingOverlay';
 import Canvas from './GardenCanvas';
 import PlantingRegionOverlay from './planting/PlantingRegionOverlay';
 import PlantingRegionCalibrationEditor, {
@@ -478,6 +479,22 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   const cameraZoom = useSharedValue(1);
   const maximumCameraZoom = 3;
   const sceneElement = useRef<View>(null);
+  // Web fallback: a restored session can mount the scene without a non-zero
+  // onLayout event, leaving fit at 0 and no canvas. Measure the element directly.
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof ResizeObserver === 'undefined') return;
+    const element = sceneElement.current as unknown as HTMLElement | null;
+    if (!element?.getBoundingClientRect) return;
+    const apply = () => {
+      const { width, height } = element.getBoundingClientRect();
+      if (width > 0 && height > 0) setViewport(previous =>
+        previous.width === width && previous.height === height ? previous : { width, height });
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
   const zoomRequest = useRef({ time: 0, zoom: 1 });
   const reducedCameraMotion = useReducedMotion();
   const zoomAt = useCallback((factor: number, focalX = viewport.width / 2, focalY = viewport.height / 2) => {
@@ -1453,6 +1470,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
         </Canvas>
         </GestureDetector>
       )}
+      <GardenLoadingOverlay waterReady={Boolean(calmBaseImage)} />
       <View style={{position:'absolute',left:12,bottom:90,flexDirection:'row',gap:6,zIndex:30}}>
         <Pressable accessibilityRole="button" accessibilityLabel="Zoom out Garden" onPress={() => zoomAt(1 / 1.25)}
           style={styles.zoomButton}><Text style={styles.zoomButtonText}>−</Text></Pressable>

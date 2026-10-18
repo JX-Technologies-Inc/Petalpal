@@ -1,8 +1,9 @@
 import { Platform } from 'react-native';
 import { Group, Image, Rect, useImage } from '@shopify/react-native-skia';
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
 import type { SkImage } from '@shopify/react-native-skia';
 import GardenStaticPicture from './GardenStaticPicture';
+import { publishLandsReady } from './loading/gardenReadiness';
 import { GARDEN_LANDS, type GardenLand, type GardenLandLayout } from './gardenMapLayout';
 import GardenShoreContact, { makeShoreCoverage } from './water/GardenShoreContact';
 
@@ -20,6 +21,9 @@ export function GardenLandResources({ children }: { children: ReactNode }) {
   const images = useMemo(() => new Map(GARDEN_LANDS.slice(0, 7).map((land, index) =>
     [land.source, [central, upper, june, july, august, september, autumn][index]])),
   [central, upper, june, july, august, september, autumn]);
+  const ready = [central, upper, june, july, august, september, autumn].every(Boolean);
+  useEffect(() => { publishLandsReady(ready); }, [ready]);
+  useEffect(() => () => publishLandsReady(false), []);
   return <LandImages.Provider value={images}>{children}</LandImages.Provider>;
 }
 
