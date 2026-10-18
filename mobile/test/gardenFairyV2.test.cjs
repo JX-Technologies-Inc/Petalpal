@@ -103,7 +103,7 @@ test('integrated scene retains one cached Canvas, current app contracts and came
 test('shore and land passes reuse seven decoded images rather than decoding fourteen',()=>{
   const cache=new Map(),decoded=[];let shared=null;
   const jsx=(type,props)=>({type,props});
-  const react={createContext:()=>({Provider:'Provider'}),useContext:()=>shared,useMemo:fn=>fn()};
+  const react={createContext:()=>({Provider:'Provider'}),useContext:()=>shared,useMemo:fn=>fn(),useEffect:()=>{}};
   const skia={Group:'Group',Image:'Image',Rect:'Rect',useImage:source=>{
     if(source===null)return null;
     const image={source,width:()=>1536,height:()=>1024};decoded.push(image);return image;

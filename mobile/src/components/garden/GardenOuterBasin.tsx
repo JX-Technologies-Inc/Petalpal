@@ -2,6 +2,7 @@ import { Image, ImageShader, Rect, Shader, Skia, useImage, type SkImage } from '
 import { memo, useMemo } from 'react';
 import GardenStaticPicture from './GardenStaticPicture';
 import GardenRightPondShore from './GardenRightPondShore';
+import { TERRAIN_ASSETS } from './terrainAssets';
 import GardenUpperRightScenery, { ScenicExclusion } from './GardenUpperRightScenery';
 
 type Bounds = { x: number; y: number; width: number; height: number };
@@ -150,16 +151,16 @@ function TerrainJoin({image, painting, inlet, bounds, scenicEnabled = false, top
 // Terrain-only artwork in world space. Alpha exposes the approved water; no
 // water material, island placement, landmark transform or camera is changed.
 function GardenOuterBasin() {
-  const scenic = useImage(require('./terrain/upper-right-scenic-v2.png'));
-  const basin = useImage(require('./terrain/outer-basin-v2.png'));
-  const floralBasin = useImage(require('./terrain/outer-basin-floral-v3.png'));
-  const floralRightBank = useImage(require('./terrain/outer-right-bank-floral-v2.png'));
-  const floralPass = useImage(require('./terrain/entrance-floral-banks-v2.png'));
-  const treeCliffs = useImage(require('./terrain/treehouse-cliff-backing-v1.png'));
-  const rightBank = useImage(require('./terrain/outer-right-bank-v1.png'));
-  const upland = useImage(require('./terrain/outer-upland-v1.png'));
-  const inlet = useImage(require('./terrain/waterfall-source-banks-v1.png'));
-  const pass = useImage(require('./terrain/entrance-mountain-pass-v1.png'));
+  const scenic = useImage(TERRAIN_ASSETS.scenic);
+  const basin = useImage(TERRAIN_ASSETS.basin);
+  const floralBasin = useImage(TERRAIN_ASSETS.floralBasin);
+  const floralRightBank = useImage(TERRAIN_ASSETS.floralRightBank);
+  const floralPass = useImage(TERRAIN_ASSETS.floralPass);
+  const treeCliffs = useImage(TERRAIN_ASSETS.treeCliffs);
+  const rightBank = useImage(TERRAIN_ASSETS.rightBank);
+  const upland = useImage(TERRAIN_ASSETS.upland);
+  const inlet = useImage(TERRAIN_ASSETS.inlet);
+  const pass = useImage(TERRAIN_ASSETS.pass);
   const images=useMemo(()=>[basin,treeCliffs,rightBank,upland,inlet,pass,scenic,floralBasin,floralRightBank,floralPass].filter((image):image is SkImage=>Boolean(image)),[basin,treeCliffs,rightBank,upland,inlet,pass,scenic,floralBasin,floralRightBank,floralPass]);
   const drawing=useMemo(()=>!inlet?null:<>
     {upland && OUTER_GROUND && <Rect x={-2400} y={-2400} width={7200} height={7000}>

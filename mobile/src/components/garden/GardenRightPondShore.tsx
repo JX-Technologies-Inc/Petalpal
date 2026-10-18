@@ -1,5 +1,6 @@
 import { BlurStyle, Image, Skia, TileMode, useImage, type SkImage } from '@shopify/react-native-skia';
 import { memo, useMemo } from 'react';
+import { TERRAIN_ASSETS } from './terrainAssets';
 
 // Local cliff-foot details only. The existing cliff artwork occludes the back
 // of each shelf; the original lotus, islands and water remain separate layers.
@@ -153,7 +154,7 @@ function makeShore(mineral: SkImage) {
 }
 
 function GardenRightPondShore({ mineral: shared }: { mineral?: SkImage | null }) {
-  const fallback = useImage(shared === undefined ? require('./terrain/outer-right-bank-v1.png') : null);
+  const fallback = useImage(shared === undefined ? TERRAIN_ASSETS.rightBank : null);
   const mineral = shared === undefined ? fallback : shared;
   const image = useMemo(() => {
     if (!mineral) return null;

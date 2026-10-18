@@ -1,0 +1,14 @@
+{
+  "$schema": "../cloudflare/node_modules/wrangler/config-schema.json",
+  "name": "petalpal-keepwarm",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-09",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [],
+  // Every 10 minutes from 07:00 to 00:59 America/Vancouver (UTC-7 from
+  // 2026-11 onward; UTC-7 PDT before that): UTC hours 14-23 and 00-07.
+  // About 18 h/day (~560 h/month) stays inside Render's shared 750 free hours.
+  "triggers": { "crons": ["*/10 0-7,14-23 * * *"] },
+  "observability": { "enabled": false }
+}
