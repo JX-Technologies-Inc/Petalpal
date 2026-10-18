@@ -1,5 +1,16 @@
 # PetalPal Security
 
+## Coordinated production release `c9bb959d`, 2026-10-17
+
+Production database, API and Web now run `c9bb959d3717d081e5eddb0aa9dea35c702ea337`. The five 2026-10-15 release
+migrations were applied once with the API suspended. The deleted-identity trigger and the AI disclosure grant guard
+were verified, prior AI grants were revoked and pending jobs were cancelled by migration 003. A short mixed-version window
+occurred because Render cannot deploy while suspended: the old API ran against the migrated schema until the new build
+went Live, protected by those database-level guards. Render now builds `Dockerfile.backend`. Anonymous postflight
+confirmed auth denial, the CORS allow/deny split, foreign-origin Socket.IO denial (closing the deferred Engine.IO P2 in
+production) and security headers. `app.jastrevia.com` remains behind Cloudflare Access. No credential values were
+recorded; authenticated acceptance is pending. See the INTEGRATION_DEPLOYMENT.md checkpoint.
+
 ## Local feedback transport logging — partner branch `updated-flower`, 2026-10-15
 
 The new mobile Help/Feedback local development transport no longer logs submitted
