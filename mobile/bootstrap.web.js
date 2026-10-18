@@ -1,6 +1,8 @@
+// Must run before any Skia module defines its classes (see the polyfill).
+import './src/polyfills/symbolDispose';
 import { LoadSkiaWeb } from '@shopify/react-native-skia/lib/module/web/LoadSkiaWeb';
 import { configureGardenWebCanvasCache, isOwnedGardenWebView } from './src/components/garden/webCanvasCache';
-import { configureGardenWebNativeOwnership, configureGardenWebRootCleanup } from './src/components/garden/webNativeHandles';
+import { configureGardenWebDispose, configureGardenWebNativeOwnership, configureGardenWebRootCleanup } from './src/components/garden/webNativeHandles';
 
 LoadSkiaWeb({ locateFile: () => '/canvaskit.wasm' })
   .then(() => {
@@ -25,6 +27,11 @@ LoadSkiaWeb({ locateFile: () => '/canvaskit.wasm' })
       [JsiSkRuntimeEffect.prototype, ['makeShader', 'makeShaderWithChildren']],
       [JsiSkImage.prototype, ['makeShaderOptions', 'makeShaderCubic']],
     ]);
+    // Belt and braces for Symbol.dispose mismatches: dispose() falls back to the
+    // key the class was defined with, then to deleting the native handle.
+    const { BaseHostObject } = require('@shopify/react-native-skia/lib/module/skia/web/Host');
+    const { JsiSkFontMgr } = require('@shopify/react-native-skia/lib/module/skia/web/JsiSkFontMgr');
+    configureGardenWebDispose([BaseHostObject.prototype, JsiSkFontMgr.prototype]);
     const { SkiaSGRoot } = require('@shopify/react-native-skia/lib/module/sksg/Reconciler');
     configureGardenWebRootCleanup(SkiaSGRoot.prototype, nativeId => isOwnedGardenWebView(globalThis.SkiaViewApi, nativeId));
     return require('expo-router/entry');

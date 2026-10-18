@@ -108,3 +108,22 @@ export function configureGardenWebNativeOwnership(
     }
   }
 }
+
+// Skia 2.6.2 Web dispose() calls this[Symbol.dispose](). If Symbol.dispose was
+// missing or replaced after a class loaded, that lookup fails. Try the current
+// symbol, then the key an undefined symbol produces, then delete the handle.
+export function configureGardenWebDispose(prototypes: readonly object[]) {
+  for (const prototype of prototypes) {
+    const target = prototype as { dispose?: (this: object) => void };
+    if (configured.has(target)) continue;
+    configured.add(target);
+    target.dispose = function (this: object) {
+      const owner = this as Record<PropertyKey, unknown> & { ref?: Partial<NativeHandle> | null };
+      for (const key of [Symbol.dispose, 'undefined'] as PropertyKey[]) {
+        const method = key === undefined ? undefined : owner[key];
+        if (typeof method === 'function') { method.call(owner); return; }
+      }
+      if (owner.ref && typeof owner.ref.delete === 'function' && !owner.ref.isDeleted?.()) owner.ref.delete();
+    };
+  }
+}
