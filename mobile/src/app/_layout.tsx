@@ -5,12 +5,18 @@ import { AuthGate } from "../components/AuthGate";
 import { nativeSecurityEnabled } from '../services/nativeSecurity';
 import { DarkTheme, DefaultTheme, Slot, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import type React from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
 import { FeedbackDraftProvider, GlobalHelpFeedback } from '../components/feedback';
 import { WorldTimeProvider } from '@/components/garden/world-time';
+
+// Partner login/entrance preview host: DEV-only, so production keeps its plain Stack.
+const DevLoginEntranceHost: React.ComponentType<{ children: React.ReactNode }> = __DEV__
+  ? require('../components/auth/LoginEntranceTransitionHost').LoginEntranceTransitionHost
+  : ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,6 +46,7 @@ function TabLayout() {
     content = (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AnimatedSplashOverlay />
+        <DevLoginEntranceHost>
         <Stack>
           <Stack.Screen name="index" options={{ title: 'Garden', headerShown: false }} />
           <Stack.Screen name="reflection" options={{ headerShown: false, animation: 'fade' }} />
@@ -53,7 +60,11 @@ function TabLayout() {
           {__DEV__ && <Stack.Screen name="swing-test" options={{ title: 'Swing preview' }} />}
           {__DEV__ && <Stack.Screen name="moon-bed-test" options={{ title: 'Moon Bed preview' }} />}
           {__DEV__ && <Stack.Screen name="water-test" options={{ title: 'Water preview' }} />}
+          {__DEV__ && <Stack.Screen name="player-preview" options={{ headerShown: false, animation: 'none' }} />}
+          {__DEV__ && <Stack.Screen name="login-preview" options={{ headerShown: false, animation: 'none' }} />}
+          {__DEV__ && <Stack.Screen name="fairy-loading-test" options={{ headerShown: false }} />}
         </Stack>
+        </DevLoginEntranceHost>
       </ThemeProvider>
     );
   } else if (pathname === '/treehouse-test') {

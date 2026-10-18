@@ -60,6 +60,7 @@ const HIDDEN_ROUTE_PATTERNS = [
 
 export function isHelpFeedbackVisibleOnRoute(pathname: string | null): boolean {
   if (!pathname) return true;
+  if (pathname === '/login-preview') return true;
   return !HIDDEN_ROUTE_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 

@@ -22,6 +22,7 @@ function runtime(path, development = false, signedIn = true) {
     '@/components/animated-icon': { AnimatedSplashOverlay: () => null },
     '@/components/garden/world-time': { WorldTimeProvider: Pass },
     '../components/feedback': { FeedbackDraftProvider: Pass, GlobalHelpFeedback: () => null },
+    '../components/auth/LoginEntranceTransitionHost': { LoginEntranceTransitionHost: Pass },
     '../constants/theme': { Fonts: {}, Spacing: { three: 3, four: 4, two: 2 } },
     '@/constants/theme': { Colors: { light: {} } },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
@@ -42,7 +43,8 @@ function runtime(path, development = false, signedIn = true) {
   return { load, render, nodes, navigation, mounts: () => mounts };
 }
 const previews = ['/treehouse-test', '/swing-test', '/moon-bed-test', '/water-test', '/waterfall-test', '/tea-set-test', '/dev/backend-qa', '/explore',
-  '/player-preview', '/mailbox', '/flower-effects-test', '/fairy-test', '/fairy-swing-test', '/fairy-sprite-test'];
+  '/player-preview', '/mailbox', '/flower-effects-test', '/fairy-test', '/fairy-swing-test', '/fairy-sprite-test',
+  '/login-preview', '/fairy-loading-test'];
 for (const path of previews) test(`direct production path denied before routed content: ${path}`, () => {
   const r = runtime(path); assert.match(r.render(r.load('../../../app/_layout').default()), /unavailable/); assert.equal(r.mounts(), 0);
 });
