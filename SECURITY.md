@@ -1,5 +1,14 @@
 # PetalPal Security
 
+## Web-only production follow-ups through `3bf76527`, 2026-10-18
+
+PRs #87–#90 changed only the mobile/Web client and were released to `petalpal-web-production` with production build
+config; the Web now serves version `417ca56c-3af3-42d7-b4f2-bbf094ff0cd0` (source
+`3bf7652796167c0ab31c365c882623a60f9047d9`). No API, database, provider credential or Access-policy change.
+`app.jastrevia.com` still redirects to Cloudflare Access. The owner-deployed keep-warm Worker only sends an
+unauthenticated GET to the API `/healthz` (expected 401) and holds no secrets; its deployment is owner-reported and not
+independently verified. See the INTEGRATION_DEPLOYMENT.md checkpoint for run, artifact and version references.
+
 ## Coordinated production release `c9bb959d`, 2026-10-17
 
 Production database, API and Web now run `c9bb959d3717d081e5eddb0aa9dea35c702ea337`. The five 2026-10-15 release
