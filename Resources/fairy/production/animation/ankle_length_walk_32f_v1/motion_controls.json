@@ -1,0 +1,1083 @@
+{
+  "coordinate_space": "source pixels; x right, y down; no re-registration",
+  "rear_tip_anchors": [
+    [
+      172,
+      342
+    ],
+    [
+      166,
+      339
+    ],
+    [
+      162,
+      335
+    ],
+    [
+      164,
+      334
+    ],
+    [
+      193,
+      341
+    ],
+    [
+      158,
+      334
+    ],
+    [
+      156,
+      335
+    ],
+    [
+      173,
+      338
+    ],
+    [
+      155,
+      340
+    ],
+    [
+      147,
+      336
+    ],
+    [
+      148,
+      333
+    ],
+    [
+      150,
+      329
+    ],
+    [
+      194,
+      342
+    ],
+    [
+      163,
+      335
+    ],
+    [
+      164,
+      337
+    ],
+    [
+      173,
+      342
+    ]
+  ],
+  "front_tip_anchors": [
+    [
+      257,
+      342
+    ],
+    [
+      263,
+      342
+    ],
+    [
+      258,
+      342
+    ],
+    [
+      245,
+      342
+    ],
+    [
+      217,
+      342
+    ],
+    [
+      231,
+      342
+    ],
+    [
+      227,
+      342
+    ],
+    [
+      230,
+      342
+    ],
+    [
+      257,
+      342
+    ],
+    [
+      246,
+      342
+    ],
+    [
+      241,
+      342
+    ],
+    [
+      244,
+      342
+    ],
+    [
+      215,
+      342
+    ],
+    [
+      264,
+      342
+    ],
+    [
+      259,
+      342
+    ],
+    [
+      258,
+      342
+    ]
+  ],
+  "wrist_anchors": [
+    [
+      204,
+      216
+    ],
+    [
+      203,
+      216
+    ],
+    [
+      206,
+      216
+    ],
+    [
+      209,
+      217
+    ],
+    [
+      202,
+      216
+    ],
+    [
+      201,
+      216
+    ],
+    [
+      198,
+      218
+    ],
+    [
+      201,
+      218
+    ],
+    [
+      176,
+      213
+    ],
+    [
+      176,
+      211
+    ],
+    [
+      178,
+      214
+    ],
+    [
+      180,
+      215
+    ],
+    [
+      206,
+      220
+    ],
+    [
+      204,
+      216
+    ],
+    [
+      205,
+      217
+    ],
+    [
+      203,
+      216
+    ]
+  ],
+  "inbetweens": [
+    {
+      "label": "1.5",
+      "pair": [
+        1,
+        2
+      ],
+      "donor_anchor": 2,
+      "rear_shoe_translation": [
+        3.0,
+        1.5
+      ],
+      "front_shoe_translation": [
+        -3.0,
+        0.0
+      ],
+      "wrist_translation": [
+        0.5,
+        0.0
+      ],
+      "rear_tip_midpoint": [
+        169.0,
+        340.5
+      ],
+      "front_tip_midpoint": [
+        260.0,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          132,
+          311,
+          171,
+          342
+        ],
+        [
+          221,
+          319,
+          270,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 196.0,
+      "petal_motion_full_at_y": 308.0,
+      "upper_identity_translation_xy": [
+        0,
+        -0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "2.5",
+      "pair": [
+        2,
+        3
+      ],
+      "donor_anchor": 2,
+      "rear_shoe_translation": [
+        -2.0,
+        -2.0
+      ],
+      "front_shoe_translation": [
+        -2.5,
+        0.0
+      ],
+      "wrist_translation": [
+        1.5,
+        0.0
+      ],
+      "rear_tip_midpoint": [
+        164.0,
+        337.0
+      ],
+      "front_tip_midpoint": [
+        260.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          132,
+          311,
+          171,
+          342
+        ],
+        [
+          221,
+          319,
+          270,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 196.0,
+      "petal_motion_full_at_y": 308.0,
+      "upper_identity_translation_xy": [
+        0,
+        -0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "3.5",
+      "pair": [
+        3,
+        4
+      ],
+      "donor_anchor": 3,
+      "rear_shoe_translation": [
+        1.0,
+        -0.5
+      ],
+      "front_shoe_translation": [
+        -6.5,
+        0.0
+      ],
+      "wrist_translation": [
+        1.5,
+        0.5
+      ],
+      "rear_tip_midpoint": [
+        163.0,
+        334.5
+      ],
+      "front_tip_midpoint": [
+        251.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          131,
+          300,
+          163,
+          336
+        ],
+        [
+          220,
+          320,
+          265,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 191.5,
+      "petal_motion_full_at_y": 297.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "4.5",
+      "pair": [
+        4,
+        5
+      ],
+      "donor_anchor": 4,
+      "rear_shoe_translation": [
+        14.5,
+        3.5
+      ],
+      "front_shoe_translation": [
+        -14.0,
+        0.0
+      ],
+      "wrist_translation": [
+        -3.5,
+        -0.5
+      ],
+      "rear_tip_midpoint": [
+        178.5,
+        337.5
+      ],
+      "front_tip_midpoint": [
+        231.0,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          134,
+          298,
+          166,
+          335
+        ],
+        [
+          217,
+          321,
+          264,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 191.5,
+      "petal_motion_full_at_y": 295.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "5.5",
+      "pair": [
+        5,
+        6
+      ],
+      "donor_anchor": 6,
+      "rear_shoe_translation": [
+        17.5,
+        3.5
+      ],
+      "front_shoe_translation": [
+        -7.0,
+        0.0
+      ],
+      "wrist_translation": [
+        0.5,
+        0.0
+      ],
+      "rear_tip_midpoint": [
+        175.5,
+        337.5
+      ],
+      "front_tip_midpoint": [
+        224.0,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          137,
+          301,
+          165,
+          335
+        ],
+        [
+          194,
+          322,
+          232,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 179.5,
+      "petal_motion_full_at_y": 298.0,
+      "upper_identity_translation_xy": [
+        0,
+        1.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "6.5",
+      "pair": [
+        6,
+        7
+      ],
+      "donor_anchor": 6,
+      "rear_shoe_translation": [
+        -1.0,
+        0.5
+      ],
+      "front_shoe_translation": [
+        -2.0,
+        0.0
+      ],
+      "wrist_translation": [
+        -1.5,
+        1.0
+      ],
+      "rear_tip_midpoint": [
+        157.0,
+        334.5
+      ],
+      "front_tip_midpoint": [
+        229.0,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          137,
+          301,
+          165,
+          335
+        ],
+        [
+          194,
+          322,
+          232,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 179.5,
+      "petal_motion_full_at_y": 298.0,
+      "upper_identity_translation_xy": [
+        0,
+        1.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "7.5",
+      "pair": [
+        7,
+        8
+      ],
+      "donor_anchor": 7,
+      "rear_shoe_translation": [
+        8.5,
+        1.5
+      ],
+      "front_shoe_translation": [
+        1.5,
+        0.0
+      ],
+      "wrist_translation": [
+        1.5,
+        0.0
+      ],
+      "rear_tip_midpoint": [
+        164.5,
+        336.5
+      ],
+      "front_tip_midpoint": [
+        228.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          131,
+          298,
+          161,
+          336
+        ],
+        [
+          195,
+          322,
+          237,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 178.0,
+      "petal_motion_full_at_y": 295.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "8.5",
+      "pair": [
+        8,
+        9
+      ],
+      "donor_anchor": 9,
+      "rear_shoe_translation": [
+        9.0,
+        -1.0
+      ],
+      "front_shoe_translation": [
+        -13.5,
+        0.0
+      ],
+      "wrist_translation": [
+        12.5,
+        2.5
+      ],
+      "rear_tip_midpoint": [
+        164.0,
+        339.0
+      ],
+      "front_tip_midpoint": [
+        243.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          121,
+          312,
+          163,
+          345
+        ],
+        [
+          220,
+          318,
+          265,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 191.5,
+      "petal_motion_full_at_y": 309.0,
+      "upper_identity_translation_xy": [
+        0,
+        1.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "9.5",
+      "pair": [
+        9,
+        10
+      ],
+      "donor_anchor": 9,
+      "rear_shoe_translation": [
+        -4.0,
+        -2.0
+      ],
+      "front_shoe_translation": [
+        -5.5,
+        0.0
+      ],
+      "wrist_translation": [
+        0.0,
+        -1.0
+      ],
+      "rear_tip_midpoint": [
+        151.0,
+        338.0
+      ],
+      "front_tip_midpoint": [
+        251.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          121,
+          312,
+          163,
+          345
+        ],
+        [
+          220,
+          318,
+          265,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 191.5,
+      "petal_motion_full_at_y": 309.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "10.5",
+      "pair": [
+        10,
+        11
+      ],
+      "donor_anchor": 10,
+      "rear_shoe_translation": [
+        0.5,
+        -1.5
+      ],
+      "front_shoe_translation": [
+        -2.5,
+        0.0
+      ],
+      "wrist_translation": [
+        1.0,
+        1.5
+      ],
+      "rear_tip_midpoint": [
+        147.5,
+        334.5
+      ],
+      "front_tip_midpoint": [
+        243.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          119,
+          305,
+          159,
+          342
+        ],
+        [
+          225,
+          320,
+          268,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 192.0,
+      "petal_motion_full_at_y": 302.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "11.5",
+      "pair": [
+        11,
+        12
+      ],
+      "donor_anchor": 12,
+      "rear_shoe_translation": [
+        -1.0,
+        2.0
+      ],
+      "front_shoe_translation": [
+        -1.5,
+        0.0
+      ],
+      "wrist_translation": [
+        -1.0,
+        -0.5
+      ],
+      "rear_tip_midpoint": [
+        149.0,
+        331.0
+      ],
+      "front_tip_midpoint": [
+        242.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          126,
+          296,
+          160,
+          336
+        ],
+        [
+          228,
+          318,
+          271,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 194.0,
+      "petal_motion_full_at_y": 293.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "12.5",
+      "pair": [
+        12,
+        13
+      ],
+      "donor_anchor": 12,
+      "rear_shoe_translation": [
+        22.0,
+        6.5
+      ],
+      "front_shoe_translation": [
+        -14.5,
+        0.0
+      ],
+      "wrist_translation": [
+        13.0,
+        2.5
+      ],
+      "rear_tip_midpoint": [
+        172.0,
+        335.5
+      ],
+      "front_tip_midpoint": [
+        229.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          126,
+          296,
+          160,
+          336
+        ],
+        [
+          228,
+          318,
+          271,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 194.0,
+      "petal_motion_full_at_y": 293.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "13.5",
+      "pair": [
+        13,
+        14
+      ],
+      "donor_anchor": 14,
+      "rear_shoe_translation": [
+        15.5,
+        3.5
+      ],
+      "front_shoe_translation": [
+        -24.5,
+        0.0
+      ],
+      "wrist_translation": [
+        1.0,
+        2.0
+      ],
+      "rear_tip_midpoint": [
+        178.5,
+        338.5
+      ],
+      "front_tip_midpoint": [
+        239.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          135,
+          309,
+          174,
+          343
+        ],
+        [
+          223,
+          320,
+          269,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 198.5,
+      "petal_motion_full_at_y": 306.0,
+      "upper_identity_translation_xy": [
+        0,
+        -0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "14.5",
+      "pair": [
+        14,
+        15
+      ],
+      "donor_anchor": 14,
+      "rear_shoe_translation": [
+        0.5,
+        1.0
+      ],
+      "front_shoe_translation": [
+        -2.5,
+        0.0
+      ],
+      "wrist_translation": [
+        0.5,
+        0.5
+      ],
+      "rear_tip_midpoint": [
+        163.5,
+        336.0
+      ],
+      "front_tip_midpoint": [
+        261.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          135,
+          309,
+          174,
+          343
+        ],
+        [
+          223,
+          320,
+          269,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 198.5,
+      "petal_motion_full_at_y": 306.0,
+      "upper_identity_translation_xy": [
+        0,
+        -0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "15.5",
+      "pair": [
+        15,
+        16
+      ],
+      "donor_anchor": 15,
+      "rear_shoe_translation": [
+        4.5,
+        2.5
+      ],
+      "front_shoe_translation": [
+        -0.5,
+        0.0
+      ],
+      "wrist_translation": [
+        -1.0,
+        -0.5
+      ],
+      "rear_tip_midpoint": [
+        168.5,
+        339.5
+      ],
+      "front_tip_midpoint": [
+        258.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          130,
+          310,
+          174,
+          344
+        ],
+        [
+          226,
+          320,
+          275,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 200.0,
+      "petal_motion_full_at_y": 307.0,
+      "upper_identity_translation_xy": [
+        0,
+        0.0
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    },
+    {
+      "label": "16.5",
+      "pair": [
+        16,
+        1
+      ],
+      "donor_anchor": 16,
+      "rear_shoe_translation": [
+        -0.5,
+        0.0
+      ],
+      "front_shoe_translation": [
+        -0.5,
+        0.0
+      ],
+      "wrist_translation": [
+        0.5,
+        0.0
+      ],
+      "rear_tip_midpoint": [
+        172.5,
+        342.0
+      ],
+      "front_tip_midpoint": [
+        257.5,
+        342.0
+      ],
+      "shoe_scale": [
+        1,
+        1
+      ],
+      "shoe_rotation_degrees": 0,
+      "shoe_regions_source": [
+        [
+          140,
+          319,
+          184,
+          346
+        ],
+        [
+          227,
+          320,
+          273,
+          346
+        ]
+      ],
+      "petal_panel_split_x": 205.5,
+      "petal_motion_full_at_y": 316.0,
+      "upper_identity_translation_xy": [
+        0,
+        -0.5
+      ],
+      "lower_panel_horizontal_scale": 1,
+      "upper_mesh_inverted_triangles": 0
+    }
+  ]
+}

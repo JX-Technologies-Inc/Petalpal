@@ -1,0 +1,22 @@
+{
+  "status": "REFERENCE_SHEET_AWAITING_MANUAL_REVIEW",
+  "frame_count": 16,
+  "layout": "4 columns x 4 rows; row-major order",
+  "output": "fairy_walk_16f_ankle_length_skirt.png",
+  "dimensions": [
+    1211,
+    1299
+  ],
+  "method": "Built-in image_gen local skirt-length edit request, with 16-frame sheet as edit target and two character sheets as design references",
+  "source_roles": {
+    "A": "Resources\\fairy\\production\\animation\\long_skirt_walk_shoes_v2\\review\\full_body_contact_sheet.png",
+    "B": "Resources\\Icon\\fairy structure.png",
+    "C": "Resources\\Icon\\fairy.png"
+  },
+  "source_sha256": {
+    "Resources\\fairy\\production\\animation\\long_skirt_walk_shoes_v2\\review\\full_body_contact_sheet.png": "eecf2e3e23a8d60c4a25768abac9ba707bdc75ceb5faf74627bcc3d93ff7a624",
+    "Resources\\Icon\\fairy structure.png": "86eed8eb748ced65bf6215fab48224b9e05bb8be50c213eb287d54ec0bf270b8",
+    "Resources\\Icon\\fairy.png": "0b9a6e4b8118d5e959199d0b2bdb1496b2d93aecd53050a2abe42fa20334a01a"
+  },
+  "note": "Reference-sheet artwork revision only. No individual runtime frames, timing, application code, or source files were replaced. Generated editing is not a byte-identical pixel-preservation guarantee. Static sheet inspection does not certify gait or ground locking."
+}

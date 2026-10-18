@@ -1,0 +1,39 @@
+{
+  "status": "EXPORTED_FOR_MANUAL_REVIEW",
+  "frames": 24,
+  "fps": 16,
+  "duration_seconds": 1.5,
+  "rest_visible_rgba_and_alpha_exact": true,
+  "approved_sources_unchanged": true,
+  "opposing_contact_left_minus_right_ankle_x": [
+    88.16365599632263,
+    -110.83694696426392
+  ],
+  "swing_lift_px": 35,
+  "root_travel_px_per_loop": 280,
+  "max_ik_error_px": 5.308535712713541e-05,
+  "max_support_contact_drift_px": 6.285883705459128e-05,
+  "mesh_folded_triangles": 0,
+  "mesh_scale_range": [
+    0.04877737442008636,
+    1.7554606776836728
+  ],
+  "painted_mesh_scale_range": [
+    0.41806780527690407,
+    1.400643912251699
+  ],
+  "loop_geometry_error_px": 0.00010013580322265625,
+  "motion_layers_changed": [
+    "calf_left.png",
+    "calf_right.png",
+    "dress_base.png",
+    "foot_left.png",
+    "foot_right.png",
+    "petals_back.png",
+    "thigh_left.png",
+    "thigh_right.png"
+  ],
+  "rest_texture_state": "original V2, frame 0",
+  "motion_texture_state": "repaired separate local copies, frames 1..25",
+  "native_eevee_exact": false
+}

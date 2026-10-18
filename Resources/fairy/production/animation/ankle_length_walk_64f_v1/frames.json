@@ -1,0 +1,3128 @@
+{
+  "status": "FAILED_VISUAL_GATE_REVIEW_ONLY",
+  "frame_count": 64,
+  "canvas": [
+    378,
+    378
+  ],
+  "frame_duration_ms": 21.25,
+  "loop_duration_ms": 1360,
+  "loop": true,
+  "gif_durations_ms": [
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    20,
+    30
+  ],
+  "root_motion": {
+    "stride_px": 72.0,
+    "direction": "screen-right",
+    "duration_ms": 1360,
+    "meaning": "in-place PNGs need this root travel to demonstrate world-space stance locking"
+  },
+  "original_32_hashes": {
+    "frame_01.png": "ec71f89593460089a183e691bec99fc573dd0efd573db269ef4e20b7e124c818",
+    "frame_02.png": "a917030e2d3da7bc65d489ea689f3496b4e2fa68279ba85dd97dd2ddbe4b8836",
+    "frame_03.png": "b3868ca586a32bedfa78d25b0c68ea9a6ec778daf307928d72c198f035731852",
+    "frame_04.png": "78eaf406ff90b85b1a9d900fa9c90cd53d3682cc0302d11b03e1d8022cb4273b",
+    "frame_05.png": "ebfee4c6cfb36bc4f920b17fab785482c18223b81cce05f809043c8e87a9ecfc",
+    "frame_06.png": "c7dd31b20c7e9d42d77e7087a65de0cf1483f1587bcc0db3aa6758bdddb40262",
+    "frame_07.png": "f21795d26bd2708bb08be7b3240ebdece9439b53ef160645e25672b521d1e1f9",
+    "frame_08.png": "5eb1f84105b27641e7854be0bc7e575f340b99698533b21993d058a296135156",
+    "frame_09.png": "41f10ec8d88cac8ae49bfed1ce6aa327dcb057962dbad6f25e7c615b9aa30e7b",
+    "frame_10.png": "d3041041a20d3b51b3a540a295ddb05249e3bf8ce9be7e37587ab1936ab1b15a",
+    "frame_11.png": "7191a245adc108d6db71c150e9505d7a696b285c032cd7a0ce13ce6f741f4fe7",
+    "frame_12.png": "07a90cccccaece77a8e502615a5b3066b1bc04490163ba6f86f173122ea5c434",
+    "frame_13.png": "48dedda76e4a30d3f8daab0aa131f49960e516a0e1cb43b87682ece6e1ee9dc8",
+    "frame_14.png": "280eab8a9b9ccd8e2a45c9f4c8f7d58b0e8f38824c963246d86450ce845b6d97",
+    "frame_15.png": "aea116ec0c74b36abadfd2c6714c6ca9e227305c2b8b460ed9241eebf116c08b",
+    "frame_16.png": "1033edf10759391471d28b59e017782dad99df9a76946e9a04f20c19e089b7a4",
+    "frame_17.png": "01a7ddf6bfc893940d7261f435fbeed27d38f90663d2ee08c35049323052030d",
+    "frame_18.png": "34fc318eb21821015aff4e2a757a77a3521ef3defb6001d88a94c9c95b39c7bb",
+    "frame_19.png": "eaba768438fb45d08c7451aee62826f8ef3cf717cf2551376e66faf4aa5e0290",
+    "frame_20.png": "96a6e388da98dc03eeff43ff0c0494623eb59ebfe283ee26cbb07eebd5f4ed10",
+    "frame_21.png": "3e0c965a80a35304964a3ad3b06e8374a36e7ce46092804891116ba3e1142ae2",
+    "frame_22.png": "e6777afa2ae83f122dbfd5d138bebed5594feb9ebca621a1cc5dbf924517a454",
+    "frame_23.png": "68302ad031f23cd7aa5774663ede9f3da217a5a9dcaf2c1590b5bc6644c54836",
+    "frame_24.png": "99da1fbb3e6b65189e329076f50f8906f613f14068afcd7f3daf20706b31cd49",
+    "frame_25.png": "bb3a1d66edec8598401aa7f5bf6579eb7b8dd695c2e79c8ae865a9a1bd99a559",
+    "frame_26.png": "1afa8c457ee9c14a6f87e16d6850fcf5dfda4b24e0f011e40c36e94e3e6e0292",
+    "frame_27.png": "a9a44eacd025a99a792db840df383160bde0cee3d1dd0758c68c3818c5ce5778",
+    "frame_28.png": "ac6c0135a9b71d2e68828b6ed5429cefacf8ae64d2970dcd45b34c06a7298b51",
+    "frame_29.png": "b9038383398df44a9132529dc849211853869c6d70034eb13b0fed536d09e507",
+    "frame_30.png": "d0ed4d4767d5049cbb21698ebe583587ef9214e1cdd8f28ac094c51f36666c1c",
+    "frame_31.png": "2bdbb4e95afff318bce061db5586b235020e5ae30b2bd385b393189b1e3000b4",
+    "frame_32.png": "0d9fa3319d0a6952d009ba0db54f42e7aaecea55b945470735fc6a05fbad7407"
+  },
+  "anchor_repair_scope": "Foot mechanics repaired in 32 anchor copies using local shoe/opening masks, including a 1-pixel feather margin. All pixels outside declared masks unchanged; originals separately preserved.",
+  "frames": [
+    {
+      "index": 1,
+      "reference_label": "1.0",
+      "file": "frames/frame_01.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 1,
+      "donor_original_16": 1,
+      "root_travel_x": 0.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.0,
+        "heel": [
+          207.32,
+          342.0
+        ],
+        "toe": [
+          227.21043790736547,
+          339.90943073464695
+        ],
+        "angle_degrees": -6.000000000000001,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5,
+        "heel": [
+          171.32,
+          342.0
+        ],
+        "toe": [
+          199.9556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 278,
+      "visible_far_shoe_pixels": 304,
+      "sha256": "fe1ae8609951f4f9f781c9c51923536c816cf8f7476b9a7eb050d6d984d9d558"
+    },
+    {
+      "index": 2,
+      "reference_label": "1.25",
+      "file": "frames/frame_02.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 2,
+      "root_travel_x": 1.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.015625,
+        "heel": [
+          206.195,
+          342.0
+        ],
+        "toe": [
+          226.0953710435659,
+          340.00620153265106
+        ],
+        "angle_degrees": -5.721315171983507,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.515625,
+        "heel": [
+          170.19876362456296,
+          341.5357442005767
+        ],
+        "toe": [
+          198.83064212655268,
+          342.0
+        ],
+        "angle_degrees": 0.9289494267216437,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 246,
+      "visible_far_shoe_pixels": 232,
+      "sha256": "3f452af8df95b63f8833d7d015941bcc037ecd3fbe296a04dc65f7ebdfb26e78"
+    },
+    {
+      "index": 3,
+      "reference_label": "1.5",
+      "file": "frames/frame_03.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 2,
+      "donor_original_16": 2,
+      "root_travel_x": 2.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.03125,
+        "heel": [
+          205.07,
+          342.0
+        ],
+        "toe": [
+          224.99416070597277,
+          340.2599367360436
+        ],
+        "angle_degrees": -4.991224500868055,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.53125,
+        "heel": [
+          169.11930075277223,
+          340.32039086044193
+        ],
+        "toe": [
+          197.7056421265527,
+          342.0
+        ],
+        "angle_degrees": 3.362584997106482,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 251,
+      "visible_far_shoe_pixels": 226,
+      "sha256": "553fd2c8eaca4f0e8d458ba2eb1b282b3a3bb602fdab0ac4c176d90e1ac795e7"
+    },
+    {
+      "index": 4,
+      "reference_label": "1.75",
+      "file": "frames/frame_04.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 2,
+      "root_travel_x": 3.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.046875,
+        "heel": [
+          203.945,
+          342.0
+        ],
+        "toe": [
+          223.89704080593353,
+          340.6157790355716
+        ],
+        "angle_degrees": -3.9686737060546875,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.546875,
+        "heel": [
+          168.14472987576013,
+          338.6237751163133
+        ],
+        "toe": [
+          196.5806421265527,
+          342.0
+        ],
+        "angle_degrees": 6.771087646484375,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 274,
+      "visible_far_shoe_pixels": 216,
+      "sha256": "c2907b8d63c4f76abfc7adb8316f1f9294373dece3efb5fee5a646381f6f397a"
+    },
+    {
+      "index": 5,
+      "reference_label": "2.0",
+      "file": "frames/frame_05.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 3,
+      "donor_original_16": 2,
+      "root_travel_x": 4.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.0625,
+        "heel": [
+          202.82,
+          342.0
+        ],
+        "toe": [
+          222.795907265577,
+          341.0186086830079
+        ],
+        "angle_degrees": -2.812608506944444,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5625,
+        "heel": [
+          167.31092499352167,
+          336.72033168639643
+        ],
+        "toe": [
+          195.4556421265527,
+          342.0
+        ],
+        "angle_degrees": 10.624638310185187,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 276,
+      "visible_far_shoe_pixels": 209,
+      "sha256": "3f5952f95a96e5c49ceb2c59fa2a089f78ac9b2094f004d2475a9f375f97240f"
+    },
+    {
+      "index": 6,
+      "reference_label": "2.25",
+      "file": "frames/frame_06.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 2,
+      "root_travel_x": 5.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.078125,
+        "heel": [
+          201.695,
+          342.0
+        ],
+        "toe": [
+          221.68638287437534,
+          341.41296442174956
+        ],
+        "angle_degrees": -1.6819746229383674,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.578125,
+        "heel": [
+          166.59382343966718,
+          334.88179171906035
+        ],
+        "toe": [
+          194.3306421265527,
+          342.0
+        ],
+        "angle_degrees": 14.393417923538774,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 286,
+      "visible_far_shoe_pixels": 212,
+      "sha256": "3431c69307a34aad97bf85041ab80fb6cd669cd5dbab88bd52269c8844060305"
+    },
+    {
+      "index": 7,
+      "reference_label": "2.5",
+      "file": "frames/frame_07.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 4,
+      "donor_original_16": 2,
+      "root_travel_x": 6.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.09375,
+        "heel": [
+          200.57,
+          342.0
+        ],
+        "toe": [
+          220.5683511875294,
+          341.743193107101
+        ],
+        "angle_degrees": -0.7357177734375,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.59375,
+        "heel": [
+          165.9025091154176,
+          333.3664070181491
+        ],
+        "toe": [
+          193.20564212655268,
+          342.0
+        ],
+        "angle_degrees": 17.547607421875,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 290,
+      "visible_far_shoe_pixels": 209,
+      "sha256": "b169d8577470d049267c6fd205990e94a5cce06d51b466654d1bacc76a9f39da"
+    },
+    {
+      "index": 8,
+      "reference_label": "2.75",
+      "file": "frames/frame_08.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 2,
+      "root_travel_x": 7.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.109375,
+        "heel": [
+          199.445,
+          342.0
+        ],
+        "toe": [
+          219.44494629138813,
+          341.9536497940648
+        ],
+        "angle_degrees": -0.13278367784288214,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.609375,
+        "heel": [
+          165.09708538813328,
+          332.4141945698601
+        ],
+        "toe": [
+          192.0806421265527,
+          342.0
+        ],
+        "angle_degrees": 19.55738774052373,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_near_shoe_pixels": 283,
+      "visible_far_shoe_pixels": 214,
+      "sha256": "2124642629809653ee49fc525ff3c3450fc9b6fdccec9afedb539f4e96ba1a42"
+    },
+    {
+      "index": 9,
+      "reference_label": "3.0",
+      "file": "frames/frame_09.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 5,
+      "donor_original_16": 3,
+      "root_travel_x": 9.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.125,
+        "heel": [
+          198.32,
+          342.0
+        ],
+        "toe": [
+          218.32,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.625,
+        "heel": [
+          164.08311952588673,
+          332.1905828057359
+        ],
+        "toe": [
+          190.99410849978145,
+          341.97826243100553
+        ],
+        "angle_degrees": 19.986614302376438,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 317,
+      "visible_far_shoe_pixels": 179,
+      "sha256": "c2a24c97042ff8e531c76a11460c6123d70091db6e949e597cafecb66138d08d"
+    },
+    {
+      "index": 10,
+      "reference_label": "3.25",
+      "file": "frames/frame_10.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 3,
+      "root_travel_x": 10.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.140625,
+        "heel": [
+          197.195,
+          342.0
+        ],
+        "toe": [
+          217.195,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.640625,
+        "heel": [
+          163.52052421228638,
+          331.9439260253597
+        ],
+        "toe": [
+          190.4668816228581,
+          341.6338084963563
+        ],
+        "angle_degrees": 19.778532827677367,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 301,
+      "visible_far_shoe_pixels": 177,
+      "sha256": "1b9282e84466f9b489e00261f5ff52ca79ffc167bd8f69fd595ae1b603acef3b"
+    },
+    {
+      "index": 11,
+      "reference_label": "3.5",
+      "file": "frames/frame_11.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 6,
+      "donor_original_16": 3,
+      "root_travel_x": 11.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.15625,
+        "heel": [
+          196.07,
+          342.0
+        ],
+        "toe": [
+          216.07,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.65625,
+        "heel": [
+          163.59341883620218,
+          331.4105127162003
+        ],
+        "toe": [
+          190.61392404396025,
+          340.89166762040463
+        ],
+        "angle_degrees": 19.335329408669267,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 295,
+      "visible_far_shoe_pixels": 176,
+      "sha256": "0124ce8a609ae11cf8e22676915b01efcfada3c67e7ea8a48080c86be4be58ee"
+    },
+    {
+      "index": 12,
+      "reference_label": "3.75",
+      "file": "frames/frame_12.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 3,
+      "root_travel_x": 12.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.171875,
+        "heel": [
+          194.945,
+          342.0
+        ],
+        "toe": [
+          214.945,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.671875,
+        "heel": [
+          164.24317886465295,
+          330.6286602164014
+        ],
+        "toe": [
+          191.37056550946738,
+          339.7995322481518
+        ],
+        "angle_degrees": 18.67869426161681,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 289,
+      "visible_far_shoe_pixels": 156,
+      "sha256": "61f7440662e47fda70dace7ef829f42a9d4f81420d395cb13d8ac22062709a72"
+    },
+    {
+      "index": 13,
+      "reference_label": "4.0",
+      "file": "frames/frame_13.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 7,
+      "donor_original_16": 4,
+      "root_travel_x": 13.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.1875,
+        "heel": [
+          193.82,
+          342.0
+        ],
+        "toe": [
+          213.82,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.6875,
+        "heel": [
+          165.41117976465753,
+          329.65851297603893
+        ],
+        "toe": [
+          192.6713805033677,
+          338.42672007243135
+        ],
+        "angle_degrees": 17.830317602784667,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 307,
+      "visible_far_shoe_pixels": 134,
+      "sha256": "9d12b3237fabff74b6be2f2783fb28594ed27462156befce7c59224ec0cd93f5"
+    },
+    {
+      "index": 14,
+      "reference_label": "4.25",
+      "file": "frames/frame_14.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 4,
+      "root_travel_x": 14.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.203125,
+        "heel": [
+          192.695,
+          342.0
+        ],
+        "toe": [
+          212.695,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.703125,
+        "heel": [
+          167.0387970032347,
+          328.5775080362243
+        ],
+        "toe": [
+          194.45053743647125,
+          336.85980762153656
+        ],
+        "angle_degrees": 16.8118896484375,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 281,
+      "visible_far_shoe_pixels": 64,
+      "sha256": "f9a1da035bd58e22e61f0d2aad2ad42ff88159580c4a02db430019d34a7fab83"
+    },
+    {
+      "index": 15,
+      "reference_label": "4.5",
+      "file": "frames/frame_15.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 8,
+      "donor_original_16": 4,
+      "root_travel_x": 15.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.21875,
+        "heel": [
+          191.57,
+          342.0
+        ],
+        "toe": [
+          211.57,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.71875,
+        "heel": [
+          169.06740604740327,
+          327.474692683254
+        ],
+        "toe": [
+          196.64211444382073,
+          335.1970923655124
+        ],
+        "angle_degrees": 15.645100614839992,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 308,
+      "visible_far_shoe_pixels": 25,
+      "sha256": "49f47dadc4b48cde39417e8ef81d578defce359da2eae14c5d42e9fab4857552"
+    },
+    {
+      "index": 16,
+      "reference_label": "4.75",
+      "file": "frames/frame_16.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 4,
+      "root_travel_x": 16.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.234375,
+        "heel": [
+          190.445,
+          342.0
+        ],
+        "toe": [
+          210.445,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.734375,
+        "heel": [
+          171.43838236418202,
+          326.4442714531152
+        ],
+        "toe": [
+          199.1803839173714,
+          333.54225354824894
+        ],
+        "angle_degrees": 14.351640718256808,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 375,
+      "visible_far_shoe_pixels": 37,
+      "sha256": "63ad3126d689b6cefe8509126035b9a6c8635967c9aadac1946031f14b66a4ca"
+    },
+    {
+      "index": 17,
+      "reference_label": "5.0",
+      "file": "frames/frame_17.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 9,
+      "donor_original_16": 5,
+      "root_travel_x": 18.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.25,
+        "heel": [
+          189.32,
+          342.0
+        ],
+        "toe": [
+          209.32,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.75,
+        "heel": [
+          174.09310142058976,
+          325.57881081482714
+        ],
+        "toe": [
+          202.0000661708687,
+          331.99763612999874
+        ],
+        "angle_degrees": 12.953200174952617,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 388,
+      "visible_far_shoe_pixels": 15,
+      "sha256": "e2442acebec483a235421eea602cd1a7d4c1d5375773639912e0bf3eaf1b6792"
+    },
+    {
+      "index": 18,
+      "reference_label": "5.25",
+      "file": "frames/frame_18.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 6,
+      "root_travel_x": 19.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.265625,
+        "heel": [
+          188.195,
+          342.0
+        ],
+        "toe": [
+          208.195,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.765625,
+        "heel": [
+          176.97293868364534,
+          324.96255258324555
+        ],
+        "toe": [
+          205.03655120434598,
+          330.6576076565503
+        ],
+        "angle_degrees": 11.471469201192091,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 344,
+      "visible_far_shoe_pixels": 74,
+      "sha256": "2ece87aeee49df9207077d8e6fc331a7ae47931a0bbf43868caffd019b978039"
+    },
+    {
+      "index": 19,
+      "reference_label": "5.5",
+      "file": "frames/frame_19.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 10,
+      "donor_original_16": 6,
+      "root_travel_x": 20.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.28125,
+        "heel": [
+          187.07,
+          342.0
+        ],
+        "toe": [
+          207.07,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.78125,
+        "heel": [
+          180.01926962036748,
+          324.6652798948563
+        ],
+        "toe": [
+          208.22608650048105,
+          329.6024330717124
+        ],
+        "angle_degrees": 9.928138013239906,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 290,
+      "visible_far_shoe_pixels": 91,
+      "sha256": "d55274b6cbae77ab8bcd623d38c175c31a8f53688b5360bb86c2f07a8733acaa"
+    },
+    {
+      "index": 20,
+      "reference_label": "5.75",
+      "file": "frames/frame_20.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 6,
+      "root_travel_x": 21.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.296875,
+        "heel": [
+          185.945,
+          342.0
+        ],
+        "toe": [
+          205.945,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.796875,
+        "heel": [
+          183.17346969777503,
+          324.7371429027787
+        ],
+        "toe": [
+          211.5059281871645,
+          328.8930779295834
+        ],
+        "angle_degrees": 8.344896827360719,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 278,
+      "visible_far_shoe_pixels": 117,
+      "sha256": "5649701a0b80abbdc92a4b543ad3b6446c35b7564cbdae79267d5a0e61a45a39"
+    },
+    {
+      "index": 21,
+      "reference_label": "6.0",
+      "file": "frames/frame_21.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 11,
+      "donor_original_16": 6,
+      "root_travel_x": 22.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.3125,
+        "heel": [
+          184.82,
+          342.0
+        ],
+        "toe": [
+          204.82,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.8125,
+        "heel": [
+          186.37691438288675,
+          325.2047876442194
+        ],
+        "toe": [
+          214.8144527378444,
+          328.5672885453811
+        ],
+        "angle_degrees": 6.743435859819218,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 287,
+      "visible_far_shoe_pixels": 109,
+      "sha256": "01259b37e3f504ef0435c22c32aeb793558adc6b6ae5adc61f381328c89a4496"
+    },
+    {
+      "index": 22,
+      "reference_label": "6.25",
+      "file": "frames/frame_22.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 6,
+      "root_travel_x": 23.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.328125,
+        "heel": [
+          183.695,
+          342.0
+        ],
+        "toe": [
+          203.695,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.828125,
+        "heel": [
+          189.5709791427215,
+          326.06904503333925
+        ],
+        "toe": [
+          218.0912266117965,
+          328.63721253230085
+        ],
+        "angle_degrees": 5.145445326880056,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 289,
+      "visible_far_shoe_pixels": 100,
+      "sha256": "5a118c12206a1be7733ba312d62b9a3bbf88a9e05781fc723e936ff5d0e68983"
+    },
+    {
+      "index": 23,
+      "reference_label": "6.5",
+      "file": "frames/frame_23.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 12,
+      "donor_original_16": 6,
+      "root_travel_x": 24.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.34375,
+        "heel": [
+          182.57,
+          342.0
+        ],
+        "toe": [
+          202.57,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.84375,
+        "heel": [
+          192.6970394442981,
+          327.3043333765397
+        ],
+        "toe": [
+          221.27703178567103,
+          329.0887206010692
+        ],
+        "angle_degrees": 3.5726154448079193,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 291,
+      "visible_far_shoe_pixels": 91,
+      "sha256": "39c7d7c6357e403cc52f3d198c9ea4005a83b6716c6af75e00af692e551f9390"
+    },
+    {
+      "index": 24,
+      "reference_label": "6.75",
+      "file": "frames/frame_24.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 6,
+      "root_travel_x": 25.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.359375,
+        "heel": [
+          181.445,
+          342.0
+        ],
+        "toe": [
+          201.445,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.859375,
+        "heel": [
+          195.6964707546353,
+          328.8598140692229
+        ],
+        "toe": [
+          224.31384589555182,
+          329.8824772806728
+        ],
+        "angle_degrees": 2.0466364298674655,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 293,
+      "visible_far_shoe_pixels": 114,
+      "sha256": "9da01ddcc9b750286efbe8a63d06e25e5884fb44a97b3d238cb9ee1324e1aedc"
+    },
+    {
+      "index": 25,
+      "reference_label": "7.0",
+      "file": "frames/frame_25.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 13,
+      "donor_original_16": 7,
+      "root_travel_x": 27.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.375,
+        "heel": [
+          180.32,
+          342.0
+        ],
+        "toe": [
+          200.32,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.875,
+        "heel": [
+          198.51064854075193,
+          330.66222376270326
+        ],
+        "toe": [
+          227.1447765793616,
+          330.95669187389245
+        ],
+        "angle_degrees": 0.5891984983233733,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 308,
+      "visible_far_shoe_pixels": 156,
+      "sha256": "2beda6815d7982289014134027af0c8623452019a633db6c7026403317b36d63"
+    },
+    {
+      "index": 26,
+      "reference_label": "7.25",
+      "file": "frames/frame_26.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 7,
+      "root_travel_x": 28.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.390625,
+        "heel": [
+          179.195,
+          342.0
+        ],
+        "toe": [
+          199.195,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.890625,
+        "heel": [
+          201.08094826966672,
+          332.62019501140395
+        ],
+        "toe": [
+          229.71395046101708,
+          332.2313692019128
+        ],
+        "angle_degrees": -0.7780081335596911,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 285,
+      "visible_far_shoe_pixels": 201,
+      "sha256": "645a48e514bfcf70ae5247147154f5542060730bdabcffa96f9743f24e8b012c"
+    },
+    {
+      "index": 27,
+      "reference_label": "7.5",
+      "file": "frames/frame_27.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 14,
+      "donor_original_16": 7,
+      "root_travel_x": 29.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.40625,
+        "heel": [
+          178.07,
+          342.0
+        ],
+        "toe": [
+          198.07,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.90625,
+        "heel": [
+          203.34874540839857,
+          334.6297786100785
+        ],
+        "toe": [
+          231.9663579335859,
+          333.61377991015746
+        ],
+        "angle_degrees": -2.033293249517058,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 261,
+      "visible_far_shoe_pixels": 244,
+      "sha256": "fc07f35118a2757c6c103c9165d5ecabfb4a9620f4902a1aa02fc50dd46e1ac2"
+    },
+    {
+      "index": 28,
+      "reference_label": "7.75",
+      "file": "frames/frame_28.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 7,
+      "root_travel_x": 30.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.421875,
+        "heel": [
+          176.945,
+          342.0
+        ],
+        "toe": [
+          196.945,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.921875,
+        "heel": [
+          205.25541542396624,
+          336.5808010665939
+        ],
+        "toe": [
+          233.84765537804412,
+          335.00478888122456
+        ],
+        "angle_degrees": -3.1549666332840545,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 237,
+      "visible_far_shoe_pixels": 283,
+      "sha256": "70e1f01380c09be1311af51fc2e0796d24fdd78abddad8c55f8a11ca8e7330d9"
+    },
+    {
+      "index": 29,
+      "reference_label": "8.0",
+      "file": "frames/frame_29.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 15,
+      "donor_original_16": 8,
+      "root_travel_x": 31.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.4375,
+        "heel": [
+          175.82,
+          342.0
+        ],
+        "toe": [
+          195.82,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.9375,
+        "heel": [
+          206.74233378338855,
+          338.36363522227344
+        ],
+        "toe": [
+          235.30392662253067,
+          336.30562295528745
+        ],
+        "angle_degrees": -4.121338068596003,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 231,
+      "visible_far_shoe_pixels": 299,
+      "sha256": "93cbdd5ad70fa41f36456dee5e0177b88650187eed8ef6da7149c41eaab506f7"
+    },
+    {
+      "index": 30,
+      "reference_label": "8.25",
+      "file": "frames/frame_30.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 9,
+      "root_travel_x": 32.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.453125,
+        "heel": [
+          174.695,
+          342.0
+        ],
+        "toe": [
+          194.695,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.953125,
+        "heel": [
+          207.75087595368421,
+          339.87593460843397
+        ],
+        "toe": [
+          236.28140526536916,
+          337.4246294060803
+        ],
+        "angle_degrees": -4.910717339188249,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 294,
+      "visible_far_shoe_pixels": 352,
+      "sha256": "cd4b2dd391060968c87328adfaa0709c29b024fbe79ba679ecbb1e870c6fbd0e"
+    },
+    {
+      "index": 31,
+      "reference_label": "8.5",
+      "file": "frames/frame_31.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 16,
+      "donor_original_16": 9,
+      "root_travel_x": 33.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.46875,
+        "heel": [
+          173.57,
+          342.0
+        ],
+        "toe": [
+          193.57,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.96875,
+        "heel": [
+          208.2224174018722,
+          341.0288845348202
+        ],
+        "toe": [
+          236.72615895882618,
+          338.2835763090693
+        ],
+        "angle_degrees": -5.501414228796108,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 296,
+      "visible_far_shoe_pixels": 323,
+      "sha256": "d1a6e0a6bdf77901642f27ad63a2f984842662ba156d26cfa5d0b79a4d373b57"
+    },
+    {
+      "index": 32,
+      "reference_label": "8.75",
+      "file": "frames/frame_32.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 9,
+      "root_travel_x": 34.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.484375,
+        "heel": [
+          172.445,
+          342.0
+        ],
+        "toe": [
+          192.445,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.984375,
+        "heel": [
+          208.09833359497117,
+          341.7525549833787
+        ],
+        "toe": [
+          236.58373593662157,
+          338.82307492126904
+        ],
+        "angle_degrees": -5.871738521154917,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_near_shoe_pixels": 299,
+      "visible_far_shoe_pixels": 298,
+      "sha256": "112a44ff6f6da368cc0adba08faab4aeba91854dea5c910ed29dc1d7ac3b295b"
+    },
+    {
+      "index": 33,
+      "reference_label": "9.0",
+      "file": "frames/frame_33.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 17,
+      "donor_original_16": 9,
+      "root_travel_x": 36.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.5,
+        "heel": [
+          171.32,
+          342.0
+        ],
+        "toe": [
+          191.32,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.0,
+        "heel": [
+          207.32,
+          342.0
+        ],
+        "toe": [
+          235.79877308278677,
+          339.006760333829
+        ],
+        "angle_degrees": -6.000000000000001,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 305,
+      "visible_far_shoe_pixels": 313,
+      "sha256": "20f9c774f22011c13683f7a6e298ad8a62b9d2b29aa42e0fbd39d033ce1e35c8"
+    },
+    {
+      "index": 34,
+      "reference_label": "9.25",
+      "file": "frames/frame_34.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 9,
+      "root_travel_x": 37.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.515625,
+        "heel": [
+          170.19762862941667,
+          341.67574968469603
+        ],
+        "toe": [
+          190.195,
+          342.0
+        ],
+        "angle_degrees": 0.9289494267216437,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.015625,
+        "heel": [
+          206.195,
+          342.0
+        ],
+        "toe": [
+          234.6879951694583,
+          339.14531503082634
+        ],
+        "angle_degrees": -5.721315171983507,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 321,
+      "visible_far_shoe_pixels": 302,
+      "sha256": "e1b26651706e2697f585f478bfea697d8aa3918fe13836909c933fefd908737c"
+    },
+    {
+      "index": 35,
+      "reference_label": "9.5",
+      "file": "frames/frame_35.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 18,
+      "donor_original_16": 9,
+      "root_travel_x": 38.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.53125,
+        "heel": [
+          169.10443313934036,
+          340.8269100918812
+        ],
+        "toe": [
+          189.07,
+          342.0
+        ],
+        "angle_degrees": 3.362584997106482,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.03125,
+        "heel": [
+          205.07,
+          342.0
+        ],
+        "toe": [
+          233.597056782408,
+          339.5086085547892
+        ],
+        "angle_degrees": -4.991224500868055,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 332,
+      "visible_far_shoe_pixels": 296,
+      "sha256": "a316696ec7d3fc9adb9961ff2e6b082ba4d059113952217173f494e8d8682e30"
+    },
+    {
+      "index": 36,
+      "reference_label": "9.75",
+      "file": "frames/frame_36.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 9,
+      "root_travel_x": 39.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.546875,
+        "heel": [
+          168.08449739620116,
+          339.6419422559021
+        ],
+        "toe": [
+          187.945,
+          342.0
+        ],
+        "angle_degrees": 6.771087646484375,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.046875,
+        "heel": [
+          203.945,
+          342.0
+        ],
+        "toe": [
+          232.51197501065445,
+          340.01809719192784
+        ],
+        "angle_degrees": -3.9686737060546875,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 338,
+      "visible_far_shoe_pixels": 298,
+      "sha256": "d3dabc16b3c3dbfa776c9cf729f56c0f774aa45f315a0a14cba3e6d40e1db240"
+    },
+    {
+      "index": 37,
+      "reference_label": "10.0",
+      "file": "frames/frame_37.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 19,
+      "donor_original_16": 10,
+      "root_travel_x": 40.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.5625,
+        "heel": [
+          167.162876888426,
+          338.31251969816464
+        ],
+        "toe": [
+          186.82,
+          342.0
+        ],
+        "angle_degrees": 10.624638310185187,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.0625,
+        "heel": [
+          202.82,
+          342.0
+        ],
+        "toe": [
+          231.42114658051338,
+          340.59486147302545
+        ],
+        "angle_degrees": -2.812608506944444,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 315,
+      "visible_far_shoe_pixels": 288,
+      "sha256": "260881e7aaa21574fe98845854d5cb6a44c58598dc81f7b302eddaf3eab5c430"
+    },
+    {
+      "index": 38,
+      "reference_label": "10.25",
+      "file": "frames/frame_38.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 10,
+      "root_travel_x": 41.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.578125,
+        "heel": [
+          166.32276552081137,
+          337.02842768499386
+        ],
+        "toe": [
+          185.695,
+          342.0
+        ],
+        "angle_degrees": 14.393417923538774,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.078125,
+        "heel": [
+          201.695,
+          342.0
+        ],
+        "toe": [
+          230.31830428027536,
+          341.1594929632833
+        ],
+        "angle_degrees": -1.6819746229383674,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 316,
+      "visible_far_shoe_pixels": 285,
+      "sha256": "255c004bafd49fd62c68d61eadc83ecf9e65570addc4b5dc06f61e096f316316"
+    },
+    {
+      "index": 39,
+      "reference_label": "10.5",
+      "file": "frames/frame_39.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 20,
+      "donor_original_16": 10,
+      "root_travel_x": 42.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.59375,
+        "heel": [
+          165.50066473559676,
+          335.9700371001317
+        ],
+        "toe": [
+          184.57,
+          342.0
+        ],
+        "angle_degrees": 17.547607421875,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.09375,
+        "heel": [
+          200.57,
+          342.0
+        ],
+        "toe": [
+          229.20328138636063,
+          341.6323084859656
+        ],
+        "angle_degrees": -0.7357177734375,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 311,
+      "visible_far_shoe_pixels": 289,
+      "sha256": "aac63b5314a97d6b5bf81d18c9fca232a9fadc996e5484569789d5ec641fd8e6"
+    },
+    {
+      "index": 40,
+      "reference_label": "10.75",
+      "file": "frames/frame_40.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 10,
+      "root_travel_x": 43.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.609375,
+        "heel": [
+          164.5988664862705,
+          335.30498307823774
+        ],
+        "toe": [
+          183.445,
+          342.0
+        ],
+        "angle_degrees": 19.55738774052373,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.109375,
+        "heel": [
+          199.445,
+          342.0
+        ],
+        "toe": [
+          228.08056522752327,
+          341.9336366045174
+        ],
+        "angle_degrees": -0.13278367784288214,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_near_shoe_pixels": 316,
+      "visible_far_shoe_pixels": 291,
+      "sha256": "d260fe35a08a81a1e9823bc6b82f9321341f7995989b4f31cb1320e91a14f59c"
+    },
+    {
+      "index": 41,
+      "reference_label": "11.0",
+      "file": "frames/frame_41.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 21,
+      "donor_original_16": 11,
+      "root_travel_x": 45.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.625,
+        "heel": [
+          163.5625947035912,
+          335.1426257670803
+        ],
+        "toe": [
+          182.35804469208034,
+          341.9786377426552
+        ],
+        "angle_degrees": 19.986614302376438,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.125,
+        "heel": [
+          198.32,
+          342.0
+        ],
+        "toe": [
+          226.9556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 243,
+      "visible_far_shoe_pixels": 304,
+      "sha256": "714436cbdb1b38374bd89d51fd2170e9f81c1fb410bd96fac64d9f5062258220"
+    },
+    {
+      "index": 42,
+      "reference_label": "11.25",
+      "file": "frames/frame_42.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 12,
+      "root_travel_x": 46.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.640625,
+        "heel": [
+          163.0041673655255,
+          334.8723312228298
+        ],
+        "toe": [
+          181.82431974170385,
+          341.6400387030204
+        ],
+        "angle_degrees": 19.778532827677367,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.140625,
+        "heel": [
+          197.195,
+          342.0
+        ],
+        "toe": [
+          225.8306421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 272,
+      "visible_far_shoe_pixels": 323,
+      "sha256": "ac2ad7ea8b6d9200feeb597e7bce8feee5ec6e768f4efba06da92e0b1a70e7e0"
+    },
+    {
+      "index": 43,
+      "reference_label": "11.5",
+      "file": "frames/frame_43.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 22,
+      "donor_original_16": 12,
+      "root_travel_x": 47.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.65625,
+        "heel": [
+          163.08593957457938,
+          334.28857062647467
+        ],
+        "toe": [
+          181.9578790186773,
+          340.9104964504553
+        ],
+        "angle_degrees": 19.335329408669267,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.15625,
+        "heel": [
+          196.07,
+          342.0
+        ],
+        "toe": [
+          224.7056421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 283,
+      "visible_far_shoe_pixels": 322,
+      "sha256": "d48538dab3a4ea4f24d3f079bde9f057cb5422e24ce164f0bcce5f20bdd234ae"
+    },
+    {
+      "index": 44,
+      "reference_label": "11.75",
+      "file": "frames/frame_44.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 12,
+      "root_travel_x": 48.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.671875,
+        "heel": [
+          163.74885233194112,
+          333.43212529432475
+        ],
+        "toe": [
+          182.6954410097346,
+          339.8373401599252
+        ],
+        "angle_degrees": 18.67869426161681,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.171875,
+        "heel": [
+          194.945,
+          342.0
+        ],
+        "toe": [
+          223.5806421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 280,
+      "visible_far_shoe_pixels": 335,
+      "sha256": "9c8dd8d4cf6c2cdb59b106f190302d8214e4027c49e7cee134c09976dafc1606"
+    },
+    {
+      "index": 45,
+      "reference_label": "12.0",
+      "file": "frames/frame_45.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 23,
+      "donor_original_16": 12,
+      "root_travel_x": 49.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.6875,
+        "heel": [
+          164.9338466387989,
+          332.3656036546222
+        ],
+        "toe": [
+          183.97319670347431,
+          338.4895851303245
+        ],
+        "angle_degrees": 17.830317602784667,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.1875,
+        "heel": [
+          193.82,
+          342.0
+        ],
+        "toe": [
+          222.4556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 278,
+      "visible_far_shoe_pixels": 337,
+      "sha256": "143362c1d84389a3f3d755f0a78b383ab8f9f4cc3f8c3c2d2dd62b08f90a46f8"
+    },
+    {
+      "index": 46,
+      "reference_label": "12.25",
+      "file": "frames/frame_46.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 12,
+      "root_travel_x": 50.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.703125,
+        "heel": [
+          166.58186349634101,
+          331.16890672664454
+        ],
+        "toe": [
+          185.72705347468533,
+          336.95351567566644
+        ],
+        "angle_degrees": 16.8118896484375,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.203125,
+        "heel": [
+          192.695,
+          342.0
+        ],
+        "toe": [
+          221.3306421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 196,
+      "visible_far_shoe_pixels": 288,
+      "sha256": "b592673e8242ffe7aadfa43c00cb9a589e30fafddbc19bf3cc28ffe9d7638f95"
+    },
+    {
+      "index": 47,
+      "reference_label": "12.5",
+      "file": "frames/frame_47.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 24,
+      "donor_original_16": 12,
+      "root_travel_x": 51.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.71875,
+        "heel": [
+          168.63384390575567,
+          329.9335457748545
+        ],
+        "toe": [
+          187.89285564682538,
+          335.32710366898516
+        ],
+        "angle_degrees": 15.645100614839992,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.21875,
+        "heel": [
+          191.57,
+          342.0
+        ],
+        "toe": [
+          220.2056421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 132,
+      "visible_far_shoe_pixels": 288,
+      "sha256": "97352302c6f57cc44f82bd1d6ed02c31be7a20c86b252e39b87018beef7fa28b"
+    },
+    {
+      "index": 48,
+      "reference_label": "12.75",
+      "file": "frames/frame_48.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 12,
+      "root_travel_x": 52.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.734375,
+        "heel": [
+          171.03072886823105,
+          328.7561893134055
+        ],
+        "toe": [
+          190.4065832182652,
+          333.71363504747694
+        ],
+        "angle_degrees": 14.351640718256808,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.234375,
+        "heel": [
+          190.445,
+          342.0
+        ],
+        "toe": [
+          219.0806421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 242,
+      "visible_far_shoe_pixels": 265,
+      "sha256": "21eef9042e7313e68641ce6b74be1a362b146a4771f8ca0f76ca3fc780496d67"
+    },
+    {
+      "index": 49,
+      "reference_label": "13.0",
+      "file": "frames/frame_49.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 25,
+      "donor_original_16": 13,
+      "root_travel_x": 54.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.75,
+        "heel": [
+          173.7134593849554,
+          327.73186778948286
+        ],
+        "toe": [
+          193.2045290295239,
+          332.2149698528514
+        ],
+        "angle_degrees": 12.953200174952617,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.25,
+        "heel": [
+          189.32,
+          342.0
+        ],
+        "toe": [
+          217.9556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 152,
+      "visible_far_shoe_pixels": 268,
+      "sha256": "aaa4fdb5649bd8cd77a360d620cd182f8e8666a5465cc66f6e5fb7754f48a60a"
+    },
+    {
+      "index": 50,
+      "reference_label": "13.25",
+      "file": "frames/frame_50.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 14,
+      "root_travel_x": 55.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.765625,
+        "heel": [
+          176.622976457117,
+          326.9472869961086
+        ],
+        "toe": [
+          196.2234536503128,
+          330.9248859953808
+        ],
+        "angle_degrees": 11.471469201192091,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.265625,
+        "heel": [
+          188.195,
+          342.0
+        ],
+        "toe": [
+          216.8306421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 138,
+      "visible_far_shoe_pixels": 280,
+      "sha256": "fdf820d2790268644b91ace81c16e344d4636cfa874968a747c0f8f116706137"
+    },
+    {
+      "index": 51,
+      "reference_label": "13.5",
+      "file": "frames/frame_51.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 26,
+      "donor_original_16": 14,
+      "root_travel_x": 56.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.78125,
+        "heel": [
+          179.700221085904,
+          326.47469404793463
+        ],
+        "toe": [
+          199.40071654220003,
+          329.92295140150594
+        ],
+        "angle_degrees": 9.928138013239906,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.28125,
+        "heel": [
+          187.07,
+          342.0
+        ],
+        "toe": [
+          215.7056421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 57,
+      "visible_far_shoe_pixels": 236,
+      "sha256": "39e4a5905cff81f44616706be779ff21affadb87c238e72275a02fb86807b7fe"
+    },
+    {
+      "index": 52,
+      "reference_label": "13.75",
+      "file": "frames/frame_52.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 14,
+      "root_travel_x": 57.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.796875,
+        "heel": [
+          182.88613427250468,
+          326.36670307624655
+        ],
+        "toe": [
+          202.67438163512827,
+          329.2693340062169
+        ],
+        "angle_degrees": 8.344896827360719,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.296875,
+        "heel": [
+          185.945,
+          342.0
+        ],
+        "toe": [
+          214.5806421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 0,
+      "visible_far_shoe_pixels": 274,
+      "sha256": "58ffb4ddf7d75b65f82e5f2ffdc5478716b685badc63ab3db841ec5e80bbae08"
+    },
+    {
+      "index": 53,
+      "reference_label": "14.0",
+      "file": "frames/frame_53.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 27,
+      "donor_original_16": 14,
+      "root_travel_x": 58.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.8125,
+        "heel": [
+          186.12165701810721,
+          326.6524240964171
+        ],
+        "toe": [
+          205.983295342319,
+          329.000896595341
+        ],
+        "angle_degrees": 6.743435859819218,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.3125,
+        "heel": [
+          184.82,
+          342.0
+        ],
+        "toe": [
+          213.4556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 27,
+      "visible_far_shoe_pixels": 300,
+      "sha256": "fa89c3ee055b3c3b28760f0f4253e19fcfc8b3307158c5c70b9bc07b386a5009"
+    },
+    {
+      "index": 54,
+      "reference_label": "14.25",
+      "file": "frames/frame_54.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 14,
+      "root_travel_x": 59.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.828125,
+        "heel": [
+          189.3477303238999,
+          327.3351520007735
+        ],
+        "toe": [
+          209.2671351991475,
+          329.12883798665905
+        ],
+        "angle_degrees": 5.145445326880056,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.328125,
+        "heel": [
+          183.695,
+          342.0
+        ],
+        "toe": [
+          212.3306421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 11,
+      "visible_far_shoe_pixels": 294,
+      "sha256": "40117483718e866d8b695979229137ceaee13ea2f54dd2a31a1a33a7fa069645"
+    },
+    {
+      "index": 55,
+      "reference_label": "14.5",
+      "file": "frames/frame_55.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 28,
+      "donor_original_16": 14,
+      "root_travel_x": 60.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.84375,
+        "heel": [
+          192.50529519107093,
+          328.3917690738832
+        ],
+        "toe": [
+          212.4664276951483,
+          329.6380391708788
+        ],
+        "angle_degrees": 3.5726154448079193,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.34375,
+        "heel": [
+          182.57,
+          342.0
+        ],
+        "toe": [
+          211.2056421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 4,
+      "visible_far_shoe_pixels": 284,
+      "sha256": "eb342684fe65ccdc63016d9584649e2c886e91d37187ed2d4c43ae443c529d5d"
+    },
+    {
+      "index": 56,
+      "reference_label": "14.75",
+      "file": "frames/frame_56.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 14,
+      "root_travel_x": 61.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.859375,
+        "heel": [
+          195.53529262080852,
+          329.7739006893147
+        ],
+        "toe": [
+          215.52253440462783,
+          330.4881596585603
+        ],
+        "angle_degrees": 2.0466364298674655,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.359375,
+        "heel": [
+          181.445,
+          342.0
+        ],
+        "toe": [
+          210.0806421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 22,
+      "visible_far_shoe_pixels": 277,
+      "sha256": "057a5c2a77a60e7bbc594b61cc526221387ff27b1c0452a0184eb6c275ffeaaa"
+    },
+    {
+      "index": 57,
+      "reference_label": "15.0",
+      "file": "frames/frame_57.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 29,
+      "donor_original_16": 15,
+      "root_travel_x": 63.0,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.875,
+        "heel": [
+          198.3786636143009,
+          331.41074747654847
+        ],
+        "toe": [
+          218.37760612941102,
+          331.61641292654105
+        ],
+        "angle_degrees": 0.5891984983233733,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.375,
+        "heel": [
+          180.32,
+          342.0
+        ],
+        "toe": [
+          208.9556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 37,
+      "visible_far_shoe_pixels": 310,
+      "sha256": "48c2f6d1703f07448d635628a817b67ce9a162f439130da24d7be69c48be9ac5"
+    },
+    {
+      "index": 58,
+      "reference_label": "15.25",
+      "file": "frames/frame_58.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 15,
+      "root_travel_x": 64.125,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.890625,
+        "heel": [
+          200.97634917273632,
+          333.21340596817384
+        ],
+        "toe": [
+          220.9745053620121,
+          332.9418382430481
+        ],
+        "angle_degrees": -0.7780081335596911,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.390625,
+        "heel": [
+          179.195,
+          342.0
+        ],
+        "toe": [
+          207.8306421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 82,
+      "visible_far_shoe_pixels": 281,
+      "sha256": "612b9166649452a671ed03e52210919e85cd7a1f7dbb3f061dc0eba01a32b2c9"
+    },
+    {
+      "index": 59,
+      "reference_label": "15.5",
+      "file": "frames/frame_59.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 30,
+      "donor_original_16": 15,
+      "root_travel_x": 65.25,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.90625,
+        "heel": [
+          203.26929029730297,
+          335.0803909371106
+        ],
+        "toe": [
+          223.25669787748873,
+          334.37078666462327
+        ],
+        "angle_degrees": -2.033293249517058,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.40625,
+        "heel": [
+          178.07,
+          342.0
+        ],
+        "toe": [
+          206.7056421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 115,
+      "visible_far_shoe_pixels": 264,
+      "sha256": "75e4f6d880aa341e6b771d1652aa444e60a0a4715042d11b7738cbf053c84333"
+    },
+    {
+      "index": 60,
+      "reference_label": "15.75",
+      "file": "frames/frame_60.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 15,
+      "root_travel_x": 66.375,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.921875,
+        "heel": [
+          205.19842798918913,
+          336.90399286939197
+        ],
+        "toe": [
+          225.1681145970305,
+          335.803258212628
+        ],
+        "angle_degrees": -3.1549666332840545,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.421875,
+        "heel": [
+          176.945,
+          342.0
+        ],
+        "toe": [
+          205.5806421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 142,
+      "visible_far_shoe_pixels": 246,
+      "sha256": "0a4bfd091212ddda4cd7433a012566d9337d5e855968071ab18ad0dc43f702df"
+    },
+    {
+      "index": 61,
+      "reference_label": "16.0",
+      "file": "frames/frame_61.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 31,
+      "donor_original_16": 16,
+      "root_travel_x": 67.5,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.9375,
+        "heel": [
+          206.704703249583,
+          338.5770485845074
+        ],
+        "toe": [
+          226.65298498387529,
+          337.13967046817896
+        ],
+        "angle_degrees": -4.121338068596003,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.4375,
+        "heel": [
+          175.82,
+          342.0
+        ],
+        "toe": [
+          204.4556421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 210,
+      "visible_far_shoe_pixels": 294,
+      "sha256": "7cff961e31b97961b7756d56ae8d5b97c26f33f2f667ae697236eb073ec2f028"
+    },
+    {
+      "index": 62,
+      "reference_label": "16.25",
+      "file": "frames/frame_62.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 16,
+      "root_travel_x": 68.625,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.953125,
+        "heel": [
+          207.72905707967274,
+          339.9996755919399
+        ],
+        "toe": [
+          227.6556431052955,
+          338.2876097744385
+        ],
+        "angle_degrees": -4.910717339188249,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.453125,
+        "heel": [
+          174.695,
+          342.0
+        ],
+        "toe": [
+          203.3306421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 242,
+      "visible_far_shoe_pixels": 288,
+      "sha256": "aa3577cf603e13e9faee4f858dd9d883c957f13061f4b9f0a01ac3ceb90174da"
+    },
+    {
+      "index": 63,
+      "reference_label": "16.5",
+      "file": "frames/frame_63.png",
+      "duration_ms": 21.25,
+      "kind": "repaired_anchor",
+      "reference_frame_32": 32,
+      "donor_original_16": 16,
+      "root_travel_x": 69.75,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.96875,
+        "heel": [
+          208.2124304806467,
+          341.0855231796003
+        ],
+        "toe": [
+          228.12030712680968,
+          339.16811674351044
+        ],
+        "angle_degrees": -5.501414228796108,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.46875,
+        "heel": [
+          173.57,
+          342.0
+        ],
+        "toe": [
+          202.2056421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 269,
+      "visible_far_shoe_pixels": 286,
+      "sha256": "c1ec5720af20a550430e4e38e07fec63a4dcf53e843be71b6e64ada2e084e018"
+    },
+    {
+      "index": 64,
+      "reference_label": "16.75",
+      "file": "frames/frame_64.png",
+      "duration_ms": 21.25,
+      "kind": "new_inbetween",
+      "reference_frame_32": null,
+      "donor_original_16": 16,
+      "root_travel_x": 70.875,
+      "body_registration": [
+        187,
+        342
+      ],
+      "near": {
+        "phase": 0.984375,
+        "heel": [
+          208.09576445369305,
+          341.7671253076014
+        ],
+        "toe": [
+          227.99083243628738,
+          339.7210876813711
+        ],
+        "angle_degrees": -5.871738521154917,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.484375,
+        "heel": [
+          172.445,
+          342.0
+        ],
+        "toe": [
+          201.0806421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_near_shoe_pixels": 270,
+      "visible_far_shoe_pixels": 281,
+      "sha256": "0439e02260e633b43198390cb5f3664f0f1cf4c906e0697431403849d49f12fe"
+    }
+  ]
+}

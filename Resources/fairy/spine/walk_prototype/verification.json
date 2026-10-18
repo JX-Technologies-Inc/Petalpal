@@ -1,0 +1,250 @@
+{
+  "status": "PASS",
+  "approved_master_sha256": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+  "layers": [
+    {
+      "file": "dress_back_petals.png",
+      "sha256": "20daf38159af5437c4f7ea59dcb5c7ed668dac9835ab6b794d298f7acc9691f6",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 29307
+    },
+    {
+      "file": "wing_left.png",
+      "sha256": "b865bf03dd46b8568bcd951323eec9cc05e9fc4d3adb3d105b94c1bba88b05ae",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 22541
+    },
+    {
+      "file": "wing_right.png",
+      "sha256": "337def3a1a97df7183ee5eaa837315e04180d9f905ea23ef7667bba8f9d1b2c2",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 9765
+    },
+    {
+      "file": "dress_side_petals.png",
+      "sha256": "eb5a720097e4648fc04a52ed84e57effb473615b1ca0ff657a043cbc3d5b0020",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 54291
+    },
+    {
+      "file": "dress_base.png",
+      "sha256": "4640f1f8fbfdbd819170b2bb0a25f3bf8347bbc9aed39e7bb418af7917b93f0b",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 22159
+    },
+    {
+      "file": "body_base.png",
+      "sha256": "e91baf8369f92f1c526264ce21e849bf47677f8ed111e1a109e2c8d7f60a4720",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 4690
+    },
+    {
+      "file": "leg_left.png",
+      "sha256": "b2b92c5e76e3000f4a6a8b71ce3aea6b2190361f5c1d079443f091dc63d55242",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 21494
+    },
+    {
+      "file": "leg_right.png",
+      "sha256": "c37cdf684fd519f616af929cf8ca1a1d096de0d6818d586e60d06ce92248b249",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 36878
+    },
+    {
+      "file": "dress_front_petals.png",
+      "sha256": "e6f8824933f5d6bb2eabf2f20bd40dfe0627c65515640eb115656b6f12fdd814",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 76307
+    },
+    {
+      "file": "arm_right_upper.png",
+      "sha256": "6e9023d9c7105bec059604d29e70489dd79e9fe62f285fc11682f8d21b2e0d0d",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 3022
+    },
+    {
+      "file": "arm_right_lower.png",
+      "sha256": "84ed39c9ffbca9f64bce173e6436dbcb4cf8a91067226ca015fd220fd8d20652",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 7062
+    },
+    {
+      "file": "arm_left_upper.png",
+      "sha256": "8703e12b16e0bb6b584b573601296d4389685cc3e516d61dc92523dcbea142a9",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 7285
+    },
+    {
+      "file": "arm_left_lower.png",
+      "sha256": "c68b4f392e9476d0a3c0d948c3b4a5b676a5eb18e839e6cd8d8d77cecca7da96",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 9319
+    },
+    {
+      "file": "hair_back.png",
+      "sha256": "43f94d09c8a563b460e42e82308ede5deb888f4e4695505db6371d7f3acb4b6d",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 5749
+    },
+    {
+      "file": "head_face.png",
+      "sha256": "99ec6c6e086676fda2112dc73bb3466055339805abadd02a9d2429a8bb4f21d6",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 9354
+    },
+    {
+      "file": "braided_updo.png",
+      "sha256": "e445c7f5306c323541876470affa6451e2c1a8de4d09b08b13625aed72fa4cbd",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 4960
+    },
+    {
+      "file": "hair_front.png",
+      "sha256": "eca38012210ff752056cea6d857d1efc8f538922a12c3a04e88c8e50bb23b2fb",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 19536
+    },
+    {
+      "file": "flower_accessory.png",
+      "sha256": "dd3ca31164427c5282829bb8e11408cbd620fe813f9a730a593507e1e3875ba9",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "owned_pixel_rgba_matches_master_at_same_coordinates": true,
+      "visible_pixels": 7216
+    }
+  ],
+  "copy_count": 18,
+  "copies_byte_identical": true,
+  "shared_canvas": [
+    1254,
+    1254
+  ],
+  "registration_offset": [
+    0,
+    0
+  ],
+  "source_rotation": 0,
+  "source_scale": 1,
+  "visible_rgba_difference_pixels": 0,
+  "alpha_difference_pixels": 0,
+  "silhouette_difference_pixels": 0,
+  "one_source_pixel_owner_per_visible_pixel": true,
+  "note": "Layer alpha masks differ by design; each owned alpha and the composited alpha match the master exactly. RGB under alpha zero is not visible and is excluded.",
+  "protected_source_and_implementation_hashes": {
+    "Resources\\fairy\\production\\master\\fairy_first_approved.png": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_back_petals.png": "20daf38159af5437c4f7ea59dcb5c7ed668dac9835ab6b794d298f7acc9691f6",
+    "Resources\\fairy\\production\\layers\\first_approved\\wing_left.png": "b865bf03dd46b8568bcd951323eec9cc05e9fc4d3adb3d105b94c1bba88b05ae",
+    "Resources\\fairy\\production\\layers\\first_approved\\wing_right.png": "337def3a1a97df7183ee5eaa837315e04180d9f905ea23ef7667bba8f9d1b2c2",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_side_petals.png": "eb5a720097e4648fc04a52ed84e57effb473615b1ca0ff657a043cbc3d5b0020",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_base.png": "4640f1f8fbfdbd819170b2bb0a25f3bf8347bbc9aed39e7bb418af7917b93f0b",
+    "Resources\\fairy\\production\\layers\\first_approved\\body_base.png": "e91baf8369f92f1c526264ce21e849bf47677f8ed111e1a109e2c8d7f60a4720",
+    "Resources\\fairy\\production\\layers\\first_approved\\leg_left.png": "b2b92c5e76e3000f4a6a8b71ce3aea6b2190361f5c1d079443f091dc63d55242",
+    "Resources\\fairy\\production\\layers\\first_approved\\leg_right.png": "c37cdf684fd519f616af929cf8ca1a1d096de0d6818d586e60d06ce92248b249",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_front_petals.png": "e6f8824933f5d6bb2eabf2f20bd40dfe0627c65515640eb115656b6f12fdd814",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_right_upper.png": "6e9023d9c7105bec059604d29e70489dd79e9fe62f285fc11682f8d21b2e0d0d",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_right_lower.png": "84ed39c9ffbca9f64bce173e6436dbcb4cf8a91067226ca015fd220fd8d20652",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_left_upper.png": "8703e12b16e0bb6b584b573601296d4389685cc3e516d61dc92523dcbea142a9",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_left_lower.png": "c68b4f392e9476d0a3c0d948c3b4a5b676a5eb18e839e6cd8d8d77cecca7da96",
+    "Resources\\fairy\\production\\layers\\first_approved\\hair_back.png": "43f94d09c8a563b460e42e82308ede5deb888f4e4695505db6371d7f3acb4b6d",
+    "Resources\\fairy\\production\\layers\\first_approved\\head_face.png": "99ec6c6e086676fda2112dc73bb3466055339805abadd02a9d2429a8bb4f21d6",
+    "Resources\\fairy\\production\\layers\\first_approved\\braided_updo.png": "e445c7f5306c323541876470affa6451e2c1a8de4d09b08b13625aed72fa4cbd",
+    "Resources\\fairy\\production\\layers\\first_approved\\hair_front.png": "eca38012210ff752056cea6d857d1efc8f538922a12c3a04e88c8e50bb23b2fb",
+    "Resources\\fairy\\production\\layers\\first_approved\\flower_accessory.png": "dd3ca31164427c5282829bb8e11408cbd620fe813f9a730a593507e1e3875ba9",
+    "mobile\\src\\components\\garden\\GardenScene.tsx": "2a5ba2e33cd6203f67f131736ca2cb3aec2091690449709b8d406cfc6d222cb8",
+    "mobile\\src\\components\\fairy\\FairyLayer.tsx": "0330e82b15224ea8f099abd4012abac585d445c6fdc32fb9b8f8f262e84a6ef2",
+    "mobile\\src\\components\\fairy\\FairyController.ts": "0321770383ceb14bbfe9f1e87238ebbcb544a47d92305d255e1a4cb03cc06b16",
+    "mobile\\src\\components\\fairy\\FairySwingTestScene.tsx": "388e5557c4064f556c524f3cee378152ce87fdc79e0f033fd3d09844f593ea10"
+  },
+  "protected_files_unchanged": true,
+  "spine_project_created": false,
+  "animation_created": false,
+  "animation_exported": false
+}

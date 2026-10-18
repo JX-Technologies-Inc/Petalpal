@@ -1,0 +1,99 @@
+{
+  "status": "PASS_FOR_DOCUMENTED_RESTRAINED_TESTS_PENDING_USER_REVIEW",
+  "layer_count": 24,
+  "canvas": [
+    1254,
+    1254
+  ],
+  "all_rgba": true,
+  "rest_visible_rgba_different_pixels": 0,
+  "rest_alpha_different_pixels": 0,
+  "input_hashes_unchanged": true,
+  "corrected_layers": [
+    "petals_back",
+    "wing_left",
+    "wing_right",
+    "torso",
+    "thigh_left",
+    "calf_left",
+    "foot_left",
+    "thigh_right",
+    "calf_right",
+    "foot_right",
+    "dress_base",
+    "petals_side",
+    "petals_front",
+    "upper_arm_right",
+    "forearm_right",
+    "hand_right",
+    "upper_arm_left",
+    "forearm_left",
+    "hand_left"
+  ],
+  "byte_identical_identity_layers": [
+    "hair_back",
+    "head_face",
+    "braided_updo",
+    "hair_front",
+    "flower_accessory"
+  ],
+  "diagnostic_joint_probes": [
+    {
+      "test": "mild_left_knee",
+      "joint_center_min_alpha": {
+        "knee_left": 252,
+        "knee_right": 252,
+        "elbow_left": 253,
+        "elbow_right": 242
+      },
+      "canvas_not_clipped": true
+    },
+    {
+      "test": "mild_right_knee",
+      "joint_center_min_alpha": {
+        "knee_left": 252,
+        "knee_right": 252,
+        "elbow_left": 253,
+        "elbow_right": 242
+      },
+      "canvas_not_clipped": true
+    },
+    {
+      "test": "mild_left_arm",
+      "joint_center_min_alpha": {
+        "knee_left": 252,
+        "knee_right": 252,
+        "elbow_left": 251,
+        "elbow_right": 242
+      },
+      "canvas_not_clipped": true
+    },
+    {
+      "test": "mild_right_arm",
+      "joint_center_min_alpha": {
+        "knee_left": 252,
+        "knee_right": 252,
+        "elbow_left": 253,
+        "elbow_right": 219
+      },
+      "canvas_not_clipped": true
+    },
+    {
+      "test": "restrained_step",
+      "joint_center_min_alpha": {
+        "knee_left": 252,
+        "knee_right": 244,
+        "elbow_left": 251,
+        "elbow_right": 226
+      },
+      "canvas_not_clipped": true
+    }
+  ],
+  "visual_review": "Five final diagnostics inspected: no obvious open knee/elbow/wrist gaps at tested poses. Smooth shared deformation required; not rigid-quad certification.",
+  "limits": [
+    "No full walk cycle, ground-contact simulation or arbitrary-angle test.",
+    "No independent rigid-rotation certification; use shared 60px joint blending.",
+    "Original approved source edge characteristics retained."
+  ],
+  "blender_rig_created": false
+}

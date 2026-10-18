@@ -1,0 +1,683 @@
+{
+  "status": "PRODUCTION_FORMAT_EXPORT_COMPLETE_MANUAL_VISUAL_REVIEW_REQUIRED",
+  "frame_count": 16,
+  "canvas": [
+    378,
+    378
+  ],
+  "frame_duration_ms": 85,
+  "loop_duration_ms": 1360,
+  "fps": 11.764705882352942,
+  "gif_frame_durations_ms": [
+    80,
+    90,
+    80,
+    90,
+    80,
+    90,
+    80,
+    90,
+    80,
+    90,
+    80,
+    90,
+    80,
+    90,
+    80,
+    90
+  ],
+  "order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "loop": true,
+  "anchor": {
+    "x": 187.0,
+    "y": 342,
+    "meaning": "fixed sprite registration anchor; not verified world-space foot locking"
+  },
+  "source": "C:\\Users\\cjysu\\Documents\\Petalpal\\Resources\\fairy\\production\\review\\ankle_length_skirt_16f_v1\\fairy_walk_16f_ankle_length_skirt.png",
+  "source_sha256": "58a599e19809df7d59c7f0a4c9433f881964414c26845a22421fe43c50033115",
+  "source_mode": "flattened RGB",
+  "alpha_limit": "Reconstructed edge matte. Original optical transparency of wings/petals cannot be recovered exactly from RGB. Pale painted interiors preserved.",
+  "frames": [
+    {
+      "frame": 1,
+      "source_box": [
+        0.0,
+        16.037037037037038,
+        302.75,
+        319.13703703703703
+      ],
+      "source_bottom": 342,
+      "source_top": 37,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.0812853150805,
+        238.79140798294088,
+        232.96703899533392
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3450,
+      "translation_xy": [
+        0,
+        0
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        98,
+        37,
+        267,
+        343
+      ],
+      "sha256": "ec71f89593460089a183e691bec99fc573dd0efd573db269ef4e20b7e124c818",
+      "file": "frames/frame_01.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 2,
+      "source_box": [
+        302.75,
+        16.037037037037038,
+        605.5,
+        319.13703703703703
+      ],
+      "source_bottom": 341,
+      "source_top": 37,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.1519427921532,
+        238.81213619816208,
+        233.00868206491717
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3522,
+      "translation_xy": [
+        0,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 38,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        97,
+        38,
+        271,
+        343
+      ],
+      "sha256": "b3868ca586a32bedfa78d25b0c68ea9a6ec778daf307928d72c198f035731852",
+      "file": "frames/frame_02.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 3,
+      "source_box": [
+        605.5,
+        16.037037037037038,
+        908.25,
+        319.13703703703703
+      ],
+      "source_bottom": 341,
+      "source_top": 36,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.14118901523017,
+        238.74725857109934,
+        233.0168375668719
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3594,
+      "translation_xy": [
+        0,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        98,
+        37,
+        278,
+        343
+      ],
+      "sha256": "ebfee4c6cfb36bc4f920b17fab785482c18223b81cce05f809043c8e87a9ecfc",
+      "file": "frames/frame_03.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 4,
+      "source_box": [
+        908.25,
+        16.037037037037038,
+        1211.0,
+        319.13703703703703
+      ],
+      "source_bottom": 341,
+      "source_top": 36,
+      "hair_center_x": 188.0,
+      "background_rgb_median": [
+        238.07903101274877,
+        238.7201165677176,
+        232.93747527016964
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3620,
+      "translation_xy": [
+        -1,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        97,
+        37,
+        280,
+        343
+      ],
+      "sha256": "f21795d26bd2708bb08be7b3240ebdece9439b53ef160645e25672b521d1e1f9",
+      "file": "frames/frame_04.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 5,
+      "source_box": [
+        0.0,
+        340.787037037037,
+        302.75,
+        643.887037037037
+      ],
+      "source_bottom": 341,
+      "source_top": 36,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.1589591478347,
+        238.79390969416357,
+        232.9984382211421
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3565,
+      "translation_xy": [
+        0,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        98,
+        37,
+        267,
+        343
+      ],
+      "sha256": "41f10ec8d88cac8ae49bfed1ce6aa327dcb057962dbad6f25e7c615b9aa30e7b",
+      "file": "frames/frame_05.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 6,
+      "source_box": [
+        302.75,
+        340.787037037037,
+        605.5,
+        643.887037037037
+      ],
+      "source_bottom": 342,
+      "source_top": 35,
+      "hair_center_x": 188.0,
+      "background_rgb_median": [
+        238.05676388837384,
+        238.68807414071546,
+        232.89828876990256
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3628,
+      "translation_xy": [
+        -1,
+        0
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 35,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        94,
+        35,
+        263,
+        343
+      ],
+      "sha256": "7191a245adc108d6db71c150e9505d7a696b285c032cd7a0ce13ce6f741f4fe7",
+      "file": "frames/frame_06.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 7,
+      "source_box": [
+        605.5,
+        340.787037037037,
+        908.25,
+        643.887037037037
+      ],
+      "source_bottom": 341,
+      "source_top": 36,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.09694304582513,
+        238.7884817592789,
+        232.98817279360958
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3708,
+      "translation_xy": [
+        0,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        87,
+        37,
+        276,
+        343
+      ],
+      "sha256": "48dedda76e4a30d3f8daab0aa131f49960e516a0e1cb43b87682ece6e1ee9dc8",
+      "file": "frames/frame_07.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 8,
+      "source_box": [
+        908.25,
+        340.787037037037,
+        1211.0,
+        643.887037037037
+      ],
+      "source_bottom": 340,
+      "source_top": 36,
+      "hair_center_x": 188.0,
+      "background_rgb_median": [
+        238.1844356862291,
+        238.91129743826355,
+        233.12566226992925
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3760,
+      "translation_xy": [
+        -1,
+        2
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 38,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        95,
+        38,
+        286,
+        343
+      ],
+      "sha256": "aea116ec0c74b36abadfd2c6714c6ca9e227305c2b8b460ed9241eebf116c08b",
+      "file": "frames/frame_08.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 9,
+      "source_box": [
+        0.0,
+        665.537037037037,
+        302.75,
+        968.637037037037
+      ],
+      "source_bottom": 341,
+      "source_top": 35,
+      "hair_center_x": 188.0,
+      "background_rgb_median": [
+        238.05744851005352,
+        238.6947595660206,
+        232.95531299517899
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3679,
+      "translation_xy": [
+        -1,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 36,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        92,
+        36,
+        276,
+        343
+      ],
+      "sha256": "01a7ddf6bfc893940d7261f435fbeed27d38f90663d2ee08c35049323052030d",
+      "file": "frames/frame_09.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 10,
+      "source_box": [
+        302.75,
+        665.537037037037,
+        605.5,
+        968.637037037037
+      ],
+      "source_bottom": 341,
+      "source_top": 35,
+      "hair_center_x": 188.0,
+      "background_rgb_median": [
+        238.03790682719864,
+        238.60809853923064,
+        232.9342517625818
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3790,
+      "translation_xy": [
+        -1,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 36,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        94,
+        36,
+        280,
+        343
+      ],
+      "sha256": "eaba768438fb45d08c7451aee62826f8ef3cf717cf2551376e66faf4aa5e0290",
+      "file": "frames/frame_10.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 11,
+      "source_box": [
+        605.5,
+        665.537037037037,
+        908.25,
+        968.637037037037
+      ],
+      "source_bottom": 340,
+      "source_top": 35,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.05296273192766,
+        238.72176167414705,
+        232.9992106729116
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3458,
+      "translation_xy": [
+        0,
+        2
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        95,
+        37,
+        276,
+        343
+      ],
+      "sha256": "3e0c965a80a35304964a3ad3b06e8374a36e7ce46092804891116ba3e1142ae2",
+      "file": "frames/frame_11.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 12,
+      "source_box": [
+        908.25,
+        665.537037037037,
+        1211.0,
+        968.637037037037
+      ],
+      "source_bottom": 341,
+      "source_top": 36,
+      "hair_center_x": 188.0,
+      "background_rgb_median": [
+        238.02609426972037,
+        238.6725939504602,
+        232.92281299674147
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3512,
+      "translation_xy": [
+        -1,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 37,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        96,
+        37,
+        274,
+        343
+      ],
+      "sha256": "68302ad031f23cd7aa5774663ede9f3da217a5a9dcaf2c1590b5bc6644c54836",
+      "file": "frames/frame_12.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 13,
+      "source_box": [
+        0.0,
+        990.287037037037,
+        302.75,
+        1293.387037037037
+      ],
+      "source_bottom": 340,
+      "source_top": 36,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.09697134020075,
+        238.7500353884486,
+        232.98703622009043
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3301,
+      "translation_xy": [
+        0,
+        2
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 38,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        97,
+        38,
+        264,
+        343
+      ],
+      "sha256": "bb3a1d66edec8598401aa7f5bf6579eb7b8dd695c2e79c8ae865a9a1bd99a559",
+      "file": "frames/frame_13.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 14,
+      "source_box": [
+        302.75,
+        990.287037037037,
+        605.5,
+        1293.387037037037
+      ],
+      "source_bottom": 341,
+      "source_top": 38,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.0022719476152,
+        238.64142122060798,
+        232.8719352394495
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3523,
+      "translation_xy": [
+        0,
+        1
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 39,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        98,
+        39,
+        280,
+        343
+      ],
+      "sha256": "a9a44eacd025a99a792db840df383160bde0cee3d1dd0758c68c3818c5ce5778",
+      "file": "frames/frame_14.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 15,
+      "source_box": [
+        605.5,
+        990.287037037037,
+        908.25,
+        1293.387037037037
+      ],
+      "source_bottom": 340,
+      "source_top": 36,
+      "hair_center_x": 187.0,
+      "background_rgb_median": [
+        238.0615165247928,
+        238.6220467357079,
+        232.90892890307083
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3601,
+      "translation_xy": [
+        0,
+        2
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 38,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        97,
+        38,
+        281,
+        343
+      ],
+      "sha256": "b9038383398df44a9132529dc849211853869c6d70034eb13b0fed536d09e507",
+      "file": "frames/frame_15.png",
+      "duration_ms": 85
+    },
+    {
+      "frame": 16,
+      "source_box": [
+        908.25,
+        990.287037037037,
+        1211.0,
+        1293.387037037037
+      ],
+      "source_bottom": 340,
+      "source_top": 36,
+      "hair_center_x": 189.0,
+      "background_rgb_median": [
+        238.0287243303807,
+        238.64807708840615,
+        232.92035737630366
+      ],
+      "edge_matte": "spatially fitted paper + connected trimap + alpha-edge decontamination",
+      "partial_alpha_pixels": 3514,
+      "translation_xy": [
+        -2,
+        2
+      ],
+      "scale_xy": [
+        1,
+        1
+      ],
+      "baseline_y": 342,
+      "registered_top": 38,
+      "registered_bottom": 342,
+      "alpha_bbox": [
+        96,
+        38,
+        270,
+        343
+      ],
+      "sha256": "2bdbb4e95afff318bce061db5586b235020e5ae30b2bd385b393189b1e3000b4",
+      "file": "frames/frame_16.png",
+      "duration_ms": 85
+    }
+  ]
+}

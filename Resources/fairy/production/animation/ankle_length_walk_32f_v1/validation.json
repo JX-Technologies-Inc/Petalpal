@@ -1,0 +1,388 @@
+{
+  "technical_checks": "PASS",
+  "visual_status": "MANUAL_REVIEW_REQUIRED_NOT_A_VISUAL_PASS",
+  "anchors_byte_identical": 16,
+  "new_unique_inbetweens": 16,
+  "frame_order_correct": true,
+  "png_html_frame_duration_ms": 42.5,
+  "loop_duration_ms": 1360,
+  "source_anchor_hashes_still_match": true,
+  "canvas_unchanged": true,
+  "empty_20px_border": true,
+  "shoe_transform_scale": [
+    1,
+    1
+  ],
+  "no_optical_flow_or_frame_average": true,
+  "gif": {
+    "walk_32f.gif": {
+      "frames": 32,
+      "duration_ms": 1360,
+      "loop": true
+    },
+    "comparison.gif": {
+      "frames": 32,
+      "duration_ms": 1360,
+      "loop": true
+    }
+  },
+  "critical_control_travel": {
+    "4": {
+      "rear": {
+        "anchor_interval_px": 29.833,
+        "each_control_substep_px": 14.916
+      },
+      "front": {
+        "anchor_interval_px": 28.0,
+        "each_control_substep_px": 14.0
+      }
+    },
+    "12": {
+      "rear": {
+        "anchor_interval_px": 45.88,
+        "each_control_substep_px": 22.94
+      },
+      "front": {
+        "anchor_interval_px": 29.0,
+        "each_control_substep_px": 14.5
+      }
+    },
+    "16": {
+      "rear": {
+        "anchor_interval_px": 1.0,
+        "each_control_substep_px": 0.5
+      },
+      "front": {
+        "anchor_interval_px": 1.0,
+        "each_control_substep_px": 0.5
+      }
+    }
+  },
+  "checks": [
+    {
+      "label": "1",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3450
+    },
+    {
+      "label": "1.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4444
+    },
+    {
+      "label": "2",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3522
+    },
+    {
+      "label": "2.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4482
+    },
+    {
+      "label": "3",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3594
+    },
+    {
+      "label": "3.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4120
+    },
+    {
+      "label": "4",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3620
+    },
+    {
+      "label": "4.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4048
+    },
+    {
+      "label": "5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3565
+    },
+    {
+      "label": "5.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4071
+    },
+    {
+      "label": "6",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3628
+    },
+    {
+      "label": "6.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4099
+    },
+    {
+      "label": "7",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3708
+    },
+    {
+      "label": "7.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4920
+    },
+    {
+      "label": "8",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3760
+    },
+    {
+      "label": "8.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4135
+    },
+    {
+      "label": "9",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3679
+    },
+    {
+      "label": "9.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4118
+    },
+    {
+      "label": "10",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3790
+    },
+    {
+      "label": "10.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 5058
+    },
+    {
+      "label": "11",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3458
+    },
+    {
+      "label": "11.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3906
+    },
+    {
+      "label": "12",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3512
+    },
+    {
+      "label": "12.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4446
+    },
+    {
+      "label": "13",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3301
+    },
+    {
+      "label": "13.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4479
+    },
+    {
+      "label": "14",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3523
+    },
+    {
+      "label": "14.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4532
+    },
+    {
+      "label": "15",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3601
+    },
+    {
+      "label": "15.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4329
+    },
+    {
+      "label": "16",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 3514
+    },
+    {
+      "label": "16.5",
+      "mode": "RGBA",
+      "canvas": [
+        378,
+        378
+      ],
+      "baseline_alpha_gt160": 342,
+      "soft_alpha_pixels": 4637
+    }
+  ],
+  "limits": [
+    "Control-point interpolation does not prove biological gait or world-space foot locking.",
+    "Existing anchor shoe/petal/wing differences persist.",
+    "Full-speed perceptual smoothness and loop-snap approval remain manual."
+  ]
+}

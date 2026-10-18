@@ -1,0 +1,42 @@
+[
+  {
+    "file": "walk_01.png",
+    "sha256": "2FACC42422140C556218136F1C5EC06A5686DE1095A12C62E4FD4A94C65178AA",
+    "unchanged": true
+  },
+  {
+    "file": "walk_02.png",
+    "sha256": "A373AE77A6950CBB6D54BC40619B9451F5042F539B46BD78AC0BFB5DB92D22E6",
+    "unchanged": true
+  },
+  {
+    "file": "walk_03.png",
+    "sha256": "E628DB66DED8A0066E50745EC67604FA5EE84299EB59F56E19CEF0C4FBBDFDA7",
+    "unchanged": true
+  },
+  {
+    "file": "walk_04.png",
+    "sha256": "41C5798038A76B3DCBD239583A6337AA400C4232A5CDC75AF69234C54718977D",
+    "unchanged": true
+  },
+  {
+    "file": "walk_05.png",
+    "sha256": "BB6DA6AB4F337764900E465C7895430B5AF7FBAD6E1C9B346ADBFCE44CC2853E",
+    "unchanged": true
+  },
+  {
+    "file": "walk_06.png",
+    "sha256": "F082C2335FB7A02ACB528D1D81FCC75E1B2408DC6AFA75AF48B3FF8780F1B8E0",
+    "unchanged": true
+  },
+  {
+    "file": "walk_07.png",
+    "sha256": "1A29E1B57C2723C9EE3B24D7985432DC017D9E783DA66C07A7BAE8BB47740ADB",
+    "unchanged": true
+  },
+  {
+    "file": "walk_08.png",
+    "sha256": "B928FD98D2699E339FC2281B80314888548C5D2472A8AE51E8687B5739CAE01A",
+    "unchanged": true
+  }
+]

@@ -1,0 +1,19 @@
+Water material refinement, 2026-10-06.
+
+Purpose: clear, hand-painted ornamental pond floor beneath the existing PetalPal Garden.
+Reference: user-provided Image B used for material atmosphere only. No geometry,
+labels, flowers, banks, landmarks, fish or lotus from the reference are in this asset.
+
+Generation direction: top-down, edge-to-edge diffuse aqua underwater mineral floor;
+muted aqua and celadon; irregular small worn stone fragments; delicate painterly
+facets; no white surface caustics, glints, fog, clouds, land, shoreline or objects.
+Generated 1536x1024 asset is sampled as diffuse floor detail, not as a replacement map.
+GardenWaterField controls its contrast by depth. SurfaceRippleLayer independently
+animates the existing broken refracted light; the floor itself is stationary.
+
+garden-shore-distance.png is numeric RGB data, 1200x900: R=G=B represents clamped
+0..320 world-pixel distance to current islands (8-neighbour chamfer metric).
+It is derived solely from gardenMapLayout.ts and the existing island alpha silhouettes.
+Regenerate after intentional island layout/art changes:
+  node scripts/build-garden-shore-distance.cjs
+No generated material or runtime component references a Codex/worktree absolute path.

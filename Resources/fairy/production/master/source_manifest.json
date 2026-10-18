@@ -1,0 +1,129 @@
+{
+  "status": "FIRST_APPROVED_ATTACHMENT_AUTHORITATIVE; extracted Swing interaction awaiting manual review",
+  "approved_on": "2026-09-30",
+  "authority": "Resources/fairy/production/master/fairy_first_approved.png",
+  "sha256": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+  "master": "fairy_first_approved.png",
+  "source_size": [
+    1254,
+    1254
+  ],
+  "source_mode": "RGBA",
+  "source_has_alpha": true,
+  "views": [
+    {
+      "id": "front_3q",
+      "source_viewport_xywh": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "status": "sole current user-approved source; no mirroring or alternate view generation"
+    }
+  ],
+  "runtime_body_height_px": [
+    96,
+    120
+  ],
+  "initial_animations_future_only": [
+    "idle",
+    "walk",
+    "run"
+  ],
+  "deprecated_visual_sources": [
+    "Blender Fairy V1",
+    "Blender Fairy V2",
+    "Resources/Icon/fairy.png"
+  ],
+  "rejected_production_files": [
+    {
+      "file": "fairy_front_3q_approved_rgb.png",
+      "status": "REJECTED",
+      "reason": "User rejected proportions and incomplete rear-foot visibility; misleading filename, must not be used as V003 authority",
+      "sha256": "6a6eff513f9ff232054ad900b2de9a5ddbdca4168a7358c55ea04a1f0e1f5ef0"
+    }
+  ],
+  "pending_transparent_master": {
+    "file": "fairy_front_3q_master_v2.png",
+    "status": "SUPERSEDED_NOT_USED_BY_FIRST_APPROVED_PIPELINE",
+    "layer_extraction_allowed": false,
+    "animation_allowed": false
+  },
+  "historical_structure_sheet": {
+    "authority": "Resources/Icon/fairy structure.png",
+    "sha256": "86eed8eb748ced65bf6215fab48224b9e05bb8be50c213eb287d54ec0bf270b8",
+    "master": "fairy_approved_structure.png",
+    "source_size": [
+      1448,
+      1086
+    ],
+    "source_mode": "RGB",
+    "source_has_alpha": false,
+    "views": [
+      {
+        "id": "front",
+        "sheet_label": "Front",
+        "source_viewport_xywh": [
+          338,
+          155,
+          266,
+          539
+        ],
+        "status": "approved painted view on original sheet",
+        "note": "Editorial viewing region only; not a transparent sprite or extraction boundary. Use full sheet for overlapping wings/details."
+      },
+      {
+        "id": "front_3q",
+        "sheet_label": "3/4 Front",
+        "source_viewport_xywh": [
+          580,
+          155,
+          206,
+          539
+        ],
+        "status": "approved painted view on original sheet",
+        "note": "Editorial viewing region only; not a transparent sprite or extraction boundary. Use full sheet for overlapping wings/details."
+      },
+      {
+        "id": "side",
+        "sheet_label": "Side",
+        "source_viewport_xywh": [
+          758,
+          155,
+          209,
+          539
+        ],
+        "status": "approved painted view on original sheet",
+        "note": "Editorial viewing region only; not a transparent sprite or extraction boundary. Use full sheet for overlapping wings/details."
+      },
+      {
+        "id": "back",
+        "sheet_label": "Back",
+        "source_viewport_xywh": [
+          947,
+          155,
+          265,
+          539
+        ],
+        "status": "approved painted view on original sheet",
+        "note": "Editorial viewing region only; not a transparent sprite or extraction boundary. Use full sheet for overlapping wings/details."
+      },
+      {
+        "id": "back_3q",
+        "sheet_label": "3/4 Back",
+        "source_viewport_xywh": [
+          1180,
+          155,
+          244,
+          539
+        ],
+        "status": "approved painted view on original sheet",
+        "note": "Editorial viewing region only; not a transparent sprite or extraction boundary. Use full sheet for overlapping wings/details."
+      }
+    ]
+  },
+  "active_layer_manifest": "../layers/first_approved/manifest.json",
+  "active_dev_pose_manifest": "../animation/swing_pose_v2/manifest.json",
+  "active_dev_pose_status": "AWAITING_MANUAL_REVIEW; previous standing-cutout walk and front-facing seated result REJECTED"
+}

@@ -1,0 +1,42 @@
+{
+  "revision": "v002_alpha_cleanup",
+  "layer_count": 18,
+  "all_rgba": true,
+  "all_canvas": [
+    1024,
+    1024
+  ],
+  "all_offsets": [
+    0,
+    0
+  ],
+  "source_scale": 1,
+  "source_rotation": 0,
+  "root": [
+    512,
+    896
+  ],
+  "visible_bounds": [
+    416,
+    375,
+    605,
+    897
+  ],
+  "recomposition_byte_equal": true,
+  "transparent_canvas_borders": true,
+  "minimum_transparent_padding_px": 127,
+  "opaque_visible_source_rgb_exact": true,
+  "opaque_pixels_compared": 41684,
+  "master_and_application_source_hashes_unchanged": true,
+  "animations_created": 0,
+  "visual_approval": false,
+  "halo_validation": "V002 reduces V001 coarse paper residue and cloth discontinuities; fine-edge tint/translucency requires manual visual review, not an automated halo-free guarantee",
+  "color_validation": "Opaque visible RGB is byte-exact to approved source; translucent foreground/alpha are reconstructed estimates",
+  "overlap_scope": "Conservative 4\u20138 native-pixel hidden support only; large deformations require additional overlap authoring",
+  "matting_metrics": {
+    "method": "closed-form trimap alpha and multi-level foreground estimation",
+    "matting_reconstruction_mean_abs_rgb": 0.8044480851374268,
+    "opaque_visible_pixels": 41684,
+    "partial_alpha_pixels": 17058
+  }
+}

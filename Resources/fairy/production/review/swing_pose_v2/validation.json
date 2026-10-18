@@ -1,0 +1,158 @@
+{
+  "master_sha256": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+  "master_unchanged": true,
+  "frames": [
+    {
+      "id": "idle_front_3q",
+      "visible_bounds_alpha_gt_32": [
+        127,
+        60,
+        345,
+        599
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walk_0",
+      "visible_bounds_alpha_gt_32": [
+        63,
+        53,
+        398,
+        602
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walk_1",
+      "visible_bounds_alpha_gt_32": [
+        67,
+        54,
+        351,
+        603
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walk_2",
+      "visible_bounds_alpha_gt_32": [
+        55,
+        55,
+        374,
+        602
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walk_3",
+      "visible_bounds_alpha_gt_32": [
+        69,
+        62,
+        364,
+        600
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walk_4",
+      "visible_bounds_alpha_gt_32": [
+        74,
+        62,
+        388,
+        599
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walk_5",
+      "visible_bounds_alpha_gt_32": [
+        80,
+        62,
+        350,
+        600
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "turn_rear_3q",
+      "visible_bounds_alpha_gt_32": [
+        80,
+        58,
+        391,
+        601
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "stand_back",
+      "visible_bounds_alpha_gt_32": [
+        131,
+        65,
+        377,
+        600
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "lower_back",
+      "visible_bounds_alpha_gt_32": [
+        117,
+        164,
+        378,
+        600
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "sit_back",
+      "visible_bounds_alpha_gt_32": [
+        119,
+        212,
+        391,
+        611
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    }
+  ],
+  "runtime_atlas_byte_identical": true,
+  "tests": [
+    "TypeScript",
+    "fairySwingInteraction",
+    "fairyRuntime",
+    "fairyPlayback",
+    "web export"
+  ],
+  "live_visual_approval": "pending manual review"
+}

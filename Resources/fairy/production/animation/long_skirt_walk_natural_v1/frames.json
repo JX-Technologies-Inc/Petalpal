@@ -1,0 +1,928 @@
+{
+  "status": "FAILED_VISUAL_GATE_NOT_PRODUCTION_READY",
+  "frame_count": 32,
+  "frame_duration_ms": 42.5,
+  "loop_duration_ms": 1360,
+  "canvas": [
+    378,
+    378
+  ],
+  "world_travel_speed_px_s": 52.182163187855785,
+  "gait": [
+    {
+      "frame": 1,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.5,
+          "support": true,
+          "forefoot_pivot": [
+            186.51612903225805,
+            342.0
+          ],
+          "angle_degrees": 0.1347291761492947,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.0,
+          "support": true,
+          "forefoot_pivot": [
+            222.0,
+            342.0
+          ],
+          "angle_degrees": -4.0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 2,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.53125,
+          "support": true,
+          "forefoot_pivot": [
+            184.2983870967742,
+            342.0
+          ],
+          "angle_degrees": 1.9052543240782889,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.03125,
+          "support": true,
+          "forefoot_pivot": [
+            219.78225806451613,
+            342.0
+          ],
+          "angle_degrees": -2.75,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 3,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.5625,
+          "support": true,
+          "forefoot_pivot": [
+            182.0806451612903,
+            342.0
+          ],
+          "angle_degrees": 4.689235320892125,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.0625,
+          "support": true,
+          "forefoot_pivot": [
+            217.56451612903226,
+            342.0
+          ],
+          "angle_degrees": -1.5,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 4,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.59375,
+          "support": true,
+          "forefoot_pivot": [
+            179.86290322580646,
+            342.0
+          ],
+          "angle_degrees": 7.153177628584434,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.09375,
+          "support": true,
+          "forefoot_pivot": [
+            215.34677419354838,
+            342.0
+          ],
+          "angle_degrees": -0.25,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 5,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.625,
+          "support": false,
+          "forefoot_pivot": [
+            178.02265271905526,
+            341.79337512875594
+          ],
+          "angle_degrees": 7.842105263157895,
+          "swing_lift": 0.2066248712440662
+        },
+        "near": {
+          "phase": 0.125,
+          "support": true,
+          "forefoot_pivot": [
+            213.1290322580645,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 6,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.65625,
+          "support": false,
+          "forefoot_pivot": [
+            179.1248271545597,
+            340.52387309995277
+          ],
+          "angle_degrees": 6.855263157894736,
+          "swing_lift": 1.4761269000472323
+        },
+        "near": {
+          "phase": 0.15625,
+          "support": true,
+          "forefoot_pivot": [
+            210.91129032258064,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 7,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.6875,
+          "support": false,
+          "forefoot_pivot": [
+            181.6717702106721,
+            339.35235148869646
+          ],
+          "angle_degrees": 5.86842105263158,
+          "swing_lift": 2.6476485113035437
+        },
+        "near": {
+          "phase": 0.1875,
+          "support": true,
+          "forefoot_pivot": [
+            208.69354838709677,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 8,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.71875,
+          "support": false,
+          "forefoot_pivot": [
+            185.36982972873233,
+            338.3565720217277
+          ],
+          "angle_degrees": 4.88157894736842,
+          "swing_lift": 3.643427978272307
+        },
+        "near": {
+          "phase": 0.21875,
+          "support": true,
+          "forefoot_pivot": [
+            206.4758064516129,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 9,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.75,
+          "support": false,
+          "forefoot_pivot": [
+            189.9253535500802,
+            337.60263124396755
+          ],
+          "angle_degrees": 3.8947368421052637,
+          "swing_lift": 4.397368756032446
+        },
+        "near": {
+          "phase": 0.25,
+          "support": true,
+          "forefoot_pivot": [
+            204.25806451612902,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 10,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.78125,
+          "support": false,
+          "forefoot_pivot": [
+            195.04468951605554,
+            337.1405732486496
+          ],
+          "angle_degrees": 2.9078947368421044,
+          "swing_lift": 4.859426751350391
+        },
+        "near": {
+          "phase": 0.28125,
+          "support": true,
+          "forefoot_pivot": [
+            202.04032258064515,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 11,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.8125,
+          "support": false,
+          "forefoot_pivot": [
+            200.43418546799825,
+            337.0010679160603
+          ],
+          "angle_degrees": 1.9210526315789478,
+          "swing_lift": 4.998932083939655
+        },
+        "near": {
+          "phase": 0.3125,
+          "support": true,
+          "forefoot_pivot": [
+            199.82258064516128,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 12,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.84375,
+          "support": false,
+          "forefoot_pivot": [
+            205.80018924724814,
+            337.1933751484051
+          ],
+          "angle_degrees": 0.9342105263157898,
+          "swing_lift": 4.806624851594898
+        },
+        "near": {
+          "phase": 0.34375,
+          "support": true,
+          "forefoot_pivot": [
+            197.6048387096774,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 13,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.875,
+          "support": false,
+          "forefoot_pivot": [
+            210.84904869514506,
+            337.7047302281506
+          ],
+          "angle_degrees": -0.05263157894736814,
+          "swing_lift": 4.295269771849427
+        },
+        "near": {
+          "phase": 0.375,
+          "support": true,
+          "forefoot_pivot": [
+            195.38709677419354,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 14,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.90625,
+          "support": false,
+          "forefoot_pivot": [
+            215.28711165302886,
+            338.5011910977226
+          ],
+          "angle_degrees": -1.039473684210526,
+          "swing_lift": 3.498808902277399
+        },
+        "near": {
+          "phase": 0.40625,
+          "support": true,
+          "forefoot_pivot": [
+            193.16935483870967,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 15,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.9375,
+          "support": false,
+          "forefoot_pivot": [
+            218.8207259622394,
+            339.52989132093745
+          ],
+          "angle_degrees": -2.026315789473684,
+          "swing_lift": 2.47010867906252
+        },
+        "near": {
+          "phase": 0.4375,
+          "support": true,
+          "forefoot_pivot": [
+            190.9516129032258,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 16,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.96875,
+          "support": false,
+          "forefoot_pivot": [
+            221.15623946411648,
+            340.7225491820444
+          ],
+          "angle_degrees": -3.013157894736842,
+          "swing_lift": 1.2774508179555946
+        },
+        "near": {
+          "phase": 0.46875,
+          "support": true,
+          "forefoot_pivot": [
+            188.73387096774195,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 17,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.0,
+          "support": true,
+          "forefoot_pivot": [
+            222.0,
+            342.0
+          ],
+          "angle_degrees": -4.0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.5,
+          "support": true,
+          "forefoot_pivot": [
+            186.51612903225805,
+            342.0
+          ],
+          "angle_degrees": 0.1347291761492947,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 18,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.03125,
+          "support": true,
+          "forefoot_pivot": [
+            219.78225806451613,
+            342.0
+          ],
+          "angle_degrees": -2.75,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.53125,
+          "support": true,
+          "forefoot_pivot": [
+            184.2983870967742,
+            342.0
+          ],
+          "angle_degrees": 1.9052543240782889,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 19,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.0625,
+          "support": true,
+          "forefoot_pivot": [
+            217.56451612903226,
+            342.0
+          ],
+          "angle_degrees": -1.5,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.5625,
+          "support": true,
+          "forefoot_pivot": [
+            182.0806451612903,
+            342.0
+          ],
+          "angle_degrees": 4.689235320892125,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 20,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.09375,
+          "support": true,
+          "forefoot_pivot": [
+            215.34677419354838,
+            342.0
+          ],
+          "angle_degrees": -0.25,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.59375,
+          "support": true,
+          "forefoot_pivot": [
+            179.86290322580646,
+            342.0
+          ],
+          "angle_degrees": 7.153177628584434,
+          "swing_lift": 0
+        }
+      }
+    },
+    {
+      "frame": 21,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.125,
+          "support": true,
+          "forefoot_pivot": [
+            213.1290322580645,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.625,
+          "support": false,
+          "forefoot_pivot": [
+            178.02265271905526,
+            341.79337512875594
+          ],
+          "angle_degrees": 7.842105263157895,
+          "swing_lift": 0.2066248712440662
+        }
+      }
+    },
+    {
+      "frame": 22,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.15625,
+          "support": true,
+          "forefoot_pivot": [
+            210.91129032258064,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.65625,
+          "support": false,
+          "forefoot_pivot": [
+            179.1248271545597,
+            340.52387309995277
+          ],
+          "angle_degrees": 6.855263157894736,
+          "swing_lift": 1.4761269000472323
+        }
+      }
+    },
+    {
+      "frame": 23,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.1875,
+          "support": true,
+          "forefoot_pivot": [
+            208.69354838709677,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.6875,
+          "support": false,
+          "forefoot_pivot": [
+            181.6717702106721,
+            339.35235148869646
+          ],
+          "angle_degrees": 5.86842105263158,
+          "swing_lift": 2.6476485113035437
+        }
+      }
+    },
+    {
+      "frame": 24,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.21875,
+          "support": true,
+          "forefoot_pivot": [
+            206.4758064516129,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.71875,
+          "support": false,
+          "forefoot_pivot": [
+            185.36982972873233,
+            338.3565720217277
+          ],
+          "angle_degrees": 4.88157894736842,
+          "swing_lift": 3.643427978272307
+        }
+      }
+    },
+    {
+      "frame": 25,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.25,
+          "support": true,
+          "forefoot_pivot": [
+            204.25806451612902,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.75,
+          "support": false,
+          "forefoot_pivot": [
+            189.9253535500802,
+            337.60263124396755
+          ],
+          "angle_degrees": 3.8947368421052637,
+          "swing_lift": 4.397368756032446
+        }
+      }
+    },
+    {
+      "frame": 26,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.28125,
+          "support": true,
+          "forefoot_pivot": [
+            202.04032258064515,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.78125,
+          "support": false,
+          "forefoot_pivot": [
+            195.04468951605554,
+            337.1405732486496
+          ],
+          "angle_degrees": 2.9078947368421044,
+          "swing_lift": 4.859426751350391
+        }
+      }
+    },
+    {
+      "frame": 27,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.3125,
+          "support": true,
+          "forefoot_pivot": [
+            199.82258064516128,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.8125,
+          "support": false,
+          "forefoot_pivot": [
+            200.43418546799825,
+            337.0010679160603
+          ],
+          "angle_degrees": 1.9210526315789478,
+          "swing_lift": 4.998932083939655
+        }
+      }
+    },
+    {
+      "frame": 28,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.34375,
+          "support": true,
+          "forefoot_pivot": [
+            197.6048387096774,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.84375,
+          "support": false,
+          "forefoot_pivot": [
+            205.80018924724814,
+            337.1933751484051
+          ],
+          "angle_degrees": 0.9342105263157898,
+          "swing_lift": 4.806624851594898
+        }
+      }
+    },
+    {
+      "frame": 29,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.375,
+          "support": true,
+          "forefoot_pivot": [
+            195.38709677419354,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.875,
+          "support": false,
+          "forefoot_pivot": [
+            210.84904869514506,
+            337.7047302281506
+          ],
+          "angle_degrees": -0.05263157894736814,
+          "swing_lift": 4.295269771849427
+        }
+      }
+    },
+    {
+      "frame": 30,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.40625,
+          "support": true,
+          "forefoot_pivot": [
+            193.16935483870967,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.90625,
+          "support": false,
+          "forefoot_pivot": [
+            215.28711165302886,
+            338.5011910977226
+          ],
+          "angle_degrees": -1.039473684210526,
+          "swing_lift": 3.498808902277399
+        }
+      }
+    },
+    {
+      "frame": 31,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.4375,
+          "support": true,
+          "forefoot_pivot": [
+            190.9516129032258,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.9375,
+          "support": false,
+          "forefoot_pivot": [
+            218.8207259622394,
+            339.52989132093745
+          ],
+          "angle_degrees": -2.026315789473684,
+          "swing_lift": 2.47010867906252
+        }
+      }
+    },
+    {
+      "frame": 32,
+      "root_speed_px_s": 52.182163187855785,
+      "feet": {
+        "far": {
+          "phase": 0.46875,
+          "support": true,
+          "forefoot_pivot": [
+            188.73387096774195,
+            342.0
+          ],
+          "angle_degrees": 0,
+          "swing_lift": 0
+        },
+        "near": {
+          "phase": 0.96875,
+          "support": false,
+          "forefoot_pivot": [
+            221.15623946411648,
+            340.7225491820444
+          ],
+          "angle_degrees": -3.013157894736842,
+          "swing_lift": 1.2774508179555946
+        }
+      }
+    }
+  ],
+  "source_hashes": {
+    ".gitignore": "6252093f8103b25bf77e3171bfc9952ba9c964480ae8f326dc9c4bb12e6aea28",
+    "contact_evidence.json": "d47228b122c5966352fd353908614cb990e820e648d73fb459aac8cab1482137",
+    "frames.json": "2953f97d0c6bac5529bd336bcad3813da2f97101a99f6f2c09102e347628132b",
+    "index.html": "5b4809406ac2b01274bf22c316944e265f746883c3a315dc8462d35fa16e2461",
+    "player.test.cjs": "da6f4ee1c4af5643f19f8157f107aef0dec9732b28c3f228a5091f8f7011ff1d",
+    "player_template.html": "6449cac206a1c831cafdb7a0e01d0ec5230e82689c6b7ea247c687307bcdc178",
+    "REPORT.md": "e662b796d4c444965950b53acf5954c989f2156d33fa50b7dc9d91a465de8f64",
+    "source_hashes.json": "771dac408521a74c9bb917c8c1205a7c0b27776453a0221d5549caf367cbf8cc",
+    "synthesize.py": "253396787034cd8fe19484d40eb51dd1ef0ba30aa3be6ba1b705f0da762af7ab",
+    "validate.py": "480704d15dc7f2615ba152c2d48f51d484174ff72a9d196cb491dc4f12b5b2b9",
+    "validation.json": "aa800075b43e628baaf83b2d1c4ad43225113ddbd6447a02d3de9ee5a10564ec",
+    "anchors\\frame_01.png": "b8623fe944fb7db1cfb8f5ee984c67638f0771afa6fb393fe1858d94c6866b6a",
+    "anchors\\frame_02.png": "faff9c4b8d2b676859f425010868611dc3ba18d3e55754ae5e21173a3c3923d0",
+    "anchors\\frame_03.png": "3d4afd8266fba0b094b24fa457f83e10ba18ccd513b98bcde36837ce9615a373",
+    "anchors\\frame_04.png": "7c7902dbc97245a5680dcde4c3f82da3f049c59e4e96403ffd636dd4520d2b8c",
+    "anchors\\frame_05.png": "f7b11201640cf3e5d1bfc6834ad0c5f01ea254009658aa2ce034bc698c6d2853",
+    "anchors\\frame_06.png": "fa66390749794dfad10317f99452006ecbcda6be6797687821e3f471b1e2bc85",
+    "anchors\\frame_07.png": "544eb1dd070c063255b44c05678287ce6908784b6358c7a35d9306bbd3be5f3b",
+    "anchors\\frame_08.png": "8068aacb8f2485dfad3b11684517ca6f515aa346abe2d36e208cabf1169f17bb",
+    "anchors\\frame_09.png": "70e92675458d7fa13b53344bbe9b98f7c1a2be56335e04e17be43d3c5ebe076f",
+    "anchors\\frame_10.png": "10643a7fb81ede9a0e5744ebd450a19cf932a7011ec54d0e8a2398838fb2cdb5",
+    "anchors\\frame_11.png": "c09bdd321b70ced68eb0c15a9b76e0750d87018b106be849d18b6f697d79fc51",
+    "anchors\\frame_12.png": "a72dbc4c7605987ac0715cf5a44b16d5a0143989cac742ca019f32790ec3822a",
+    "anchors\\frame_13.png": "ca9b7ee32b1a4240ca570ca72b5a1f53f1e26131f0c86e46bae5d3953a07ba0a",
+    "anchors\\frame_14.png": "d17f7c7f8c823c8b1b8b51a77282710f8241e62a88b0f80b5419b1a8f7ddd515",
+    "anchors\\frame_15.png": "52304cd917b52d098cd80cabc645e1bd5cefad93efd794be6f1e22dc1628f85e",
+    "anchors\\frame_16.png": "53f3bbf6682cf5362bb585af0c751e4733d36e23348f43eabe62f667a6b7a581",
+    "anchors\\frame_17.png": "2ed27378fe018836bfbdfd6686e77effd97c27938f0ba99fab0b822e73fba6cb",
+    "anchors\\frame_18.png": "34bc59346c082f8f9755d2e0fa103de3ac276d095ea5a63f623b3484a037ffa7",
+    "anchors\\frame_19.png": "5c81ec68f1de666c5361c5b148ae8d4d52d7c1bfb6e2281be76ce82271216aad",
+    "anchors\\frame_20.png": "32cb99b4fcde63061906ee6c701112d6f3a9ffd9c0061ab560c7815db712adb6",
+    "anchors\\frame_21.png": "de0fa3146f6a6df0065ca070eeb3416170cdf6d074160b2a7ba7378a43d1bd1c",
+    "anchors\\frame_22.png": "6364913f0bd4c19d90cef29ca2b66b56130b9f0c4297599745298fc1420a47af",
+    "anchors\\frame_23.png": "5b9adb7c6b10c011241c58b1b80c48917513e97f3aaa29fbe81f308925b04581",
+    "anchors\\frame_24.png": "2d3217b899c0b190dec2e5c8770f3f6d59fa00b39faeec56c2d01325d9a88361",
+    "frames\\frame_01.png": "b8623fe944fb7db1cfb8f5ee984c67638f0771afa6fb393fe1858d94c6866b6a",
+    "frames\\frame_02.png": "faff9c4b8d2b676859f425010868611dc3ba18d3e55754ae5e21173a3c3923d0",
+    "frames\\frame_03.png": "3d4afd8266fba0b094b24fa457f83e10ba18ccd513b98bcde36837ce9615a373",
+    "frames\\frame_04.png": "7c7902dbc97245a5680dcde4c3f82da3f049c59e4e96403ffd636dd4520d2b8c",
+    "frames\\frame_05.png": "f7b11201640cf3e5d1bfc6834ad0c5f01ea254009658aa2ce034bc698c6d2853",
+    "frames\\frame_06.png": "c99815a58aa21939b883e97751ca1e9c358b183e71c16c772572c5b9b26f1efd",
+    "frames\\frame_07.png": "fa66390749794dfad10317f99452006ecbcda6be6797687821e3f471b1e2bc85",
+    "frames\\frame_08.png": "544eb1dd070c063255b44c05678287ce6908784b6358c7a35d9306bbd3be5f3b",
+    "frames\\frame_09.png": "8068aacb8f2485dfad3b11684517ca6f515aa346abe2d36e208cabf1169f17bb",
+    "frames\\frame_10.png": "8e95f66023a5f65d21b2bf69ee3cd68a88032e9a5537a7f3b77fb3c39534b1a0",
+    "frames\\frame_11.png": "70e92675458d7fa13b53344bbe9b98f7c1a2be56335e04e17be43d3c5ebe076f",
+    "frames\\frame_12.png": "10643a7fb81ede9a0e5744ebd450a19cf932a7011ec54d0e8a2398838fb2cdb5",
+    "frames\\frame_13.png": "c09bdd321b70ced68eb0c15a9b76e0750d87018b106be849d18b6f697d79fc51",
+    "frames\\frame_14.png": "47fbf0e88d7e47eb53373ec5c36c3a4949def7b8169f4b6d89882be7f6e48a97",
+    "frames\\frame_15.png": "a72dbc4c7605987ac0715cf5a44b16d5a0143989cac742ca019f32790ec3822a",
+    "frames\\frame_16.png": "ca9b7ee32b1a4240ca570ca72b5a1f53f1e26131f0c86e46bae5d3953a07ba0a",
+    "frames\\frame_17.png": "347c327ec5dd9158396664ea8b2987ed42d029365899690c9998df770a98201a",
+    "frames\\frame_18.png": "d17f7c7f8c823c8b1b8b51a77282710f8241e62a88b0f80b5419b1a8f7ddd515",
+    "frames\\frame_19.png": "52304cd917b52d098cd80cabc645e1bd5cefad93efd794be6f1e22dc1628f85e",
+    "frames\\frame_20.png": "53f3bbf6682cf5362bb585af0c751e4733d36e23348f43eabe62f667a6b7a581",
+    "frames\\frame_21.png": "2ed27378fe018836bfbdfd6686e77effd97c27938f0ba99fab0b822e73fba6cb",
+    "frames\\frame_22.png": "5de36cc87d7875ee4ef6f7498b1bc446dd32abfe270d98743e51da7813bcbf01",
+    "frames\\frame_23.png": "34bc59346c082f8f9755d2e0fa103de3ac276d095ea5a63f623b3484a037ffa7",
+    "frames\\frame_24.png": "5c81ec68f1de666c5361c5b148ae8d4d52d7c1bfb6e2281be76ce82271216aad",
+    "frames\\frame_25.png": "32cb99b4fcde63061906ee6c701112d6f3a9ffd9c0061ab560c7815db712adb6",
+    "frames\\frame_26.png": "dee572f714bb56eb246680617d08d2485a0d969a77168fb00847e6f0981a7517",
+    "frames\\frame_27.png": "de0fa3146f6a6df0065ca070eeb3416170cdf6d074160b2a7ba7378a43d1bd1c",
+    "frames\\frame_28.png": "6364913f0bd4c19d90cef29ca2b66b56130b9f0c4297599745298fc1420a47af",
+    "frames\\frame_29.png": "5b9adb7c6b10c011241c58b1b80c48917513e97f3aaa29fbe81f308925b04581",
+    "frames\\frame_30.png": "095446b1da201fa6ed677a43af39541ef4fffad8ff81653b4688924507eb419d",
+    "frames\\frame_31.png": "2d3217b899c0b190dec2e5c8770f3f6d59fa00b39faeec56c2d01325d9a88361",
+    "frames\\frame_32.png": "4b4c2f099ed7fbaa1581679d8f740b85ec35cbf75b9c79ca97d6b373588f29a5",
+    "inbetweens\\frame_05_5.png": "c99815a58aa21939b883e97751ca1e9c358b183e71c16c772572c5b9b26f1efd",
+    "inbetweens\\frame_08_5.png": "8e95f66023a5f65d21b2bf69ee3cd68a88032e9a5537a7f3b77fb3c39534b1a0",
+    "inbetweens\\frame_11_5.png": "47fbf0e88d7e47eb53373ec5c36c3a4949def7b8169f4b6d89882be7f6e48a97",
+    "inbetweens\\frame_13_5.png": "347c327ec5dd9158396664ea8b2987ed42d029365899690c9998df770a98201a",
+    "inbetweens\\frame_17_5.png": "5de36cc87d7875ee4ef6f7498b1bc446dd32abfe270d98743e51da7813bcbf01",
+    "inbetweens\\frame_20_5.png": "dee572f714bb56eb246680617d08d2485a0d969a77168fb00847e6f0981a7517",
+    "inbetweens\\frame_23_5.png": "095446b1da201fa6ed677a43af39541ef4fffad8ff81653b4688924507eb419d",
+    "inbetweens\\frame_24_5.png": "4b4c2f099ed7fbaa1581679d8f740b85ec35cbf75b9c79ca97d6b373588f29a5",
+    "review\\contact_sheet.png": "a532d075f3480f08eb3c2cb4b8e7bdf3f71a4b28e7a5f161cd3e723153916c9c",
+    "review\\feet_dark.png": "cc869223905e21bc3ca9bfef470b4dcd972627e642cab8b691c42fd7d0e10fdd",
+    "review\\feet_light.png": "5d6e28b0f02a7f5417ef27fb518d2c910b8cb20825f943eac7738b3ba84324a0",
+    "review\\triplets.png": "1fe659f65fcf6155aa3f0490eb1fb98d0eb735ce8346e02332bf4164b138394a",
+    "review\\walk_32.gif": "3e66426c70ca75eb990e1be7cf6c218b022a0c5d4cce2cca1928ee1703d1c95e"
+  },
+  "note": "Distinct source calf/shoe regions; original footwear size retained via rigid map. Transparent frame centering unchanged; ground lock is evaluated with documented root travel."
+}

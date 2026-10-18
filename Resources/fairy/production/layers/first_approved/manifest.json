@@ -1,0 +1,122 @@
+{
+  "authority": "../../master/fairy_first_approved.png",
+  "source_sha256": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+  "canvas": [
+    1254,
+    1254
+  ],
+  "registration": {
+    "x": 0,
+    "y": 0,
+    "scale": 1,
+    "rotation": 0
+  },
+  "sides": "screen left/right in the single approved view",
+  "root": [
+    674,
+    1178
+  ],
+  "hips": [
+    655,
+    676
+  ],
+  "layers": [
+    {
+      "id": "dress_back_petals",
+      "file": "dress_back_petals.png",
+      "visible_pixels": 29307
+    },
+    {
+      "id": "wing_left",
+      "file": "wing_left.png",
+      "visible_pixels": 22541
+    },
+    {
+      "id": "wing_right",
+      "file": "wing_right.png",
+      "visible_pixels": 9765
+    },
+    {
+      "id": "dress_side_petals",
+      "file": "dress_side_petals.png",
+      "visible_pixels": 54291
+    },
+    {
+      "id": "dress_base",
+      "file": "dress_base.png",
+      "visible_pixels": 22159
+    },
+    {
+      "id": "body_base",
+      "file": "body_base.png",
+      "visible_pixels": 4690
+    },
+    {
+      "id": "leg_left",
+      "file": "leg_left.png",
+      "visible_pixels": 21494
+    },
+    {
+      "id": "leg_right",
+      "file": "leg_right.png",
+      "visible_pixels": 36878
+    },
+    {
+      "id": "dress_front_petals",
+      "file": "dress_front_petals.png",
+      "visible_pixels": 76307
+    },
+    {
+      "id": "arm_right_upper",
+      "file": "arm_right_upper.png",
+      "visible_pixels": 3022
+    },
+    {
+      "id": "arm_right_lower",
+      "file": "arm_right_lower.png",
+      "visible_pixels": 7062
+    },
+    {
+      "id": "arm_left_upper",
+      "file": "arm_left_upper.png",
+      "visible_pixels": 7285
+    },
+    {
+      "id": "arm_left_lower",
+      "file": "arm_left_lower.png",
+      "visible_pixels": 9319
+    },
+    {
+      "id": "hair_back",
+      "file": "hair_back.png",
+      "visible_pixels": 5749
+    },
+    {
+      "id": "head_face",
+      "file": "head_face.png",
+      "visible_pixels": 9354
+    },
+    {
+      "id": "braided_updo",
+      "file": "braided_updo.png",
+      "visible_pixels": 4960
+    },
+    {
+      "id": "hair_front",
+      "file": "hair_front.png",
+      "visible_pixels": 19536
+    },
+    {
+      "id": "flower_accessory",
+      "file": "flower_accessory.png",
+      "visible_pixels": 7216
+    }
+  ],
+  "visible_rgba_exact": true,
+  "alpha_exact": true,
+  "hidden_reconstruction": false,
+  "limitations": [
+    "Visible-pixel extraction only; occluded anatomy cannot be recovered.",
+    "Source edge fringes preserved unchanged. Joint separation needs manual posed review."
+  ]
+}

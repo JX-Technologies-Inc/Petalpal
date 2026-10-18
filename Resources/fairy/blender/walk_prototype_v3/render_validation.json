@@ -1,0 +1,22 @@
+{
+  "rest_visible_rgba_exact": true,
+  "rest_alpha_exact": true,
+  "rest_max_visible_delta": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "loop_closure_exact": false,
+  "frames": 24,
+  "fps": 16,
+  "duration_seconds": 1.5,
+  "canvas": [
+    1254,
+    1254
+  ],
+  "exporter": "actual Blender evaluated mesh geometry + premultiplied texture filtering + straight sRGB source-over",
+  "native_engine_rest_exact": false,
+  "native_engine_rest_mean_visible_rgb_error": 7.530153257250868,
+  "sources_unchanged": true
+}

@@ -1,0 +1,4 @@
+Built-in image_gen edit, 2026-10-09.
+Reference: codex-clipboard-61f56651-f45c-4851-9a8e-1f576de762bf.png.
+Prompt: Remove only the beige background and surrounding sparkles to produce a true transparent RGBA sprite. Preserve the exact fairy identity, face, violet braided hair, flower accessory, translucent gold-veined wings, long layered lavender/ivory/blue petal dress, trailing legs and shoes, right-facing gentle airborne glide, proportions, colors and painterly rendering. No redesign, no environment, no aura or shadow; entire character uncropped.
+Runtime: FlyingFairy.tsx adds localized continuous wing-tip and trailing-dress deformation without altering face, hair or torso. Flight movement uses the existing swing-only aerial controller; walking and seated artwork are unchanged.

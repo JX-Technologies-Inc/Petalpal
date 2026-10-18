@@ -1,0 +1,15 @@
+{
+  "requested_file": "fairy_front_3q_approved_rgba.png",
+  "requested_file_exists": false,
+  "located_file": "Resources/fairy/production/master/fairy_front_3q_approved_rgb.png",
+  "compared_to": "Resources/fairy/production/review/front_3q_recomposed.png",
+  "source_sha256": "6a6eff513f9ff232054ad900b2de9a5ddbdca4168a7358c55ea04a1f0e1f5ef0",
+  "current_sha256": "6a6eff513f9ff232054ad900b2de9a5ddbdca4168a7358c55ea04a1f0e1f5ef0",
+  "dimensions": [
+    1024,
+    1024
+  ],
+  "rgba_differing_pixels": 0,
+  "alpha_differing_pixels": 0,
+  "status": "Authority clarification requested; no V003 correction fabricated"
+}

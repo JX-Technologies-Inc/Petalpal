@@ -1,0 +1,78 @@
+{
+  "technical_extraction": "PASS",
+  "transparent_matte": "ESTIMATED_REVIEW_CANDIDATE",
+  "motion_acceptance": "FAIL_CLEAR_ALTERNATION",
+  "source_hash": "ec7d74153cc3554b01cfaf92199ccdd61815fc8cff1b5fbe62fb9ef15a2cf00d",
+  "gif_frames": 6,
+  "loop_ms": 1200,
+  "no_per_frame_scale": true,
+  "frames": [
+    {
+      "frame": 1,
+      "original_source_pixels_exact": true,
+      "scale": 1,
+      "rgba_canvas": [
+        400,
+        720
+      ],
+      "opaque_rgb_max_delta": 0,
+      "labels_region_alpha_zero": true
+    },
+    {
+      "frame": 2,
+      "original_source_pixels_exact": true,
+      "scale": 1,
+      "rgba_canvas": [
+        400,
+        720
+      ],
+      "opaque_rgb_max_delta": 0,
+      "labels_region_alpha_zero": true
+    },
+    {
+      "frame": 3,
+      "original_source_pixels_exact": true,
+      "scale": 1,
+      "rgba_canvas": [
+        400,
+        720
+      ],
+      "opaque_rgb_max_delta": 0,
+      "labels_region_alpha_zero": true
+    },
+    {
+      "frame": 4,
+      "original_source_pixels_exact": true,
+      "scale": 1,
+      "rgba_canvas": [
+        400,
+        720
+      ],
+      "opaque_rgb_max_delta": 0,
+      "labels_region_alpha_zero": true
+    },
+    {
+      "frame": 5,
+      "original_source_pixels_exact": true,
+      "scale": 1,
+      "rgba_canvas": [
+        400,
+        720
+      ],
+      "opaque_rgb_max_delta": 0,
+      "labels_region_alpha_zero": true
+    },
+    {
+      "frame": 6,
+      "original_source_pixels_exact": true,
+      "scale": 1,
+      "rgba_canvas": [
+        400,
+        720
+      ],
+      "opaque_rgb_max_delta": 0,
+      "labels_region_alpha_zero": true
+    }
+  ],
+  "browser_visual_automation_run": false
+}

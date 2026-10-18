@@ -1,0 +1,486 @@
+{
+  "status": "SYNTHESIZED_MIDPOINTS_AWAITING_VISUAL_REVIEW",
+  "canvas": [
+    378,
+    378
+  ],
+  "frame_count": 24,
+  "anchor_count": 16,
+  "new_frame_count": 8,
+  "loop_duration_ms": 1360,
+  "frame_duration_ms": 56.666666666666664,
+  "gif_durations_ms": [
+    60,
+    50,
+    60,
+    60,
+    50,
+    60,
+    60,
+    50,
+    60,
+    60,
+    50,
+    60,
+    60,
+    50,
+    60,
+    60,
+    50,
+    60,
+    60,
+    50,
+    60,
+    60,
+    50,
+    60
+  ],
+  "original_frame_duration_ms": 85,
+  "frames": [
+    {
+      "index": 1,
+      "label": "1",
+      "kind": "anchor",
+      "anchor": 1,
+      "sha256": "b8623fe944fb7db1cfb8f5ee984c67638f0771afa6fb393fe1858d94c6866b6a"
+    },
+    {
+      "index": 2,
+      "label": "1.5",
+      "kind": "midpoint",
+      "between": [
+        1,
+        2
+      ],
+      "sha256": "faff9c4b8d2b676859f425010868611dc3ba18d3e55754ae5e21173a3c3923d0"
+    },
+    {
+      "index": 3,
+      "label": "2",
+      "kind": "anchor",
+      "anchor": 2,
+      "sha256": "3d4afd8266fba0b094b24fa457f83e10ba18ccd513b98bcde36837ce9615a373"
+    },
+    {
+      "index": 4,
+      "label": "3",
+      "kind": "anchor",
+      "anchor": 3,
+      "sha256": "7c7902dbc97245a5680dcde4c3f82da3f049c59e4e96403ffd636dd4520d2b8c"
+    },
+    {
+      "index": 5,
+      "label": "3.5",
+      "kind": "midpoint",
+      "between": [
+        3,
+        4
+      ],
+      "sha256": "f7b11201640cf3e5d1bfc6834ad0c5f01ea254009658aa2ce034bc698c6d2853"
+    },
+    {
+      "index": 6,
+      "label": "4",
+      "kind": "anchor",
+      "anchor": 4,
+      "sha256": "fa66390749794dfad10317f99452006ecbcda6be6797687821e3f471b1e2bc85"
+    },
+    {
+      "index": 7,
+      "label": "5",
+      "kind": "anchor",
+      "anchor": 5,
+      "sha256": "544eb1dd070c063255b44c05678287ce6908784b6358c7a35d9306bbd3be5f3b"
+    },
+    {
+      "index": 8,
+      "label": "5.5",
+      "kind": "midpoint",
+      "between": [
+        5,
+        6
+      ],
+      "sha256": "8068aacb8f2485dfad3b11684517ca6f515aa346abe2d36e208cabf1169f17bb"
+    },
+    {
+      "index": 9,
+      "label": "6",
+      "kind": "anchor",
+      "anchor": 6,
+      "sha256": "70e92675458d7fa13b53344bbe9b98f7c1a2be56335e04e17be43d3c5ebe076f"
+    },
+    {
+      "index": 10,
+      "label": "7",
+      "kind": "anchor",
+      "anchor": 7,
+      "sha256": "10643a7fb81ede9a0e5744ebd450a19cf932a7011ec54d0e8a2398838fb2cdb5"
+    },
+    {
+      "index": 11,
+      "label": "7.5",
+      "kind": "midpoint",
+      "between": [
+        7,
+        8
+      ],
+      "sha256": "c09bdd321b70ced68eb0c15a9b76e0750d87018b106be849d18b6f697d79fc51"
+    },
+    {
+      "index": 12,
+      "label": "8",
+      "kind": "anchor",
+      "anchor": 8,
+      "sha256": "a72dbc4c7605987ac0715cf5a44b16d5a0143989cac742ca019f32790ec3822a"
+    },
+    {
+      "index": 13,
+      "label": "9",
+      "kind": "anchor",
+      "anchor": 9,
+      "sha256": "ca9b7ee32b1a4240ca570ca72b5a1f53f1e26131f0c86e46bae5d3953a07ba0a"
+    },
+    {
+      "index": 14,
+      "label": "9.5",
+      "kind": "midpoint",
+      "between": [
+        9,
+        10
+      ],
+      "sha256": "d17f7c7f8c823c8b1b8b51a77282710f8241e62a88b0f80b5419b1a8f7ddd515"
+    },
+    {
+      "index": 15,
+      "label": "10",
+      "kind": "anchor",
+      "anchor": 10,
+      "sha256": "52304cd917b52d098cd80cabc645e1bd5cefad93efd794be6f1e22dc1628f85e"
+    },
+    {
+      "index": 16,
+      "label": "11",
+      "kind": "anchor",
+      "anchor": 11,
+      "sha256": "53f3bbf6682cf5362bb585af0c751e4733d36e23348f43eabe62f667a6b7a581"
+    },
+    {
+      "index": 17,
+      "label": "11.5",
+      "kind": "midpoint",
+      "between": [
+        11,
+        12
+      ],
+      "sha256": "2ed27378fe018836bfbdfd6686e77effd97c27938f0ba99fab0b822e73fba6cb"
+    },
+    {
+      "index": 18,
+      "label": "12",
+      "kind": "anchor",
+      "anchor": 12,
+      "sha256": "34bc59346c082f8f9755d2e0fa103de3ac276d095ea5a63f623b3484a037ffa7"
+    },
+    {
+      "index": 19,
+      "label": "13",
+      "kind": "anchor",
+      "anchor": 13,
+      "sha256": "5c81ec68f1de666c5361c5b148ae8d4d52d7c1bfb6e2281be76ce82271216aad"
+    },
+    {
+      "index": 20,
+      "label": "13.5",
+      "kind": "midpoint",
+      "between": [
+        13,
+        14
+      ],
+      "sha256": "32cb99b4fcde63061906ee6c701112d6f3a9ffd9c0061ab560c7815db712adb6"
+    },
+    {
+      "index": 21,
+      "label": "14",
+      "kind": "anchor",
+      "anchor": 14,
+      "sha256": "de0fa3146f6a6df0065ca070eeb3416170cdf6d074160b2a7ba7378a43d1bd1c"
+    },
+    {
+      "index": 22,
+      "label": "15",
+      "kind": "anchor",
+      "anchor": 15,
+      "sha256": "6364913f0bd4c19d90cef29ca2b66b56130b9f0c4297599745298fc1420a47af"
+    },
+    {
+      "index": 23,
+      "label": "15.5",
+      "kind": "midpoint",
+      "between": [
+        15,
+        16
+      ],
+      "sha256": "5b9adb7c6b10c011241c58b1b80c48917513e97f3aaa29fbe81f308925b04581"
+    },
+    {
+      "index": 24,
+      "label": "16",
+      "kind": "anchor",
+      "anchor": 16,
+      "sha256": "2d3217b899c0b190dec2e5c8770f3f6d59fa00b39faeec56c2d01325d9a88361"
+    }
+  ],
+  "synthesis": [
+    {
+      "between": [
+        1,
+        2
+      ],
+      "flow_magnitude_p95_px": 7.373993396759033,
+      "forward_backward_error_p95_px": 3.003479480743408,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        3,
+        4
+      ],
+      "flow_magnitude_p95_px": 9.553648948669434,
+      "forward_backward_error_p95_px": 1.5226677656173706,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        5,
+        6
+      ],
+      "flow_magnitude_p95_px": 14.136211395263672,
+      "forward_backward_error_p95_px": 12.637130737304688,
+      "method": "DIS reverse-flow midpoint warp of destination painting; TPS foot landmarks for occlusion pairs",
+      "landmarks": {
+        "a": [
+          [
+            170,
+            306
+          ],
+          [
+            162,
+            320
+          ],
+          [
+            163,
+            333
+          ],
+          [
+            181,
+            335
+          ],
+          [
+            195,
+            337
+          ],
+          [
+            193,
+            310
+          ],
+          [
+            187,
+            324
+          ],
+          [
+            188,
+            336
+          ],
+          [
+            211,
+            337
+          ],
+          [
+            222,
+            337
+          ]
+        ],
+        "b": [
+          [
+            147,
+            292
+          ],
+          [
+            143,
+            305
+          ],
+          [
+            137,
+            309
+          ],
+          [
+            147,
+            327
+          ],
+          [
+            154,
+            335
+          ],
+          [
+            201,
+            310
+          ],
+          [
+            194,
+            324
+          ],
+          [
+            198,
+            338
+          ],
+          [
+            218,
+            338
+          ],
+          [
+            225,
+            338
+          ]
+        ]
+      }
+    },
+    {
+      "between": [
+        7,
+        8
+      ],
+      "flow_magnitude_p95_px": 10.36600112915039,
+      "forward_backward_error_p95_px": 1.9514156579971313,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        9,
+        10
+      ],
+      "flow_magnitude_p95_px": 10.69698429107666,
+      "forward_backward_error_p95_px": 2.3137853145599365,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        11,
+        12
+      ],
+      "flow_magnitude_p95_px": 5.498788356781006,
+      "forward_backward_error_p95_px": 1.589006781578064,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        13,
+        14
+      ],
+      "flow_magnitude_p95_px": 22.466148376464844,
+      "forward_backward_error_p95_px": 21.478191375732422,
+      "method": "DIS reverse-flow midpoint warp of destination painting; TPS foot landmarks for occlusion pairs",
+      "landmarks": {
+        "a": [
+          [
+            174,
+            306
+          ],
+          [
+            166,
+            320
+          ],
+          [
+            167,
+            333
+          ],
+          [
+            183,
+            337
+          ],
+          [
+            192,
+            338
+          ],
+          [
+            193,
+            310
+          ],
+          [
+            187,
+            324
+          ],
+          [
+            189,
+            337
+          ],
+          [
+            211,
+            338
+          ],
+          [
+            219,
+            338
+          ]
+        ],
+        "b": [
+          [
+            147,
+            298
+          ],
+          [
+            142,
+            311
+          ],
+          [
+            135,
+            315
+          ],
+          [
+            148,
+            332
+          ],
+          [
+            159,
+            338
+          ],
+          [
+            233,
+            311
+          ],
+          [
+            225,
+            325
+          ],
+          [
+            229,
+            339
+          ],
+          [
+            250,
+            339
+          ],
+          [
+            264,
+            339
+          ]
+        ]
+      }
+    },
+    {
+      "between": [
+        15,
+        16
+      ],
+      "flow_magnitude_p95_px": 10.75520133972168,
+      "forward_backward_error_p95_px": 4.262235641479492,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    }
+  ],
+  "timing_note": "Uniform 24-frame spacing follows the requested target; nonuniform insertion necessarily redistributes anchor timestamps within the unchanged total loop."
+}

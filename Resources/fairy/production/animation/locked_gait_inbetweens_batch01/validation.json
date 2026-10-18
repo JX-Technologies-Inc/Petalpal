@@ -1,0 +1,80 @@
+{
+  "status": "FAILED_FIRST_BATCH_STOPPED",
+  "locked_master_sha256": "687c37c6f23ce03eecdd5d00c9cd107ee402d1d3f28ce9d32cba4ebcdbe427e2",
+  "reference_crops": "Unscaled 370x430 RGB crops from locked sheet, not transparent production anchors. No source overwrite.",
+  "comparison": "Generated images uniformly reduced ONLY for review thumbnails; raw attempts unchanged. Not registered production frames.",
+  "frames": {
+    "1.33": {
+      "status": "FAILED",
+      "size": [
+        1163,
+        1352
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "sha256": "27169b2a98532d3c400dbad36e1bb55ae4d1e54758b7b2a9d644d8af3d0ddac1",
+      "neighbors": [
+        "1",
+        "2"
+      ],
+      "reason": "Design/shoe scale and registration drift; ankle exposure; temporal position not established."
+    },
+    "1.66": {
+      "status": "FAILED",
+      "size": [
+        1163,
+        1352
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "sha256": "ef4d6314e7aaed5bab8c031cfa01d8391699c4f7ab1b862770e1dbdf6f673e7d",
+      "neighbors": [
+        "1",
+        "2"
+      ],
+      "reason": "Design/shoe scale and registration drift; ankle exposure; temporal position not established."
+    },
+    "2.33": {
+      "status": "FAILED",
+      "size": [
+        1163,
+        1353
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "sha256": "923c0accc781e783e5ba33778454508e03822db65c798dcec452d0ff6d7d291f",
+      "neighbors": [
+        "2",
+        "3"
+      ],
+      "reason": "Design/shoe scale and registration drift; ankle exposure; temporal position not established. Lifted-foot side contradicts neighboring anchors."
+    },
+    "2.66": {
+      "status": "FAILED",
+      "size": [
+        1163,
+        1352
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "sha256": "01d31ed5c338a73912ffcc8e4e4d0c203554efdc36d83d7276d6154945e69bfc",
+      "neighbors": [
+        "2",
+        "3"
+      ],
+      "reason": "Design/shoe scale and registration drift; ankle exposure; temporal position not established."
+    }
+  }
+}

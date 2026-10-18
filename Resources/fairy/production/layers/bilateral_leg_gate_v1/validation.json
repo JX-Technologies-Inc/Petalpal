@@ -1,0 +1,56 @@
+{
+  "technical_checks": "PASS",
+  "anatomical_and_visual_gate": "PENDING_USER_REVIEW",
+  "independent_reconstruction_provenance": "two separately generated sources; right attempt01 not selected; no flip/mirror or cross-leg pixel copying",
+  "distinct_hashes_are_not_anatomical_proof": true,
+  "source_references_unchanged": true,
+  "animation_created_or_modified": false,
+  "assets": {
+    "left": {
+      "canvas": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        255
+      ],
+      "bbox_alpha_gt16": [
+        607,
+        620,
+        787,
+        1177
+      ],
+      "hip_knee_ankle_shoe_same_component": true,
+      "source_shoe_visible_rgba_and_alpha_exact_below_y1025": true,
+      "main_component_pixels": 33651,
+      "other_components_gt16px": 0,
+      "sha256": "d9ca406203d37518a60e2734accf33b195440eb3fcd8212385fcb01a492b54ef"
+    },
+    "right": {
+      "canvas": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min_max": [
+        0,
+        255
+      ],
+      "bbox_alpha_gt16": [
+        548,
+        620,
+        715,
+        1149
+      ],
+      "hip_knee_ankle_shoe_same_component": true,
+      "source_shoe_visible_rgba_and_alpha_exact_below_y1025": true,
+      "main_component_pixels": 30214,
+      "other_components_gt16px": 0,
+      "sha256": "a613065cc7188c229580fba46f3dea1fb3a6ed2d9c9aad0d747b1943cee1b4e1"
+    }
+  },
+  "diagnostic_views": 5,
+  "separated_views": "same two assets translated independently, not gait frames or 3D pose claims"
+}

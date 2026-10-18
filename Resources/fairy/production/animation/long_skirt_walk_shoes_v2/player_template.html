@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>PetalPal shoe correction V2</title>
+<style>body{font:16px system-ui;margin:24px;background:#eeebef;color:#342c3a}main{max-width:950px;margin:auto}.pair{display:flex;flex-wrap:wrap;gap:18px}.pair section{flex:1;min-width:300px}img{width:378px;max-width:100%;background:#f5f5f0}button,select,input{font:inherit;margin:5px;padding:7px}.note{background:#fff3d3;padding:12px}h2{font-size:18px}</style>
+<main><h1>Fairy — 90% shoe correction</h1><p class="note">Shoe proportion only. Existing gait/passing/ground-lock limitations remain. Original and corrected use identical positioning and one shared frame clock. No crossfade or interpolation.</p>
+<button id="play">Pause</button><button id="prev">Previous</button><button id="next">Next</button><label>Speed <select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1× — 85 ms/frame</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><label>Background <select id="bg"><option value="#f5f5f0">Light</option><option value="#30323a">Dark</option></select></label>
+<p id="status"></p><input id="scrub" type="range" min="0" max="15" value="0" step="1" aria-label="Frame">
+<div class="pair"><section><h2>Original</h2><img id="original" width="378" height="378"></section><section><h2>Corrected 90%</h2><img id="corrected" width="378" height="378"></section></div>
+<p>16 frames · 378 × 378 · cycle 1360 ms. Inspect 4→5, 8→9, 12→13 and 16→1.</p></main>
+<script>
+const assets=/*ASSETS*/;
+const el=id=>document.getElementById(id);let frame=0,playing=true,acc=0,last=null;
+function draw(){for(const k of ['original','corrected'])el(k).src='data:image/png;base64,'+assets[k][frame];el('scrub').value=frame;el('status').textContent=`Frame ${frame+1} / 16 — ${playing?'Playing':'Paused'}`;}
+function pause(){playing=false;acc=0;el('play').textContent='Play';draw();}
+el('play').onclick=()=>{playing=!playing;acc=0;el('play').textContent=playing?'Pause':'Play';draw();};
+el('prev').onclick=()=>{frame=(frame+15)%16;pause();};el('next').onclick=()=>{frame=(frame+1)%16;pause();};el('scrub').oninput=()=>{frame=Number(el('scrub').value);pause();};el('speed').onchange=()=>{acc=0;};el('bg').onchange=()=>{for(const k of ['original','corrected'])el(k).style.background=el('bg').value;};
+document.addEventListener('visibilitychange',()=>{last=null;});
+function tick(now){let dt=last===null?0:Math.max(0,now-last);last=now;if(playing&&!document.hidden){acc+=dt*Number(el('speed').value);const steps=Math.floor(acc/85);if(steps){frame=(frame+steps)%16;acc%=85;draw();}}requestAnimationFrame(tick);}
+draw();requestAnimationFrame(tick);
+</script></html>

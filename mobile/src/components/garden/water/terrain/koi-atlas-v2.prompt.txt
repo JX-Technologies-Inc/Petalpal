@@ -1,0 +1,9 @@
+Use case: stylized-concept.
+Asset type: production transparent sprite atlas for PetalPal, a lush hand-painted fantasy garden game. This is ONLY a koi fish sprite asset, NOT a garden scene or mockup.
+Create exactly four separate complete koi, one centered in each quadrant of a square 2x2 atlas. Genuine transparent RGBA background. No labels, no grid, no water, no ripples, no shadows or other objects. Wide transparent gutters between all four fish, no overlapping quadrants.
+Each koi is viewed from directly above (dorsal view), a gently elegant natural body with clear readable fins and a forked tail. All point horizontally RIGHT, nose right and tail left, body almost straight to permit runtime tail flex. Each fish occupies approximately 75% of its quadrant's width and 36% of its height, with generous margins. Identical approximate length and consistent top lighting.
+Top-left: creamy ivory koi with soft warm coral-orange patches.
+Top-right: light golden apricot koi with creamy translucent fins.
+Bottom-left: peach-orange koi with irregular ivory patches.
+Bottom-right: warm ivory koi with coral patches and very few muted charcoal accents.
+Painterly fantasy-game illustration: delicate scales and soft brush details, slightly simplified beautiful forms readable when small, softly translucent fin tips, restrained warm colors with attractive contrast. No neon, no electric red, no cold blue or purple, no photorealism, no thick cartoon outlines. Each quadrant must contain ONE complete recognizable fish, no disconnected parts. This atlas will be sampled into the actual moving Garden scene.

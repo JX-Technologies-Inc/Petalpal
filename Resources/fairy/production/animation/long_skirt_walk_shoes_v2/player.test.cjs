@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const html=fs.readFileSync(__dirname+'/index.html','utf8'),js=html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const nodes={};for(const id of ['play','prev','next','speed','bg','status','scrub','original','corrected'])nodes[id]={value:id==='speed'?'1':id==='bg'?'#30323a':'0',style:{}};
+let callback;const context=vm.createContext({document:{hidden:false,getElementById:id=>nodes[id],addEventListener(){}},requestAnimationFrame:f=>callback=f});vm.runInContext(js,context);
+const frame=()=>vm.runInContext('frame',context);const synced=()=>{const i=frame();assert.equal(nodes.original.src,'data:image/png;base64,'+vm.runInContext(`assets.original[${i}]`,context));assert.equal(nodes.corrected.src,'data:image/png;base64,'+vm.runInContext(`assets.corrected[${i}]`,context));};
+callback(0);callback(84);assert.equal(frame(),0);callback(85);assert.equal(frame(),1);synced();callback(1360);assert.equal(frame(),0);
+nodes.play.onclick();callback(1445);assert.equal(frame(),0);nodes.prev.onclick();assert.equal(frame(),15);nodes.next.onclick();assert.equal(frame(),0);
+nodes.scrub.value='3';nodes.scrub.oninput();assert.equal(frame(),3);nodes.next.onclick();assert.equal(frame(),4);synced();
+nodes.speed.value='2';nodes.speed.onchange();nodes.play.onclick();callback(1487.5);assert.equal(frame(),5);synced();nodes.bg.onchange();assert.equal(nodes.corrected.style.background,'#30323a');assert.equal(nodes.original.style.background,'#30323a');
+console.log('PASS: shared clock, 85ms default, 16-to-1 wrap, pause, previous/next, scrub, speed, backgrounds and synchronized assets (DOM mock; not browser visual QA).');

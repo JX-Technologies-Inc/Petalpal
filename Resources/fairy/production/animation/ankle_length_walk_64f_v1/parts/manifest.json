@@ -1,0 +1,87 @@
+{
+  "source": "../original_16_anchors/frame_01.png",
+  "source_sha256": "ec71f89593460089a183e691bec99fc573dd0efd573db269ef4e20b7e124c818",
+  "near_top_polygon": [
+    [
+      218,
+      334
+    ],
+    [
+      224,
+      320
+    ],
+    [
+      232,
+      322
+    ],
+    [
+      240,
+      331
+    ],
+    [
+      251,
+      334
+    ],
+    [
+      262,
+      339
+    ]
+  ],
+  "far_top_polygon": [
+    [
+      134,
+      325
+    ],
+    [
+      140,
+      314
+    ],
+    [
+      147,
+      316
+    ],
+    [
+      155,
+      329
+    ],
+    [
+      164,
+      333
+    ],
+    [
+      179,
+      339
+    ]
+  ],
+  "parts": [
+    {
+      "name": "near",
+      "heel": [
+        227.0,
+        341.0
+      ],
+      "toe": [
+        247.0,
+        341.0
+      ],
+      "sole_length": 20.0,
+      "neutral_angle_degrees": -0.0
+    },
+    {
+      "name": "far",
+      "heel": [
+        143.0,
+        336.0
+      ],
+      "toe": [
+        171.0,
+        342.0
+      ],
+      "sole_length": 28.635642126552707,
+      "neutral_angle_degrees": -12.094757077012101
+    }
+  ],
+  "shoe_scaling": false,
+  "repainting": false,
+  "near_far_images_distinct": true
+}

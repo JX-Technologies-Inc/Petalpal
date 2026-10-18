@@ -1,0 +1,12 @@
+{
+  "unique_frames": 48,
+  "source_unchanged": true,
+  "analytic_loop_endpoint_equal": true,
+  "max_analytic_stance_drift_px": 5.684341886080802e-14,
+  "all_rgba": true,
+  "all_canvas_equal": true,
+  "empty_canvas_border": true,
+  "visual_status": "FAILED; exact ranges and limitations in REPORT.md",
+  "gif_frames": 48,
+  "gif_duration_ms": 1440
+}

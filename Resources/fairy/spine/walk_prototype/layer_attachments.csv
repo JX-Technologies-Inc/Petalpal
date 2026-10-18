@@ -1,0 +1,19 @@
+draw_order_back_to_front,image,slot,parent_bone,attachment_center_local_x,attachment_center_local_y,width,height,rotation,scale_x,scale_y,recommended_mesh_bindings
+0,dress_back_petals.png,dress_back_petals,petals_back,-28,-177,1254,1254,0,1,1,['petals_back']
+1,wing_left.png,wing_left,wing_left,60,-270,1254,1254,0,1,1,['wing_left']
+2,wing_right.png,wing_right,wing_right,-97,-269,1254,1254,0,1,1,['wing_right']
+3,dress_side_petals.png,dress_side_petals,petals_side,37,-167,1254,1254,0,1,1,['petals_side']
+4,dress_base.png,dress_base,skirt_base,-59,-205,1254,1254,0,1,1,['skirt_base']
+5,body_base.png,body_base,chest,-35,-307,1254,1254,0,1,1,['chest']
+6,leg_left.png,leg_left,thigh_left,-2,61,1254,1254,0,1,1,"['thigh_left', 'calf_left', 'foot_left']"
+7,leg_right.png,leg_right,thigh_right,-35,55,1254,1254,0,1,1,"['thigh_right', 'calf_right', 'foot_right']"
+8,dress_front_petals.png,dress_front_petals,petals_front,-59,-205,1254,1254,0,1,1,['petals_front']
+9,arm_right_upper.png,arm_right_upper,upper_arm_right,-121,-252,1254,1254,0,1,1,['upper_arm_right']
+10,arm_right_lower.png,arm_right_lower,forearm_right,-160,-136,1254,1254,0,1,1,['forearm_right']
+11,arm_left_upper.png,arm_left_upper,upper_arm_left,40,-337,1254,1254,0,1,1,['upper_arm_left']
+12,arm_left_lower.png,arm_left_lower,forearm_left,61,-189,1254,1254,0,1,1,['forearm_left']
+13,hair_back.png,hair_back,hair_back,42,-397,1254,1254,0,1,1,['hair_back']
+14,head_face.png,head_face,head,-23,-361,1254,1254,0,1,1,['head']
+15,braided_updo.png,braided_updo,braided_updo,49,-388,1254,1254,0,1,1,['braided_updo']
+16,hair_front.png,hair_front,hair_front,-23,-477,1254,1254,0,1,1,['hair_front']
+17,flower_accessory.png,flower_accessory,flower,77,-450,1254,1254,0,1,1,['flower']

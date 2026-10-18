@@ -1,0 +1,22 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const ids=['play','prev','next','speed','bg','seek','position','originalLabel','candidateLabel','stageA','stageB','detailA','detailB','original','candidate','originalDetail','candidateDetail','critical4','critical12','critical16','fullLoop','mode','guide','r96','r108','r120'];
+const els=Object.fromEntries(ids.map(id=>[id,{value:id==='speed'?'1':id==='bg'?'light':'0',textContent:'',src:'',className:''}]));
+let tick;const ctx={document:{hidden:false,getElementById:id=>els[id],addEventListener(){}},requestAnimationFrame:fn=>tick=fn};
+vm.createContext(ctx);vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],ctx);
+assert.equal(els.position.textContent,'1 / 32 · 1');
+const first=els.candidate.src;
+els.next.onclick();assert.equal(els.position.textContent,'2 / 32 · 1.5');assert.equal(els.original.src,first);
+els.next.onclick();assert.equal(els.position.textContent,'3 / 32 · 2');assert.equal(els.original.src,els.candidate.src);
+els.fullLoop.onclick();els.prev.onclick();assert.equal(els.position.textContent,'32 / 32 · 16.5');els.next.onclick();
+els.play.onclick();tick(0);tick(42.5);assert.equal(els.position.textContent,'2 / 32 · 1.5');tick(85);assert.equal(els.position.textContent,'3 / 32 · 2');tick(1360);assert.equal(els.position.textContent,'1 / 32 · 1');
+els.speed.value='2';els.speed.onchange();tick(1400);tick(1421.25);assert.equal(els.position.textContent,'2 / 32 · 1.5');
+els.play.onclick();tick(1500);assert.equal(els.position.textContent,'2 / 32 · 1.5');
+els.seek.value='24';els.seek.oninput();assert.equal(els.position.textContent,'25 / 32 · 13');
+for(const k of [4,12,16]){els['critical'+k].onclick();assert.equal(els.position.textContent,`${(k-1)*2+1} / 32 · ${k}`);}
+els.speed.value='1';els.speed.onchange();els.play.onclick();tick(1600);tick(1642.5);assert.equal(els.position.textContent,'32 / 32 · 16.5');tick(1685);assert.equal(els.position.textContent,'1 / 32 · 1');tick(1727.5);assert.equal(els.position.textContent,'31 / 32 · 16');
+els.bg.value='dark';els.bg.onchange();assert.equal(els.stageA.className,'stage dark');assert.equal(els.detailB.className,'detail dark');els.guide.onclick();assert.equal(els.stageB.className,'stage dark guide');
+ctx.document.hidden=true;tick(9999);assert.equal(els.position.textContent,'31 / 32 · 16');
+for(const id of ['candidateDetail','r96','r108','r120'])assert.equal(els[id].src,els.candidate.src);
+assert.equal(els.originalDetail.src,els.original.src);
+console.log('PASS: 32 embedded images; synchronized 16/32 timing; 1360ms wrap; 42.5ms samples; play/pause, step, scrub, speed, backgrounds, baseline, critical loops and visibility pause. Mock DOM; not a perceptual playback test.');

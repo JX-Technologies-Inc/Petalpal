@@ -1,0 +1,175 @@
+{
+  "status": "Historical 1024px proposal below; current attachment contract is active_contract and must not be rescaled to this proposal",
+  "canvas": {
+    "width": 1024,
+    "height": 1024,
+    "origin": "top_left",
+    "x_positive": "right",
+    "y_positive": "down",
+    "units": "master_pixels",
+    "root": [
+      512,
+      896
+    ],
+    "root_normalized": [
+      0.5,
+      0.875
+    ],
+    "standing_body_height_target": 512,
+    "safe_padding": 64
+  },
+  "coordinate_formula": "local=(canvas_x-512, canvas_y-896); runtime=parent_world+local*uniform_scale",
+  "sides": "anatomical character left/right, never screen left/right",
+  "anchors": [
+    {
+      "id": "root",
+      "meaning": "fixed ground contact under stance; stays put during bob/jump",
+      "canvas_xy": [
+        512,
+        896
+      ],
+      "placement_status": "fixed"
+    },
+    {
+      "id": "hips",
+      "meaning": "pelvis center, parent of legs and dress",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "chest",
+      "meaning": "sternum center, body motion",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "neck",
+      "meaning": "base of neck at torso attachment",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "head",
+      "meaning": "head rotation point at upper neck/skull base",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "flower_accessory",
+      "meaning": "ornament attachment to braided updo, not petal centroid",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "shoulder_left",
+      "meaning": "upper-arm pivot at shoulder joint",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "shoulder_right",
+      "meaning": "upper-arm pivot at shoulder joint",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "elbow_left",
+      "meaning": "forearm hinge",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "elbow_right",
+      "meaning": "forearm hinge",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "wrist_left",
+      "meaning": "hand attachment",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "wrist_right",
+      "meaning": "hand attachment",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "knee_left",
+      "meaning": "knee joint",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "knee_right",
+      "meaning": "knee joint",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "ankle_left",
+      "meaning": "foot attachment",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "ankle_right",
+      "meaning": "foot attachment",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "wing_root_left",
+      "meaning": "wing attachment at upper back",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    },
+    {
+      "id": "wing_root_right",
+      "meaning": "wing attachment at upper back",
+      "canvas_xy": null,
+      "placement_status": "artist placement required"
+    }
+  ],
+  "view_placements": {
+    "front": {
+      "status": "pending placement against approved painted view",
+      "anatomical_coordinates": null
+    },
+    "front_3q": {
+      "status": "pending placement against approved painted view",
+      "anatomical_coordinates": null
+    },
+    "side": {
+      "status": "pending placement against approved painted view",
+      "anatomical_coordinates": null
+    },
+    "back": {
+      "status": "pending placement against approved painted view",
+      "anatomical_coordinates": null
+    },
+    "back_3q": {
+      "status": "pending placement against approved painted view",
+      "anatomical_coordinates": null
+    }
+  },
+  "active_contract": {
+    "manifest": "../layers/first_approved/manifest.json",
+    "canvas": [
+      1254,
+      1254
+    ],
+    "root": [
+      674,
+      1178
+    ],
+    "hips": [
+      655,
+      676
+    ],
+    "units": "unaltered source pixels",
+    "placement": "all layers x=0,y=0; runtime uniform scale only"
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "frames": [
+    {
+      "frame": 1,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3646,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 2,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3572,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 3,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3466,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 4,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3458,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 5,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3477,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 6,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3323,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 7,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3075,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 8,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2757,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 9,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2447,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 10,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2181,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 11,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2325,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 12,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2664,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 13,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2988,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 14,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3289,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 15,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3488,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 16,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3576,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 17,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3645,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 18,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3671,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 19,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3683,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 20,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3712,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 21,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3705,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 22,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3590,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 23,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3439,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 24,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3241,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 25,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2987,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 26,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2660,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 27,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2532,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 28,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2604,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 29,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 2865,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 30,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3110,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 31,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3343,
+      "upper_280_rows_identical": true
+    },
+    {
+      "frame": 32,
+      "outside_mask_changed_pixels": 0,
+      "changed_pixels": 3507,
+      "upper_280_rows_identical": true
+    }
+  ],
+  "source_files_unchanged": true,
+  "all_canvas_rgba_378": true,
+  "gif_duration_ms": 1360,
+  "note": "Pixel and transform tests are not anatomical or perceptual approval.",
+  "max_analytical_stance_contact_world_x_drift_px": 5.684341886080802e-14,
+  "rigid_shoe_transform_scale": 1.0,
+  "ground_lock_scope": "Analytical heel/forefoot pivots, with root travel 52.182163 px/s. Not all antialiased sole pixels or perceptual ground lock.",
+  "continuous_ankle_at_phase_boundaries": true,
+  "decoded_gif_frames": 32,
+  "decoded_gif_duration_ms": 1360
+}

@@ -1,0 +1,348 @@
+{
+  "status": "FAILED_VALIDATION_DO_NOT_RIG",
+  "canvas": [
+    1254,
+    1254
+  ],
+  "draw_order_back_to_front": [
+    "petals_back",
+    "wing_left",
+    "wing_right",
+    "torso",
+    "thigh_left",
+    "calf_left",
+    "foot_left",
+    "thigh_right",
+    "calf_right",
+    "foot_right",
+    "dress_base",
+    "petals_side",
+    "petals_front",
+    "upper_arm_right",
+    "forearm_right",
+    "hand_right",
+    "upper_arm_left",
+    "forearm_left",
+    "hand_left",
+    "hair_back",
+    "head_face",
+    "braided_updo",
+    "hair_front",
+    "flower_accessory"
+  ],
+  "parts": [
+    {
+      "name": "petals_back",
+      "pivot_source": [
+        655,
+        450
+      ],
+      "source_pixels": 29112,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 1639
+    },
+    {
+      "name": "wing_left",
+      "pivot_source": [
+        567,
+        357
+      ],
+      "source_pixels": 22541,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 1571
+    },
+    {
+      "name": "wing_right",
+      "pivot_source": [
+        724,
+        358
+      ],
+      "source_pixels": 8919,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 1639
+    },
+    {
+      "name": "torso",
+      "pivot_source": [
+        655,
+        676
+      ],
+      "source_pixels": 23827,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 5020
+    },
+    {
+      "name": "thigh_left",
+      "pivot_source": [
+        649,
+        688
+      ],
+      "source_pixels": 4267,
+      "joint_overlap_pixels": 3829,
+      "reconstructed_hidden_pixels": 8817
+    },
+    {
+      "name": "calf_left",
+      "pivot_source": [
+        655,
+        842
+      ],
+      "source_pixels": 5997,
+      "joint_overlap_pixels": 5141,
+      "reconstructed_hidden_pixels": 5003
+    },
+    {
+      "name": "foot_left",
+      "pivot_source": [
+        606,
+        1014
+      ],
+      "source_pixels": 10188,
+      "joint_overlap_pixels": 6742,
+      "reconstructed_hidden_pixels": 436
+    },
+    {
+      "name": "thigh_right",
+      "pivot_source": [
+        662,
+        682
+      ],
+      "source_pixels": 9317,
+      "joint_overlap_pixels": 9860,
+      "reconstructed_hidden_pixels": 1984
+    },
+    {
+      "name": "calf_right",
+      "pivot_source": [
+        686,
+        833
+      ],
+      "source_pixels": 12484,
+      "joint_overlap_pixels": 12855,
+      "reconstructed_hidden_pixels": 1
+    },
+    {
+      "name": "foot_right",
+      "pivot_source": [
+        699,
+        1025
+      ],
+      "source_pixels": 12034,
+      "joint_overlap_pixels": 8613,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "dress_base",
+      "pivot_source": [
+        686,
+        422
+      ],
+      "source_pixels": 27326,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 494
+    },
+    {
+      "name": "petals_side",
+      "pivot_source": [
+        590,
+        460
+      ],
+      "source_pixels": 54291,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 1295
+    },
+    {
+      "name": "petals_front",
+      "pivot_source": [
+        686,
+        422
+      ],
+      "source_pixels": 57129,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "upper_arm_right",
+      "pivot_source": [
+        748,
+        375
+      ],
+      "source_pixels": 3022,
+      "joint_overlap_pixels": 1021,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "forearm_right",
+      "pivot_source": [
+        787,
+        491
+      ],
+      "source_pixels": 4889,
+      "joint_overlap_pixels": 3670,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "hand_right",
+      "pivot_source": [
+        839,
+        629
+      ],
+      "source_pixels": 2173,
+      "joint_overlap_pixels": 1020,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "upper_arm_left",
+      "pivot_source": [
+        587,
+        290
+      ],
+      "source_pixels": 7285,
+      "joint_overlap_pixels": 7588,
+      "reconstructed_hidden_pixels": 137
+    },
+    {
+      "name": "forearm_left",
+      "pivot_source": [
+        566,
+        438
+      ],
+      "source_pixels": 6873,
+      "joint_overlap_pixels": 5703,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "hand_left",
+      "pivot_source": [
+        507,
+        620
+      ],
+      "source_pixels": 2446,
+      "joint_overlap_pixels": 1176,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "hair_back",
+      "pivot_source": [
+        585,
+        230
+      ],
+      "source_pixels": 5749,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "head_face",
+      "pivot_source": [
+        650,
+        266
+      ],
+      "source_pixels": 9354,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "braided_updo",
+      "pivot_source": [
+        578,
+        239
+      ],
+      "source_pixels": 4960,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "hair_front",
+      "pivot_source": [
+        650,
+        150
+      ],
+      "source_pixels": 19536,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 0
+    },
+    {
+      "name": "flower_accessory",
+      "pivot_source": [
+        550,
+        177
+      ],
+      "source_pixels": 7216,
+      "joint_overlap_pixels": 0,
+      "reconstructed_hidden_pixels": 0
+    }
+  ],
+  "rest_visible_rgba_exact": false,
+  "rest_alpha_exact": false,
+  "rest_max_rgba_difference": [
+    7,
+    9,
+    8,
+    5
+  ],
+  "rest_changed_visible_pixels": 28789,
+  "source_hashes": {
+    "Resources\\fairy\\production\\master\\fairy_first_approved.png": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+    "Resources\\Icon\\fairy structure.png": "86eed8eb748ced65bf6215fab48224b9e05bb8be50c213eb287d54ec0bf270b8",
+    "Resources\\Icon\\fairy.png": "0b9a6e4b8118d5e959199d0b2bdb1496b2d93aecd53050a2abe42fa20334a01a",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_left_lower.png": "c68b4f392e9476d0a3c0d948c3b4a5b676a5eb18e839e6cd8d8d77cecca7da96",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_left_upper.png": "8703e12b16e0bb6b584b573601296d4389685cc3e516d61dc92523dcbea142a9",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_right_lower.png": "84ed39c9ffbca9f64bce173e6436dbcb4cf8a91067226ca015fd220fd8d20652",
+    "Resources\\fairy\\production\\layers\\first_approved\\arm_right_upper.png": "6e9023d9c7105bec059604d29e70489dd79e9fe62f285fc11682f8d21b2e0d0d",
+    "Resources\\fairy\\production\\layers\\first_approved\\body_base.png": "e91baf8369f92f1c526264ce21e849bf47677f8ed111e1a109e2c8d7f60a4720",
+    "Resources\\fairy\\production\\layers\\first_approved\\braided_updo.png": "e445c7f5306c323541876470affa6451e2c1a8de4d09b08b13625aed72fa4cbd",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_back_petals.png": "20daf38159af5437c4f7ea59dcb5c7ed668dac9835ab6b794d298f7acc9691f6",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_base.png": "4640f1f8fbfdbd819170b2bb0a25f3bf8347bbc9aed39e7bb418af7917b93f0b",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_front_petals.png": "e6f8824933f5d6bb2eabf2f20bd40dfe0627c65515640eb115656b6f12fdd814",
+    "Resources\\fairy\\production\\layers\\first_approved\\dress_side_petals.png": "eb5a720097e4648fc04a52ed84e57effb473615b1ca0ff657a043cbc3d5b0020",
+    "Resources\\fairy\\production\\layers\\first_approved\\flower_accessory.png": "dd3ca31164427c5282829bb8e11408cbd620fe813f9a730a593507e1e3875ba9",
+    "Resources\\fairy\\production\\layers\\first_approved\\hair_back.png": "43f94d09c8a563b460e42e82308ede5deb888f4e4695505db6371d7f3acb4b6d",
+    "Resources\\fairy\\production\\layers\\first_approved\\hair_front.png": "eca38012210ff752056cea6d857d1efc8f538922a12c3a04e88c8e50bb23b2fb",
+    "Resources\\fairy\\production\\layers\\first_approved\\head_face.png": "99ec6c6e086676fda2112dc73bb3466055339805abadd02a9d2429a8bb4f21d6",
+    "Resources\\fairy\\production\\layers\\first_approved\\leg_left.png": "b2b92c5e76e3000f4a6a8b71ce3aea6b2190361f5c1d079443f091dc63d55242",
+    "Resources\\fairy\\production\\layers\\first_approved\\leg_right.png": "c37cdf684fd519f616af929cf8ca1a1d096de0d6818d586e60d06ce92248b249",
+    "Resources\\fairy\\production\\layers\\first_approved\\wing_left.png": "b865bf03dd46b8568bcd951323eec9cc05e9fc4d3adb3d105b94c1bba88b05ae",
+    "Resources\\fairy\\production\\layers\\first_approved\\wing_right.png": "337def3a1a97df7183ee5eaa837315e04180d9f905ea23ef7667bba8f9d1b2c2"
+  },
+  "diagnostics": [
+    {
+      "name": "leg_separation",
+      "angles_degrees": {
+        "thigh_left": 8,
+        "calf_left": -16,
+        "thigh_right": -6,
+        "calf_right": 10
+      },
+      "status": "FAILED_VISUAL_GATE"
+    },
+    {
+      "name": "elbow_bend",
+      "angles_degrees": {
+        "upper_arm_left": 3,
+        "forearm_left": -12,
+        "upper_arm_right": -3,
+        "forearm_right": 10
+      },
+      "status": "FAILED_VISUAL_GATE"
+    },
+    {
+      "name": "secondary",
+      "angles_degrees": {
+        "wing_left": -1,
+        "wing_right": 1,
+        "petals_side": 1,
+        "petals_back": -1
+      },
+      "status": "NOT_CERTIFIED"
+    }
+  ],
+  "rig_created": false,
+  "motion_gate_passed": false,
+  "generated_method": "built-in image_gen; only reconstructed interior coverage composited beneath approved pixels",
+  "limitations": [
+    "Near-opaque source pixels change alpha/color when new underlaps are added.",
+    "Leg separation exposes knee transition seams and residual garment boundaries.",
+    "Elbow bending exposes gaps between arms and costume; underdress backing remains incomplete.",
+    "Parts are reconstruction candidates, not complete animation-ready production artwork."
+  ]
+}

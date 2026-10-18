@@ -1,0 +1,11 @@
+{
+  "blender": "5.2.2 LTS",
+  "bones": 32,
+  "layers": 24,
+  "vertices": 3910,
+  "triangles": 5640,
+  "fps": 16,
+  "unique_frames": 24,
+  "seconds": 1.5,
+  "rig_created": true
+}

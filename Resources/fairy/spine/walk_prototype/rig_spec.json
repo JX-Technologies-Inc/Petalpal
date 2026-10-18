@@ -1,0 +1,730 @@
+{
+  "status": "SPECIFICATION_ONLY_NOT_A_SPINE_IMPORT_FILE",
+  "coordinate_system": "source top-left, x right, y down; Spine root at source (674,1178)",
+  "spine_world_formula": [
+    "X = sourceX - 674",
+    "Y = 1178 - sourceY"
+  ],
+  "attachment_center_source": [
+    627,
+    627
+  ],
+  "initial_root_attachment_center_spine": [
+    -47,
+    551
+  ],
+  "side_convention": "screen left/right, not presumed anatomical left/right",
+  "pivots_are_approximate": true,
+  "bones": [
+    {
+      "name": "root",
+      "parent": null,
+      "source_x": 674,
+      "source_y": 1178,
+      "spine_world_x": 0,
+      "spine_world_y": 0,
+      "zero_rotation_local_x": 0,
+      "zero_rotation_local_y": 0,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "pelvis",
+      "parent": "root",
+      "source_x": 655,
+      "source_y": 676,
+      "spine_world_x": -19,
+      "spine_world_y": 502,
+      "zero_rotation_local_x": -19,
+      "zero_rotation_local_y": 502,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "torso",
+      "parent": "pelvis",
+      "source_x": 686,
+      "source_y": 422,
+      "spine_world_x": 12,
+      "spine_world_y": 756,
+      "zero_rotation_local_x": 31,
+      "zero_rotation_local_y": 254,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "chest",
+      "parent": "torso",
+      "source_x": 662,
+      "source_y": 320,
+      "spine_world_x": -12,
+      "spine_world_y": 858,
+      "zero_rotation_local_x": -24,
+      "zero_rotation_local_y": 102,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "neck",
+      "parent": "chest",
+      "source_x": 650,
+      "source_y": 266,
+      "spine_world_x": -24,
+      "spine_world_y": 912,
+      "zero_rotation_local_x": -12,
+      "zero_rotation_local_y": 54,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "source_x": 650,
+      "source_y": 266,
+      "spine_world_x": -24,
+      "spine_world_y": 912,
+      "zero_rotation_local_x": 0,
+      "zero_rotation_local_y": 0,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "hair_back",
+      "parent": "head",
+      "source_x": 585,
+      "source_y": 230,
+      "spine_world_x": -89,
+      "spine_world_y": 948,
+      "zero_rotation_local_x": -65,
+      "zero_rotation_local_y": 36,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "hair_front",
+      "parent": "head",
+      "source_x": 650,
+      "source_y": 150,
+      "spine_world_x": -24,
+      "spine_world_y": 1028,
+      "zero_rotation_local_x": 0,
+      "zero_rotation_local_y": 116,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "braided_updo",
+      "parent": "head",
+      "source_x": 578,
+      "source_y": 239,
+      "spine_world_x": -96,
+      "spine_world_y": 939,
+      "zero_rotation_local_x": -72,
+      "zero_rotation_local_y": 27,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "flower",
+      "parent": "head",
+      "source_x": 550,
+      "source_y": 177,
+      "spine_world_x": -124,
+      "spine_world_y": 1001,
+      "zero_rotation_local_x": -100,
+      "zero_rotation_local_y": 89,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "upper_arm_left",
+      "parent": "chest",
+      "source_x": 587,
+      "source_y": 290,
+      "spine_world_x": -87,
+      "spine_world_y": 888,
+      "zero_rotation_local_x": -75,
+      "zero_rotation_local_y": 30,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "forearm_left",
+      "parent": "upper_arm_left",
+      "source_x": 566,
+      "source_y": 438,
+      "spine_world_x": -108,
+      "spine_world_y": 740,
+      "zero_rotation_local_x": -21,
+      "zero_rotation_local_y": -148,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "hand_left",
+      "parent": "forearm_left",
+      "source_x": 507,
+      "source_y": 620,
+      "spine_world_x": -167,
+      "spine_world_y": 558,
+      "zero_rotation_local_x": -59,
+      "zero_rotation_local_y": -182,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "upper_arm_right",
+      "parent": "chest",
+      "source_x": 748,
+      "source_y": 375,
+      "spine_world_x": 74,
+      "spine_world_y": 803,
+      "zero_rotation_local_x": 86,
+      "zero_rotation_local_y": -55,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "forearm_right",
+      "parent": "upper_arm_right",
+      "source_x": 787,
+      "source_y": 491,
+      "spine_world_x": 113,
+      "spine_world_y": 687,
+      "zero_rotation_local_x": 39,
+      "zero_rotation_local_y": -116,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "hand_right",
+      "parent": "forearm_right",
+      "source_x": 839,
+      "source_y": 629,
+      "spine_world_x": 165,
+      "spine_world_y": 549,
+      "zero_rotation_local_x": 52,
+      "zero_rotation_local_y": -138,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "thigh_left",
+      "parent": "pelvis",
+      "source_x": 629,
+      "source_y": 688,
+      "spine_world_x": -45,
+      "spine_world_y": 490,
+      "zero_rotation_local_x": -26,
+      "zero_rotation_local_y": -12,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "calf_left",
+      "parent": "thigh_left",
+      "source_x": 629,
+      "source_y": 842,
+      "spine_world_x": -45,
+      "spine_world_y": 336,
+      "zero_rotation_local_x": 0,
+      "zero_rotation_local_y": -154,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "foot_left",
+      "parent": "calf_left",
+      "source_x": 606,
+      "source_y": 1014,
+      "spine_world_x": -68,
+      "spine_world_y": 164,
+      "zero_rotation_local_x": -23,
+      "zero_rotation_local_y": -172,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "heel_left",
+      "parent": "foot_left",
+      "source_x": 564,
+      "source_y": 1130,
+      "spine_world_x": -110,
+      "spine_world_y": 48,
+      "zero_rotation_local_x": -42,
+      "zero_rotation_local_y": -116,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "toe_left",
+      "parent": "foot_left",
+      "source_x": 644,
+      "source_y": 1142,
+      "spine_world_x": -30,
+      "spine_world_y": 36,
+      "zero_rotation_local_x": 38,
+      "zero_rotation_local_y": -128,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "thigh_right",
+      "parent": "pelvis",
+      "source_x": 662,
+      "source_y": 682,
+      "spine_world_x": -12,
+      "spine_world_y": 496,
+      "zero_rotation_local_x": 7,
+      "zero_rotation_local_y": -6,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "calf_right",
+      "parent": "thigh_right",
+      "source_x": 686,
+      "source_y": 833,
+      "spine_world_x": 12,
+      "spine_world_y": 345,
+      "zero_rotation_local_x": 24,
+      "zero_rotation_local_y": -151,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "foot_right",
+      "parent": "calf_right",
+      "source_x": 699,
+      "source_y": 1025,
+      "spine_world_x": 25,
+      "spine_world_y": 153,
+      "zero_rotation_local_x": 13,
+      "zero_rotation_local_y": -192,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "heel_right",
+      "parent": "foot_right",
+      "source_x": 687,
+      "source_y": 1160,
+      "spine_world_x": 13,
+      "spine_world_y": 18,
+      "zero_rotation_local_x": -12,
+      "zero_rotation_local_y": -135,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "toe_right",
+      "parent": "foot_right",
+      "source_x": 776,
+      "source_y": 1171,
+      "spine_world_x": 102,
+      "spine_world_y": 7,
+      "zero_rotation_local_x": 77,
+      "zero_rotation_local_y": -146,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "wing_left",
+      "parent": "chest",
+      "source_x": 567,
+      "source_y": 357,
+      "spine_world_x": -107,
+      "spine_world_y": 821,
+      "zero_rotation_local_x": -95,
+      "zero_rotation_local_y": -37,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "wing_right",
+      "parent": "chest",
+      "source_x": 724,
+      "source_y": 358,
+      "spine_world_x": 50,
+      "spine_world_y": 820,
+      "zero_rotation_local_x": 62,
+      "zero_rotation_local_y": -38,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "skirt_base",
+      "parent": "pelvis",
+      "source_x": 686,
+      "source_y": 422,
+      "spine_world_x": 12,
+      "spine_world_y": 756,
+      "zero_rotation_local_x": 31,
+      "zero_rotation_local_y": 254,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "petals_front",
+      "parent": "skirt_base",
+      "source_x": 686,
+      "source_y": 422,
+      "spine_world_x": 12,
+      "spine_world_y": 756,
+      "zero_rotation_local_x": 0,
+      "zero_rotation_local_y": 0,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "petals_side",
+      "parent": "skirt_base",
+      "source_x": 590,
+      "source_y": 460,
+      "spine_world_x": -84,
+      "spine_world_y": 718,
+      "zero_rotation_local_x": -96,
+      "zero_rotation_local_y": -38,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    },
+    {
+      "name": "petals_back",
+      "parent": "skirt_base",
+      "source_x": 655,
+      "source_y": 450,
+      "spine_world_x": -19,
+      "spine_world_y": 728,
+      "zero_rotation_local_x": -31,
+      "zero_rotation_local_y": -28,
+      "setup_rotation": 0,
+      "setup_scale_x": 1,
+      "setup_scale_y": 1
+    }
+  ],
+  "attachments": [
+    {
+      "draw_order_back_to_front": 0,
+      "image": "dress_back_petals.png",
+      "slot": "dress_back_petals",
+      "parent_bone": "petals_back",
+      "attachment_center_local_x": -28,
+      "attachment_center_local_y": -177,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "petals_back"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 1,
+      "image": "wing_left.png",
+      "slot": "wing_left",
+      "parent_bone": "wing_left",
+      "attachment_center_local_x": 60,
+      "attachment_center_local_y": -270,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "wing_left"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 2,
+      "image": "wing_right.png",
+      "slot": "wing_right",
+      "parent_bone": "wing_right",
+      "attachment_center_local_x": -97,
+      "attachment_center_local_y": -269,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "wing_right"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 3,
+      "image": "dress_side_petals.png",
+      "slot": "dress_side_petals",
+      "parent_bone": "petals_side",
+      "attachment_center_local_x": 37,
+      "attachment_center_local_y": -167,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "petals_side"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 4,
+      "image": "dress_base.png",
+      "slot": "dress_base",
+      "parent_bone": "skirt_base",
+      "attachment_center_local_x": -59,
+      "attachment_center_local_y": -205,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "skirt_base"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 5,
+      "image": "body_base.png",
+      "slot": "body_base",
+      "parent_bone": "chest",
+      "attachment_center_local_x": -35,
+      "attachment_center_local_y": -307,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "chest"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 6,
+      "image": "leg_left.png",
+      "slot": "leg_left",
+      "parent_bone": "thigh_left",
+      "attachment_center_local_x": -2,
+      "attachment_center_local_y": 61,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "thigh_left",
+        "calf_left",
+        "foot_left"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 7,
+      "image": "leg_right.png",
+      "slot": "leg_right",
+      "parent_bone": "thigh_right",
+      "attachment_center_local_x": -35,
+      "attachment_center_local_y": 55,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "thigh_right",
+        "calf_right",
+        "foot_right"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 8,
+      "image": "dress_front_petals.png",
+      "slot": "dress_front_petals",
+      "parent_bone": "petals_front",
+      "attachment_center_local_x": -59,
+      "attachment_center_local_y": -205,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "petals_front"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 9,
+      "image": "arm_right_upper.png",
+      "slot": "arm_right_upper",
+      "parent_bone": "upper_arm_right",
+      "attachment_center_local_x": -121,
+      "attachment_center_local_y": -252,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "upper_arm_right"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 10,
+      "image": "arm_right_lower.png",
+      "slot": "arm_right_lower",
+      "parent_bone": "forearm_right",
+      "attachment_center_local_x": -160,
+      "attachment_center_local_y": -136,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "forearm_right"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 11,
+      "image": "arm_left_upper.png",
+      "slot": "arm_left_upper",
+      "parent_bone": "upper_arm_left",
+      "attachment_center_local_x": 40,
+      "attachment_center_local_y": -337,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "upper_arm_left"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 12,
+      "image": "arm_left_lower.png",
+      "slot": "arm_left_lower",
+      "parent_bone": "forearm_left",
+      "attachment_center_local_x": 61,
+      "attachment_center_local_y": -189,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "forearm_left"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 13,
+      "image": "hair_back.png",
+      "slot": "hair_back",
+      "parent_bone": "hair_back",
+      "attachment_center_local_x": 42,
+      "attachment_center_local_y": -397,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "hair_back"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 14,
+      "image": "head_face.png",
+      "slot": "head_face",
+      "parent_bone": "head",
+      "attachment_center_local_x": -23,
+      "attachment_center_local_y": -361,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "head"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 15,
+      "image": "braided_updo.png",
+      "slot": "braided_updo",
+      "parent_bone": "braided_updo",
+      "attachment_center_local_x": 49,
+      "attachment_center_local_y": -388,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "braided_updo"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 16,
+      "image": "hair_front.png",
+      "slot": "hair_front",
+      "parent_bone": "hair_front",
+      "attachment_center_local_x": -23,
+      "attachment_center_local_y": -477,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "hair_front"
+      ]
+    },
+    {
+      "draw_order_back_to_front": 17,
+      "image": "flower_accessory.png",
+      "slot": "flower_accessory",
+      "parent_bone": "flower",
+      "attachment_center_local_x": 77,
+      "attachment_center_local_y": -450,
+      "width": 1254,
+      "height": 1254,
+      "rotation": 0,
+      "scale_x": 1,
+      "scale_y": 1,
+      "recommended_mesh_bindings": [
+        "flower"
+      ]
+    }
+  ]
+}

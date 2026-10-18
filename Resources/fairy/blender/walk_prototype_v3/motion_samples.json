@@ -1,0 +1,994 @@
+[
+  {
+    "frame": 1,
+    "body_source_delta": [
+      0.0,
+      18.0
+    ],
+    "root_travel_px": 0.0,
+    "legs": {
+      "left": {
+        "phase": 0.0,
+        "state": "stance",
+        "target_ankle": [
+          715.0029863734484,
+          1024.800994632784
+        ],
+        "hip_degrees": -27.63854463893115,
+        "knee_degrees": 15.963653207192264,
+        "foot_roll_degrees": -7.0,
+        "evaluated_ankle": [
+          715.0030007362366,
+          1024.800971031189
+        ]
+      },
+      "right": {
+        "phase": 0.5,
+        "state": "swing",
+        "target_ankle": [
+          626.8393488187901,
+          1019.2248392291734
+        ],
+        "hip_degrees": -9.012986244205685,
+        "knee_degrees": 38.27844097291682,
+        "foot_roll_degrees": 10.0,
+        "evaluated_ankle": [
+          626.8393447399139,
+          1019.2248253822327
+        ]
+      }
+    }
+  },
+  {
+    "frame": 2,
+    "body_source_delta": [
+      1.035276180410083,
+      20.0
+    ],
+    "root_travel_px": 11.666666666666666,
+    "legs": {
+      "left": {
+        "phase": 0.041666666666666664,
+        "state": "stance",
+        "target_ankle": [
+          708.6143283682925,
+          1026.3980524465994
+        ],
+        "hip_degrees": -28.492896864456274,
+        "knee_degrees": 19.98792603628384,
+        "foot_roll_degrees": -4.569444444444445,
+        "evaluated_ankle": [
+          708.6143492062887,
+          1026.3980536460876
+        ]
+      },
+      "right": {
+        "phase": 0.5416666666666666,
+        "state": "swing",
+        "target_ankle": [
+          625.3179117116183,
+          1012.4410829057374
+        ],
+        "hip_degrees": -12.415020875457467,
+        "knee_degrees": 45.39861667230651,
+        "foot_roll_degrees": 8.583333333333336,
+        "evaluated_ankle": [
+          625.3178833325704,
+          1012.441089630127
+        ]
+      }
+    }
+  },
+  {
+    "frame": 3,
+    "body_source_delta": [
+      1.9999999999999998,
+      21.464101615137753
+    ],
+    "root_travel_px": 23.333333333333332,
+    "legs": {
+      "left": {
+        "phase": 0.08333333333333333,
+        "state": "stance",
+        "target_ankle": [
+          702.1531932476332,
+          1028.2175057752593
+        ],
+        "hip_degrees": -28.1049738810895,
+        "knee_degrees": 21.727663480648445,
+        "foot_roll_degrees": -2.1388888888888893,
+        "evaluated_ankle": [
+          702.1532065073649,
+          1028.2175450325012
+        ]
+      },
+      "right": {
+        "phase": 0.5833333333333334,
+        "state": "swing",
+        "target_ankle": [
+          628.8312939166802,
+          1006.0369846280234
+        ],
+        "hip_degrees": -16.178356149493982,
+        "knee_degrees": 51.4617089847385,
+        "foot_roll_degrees": 7.166666666666665,
+        "evaluated_ankle": [
+          628.8312918345133,
+          1006.0369997024536
+        ]
+      }
+    }
+  },
+  {
+    "frame": 4,
+    "body_source_delta": [
+      2.8284271247461903,
+      22.0
+    ],
+    "root_travel_px": 35.0,
+    "legs": {
+      "left": {
+        "phase": 0.125,
+        "state": "stance",
+        "target_ankle": [
+          695.0,
+          1030.0
+        ],
+        "hip_degrees": -26.605934150490697,
+        "knee_degrees": 21.603865244019147,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          695.000018119812,
+          1029.9999980926514
+        ]
+      },
+      "right": {
+        "phase": 0.625,
+        "state": "swing",
+        "target_ankle": [
+          636.3971939083314,
+          1000.5818826256294
+        ],
+        "hip_degrees": -19.961069766220085,
+        "knee_degrees": 56.03158603045566,
+        "foot_roll_degrees": 5.75,
+        "evaluated_ankle": [
+          636.3971724510193,
+          1000.5818634033203
+        ]
+      }
+    }
+  },
+  {
+    "frame": 5,
+    "body_source_delta": [
+      3.4641016151377544,
+      21.464101615137753
+    ],
+    "root_travel_px": 46.666666666666664,
+    "legs": {
+      "left": {
+        "phase": 0.16666666666666666,
+        "state": "stance",
+        "target_ankle": [
+          683.3333333333334,
+          1030.0
+        ],
+        "hip_degrees": -25.253593642092355,
+        "knee_degrees": 23.17372471492862,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          683.3333395322164,
+          1030.0000338554382
+        ]
+      },
+      "right": {
+        "phase": 0.6666666666666666,
+        "state": "swing",
+        "target_ankle": [
+          647.0331259370262,
+          996.5641958025658
+        ],
+        "hip_degrees": -23.43784245754524,
+        "knee_degrees": 58.79814034037409,
+        "foot_roll_degrees": 4.333333333333335,
+        "evaluated_ankle": [
+          647.0330975850424,
+          996.5642242431641
+        ]
+      }
+    }
+  },
+  {
+    "frame": 6,
+    "body_source_delta": [
+      3.8637033051562732,
+      20.0
+    ],
+    "root_travel_px": 58.333333333333336,
+    "legs": {
+      "left": {
+        "phase": 0.20833333333333334,
+        "state": "stance",
+        "target_ankle": [
+          671.6666666666666,
+          1030.0
+        ],
+        "hip_degrees": -22.60189156544539,
+        "knee_degrees": 22.24202943526692,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          671.6666847864786,
+          1029.9999861717224
+        ]
+      },
+      "right": {
+        "phase": 0.7083333333333334,
+        "state": "swing",
+        "target_ankle": [
+          659.7564314027247,
+          994.357764595387
+        ],
+        "hip_degrees": -26.300604359990665,
+        "knee_degrees": 59.594152906593486,
+        "foot_roll_degrees": 2.916666666666665,
+        "evaluated_ankle": [
+          659.7564131418864,
+          994.3577675819397
+        ]
+      }
+    }
+  },
+  {
+    "frame": 7,
+    "body_source_delta": [
+      4.0,
+      18.0
+    ],
+    "root_travel_px": 70.0,
+    "legs": {
+      "left": {
+        "phase": 0.25,
+        "state": "stance",
+        "target_ankle": [
+          660.0,
+          1030.0
+        ],
+        "hip_degrees": -18.948394196256867,
+        "knee_degrees": 19.311678422539885,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          660.000018119812,
+          1030.0000338554382
+        ]
+      },
+      "right": {
+        "phase": 0.75,
+        "state": "swing",
+        "target_ankle": [
+          673.5842903823191,
+          994.1960243208306
+        ],
+        "hip_degrees": -28.285587829679038,
+        "knee_degrees": 58.40577218935227,
+        "foot_roll_degrees": 1.5000000000000002,
+        "evaluated_ankle": [
+          673.5842623710632,
+          994.1960244178772
+        ]
+      }
+    }
+  },
+  {
+    "frame": 8,
+    "body_source_delta": [
+      3.8637033051562732,
+      16.0
+    ],
+    "root_travel_px": 81.66666666666667,
+    "legs": {
+      "left": {
+        "phase": 0.2916666666666667,
+        "state": "stance",
+        "target_ankle": [
+          648.3333333333334,
+          1030.0
+        ],
+        "hip_degrees": -14.50524206593934,
+        "knee_degrees": 14.751831118139833,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          648.3333395322164,
+          1029.9999980926514
+        ]
+      },
+      "right": {
+        "phase": 0.7916666666666667,
+        "state": "swing",
+        "target_ankle": [
+          687.5337333008861,
+          996.1557713984137
+        ],
+        "hip_degrees": -29.209862828036854,
+        "knee_degrees": 55.36571553576392,
+        "foot_roll_degrees": 0.08333333333333126,
+        "evaluated_ankle": [
+          687.5337408383688,
+          996.1557774543762
+        ]
+      }
+    }
+  },
+  {
+    "frame": 9,
+    "body_source_delta": [
+      3.464101615137755,
+      14.535898384862247
+    ],
+    "root_travel_px": 93.33333333333333,
+    "legs": {
+      "left": {
+        "phase": 0.3333333333333333,
+        "state": "stance",
+        "target_ankle": [
+          636.6666666666666,
+          1030.0
+        ],
+        "hip_degrees": -9.313799632119178,
+        "knee_degrees": 8.642979629034809,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          636.6666669050852,
+          1030.0000219345093
+        ]
+      },
+      "right": {
+        "phase": 0.8333333333333333,
+        "state": "swing",
+        "target_ankle": [
+          700.6216527364554,
+          1000.1516290712603
+        ],
+        "hip_degrees": -28.989537244861722,
+        "knee_degrees": 50.72235612067997,
+        "foot_roll_degrees": -1.3333333333333313,
+        "evaluated_ankle": [
+          700.6216341654459,
+          1000.1516370773315
+        ]
+      }
+    }
+  },
+  {
+    "frame": 10,
+    "body_source_delta": [
+      2.8284271247461903,
+      14.0
+    ],
+    "root_travel_px": 105.0,
+    "legs": {
+      "left": {
+        "phase": 0.375,
+        "state": "stance",
+        "target_ankle": [
+          627.4956911896727,
+          1029.0883102770597
+        ],
+        "hip_degrees": -7.455200997741323,
+        "knee_degrees": 7.94965192182409,
+        "foot_roll_degrees": 1.0714285714285723,
+        "evaluated_ankle": [
+          627.4956884384155,
+          1029.0883212089539
+        ]
+      },
+      "right": {
+        "phase": 0.875,
+        "state": "swing",
+        "target_ankle": [
+          711.8648153478786,
+          1005.9415900714285
+        ],
+        "hip_degrees": -27.62535822977869,
+        "knee_degrees": 44.790836912823686,
+        "foot_roll_degrees": -2.75,
+        "evaluated_ankle": [
+          711.8647994995117,
+          1005.9415726661682
+        ]
+      }
+    }
+  },
+  {
+    "frame": 11,
+    "body_source_delta": [
+      1.9999999999999998,
+      14.535898384862247
+    ],
+    "root_travel_px": 116.66666666666667,
+    "legs": {
+      "left": {
+        "phase": 0.4166666666666667,
+        "state": "stance",
+        "target_ankle": [
+          622.8459228552508,
+          1026.8024611353815
+        ],
+        "hip_degrees": -11.077598150343386,
+        "knee_degrees": 16.149591092927256,
+        "foot_roll_degrees": 4.047619047619049,
+        "evaluated_ankle": [
+          622.845918973287,
+          1026.8024830818176
+        ]
+      },
+      "right": {
+        "phase": 0.9166666666666667,
+        "state": "swing",
+        "target_ankle": [
+          720.2798739152809,
+          1013.1432587764205
+        ],
+        "hip_degrees": -25.163290223044278,
+        "knee_degrees": 37.89918208204028,
+        "foot_roll_degrees": -4.166666666666669,
+        "evaluated_ankle": [
+          720.2798436482748,
+          1013.1432800292969
+        ]
+      }
+    }
+  },
+  {
+    "frame": 12,
+    "body_source_delta": [
+      1.035276180410084,
+      15.999999999999998
+    ],
+    "root_travel_px": 128.33333333333331,
+    "legs": {
+      "left": {
+        "phase": 0.4583333333333333,
+        "state": "stance",
+        "target_ankle": [
+          618.3053736042035,
+          1024.8840192982707
+        ],
+        "hip_degrees": -13.706871941361497,
+        "knee_degrees": 22.42004438997361,
+        "foot_roll_degrees": 7.023809523809524,
+        "evaluated_ankle": [
+          618.3053571383158,
+          1024.884047985077
+        ]
+      },
+      "right": {
+        "phase": 0.9583333333333333,
+        "state": "swing",
+        "target_ankle": [
+          724.8833794824927,
+          1021.2596862265643
+        ],
+        "hip_degrees": -21.6453343305093,
+        "knee_degrees": 30.335101964863412,
+        "foot_roll_degrees": -5.583333333333331,
+        "evaluated_ankle": [
+          724.8833614985148,
+          1021.2596921920776
+        ]
+      }
+    }
+  },
+  {
+    "frame": 13,
+    "body_source_delta": [
+      4.898587196589413e-16,
+      18.0
+    ],
+    "root_travel_px": 140.0,
+    "legs": {
+      "left": {
+        "phase": 0.5,
+        "state": "swing",
+        "target_ankle": [
+          613.8548199790913,
+          1023.3381599660298
+        ],
+        "hip_degrees": -15.725175958643627,
+        "knee_degrees": 27.505594119328816,
+        "foot_roll_degrees": 10.0,
+        "evaluated_ankle": [
+          613.8548340797424,
+          1023.3381776809692
+        ]
+      },
+      "right": {
+        "phase": 0.0,
+        "state": "stance",
+        "target_ankle": [
+          724.6917935907697,
+          1029.7130376107832
+        ],
+        "hip_degrees": -17.049826204710964,
+        "knee_degrees": 22.271310201372064,
+        "foot_roll_degrees": -7.0,
+        "evaluated_ankle": [
+          724.6917810440063,
+          1029.7130494117737
+        ]
+      }
+    }
+  },
+  {
+    "frame": 14,
+    "body_source_delta": [
+      -1.0352761804100814,
+      19.999999999999996
+    ],
+    "root_travel_px": 151.66666666666666,
+    "legs": {
+      "left": {
+        "phase": 0.5416666666666666,
+        "state": "swing",
+        "target_ankle": [
+          612.9095647466715,
+          1016.2001665720577
+        ],
+        "hip_degrees": -21.44419423999833,
+        "knee_degrees": 38.61076643270285,
+        "foot_roll_degrees": 8.583333333333336,
+        "evaluated_ankle": [
+          612.9095648129781,
+          1016.2001519203186
+        ]
+      },
+      "right": {
+        "phase": 0.04166666666666652,
+        "state": "stance",
+        "target_ankle": [
+          718.343131433759,
+          1029.6006383429435
+        ],
+        "hip_degrees": -18.471901590680382,
+        "knee_degrees": 26.286882004546342,
+        "foot_roll_degrees": -4.569444444444454,
+        "evaluated_ankle": [
+          718.3431242307028,
+          1029.6006350517273
+        ]
+      }
+    }
+  },
+  {
+    "frame": 15,
+    "body_source_delta": [
+      -2.0000000000000004,
+      21.464101615137757
+    ],
+    "root_travel_px": 163.33333333333334,
+    "legs": {
+      "left": {
+        "phase": 0.5833333333333334,
+        "state": "swing",
+        "target_ankle": [
+          616.9530351273247,
+          1009.3636079306643
+        ],
+        "hip_degrees": -26.670853440213307,
+        "knee_degrees": 46.991675788115785,
+        "foot_roll_degrees": 7.166666666666665,
+        "evaluated_ankle": [
+          616.9530612627665,
+          1009.3636541366577
+        ]
+      },
+      "right": {
+        "phase": 0.08333333333333348,
+        "state": "stance",
+        "target_ankle": [
+          711.9944516471425,
+          1029.7138686557773
+        ],
+        "hip_degrees": -19.0813321411114,
+        "knee_degrees": 28.935325304448387,
+        "foot_roll_degrees": -2.1388888888888795,
+        "evaluated_ankle": [
+          711.9944435755411,
+          1029.7139077186584
+        ]
+      }
+    }
+  },
+  {
+    "frame": 16,
+    "body_source_delta": [
+      -2.82842712474619,
+      22.0
+    ],
+    "root_travel_px": 175.0,
+    "legs": {
+      "left": {
+        "phase": 0.625,
+        "state": "swing",
+        "target_ankle": [
+          625.0001880378941,
+          1003.399395875113
+        ],
+        "hip_degrees": -31.451040829906937,
+        "knee_degrees": 52.960259648534276,
+        "foot_roll_degrees": 5.75,
+        "evaluated_ankle": [
+          625.00017786026,
+          1003.399374961853
+        ]
+      },
+      "right": {
+        "phase": 0.125,
+        "state": "stance",
+        "target_ankle": [
+          705.0,
+          1030.0
+        ],
+        "hip_degrees": -18.764863936029148,
+        "knee_degrees": 30.24405439118342,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          704.9999942779541,
+          1029.9999980926514
+        ]
+      }
+    }
+  },
+  {
+    "frame": 17,
+    "body_source_delta": [
+      -3.464101615137754,
+      21.464101615137757
+    ],
+    "root_travel_px": 186.66666666666666,
+    "legs": {
+      "left": {
+        "phase": 0.6666666666666666,
+        "state": "swing",
+        "target_ankle": [
+          636.0658463040447,
+          998.7976104019067
+        ],
+        "hip_degrees": -35.59984133228749,
+        "knee_degrees": 56.503206902310694,
+        "foot_roll_degrees": 4.333333333333335,
+        "evaluated_ankle": [
+          636.0658763249716,
+          998.7976341247559
+        ]
+      },
+      "right": {
+        "phase": 0.16666666666666652,
+        "state": "stance",
+        "target_ankle": [
+          693.3333333333334,
+          1030.0
+        ],
+        "hip_degrees": -17.3508484303757,
+        "knee_degrees": 31.14127824793697,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          693.3333514531454,
+          1030.0000338554382
+        ]
+      }
+    }
+  },
+  {
+    "frame": 18,
+    "body_source_delta": [
+      -3.8637033051562732,
+      20.0
+    ],
+    "root_travel_px": 198.33333333333334,
+    "legs": {
+      "left": {
+        "phase": 0.7083333333333334,
+        "state": "swing",
+        "target_ankle": [
+          649.1647126773195,
+          995.9338389996914
+        ],
+        "hip_degrees": -38.87302702828761,
+        "knee_degrees": 57.61702348575297,
+        "foot_roll_degrees": 2.916666666666665,
+        "evaluated_ankle": [
+          649.1647130648295,
+          995.9338216781616
+        ]
+      },
+      "right": {
+        "phase": 0.20833333333333348,
+        "state": "stance",
+        "target_ankle": [
+          681.6666666666666,
+          1030.0
+        ],
+        "hip_degrees": -15.090757583379471,
+        "knee_degrees": 30.643067493723883,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          681.6666609446207,
+          1029.9999861717224
+        ]
+      }
+    }
+  },
+  {
+    "frame": 19,
+    "body_source_delta": [
+      -4.0,
+      18.0
+    ],
+    "root_travel_px": 210.0,
+    "legs": {
+      "left": {
+        "phase": 0.75,
+        "state": "swing",
+        "target_ankle": [
+          663.3113839609459,
+          995.043348390592
+        ],
+        "hip_degrees": -41.04639976881548,
+        "knee_degrees": 56.4042151841243,
+        "foot_roll_degrees": 1.5000000000000002,
+        "evaluated_ankle": [
+          663.3113994598389,
+          995.0433640480042
+        ]
+      },
+      "right": {
+        "phase": 0.25,
+        "state": "stance",
+        "target_ankle": [
+          670.0,
+          1030.0
+        ],
+        "hip_degrees": -12.204697394997236,
+        "knee_degrees": 29.105756387480753,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          669.9999942779541,
+          1030.0000100135803
+        ]
+      }
+    }
+  },
+  {
+    "frame": 20,
+    "body_source_delta": [
+      -3.8637033051562737,
+      16.000000000000004
+    ],
+    "root_travel_px": 221.66666666666666,
+    "legs": {
+      "left": {
+        "phase": 0.7916666666666666,
+        "state": "swing",
+        "target_ankle": [
+          677.5203652320084,
+          996.2048490707436
+        ],
+        "hip_degrees": -41.97263529639207,
+        "knee_degrees": 53.09166290823407,
+        "foot_roll_degrees": 0.08333333333333481,
+        "evaluated_ankle": [
+          677.5203727086385,
+          996.2048320770264
+        ]
+      },
+      "right": {
+        "phase": 0.2916666666666665,
+        "state": "stance",
+        "target_ankle": [
+          658.3333333333334,
+          1030.0
+        ],
+        "hip_degrees": -8.976705781197333,
+        "knee_degrees": 27.008161116177092,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          658.3333276112875,
+          1029.9999861717224
+        ]
+      }
+    }
+  },
+  {
+    "frame": 21,
+    "body_source_delta": [
+      -3.4641016151377544,
+      14.535898384862245
+    ],
+    "root_travel_px": 233.33333333333334,
+    "legs": {
+      "left": {
+        "phase": 0.8333333333333334,
+        "state": "swing",
+        "target_ankle": [
+          690.8060841475204,
+          999.334959274664
+        ],
+        "hip_degrees": -41.603537596140626,
+        "knee_degrees": 48.00255095121627,
+        "foot_roll_degrees": -1.3333333333333344,
+        "evaluated_ankle": [
+          690.8060700098673,
+          999.3349938392639
+        ]
+      },
+      "right": {
+        "phase": 0.3333333333333335,
+        "state": "stance",
+        "target_ankle": [
+          646.6666666666666,
+          1030.0
+        ],
+        "hip_degrees": -5.724078230627305,
+        "knee_degrees": 24.906939868691094,
+        "foot_roll_degrees": 0.0,
+        "evaluated_ankle": [
+          646.6666371027628,
+          1030.0000219345093
+        ]
+      }
+    }
+  },
+  {
+    "frame": 22,
+    "body_source_delta": [
+      -2.8284271247461907,
+      14.0
+    ],
+    "root_travel_px": 245.0,
+    "legs": {
+      "left": {
+        "phase": 0.875,
+        "state": "swing",
+        "target_ankle": [
+          702.1829053218681,
+          1004.193745811167
+        ],
+        "hip_degrees": -39.97028471144183,
+        "knee_degrees": 41.50193882729339,
+        "foot_roll_degrees": -2.75,
+        "evaluated_ankle": [
+          702.1829166412354,
+          1004.1937499046326
+        ]
+      },
+      "right": {
+        "phase": 0.375,
+        "state": "stance",
+        "target_ankle": [
+          637.7805451633176,
+          1028.6234612025958
+        ],
+        "hip_degrees": -4.346495685044704,
+        "knee_degrees": 25.376368765060356,
+        "foot_roll_degrees": 1.0714285714285723,
+        "evaluated_ankle": [
+          637.7805271148682,
+          1028.6234765052795
+        ]
+      }
+    }
+  },
+  {
+    "frame": 23,
+    "body_source_delta": [
+      -2.0000000000000018,
+      14.535898384862243
+    ],
+    "root_travel_px": 256.66666666666663,
+    "legs": {
+      "left": {
+        "phase": 0.9166666666666666,
+        "state": "swing",
+        "target_ankle": [
+          710.6651447630363,
+          1010.4009643189931
+        ],
+        "hip_degrees": -37.13234527093336,
+        "knee_degrees": 33.92920145507274,
+        "foot_roll_degrees": -4.166666666666666,
+        "evaluated_ankle": [
+          710.6651471455891,
+          1010.4009895324707
+        ]
+      },
+      "right": {
+        "phase": 0.4166666666666665,
+        "state": "stance",
+        "target_ankle": [
+          633.9670626057203,
+          1025.0752368233987
+        ],
+        "hip_degrees": -6.004419396323093,
+        "knee_degrees": 29.839395574413572,
+        "foot_roll_degrees": 4.047619047619038,
+        "evaluated_ankle": [
+          633.9670346577961,
+          1025.0752477645874
+        ]
+      }
+    }
+  },
+  {
+    "frame": 24,
+    "body_source_delta": [
+      -1.0352761804100827,
+      16.0
+    ],
+    "root_travel_px": 268.33333333333337,
+    "legs": {
+      "left": {
+        "phase": 0.9583333333333334,
+        "state": "swing",
+        "target_ankle": [
+          715.2670843549777,
+          1017.4618923133925
+        ],
+        "hip_degrees": -33.09983078915604,
+        "knee_degrees": 25.49741904128944,
+        "foot_roll_degrees": -5.583333333333334,
+        "evaluated_ankle": [
+          715.2670914332073,
+          1017.4618988037109
+        ]
+      },
+      "right": {
+        "phase": 0.4583333333333335,
+        "state": "stance",
+        "target_ankle": [
+          630.3272148893268,
+          1021.9395432102392
+        ],
+        "hip_degrees": -7.619977012609138,
+        "knee_degrees": 34.25314299811207,
+        "foot_roll_degrees": 7.023809523809535,
+        "evaluated_ankle": [
+          630.327182451884,
+          1021.9395427703857
+        ]
+      }
+    }
+  },
+  {
+    "frame": 25,
+    "body_source_delta": [
+      -9.797174393178826e-16,
+      17.999999999999996
+    ],
+    "root_travel_px": 280.0,
+    "legs": {
+      "left": {
+        "phase": 0.0,
+        "state": "stance",
+        "target_ankle": [
+          715.0029863734484,
+          1024.800994632784
+        ],
+        "hip_degrees": -27.63854463893115,
+        "knee_degrees": 15.963653207192264,
+        "foot_roll_degrees": -7.0
+      },
+      "right": {
+        "phase": 0.5,
+        "state": "swing",
+        "target_ankle": [
+          626.8393488187901,
+          1019.2248392291734
+        ],
+        "hip_degrees": -9.012986244205685,
+        "knee_degrees": 38.27844097291682,
+        "foot_roll_degrees": 10.0
+      }
+    }
+  }
+]

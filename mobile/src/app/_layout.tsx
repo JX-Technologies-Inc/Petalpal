@@ -4,6 +4,7 @@ import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { LoginEntranceTransitionHost } from '@/components/auth/LoginEntranceTransitionHost';
 import { FeedbackDraftProvider, GlobalHelpFeedback } from '@/components/feedback';
 import { WorldTimeProvider } from '@/components/garden/world-time';
 
@@ -20,18 +21,21 @@ export default function TabLayout() {
     content = (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AnimatedSplashOverlay />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="player-preview" />
-          <Stack.Screen name="garden-test" />
-          <Stack.Screen name="treehouse-test" />
-          <Stack.Screen name="swing-test" />
-          <Stack.Screen name="moon-bed-test" />
-          <Stack.Screen name="water-test" />
-          <Stack.Screen name="flower-effects-test" />
-          <Stack.Screen name="mailbox" />
-          <Stack.Screen name="journal" />
-        </Stack>
+        <LoginEntranceTransitionHost>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="player-preview" options={{ animation: 'none' }} />
+            <Stack.Screen name="garden-test" />
+            <Stack.Screen name="treehouse-test" />
+            <Stack.Screen name="swing-test" />
+            <Stack.Screen name="moon-bed-test" />
+            <Stack.Screen name="water-test" />
+            <Stack.Screen name="flower-effects-test" />
+            <Stack.Screen name="mailbox" />
+            <Stack.Screen name="journal" />
+            <Stack.Screen name="login-preview" options={{ animation: 'none' }} />
+          </Stack>
+        </LoginEntranceTransitionHost>
       </ThemeProvider>
     );
   } else if (pathname === '/treehouse-test') {

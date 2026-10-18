@@ -1,0 +1,55 @@
+{
+  "blender": "5.2.2 LTS",
+  "engine": "CYCLES",
+  "samples": 128,
+  "direction": "SE",
+  "heading_degrees": 45,
+  "camera": "ORTHO",
+  "elevation_degrees": 30,
+  "ortho_scale": 1.75,
+  "resolution": [
+    512,
+    512
+  ],
+  "pivot": [
+    0.5,
+    0.875
+  ],
+  "base_mesh_triangles_excluding_curves": 15260,
+  "base_mesh_polygons_excluding_curves": 7906,
+  "render_evaluated_triangles": 69016,
+  "render_evaluated_polygons": 34988,
+  "object_categories": {
+    "Body": 19,
+    "Face": 20,
+    "Hair": 24,
+    "Crocus": 22,
+    "Dress": 62,
+    "Wings": 50,
+    "Footwear": 20
+  },
+  "rig_created": false,
+  "bare_sole_to_crown_units": 0.995,
+  "head_height_units": 0.169,
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "visible_bounds_512": [
+    143,
+    141,
+    315,
+    456
+  ],
+  "transparent_padding_ltrb": [
+    143,
+    141,
+    197,
+    56
+  ],
+  "preview_body_heights_px": [
+    64,
+    104
+  ],
+  "projected_nominal_body_height_512": 253.2777038308254
+}

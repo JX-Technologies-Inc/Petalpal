@@ -1,0 +1,45 @@
+{
+  "status": "PENDING_MANUAL_BILATERAL_ASSET_REVIEW",
+  "canvas": [
+    1254,
+    1254
+  ],
+  "side_convention": "anatomical: LEFT=original near screen-right shoe; RIGHT=far screen-left shoe",
+  "independent_generation": true,
+  "mirrored_or_cross_leg_reuse": false,
+  "animation_created_or_modified": false,
+  "parts": {
+    "leg_left_complete": {
+      "hip": [
+        650,
+        645
+      ],
+      "knee": [
+        674,
+        833
+      ],
+      "ankle": [
+        699,
+        1025
+      ],
+      "source": "left_independent_reconstruction.png + left_near_visible_source.png"
+    },
+    "leg_right_complete": {
+      "hip": [
+        690,
+        640
+      ],
+      "knee": [
+        635,
+        835
+      ],
+      "ankle": [
+        602,
+        1014
+      ],
+      "source": "right_independent_reconstruction.png + right_far_visible_source.png"
+    }
+  },
+  "diagnostics": "static translations, not a walk cycle",
+  "rest_registration_note": "source-aligned candidate; hidden reconstruction is not pixel-certified against nonexistent source anatomy"
+}

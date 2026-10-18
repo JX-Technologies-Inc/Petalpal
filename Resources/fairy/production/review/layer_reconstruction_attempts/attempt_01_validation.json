@@ -1,0 +1,32 @@
+{
+  "status": "REJECTED_NOT_FOR_PRODUCTION",
+  "method": "built-in image_gen background-extraction attempt",
+  "actual_canvas": [
+    1254,
+    1254
+  ],
+  "requested_canvas": [
+    1024,
+    1024
+  ],
+  "mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "alpha_bounds": [
+    29,
+    20,
+    1232,
+    1232
+  ],
+  "failures": [
+    "Did not retain requested native character scale and registration",
+    "Visible character details were reinterpreted; identity preservation not verified",
+    "Visible colored fringes around silhouette"
+  ],
+  "next_step": "Await explicit permission for deterministic Python pixel masking/compositing with conservative reconstruction, or original transparent layers",
+  "source_master_sha256": "86eed8eb748ced65bf6215fab48224b9e05bb8be50c213eb287d54ec0bf270b8",
+  "production_layers_created": 0,
+  "animation_frames_created": 0
+}

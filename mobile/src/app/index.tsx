@@ -65,6 +65,8 @@ export default function HomeScreen() {
 }
 
 const DEV_ROUTES = [
+  { label: '🧚 Fairy Loading Lab (3 Actions)', href: '/fairy-loading-test' },
+  { label: '💌 Login Preview (Invitation Card)', href: '/login-preview' },
   { label: '🌸 Open Journal (Planting & Entries)', href: '/journal' },
   { label: '🧚 Player Preview (Clean Experience)', href: '/player-preview' },
   { label: '🛠️ Native Garden Preview (Dev & Sandboxes)', href: '/garden-test' },

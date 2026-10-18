@@ -1,0 +1,109 @@
+{
+  "source_sha256": "ec7d74153cc3554b01cfaf92199ccdd61815fc8cff1b5fbe62fb9ef15a2cf00d",
+  "canvas": [
+    400,
+    720
+  ],
+  "source_rgb_no_original_alpha": true,
+  "order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "frame_duration_ms": 200,
+  "frames": [
+    {
+      "frame": 1,
+      "label": "Left Contact",
+      "source_offset_x": 0,
+      "translation_x": 45,
+      "translation_y": -100,
+      "scale": 1,
+      "alpha_bbox": [
+        54,
+        34,
+        334,
+        623
+      ],
+      "alpha_estimated": true
+    },
+    {
+      "frame": 2,
+      "label": "Left Down",
+      "source_offset_x": 268,
+      "translation_x": -223,
+      "translation_y": -100,
+      "scale": 1,
+      "alpha_bbox": [
+        51,
+        34,
+        314,
+        623
+      ],
+      "alpha_estimated": true
+    },
+    {
+      "frame": 3,
+      "label": "Right Passing",
+      "source_offset_x": 537,
+      "translation_x": -492,
+      "translation_y": -100,
+      "scale": 1,
+      "alpha_bbox": [
+        53,
+        33,
+        315,
+        623
+      ],
+      "alpha_estimated": true
+    },
+    {
+      "frame": 4,
+      "label": "Right Contact",
+      "source_offset_x": 806,
+      "translation_x": -761,
+      "translation_y": -100,
+      "scale": 1,
+      "alpha_bbox": [
+        57,
+        34,
+        331,
+        623
+      ],
+      "alpha_estimated": true
+    },
+    {
+      "frame": 5,
+      "label": "Right Down",
+      "source_offset_x": 1088,
+      "translation_x": -1043,
+      "translation_y": -100,
+      "scale": 1,
+      "alpha_bbox": [
+        50,
+        34,
+        325,
+        623
+      ],
+      "alpha_estimated": true
+    },
+    {
+      "frame": 6,
+      "label": "Left Passing",
+      "source_offset_x": 1374,
+      "translation_x": -1329,
+      "translation_y": -100,
+      "scale": 1,
+      "alpha_bbox": [
+        49,
+        34,
+        312,
+        623
+      ],
+      "alpha_estimated": true
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+[
+  {
+    "frame_64": 1,
+    "source_32": 1,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_01.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 3,
+    "source_32": 2,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_03.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 5,
+    "source_32": 3,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_05.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 7,
+    "source_32": 4,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_07.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 9,
+    "source_32": 5,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_09.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 11,
+    "source_32": 6,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_11.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 13,
+    "source_32": 7,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_13.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 15,
+    "source_32": 8,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_15.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 17,
+    "source_32": 9,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_17.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 19,
+    "source_32": 10,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_19.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 21,
+    "source_32": 11,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_21.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 23,
+    "source_32": 12,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_23.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 25,
+    "source_32": 13,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_25.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 27,
+    "source_32": 14,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_27.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 29,
+    "source_32": 15,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_29.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 31,
+    "source_32": 16,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_31.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 33,
+    "source_32": 17,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_33.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 35,
+    "source_32": 18,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_35.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 37,
+    "source_32": 19,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_37.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 39,
+    "source_32": 20,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_39.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 41,
+    "source_32": 21,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_41.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 43,
+    "source_32": 22,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_43.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 45,
+    "source_32": 23,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_45.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 47,
+    "source_32": 24,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_47.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 49,
+    "source_32": 25,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_49.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 51,
+    "source_32": 26,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_51.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 53,
+    "source_32": 27,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_53.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 55,
+    "source_32": 28,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_55.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 57,
+    "source_32": 29,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_57.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 59,
+    "source_32": 30,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_59.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 61,
+    "source_32": 31,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_61.png",
+    "outside_mask_rgba_unchanged": true
+  },
+  {
+    "frame_64": 63,
+    "source_32": 32,
+    "reason": "whole-cycle planted-shoe sliding and absent clear foot-role exchange; only shoe/opening pixels repaired",
+    "mask": "masks/frame_63.png",
+    "outside_mask_rgba_unchanged": true
+  }
+]

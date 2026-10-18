@@ -1,0 +1,371 @@
+{
+  "status": "VISUAL_GATE_FAILED_NOT_FOR_PRODUCTION",
+  "frame_count": 16,
+  "fps": 5.882352941176471,
+  "frame_duration_ms": 170,
+  "loop_duration_ms": 2720,
+  "canvas": [
+    378,
+    378
+  ],
+  "source_sheet_size": [
+    1254,
+    1254
+  ],
+  "registration": "fixed regular grid plus uniform 32px padding; no per-frame resize, shift, or repaint",
+  "warning": "Generated cell alignment, anatomy, gait and edges require visual review. Labels are intentions, not validation.",
+  "frames": [
+    {
+      "frame": 1,
+      "intended_phase": "Left Contact",
+      "source_rect": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "source_alpha_bbox_gt16": [
+        66,
+        3,
+        232,
+        312
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "2e004ad2788895733d2646cf61a081662f6bb4e42caf7ef04361942808c79d20",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 2,
+      "intended_phase": "Left Down",
+      "source_rect": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "source_alpha_bbox_gt16": [
+        64,
+        2,
+        238,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "4ab5122466b4d717d53eb3375998ca610abe2a7bf8b51a3b8ae6020c3f572a19",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 3,
+      "intended_phase": "Left Support",
+      "source_rect": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        2,
+        246,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "defce4f989e63f599f645d6902d8f920e5aded0d2ee432a4be9695c5882b4e42",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 4,
+      "intended_phase": "Right Swing-in",
+      "source_rect": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        1,
+        251,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "04253358bae055edb7b45a02a7b85422ab73f32826e7ff38e68017ba76e457ce",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 5,
+      "intended_phase": "Right Passing",
+      "source_rect": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "source_alpha_bbox_gt16": [
+        66,
+        2,
+        229,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "3ae7987f3d3611b425700759bbd6c52ffcdad97d36b2ef63b79f32be14db6cb8",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 6,
+      "intended_phase": "Right Advance",
+      "source_rect": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        2,
+        228,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "d4a526945a59b2c2071ae5036e11e2d73c75774c6c3748837869044fa1c65208",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 7,
+      "intended_phase": "Right Pre-contact",
+      "source_rect": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "source_alpha_bbox_gt16": [
+        59,
+        2,
+        242,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "44ae8cbb2ea1f79211e576a8f9e3a5a3a8de057043abbd79051d15114b4dd8df",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 8,
+      "intended_phase": "Right Late Swing",
+      "source_rect": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        2,
+        254,
+        311
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "f6c3cdd67209ed9f38a13cd46ace41c29bc9dbfc77f96e09f84d409fe5ec4ba0",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 9,
+      "intended_phase": "Right Contact",
+      "source_rect": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "source_alpha_bbox_gt16": [
+        63,
+        2,
+        242,
+        311
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "23d0588ab475b641f4997c89a24a398f53da9dafc8c50d89d65b7772d5ae06e3",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 10,
+      "intended_phase": "Right Down",
+      "source_rect": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "source_alpha_bbox_gt16": [
+        64,
+        2,
+        243,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "8b8c7611c571fcf713b25cb70eec48a1860175ec6d9faad537a84558450e5cb8",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 11,
+      "intended_phase": "Right Support",
+      "source_rect": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "source_alpha_bbox_gt16": [
+        64,
+        2,
+        239,
+        309
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "339e3af0f8369f98dc6d136772182b13f0dc58a006e134ccee975bb87f4de361",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 12,
+      "intended_phase": "Left Swing-in",
+      "source_rect": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        3,
+        240,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "e35777a464a4ed51a1b607f177b3628aad3af32f3a17c0fe4e662caee9ccafc2",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 13,
+      "intended_phase": "Left Passing",
+      "source_rect": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        3,
+        228,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "72f8c0649b591a52d1f0c493db6bb24d7bf3b99697b3c7831ae5e3ec086ffc94",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 14,
+      "intended_phase": "Left Advance",
+      "source_rect": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "source_alpha_bbox_gt16": [
+        65,
+        5,
+        246,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "17df27876240d5a660a1d81f06187d64878e9f806c1c823cf5951c3b3cf6358e",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 15,
+      "intended_phase": "Left Pre-contact",
+      "source_rect": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "source_alpha_bbox_gt16": [
+        64,
+        3,
+        250,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "d1c9c55aac94bbb96362ba7311fb7a6a56336269389222dab274945146934c8c",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "frame": 16,
+      "intended_phase": "Left Late Swing",
+      "source_rect": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "source_alpha_bbox_gt16": [
+        66,
+        3,
+        234,
+        310
+      ],
+      "source_cell_edge_touched": false,
+      "rgba_sha256": "271890b82f05e8d53353fecf7849227aa49fa27b58665763cc2af96986c5e3fd",
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    }
+  ]
+}

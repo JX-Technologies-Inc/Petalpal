@@ -1,0 +1,51 @@
+{
+  "status": "CANDIDATE_REQUIRES_EXPLICIT_MANUAL_APPROVAL",
+  "authority": "Resources/Icon/fairy structure.png",
+  "view": "3/4 Front",
+  "method": "built-in image_gen; only approved structure sheet supplied as visual input",
+  "prompt_file": "fairy_front_3q_master_v2.prompt.txt",
+  "generated_source": "C:\\Users\\cjysu\\.codex\\generated_images\\01a0e920-8626-7cc1-aa96-c0a2908bc06d\\exec-375163bb-5170-407e-8ca8-9582cde30b03.png",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "mode": "RGBA",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "visible_bounds": [
+    582,
+    213,
+    995,
+    1305
+  ],
+  "transparent_padding_ltrb": [
+    582,
+    213,
+    541,
+    231
+  ],
+  "postprocessing": {
+    "clear_alpha_at_or_below": 1,
+    "nonzero_specks_cleared": 14909,
+    "padding_translation": [
+      141,
+      141
+    ],
+    "character_scale": 1,
+    "rotation": 0,
+    "all_pixels_with_alpha_above_1_preserved_exactly": true
+  },
+  "manual_inspection": {
+    "full_body_present": true,
+    "both_feet_and_shoes_visible": true,
+    "complete_arms_and_hands_visible": true,
+    "no_character_extent_at_canvas_edge": true
+  },
+  "limitations": "Generated reconstruction is a visual candidate, not pixel-exact extraction; face, proportions, costume and silhouette fidelity require user approval. No layered or animation authority until explicitly approved.",
+  "source_and_rejected_image_unchanged": true,
+  "layers_created": 0,
+  "animations_created": 0,
+  "candidate_sha256": "adb4d947831c8223eaa7009374df539fcd0f35fe989d85918ffa4c5694cb5418"
+}

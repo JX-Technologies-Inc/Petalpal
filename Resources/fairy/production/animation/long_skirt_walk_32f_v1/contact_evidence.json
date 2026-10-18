@@ -1,0 +1,154 @@
+[
+  {
+    "pair": [
+      5,
+      6
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        217,
+        251,
+        341
+      ],
+      [
+        210,
+        245,
+        341
+      ]
+    ],
+    "distal_x_difference_px": -6
+  },
+  {
+    "pair": [
+      8,
+      9
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        194,
+        230,
+        340
+      ],
+      [
+        199,
+        231,
+        341
+      ]
+    ],
+    "distal_x_difference_px": 1
+  },
+  {
+    "pair": [
+      11,
+      12
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        195,
+        228,
+        341
+      ],
+      [
+        198,
+        230,
+        341
+      ]
+    ],
+    "distal_x_difference_px": 2
+  },
+  {
+    "pair": [
+      13,
+      14
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        225,
+        259,
+        341
+      ],
+      [
+        218,
+        253,
+        341
+      ]
+    ],
+    "distal_x_difference_px": -6
+  },
+  {
+    "pair": [
+      17,
+      18
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        207,
+        244,
+        340
+      ],
+      [
+        208,
+        245,
+        341
+      ]
+    ],
+    "distal_x_difference_px": 1
+  },
+  {
+    "pair": [
+      20,
+      21
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        210,
+        241,
+        340
+      ],
+      [
+        230,
+        264,
+        340
+      ]
+    ],
+    "distal_x_difference_px": 23
+  },
+  {
+    "pair": [
+      23,
+      24
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        225,
+        259,
+        340
+      ],
+      [
+        225,
+        259,
+        340
+      ]
+    ],
+    "distal_x_difference_px": 0
+  },
+  {
+    "pair": [
+      24,
+      1
+    ],
+    "screen_right_lower_shoe_alpha80_bounds_xmin_xmax_ymax": [
+      [
+        225,
+        259,
+        340
+      ],
+      [
+        224,
+        257,
+        341
+      ]
+    ],
+    "distal_x_difference_px": -2
+  }
+]

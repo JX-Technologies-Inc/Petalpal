@@ -1,0 +1,61 @@
+{
+  "blender": "5.2.2 LTS",
+  "source_blend": "fairy_v1.blend",
+  "source_sha256": "5c9f2fd48141158abcd5d3315afada21628b09a15480d3999e57435aa1d580b4",
+  "head_hair_scale": 1.1,
+  "crocus_scale": 1.2,
+  "wing_extent_scale": 0.82,
+  "wing_membrane_alpha": 0.28,
+  "skirt_petals_v1": 31,
+  "skirt_petals_v2": 21,
+  "direction": "SE",
+  "camera": "ORTHO",
+  "elevation_degrees": 30,
+  "ortho_scale": 1.75,
+  "resolution": [
+    512,
+    512
+  ],
+  "pivot": [
+    0.5,
+    0.875
+  ],
+  "engine": "CYCLES",
+  "samples": 128,
+  "base_mesh_polygons_excluding_curves": 7666,
+  "render_evaluated_triangles": 64088,
+  "render_evaluated_polygons": 32524,
+  "object_categories": {
+    "Body": 19,
+    "Face": 20,
+    "Hair": 24,
+    "Crocus": 22,
+    "Dress": 49,
+    "Wings": 50,
+    "Footwear": 20
+  },
+  "rig_created": false,
+  "actions": 0,
+  "preview_body_heights_px": [
+    96,
+    108,
+    120
+  ],
+  "projected_nominal_body_height_512": 257.1983947753906,
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "visible_bounds_512": [
+    161,
+    161,
+    305,
+    456
+  ],
+  "transparent_padding_ltrb": [
+    161,
+    161,
+    207,
+    56
+  ]
+}

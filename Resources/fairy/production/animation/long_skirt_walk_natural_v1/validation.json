@@ -1,0 +1,11 @@
+{
+  "source_package_unchanged": true,
+  "frames": 32,
+  "canvas": [
+    378,
+    378
+  ],
+  "gif_duration_ms": 1360,
+  "analytical_forefoot_support_world_drift_max_px": 2.930988785010413e-14,
+  "visual_status": "FAIL: calf and garment extraction/deformation artifacts; production-quality improvement not achieved"
+}

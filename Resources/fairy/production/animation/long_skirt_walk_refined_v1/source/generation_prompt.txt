@@ -1,0 +1,25 @@
+Use case: identity-preserve. Create ONE production sprite CONTACT SHEET, exactly 16 complete full-body Fairy sprites in a perfectly regular 4-column x 4-row grid, row-major walk-cycle order. Transparent RGBA background, no labels, no borders, no ground lines, no shadows. Prefer 3072 square resolution. Equal cells, generous padding, same fixed scale and camera. Each character faces SCREEN RIGHT, pure side-view. Foot ground baseline at 92% of each cell, top of hair at 10%, fixed pelvis horizontal registration 55% of cell. Do not crop wings or footwear.
+References: image 1 walking.png establishes LONG SKIRT appearance, not valid motion. Image 2 structure sheet establishes elegant adult slender proportions, identity/costume. Image 3 fairy.png provides hairstyle/face details ONLY, do not adopt its chibi proportions. Image 4 human gait chart is MOTION LOGIC ONLY (reverse travel direction to screen right).
+Keep the same elegant PetalPal Fairy throughout: slim 5.5–6 head proportions, refined aloof face, purple-black braided updo with crocus ornament, lavender/blue wings, long layered lavender/teal/ivory petal skirt with tiny gold details, delicate purple gold-vine heels. Knees and thighs remain covered by opaque skirt fabric. Stable head, almost still relaxed arms, near-still wings, mild delayed petal movement. Painterly, detailed, no character redesign.
+CRITICAL MOTION: 16 DIFFERENT consecutive poses of one slow, short-stride human walking cycle, not 16 variants of one stance. Anatomical LEFT leg is the NEAR leg, RIGHT leg the FAR leg. The near leg must visibly travel from FRONT to BACK and then FRONT over the cycle; far leg does opposite. Never keep the near leg permanently forward. Near leg occludes far at crossing, far leg slightly lower contrast naturally, SAME footwear design on each foot. Clear support/swing and alternating heel contact, slight toe-off and low foot lift. No marching, no bouncing, no horizontal character travel across cells.
+Row1:
+1 LEFT/NEAR CONTACT: near foot forward screen-right, far foot back screen-left, both touch baseline.
+2 LEFT DOWN: near planted, slight pelvis lowering, far heel lifting.
+3 LEFT SUPPORT: near planted under body, far foot trailing toe-off.
+4 RIGHT SWING-IN: far knee bends beneath skirt, far shoe lifts and approaches near support ankle.
+Row2:
+5 RIGHT PASSING: near leg nearly vertical planted, far bent leg crosses forward with shoe slightly raised next to near ankle; narrow foot separation.
+6 RIGHT ADVANCE: far shoe ahead airborne low, near foot now behind.
+7 RIGHT PRECONTACT: far heel extends forward near ground, near heel lifting behind.
+8 RIGHT LATE SWING: far heel about to land, near trailing toes grounded.
+Row3:
+9 RIGHT/FAR CONTACT: far foot FORWARD screen-right, near foot BACK screen-left. This MUST change which anatomical leg leads versus frame1.
+10 RIGHT DOWN: far planted forward, near heel lifting behind.
+11 RIGHT SUPPORT: far under body planted, near trailing toe-off.
+12 LEFT SWING-IN: near knee bends, near shoe comes forward lifted beside far support ankle.
+Row4:
+13 LEFT PASSING: far leg vertical planted, near bent leg crosses with shoe slightly raised next to far ankle. OPPOSITE ownership to5.
+14 LEFT ADVANCE: near foot ahead airborne low, far behind.
+15 LEFT PRECONTACT: near heel extends forward low, far heel peels.
+16 LEFT LATE SWING: near heel nearly reaches frame1 contact, far toes support behind. Smooth16-to1 closure, not duplicated frame1.
+Stride only roughly 0.5 head widths between ankles at contact, foot lift under 0.12 head heights, body bob under0.03 body height. Feet should sweep backward through support at steady pace across frames. Preserve artwork richness, consistent limb lengths, face and silhouette. Do NOT copy the old six reference leg poses. Do NOT expose knees or thighs. This is a coherent animation sheet, not a set of unrelated character illustrations.

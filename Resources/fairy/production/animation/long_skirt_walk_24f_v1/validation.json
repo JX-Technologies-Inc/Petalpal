@@ -1,0 +1,229 @@
+{
+  "anchors_byte_identical": 16,
+  "new_distinct_midpoints": 8,
+  "canvas": [
+    378,
+    378
+  ],
+  "gif_duration_ms": 1360,
+  "source_package_unchanged": true,
+  "alpha_bounds": [
+    {
+      "label": "1",
+      "alpha_gt16_bbox": [
+        98,
+        35,
+        264,
+        344
+      ]
+    },
+    {
+      "label": "1.5",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        267,
+        342
+      ]
+    },
+    {
+      "label": "2",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        270,
+        342
+      ]
+    },
+    {
+      "label": "3",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        278,
+        342
+      ]
+    },
+    {
+      "label": "3.5",
+      "alpha_gt16_bbox": [
+        96,
+        33,
+        281,
+        342
+      ]
+    },
+    {
+      "label": "4",
+      "alpha_gt16_bbox": [
+        97,
+        33,
+        283,
+        342
+      ]
+    },
+    {
+      "label": "5",
+      "alpha_gt16_bbox": [
+        98,
+        34,
+        261,
+        342
+      ]
+    },
+    {
+      "label": "5.5",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        261,
+        342
+      ]
+    },
+    {
+      "label": "6",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        260,
+        342
+      ]
+    },
+    {
+      "label": "7",
+      "alpha_gt16_bbox": [
+        91,
+        34,
+        274,
+        342
+      ]
+    },
+    {
+      "label": "7.5",
+      "alpha_gt16_bbox": [
+        94,
+        33,
+        281,
+        343
+      ]
+    },
+    {
+      "label": "8",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        286,
+        343
+      ]
+    },
+    {
+      "label": "9",
+      "alpha_gt16_bbox": [
+        95,
+        34,
+        274,
+        343
+      ]
+    },
+    {
+      "label": "9.5",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        275,
+        343
+      ]
+    },
+    {
+      "label": "10",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        275,
+        342
+      ]
+    },
+    {
+      "label": "11",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        271,
+        341
+      ]
+    },
+    {
+      "label": "11.5",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        272,
+        342
+      ]
+    },
+    {
+      "label": "12",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        272,
+        342
+      ]
+    },
+    {
+      "label": "13",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        260,
+        342
+      ]
+    },
+    {
+      "label": "13.5",
+      "alpha_gt16_bbox": [
+        96,
+        36,
+        275,
+        342
+      ]
+    },
+    {
+      "label": "14",
+      "alpha_gt16_bbox": [
+        97,
+        37,
+        278,
+        342
+      ]
+    },
+    {
+      "label": "15",
+      "alpha_gt16_bbox": [
+        96,
+        35,
+        282,
+        342
+      ]
+    },
+    {
+      "label": "15.5",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        274,
+        342
+      ]
+    },
+    {
+      "label": "16",
+      "alpha_gt16_bbox": [
+        98,
+        35,
+        266,
+        342
+      ]
+    }
+  ],
+  "visual_smoothness": "manual review pending; not proven by pixel checks"
+}

@@ -1,0 +1,385 @@
+{
+  "status": "FAILED_STRICT_MOTION_GATE",
+  "canvas": [
+    378,
+    378
+  ],
+  "frame_count": 32,
+  "anchor_count": 24,
+  "new_frame_count": 8,
+  "loop_duration_ms": 1360,
+  "frame_duration_ms": 42.5,
+  "gif_durations_ms": [
+    40,
+    40,
+    50,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    50,
+    40,
+    40
+  ],
+  "original_frame_duration_ms": 56.666666666666664,
+  "frames": [
+    {
+      "index": 1,
+      "label": "1",
+      "kind": "anchor",
+      "anchor": 1,
+      "sha256": "b8623fe944fb7db1cfb8f5ee984c67638f0771afa6fb393fe1858d94c6866b6a"
+    },
+    {
+      "index": 2,
+      "label": "2",
+      "kind": "anchor",
+      "anchor": 2,
+      "sha256": "faff9c4b8d2b676859f425010868611dc3ba18d3e55754ae5e21173a3c3923d0"
+    },
+    {
+      "index": 3,
+      "label": "3",
+      "kind": "anchor",
+      "anchor": 3,
+      "sha256": "3d4afd8266fba0b094b24fa457f83e10ba18ccd513b98bcde36837ce9615a373"
+    },
+    {
+      "index": 4,
+      "label": "4",
+      "kind": "anchor",
+      "anchor": 4,
+      "sha256": "7c7902dbc97245a5680dcde4c3f82da3f049c59e4e96403ffd636dd4520d2b8c"
+    },
+    {
+      "index": 5,
+      "label": "5",
+      "kind": "anchor",
+      "anchor": 5,
+      "sha256": "f7b11201640cf3e5d1bfc6834ad0c5f01ea254009658aa2ce034bc698c6d2853"
+    },
+    {
+      "index": 6,
+      "label": "5.5",
+      "kind": "midpoint",
+      "between": [
+        5,
+        6
+      ],
+      "sha256": "c99815a58aa21939b883e97751ca1e9c358b183e71c16c772572c5b9b26f1efd"
+    },
+    {
+      "index": 7,
+      "label": "6",
+      "kind": "anchor",
+      "anchor": 6,
+      "sha256": "fa66390749794dfad10317f99452006ecbcda6be6797687821e3f471b1e2bc85"
+    },
+    {
+      "index": 8,
+      "label": "7",
+      "kind": "anchor",
+      "anchor": 7,
+      "sha256": "544eb1dd070c063255b44c05678287ce6908784b6358c7a35d9306bbd3be5f3b"
+    },
+    {
+      "index": 9,
+      "label": "8",
+      "kind": "anchor",
+      "anchor": 8,
+      "sha256": "8068aacb8f2485dfad3b11684517ca6f515aa346abe2d36e208cabf1169f17bb"
+    },
+    {
+      "index": 10,
+      "label": "8.5",
+      "kind": "midpoint",
+      "between": [
+        8,
+        9
+      ],
+      "sha256": "8e95f66023a5f65d21b2bf69ee3cd68a88032e9a5537a7f3b77fb3c39534b1a0"
+    },
+    {
+      "index": 11,
+      "label": "9",
+      "kind": "anchor",
+      "anchor": 9,
+      "sha256": "70e92675458d7fa13b53344bbe9b98f7c1a2be56335e04e17be43d3c5ebe076f"
+    },
+    {
+      "index": 12,
+      "label": "10",
+      "kind": "anchor",
+      "anchor": 10,
+      "sha256": "10643a7fb81ede9a0e5744ebd450a19cf932a7011ec54d0e8a2398838fb2cdb5"
+    },
+    {
+      "index": 13,
+      "label": "11",
+      "kind": "anchor",
+      "anchor": 11,
+      "sha256": "c09bdd321b70ced68eb0c15a9b76e0750d87018b106be849d18b6f697d79fc51"
+    },
+    {
+      "index": 14,
+      "label": "11.5",
+      "kind": "midpoint",
+      "between": [
+        11,
+        12
+      ],
+      "sha256": "47fbf0e88d7e47eb53373ec5c36c3a4949def7b8169f4b6d89882be7f6e48a97"
+    },
+    {
+      "index": 15,
+      "label": "12",
+      "kind": "anchor",
+      "anchor": 12,
+      "sha256": "a72dbc4c7605987ac0715cf5a44b16d5a0143989cac742ca019f32790ec3822a"
+    },
+    {
+      "index": 16,
+      "label": "13",
+      "kind": "anchor",
+      "anchor": 13,
+      "sha256": "ca9b7ee32b1a4240ca570ca72b5a1f53f1e26131f0c86e46bae5d3953a07ba0a"
+    },
+    {
+      "index": 17,
+      "label": "13.5",
+      "kind": "midpoint",
+      "between": [
+        13,
+        14
+      ],
+      "sha256": "347c327ec5dd9158396664ea8b2987ed42d029365899690c9998df770a98201a"
+    },
+    {
+      "index": 18,
+      "label": "14",
+      "kind": "anchor",
+      "anchor": 14,
+      "sha256": "d17f7c7f8c823c8b1b8b51a77282710f8241e62a88b0f80b5419b1a8f7ddd515"
+    },
+    {
+      "index": 19,
+      "label": "15",
+      "kind": "anchor",
+      "anchor": 15,
+      "sha256": "52304cd917b52d098cd80cabc645e1bd5cefad93efd794be6f1e22dc1628f85e"
+    },
+    {
+      "index": 20,
+      "label": "16",
+      "kind": "anchor",
+      "anchor": 16,
+      "sha256": "53f3bbf6682cf5362bb585af0c751e4733d36e23348f43eabe62f667a6b7a581"
+    },
+    {
+      "index": 21,
+      "label": "17",
+      "kind": "anchor",
+      "anchor": 17,
+      "sha256": "2ed27378fe018836bfbdfd6686e77effd97c27938f0ba99fab0b822e73fba6cb"
+    },
+    {
+      "index": 22,
+      "label": "17.5",
+      "kind": "midpoint",
+      "between": [
+        17,
+        18
+      ],
+      "sha256": "5de36cc87d7875ee4ef6f7498b1bc446dd32abfe270d98743e51da7813bcbf01"
+    },
+    {
+      "index": 23,
+      "label": "18",
+      "kind": "anchor",
+      "anchor": 18,
+      "sha256": "34bc59346c082f8f9755d2e0fa103de3ac276d095ea5a63f623b3484a037ffa7"
+    },
+    {
+      "index": 24,
+      "label": "19",
+      "kind": "anchor",
+      "anchor": 19,
+      "sha256": "5c81ec68f1de666c5361c5b148ae8d4d52d7c1bfb6e2281be76ce82271216aad"
+    },
+    {
+      "index": 25,
+      "label": "20",
+      "kind": "anchor",
+      "anchor": 20,
+      "sha256": "32cb99b4fcde63061906ee6c701112d6f3a9ffd9c0061ab560c7815db712adb6"
+    },
+    {
+      "index": 26,
+      "label": "20.5",
+      "kind": "midpoint",
+      "between": [
+        20,
+        21
+      ],
+      "sha256": "dee572f714bb56eb246680617d08d2485a0d969a77168fb00847e6f0981a7517"
+    },
+    {
+      "index": 27,
+      "label": "21",
+      "kind": "anchor",
+      "anchor": 21,
+      "sha256": "de0fa3146f6a6df0065ca070eeb3416170cdf6d074160b2a7ba7378a43d1bd1c"
+    },
+    {
+      "index": 28,
+      "label": "22",
+      "kind": "anchor",
+      "anchor": 22,
+      "sha256": "6364913f0bd4c19d90cef29ca2b66b56130b9f0c4297599745298fc1420a47af"
+    },
+    {
+      "index": 29,
+      "label": "23",
+      "kind": "anchor",
+      "anchor": 23,
+      "sha256": "5b9adb7c6b10c011241c58b1b80c48917513e97f3aaa29fbe81f308925b04581"
+    },
+    {
+      "index": 30,
+      "label": "23.5",
+      "kind": "midpoint",
+      "between": [
+        23,
+        24
+      ],
+      "sha256": "095446b1da201fa6ed677a43af39541ef4fffad8ff81653b4688924507eb419d"
+    },
+    {
+      "index": 31,
+      "label": "24",
+      "kind": "anchor",
+      "anchor": 24,
+      "sha256": "2d3217b899c0b190dec2e5c8770f3f6d59fa00b39faeec56c2d01325d9a88361"
+    },
+    {
+      "index": 32,
+      "label": "24.5",
+      "kind": "midpoint",
+      "between": [
+        24,
+        1
+      ],
+      "sha256": "4b4c2f099ed7fbaa1581679d8f740b85ec35cbf75b9c79ca97d6b373588f29a5"
+    }
+  ],
+  "synthesis": [
+    {
+      "between": [
+        5,
+        6
+      ],
+      "flow_magnitude_p95_px": 3.8372089862823486,
+      "forward_backward_error_p95_px": 0.20232518017292023,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        8,
+        9
+      ],
+      "flow_magnitude_p95_px": 10.412314414978027,
+      "forward_backward_error_p95_px": 0.49646303057670593,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        11,
+        12
+      ],
+      "flow_magnitude_p95_px": 4.951940536499023,
+      "forward_backward_error_p95_px": 0.24680961668491364,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        13,
+        14
+      ],
+      "flow_magnitude_p95_px": 5.391870498657227,
+      "forward_backward_error_p95_px": 0.9975660443305969,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        17,
+        18
+      ],
+      "flow_magnitude_p95_px": 2.8616280555725098,
+      "forward_backward_error_p95_px": 0.1759590208530426,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        20,
+        21
+      ],
+      "flow_magnitude_p95_px": 17.401716232299805,
+      "forward_backward_error_p95_px": 1.182162880897522,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        23,
+        24
+      ],
+      "flow_magnitude_p95_px": 5.336129665374756,
+      "forward_backward_error_p95_px": 0.2633666396141052,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    },
+    {
+      "between": [
+        24,
+        1
+      ],
+      "flow_magnitude_p95_px": 4.497099876403809,
+      "forward_backward_error_p95_px": 1.4014204740524292,
+      "method": "DIS reverse-flow midpoint warp of destination painting",
+      "landmarks": null
+    }
+  ],
+  "timing_note": "Uniform 32-frame spacing follows the requested target; nonuniform insertion necessarily redistributes anchor timestamps within the unchanged total loop.",
+  "failure_reasons": [
+    "Apparent planted-foot displacement persists in fixed anchors",
+    "Passing/weight transfer not anatomically established",
+    "Visibly smoother human-like playback not verified"
+  ]
+}

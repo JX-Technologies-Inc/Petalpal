@@ -1,0 +1,301 @@
+{
+  "anchors_byte_identical": 24,
+  "new_distinct_midpoints": 8,
+  "canvas": [
+    378,
+    378
+  ],
+  "gif_duration_ms": 1360,
+  "source_package_unchanged": true,
+  "alpha_bounds": [
+    {
+      "label": "1",
+      "alpha_gt16_bbox": [
+        98,
+        35,
+        264,
+        344
+      ]
+    },
+    {
+      "label": "2",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        267,
+        342
+      ]
+    },
+    {
+      "label": "3",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        270,
+        342
+      ]
+    },
+    {
+      "label": "4",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        278,
+        342
+      ]
+    },
+    {
+      "label": "5",
+      "alpha_gt16_bbox": [
+        96,
+        33,
+        281,
+        342
+      ]
+    },
+    {
+      "label": "5.5",
+      "alpha_gt16_bbox": [
+        97,
+        33,
+        282,
+        342
+      ]
+    },
+    {
+      "label": "6",
+      "alpha_gt16_bbox": [
+        97,
+        33,
+        283,
+        342
+      ]
+    },
+    {
+      "label": "7",
+      "alpha_gt16_bbox": [
+        98,
+        34,
+        261,
+        342
+      ]
+    },
+    {
+      "label": "8",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        261,
+        342
+      ]
+    },
+    {
+      "label": "8.5",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        261,
+        342
+      ]
+    },
+    {
+      "label": "9",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        260,
+        342
+      ]
+    },
+    {
+      "label": "10",
+      "alpha_gt16_bbox": [
+        91,
+        34,
+        274,
+        342
+      ]
+    },
+    {
+      "label": "11",
+      "alpha_gt16_bbox": [
+        94,
+        33,
+        281,
+        343
+      ]
+    },
+    {
+      "label": "11.5",
+      "alpha_gt16_bbox": [
+        95,
+        34,
+        284,
+        343
+      ]
+    },
+    {
+      "label": "12",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        286,
+        343
+      ]
+    },
+    {
+      "label": "13",
+      "alpha_gt16_bbox": [
+        95,
+        34,
+        274,
+        343
+      ]
+    },
+    {
+      "label": "13.5",
+      "alpha_gt16_bbox": [
+        95,
+        34,
+        275,
+        343
+      ]
+    },
+    {
+      "label": "14",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        275,
+        343
+      ]
+    },
+    {
+      "label": "15",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        275,
+        342
+      ]
+    },
+    {
+      "label": "16",
+      "alpha_gt16_bbox": [
+        96,
+        34,
+        271,
+        341
+      ]
+    },
+    {
+      "label": "17",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        272,
+        342
+      ]
+    },
+    {
+      "label": "17.5",
+      "alpha_gt16_bbox": [
+        97,
+        34,
+        272,
+        342
+      ]
+    },
+    {
+      "label": "18",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        272,
+        342
+      ]
+    },
+    {
+      "label": "19",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        260,
+        342
+      ]
+    },
+    {
+      "label": "20",
+      "alpha_gt16_bbox": [
+        96,
+        36,
+        275,
+        342
+      ]
+    },
+    {
+      "label": "20.5",
+      "alpha_gt16_bbox": [
+        97,
+        36,
+        274,
+        342
+      ]
+    },
+    {
+      "label": "21",
+      "alpha_gt16_bbox": [
+        97,
+        37,
+        278,
+        342
+      ]
+    },
+    {
+      "label": "22",
+      "alpha_gt16_bbox": [
+        96,
+        35,
+        282,
+        342
+      ]
+    },
+    {
+      "label": "23",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        274,
+        342
+      ]
+    },
+    {
+      "label": "23.5",
+      "alpha_gt16_bbox": [
+        97,
+        35,
+        270,
+        342
+      ]
+    },
+    {
+      "label": "24",
+      "alpha_gt16_bbox": [
+        98,
+        35,
+        266,
+        342
+      ]
+    },
+    {
+      "label": "24.5",
+      "alpha_gt16_bbox": [
+        98,
+        35,
+        265,
+        344
+      ]
+    }
+  ],
+  "visual_smoothness": "manual review pending; not proven by pixel checks"
+}

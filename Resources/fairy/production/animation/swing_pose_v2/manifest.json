@@ -1,0 +1,266 @@
+{
+  "status": "NEW_POSE_ART_PENDING_MANUAL_REVIEW",
+  "method": "built-in image generation; uniform sheet registration",
+  "authority": "../../master/fairy_first_approved.png",
+  "authority_sha256": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+  "cell": [
+    512,
+    640
+  ],
+  "atlas_size": [
+    2048,
+    1920
+  ],
+  "world_scale": 0.2,
+  "walk_cycle_distance": 48,
+  "walk_sequence": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "frames": [
+    {
+      "id": "idle_front_3q",
+      "index": 0,
+      "rect": [
+        0,
+        0,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        246.9048,
+        360.9048
+      ],
+      "contact": null,
+      "support": null
+    },
+    {
+      "id": "walk_0",
+      "index": 1,
+      "rect": [
+        512,
+        0,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.4,
+        359.5
+      ],
+      "contact": [
+        343.7,
+        594.4
+      ],
+      "support": "near_heel"
+    },
+    {
+      "id": "walk_1",
+      "index": 2,
+      "rect": [
+        1024,
+        0,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.1,
+        359.5
+      ],
+      "contact": [
+        268.7,
+        599.8
+      ],
+      "support": "near_sole"
+    },
+    {
+      "id": "walk_2",
+      "index": 3,
+      "rect": [
+        1536,
+        0,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        255.9,
+        359.5
+      ],
+      "contact": [
+        343.2,
+        594.4
+      ],
+      "support": "near_toe"
+    },
+    {
+      "id": "walk_3",
+      "index": 4,
+      "rect": [
+        0,
+        640,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.4,
+        362.0
+      ],
+      "contact": [
+        239.3,
+        600.5
+      ],
+      "support": "far_heel"
+    },
+    {
+      "id": "walk_4",
+      "index": 5,
+      "rect": [
+        512,
+        640,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.1,
+        362.0
+      ],
+      "contact": [
+        344.3,
+        600.5
+      ],
+      "support": "far_sole"
+    },
+    {
+      "id": "walk_5",
+      "index": 6,
+      "rect": [
+        1024,
+        640,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        255.9,
+        362.0
+      ],
+      "contact": [
+        282.0,
+        600.5
+      ],
+      "support": "far_toe"
+    },
+    {
+      "id": "turn_rear_3q",
+      "index": 7,
+      "rect": [
+        1536,
+        640,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.0,
+        381.84
+      ],
+      "contact": null,
+      "support": null
+    },
+    {
+      "id": "stand_back",
+      "index": 8,
+      "rect": [
+        0,
+        1280,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        255.64,
+        390.28
+      ],
+      "contact": null,
+      "support": null
+    },
+    {
+      "id": "lower_back",
+      "index": 9,
+      "rect": [
+        512,
+        1280,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.48,
+        431.56
+      ],
+      "contact": null,
+      "support": null
+    },
+    {
+      "id": "sit_back",
+      "index": 10,
+      "rect": [
+        1024,
+        1280,
+        512,
+        640
+      ],
+      "root": [
+        256,
+        600
+      ],
+      "hips": [
+        256.2,
+        450.84
+      ],
+      "contact": null,
+      "support": null
+    }
+  ],
+  "notes": [
+    "Dedicated authored poses, not rotations/mirrors of the front master.",
+    "Foot contact coordinates are review calibration; no production Garden integration."
+  ]
+}

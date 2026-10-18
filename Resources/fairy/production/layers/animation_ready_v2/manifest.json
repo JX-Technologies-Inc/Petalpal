@@ -1,0 +1,354 @@
+{
+  "status": "PASS_FOR_DOCUMENTED_RESTRAINED_TESTS_PENDING_USER_REVIEW",
+  "canvas": [
+    1254,
+    1254
+  ],
+  "draw_order_back_to_front": [
+    "petals_back",
+    "wing_left",
+    "wing_right",
+    "torso",
+    "thigh_left",
+    "calf_left",
+    "foot_left",
+    "thigh_right",
+    "calf_right",
+    "foot_right",
+    "dress_base",
+    "petals_side",
+    "petals_front",
+    "upper_arm_right",
+    "forearm_right",
+    "hand_right",
+    "upper_arm_left",
+    "forearm_left",
+    "hand_left",
+    "hair_back",
+    "head_face",
+    "braided_updo",
+    "hair_front",
+    "flower_accessory"
+  ],
+  "parts": [
+    {
+      "name": "petals_back",
+      "pivot_source": [
+        655,
+        450
+      ],
+      "hidden_pixels": 1639,
+      "source_owned_pixels": 28987
+    },
+    {
+      "name": "wing_left",
+      "pivot_source": [
+        567,
+        357
+      ],
+      "hidden_pixels": 1571,
+      "source_owned_pixels": 22541
+    },
+    {
+      "name": "wing_right",
+      "pivot_source": [
+        724,
+        358
+      ],
+      "hidden_pixels": 1639,
+      "source_owned_pixels": 8919
+    },
+    {
+      "name": "torso",
+      "pivot_source": [
+        655,
+        676
+      ],
+      "hidden_pixels": 6630,
+      "source_owned_pixels": 23827
+    },
+    {
+      "name": "thigh_left",
+      "pivot_source": [
+        649,
+        688
+      ],
+      "hidden_pixels": 13398,
+      "source_owned_pixels": 2821
+    },
+    {
+      "name": "calf_left",
+      "pivot_source": [
+        629,
+        842
+      ],
+      "hidden_pixels": 4227,
+      "source_owned_pixels": 8541
+    },
+    {
+      "name": "foot_left",
+      "pivot_source": [
+        606,
+        1014
+      ],
+      "hidden_pixels": 1,
+      "source_owned_pixels": 11316
+    },
+    {
+      "name": "thigh_right",
+      "pivot_source": [
+        662,
+        682
+      ],
+      "hidden_pixels": 4453,
+      "source_owned_pixels": 10716
+    },
+    {
+      "name": "calf_right",
+      "pivot_source": [
+        686,
+        833
+      ],
+      "hidden_pixels": 2328,
+      "source_owned_pixels": 11080
+    },
+    {
+      "name": "foot_right",
+      "pivot_source": [
+        699,
+        1025
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 13127
+    },
+    {
+      "name": "dress_base",
+      "pivot_source": [
+        686,
+        422
+      ],
+      "hidden_pixels": 25901,
+      "source_owned_pixels": 25058
+    },
+    {
+      "name": "petals_side",
+      "pivot_source": [
+        590,
+        460
+      ],
+      "hidden_pixels": 1295,
+      "source_owned_pixels": 54291
+    },
+    {
+      "name": "petals_front",
+      "pivot_source": [
+        686,
+        422
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 56208
+    },
+    {
+      "name": "upper_arm_right",
+      "pivot_source": [
+        748,
+        375
+      ],
+      "hidden_pixels": 934,
+      "source_owned_pixels": 3022
+    },
+    {
+      "name": "forearm_right",
+      "pivot_source": [
+        787,
+        491
+      ],
+      "hidden_pixels": 897,
+      "source_owned_pixels": 4889
+    },
+    {
+      "name": "hand_right",
+      "pivot_source": [
+        839,
+        629
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 2173
+    },
+    {
+      "name": "upper_arm_left",
+      "pivot_source": [
+        587,
+        290
+      ],
+      "hidden_pixels": 1644,
+      "source_owned_pixels": 7285
+    },
+    {
+      "name": "forearm_left",
+      "pivot_source": [
+        566,
+        438
+      ],
+      "hidden_pixels": 801,
+      "source_owned_pixels": 6873
+    },
+    {
+      "name": "hand_left",
+      "pivot_source": [
+        507,
+        620
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 2446
+    },
+    {
+      "name": "hair_back",
+      "pivot_source": [
+        585,
+        230
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 5749
+    },
+    {
+      "name": "head_face",
+      "pivot_source": [
+        650,
+        266
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 9354
+    },
+    {
+      "name": "braided_updo",
+      "pivot_source": [
+        578,
+        239
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 4960
+    },
+    {
+      "name": "hair_front",
+      "pivot_source": [
+        650,
+        150
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 19536
+    },
+    {
+      "name": "flower_accessory",
+      "pivot_source": [
+        550,
+        177
+      ],
+      "hidden_pixels": 0,
+      "source_owned_pixels": 7216
+    }
+  ],
+  "rest_exact_visible_rgba": true,
+  "rest_alpha_exact": true,
+  "rest_max_visible_rgba_delta": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "rest_changed_visible_pixels": 0,
+  "unchanged_byte_identical_layers": [
+    "hair_back",
+    "head_face",
+    "braided_updo",
+    "hair_front",
+    "flower_accessory"
+  ],
+  "diagnostic_deformation": "shared limb skinning field, smoothstep blend over 60 source px at knee/elbow; rigid feet/hands below bend",
+  "diagnostics": [
+    {
+      "name": "mild_left_knee",
+      "angles": {
+        "calf_left": -6
+      }
+    },
+    {
+      "name": "mild_right_knee",
+      "angles": {
+        "calf_right": 6
+      }
+    },
+    {
+      "name": "mild_left_arm",
+      "angles": {
+        "forearm_left": -5
+      }
+    },
+    {
+      "name": "mild_right_arm",
+      "angles": {
+        "forearm_right": 5
+      }
+    },
+    {
+      "name": "restrained_step",
+      "angles": {
+        "thigh_left": 2,
+        "calf_left": -6,
+        "thigh_right": -2,
+        "calf_right": 4,
+        "forearm_left": -3,
+        "forearm_right": 3
+      }
+    }
+  ],
+  "source_hashes": {
+    "Resources\\fairy\\production\\master\\fairy_first_approved.png": "c395f4d96c4b3c8848d0f4e63d945bc4d6a3bb7c6c095353827d5c17845fee42",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\braided_updo.png": "e32c2fab04a12784cbf79f8411227d0e981ae6b9c44cd446d82e094fe2bd9f8f",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\calf_left.png": "ddcecc36dfbd114771e53e74e87780d9a782210c46a998f722e1eff217cbc435",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\calf_right.png": "6002f5d8bf2e3cac330f13af7ea22fbe535f1353ce31a0c6aa6b615816f5b1f0",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\dress_base.png": "1d18ae4b1bff736158663f8e9b8932dcbb239a5bf8e77e3aec98dceda34b451e",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\flower_accessory.png": "21495029015ce55cfdb153d228ce302b47aace44d75f37a0413b7adba672a47d",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\foot_left.png": "8bae3bcc6c4b2ede25c70960441304b0f95e776e1aae9f1923e6e7969580507e",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\foot_right.png": "a467a8d34f9cd814cfa3d80737aaef23f8eac36a52e28c054ea65474fb40d4a4",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\forearm_left.png": "171ea744e6328c96ec617b84af624fdbce2f976844bed1a5ecbf4fd9f07b1725",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\forearm_right.png": "66b48c740e1fdc0a040b4ce6476850114bdb854d0f7cc95922dbea5e0fc861ab",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\hair_back.png": "47ad3acef470eb2e03e4b1dcb470348d4dc74d3b20af386c867d46172e239083",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\hair_front.png": "ce85abcb5a5bddd2725ad47b8a840f27f1c540a572a307125eeec4a0b07428aa",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\hand_left.png": "a9e19e7b7fd5f009d9aebfaab08de9d4c376b7502c2b51fc947b53584d451a7f",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\hand_right.png": "017f0ec3dbd86b940593270898bc530d744047d45c53062786fa339277b70bf5",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\head_face.png": "3ee6813f7386c446e0127eda78da7284cd5b04a010aea3fd87102079946bb66d",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\petals_back.png": "2bf1c6ad533451323c40b0fdc3310d411b39c69f6c16dfb3b6fcce4b4598021c",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\petals_front.png": "6367e2da8fec07f7e7c340c1542cf6d4ccb121c76619ceeab8c4fbcb25841c81",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\petals_side.png": "30bac635b04333b310756376a6b85ee542cdf31bb7d95e5bedce570ba2e5d8cc",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\thigh_left.png": "751e6da9611367672e6a708c84df39eee992b2fe11890df05d462729036c831d",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\thigh_right.png": "120702fe2e326536bb5828116e0db5228472560edca05ddb1c29ab53bff262c5",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\torso.png": "8365ec402512e91e6b0b11aec783acd673021eed5cde265422a2d11f1681a9c0",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\upper_arm_left.png": "eb76d9c6ca60a8408040cd4705b82d8543f2368ba73920a8d0d4e14aea4908a6",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\upper_arm_right.png": "a3a27019a8a5d115259c8728eb1a6ffce34c753763410b3f076a034fcd0dbd39",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\wing_left.png": "dd9827c4e6d30f57f20caf771f8e33fbc1ef8be466053f93b3bfd60d3a5876bf",
+    "Resources\\fairy\\production\\layers\\animation_ready_v1\\images\\wing_right.png": "859b9c1f500b09e679bd5cdf3619d4f5190f54b8c2193a7f11b692577233ad93"
+  },
+  "blender_rig_created": false,
+  "corrected_layers": [
+    "petals_back",
+    "wing_left",
+    "wing_right",
+    "torso",
+    "thigh_left",
+    "calf_left",
+    "foot_left",
+    "thigh_right",
+    "calf_right",
+    "foot_right",
+    "dress_base",
+    "petals_side",
+    "petals_front",
+    "upper_arm_right",
+    "forearm_right",
+    "hand_right",
+    "upper_arm_left",
+    "forearm_left",
+    "hand_left"
+  ]
+}

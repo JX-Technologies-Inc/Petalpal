@@ -1,0 +1,2033 @@
+{
+  "status": "FAILED_VISUAL_GATE_REVIEW_ONLY",
+  "frame_count": 48,
+  "canvas": [
+    378,
+    378
+  ],
+  "frame_duration_ms": 30,
+  "loop_duration_ms": 1440,
+  "loop": true,
+  "stride_px": 120.0,
+  "source": "C:\\Users\\cjysu\\Documents\\Petalpal\\Resources\\fairy\\production\\animation\\ankle_length_walk_16f_v1\\frames\\frame_01.png",
+  "source_sha256": "ec71f89593460089a183e691bec99fc573dd0efd573db269ef4e20b7e124c818",
+  "method": "Single stable painting; continuous contact-driven rigid shoes; restrained local body and garment displacement fields. No optical flow or adjacent-frame interpolation.",
+  "frames": [
+    {
+      "index": 1,
+      "file": "frames/frame_01.png",
+      "duration_ms": 30,
+      "phase": 0.0,
+      "root_travel_x": 0.0,
+      "near": {
+        "phase": 0.0,
+        "heel": [
+          222.2,
+          342.0
+        ],
+        "toe": [
+          242.09043790736547,
+          339.90943073464695
+        ],
+        "angle_degrees": -6.000000000000001,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5,
+        "heel": [
+          162.2,
+          342.0
+        ],
+        "toe": [
+          190.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_shoe_pixels": [
+        356,
+        295
+      ],
+      "sha256": "88a6144c121abd89f0993a83b23170f78895775ff7ce7fbd7d2f20caad63b86c"
+    },
+    {
+      "index": 2,
+      "file": "frames/frame_02.png",
+      "duration_ms": 30,
+      "phase": 0.020833333333333332,
+      "root_travel_x": 2.5,
+      "near": {
+        "phase": 0.020833333333333332,
+        "heel": [
+          219.7,
+          342.0
+        ],
+        "toe": [
+          239.60724493987715,
+          340.07604602348835
+        ],
+        "angle_degrees": -5.52025864840535,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5208333333333334,
+        "heel": [
+          159.71115257808262,
+          341.2008766743942
+        ],
+        "toe": [
+          188.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 1.5991378386488397,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_shoe_pixels": [
+        337,
+        293
+      ],
+      "sha256": "49553b5b8cf3be46683e523e338343c66d8aeda0bc285dc6c83b347beed4b8cf"
+    },
+    {
+      "index": 3,
+      "file": "frames/frame_03.png",
+      "duration_ms": 30,
+      "phase": 0.041666666666666664,
+      "root_travel_x": 5.0,
+      "near": {
+        "phase": 0.041666666666666664,
+        "heel": [
+          217.2,
+          342.0
+        ],
+        "toe": [
+          237.14285655316934,
+          340.489214608321
+        ],
+        "angle_degrees": -4.332208076131687,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5416666666666666,
+        "heel": [
+          157.3346890039955,
+          339.22589273715016
+        ],
+        "toe": [
+          185.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 5.559306412894368,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_shoe_pixels": [
+        314,
+        270
+      ],
+      "sha256": "7810ffd8fdcb30d1b59e623e20470f96dc591337c0c7f273e0e88ba7e17d4dee"
+    },
+    {
+      "index": 4,
+      "file": "frames/frame_04.png",
+      "duration_ms": 30,
+      "phase": 0.0625,
+      "root_travel_x": 7.5,
+      "near": {
+        "phase": 0.0625,
+        "heel": [
+          214.7,
+          342.0
+        ],
+        "toe": [
+          234.675907265577,
+          341.0186086830079
+        ],
+        "angle_degrees": -2.812608506944444,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5625,
+        "heel": [
+          155.19092499352166,
+          336.72033168639643
+        ],
+        "toe": [
+          183.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 10.624638310185187,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_shoe_pixels": [
+        290,
+        230
+      ],
+      "sha256": "1ba444f9ed9ddf60d02d3950506cbe2c6ab5d9ce04beb04b792fcf13bb8e80d5"
+    },
+    {
+      "index": 5,
+      "file": "frames/frame_05.png",
+      "duration_ms": 30,
+      "phase": 0.08333333333333333,
+      "root_travel_x": 10.0,
+      "near": {
+        "phase": 0.08333333333333333,
+        "heel": [
+          212.2,
+          342.0
+        ],
+        "toe": [
+          232.1945450580741,
+          341.53291551016605
+        ],
+        "angle_degrees": -1.3382201646090537,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.5833333333333334,
+        "heel": [
+          153.24671626957146,
+          334.3285483734828
+        ],
+        "toe": [
+          180.83564212655267,
+          342.0
+        ],
+        "angle_degrees": 15.53926611796983,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_shoe_pixels": [
+        286,
+        220
+      ],
+      "sha256": "a046293f70c639df24734bc7d95f44e6bb3551542b81a232bb5f5b904d550a54"
+    },
+    {
+      "index": 6,
+      "file": "frames/frame_06.png",
+      "duration_ms": 30,
+      "phase": 0.10416666666666667,
+      "root_travel_x": 12.5,
+      "near": {
+        "phase": 0.10416666666666667,
+        "heel": [
+          209.7,
+          342.0
+        ],
+        "toe": [
+          229.69975117831297,
+          341.90023625122666
+        ],
+        "angle_degrees": -0.28580327289094676,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "far": {
+        "phase": 0.6041666666666666,
+        "heel": [
+          151.2678198495015,
+          332.6547874728302
+        ],
+        "toe": [
+          178.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 19.04732242369684,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "visible_shoe_pixels": [
+        271,
+        208
+      ],
+      "sha256": "7b058595daa83dab4e3cf17053500cc91cda180441467e8de7278a0c0bed2bbe"
+    },
+    {
+      "index": 7,
+      "file": "frames/frame_07.png",
+      "duration_ms": 30,
+      "phase": 0.125,
+      "root_travel_x": 15.0,
+      "near": {
+        "phase": 0.125,
+        "heel": [
+          207.2,
+          342.0
+        ],
+        "toe": [
+          227.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.625,
+        "heel": [
+          148.98783158303797,
+          332.1905828057359
+        ],
+        "toe": [
+          175.8988205569327,
+          341.97826243100553
+        ],
+        "angle_degrees": 19.986614302376438,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        282,
+        237
+      ],
+      "sha256": "7c93e4aa5c9cca2d466e922f5968a3aa45407039e249ad5c7b77e2fc1ed6e3de"
+    },
+    {
+      "index": 8,
+      "file": "frames/frame_08.png",
+      "duration_ms": 30,
+      "phase": 0.14583333333333334,
+      "root_travel_x": 17.5,
+      "near": {
+        "phase": 0.14583333333333334,
+        "heel": [
+          204.7,
+          342.0
+        ],
+        "toe": [
+          224.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.6458333333333334,
+        "heel": [
+          147.9924578165819,
+          331.7965809296481
+        ],
+        "toe": [
+          174.95950128407935,
+          341.42874406271966
+        ],
+        "angle_degrees": 19.6558518933626,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        292,
+        251
+      ],
+      "sha256": "637a556425a8fb9b365dc425e4a5be93b9ee7229de324dc82943961c6076e99d"
+    },
+    {
+      "index": 9,
+      "file": "frames/frame_09.png",
+      "duration_ms": 30,
+      "phase": 0.16666666666666666,
+      "root_travel_x": 20.0,
+      "near": {
+        "phase": 0.16666666666666666,
+        "heel": [
+          202.2,
+          342.0
+        ],
+        "toe": [
+          222.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.6666666666666666,
+        "heel": [
+          148.840056286446,
+          330.9135743977677
+        ],
+        "toe": [
+          175.9285869687214,
+          340.1985895014402
+        ],
+        "angle_degrees": 18.919948378178443,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        304,
+        219
+      ],
+      "sha256": "47124f05a20ea7dae3564e5e093ec15c7ffad877a812cede215d2e65e519e2a3"
+    },
+    {
+      "index": 10,
+      "file": "frames/frame_10.png",
+      "duration_ms": 30,
+      "phase": 0.1875,
+      "root_travel_x": 22.5,
+      "near": {
+        "phase": 0.1875,
+        "heel": [
+          199.7,
+          342.0
+        ],
+        "toe": [
+          219.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.6875,
+        "heel": [
+          151.29674726720893,
+          329.65851297603893
+        ],
+        "toe": [
+          178.55694800591908,
+          338.42672007243135
+        ],
+        "angle_degrees": 17.830317602784667,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        304,
+        166
+      ],
+      "sha256": "bfce13befb3d2f0d8f9703b0f248d2122ae1c0a927658bbd41e65e2d1ee8b353"
+    },
+    {
+      "index": 11,
+      "file": "frames/frame_11.png",
+      "duration_ms": 30,
+      "phase": 0.20833333333333334,
+      "root_travel_x": 25.0,
+      "near": {
+        "phase": 0.20833333333333334,
+        "heel": [
+          197.2,
+          342.0
+        ],
+        "toe": [
+          217.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.7083333333333334,
+        "heel": [
+          155.12865103344933,
+          328.2077156403778
+        ],
+        "toe": [
+          182.5938016480479,
+          336.3111409480743
+        ],
+        "angle_degrees": 16.438373413141964,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        313,
+        128
+      ],
+      "sha256": "2c512a0880b060f5af757bf64ca0228b7ebbd5e5845498fbd41dae53b1206b6b"
+    },
+    {
+      "index": 12,
+      "file": "frames/frame_12.png",
+      "duration_ms": 30,
+      "phase": 0.22916666666666666,
+      "root_travel_x": 27.5,
+      "near": {
+        "phase": 0.22916666666666666,
+        "heel": [
+          194.7,
+          342.0
+        ],
+        "toe": [
+          214.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.7291666666666666,
+        "heel": [
+          160.10188785974586,
+          326.7738788647882
+        ],
+        "toe": [
+          187.7880670523416,
+          334.086572056457
+        ],
+        "angle_degrees": 14.795529655211052,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        329,
+        104
+      ],
+      "sha256": "445628b4d3fd6c2d2519a326547dad4dc26a1df7a6ab0c70035b7ce1e3df45ec"
+    },
+    {
+      "index": 13,
+      "file": "frames/frame_13.png",
+      "duration_ms": 30,
+      "phase": 0.25,
+      "root_travel_x": 30.0,
+      "near": {
+        "phase": 0.25,
+        "heel": [
+          192.2,
+          342.0
+        ],
+        "toe": [
+          212.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.75,
+        "heel": [
+          165.98257802067724,
+          325.57881081482714
+        ],
+        "toe": [
+          193.88954277095618,
+          331.99763612999874
+        ],
+        "angle_degrees": 12.953200174952617,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        327,
+        86
+      ],
+      "sha256": "b6ae77260ce80eada666e617f0ba6c747f1fa8fdae834a7778905b422be02f11"
+    },
+    {
+      "index": 14,
+      "file": "frames/frame_14.png",
+      "duration_ms": 30,
+      "phase": 0.2708333333333333,
+      "root_travel_x": 32.5,
+      "near": {
+        "phase": 0.2708333333333333,
+        "heel": [
+          189.7,
+          342.0
+        ],
+        "toe": [
+          209.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.7708333333333333,
+        "heel": [
+          172.53684179082205,
+          324.8250949827813
+        ],
+        "toe": [
+          200.64990823513395,
+          330.27078089896344
+        ],
+        "angle_degrees": 10.962798818327373,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        326,
+        66
+      ],
+      "sha256": "fd6ee88ba2904cabe7e30c71c225b937394c8c584f3cb2baedc9cd275eedb79f"
+    },
+    {
+      "index": 15,
+      "file": "frames/frame_15.png",
+      "duration_ms": 30,
+      "phase": 0.2916666666666667,
+      "root_travel_x": 35.0,
+      "near": {
+        "phase": 0.2916666666666667,
+        "heel": [
+          187.2,
+          342.0
+        ],
+        "toe": [
+          207.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.7916666666666667,
+        "heel": [
+          179.530799444759,
+          324.67001258382163
+        ],
+        "toe": [
+          207.82353793878787,
+          329.08826433179803
+        ],
+        "angle_degrees": 8.875739431295992,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        328,
+        39
+      ],
+      "sha256": "ab35836310c4ea7bf22df4859c200f21fb74d2363c66ac518d1afea10af5db7a"
+    },
+    {
+      "index": 16,
+      "file": "frames/frame_16.png",
+      "duration_ms": 30,
+      "phase": 0.3125,
+      "root_travel_x": 37.5,
+      "near": {
+        "phase": 0.3125,
+        "heel": [
+          184.7,
+          342.0
+        ],
+        "toe": [
+          204.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.8125,
+        "heel": [
+          186.73057125706666,
+          325.2047876442194
+        ],
+        "toe": [
+          215.1681096120243,
+          328.5672885453811
+        ],
+        "angle_degrees": 6.743435859819218,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        327,
+        20
+      ],
+      "sha256": "212cbd99a75ea7283cdf94ff2de3e70d94d39220b3e0f189d57bf5571dcad9e7"
+    },
+    {
+      "index": 17,
+      "file": "frames/frame_17.png",
+      "duration_ms": 30,
+      "phase": 0.3333333333333333,
+      "root_travel_x": 40.0,
+      "near": {
+        "phase": 0.3333333333333333,
+        "heel": [
+          182.2,
+          342.0
+        ],
+        "toe": [
+          202.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.8333333333333333,
+        "heel": [
+          193.90227750232378,
+          326.4415933346323
+        ],
+        "toe": [
+          222.44498594141592,
+          328.7467603483166
+        ],
+        "angle_degrees": 4.617301949857723,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        323,
+        8
+      ],
+      "sha256": "ade5a828eed9c29d2c7fd6c79b25451128709700c2b1f3afd1f6d2b2a2a03e16"
+    },
+    {
+      "index": 18,
+      "file": "frames/frame_18.png",
+      "duration_ms": 30,
+      "phase": 0.3541666666666667,
+      "root_travel_x": 42.5,
+      "near": {
+        "phase": 0.3541666666666667,
+        "heel": [
+          179.7,
+          342.0
+        ],
+        "toe": [
+          199.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.8541666666666667,
+        "heel": [
+          200.81203845510908,
+          328.30984621093995
+        ],
+        "toe": [
+          229.4193526378079,
+          329.5832570842873
+        ],
+        "angle_degrees": 2.548751547372195,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        320,
+        69
+      ],
+      "sha256": "e7865047ed2936e4f5515f7fe3ae2b8da7d5745738e0509493840070aaf2ccdd"
+    },
+    {
+      "index": 19,
+      "file": "frames/frame_19.png",
+      "duration_ms": 30,
+      "phase": 0.375,
+      "root_travel_x": 45.0,
+      "near": {
+        "phase": 0.375,
+        "heel": [
+          177.2,
+          342.0
+        ],
+        "toe": [
+          197.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.875,
+        "heel": [
+          207.22597439000106,
+          330.66222376270326
+        ],
+        "toe": [
+          235.86010242861073,
+          330.95669187389245
+        ],
+        "angle_degrees": 0.5891984983233733,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        311,
+        134
+      ],
+      "sha256": "bb26255341f85452a9ead2d298f1d2b0d380256a0c98f5a573b8adc56e092851"
+    },
+    {
+      "index": 20,
+      "file": "frames/frame_20.png",
+      "duration_ms": 30,
+      "phase": 0.3958333333333333,
+      "root_travel_x": 47.5,
+      "near": {
+        "phase": 0.3958333333333333,
+        "heel": [
+          174.7,
+          342.0
+        ],
+        "toe": [
+          194.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.8958333333333333,
+        "heel": [
+          212.91020558157845,
+          333.28969825054116
+        ],
+        "toe": [
+          241.5394629330751,
+          332.68503015829884
+        ],
+        "angle_degrees": -1.209943351328068,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        304,
+        192
+      ],
+      "sha256": "fb929a6793bad398755b76fa30ab29c4c1fd9590b31cf9765697c3d3d384e4de"
+    },
+    {
+      "index": 21,
+      "file": "frames/frame_21.png",
+      "duration_ms": 30,
+      "phase": 0.4166666666666667,
+      "root_travel_x": 50.0,
+      "near": {
+        "phase": 0.4166666666666667,
+        "heel": [
+          172.2,
+          342.0
+        ],
+        "toe": [
+          192.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.9166666666666667,
+        "heel": [
+          217.63085230442002,
+          335.9438204645517
+        ],
+        "toe": [
+          246.23237426620605,
+          334.54634364203525
+        ],
+        "angle_degrees": -2.7972601556214407,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        296,
+        230
+      ],
+      "sha256": "897eb1c6dd4ec847ed4e3f1e9cb78afbabad365cea5a546c3e6e5548cb6a6353"
+    },
+    {
+      "index": 22,
+      "file": "frames/frame_22.png",
+      "duration_ms": 30,
+      "phase": 0.4375,
+      "root_travel_x": 52.5,
+      "near": {
+        "phase": 0.4375,
+        "heel": [
+          169.7,
+          342.0
+        ],
+        "toe": [
+          189.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.9375,
+        "heel": [
+          221.15403483310425,
+          338.36363522227344
+        ],
+        "toe": [
+          249.71562767224637,
+          336.30562295528745
+        ],
+        "angle_degrees": -4.121338068596003,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        287,
+        280
+      ],
+      "sha256": "6cda65ca63717ed3b51a4d29409409f953e20b3e16a8edb222379edbd74c3577"
+    },
+    {
+      "index": 23,
+      "file": "frames/frame_23.png",
+      "duration_ms": 30,
+      "phase": 0.4583333333333333,
+      "root_travel_x": 55.0,
+      "near": {
+        "phase": 0.4583333333333333,
+        "heel": [
+          167.2,
+          342.0
+        ],
+        "toe": [
+          187.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.9583333333333333,
+        "heel": [
+          223.2458734422099,
+          340.3040662285664
+        ],
+        "toe": [
+          251.76677806956872,
+          337.74320714671467
+        ],
+        "angle_degrees": -5.130763244291089,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        277,
+        314
+      ],
+      "sha256": "567bd762a44031b54cd93fd182b4218baf0d3ebb97879fbe7e16c96b2b65fa41"
+    },
+    {
+      "index": 24,
+      "file": "frames/frame_24.png",
+      "duration_ms": 30,
+      "phase": 0.4791666666666667,
+      "root_travel_x": 57.5,
+      "near": {
+        "phase": 0.4791666666666667,
+        "heel": [
+          164.7,
+          342.0
+        ],
+        "toe": [
+          184.7,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "far": {
+        "phase": 0.9791666666666667,
+        "heel": [
+          223.67248840631555,
+          341.5624352803231
+        ],
+        "toe": [
+          252.16284045373723,
+          338.68149095354835
+        ],
+        "angle_degrees": -5.774121836745991,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "visible_shoe_pixels": [
+        266,
+        326
+      ],
+      "sha256": "491d2c2a457440c58e53d084333dcede5f37fa25d297a02e88ca012d6c2b1093"
+    },
+    {
+      "index": 25,
+      "file": "frames/frame_25.png",
+      "duration_ms": 30,
+      "phase": 0.5,
+      "root_travel_x": 60.0,
+      "near": {
+        "phase": 0.5,
+        "heel": [
+          162.2,
+          342.0
+        ],
+        "toe": [
+          182.2,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.0,
+        "heel": [
+          222.2,
+          342.0
+        ],
+        "toe": [
+          250.67877308278676,
+          339.006760333829
+        ],
+        "angle_degrees": -6.000000000000001,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_shoe_pixels": [
+        268,
+        318
+      ],
+      "sha256": "70aa63b0fe1a9454973f32b96b7711f0547724fd9da9e8e7d1b3ad005e24fe43"
+    },
+    {
+      "index": 26,
+      "file": "frames/frame_26.png",
+      "duration_ms": 30,
+      "phase": 0.5208333333333334,
+      "root_travel_x": 62.5,
+      "near": {
+        "phase": 0.5208333333333334,
+        "heel": [
+          159.70778929840884,
+          341.4418680593408
+        ],
+        "toe": [
+          179.7,
+          342.0
+        ],
+        "angle_degrees": 1.5991378386488397,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.02083333333333348,
+        "heel": [
+          219.7,
+          342.0
+        ],
+        "toe": [
+          248.20283709119747,
+          339.2453171230327
+        ],
+        "angle_degrees": -5.520258648405343,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_shoe_pixels": [
+        263,
+        302
+      ],
+      "sha256": "0c340dd251bca8a5aa48df11bda164eb33edae1d8bf0ca5e9ecba64ffd845e87"
+    },
+    {
+      "index": 27,
+      "file": "frames/frame_27.png",
+      "duration_ms": 30,
+      "phase": 0.5416666666666666,
+      "root_travel_x": 65.0,
+      "near": {
+        "phase": 0.5416666666666666,
+        "heel": [
+          157.29407088089746,
+          340.0624794439113
+        ],
+        "toe": [
+          177.2,
+          342.0
+        ],
+        "angle_degrees": 5.559306412894368,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.04166666666666652,
+        "heel": [
+          217.20000000000002,
+          342.0
+        ],
+        "toe": [
+          245.7538251618867,
+          339.8368845096928
+        ],
+        "angle_degrees": -4.332208076131697,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_shoe_pixels": [
+        252,
+        299
+      ],
+      "sha256": "ff42791d879c1429a56657d3d165b18872d97c9423aa2492cdfac440507a8bb4"
+    },
+    {
+      "index": 28,
+      "file": "frames/frame_28.png",
+      "duration_ms": 30,
+      "phase": 0.5625,
+      "root_travel_x": 67.5,
+      "near": {
+        "phase": 0.5625,
+        "heel": [
+          155.042876888426,
+          338.31251969816464
+        ],
+        "toe": [
+          174.7,
+          342.0
+        ],
+        "angle_degrees": 10.624638310185187,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.0625,
+        "heel": [
+          214.7,
+          342.0
+        ],
+        "toe": [
+          243.30114658051338,
+          340.59486147302545
+        ],
+        "angle_degrees": -2.812608506944444,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_shoe_pixels": [
+        240,
+        283
+      ],
+      "sha256": "075ea589a8a358eaa2f47bbfe246e99c093379e47e5bcfa8ff71deb81d57caf0"
+    },
+    {
+      "index": 29,
+      "file": "frames/frame_29.png",
+      "duration_ms": 30,
+      "phase": 0.5833333333333334,
+      "root_travel_x": 70.0,
+      "near": {
+        "phase": 0.5833333333333334,
+        "heel": [
+          152.93105835374362,
+          336.6420257715096
+        ],
+        "toe": [
+          172.2,
+          342.0
+        ],
+        "angle_degrees": 15.53926611796983,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.08333333333333348,
+        "heel": [
+          212.2,
+          342.0
+        ],
+        "toe": [
+          240.8278318383122,
+          341.3312367853126
+        ],
+        "angle_degrees": -1.3382201646090437,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_shoe_pixels": [
+        229,
+        283
+      ],
+      "sha256": "23fc37161d8268c3cd73feccb18a6c57dab5a50d18272bf75d7bc535f14c73c6"
+    },
+    {
+      "index": 30,
+      "file": "frames/frame_30.png",
+      "duration_ms": 30,
+      "phase": 0.6041666666666666,
+      "root_travel_x": 72.5,
+      "near": {
+        "phase": 0.6041666666666666,
+        "heel": [
+          150.79501288120076,
+          335.47302045061923
+        ],
+        "toe": [
+          169.7,
+          342.0
+        ],
+        "angle_degrees": 19.04732242369684,
+        "contact": "toe",
+        "pivot": "toe",
+        "stage": "heel rise / toe loading / toe-off"
+      },
+      "far": {
+        "phase": 0.10416666666666652,
+        "heel": [
+          209.70000000000002,
+          342.0
+        ],
+        "toe": [
+          238.33528586811354,
+          341.85716004964615
+        ],
+        "angle_degrees": -0.2858032728909514,
+        "contact": "heel",
+        "pivot": "heel",
+        "stage": "heel contact / loading response / foot settling"
+      },
+      "visible_shoe_pixels": [
+        230,
+        289
+      ],
+      "sha256": "5381bc3a90bcb0564a7787b92848503d2940cf2d1e7058578777729cd6022aa3"
+    },
+    {
+      "index": 31,
+      "file": "frames/frame_31.png",
+      "duration_ms": 30,
+      "phase": 0.625,
+      "root_travel_x": 75.0,
+      "near": {
+        "phase": 0.625,
+        "heel": [
+          148.46730676074245,
+          335.1426257670803
+        ],
+        "toe": [
+          167.26275674923158,
+          341.9786377426552
+        ],
+        "angle_degrees": 19.986614302376438,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.125,
+        "heel": [
+          207.2,
+          342.0
+        ],
+        "toe": [
+          235.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        250,
+        292
+      ],
+      "sha256": "b7fb4f475d89e5d2c5bf32ed7c120dc51cd10adda08ffc89918cdd67e43b7fb9"
+    },
+    {
+      "index": 32,
+      "file": "frames/frame_32.png",
+      "duration_ms": 30,
+      "phase": 0.6458333333333334,
+      "root_travel_x": 77.5,
+      "near": {
+        "phase": 0.6458333333333334,
+        "heel": [
+          147.47855833001384,
+          334.7110497449323
+        ],
+        "toe": [
+          166.31315847504916,
+          341.4384442908643
+        ],
+        "angle_degrees": 19.6558518933626,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.14583333333333348,
+        "heel": [
+          204.7,
+          342.0
+        ],
+        "toe": [
+          233.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        247,
+        307
+      ],
+      "sha256": "fe1bba9ab0494d2b1045cdd5117c5fe8e65bb675be81459e3224d8f86b75e6c7"
+    },
+    {
+      "index": 33,
+      "file": "frames/frame_33.png",
+      "duration_ms": 30,
+      "phase": 0.6666666666666666,
+      "root_travel_x": 80.0,
+      "near": {
+        "phase": 0.6666666666666666,
+        "heel": [
+          148.34089731366754,
+          333.74444560518543
+        ],
+        "toe": [
+          167.26034781005242,
+          340.2293814502684
+        ],
+        "angle_degrees": 18.919948378178443,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.16666666666666652,
+        "heel": [
+          202.20000000000002,
+          342.0
+        ],
+        "toe": [
+          230.83564212655273,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        222,
+        307
+      ],
+      "sha256": "beaf4786f97b72ab95cf7287b98c73adc8bf949013f05538f697ec4a87da91c6"
+    },
+    {
+      "index": 34,
+      "file": "frames/frame_34.png",
+      "duration_ms": 30,
+      "phase": 0.6875,
+      "root_travel_x": 82.5,
+      "near": {
+        "phase": 0.6875,
+        "heel": [
+          150.81941414135034,
+          332.3656036546222
+        ],
+        "toe": [
+          169.85876420602574,
+          338.4895851303245
+        ],
+        "angle_degrees": 17.830317602784667,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.1875,
+        "heel": [
+          199.7,
+          342.0
+        ],
+        "toe": [
+          228.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        187,
+        316
+      ],
+      "sha256": "1532d7add226e38ef6ada9244e70bb313defa87eeb6568072a44cd1ab042c080"
+    },
+    {
+      "index": 35,
+      "file": "frames/frame_35.png",
+      "duration_ms": 30,
+      "phase": 0.7083333333333334,
+      "root_travel_x": 85.0,
+      "near": {
+        "phase": 0.7083333333333334,
+        "heel": [
+          154.6791992427092,
+          330.756683409997
+        ],
+        "toe": [
+          173.86169250981928,
+          336.41636114439814
+        ],
+        "angle_degrees": 16.438373413141964,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.20833333333333348,
+        "heel": [
+          197.2,
+          342.0
+        ],
+        "toe": [
+          225.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        156,
+        329
+      ],
+      "sha256": "99e03dbb699c93ef8a840e7f29139f3468d35a35cddd96da805f55590dac2df7"
+    },
+    {
+      "index": 36,
+      "file": "frames/frame_36.png",
+      "duration_ms": 30,
+      "phase": 0.7291666666666666,
+      "root_travel_x": 87.5,
+      "near": {
+        "phase": 0.7291666666666666,
+        "heel": [
+          159.68534304739106,
+          329.13622188615204
+        ],
+        "toe": [
+          179.02220936960524,
+          334.2436283548815
+        ],
+        "angle_degrees": 14.795529655211052,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.22916666666666652,
+        "heel": [
+          194.70000000000002,
+          342.0
+        ],
+        "toe": [
+          223.33564212655273,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        126,
+        343
+      ],
+      "sha256": "418df9d0d8a8fcf84ae5d10e61119b16e35b673b8163201b8bdf4a57c60882b6"
+    },
+    {
+      "index": 37,
+      "file": "frames/frame_37.png",
+      "duration_ms": 30,
+      "phase": 0.75,
+      "root_travel_x": 90.0,
+      "near": {
+        "phase": 0.75,
+        "heel": [
+          165.60293598504288,
+          327.73186778948286
+        ],
+        "toe": [
+          185.0940056296114,
+          332.2149698528514
+        ],
+        "angle_degrees": 12.953200174952617,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.25,
+        "heel": [
+          192.2,
+          342.0
+        ],
+        "toe": [
+          220.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        112,
+        342
+      ],
+      "sha256": "e2b3ad3ea92d9ff711b3ca721f3f4a73f3ee935d9d27518072da1f3a53b1a899"
+    },
+    {
+      "index": 38,
+      "file": "frames/frame_38.png",
+      "duration_ms": 30,
+      "phase": 0.7708333333333334,
+      "root_travel_x": 92.5,
+      "near": {
+        "phase": 0.7708333333333334,
+        "heel": [
+          172.1970684853116,
+          326.75204515311435
+        ],
+        "toe": [
+          191.83208579700218,
+          330.5554771782217
+        ],
+        "angle_degrees": 10.962798818327363,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.2708333333333335,
+        "heel": [
+          189.7,
+          342.0
+        ],
+        "toe": [
+          218.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        86,
+        355
+      ],
+      "sha256": "e8b73e46ec11acc6052eeb0e775bce5d7d62b3672fefa508a3d0274580b40d26"
+    },
+    {
+      "index": 39,
+      "file": "frames/frame_39.png",
+      "duration_ms": 30,
+      "phase": 0.7916666666666666,
+      "root_travel_x": 95.0,
+      "near": {
+        "phase": 0.7916666666666666,
+        "heel": [
+          179.23283097784397,
+          326.3598757330559
+        ],
+        "toe": [
+          198.9933366923599,
+          329.4457166081795
+        ],
+        "angle_degrees": 8.875739431296003,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.2916666666666665,
+        "heel": [
+          187.20000000000002,
+          342.0
+        ],
+        "toe": [
+          215.83564212655273,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        45,
+        349
+      ],
+      "sha256": "6d3ae280fd8edeb4bb4db8e5b00d013629fca7a4d7139f5a84aff808ef995193"
+    },
+    {
+      "index": 40,
+      "file": "frames/frame_40.png",
+      "duration_ms": 30,
+      "phase": 0.8125,
+      "root_travel_x": 97.5,
+      "near": {
+        "phase": 0.8125,
+        "heel": [
+          186.47531389228712,
+          326.6524240964171
+        ],
+        "toe": [
+          206.3369522164989,
+          329.000896595341
+        ],
+        "angle_degrees": 6.743435859819218,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.3125,
+        "heel": [
+          184.7,
+          342.0
+        ],
+        "toe": [
+          213.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        6,
+        355
+      ],
+      "sha256": "8c3ae04a15185daaafd0f15e329729ba561dba20974a8e494e787be119a7f6d5"
+    },
+    {
+      "index": 41,
+      "file": "frames/frame_41.png",
+      "duration_ms": 30,
+      "phase": 0.8333333333333334,
+      "root_travel_x": 100.0,
+      "near": {
+        "phase": 0.8333333333333334,
+        "heel": [
+          193.68960765828794,
+          327.64770395469407
+        ],
+        "toe": [
+          213.6246999554679,
+          329.25770243385995
+        ],
+        "angle_degrees": 4.617301949857714,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.3333333333333335,
+        "heel": [
+          182.2,
+          342.0
+        ],
+        "toe": [
+          210.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        47,
+        345
+      ],
+      "sha256": "18fc869cbd207828d37abdf6ae69b08e942cdf79db90472d90c345b7b9b43985"
+    },
+    {
+      "index": 42,
+      "file": "frames/frame_42.png",
+      "duration_ms": 30,
+      "phase": 0.8541666666666666,
+      "root_travel_x": 102.5,
+      "near": {
+        "phase": 0.8541666666666666,
+        "heel": [
+          200.64080270549326,
+          329.28097240460477
+        ],
+        "toe": [
+          220.62101761128883,
+          330.170361137513
+        ],
+        "angle_degrees": 2.5487515473722056,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.3541666666666665,
+        "heel": [
+          179.70000000000002,
+          342.0
+        ],
+        "toe": [
+          208.33564212655273,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        106,
+        343
+      ],
+      "sha256": "1b03e03047bf8d122991d398b7d6be71518a73b6cae961f8ed17c468f8d67164"
+    },
+    {
+      "index": 43,
+      "file": "frames/frame_43.png",
+      "duration_ms": 30,
+      "phase": 0.875,
+      "root_travel_x": 105.0,
+      "near": {
+        "phase": 0.875,
+        "heel": [
+          207.09398946355006,
+          331.41074747654847
+        ],
+        "toe": [
+          227.09293197866018,
+          331.61641292654105
+        ],
+        "angle_degrees": 0.5891984983233733,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.375,
+        "heel": [
+          177.2,
+          342.0
+        ],
+        "toe": [
+          205.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        171,
+        335
+      ],
+      "sha256": "de6258913096eb8be3d6be35971d092f265eb380e62924d7f2ac3357690c03fd"
+    },
+    {
+      "index": 44,
+      "file": "frames/frame_44.png",
+      "duration_ms": 30,
+      "phase": 0.8958333333333334,
+      "root_travel_x": 107.5,
+      "near": {
+        "phase": 0.8958333333333334,
+        "heel": [
+          212.81425836210528,
+          333.8338419719824
+        ],
+        "toe": [
+          232.80979904177445,
+          333.4115234574752
+        ],
+        "angle_degrees": -1.209943351328075,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.3958333333333335,
+        "heel": [
+          174.7,
+          342.0
+        ],
+        "toe": [
+          203.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        210,
+        332
+      ],
+      "sha256": "1bcf7b51328f5a36a826fe40de173b01e9f09632ff803e982d5f17dd483cb75c"
+    },
+    {
+      "index": 45,
+      "file": "frames/frame_45.png",
+      "duration_ms": 30,
+      "phase": 0.9166666666666666,
+      "root_travel_x": 110.0,
+      "near": {
+        "phase": 0.9166666666666666,
+        "heel": [
+          217.56669983080582,
+          336.30764722184307
+        ],
+        "toe": [
+          237.54286927403612,
+          335.33160707136176
+        ],
+        "angle_degrees": -2.7972601556214265,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.4166666666666665,
+        "heel": [
+          172.20000000000002,
+          342.0
+        ],
+        "toe": [
+          200.83564212655273,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        267,
+        321
+      ],
+      "sha256": "9fd2624a0b4758b9023b5e1e69478a1d800cc8c8b3615348d04bfa7590ef9789"
+    },
+    {
+      "index": 46,
+      "file": "frames/frame_46.png",
+      "duration_ms": 30,
+      "phase": 0.9375,
+      "root_travel_x": 112.5,
+      "near": {
+        "phase": 0.9375,
+        "heel": [
+          221.1164042992987,
+          338.5770485845074
+        ],
+        "toe": [
+          241.064686033591,
+          337.13967046817896
+        ],
+        "angle_degrees": -4.121338068596003,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.4375,
+        "heel": [
+          169.7,
+          342.0
+        ],
+        "toe": [
+          198.3356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        320,
+        316
+      ],
+      "sha256": "923fd6cc1011e63849378b1ede9c8538e92c8723a10f433cd3472a14988b498d"
+    },
+    {
+      "index": 47,
+      "file": "frames/frame_47.png",
+      "duration_ms": 30,
+      "phase": 0.9583333333333334,
+      "root_travel_x": 115.0,
+      "near": {
+        "phase": 0.9583333333333334,
+        "heel": [
+          223.22846219723067,
+          340.4028103056737
+        ],
+        "toe": [
+          243.14832605173282,
+          338.6142287397118
+        ],
+        "angle_degrees": -5.130763244291092,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.4583333333333335,
+        "heel": [
+          167.2,
+          342.0
+        ],
+        "toe": [
+          195.8356421265527,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        359,
+        306
+      ],
+      "sha256": "321cc99ce305027f2cc83c44ebb70b9937d6d96e2ff73471cb11b5ed1557a414"
+    },
+    {
+      "index": 48,
+      "file": "frames/frame_48.png",
+      "duration_ms": 30,
+      "phase": 0.9791666666666666,
+      "root_travel_x": 117.5,
+      "near": {
+        "phase": 0.9791666666666666,
+        "heel": [
+          223.66796395424885,
+          341.58809472307297
+        ],
+        "toe": [
+          243.56648896130898,
+          339.575955924828
+        ],
+        "angle_degrees": -5.774121836745991,
+        "contact": "air",
+        "pivot": "heel",
+        "stage": "swing / passing / late swing / pre-contact"
+      },
+      "far": {
+        "phase": 0.4791666666666665,
+        "heel": [
+          164.70000000000002,
+          342.0
+        ],
+        "toe": [
+          193.33564212655273,
+          342.0
+        ],
+        "angle_degrees": 0.0,
+        "contact": "flat",
+        "pivot": "heel",
+        "stage": "early / mid / late support"
+      },
+      "visible_shoe_pixels": [
+        373,
+        302
+      ],
+      "sha256": "a1492f1663d9247d23d9079c7893ecc52ddf7ebca198c5c052570d6c65ac4758"
+    }
+  ]
+}

@@ -1,0 +1,864 @@
+{
+  "overall_visual_gate": "FAILED",
+  "technical_package_checks": "PASS",
+  "original_32_preserved": true,
+  "original_16_preserved": true,
+  "all_repaired_anchor_pixels_outside_masks_exact": true,
+  "png_count": 64,
+  "unique_png_count": 64,
+  "frame_duration_ms": 21.25,
+  "loop_duration_ms": 1360,
+  "gif": {
+    "walk_64f.gif": {
+      "frames": 64,
+      "loop_ms": 1360
+    },
+    "comparison.gif": {
+      "frames": 64,
+      "loop_ms": 1360
+    }
+  },
+  "analytic_locking": {
+    "near": {
+      "continuous_contact_point_drift_px": 5.684341886080802e-14,
+      "meaning": "analytic heel/forefoot reference, with 72px/cycle root travel; not visible-pixel or visual approval"
+    },
+    "far": {
+      "continuous_contact_point_drift_px": 5.684341886080802e-14,
+      "meaning": "analytic heel/forefoot reference, with 72px/cycle root travel; not visible-pixel or visual approval"
+    }
+  },
+  "visual_gates": [
+    {
+      "gate": "support-foot visual lock",
+      "status": "NOT_PASSED",
+      "frames": "1\u201364",
+      "reason": "Analytic contact references lock with root travel; visible shoe/hem extraction is not clean enough to certify the painted contacts."
+    },
+    {
+      "gate": "progressive swing trajectory",
+      "status": "TECHNICAL_PASS",
+      "frames": "9\u201332 and 41\u201364",
+      "reason": "Continuous rigid-shoe trajectories; no scale/shear; start/end velocity matches root travel."
+    },
+    {
+      "gate": "clear visible near/far role exchange",
+      "status": "FAILED",
+      "frames": "15\u201324 and 47\u201356",
+      "reason": "Shoes exchange modeled roles but long-skirt occlusion and extraction joins obscure the visible passing exchange."
+    },
+    {
+      "gate": "natural passing",
+      "status": "FAILED",
+      "frames": "15\u201324 and 47\u201356",
+      "reason": "The lifted shoe becomes heavily occluded; close silhouettes/joins do not give a clean, natural passing read."
+    },
+    {
+      "gate": "identical shoe design and scale",
+      "status": "TECHNICAL_PASS_VISUAL_LIMIT",
+      "frames": "1\u201364",
+      "reason": "Two separate approved source-shoe cutouts use rigid unit transforms. Occlusion/retained opening fragments affect the visible silhouette, so full visual gate is not passed."
+    },
+    {
+      "gate": "stable skirt/clean ankle coverage",
+      "status": "FAILED",
+      "frames": "1\u201364, strongest at 9\u201324 and 33\u201356",
+      "reason": "Original foot-opening cutouts leave notches/short straight joins; small skin-colored opening remnants can be visible. No broad skirt retargeting retained."
+    },
+    {
+      "gate": "no broken-leg appearance",
+      "status": "FAILED",
+      "frames": "15\u201324 and 47\u201356",
+      "reason": "No new anatomy was painted, but passing occlusion/opening joins still require repair before approval."
+    },
+    {
+      "gate": "identity preservation",
+      "status": "TECHNICAL_PASS",
+      "frames": "1\u201364",
+      "reason": "Original painting, no generative redraw; original anchors unchanged separately; repaired anchor pixels outside local masks exact."
+    },
+    {
+      "gate": "no loop snap",
+      "status": "FAILED",
+      "frames": "64\u21921",
+      "reason": "Shoe curves are periodic with root travel, but the retained source hem/body painting still switches at the restart."
+    },
+    {
+      "gate": "visibly smoother overall than 32",
+      "status": "NOT_PASSED",
+      "frames": "1\u201364",
+      "reason": "Finer kinematic samples are not sufficient evidence of full-animation improvement. Full-speed human review not completed in this session."
+    }
+  ],
+  "checks": [
+    {
+      "frame": 1,
+      "alpha_bbox": [
+        97,
+        33,
+        268,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 278,
+      "visible_far_shoe_pixels": 304
+    },
+    {
+      "frame": 2,
+      "alpha_bbox": [
+        94,
+        32,
+        270,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 246,
+      "visible_far_shoe_pixels": 232
+    },
+    {
+      "frame": 3,
+      "alpha_bbox": [
+        94,
+        32,
+        271,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 251,
+      "visible_far_shoe_pixels": 226
+    },
+    {
+      "frame": 4,
+      "alpha_bbox": [
+        94,
+        32,
+        273,
+        348
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 274,
+      "visible_far_shoe_pixels": 216
+    },
+    {
+      "frame": 5,
+      "alpha_bbox": [
+        94,
+        33,
+        274,
+        348
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 276,
+      "visible_far_shoe_pixels": 209
+    },
+    {
+      "frame": 6,
+      "alpha_bbox": [
+        94,
+        32,
+        273,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 286,
+      "visible_far_shoe_pixels": 212
+    },
+    {
+      "frame": 7,
+      "alpha_bbox": [
+        94,
+        32,
+        272,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 290,
+      "visible_far_shoe_pixels": 209
+    },
+    {
+      "frame": 8,
+      "alpha_bbox": [
+        93,
+        32,
+        271,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 283,
+      "visible_far_shoe_pixels": 214
+    },
+    {
+      "frame": 9,
+      "alpha_bbox": [
+        94,
+        32,
+        280,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 317,
+      "visible_far_shoe_pixels": 179
+    },
+    {
+      "frame": 10,
+      "alpha_bbox": [
+        94,
+        32,
+        277,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 301,
+      "visible_far_shoe_pixels": 177
+    },
+    {
+      "frame": 11,
+      "alpha_bbox": [
+        94,
+        32,
+        274,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 295,
+      "visible_far_shoe_pixels": 176
+    },
+    {
+      "frame": 12,
+      "alpha_bbox": [
+        94,
+        32,
+        271,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 289,
+      "visible_far_shoe_pixels": 156
+    },
+    {
+      "frame": 13,
+      "alpha_bbox": [
+        96,
+        34,
+        281,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 307,
+      "visible_far_shoe_pixels": 134
+    },
+    {
+      "frame": 14,
+      "alpha_bbox": [
+        96,
+        34,
+        274,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 281,
+      "visible_far_shoe_pixels": 64
+    },
+    {
+      "frame": 15,
+      "alpha_bbox": [
+        96,
+        34,
+        267,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 308,
+      "visible_far_shoe_pixels": 25
+    },
+    {
+      "frame": 16,
+      "alpha_bbox": [
+        96,
+        34,
+        263,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 375,
+      "visible_far_shoe_pixels": 37
+    },
+    {
+      "frame": 17,
+      "alpha_bbox": [
+        97,
+        34,
+        268,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 388,
+      "visible_far_shoe_pixels": 15
+    },
+    {
+      "frame": 18,
+      "alpha_bbox": [
+        93,
+        35,
+        259,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 344,
+      "visible_far_shoe_pixels": 74
+    },
+    {
+      "frame": 19,
+      "alpha_bbox": [
+        93,
+        35,
+        261,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 290,
+      "visible_far_shoe_pixels": 91
+    },
+    {
+      "frame": 20,
+      "alpha_bbox": [
+        93,
+        34,
+        264,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 278,
+      "visible_far_shoe_pixels": 117
+    },
+    {
+      "frame": 21,
+      "alpha_bbox": [
+        93,
+        34,
+        267,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 287,
+      "visible_far_shoe_pixels": 109
+    },
+    {
+      "frame": 22,
+      "alpha_bbox": [
+        92,
+        34,
+        267,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 289,
+      "visible_far_shoe_pixels": 100
+    },
+    {
+      "frame": 23,
+      "alpha_bbox": [
+        92,
+        35,
+        266,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 291,
+      "visible_far_shoe_pixels": 91
+    },
+    {
+      "frame": 24,
+      "alpha_bbox": [
+        91,
+        35,
+        265,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 293,
+      "visible_far_shoe_pixels": 114
+    },
+    {
+      "frame": 25,
+      "alpha_bbox": [
+        85,
+        33,
+        277,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 308,
+      "visible_far_shoe_pixels": 156
+    },
+    {
+      "frame": 26,
+      "alpha_bbox": [
+        88,
+        33,
+        278,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 285,
+      "visible_far_shoe_pixels": 201
+    },
+    {
+      "frame": 27,
+      "alpha_bbox": [
+        91,
+        33,
+        279,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 261,
+      "visible_far_shoe_pixels": 244
+    },
+    {
+      "frame": 28,
+      "alpha_bbox": [
+        94,
+        33,
+        280,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 237,
+      "visible_far_shoe_pixels": 283
+    },
+    {
+      "frame": 29,
+      "alpha_bbox": [
+        92,
+        36,
+        288,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 231,
+      "visible_far_shoe_pixels": 299
+    },
+    {
+      "frame": 30,
+      "alpha_bbox": [
+        97,
+        33,
+        269,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 294,
+      "visible_far_shoe_pixels": 352
+    },
+    {
+      "frame": 31,
+      "alpha_bbox": [
+        97,
+        33,
+        271,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 296,
+      "visible_far_shoe_pixels": 323
+    },
+    {
+      "frame": 32,
+      "alpha_bbox": [
+        94,
+        32,
+        274,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 299,
+      "visible_far_shoe_pixels": 298
+    },
+    {
+      "frame": 33,
+      "alpha_bbox": [
+        91,
+        32,
+        277,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 305,
+      "visible_far_shoe_pixels": 313
+    },
+    {
+      "frame": 34,
+      "alpha_bbox": [
+        89,
+        32,
+        276,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 321,
+      "visible_far_shoe_pixels": 302
+    },
+    {
+      "frame": 35,
+      "alpha_bbox": [
+        87,
+        32,
+        275,
+        347
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 332,
+      "visible_far_shoe_pixels": 296
+    },
+    {
+      "frame": 36,
+      "alpha_bbox": [
+        85,
+        32,
+        274,
+        348
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 338,
+      "visible_far_shoe_pixels": 298
+    },
+    {
+      "frame": 37,
+      "alpha_bbox": [
+        93,
+        32,
+        283,
+        348
+      ],
+      "strong_alpha_bottom": 342,
+      "visible_near_shoe_pixels": 315,
+      "visible_far_shoe_pixels": 288
+    },
+    {
+      "frame": 38,
+      "alpha_bbox": [
+        93,
+        32,
+        282,
+        348
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 316,
+      "visible_far_shoe_pixels": 285
+    },
+    {
+      "frame": 39,
+      "alpha_bbox": [
+        93,
+        32,
+        281,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 311,
+      "visible_far_shoe_pixels": 289
+    },
+    {
+      "frame": 40,
+      "alpha_bbox": [
+        93,
+        32,
+        280,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 316,
+      "visible_far_shoe_pixels": 291
+    },
+    {
+      "frame": 41,
+      "alpha_bbox": [
+        94,
+        33,
+        277,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 243,
+      "visible_far_shoe_pixels": 304
+    },
+    {
+      "frame": 42,
+      "alpha_bbox": [
+        92,
+        33,
+        274,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 272,
+      "visible_far_shoe_pixels": 323
+    },
+    {
+      "frame": 43,
+      "alpha_bbox": [
+        93,
+        33,
+        274,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 283,
+      "visible_far_shoe_pixels": 322
+    },
+    {
+      "frame": 44,
+      "alpha_bbox": [
+        93,
+        33,
+        275,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 280,
+      "visible_far_shoe_pixels": 335
+    },
+    {
+      "frame": 45,
+      "alpha_bbox": [
+        94,
+        33,
+        275,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 278,
+      "visible_far_shoe_pixels": 337
+    },
+    {
+      "frame": 46,
+      "alpha_bbox": [
+        97,
+        33,
+        270,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 196,
+      "visible_far_shoe_pixels": 288
+    },
+    {
+      "frame": 47,
+      "alpha_bbox": [
+        97,
+        33,
+        266,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 132,
+      "visible_far_shoe_pixels": 288
+    },
+    {
+      "frame": 48,
+      "alpha_bbox": [
+        97,
+        33,
+        264,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 242,
+      "visible_far_shoe_pixels": 265
+    },
+    {
+      "frame": 49,
+      "alpha_bbox": [
+        96,
+        37,
+        265,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 152,
+      "visible_far_shoe_pixels": 268
+    },
+    {
+      "frame": 50,
+      "alpha_bbox": [
+        94,
+        34,
+        261,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 138,
+      "visible_far_shoe_pixels": 280
+    },
+    {
+      "frame": 51,
+      "alpha_bbox": [
+        94,
+        34,
+        263,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 57,
+      "visible_far_shoe_pixels": 236
+    },
+    {
+      "frame": 52,
+      "alpha_bbox": [
+        94,
+        34,
+        270,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 0,
+      "visible_far_shoe_pixels": 274
+    },
+    {
+      "frame": 53,
+      "alpha_bbox": [
+        94,
+        35,
+        281,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 27,
+      "visible_far_shoe_pixels": 300
+    },
+    {
+      "frame": 54,
+      "alpha_bbox": [
+        94,
+        34,
+        280,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 11,
+      "visible_far_shoe_pixels": 294
+    },
+    {
+      "frame": 55,
+      "alpha_bbox": [
+        94,
+        34,
+        279,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 4,
+      "visible_far_shoe_pixels": 284
+    },
+    {
+      "frame": 56,
+      "alpha_bbox": [
+        94,
+        34,
+        278,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 22,
+      "visible_far_shoe_pixels": 277
+    },
+    {
+      "frame": 57,
+      "alpha_bbox": [
+        96,
+        35,
+        284,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 37,
+      "visible_far_shoe_pixels": 310
+    },
+    {
+      "frame": 58,
+      "alpha_bbox": [
+        96,
+        35,
+        284,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 82,
+      "visible_far_shoe_pixels": 281
+    },
+    {
+      "frame": 59,
+      "alpha_bbox": [
+        96,
+        35,
+        284,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 115,
+      "visible_far_shoe_pixels": 264
+    },
+    {
+      "frame": 60,
+      "alpha_bbox": [
+        96,
+        35,
+        284,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 142,
+      "visible_far_shoe_pixels": 246
+    },
+    {
+      "frame": 61,
+      "alpha_bbox": [
+        94,
+        35,
+        271,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 210,
+      "visible_far_shoe_pixels": 294
+    },
+    {
+      "frame": 62,
+      "alpha_bbox": [
+        94,
+        34,
+        271,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 242,
+      "visible_far_shoe_pixels": 288
+    },
+    {
+      "frame": 63,
+      "alpha_bbox": [
+        94,
+        34,
+        271,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 269,
+      "visible_far_shoe_pixels": 286
+    },
+    {
+      "frame": 64,
+      "alpha_bbox": [
+        94,
+        34,
+        271,
+        349
+      ],
+      "strong_alpha_bottom": 343,
+      "visible_near_shoe_pixels": 270,
+      "visible_far_shoe_pixels": 281
+    }
+  ],
+  "review_method": "Full ordered sequence inspected on light/dark sheets. No claim of observed real-time browser playback; no browser automation used."
+}

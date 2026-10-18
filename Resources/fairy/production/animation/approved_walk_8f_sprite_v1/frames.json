@@ -1,0 +1,157 @@
+{
+  "source_sha256": "a4b730d51f062241cf5927e060d849c6696116923aaf26a8a6674b01df7fbbcb",
+  "canvas": [
+    362,
+    482
+  ],
+  "baseline_y": 472,
+  "frame_count": 8,
+  "loop_duration_ms": 800,
+  "frames": [
+    {
+      "index": 1,
+      "file": "frames/frame_01.png",
+      "duration_ms": 100,
+      "crop": [
+        0,
+        0,
+        362,
+        482
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "13fe0131a6bbf3d44c1a60c11c56245051ae55e63588a4fde1ab5318776e9b20"
+    },
+    {
+      "index": 2,
+      "file": "frames/frame_02.png",
+      "duration_ms": 100,
+      "crop": [
+        362,
+        0,
+        724,
+        482
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "36ed6ce35702f0b30860fd2d4ad20c7c5a367691c069bcd9b7e8856e9ca230f6"
+    },
+    {
+      "index": 3,
+      "file": "frames/frame_03.png",
+      "duration_ms": 100,
+      "crop": [
+        724,
+        0,
+        1086,
+        482
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "e6cde85799ca85f490482d9216b3c9a1b7f66527eea14f2e7976def19fc5dd59"
+    },
+    {
+      "index": 4,
+      "file": "frames/frame_04.png",
+      "duration_ms": 100,
+      "crop": [
+        1086,
+        0,
+        1448,
+        482
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "2a3d38fa3f8d506b24988251f4b39780704378438bac70e84ae8c4e06a07bdfe"
+    },
+    {
+      "index": 5,
+      "file": "frames/frame_05.png",
+      "duration_ms": 100,
+      "crop": [
+        0,
+        522,
+        362,
+        1004
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "a8dcd3de4606e0780f8cff465c1eaa4a7d595d9414fff8eabd6c6e8f442dd9cf"
+    },
+    {
+      "index": 6,
+      "file": "frames/frame_06.png",
+      "duration_ms": 100,
+      "crop": [
+        362,
+        522,
+        724,
+        1004
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "b3166c8ac7b137a7a10ada9ce02d3ce0aa60b48cde30e98ce0dae18dec5e4bcb"
+    },
+    {
+      "index": 7,
+      "file": "frames/frame_07.png",
+      "duration_ms": 100,
+      "crop": [
+        724,
+        522,
+        1086,
+        1004
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "7c2a1d34dbba939405095d60a887f5bc30c296ab5d75300e767370e235da8365"
+    },
+    {
+      "index": 8,
+      "file": "frames/frame_08.png",
+      "duration_ms": 100,
+      "crop": [
+        1086,
+        522,
+        1448,
+        1004
+      ],
+      "scale": 1,
+      "translation": [
+        0,
+        0
+      ],
+      "rgb_source_exact": true,
+      "sha256": "a65edc8aa6872277f4dcdc77449b87103fc565f89b2b77c9834371d1c8b72e37"
+    }
+  ],
+  "registration": "Fixed 362px column grid and 522px row pitch. No individual scaling or bounding-box recentering."
+}

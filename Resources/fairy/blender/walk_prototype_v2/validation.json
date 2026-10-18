@@ -1,0 +1,293 @@
+{
+  "status": "PROTOTYPE_READY_FOR_MANUAL_REVIEW",
+  "rig_exists": true,
+  "frame_count": 24,
+  "rgba_canvas": [
+    1254,
+    1254
+  ],
+  "fps": 16,
+  "duration_seconds": 1.5,
+  "rest_exact": true,
+  "loop_closure_exact": true,
+  "mesh_triangle_flips": 0,
+  "mesh_linear_scale_min": 0.8802373034506906,
+  "mesh_linear_scale_max": 1.1279057062256803,
+  "painted_triangle_centroid_scale_min": 0.9229509442009962,
+  "painted_triangle_centroid_scale_max": 1.0848721115511735,
+  "max_ankle_IK_target_error_source_px": 4.686836763184454e-05,
+  "minimum_joint_center_alpha": 237,
+  "frame_checks": [
+    {
+      "frame": 1,
+      "min_scale": 0.976879235847939,
+      "max_scale": 1.0254067530796402,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 2,
+      "min_scale": 0.9768782692701661,
+      "max_scale": 1.0254068518044497,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 3,
+      "min_scale": 0.9686652434341404,
+      "max_scale": 1.0254075327147296,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 244
+      }
+    },
+    {
+      "frame": 4,
+      "min_scale": 0.9598840223132614,
+      "max_scale": 1.0254056612101892,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 5,
+      "min_scale": 0.9544772672913533,
+      "max_scale": 1.0275802969457677,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 6,
+      "min_scale": 0.95322485801195,
+      "max_scale": 1.0312923364778463,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 244
+      }
+    },
+    {
+      "frame": 7,
+      "min_scale": 0.9564838305351684,
+      "max_scale": 1.0318147866084306,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 244
+      }
+    },
+    {
+      "frame": 8,
+      "min_scale": 0.962231279270359,
+      "max_scale": 1.0291356486069816,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 9,
+      "min_scale": 0.9692368602097683,
+      "max_scale": 1.027551360014764,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 10,
+      "min_scale": 0.9768780716282786,
+      "max_scale": 1.0299457945310007,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 11,
+      "min_scale": 0.9753395296791072,
+      "max_scale": 1.0327241141896983,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 12,
+      "min_scale": 0.9728622381932931,
+      "max_scale": 1.0360045038832526,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 13,
+      "min_scale": 0.9562584857939438,
+      "max_scale": 1.057924320580167,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 14,
+      "min_scale": 0.9610334623141763,
+      "max_scale": 1.051626060687232,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 15,
+      "min_scale": 0.9476458226446347,
+      "max_scale": 1.0639230965520714,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 16,
+      "min_scale": 0.9263803756101344,
+      "max_scale": 1.0805330374344058,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 250,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 17,
+      "min_scale": 0.9070879488928887,
+      "max_scale": 1.1000066252832736,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 250,
+        "forearm_right": 237
+      }
+    },
+    {
+      "frame": 18,
+      "min_scale": 0.8924047677319874,
+      "max_scale": 1.1153182044678571,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 253,
+        "forearm_left": 250,
+        "forearm_right": 237
+      }
+    },
+    {
+      "frame": 19,
+      "min_scale": 0.8833810790567753,
+      "max_scale": 1.1246614456528703,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 251,
+        "forearm_right": 239
+      }
+    },
+    {
+      "frame": 20,
+      "min_scale": 0.8802373034506906,
+      "max_scale": 1.1279057062256803,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 251,
+        "forearm_right": 240
+      }
+    },
+    {
+      "frame": 21,
+      "min_scale": 0.8825480307398786,
+      "max_scale": 1.1255232525084284,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 252,
+        "forearm_right": 242
+      }
+    },
+    {
+      "frame": 22,
+      "min_scale": 0.8893253991660252,
+      "max_scale": 1.1185135761317706,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 23,
+      "min_scale": 0.8991262310999165,
+      "max_scale": 1.1083278345563474,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    },
+    {
+      "frame": 24,
+      "min_scale": 0.9102764909225702,
+      "max_scale": 1.096664297116028,
+      "joint_center_min_alpha": {
+        "calf_left": 252,
+        "calf_right": 254,
+        "forearm_left": 253,
+        "forearm_right": 243
+      }
+    }
+  ],
+  "source_hashes_unchanged": true,
+  "limits": [
+    "Short-stride single-view cutout study, not a production locomotion approval.",
+    "Heel/toe roll is approximate; ankle targets are validated, not a physical shoe-ground simulation.",
+    "Native Eevee layered-alpha preview differs from approved source; use supplied evaluated-mesh PNG exporter.",
+    "Existing source edge residue and fine painterly cutout boundaries remain visible at high magnification."
+  ]
+}

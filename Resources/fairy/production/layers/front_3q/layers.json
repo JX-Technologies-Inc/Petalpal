@@ -1,0 +1,498 @@
+{
+  "status": "DRAFT_LAYER_RECONSTRUCTION_REQUIRES_VISUAL_REVIEW",
+  "source": "../../master/fairy_approved_structure.png",
+  "source_sha256": "86eed8eb748ced65bf6215fab48224b9e05bb8be50c213eb287d54ec0bf270b8",
+  "view": "front_3q",
+  "canvas": [
+    1024,
+    1024
+  ],
+  "root": [
+    512,
+    896
+  ],
+  "root_normalized": [
+    0.5,
+    0.875
+  ],
+  "original_source_root": [
+    683,
+    686
+  ],
+  "source_translation": [
+    -171,
+    210
+  ],
+  "source_scale": 1,
+  "source_rotation_degrees": 0,
+  "layers_back_to_front": [
+    {
+      "file": "wing_left.png",
+      "z_index": 0,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1464,
+      "hidden_seam_pixels": 5,
+      "alpha_bounds": [
+        545,
+        472,
+        577,
+        561
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "wing_right.png",
+      "z_index": 1,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1228,
+      "hidden_seam_pixels": 109,
+      "alpha_bounds": [
+        448,
+        471,
+        479,
+        558
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "dress_back_petals.png",
+      "z_index": 2,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 7383,
+      "hidden_seam_pixels": 1326,
+      "alpha_bounds": [
+        417,
+        547,
+        600,
+        847
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "leg_right.png",
+      "z_index": 3,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 3554,
+      "hidden_seam_pixels": 442,
+      "alpha_bounds": [
+        466,
+        670,
+        516,
+        887
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "leg_left.png",
+      "z_index": 4,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 5962,
+      "hidden_seam_pixels": 356,
+      "alpha_bounds": [
+        496,
+        671,
+        566,
+        897
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "body_base.png",
+      "z_index": 5,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1321,
+      "hidden_seam_pixels": 1121,
+      "alpha_bounds": [
+        478,
+        463,
+        542,
+        525
+      ],
+      "hidden_method": "adjacent original paint extension, <=8 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "arm_left_upper.png",
+      "z_index": 6,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 732,
+      "hidden_seam_pixels": 634,
+      "alpha_bounds": [
+        532,
+        493,
+        566,
+        585
+      ],
+      "hidden_method": "adjacent original paint extension, <=8 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "arm_left_lower.png",
+      "z_index": 7,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 616,
+      "hidden_seam_pixels": 131,
+      "alpha_bounds": [
+        556,
+        576,
+        605,
+        676
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "dress_base.png",
+      "z_index": 8,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 4697,
+      "hidden_seam_pixels": 1700,
+      "alpha_bounds": [
+        480,
+        501,
+        556,
+        692
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "dress_side_petals.png",
+      "z_index": 9,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 12496,
+      "hidden_seam_pixels": 1805,
+      "alpha_bounds": [
+        416,
+        554,
+        601,
+        839
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "dress_front_petals.png",
+      "z_index": 10,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 7579,
+      "hidden_seam_pixels": 237,
+      "alpha_bounds": [
+        451,
+        525,
+        578,
+        677
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "arm_right_upper.png",
+      "z_index": 11,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1426,
+      "hidden_seam_pixels": 99,
+      "alpha_bounds": [
+        464,
+        490,
+        495,
+        579
+      ],
+      "hidden_method": "adjacent original paint extension, <=8 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "arm_right_lower.png",
+      "z_index": 12,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1365,
+      "hidden_seam_pixels": 0,
+      "alpha_bounds": [
+        444,
+        569,
+        479,
+        675
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "hair_back.png",
+      "z_index": 13,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 559,
+      "hidden_seam_pixels": 647,
+      "alpha_bounds": [
+        456,
+        420,
+        550,
+        493
+      ],
+      "hidden_method": "adjacent original paint extension, <=8 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "head_face.png",
+      "z_index": 14,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1369,
+      "hidden_seam_pixels": 723,
+      "alpha_bounds": [
+        485,
+        418,
+        548,
+        474
+      ],
+      "hidden_method": "adjacent original paint extension, <=8 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "braided_updo.png",
+      "z_index": 15,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 894,
+      "hidden_seam_pixels": 117,
+      "alpha_bounds": [
+        457,
+        443,
+        495,
+        482
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "hair_front.png",
+      "z_index": 16,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 5050,
+      "hidden_seam_pixels": 234,
+      "alpha_bounds": [
+        460,
+        375,
+        557,
+        497
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    },
+    {
+      "file": "flower_accessory.png",
+      "z_index": 17,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "source_translation": [
+        -171,
+        210
+      ],
+      "visible_source_pixels": 1047,
+      "hidden_seam_pixels": 0,
+      "alpha_bounds": [
+        441,
+        410,
+        481,
+        459
+      ],
+      "hidden_method": "adjacent original paint extension, <=4 native pixels, behind opaque higher layers only"
+    }
+  ],
+  "visible_pixels_method": "Original source pixels with semantic trimap matting; opaque RGB exact, continuous foreground/alpha reconstruction at translucent boundaries",
+  "revision": "v002_alpha_cleanup",
+  "matting_metrics": {
+    "method": "closed-form trimap alpha and multi-level foreground estimation",
+    "matting_reconstruction_mean_abs_rgb": 0.8044480851374268,
+    "opaque_visible_pixels": 41684,
+    "partial_alpha_pixels": 17058
+  },
+  "hidden_seam_pixels_total": 9686,
+  "max_hidden_seam_extension_native_px": 8,
+  "opaque_color_validation": "Exact source RGB equality for alpha=255 visible pixels",
+  "recomposition_validation": "Byte-exact RGBA equality to source-derived registration cutout",
+  "limitations": [
+    "Flattened source cannot uniquely recover original wing/petal alpha; translucency is estimated",
+    "Seam support is conservative and only suitable for very small movement; no completed hidden anatomy for walk/run",
+    "Semantic cuts and anatomical side assignments require visual approval; no animation or app integration"
+  ],
+  "animation_frames_created": 0
+}

@@ -1,0 +1,10 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const html=fs.readFileSync(__dirname+'/index.html','utf8'),els={};
+for(const id of ['sprite','detail','r96','r108','r120','label','seek','play','prev','next','speed','bg','guide','stage','close'])els[id]={value:id==='speed'?'1':'0',style:{},classList:{toggle(){}},textContent:''};
+let tick;const ctx={document:{hidden:false,getElementById:id=>els[id],addEventListener(){}},requestAnimationFrame:fn=>tick=fn};vm.createContext(ctx);vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
+assert.equal(els.label.textContent,'Frame 1 / 16');
+els.next.onclick();assert.equal(els.label.textContent,'Frame 2 / 16');els.prev.onclick();assert.equal(els.label.textContent,'Frame 1 / 16');els.prev.onclick();assert.equal(els.label.textContent,'Frame 16 / 16');els.next.onclick();
+els.play.onclick();tick(0);tick(85);assert.equal(els.label.textContent,'Frame 2 / 16');els.speed.value='2';els.speed.onchange();tick(127.5);assert.equal(els.label.textContent,'Frame 3 / 16');els.play.onclick();tick(212.5);assert.equal(els.label.textContent,'Frame 3 / 16');
+els.seek.value='12';els.seek.oninput();assert.equal(els.label.textContent,'Frame 13 / 16');els.bg.value='dark';els.bg.onchange();assert.equal(els.stage.className,'stage dark');els.guide.onclick();
+for(const id of ['detail','r96','r108','r120'])assert.equal(els[id].src,els.sprite.src);
+console.log('PASS: embedded frames, stepping/wrap, pause/play, 85ms timing, speed, seek, backgrounds, synchronized views. Mock DOM only.');
