@@ -109,6 +109,7 @@ import { type WaterfallVersion } from './waterfallV2Placement';
 import SurfaceRippleLayer from './water/SurfaceRippleLayer';
 import FloatingPetalLayer from './water/FloatingPetalLayer';
 import GardenWaterField from './water/GardenWaterField';
+import GardenSubmergedRocks from './water/GardenSubmergedRocks';
 import WaterfallImpactUnderlay from './water/WaterfallImpactUnderlay';
 import FishLayer, { type FishDensity, type FishMotionPreset } from './water/FishLayer';
 import LotusLayer, { type LotusRenderMode } from './water/LotusLayer';
@@ -1298,6 +1299,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
 
             {/* Approved receiving-water floor/contact, below fish and all terrain. */}
             {perf.Water && waterBaseVisible && <>
+              <GardenSubmergedRocks flow={surfaceFlow} />
               {perf.Land && <LandLayer renderPass="shore" layout={__DEV__ ? calibrationLayout : undefined} />}
             </>}
 
