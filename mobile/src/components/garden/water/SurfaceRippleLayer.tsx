@@ -1,109 +1,96 @@
-import type { WaterTopFlow } from './WaterTopAssembly';
-import { Group, Image, Mask, Rect, Shader, Skia, useImage } from '@shopify/react-native-skia';
-import { memo, useEffect, useState } from 'react';
-import { AppState } from 'react-native';
-import {
-  cancelAnimation,
-  Easing,
-  useDerivedValue,
-  useReducedMotion,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
-
+import { runtimeAudit } from '../performance/runtimeAudit';
+import { ImageShader, Rect, Shader, Skia, useImage } from '@shopify/react-native-skia';
+import { memo } from 'react';
+import { useDerivedValue } from 'react-native-reanimated';
 import { GARDEN_WORLD_HEIGHT, GARDEN_WORLD_WIDTH } from '../gardenMapLayout';
-import { WATER_ASSETS } from './waterAssets';
+import { useWaterTopFlow, type WaterTopFlow } from './WaterTopAssembly';
+import { WATER_WAVE_SKSL } from './waterWaveShader';
 
-export const SURFACE_RIPPLE_CYCLE_MS = 6400;
-const EDGE = Skia.RuntimeEffect.Make(`
+// Preview compatibility only: mixed wave periods never reset together.
+export const SURFACE_RIPPLE_CYCLE_MS = 18000;
+
+const SURFACE = Skia.RuntimeEffect.Make(`
+uniform shader openWater;
+uniform shader shoreline;
+uniform float seconds;
+uniform float strength;
 uniform float2 size;
-half4 main(float2 p){float a=smoothstep(0.0,90.0,p.x)*smoothstep(0.0,90.0,p.y)*
-smoothstep(0.0,90.0,size.x-p.x)*smoothstep(0.0,90.0,size.y-p.y);return half4(a);}
+uniform float softEdges;
+${WATER_WAVE_SKSL}
+
+// Occasional, outward-fading fragments at existing stones. Four separated
+// anchors, unequal timings, no complete rings or island-wide outline.
+float stoneWave(float2 p,float2 center,float t,float seed) {
+  float2 q=(p-center)*float2(1.0,1.32);
+  if(dot(q,q)>105.0*105.0) return 0.0;
+  float radius=length(q);
+  float phase=fract(t/(5.8+seed*0.31)+seed*0.27);
+  float softness=5.5+phase*2.2;
+  float ring=exp(-pow((radius-(12.0+phase*72.0))/softness,2.0))*(5.5/softness);
+  float angle=atan(q.y,q.x);
+  float broken=smoothstep(0.25,0.82,sin(angle*2.3+seed+sin(angle*4.0+seed+phase*0.9)*0.65));
+  return ring*broken*sin(phase*3.14159)*(1.0-phase)*0.20;
+}
+// Disconnected satin-like flecks of refracted light. They evolve locally on
+// the existing clock; no thresholded wave crests, cells or scrolling texture.
+float lightFragments(float2 p,float t) {
+  float2 uv=p+waterRefraction(p,t)*0.8;
+  float2 warp=float2(wwNoise(p/130.0+9.7),wwNoise(p/115.0+2.3))-0.5;
+  float grain=wwNoise(uv/float2(23.0,14.0)+warp*1.9);
+  float islands=smoothstep(0.51,0.76,wwNoise(p/145.0+float2(3.9,19.1)));
+  float timing=0.73+0.27*sin(t*0.52+wwNoise(p/90.0+8.9)*6.28);
+  return smoothstep(0.69,0.88,grain)*islands*timing;
+}
+half4 main(float2 xy) {
+  float2 p=xy/size*float2(2400,1800);
+  float wet=openWater.eval(xy).r;
+  float distance=shoreline.eval(xy).r*320.0;
+  float contact=smoothstep(10.0,52.0,distance);
+  float2 fall=(p-float2(1060,185))/float2(150,190);
+  float mask=wet*contact*mix(0.35,1.0,smoothstep(0.15,1.2,dot(fall,fall)));
+  float edge=smoothstep(-600.0,-500.0,xy.x)*smoothstep(-400.0,-300.0,xy.y)*
+    smoothstep(-600.0,-500.0,size.x-xy.x)*smoothstep(-400.0,-300.0,size.y-xy.y);
+  mask*=mix(1.0,edge,softEdges);
+  if(mask<0.001) return half4(0);
+  // Soft signed response to the SAME wave normals as the refracted floor.
+  // Broad illumination is secondary to visible underwater deformation.
+  float value=waterWaveLight(p,seconds);
+  value+=stoneWave(p,float2(568,1338),seconds,1.3)+
+    stoneWave(p,float2(2252,870),seconds,2.9)+
+    stoneWave(p,float2(1412,1538),seconds,4.6)+
+    stoneWave(p,float2(1952,1568),seconds,6.1);
+  // Neutral soft-light cannot lay a pale opaque film over the mineral detail.
+  float fragments=lightFragments(p,seconds)*mix(0.12,1.0,exp(-distance/220.0));
+  float gray=0.5+value*(value>0.0?0.085:0.065)+fragments*0.20;
+  float alpha=mask*min(strength*0.75,1.0);
+  return half4(float3(gray)*alpha,alpha);
+}
 `);
 
 type SurfaceRippleLayerProps = {
-  flow?: WaterTopFlow;
-  active: boolean;
-  enabled?: boolean;
-  opacity?: number;
-  width?: number;
-  height?: number;
-  softWorldEdges?: boolean;
+  active: boolean; enabled?: boolean; opacity?: number; flow?: WaterTopFlow;
+  width?: number; height?: number; softWorldEdges?: boolean;
 };
 
-function cyclicWeight(phase: number, index: number, count: number): number {
-  'worklet';
-  let distance = Math.abs(phase - index);
-  if (distance > count / 2) distance = count - distance;
-  if (distance >= 1) return 0;
-  const cosine = Math.cos(distance * Math.PI / 2);
-  return cosine * cosine;
+function SurfaceRippleLayer({ active, enabled = true, opacity = 0.35,
+  width = GARDEN_WORLD_WIDTH, height = GARDEN_WORLD_HEIGHT,
+  softWorldEdges = false, flow: sharedFlow }: SurfaceRippleLayerProps) {
+  runtimeAudit.render('SurfaceRippleLayer');
+  const mask = useImage(require('./assets/water-surface-mask.png'));
+  const shoreline = useImage(require('./assets/garden-shore-distance.png'));
+  const standalone = useWaterTopFlow(active && !sharedFlow, enabled && !sharedFlow);
+  const flow = sharedFlow ?? standalone;
+  const uniforms = useDerivedValue(() => ({
+    seconds: flow.enabled ? flow.seconds.value : 0,
+    strength: Math.max(0, Math.min(1.5, opacity / 0.35)),
+    size: [width, height], softEdges: softWorldEdges ? 1 : 0,
+  }), [flow.enabled, opacity, width, height, softWorldEdges]);
+  if (!enabled || !SURFACE || !mask || !shoreline) return null;
+  return <Rect x={-600} y={-400} width={width + 1200} height={height + 800} blendMode="softLight">
+    <Shader source={SURFACE} uniforms={uniforms}>
+      <ImageShader image={mask} rect={{ x: 0, y: 0, width, height }} fit="fill" tx="clamp" ty="clamp" />
+      <ImageShader image={shoreline} rect={{ x: 0, y: 0, width, height }} fit="fill" tx="clamp" ty="clamp" />
+    </Shader>
+  </Rect>;
 }
-
-function SurfaceRippleLayer({
-  active,
-  enabled = true,
-  opacity = 0.35,
-  width = GARDEN_WORLD_WIDTH,
-  height = GARDEN_WORLD_HEIGHT,
-  softWorldEdges = false,
-  flow,
-}: SurfaceRippleLayerProps) {
-  const reducedMotion = useReducedMotion();
-  const [foreground, setForeground] = useState(AppState.currentState === 'active');
-  const phase = useSharedValue(0);
-  const frameA = useImage(WATER_ASSETS.ripples[0]);
-  const frameB = useImage(WATER_ASSETS.ripples[1]);
-  const frameC = useImage(WATER_ASSETS.ripples[2]);
-  const frameD = useImage(WATER_ASSETS.ripples[3]);
-  const frames = [frameA, frameB, frameC, frameD] as const;
-  const shouldAnimate = enabled && active && foreground && !reducedMotion && !flow;
-  const visiblePhase = useDerivedValue(() => flow
-    ? (flow.enabled ? flow.seconds.value * 4000 / SURFACE_RIPPLE_CYCLE_MS % 4 : 0)
-    : phase.value, [flow?.seconds, flow?.enabled]);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (state) => {
-      setForeground(state === 'active');
-    });
-    return () => subscription.remove();
-  }, []);
-
-  useEffect(() => {
-    cancelAnimation(phase);
-    if (reducedMotion) phase.value = 0;
-    if (shouldAnimate) {
-      phase.value = withRepeat(
-        withTiming(4, { duration: SURFACE_RIPPLE_CYCLE_MS, easing: Easing.linear }),
-        -1,
-        false,
-      );
-    }
-    return () => cancelAnimation(phase);
-  }, [phase, reducedMotion, shouldAnimate]);
-
-  const opacityA = useDerivedValue(() => cyclicWeight(visiblePhase.value, 0, 4) * opacity);
-  const opacityB = useDerivedValue(() => cyclicWeight(visiblePhase.value, 1, 4) * opacity);
-  const opacityC = useDerivedValue(() => cyclicWeight(visiblePhase.value, 2, 4) * opacity);
-  const opacityD = useDerivedValue(() => cyclicWeight(visiblePhase.value, 3, 4) * opacity);
-  const opacities = [opacityA, opacityB, opacityC, opacityD] as const;
-
-  if (!enabled) return null;
-
-  const layers = (
-    <Group>
-      {frames.map((image, index) => image ? (
-        <Image key={index} image={image} x={0} y={0} width={width} height={height}
-          opacity={opacities[index]} fit="fill" />
-      ) : null)}
-    </Group>
-  );
-  return softWorldEdges && EDGE ? <Mask mode="alpha" mask={
-    <Rect x={0} y={0} width={width} height={height}>
-      <Shader source={EDGE} uniforms={{size:[width,height]}} />
-    </Rect>
-  }>{layers}</Mask> : layers;
-}
-
 export default memo(SurfaceRippleLayer);

@@ -131,22 +131,28 @@ test('shore and land passes reuse seven decoded images rather than decoding four
   for(let i=0;i<7;i++)assert.equal(passes[0][i].props.images[0],passes[1][i].props.images[0]);
 });
 
-test('camera preserves main framing, free pan and zoom limits while zoom keeps the focal world point',()=>{
+test('camera always covers the screen with the Garden on any device while zoom keeps the focal world point',()=>{
   const module={exports:{}};
   vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(garden,'rendering/gardenWorldBounds.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,{module,exports:module.exports});
-  const {constrainGardenCamera,zoomGardenAt}=module.exports;
-  for(const [width,height] of [[1280,736],[390,760],[2560,1440]]){
+  const {constrainGardenCamera,zoomGardenAt,GARDEN_WORLD_BOUNDS:b}=module.exports;
+  for(const [width,height] of [[1280,736],[390,760],[375,812],[2560,1440]]){
     const fit=Math.min(width/2400,height/1800),baseX=(width-2400*fit)/2,baseY=(height-1800*fit)/2;
-    const initial=constrainGardenCamera(width,height,fit,baseX,baseY,0,0,1);
-    assert.equal(initial.x,0);assert.equal(initial.y,0);assert.equal(initial.zoom,1);
-    const pan=constrainGardenCamera(width,height,fit,baseX,baseY,-700,900,1);
-    assert.equal(pan.x,-700);assert.equal(pan.y,900);
-    assert.equal(constrainGardenCamera(width,height,fit,baseX,baseY,0,0,.1).zoom,.8);
-    assert.equal(constrainGardenCamera(width,height,fit,baseX,baseY,0,0,8).zoom,3);
-    const focalX=width*.37,focalY=height*.61;
-    const next=zoomGardenAt(width,height,fit,baseX,baseY,13,-22,1,1.25,focalX,focalY);
-    assert.ok(Math.abs((focalX-baseX-next.x)/(fit*next.zoom)-(focalX-baseX-13)/fit)<1e-9);
-    assert.ok(Math.abs((focalY-baseY-next.y)/(fit*next.zoom)-(focalY-baseY+22)/fit)<1e-9);
+    const cover=Math.max(width/b.width,height/b.height)/fit;
+    const covers=c=>{const s=fit*c.zoom;
+      assert.ok(baseX+c.x+b.x*s<=1e-6&&baseX+c.x+(b.x+b.width)*s>=width-1e-6,'horizontal edges stay off screen');
+      assert.ok(baseY+c.y+b.y*s<=1e-6&&baseY+c.y+(b.y+b.height)*s>=height-1e-6,'vertical edges stay off screen');};
+    const zoomedOut=constrainGardenCamera(width,height,fit,baseX,baseY,0,0,.1);
+    assert.ok(Math.abs(zoomedOut.zoom-cover)<1e-9);assert.equal(zoomedOut.minimumZoom,zoomedOut.zoom);covers(zoomedOut);
+    assert.ok(Math.abs(constrainGardenCamera(width,height,fit,baseX,baseY,0,0,99).zoom-Math.max(3,cover*3))<1e-9);
+    for(const [x,y] of [[-99999,-99999],[99999,99999],[-700,900]]) covers(constrainGardenCamera(width,height,fit,baseX,baseY,x,y,cover*1.5));
+    const z=cover*1.5,focalX=width*.37,focalY=height*.61;
+    const inside=constrainGardenCamera(width,height,fit,baseX,baseY,-200*fit,-150*fit,z);
+    const next=zoomGardenAt(width,height,fit,baseX,baseY,inside.x,inside.y,z,z*1.1,focalX,focalY);
+    const before=[(focalX-baseX-inside.x)/(fit*z),(focalY-baseY-inside.y)/(fit*z)];
+    const after=[(focalX-baseX-next.x)/(fit*next.zoom),(focalY-baseY-next.y)/(fit*next.zoom)];
+    const clamped=constrainGardenCamera(width,height,fit,baseX,baseY,next.x,next.y,next.zoom);
+    assert.equal(clamped.x,next.x);assert.equal(clamped.y,next.y);covers(next);
+    if(next.x!==inside.x||next.y!==inside.y) assert.ok(Math.hypot(after[0]-before[0],after[1]-before[1])<200,'zoom stays near the focal point');
   }
 });
 
