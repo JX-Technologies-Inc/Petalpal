@@ -1,23 +1,49 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { useLandsReady } from './gardenReadiness';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { reportGardenLoadFailure, useGardenLoadState } from './gardenReadiness';
 
-// Shown over the canvas until the water base and the seven land textures decode. It never
-// intercepts touches, and it changes nothing about rendering or quality.
-export function GardenLoadingOverlay({ waterReady }: { waterReady: boolean }) {
-  const landsReady = useLandsReady();
-  const ready = waterReady && landsReady;
-  const [slow, setSlow] = useState(false);
+// Covers the canvas until the water base and land textures decode. After
+// 30 s it shrinks to a small banner so a slow or failed image never hides the
+// garden. It changes nothing about rendering or quality.
+export function GardenLoadingOverlay() {
+  const load = useGardenLoadState();
+  const ready = load.water === 'ready' && load.landsLoaded >= load.landsTotal;
+  const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (ready) return;
-    const timer = setTimeout(() => setSlow(true), 12_000);
-    return () => clearTimeout(timer);
+    const started = Date.now();
+    const timer = setInterval(() => setElapsed(Date.now() - started), 1_000);
+    return () => clearInterval(timer);
+  }, [ready]);
+  useEffect(() => {
+    if (ready || Platform.OS !== 'web' || typeof window === 'undefined') return;
+    // Image downloads that fail reject without calling Skia's onError.
+    const onRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason as { message?: unknown } | undefined;
+      reportGardenLoadFailure(`network: ${typeof reason?.message === 'string' ? reason.message : 'request failed'}`);
+    };
+    window.addEventListener('unhandledrejection', onRejection);
+    return () => window.removeEventListener('unhandledrejection', onRejection);
   }, [ready]);
   if (ready) return null;
-  return <View pointerEvents="none" style={styles.root} testID="garden-loading">
+  const progress = `Water ${load.water === 'ready' ? '✓' : load.water === 'failed' ? '✕' : '…'} · Islands ${load.landsLoaded}/${load.landsTotal}`;
+  const failures = load.failures.length ? `Couldn’t load: ${load.failures.join(', ')}` : null;
+  const reload = Platform.OS === 'web' && typeof window !== 'undefined'
+    ? <Pressable accessibilityRole="button" onPress={() => window.location.reload()} style={styles.reload}>
+        <Text style={styles.reloadText}>Reload</Text></Pressable> : null;
+  if (elapsed >= 30_000) return <View pointerEvents="box-none" style={styles.bannerWrap} testID="garden-loading">
+    <View style={styles.banner}>
+      <Text style={styles.bannerText}>Garden still loading · {progress}</Text>
+      {failures ? <Text style={styles.bannerText}>{failures}</Text> : null}
+      {reload}
+    </View>
+  </View>;
+  return <View pointerEvents="box-none" style={styles.root} testID="garden-loading">
     <ActivityIndicator color="#365b42" accessibilityLabel="Loading your garden" />
     <Text accessibilityLiveRegion="polite" style={styles.title}>Growing your garden…</Text>
-    {slow ? <Text style={styles.hint}>The first visit can take up to a minute on a slow connection.</Text> : null}
+    <Text style={styles.hint}>{progress}</Text>
+    {failures ? <Text style={styles.hint}>{failures}</Text> : null}
+    {elapsed >= 12_000 ? <Text style={styles.hint}>The first visit can take up to a minute on a slow connection.</Text> : null}
   </View>;
 }
 
@@ -25,5 +51,10 @@ const styles = StyleSheet.create({
   root: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, zIndex: 5, alignItems: 'center', justifyContent: 'center',
     gap: 10, padding: 24, backgroundColor: '#eef3e6' },
   title: { fontSize: 17, fontWeight: '600', color: '#365b42' },
-  hint: { fontSize: 13, color: '#5d7263', textAlign: 'center', maxWidth: 280 },
+  hint: { fontSize: 13, color: '#5d7263', textAlign: 'center', maxWidth: 300 },
+  bannerWrap: { position: 'absolute', top: 60, left: 12, right: 12, zIndex: 5, alignItems: 'center' },
+  banner: { backgroundColor: '#eef3e6ee', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, gap: 4, alignItems: 'center', maxWidth: 360 },
+  bannerText: { fontSize: 12, color: '#365b42', textAlign: 'center' },
+  reload: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 8, backgroundColor: '#365b42' },
+  reloadText: { color: '#fff', fontSize: 12, fontWeight: '600' },
 });
