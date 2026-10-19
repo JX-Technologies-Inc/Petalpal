@@ -131,3 +131,29 @@ pronouns that the text does not give.
 paragraph only (`lib/weekly-editorial.js`, still default OFF; the paragraph now adds
 329 serialized bytes, inside the 512-byte allowance). Pattern insight is unchanged.
 Live quality is unproven until the multi-Event A/B against the default configuration.
+
+## Default vs selective live A/B — 2026-10-19
+
+Runner `scripts/weekly-default-vs-selective-ab-evaluation.mjs` on eval-only branch
+`eval/weekly-default-vs-selective-ab` (`f2738ac1`, revision `66732a53`), owner-run with
+integration credentials at hidden prompts. Arms: **default** (Selector V1, base
+weekly-reflection-v2 prompt, no flags) vs **selective** (`AI_WEEKLY_EVIDENCE_SELECTOR_V2`,
+`AI_WEEKLY_EVIDENCE_SIGNIFICANCE`, `AI_WEEKLY_REFLECTION_NARRATIVE_THREAD` with the voice
+fixes). Weeks: busy stress A, B, F, J, K, L (en, zh-Hans) and native-Chinese R-U
+(`experiments/weekly-selective-reflection-v1/zh-native.mjs`, written by Opus, important
+Events agreed blind by Haiku). Ledger COMPLETE: 32 dispatched, 25 validated, 7 rejected,
+no retries; reservation US$1.31072 (cap), estimated use **US$0.1766**.
+
+| | Default | Selective |
+|---|---|---|
+| Important Events delivered to the writer (offline) | 10/32 | 32/32 |
+| Important Events cited in validated output | 8/32 | 27/32 (every validated output cited all of its week's) |
+| Validator rejections (all `REFLECTION_V2_SCHEMA_MAX_ITEMS`) | 4 (A en/zh, L en/zh: 5-8 refs in one sentence) | 3 (B en: 6 refs; S, T zh: 4 paragraphs) |
+| Blind pairwise wins, 9 comparable weeks (Opus reviewer, mapping opened after) | 0 | **9** |
+| Reviewer-noted fidelity slips | record commentary ("记录里说", "in the record"), added mood words | one invented cause (F en), minor framing |
+
+**Finding:** selection, not prose, was the main gap: default writers mostly saw routine
+entries and produced weekday lists. **Open blocker for any rollout:** `maxItems` bounds
+(3 paragraphs, 8 sentences, 4 refs) are local-only and not stated in the prompt, so busy
+weeks are rejected in both arms (22%), leaving the owner without a report. Next: state those
+limits in the shared final stage, test offline, then a separately approved live check.
