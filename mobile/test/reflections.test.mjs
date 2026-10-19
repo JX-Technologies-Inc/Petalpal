@@ -56,3 +56,16 @@ test('Create last week POSTs an empty body to the owner-scoped Weekly trigger an
   }
   assert.equal(outcome(undefined, new Error('Network request failed')).message, 'Network request failed');
 });
+
+test('Weekly reflections are named by week of month and the last closed week is the previous Monday', () => {
+  const load = loadPlantingModules(undefined, undefined, undefined, false, { fetch: async () => { throw Error('no network'); } });
+  const service = load('../../../services/reflections');
+  assert.equal(service.lastClosedWeekKey(new Date(2026, 9, 19, 10)), '2026-10-12', 'Monday: the week that just ended');
+  assert.equal(service.lastClosedWeekKey(new Date(2026, 9, 18, 23)), '2026-10-05', 'Sunday: the current week is still open');
+  assert.equal(service.lastClosedWeekKey(new Date(2026, 10, 2, 0, 5)), '2026-10-26');
+  assert.deepEqual({ ...service.weekLabel('2026-10-12') }, { title: 'October · Week 2', chip: 'Oct · Week 2', range: 'Oct 12 – 18' });
+  assert.deepEqual({ ...service.weekLabel('2026-09-28') }, { title: 'September · Week 4', chip: 'Sep · Week 4', range: 'Sep 28 – Oct 4' });
+  assert.equal(service.weekLabel('2026-10-05').title, 'October · Week 1');
+  assert.equal(service.weekLabel('2026-03-30').title, 'March · Week 5');
+  assert.equal(service.weekLabel('not-a-date').title, 'not-a-date');
+});

@@ -26,6 +26,24 @@ export const readReflection = (report: SavedReport, signal?: AbortSignal) =>
 export const createLastWeekReflection = (signal?: AbortSignal) =>
   apiRequest<WeeklyTriggerResult>('/ai/reports/weekly/trigger', 'POST', {}, { signal });
 
+// Weekly periodKey is the local Monday (YYYY-MM-DD) of a Monday-Sunday week.
+export function lastClosedWeekKey(now = new Date()) {
+  const offset = (now.getDay() + 6) % 7;
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset - 7);
+  return [monday.getFullYear(), monday.getMonth() + 1, monday.getDate()].map((n, i) => String(n).padStart(i ? 2 : 4, '0')).join('-');
+}
+// "October · Week 2" (the Monday's week of its month) and "Oct 12 – 18" for a Weekly periodKey.
+export function weekLabel(periodKey: string) {
+  const match = periodKey.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return { title: periodKey, chip: periodKey, range: '' };
+  const [year, month, day] = match.slice(1).map(Number), start = new Date(Date.UTC(year, month - 1, day));
+  const end = new Date(Date.UTC(year, month - 1, day + 6));
+  const name = (date: Date, style: 'long' | 'short') => date.toLocaleDateString('en-US', { month: style, timeZone: 'UTC' });
+  const week = Math.ceil(day / 7);
+  return { title: `${name(start, 'long')} · Week ${week}`, chip: `${name(start, 'short')} · Week ${week}`,
+    range: `${name(start, 'short')} ${day} – ${end.getUTCMonth() === start.getUTCMonth() ? '' : `${name(end, 'short')} `}${end.getUTCDate()}` };
+}
+
 export type WeeklyTriggerOutcome = {
   kind: 'ready' | 'empty' | 'pending' | 'consent' | 'paused' | 'failed'; message: string; periodKey?: string;
 };
