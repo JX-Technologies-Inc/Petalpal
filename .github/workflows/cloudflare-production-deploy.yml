@@ -88,7 +88,7 @@ jobs:
           set -euo pipefail
           node ../../scripts/cloudflare-production-deploy.mjs check-fallback
           export MESSAGE="first-launch-fallback ${SOURCE_SHA}" WRANGLER_OUTPUT="$RUNNER_TEMP/wrangler.txt"
-          node_modules/.bin/wrangler versions upload -c wrangler.rollback.jsonc --message "$MESSAGE" > "$WRANGLER_OUTPUT" 2>&1 || { tail -5 "$WRANGLER_OUTPUT" | sed -E 's/[A-Za-z0-9_-]{32,}/<redacted>/g'; exit 1; }
+          node_modules/.bin/wrangler versions upload -c wrangler.rollback.jsonc --message "$MESSAGE" > "$WRANGLER_OUTPUT" 2>&1 || { tail -20 "$WRANGLER_OUTPUT" | sed -E -e 's/[A-Za-z0-9_-]{32,}/<redacted>/g' -e 's/[^[:space:]"<>@]+@[^[:space:]"<>@]+/<redacted-email>/g'; exit 1; }
           node ../../scripts/cloudflare-production-deploy.mjs record-version
 
       - name: Artifact provenance (exact production artifact from a successful main build)
@@ -114,7 +114,7 @@ jobs:
         run: |
           set -euo pipefail
           export MESSAGE="production-artifact ${ARTIFACT_ID} ${ARTIFACT_DIGEST}" WRANGLER_OUTPUT="$RUNNER_TEMP/wrangler.txt"
-          node_modules/.bin/wrangler versions upload -c wrangler.production.jsonc --message "$MESSAGE" > "$WRANGLER_OUTPUT" 2>&1 || { tail -5 "$WRANGLER_OUTPUT" | sed -E 's/[A-Za-z0-9_-]{32,}/<redacted>/g'; exit 1; }
+          node_modules/.bin/wrangler versions upload -c wrangler.production.jsonc --message "$MESSAGE" > "$WRANGLER_OUTPUT" 2>&1 || { tail -20 "$WRANGLER_OUTPUT" | sed -E -e 's/[A-Za-z0-9_-]{32,}/<redacted>/g' -e 's/[^[:space:]"<>@]+@[^[:space:]"<>@]+/<redacted-email>/g'; exit 1; }
           node ../../scripts/cloudflare-production-deploy.mjs record-version
 
       - name: Deploy a verified version at 100% (activate-app or rollback)
@@ -125,5 +125,5 @@ jobs:
           set -euo pipefail
           node ../../scripts/cloudflare-production-deploy.mjs check-version
           node_modules/.bin/wrangler versions deploy "${VERSION_ID}@100%" --name petalpal-web-production --yes \
-            --message "${PHASE} ${VERSION_ID}" > "$RUNNER_TEMP/wrangler.txt" 2>&1 || { tail -5 "$RUNNER_TEMP/wrangler.txt" | sed -E 's/[A-Za-z0-9_-]{32,}/<redacted>/g'; exit 1; }
+            --message "${PHASE} ${VERSION_ID}" > "$RUNNER_TEMP/wrangler.txt" 2>&1 || { tail -20 "$RUNNER_TEMP/wrangler.txt" | sed -E -e 's/[A-Za-z0-9_-]{32,}/<redacted>/g' -e 's/[^[:space:]"<>@]+@[^[:space:]"<>@]+/<redacted-email>/g'; exit 1; }
           echo "::notice title=${PHASE}::petalpal-web-production now serves ${VERSION_ID} at 100%"
