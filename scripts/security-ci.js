@@ -31,7 +31,7 @@ export const additionalSecurityTests = [
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^selector ON/', count: 0 },
   { file: 'test/back/sonnet-weekly.test.js', pattern: '^(editorial |narrative thread |both editorial |evidence significance ON)', count: 4 },
   // Opt-in Prompt-First v2 reflection contracts: pure offline validators, no inference.
-  { file: 'test/back/reflection-v2.test.js', pattern: '.', count: 16 },
+  { file: 'test/back/reflection-v2.test.js', pattern: '.', count: 17 },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
   { file: 'test/back/haiku-event-emotion.test.js', pattern: '.', count: 16 },
   { file: 'test/back/speech-admission.test.js', pattern: '^speech admission ', count: 4 },
