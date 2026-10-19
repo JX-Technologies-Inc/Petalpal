@@ -19,6 +19,8 @@ Object.assign(native, {
   Animated: { View: 'View', Image: 'Image',
     Value: class { interpolate() { return 0; } stopAnimation() {} },
     timing: () => ({ start() {}, stop() {} }) },
+  Easing: { inOut: easing => easing, cubic: value => value },
+  PanResponder: { create: () => ({ panHandlers: {} }) },
 });
 function elements(tree) {
   if (Array.isArray(tree)) return tree.flatMap(elements);
@@ -88,6 +90,11 @@ test('saved AI summaries, narrative fallback and topics render literal hostile t
         listReflections: async () => ({ reports: [report], nextCursor: null }),
         readReflection: async () => ({ ...report, summary,
           narrativeSections: [{ claim: payload }], topTopics: [{ topic: link, count: 1 }] }),
+        // Last week is already listed, so opening the Weekly book must not create anything.
+        lastClosedWeekKey: () => report.periodKey,
+        weekLabel: key => ({ title: key, chip: key, range: '' }),
+        createLastWeekReflection: async () => { throw Error('must not create when last week is listed'); },
+        weeklyTriggerOutcome: () => { throw Error('must not create when last week is listed'); },
       },
     })('../../../app/reflection').default;
     hooks.mount(() => Component());
