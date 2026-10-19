@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, ActivityIndicator, Animated, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useWorldTime } from '../components/garden/world-time';
-import { listReflections, readReflection, type ReflectionReport, type ReportType, type SavedReport } from '../services/reflections';
+import { createLastWeekReflection, listReflections, readReflection, weeklyTriggerOutcome, type ReflectionReport, type ReportType, type SavedReport } from '../services/reflections';
 
 const title = (type: ReportType) => type === 'weekly' ? 'Weekly' : 'Monthly';
 function period(report: SavedReport) {
@@ -59,9 +59,29 @@ export default function Reflection() {
     } finally { if (!controller.signal.aborted) setLoading(false); }
   }
   useEffect(() => { void load(); return () => listAbort.current?.abort(); }, []);
+  const [creating, setCreating] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [openPeriod, setOpenPeriod] = useState<string | null>(null);
+  const createAbort = useRef<AbortController | null>(null);
+  useEffect(() => () => createAbort.current?.abort(), []);
+  async function createLastWeek() {
+    if (creating) return;
+    const controller = new AbortController(); createAbort.current = controller;
+    setCreating(true); setNotice('');
+    let outcome;
+    try { outcome = weeklyTriggerOutcome(await createLastWeekReflection(controller.signal)); }
+    catch (error) { outcome = weeklyTriggerOutcome(undefined, error); }
+    if (controller.signal.aborted) return;
+    setCreating(false); setNotice(outcome.message);
+    if ((outcome.kind === 'ready' || outcome.kind === 'empty') && outcome.periodKey) {
+      setOpenPeriod(outcome.periodKey); await load();
+    }
+  }
   useEffect(() => {
+    const created = openPeriod ? reports.find(report => report.type === 'weekly' && report.periodKey === openPeriod) : undefined;
+    if (created) { setOpenPeriod(null); setType('weekly'); setSelected(created); return; }
     setSelected(current => current?.type === type ? current : reports.find(report => report.type === type) || null);
-  }, [reports, type]);
+  }, [reports, type, openPeriod]);
   useEffect(() => {
     setDetail(null); setReadError(''); setSection('Summary');
     if (!selected) { setReading(false); return; }
@@ -111,6 +131,12 @@ export default function Reflection() {
             {available.length > 1 && <ScrollView horizontal style={{ flexGrow: 0, marginTop: 9 }} contentContainerStyle={{ gap: 8 }}>
               {available.map(report => <Pressable key={report.id} accessibilityRole="button" accessibilityState={{ selected: selected?.id === report.id }} onPress={() => setSelected(report)} style={[s.period, selected?.id === report.id && { backgroundColor: '#C5CAA2' }]}><Text style={s.small}>{period(report)}</Text></Pressable>)}
             </ScrollView>}
+            {type === 'weekly' && <Pressable testID="reflection-create-weekly" accessibilityRole="button" accessibilityState={{ disabled: creating, busy: creating }} disabled={creating}
+              onPress={() => void createLastWeek()} style={[s.create, creating && { opacity: .7 }]}>
+              {creating && <ActivityIndicator size="small" color="#52613B" accessible={false} />}
+              <Text style={s.createText}>{creating ? 'Writing last week’s reflection…' : 'Create last week’s reflection'}</Text>
+            </Pressable>}
+            {type === 'weekly' && !!notice && <Text testID="reflection-create-notice" accessibilityLiveRegion="polite" style={[s.small, { marginTop: 8 }]}>{notice}</Text>}
             <View style={s.rule} />
             {compact && <View style={{ flexDirection: 'row', gap: 5, marginBottom: 12 }}>{(['Summary', 'Topics', 'Patterns'] as const).map((item, index) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: section === item, disabled: !currentDetail }} aria-selected={section === item} disabled={!currentDetail} onPress={() => setSection(item)} style={[s.tab, { backgroundColor: ['#BBC09A', '#E1C49A', '#DCA9A0'][index] }]}><Text style={s.small}>{item}</Text></Pressable>)}</View>}
             {(loading || reading) && <ActivityIndicator color="#6E744E" accessibilityLabel="Loading reflection" />}
@@ -172,4 +198,7 @@ const s = StyleSheet.create({
   link: { fontFamily: 'Georgia', color: '#52613B', textDecorationLine: 'underline', marginVertical: 10 },
   period: { padding: 7, borderRadius: 3, borderWidth: 1, borderColor: '#AD936255' },
   tab: { paddingHorizontal: 9, paddingVertical: 8, borderRadius: 4 },
+  create: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 8, marginTop: 12, minHeight: 44, paddingHorizontal: 14,
+    borderRadius: 4, borderWidth: 1, borderColor: '#52613B88', backgroundColor: '#E4E6CC' },
+  createText: { fontFamily: 'Georgia', color: '#3F4A2C', fontSize: 15 },
 });
