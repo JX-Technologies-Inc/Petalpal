@@ -158,10 +158,25 @@ entries and produced weekday lists. **Open blocker for any rollout:** `maxItems`
 weeks are rejected in both arms (22%), leaving the owner without a report. Next: state those
 limits in the shared final stage, test offline, then a separately approved live check.
 
-**Limits fix (2026-10-19, branch `fix/weekly-limits-in-prompt`, live check pending):** the
+**Limits fix (2026-10-19, branch `fix/weekly-limits-in-prompt`):** the
 shared final Weekly stage now says "Max 3 paragraphs, 8 sentences each, 4 refs per sentence."
 It applies to the default prompt and every Weekly candidate. To keep the packet allowance
 unchanged (the weekly prompt may not exceed the frozen `ab523996` size), three phrases were
 shortened: "in the requested locale (en or zh-Hans)", "Copy numbers, dates and times exactly",
 and "No headings, lists or citation aliases in prose". Net size: 1,460 bytes, equal to the bound.
 A test now pins the stated limits to the schema's `maxItems`. Monthly is unchanged.
+
+**Limits live re-check (2026-10-19):** runner `scripts/weekly-limits-ab-evaluation.mjs` on eval-only
+branch `eval/weekly-limits-ab` (`2df3673d`, revision `7e323aab`), same 16 weeks and arms as above,
+owner-run. Ledger COMPLETE: 32 dispatched, 29 validated, 3 rejected, no retries; estimated use
+**US$0.1806**.
+
+| | Default | Selective |
+|---|---|---|
+| Rejections | 2 (was 4): A en `SCHEMA_MIN_ITEMS`, R zh `QUOTE_UNSUPPORTED` | 1 (was 3): B en `SCHEMA_MAX_ITEMS` (6 refs in one sentence) |
+| `SCHEMA_MAX_ITEMS` across both arms | **1** (was 7) | |
+| Important Events cited | 10/32 | **31/32** |
+
+The stated limits removed most bound violations; the remaining rejections are the validator
+working as designed (an inexact quotation, an empty array) plus one grouped sentence in the
+repeated-stress week. Single run, so rates are indicative only.
