@@ -126,3 +126,8 @@ Observations:
 for both prompts, each needing its own evaluation: always address the reader as
 "you"/「你」, never comment on what the records do not say, and add no gendered
 pronouns that the text does not give.
+
+**2026-10-19:** these three fixes were applied to the narrative-thread composition
+paragraph only (`lib/weekly-editorial.js`, still default OFF; the paragraph now adds
+329 serialized bytes, inside the 512-byte allowance). Pattern insight is unchanged.
+Live quality is unproven until the multi-Event A/B against the default configuration.
