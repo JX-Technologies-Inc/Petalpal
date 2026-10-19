@@ -119,7 +119,24 @@ Result: **17/17 pass**. No runtime code, hosted access or provider call.
 - **Hosted:** use the real boundary, 2026-10-19T00:00Z. No clock override exists
   or is needed.
 
-## Hosted ZH Weekly runbook (prepared 2026-10-17, NOT executed)
+## Hosted ZH Weekly result — 2026-10-19 (EXECUTED, PASS)
+
+- TEST backend `petalpal-backend-test` Manual Deploy of `main` `5bd75190` (source now
+  `Jastrevia/Petalpal` after the org rename) with the `weekly-sonnet-v1` budget below; startup
+  `Integration environment isolation PASS (database marker verified)`, no pending migrations;
+  anonymous smoke 10/10.
+- `phase=check` run [39207576943](https://github.com/Jastrevia/Petalpal/actions/runs/39207576943)
+  success (trigger skipped); `phase=trigger` run
+  [39208779568](https://github.com/Jastrevia/Petalpal/actions/runs/39208779568), attempt 1,
+  success: the script exits 0 only on HTTP 200 with narrative `GENERATED`. One request, no retry.
+- Owner read the report owner-only on the TEST web build: zh-Hans prose grounded in the two
+  hosted Events, no invented content seen (owner review; not a per-claim audit). Display issues
+  (low contrast, clipped pull-quote, English chrome, empty Themes line) are a separate frontend task.
+- Restored afterwards: `PETALPAL_TEST_AI_BUDGET` and both provider secrets removed, the three
+  daily call limits back to `0`, redeployed, isolation PASS, anonymous smoke 10/10.
+- Configuration under test was the **default** (Selector V1, base prompt, no Weekly flags).
+
+## Hosted ZH Weekly runbook (prepared 2026-10-17, executed 2026-10-19, see above)
 
 **Prerequisite — guard fix (merged in PR #72; TEST backend deployed at `709c94c4` on 2026-10-17, startup isolation PASS, anonymous smoke 10/10, anonymous Weekly trigger and report list 401; budget variables not yet set).** One Weekly generation reserves **2**
 calls (`WEEKLY_REPORT: { daily: 4, calls: 2 }`, `lib/ai-cost-gate.js`), and
