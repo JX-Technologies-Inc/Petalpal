@@ -1,5 +1,11 @@
 # PetalPal Security
 
+## Release workflow error output, 2026-10-19
+
+`cloudflare-production-deploy.yml` now prints the last 20 (was 5) lines of a failed Wrangler command so the real error is
+visible in this public repository's logs. Output is still filtered: runs of 32+ token characters become `<redacted>` and any
+`name@host` becomes `<redacted-email>`, since Wrangler authentication errors can include the account email or name.
+
 ## Web-only production follow-ups through `3bf76527`, 2026-10-18
 
 PRs #87–#90 changed only the mobile/Web client and were released to `petalpal-web-production` with production build
