@@ -157,3 +157,11 @@ entries and produced weekday lists. **Open blocker for any rollout:** `maxItems`
 (3 paragraphs, 8 sentences, 4 refs) are local-only and not stated in the prompt, so busy
 weeks are rejected in both arms (22%), leaving the owner without a report. Next: state those
 limits in the shared final stage, test offline, then a separately approved live check.
+
+**Limits fix (2026-10-19, branch `fix/weekly-limits-in-prompt`, live check pending):** the
+shared final Weekly stage now says "Max 3 paragraphs, 8 sentences each, 4 refs per sentence."
+It applies to the default prompt and every Weekly candidate. To keep the packet allowance
+unchanged (the weekly prompt may not exceed the frozen `ab523996` size), three phrases were
+shortened: "in the requested locale (en or zh-Hans)", "Copy numbers, dates and times exactly",
+and "No headings, lists or citation aliases in prose". Net size: 1,460 bytes, equal to the bound.
+A test now pins the stated limits to the schema's `maxItems`. Monthly is unchanged.

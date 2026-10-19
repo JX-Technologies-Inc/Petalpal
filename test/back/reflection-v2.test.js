@@ -514,3 +514,14 @@ test("Weekly editorial freedom changes Monthly only by retiring its language gui
   assert.ok(Buffer.byteLength(JSON.stringify(REFLECTION_V2_INSTRUCTIONS.WEEKLY)) <= Buffer.byteLength(JSON.stringify(parentPrompts.WEEKLY)));
   assert.equal(current.slice(current.indexOf("\nfunction schemaFor(type)")), parent.slice(parentEnd));
 });
+
+test("Weekly prompts state the schema's local-only paragraph, sentence and ref bounds", async () => {
+  // maxItems is stripped from the wire schema, so the model only learns these bounds from the prompt.
+  const { WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS, WEEKLY_PATTERN_INSIGHT_INSTRUCTIONS, WEEKLY_RETROSPECTIVE_INSTRUCTIONS } = await import("../../lib/weekly-editorial.js");
+  const paragraphs = REFLECTION_V2_SCHEMAS.WEEKLY.properties.paragraphs, sentences = paragraphs.items.properties.sentences;
+  const refs = sentences.items.properties.refs;
+  const rule = `Max ${paragraphs.maxItems} paragraphs, ${sentences.maxItems} sentences each, ${refs.maxItems} refs per sentence.`;
+  assert.equal(rule, "Max 3 paragraphs, 8 sentences each, 4 refs per sentence.");
+  for (const prompt of [REFLECTION_V2_INSTRUCTIONS.WEEKLY, WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS, WEEKLY_PATTERN_INSIGHT_INSTRUCTIONS,
+    WEEKLY_RETROSPECTIVE_INSTRUCTIONS]) assert.ok(prompt.includes(rule));
+});
