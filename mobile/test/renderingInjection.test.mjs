@@ -19,6 +19,8 @@ Object.assign(native, {
   Animated: { View: 'View', Image: 'Image',
     Value: class { interpolate() { return 0; } stopAnimation() {} },
     timing: () => ({ start() {}, stop() {} }) },
+  Easing: { inOut: easing => easing, cubic: value => value },
+  PanResponder: { create: () => ({ panHandlers: {} }) },
 });
 function elements(tree) {
   if (Array.isArray(tree)) return tree.flatMap(elements);
