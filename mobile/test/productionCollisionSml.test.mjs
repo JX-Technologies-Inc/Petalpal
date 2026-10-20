@@ -35,6 +35,7 @@ const jsx=(type,props)=>({type,props});let state;
 const renderLoad=loadPlantingModules(undefined,{useMemo:f=>f()},undefined,true,{
   'react/jsx-runtime':{jsx,jsxs:jsx},'@shopify/react-native-skia':{Circle:'Circle',Group:'Group'},
   './PlantingContext':{usePlanting:()=>state},'./productionGrowth':{productionGrowth:()=>[]},'./ProductionGrowthLayer':{ProductionGrowthLayer:'Growth'},
+  '../flower-mood-effects/GardenMoodEffects':{GardenMoodEffectsLayer:'MoodEffects'},
 });
 const nodes=n=>Array.isArray(n)?n.flatMap(nodes):n&&typeof n==='object'?[n,...nodes(n.props?.children)]:[];
 for(const mode of ['planting','adjusting'])for(const code of ['CHAMOMILE','TULIP','HYDRANGEA']){
