@@ -1,6 +1,6 @@
 # Weekly pattern-insight candidate (2026-10-17)
 
-Status: **LIVE A/B COMPLETE (2026-10-17) · NOT ADOPTED · DEFAULT OFF · keep the baseline narrative-thread prompt.**
+Status: **v1 and v2 live A/Bs complete (2026-10-17, 2026-10-20) · NOT ADOPTED · DEFAULT OFF · production keeps the narrative-thread prompt; depth moves to a new report format.**
 Flag: `AI_WEEKLY_REFLECTION_PATTERN_INSIGHT=true` (requires `weekly-reflection-v2`;
 mutually exclusive with `AI_WEEKLY_REFLECTION_NARRATIVE_THREAD` and
 `AI_WEEKLY_REFLECTION_RETROSPECTIVE`). Source: `lib/weekly-editorial.js`.
@@ -180,3 +180,46 @@ owner-run. Ledger COMPLETE: 32 dispatched, 29 validated, 3 rejected, no retries;
 The stated limits removed most bound violations; the remaining rejections are the validator
 working as designed (an inexact quotation, an empty array) plus one grouped sentence in the
 repeated-stress week. Single run, so rates are indicative only.
+
+## Owner blind review of the 2026-10-17 A/B — 2026-10-20
+
+The owner re-reviewed the 12 comparable pairs blind (labels only, mapping opened after).
+Result reversed Claude's review: **pattern insight 8, narrative thread 4** (en 3-2, zh 5-2).
+Notes: even preferred outputs were "not deep enough" (weeks D en, M en, N zh) and calling
+the reader 「用户」 was "unnatural" (B zh). The narrative thread's later voice fixes address
+the second point; the first prompted v2.
+
+## Insight v2 live A/B — 2026-10-20
+
+v2 replaced the composition paragraph on local branch `feat/weekly-insight-v2` (`6a2f827d`,
+not merged; delta 332 bytes, inside the 512-byte allowance; Weekly suites 206/206):
+
+> Write a reflection, not a record: no weekday walk-through or per-entry summary; leave out filler.
+> Open with one sentence on what the week turned on, citing 2-4 Events; if none connect, start with
+> the moment that mattered most. Then trace how stated feelings moved: where they began, what shifted
+> them, where they ended, and contrasts in the Events' words. Link Events only as written; keep each
+> stated cause with its effect. Keep hard or mixed weeks at stated intensity, without softening; when
+> little connects, say less. Infer no unstated thoughts, motives, traits, risks, diagnoses, growth or
+> advice. Address the reader as you (你), never the user (用户); add no gender; never remark on what
+> the records omit. Paraphrase naturally without quotation marks.
+
+Runner `scripts/weekly-insight-v2-ab-evaluation.mjs` on eval-only branch `eval/weekly-insight-v2-ab`
+(`550c3a04`, revision `5ab2211d`), owner-run. Both arms used the production selection (Selector V2 +
+significance) and the identical evidence packet; only the system prompt differed. Weeks: en D, O, P, V;
+zh-Hans M, R, T, V. Ledger COMPLETE: 16 dispatched, **15 validated, 1 rejected** (insight v2, T zh,
+`REFLECTION_V2_QUOTE_UNSUPPORTED`: a partial quotation); estimated use **US$0.098** (cap US$0.65536).
+
+| | Production (narrative thread) | Insight v2 |
+|---|---|---|
+| Owner blind wins, 7 comparable weeks | 1 (R zh) | 3 (D en, V zh, M zh) |
+| Ties, owner unhappy with both | 3 (O, P, V en) | |
+| Validator rejections | 0 | 1 |
+| Unstated characterisations found by Claude | 0 | 3 ("after days of not coping well", 「撑得很辛苦」, 「自责」) |
+| Other slips | V en: says the user told Mum "not really" (it was not said to her); T zh remarks that the question "has no answer in the records" | fixed opening ("The week turned on…" / 「这一周的重心落在…」) in most outputs |
+
+Owner's verdict on the ties: one reads as long-winded and "obviously AI", the other as an inventory;
+neither has depth. **Decision:** v2 is not adopted (small zh gain, more mind-reading, one lost report);
+production keeps the narrative thread for the beta. Prompt wording alone oscillates between
+restating and over-reading one week of entries, so depth moves to format: a short report with the
+user's own line, a side-by-side observation, cross-week "then and now", a mood curve from the user's
+own flower choices and one question ([WEEKLY_SHORT_REPORT_DESIGN.md](../product/WEEKLY_SHORT_REPORT_DESIGN.md)).
