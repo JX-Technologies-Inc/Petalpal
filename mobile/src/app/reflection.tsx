@@ -154,6 +154,8 @@ export default function Reflection() {
 
   // Narrow or short screens (phones in either orientation) use the single-page layout.
   const compact = width < 700 || height < 600;
+  // A phone on its side reads like an open book: heading on the left, the reflection on the right.
+  const wide = compact && width > height;
   const sceneWidth = Math.min(width, 1000);
   const artHeight = sceneWidth * 4 / 3;
   // Phone: a short scenic header, then one page that fills the rest of the screen (content scrolls inside).
@@ -175,9 +177,22 @@ export default function Reflection() {
   const faceOpacity = (front: boolean) => progress.interpolate({ inputRange: [0, .499, .501, 1],
     outputRange: front === !backwards ? [1, 1, 0, 0] : [0, 0, 1, 1] });
 
-  // Paper under a moving leaf: the book's own art (desktop) or the page colour (phone).
+  // Phone paper: the left page of the painted spread, scaled to cover the page and mirrored so its
+  // gutter shading sits at the spine. Same art (and day/night) as the desktop book.
+  const sheet = { x: 262, y: 545, w: 310, h: 500 }; // in a 1000-wide copy of the interior art
+  const paintedPaper = () => {
+    const k = Math.max(area.width / sheet.w, area.height / sheet.h);
+    return <View pointerEvents="none" style={[StyleSheet.absoluteFill, { overflow: 'hidden', borderRadius: 10 }]}>
+      <View style={[StyleSheet.absoluteFill, { transform: [{ scaleX: -1 }] }]}>
+        <Image source={night ? interiorNight : interiorDay} accessible={false} style={{ position: 'absolute', width: 1000 * k, height: 4000 / 3 * k,
+          left: -sheet.x * k - (sheet.w * k - area.width) / 2, top: -sheet.y * k - (sheet.h * k - area.height) / 2 }} />
+      </View>
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: '#F6E4BE', opacity: night ? .38 : .2 }]} />
+    </View>;
+  };
+  // Paper under a moving leaf: the book's own art on both layouts.
   const paper = (side: 'left' | 'right') => compact
-    ? <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: paperColor }]} />
+    ? paintedPaper()
     : <View pointerEvents="none" style={[StyleSheet.absoluteFill, { overflow: 'hidden' }]}>
       <Image source={night ? interiorNight : interiorDay} accessible={false}
         style={{ position: 'absolute', width: sceneWidth, height: artHeight,
@@ -187,19 +202,27 @@ export default function Reflection() {
   function leftFace(report: SavedReport | null, interactive: boolean) {
     const detail = report ? details[report.id] ?? null : null;
     const shown: Section = interactive ? section : 'Summary';
-    return <View style={{ flex: 1, minHeight: 0, paddingRight: compact ? 0 : 30 }}>
+    return <View style={{ flex: 1, minHeight: 0, paddingRight: compact ? 0 : 30, flexDirection: wide ? 'row' : 'column', gap: wide ? 22 : 0 }}>
+      <View style={wide ? { width: '38%' } : undefined}>
       {compact && <View style={s.segment}>{(['weekly', 'monthly'] as const).map(item => <Pressable key={item} accessibilityRole="tab"
         accessibilityState={{ selected: type === item }} aria-selected={type === item} accessibilityLabel={`${title(item)} reflections`}
         disabled={!interactive || !!turning} onPress={() => setType(item)} style={[s.segmentItem, type === item && s.segmentOn]}>
         <Text style={[s.small, type === item && s.segmentText]}>{title(item)}</Text></Pressable>)}</View>}
       <Text accessibilityRole="header" style={[s.heading, { fontSize: compact ? 22 : Math.max(21, Math.min(27, sceneWidth * .026)) }]}>Your {title(type)} Reflection</Text>
-      {report && <Text style={[s.ink, { marginTop: 4 }]}>{heading(report)}{report.status === 'PARTIAL' ? ' · In progress' : ''}</Text>}
+      {report && (report.type === 'weekly'
+        ? <><Text style={s.eyebrow}>{weekLabel(report.periodKey).title.toUpperCase()}</Text>
+          {!!weekLabel(report.periodKey).range && <Text style={s.range}>{weekLabel(report.periodKey).range}{report.status === 'PARTIAL' ? ' · In progress' : ''}</Text>}</>
+        : <Text style={s.range}>{heading(report)}{report.status === 'PARTIAL' ? ' · In progress' : ''}</Text>)}
       {interactive && type === 'weekly' && (creating || !!notice) && <View testID="reflection-create-status" accessibilityLiveRegion="polite" style={s.status}>
         {creating && <ActivityIndicator size="small" color="#8B6C44" accessible={false} />}
         <Text style={s.statusText}>{creating ? 'Writing last week’s reflection…' : notice}</Text>
       </View>}
-      <View style={s.rule} />
-      {compact && detail && <View style={{ flexDirection: 'row', gap: 5, marginBottom: 12 }}>{(['Summary', 'Topics', 'Patterns'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: shown === item, disabled: !interactive || !detail }} aria-selected={shown === item} disabled={!interactive || !detail} onPress={() => setSection(item)} style={[s.tab, { backgroundColor: ['#BBC09A', '#E1C49A', '#DCA9A0'][i] }]}><Text style={s.small}>{item}</Text></Pressable>)}</View>}
+      <Text accessible={false} style={s.ornament}>·  ❦  ·</Text>
+      {compact && detail && <View style={s.textTabs}>{(['Summary', 'Topics', 'Patterns'] as const).map(item => <Pressable key={item} accessibilityRole="tab"
+        accessibilityState={{ selected: shown === item, disabled: !interactive || !detail }} aria-selected={shown === item} disabled={!interactive || !detail}
+        onPress={() => setSection(item)} style={[s.textTab, shown === item && s.textTabOn]}><Text style={[s.small, shown === item && s.textTabTextOn]}>{item}</Text></Pressable>)}</View>}
+      </View>
+      <View style={[{ flex: 1, minHeight: 0 }, wide && s.gutter]}>
       {interactive && (loading || reading) && <ActivityIndicator color="#6E744E" accessibilityLabel="Loading reflection" />}
       {interactive && !!listError && <><Text style={s.body}>{listError}</Text><Pressable accessibilityRole="button" onPress={() => void load(cursor || undefined)}><Text style={s.link}>Try loading again</Text></Pressable></>}
       {interactive && !!readError && <><Text style={s.body}>{readError}</Text><Pressable accessibilityRole="button" onPress={() => setRetry(value => value + 1)}><Text style={s.link}>Try reading again</Text></Pressable></>}
@@ -212,7 +235,10 @@ export default function Reflection() {
         </View>}
         {detail && <>
           <EmotionalSafetyNote />
-          {shown === 'Summary' && <Text selectable={interactive} style={s.body}>{detail.summary || detail.narrativeSections?.map(item => item.claim).join('\n\n') || 'No written reflection is available for this saved report.'}</Text>}
+          {shown === 'Summary' && (() => {
+            const text = detail.summary || detail.narrativeSections?.map(item => item.claim).join('\n\n') || 'No written reflection is available for this saved report.';
+            return <Text selectable={interactive} style={s.body}><Text style={s.initial}>{text.slice(0, 1)}</Text>{text.slice(1)}</Text>;
+          })()}
           {(shown === 'Summary' || shown === 'Topics') && <>
             <Text style={s.sectionHeading}>Your {title(type)} Themes</Text>
             {detail.topTopics?.length ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 17 }}>{detail.topTopics.map(item => <View key={item.topic} style={s.topic}>
@@ -231,6 +257,7 @@ export default function Reflection() {
         </>}
       </ScrollView>
       {detail && <Text style={[s.small, { paddingTop: 7, borderTopWidth: 1, borderColor: '#AA8B5933' }]}>{detail.eventCount} recorded {detail.eventCount === 1 ? 'event' : 'events'} · Saved reflection</Text>}
+      </View>
     </View>;
   }
   function rightFace(report: SavedReport | null) {
@@ -242,7 +269,7 @@ export default function Reflection() {
   }
   // Phone: a whole page; desktop: a two-page spread split at the spine.
   const page = (report: SavedReport | null, interactive: boolean) => compact
-    ? <View style={{ flex: 1, padding: 18, paddingBottom: 60 }}>{leftFace(report, interactive)}</View>
+    ? <View style={{ flex: 1, paddingTop: 18, paddingRight: 30, paddingBottom: 60, paddingLeft: 30 }}>{leftFace(report, interactive)}</View>
     : <View style={{ flex: 1, flexDirection: 'row' }}>{leftFace(report, interactive)}{rightFace(report)}</View>;
 
   const from = turning ? pages[turning.from] : null, to = turning ? pages[turning.to] : null;
@@ -271,8 +298,18 @@ export default function Reflection() {
         {!compact && <View style={{ position: 'absolute', left: '-6%', top: '10%', gap: 6, zIndex: 2 }}>
           {(['Summary', 'Topics', 'Patterns'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: section === item, disabled: !selected || !details[selected.id] || !!turning }} aria-selected={section === item} disabled={!selected || !details[selected.id] || !!turning} onPress={() => setSection(item)} style={[s.edgeTab, { backgroundColor: ['#BBC09A', '#E1C49A', '#DCA9A0'][i], opacity: section === item ? 1 : .88 }]}><Text style={s.small}>{item}</Text></Pressable>)}
         </View>}
+        {compact && <>{/* Page block: two sheets peeking out at the fore-edge and tail. */}
+          <View pointerEvents="none" style={[s.sheetEdge, { left: area.left + 7, top: area.top + 6, width: area.width - 4, height: area.height - 2 }]} />
+          <View pointerEvents="none" style={[s.sheetEdge, { left: area.left + 3, top: area.top + 3, width: area.width - 2, height: area.height - 1 }]} />
+        </>}
         <View {...swipe.panHandlers} style={[s.pages, { left: area.left, top: area.top, width: area.width, height: area.height, backgroundColor: compact ? paperColor : 'transparent',
-          borderLeftWidth: compact ? 7 : 0, borderColor: '#765035', shadowColor: '#291A0D', shadowOpacity: compact ? .3 : 0, shadowRadius: 5, overflow: compact ? 'hidden' : 'visible' }]}>
+          shadowColor: '#291A0D', shadowOpacity: compact ? .35 : 0, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, overflow: compact ? 'hidden' : 'visible' }]}>
+          {compact && <>
+            {paintedPaper()}
+            <View pointerEvents="none" style={s.spine}><View style={s.spineLine} /></View>
+            <View pointerEvents="none" style={s.ribbon}><View style={s.ribbonBody} />
+              <View style={{ flexDirection: 'row' }}><View style={s.ribbonTailLeft} /><View style={s.ribbonTailRight} /></View></View>
+          </>}
           {compact
             ? page(turning ? (backwards ? from : to) : selected, !turning)
             : <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -308,7 +345,7 @@ export default function Reflection() {
           <Pressable testID="reflection-previous-page" accessibilityRole="button" accessibilityLabel={`Previous ${type === 'weekly' ? 'week' : 'month'}`}
             disabled={!!turning || (atStart && !cursor)} onPress={() => atStart ? void load(cursor || undefined) : void turn(-1)}
             style={[s.turn, { opacity: atStart && !cursor ? .35 : 1 }]}><Text style={s.arrow}>‹</Text></Pressable>
-          <Text accessibilityLiveRegion="polite" style={s.number}>{selected ? `${period(selected)}  ·  ${index + 1} of ${pages.length}` : ''}</Text>
+          <Text accessibilityLiveRegion="polite" style={s.number}>{selected ? `❦   ${period(selected)}  ·  ${index + 1} of ${pages.length}   ❦` : ''}</Text>
           <Pressable testID="reflection-next-page" accessibilityRole="button" accessibilityLabel={`Next ${type === 'weekly' ? 'week' : 'month'}`}
             disabled={!!turning || atEnd} onPress={() => void turn(1)} style={[s.turn, { opacity: atEnd ? .35 : 1 }]}><Text style={s.arrow}>›</Text></Pressable>
         </View>}
@@ -338,6 +375,22 @@ const s = StyleSheet.create({
   turn: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   arrow: { fontFamily: 'Georgia', color: '#6B5232', fontSize: 30 },
   number: { fontFamily: 'Georgia', color: '#6B5232', fontSize: 13, flexShrink: 1, textAlign: 'center' },
+  eyebrow: { fontFamily: 'Georgia', fontSize: 12, letterSpacing: 2.2, color: '#7E6A48', marginTop: 8 },
+  range: { fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 15, color: '#5E4B33', marginTop: 3 },
+  ornament: { fontFamily: 'Georgia', fontSize: 16, color: '#9A845C', textAlign: 'center', marginVertical: 12, letterSpacing: 2 },
+  initial: { fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 30, lineHeight: 30, color: '#6C7A4A' },
+  textTabs: { flexDirection: 'row', gap: 18, marginBottom: 14, borderBottomWidth: 1, borderColor: '#B4986A40' },
+  textTab: { paddingVertical: 8, borderBottomWidth: 2, borderColor: 'transparent', marginBottom: -1 },
+  textTabOn: { borderColor: '#7E8B57' },
+  textTabTextOn: { color: '#3F4A2C' },
+  gutter: { paddingLeft: 22, borderLeftWidth: 1, borderColor: '#A98A5C55' },
+  sheetEdge: { position: 'absolute', borderRadius: 11, backgroundColor: '#E6D2A8', borderWidth: 1, borderColor: '#B8996A66' },
+  spine: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 12, backgroundColor: '#5A3922', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
+  spineLine: { position: 'absolute', right: 2, top: 10, bottom: 10, width: 1, backgroundColor: '#A27B4C', opacity: .8 },
+  ribbon: { position: 'absolute', top: 0, right: 9, width: 14, zIndex: 1, shadowColor: '#3B2414', shadowOpacity: .25, shadowRadius: 2, shadowOffset: { width: 1, height: 1 } },
+  ribbonBody: { width: 14, height: 70, backgroundColor: '#A55E63' },
+  ribbonTailLeft: { width: 0, height: 0, borderTopWidth: 11, borderTopColor: '#A55E63', borderRightWidth: 7, borderRightColor: 'transparent' },
+  ribbonTailRight: { width: 0, height: 0, borderTopWidth: 11, borderTopColor: '#A55E63', borderLeftWidth: 7, borderLeftColor: 'transparent' },
   segment: { flexDirection: 'row', alignSelf: 'flex-start', borderWidth: 1, borderColor: '#A98C5E66', borderRadius: 18, padding: 2, marginBottom: 12 },
   segmentItem: { minHeight: 34, minWidth: 84, paddingHorizontal: 14, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   segmentOn: { backgroundColor: '#C5CAA2' },
