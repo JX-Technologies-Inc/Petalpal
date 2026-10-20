@@ -63,7 +63,7 @@ function textContent(tree) {
 function button(tree, label) {
   return elements(tree).find((element) => element.type === 'Pressable' && textContent(element) === label);
 }
-function modalHarness(overrides = {}) {
+function modalHarness(overrides = {}, events = { readEvent: async () => { throw new Error('readEvent not expected'); } }) {
   const calls = { close: 0, adjust: [], support: [], messages: [], deletes: 0 };
   const value = {
     selectedFlower: placement, selectedFlowerIsOwner: false, currentUserId: 'visitor',
@@ -81,7 +81,7 @@ function modalHarness(overrides = {}) {
   native.StyleSheet = { create: (styles) => styles, absoluteFill: {} };
   const load = loadPlantingModules(undefined, hooks.react, undefined, true, {
     './PlantingContext': { usePlanting: () => value }, 'react-native': native,
-    './plantingRegionData': monthData,
+    './plantingRegionData': monthData, '../../../services/events': events,
   });
   const Modal = load('FlowerDetailModal').default;
   hooks.mount(() => Modal());
@@ -699,4 +699,39 @@ test('message refresh safety: superseded complete fetch and owner switch cannot 
   assert.equal(flow.flowerDetailSource.messages.some(m => m.id === 'message-1'), false);
   provider.props.gardenOwnerUserId = 'another-owner'; provider.hooks.render(); flow = await provider.hooks.flush();
   assert.equal(flow.selectedFlower, null); assert.equal(flow.flowerDetailSource, null);
+});
+
+// An Event-grown flower stores no memory text of its own; the owner can open its Event.
+const eventFlower = { ...placement, sourceEventId: 'event-9', notes: '' };
+const eventSource = { ...source, event: '', dailyCheckIn: null };
+
+test('owner can open the Event a flower grew from; it loads only on tap', async () => {
+  const reads = [];
+  const { hooks } = modalHarness({ selectedFlowerIsOwner: true, currentUserId: 'owner', selectedFlower: eventFlower, flowerDetailSource: eventSource },
+    { readEvent: async (id) => { reads.push(id); return { id, content: 'Walked to the river after work.' }; } });
+  let tree = hooks.render();
+  assert.equal(reads.length, 0);
+  assert.equal(textContent(tree).includes('Walked to the river'), false);
+  button(tree, 'View Event ▾').props.onPress();
+  await hooks.flush(); tree = hooks.render();
+  assert.deepEqual(reads, ['event-9']);
+  assert.ok(textContent(tree).includes('Walked to the river after work.'));
+  button(tree, 'Hide Event ▴').props.onPress();
+  await hooks.flush(); tree = hooks.render();
+  assert.equal(textContent(tree).includes('Walked to the river'), false);
+});
+
+test('a visitor never sees or loads the Event behind a friend\'s flower', async () => {
+  const { hooks } = modalHarness({ selectedFlowerIsOwner: false, selectedFlower: eventFlower, flowerDetailSource: eventSource });
+  const tree = hooks.render();
+  assert.equal(button(tree, 'View Event ▾'), undefined);
+  assert.equal(textContent(tree).includes('View Event'), false);
+});
+
+test('an Event that cannot be read shows a short note instead of failing', async () => {
+  const { hooks } = modalHarness({ selectedFlowerIsOwner: true, currentUserId: 'owner', selectedFlower: eventFlower, flowerDetailSource: eventSource },
+    { readEvent: async () => { throw new Error('404'); } });
+  button(hooks.render(), 'View Event ▾').props.onPress();
+  await hooks.flush();
+  assert.ok(textContent(hooks.render()).includes('This Event can’t be opened right now.'));
 });
