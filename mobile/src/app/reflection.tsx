@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Image, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useWorldTime } from '../components/garden/world-time';
-import { createLastWeekReflection, lastClosedWeekKey, listReflections, readReflection, weekLabel, weeklyTriggerOutcome, type ReflectionReport, type ReportType, type SavedReport } from '../services/reflections';
+import { createLastWeekReflection, lastClosedWeekKey, listReflections, readReflection, shortWeekly, weekLabel, weeklyTriggerOutcome, type ReflectionReport, type ReportType, type SavedReport } from '../services/reflections';
+import { ShortWeeklyReport } from '../components/features/ShortWeeklyReport';
 
 const title = (type: ReportType) => type === 'weekly' ? 'Weekly' : 'Monthly';
 function period(report: SavedReport) {
@@ -255,6 +256,9 @@ export default function Reflection() {
         {detail && <>
           <EmotionalSafetyNote />
           {shown === 'Summary' && (() => {
+            const short = shortWeekly(detail);
+            if (short) return <ShortWeeklyReport short={short} interactive={interactive}
+              onWrite={() => router.replace({ pathname: '/', params: { feature: 'events' } })} />;
             const text = detail.summary || detail.narrativeSections?.map(item => item.claim).join('\n\n') || 'No written reflection is available for this saved report.';
             return <Text selectable={interactive} style={s.body}><Text style={[s.initial, { color: accent }]}>{text.slice(0, 1)}</Text>{text.slice(1)}</Text>;
           })()}

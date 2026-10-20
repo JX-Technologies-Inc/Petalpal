@@ -60,16 +60,31 @@ Enable with `AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1` (Sonnet provider). C
 
 Open items for the owner:
 
-- zh-Hans mood names in the curve line are provisional: 晴朗 平静 温柔 好奇 疗愈 安静 迷茫 火焰.
+- zh-Hans mood names confirmed by the owner (2026-10-20): 晴朗 平静 温柔 好奇 疗愈 安静 迷茫 火焰.
 - A week with fewer than two selectable Events stays "insufficient evidence" (no curve-only report yet).
 - Hosted TEST only allows the v2 contract (`lib/integration-environment.js`); live acceptance needs that
   gate widened under a separately approved task, then paid inference approval.
+
+## Step 2 — mobile rendering (built)
+
+[ShortWeeklyReport.tsx](../../mobile/src/components/features/ShortWeeklyReport.tsx), parsing and layout in
+[reflections.ts](../../mobile/src/services/reflections.ts); used by the Reflection Summary tab.
+
+- Only a report whose every section has `contractVersion: weekly-short-v1` renders this way; older
+  reports keep the plain summary text.
+- Line of the week: tapping it loads that Event with the existing `GET /events/:id` and shows its full
+  text inline (or a short "can't be opened" note); no new route.
+- Mood curve: seven columns (Mon first), the user's mood icons from the Event panel as points, joined in
+  time order; the factual line sits below and is the curve's accessibility label.
+- Question: "Write about it" / 写一写 opens the existing Event panel (`/` with `feature=events`).
+- Labels follow the report's locale (en / zh-Hans).
+- Checked offline (parsing and layout tests, type check) and visually in Expo web at phone width with
+  synthetic data; the signed-in tap-to-Event success path is not yet checked against a backend.
 
 ## Next steps
 
 - Then and now: English cross-week retrieval can reuse BGE/pgvector; Chinese needs a code-only path
   (repeated phrase, ≥ 7 days apart), since BGE is English-only today.
-- Mobile rendering: curve, tap-to-Event, question button starting a new Event.
 - Live acceptance: owner blind review against the current report, as in the earlier A/Bs.
 - Mockup used for approval: low-week example in en and zh-Hans (synthetic data), reviewed in chat on
   2026-10-20; not stored in the repository.
