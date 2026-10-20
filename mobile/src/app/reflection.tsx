@@ -167,8 +167,9 @@ export default function Reflection() {
   const camera = { position: 'absolute' as const, left: 0, top: 0, width: sceneWidth, height: artHeight };
   const lakeCamera = { ...camera, top: -artHeight * .14 };
   // The text area inside the book (same fractions as the resting layout below).
+  // Phone: the page sits inside the open cloth cover of the shelf book it came from.
   const area = compact
-    ? { left: 0, top: 0, width: bookWidth, height: bookHeight }
+    ? { left: 20, top: 15, width: bookWidth - 38, height: bookHeight - 31 }
     : { left: bookWidth * .10, top: bookHeight * .07, width: bookWidth * .85, height: bookHeight * .83 };
   const pageWidth = compact ? area.width : area.width / 2;
   const paperColor = night ? '#E6C495' : '#F3E1BA';
@@ -177,17 +178,34 @@ export default function Reflection() {
   const faceOpacity = (front: boolean) => progress.interpolate({ inputRange: [0, .499, .501, 1],
     outputRange: front === !backwards ? [1, 1, 0, 0] : [0, 0, 1, 1] });
 
+  // The open book on phones is the shelf book itself: green cloth for Weekly, blue for Monthly.
+  const cloth = type === 'weekly' ? (night ? '#2F4739' : '#3E5A4C') : (night ? '#233F62' : '#2D5279');
+  const accent = type === 'weekly' ? '#55704A' : '#3B5F8C', bookInk = type === 'weekly' ? '#34472F' : '#2A4466';
+  // Shelf spines cropped from the same painted art (1000-wide units, rows 138–318): the phone's Weekly/Monthly switch.
+  const shelf = { weekly: { x: 572, w: 70 }, monthly: { x: 661, w: 74 } };
+  const shelfSpine = (item: ReportType, h: number) => {
+    const { x, w } = shelf[item], k = h / 180;
+    return <View style={{ width: w * k, height: h, overflow: 'hidden', borderRadius: 2 }}>
+      <Image source={night ? interiorNight : interiorDay} accessible={false} style={{ position: 'absolute', width: 1000 * k, height: 4000 / 3 * k, left: -x * k, top: -138 * k }} />
+    </View>;
+  };
+
   // Phone paper: the left page of the painted spread, scaled to cover the page and mirrored so its
   // gutter shading sits at the spine. Same art (and day/night) as the desktop book.
   const sheet = { x: 262, y: 545, w: 310, h: 500 }; // in a 1000-wide copy of the interior art
   const paintedPaper = () => {
     const k = Math.max(area.width / sheet.w, area.height / sheet.h);
-    return <View pointerEvents="none" style={[StyleSheet.absoluteFill, { overflow: 'hidden', borderRadius: 10 }]}>
+    return <View pointerEvents="none" style={[StyleSheet.absoluteFill, { overflow: 'hidden', borderRadius: 6 }]}>
       <View style={[StyleSheet.absoluteFill, { transform: [{ scaleX: -1 }] }]}>
         <Image source={night ? interiorNight : interiorDay} accessible={false} style={{ position: 'absolute', width: 1000 * k, height: 4000 / 3 * k,
           left: -sheet.x * k - (sheet.w * k - area.width) / 2, top: -sheet.y * k - (sheet.h * k - area.height) / 2 }} />
       </View>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: '#F6E4BE', opacity: night ? .38 : .2 }]} />
+      {/* Foxing: a few soft age marks. */}
+      <View style={[s.fox, { left: '14%', top: '62%', width: 70, height: 60 }]} />
+      <View style={[s.fox, { right: '16%', top: '26%', width: 46, height: 40 }]} />
+      <View style={[s.fox, { right: '9%', bottom: '12%', width: 84, height: 70 }]} />
+      <View style={s.aged} />
     </View>;
   };
   // Paper under a moving leaf: the book's own art on both layouts.
@@ -204,11 +222,12 @@ export default function Reflection() {
     const shown: Section = interactive ? section : 'Summary';
     return <View style={{ flex: 1, minHeight: 0, paddingRight: compact ? 0 : 30, flexDirection: wide ? 'row' : 'column', gap: wide ? 22 : 0 }}>
       <View style={wide ? { width: '38%' } : undefined}>
-      {compact && <View style={s.segment}>{(['weekly', 'monthly'] as const).map(item => <Pressable key={item} accessibilityRole="tab"
+      {compact && <View style={s.shelf}>{(['weekly', 'monthly'] as const).map(item => <Pressable key={item} accessibilityRole="tab"
         accessibilityState={{ selected: type === item }} aria-selected={type === item} accessibilityLabel={`${title(item)} reflections`}
-        disabled={!interactive || !!turning} onPress={() => setType(item)} style={[s.segmentItem, type === item && s.segmentOn]}>
-        <Text style={[s.small, type === item && s.segmentText]}>{title(item)}</Text></Pressable>)}</View>}
-      <Text accessibilityRole="header" style={[s.heading, { fontSize: compact ? 22 : Math.max(21, Math.min(27, sceneWidth * .026)) }]}>Your {title(type)} Reflection</Text>
+        disabled={!interactive || !!turning} onPress={() => setType(item)} style={[s.shelfItem, { opacity: type === item ? 1 : .62 }]}>
+        <View style={[s.shelfSpine, type === item && s.shelfSpineOn]}>{shelfSpine(item, wide ? 44 : 52)}</View>
+        <Text style={[s.small, type === item && [s.shelfTextOn, { borderColor: '#B8934A' }]]}>{title(item)}</Text></Pressable>)}</View>}
+      <Text accessibilityRole="header" style={[s.heading, compact && { color: bookInk }, { fontSize: compact ? 22 : Math.max(21, Math.min(27, sceneWidth * .026)) }]}>Your {title(type)} Reflection</Text>
       {report && (report.type === 'weekly'
         ? <><Text style={s.eyebrow}>{weekLabel(report.periodKey).title.toUpperCase()}</Text>
           {!!weekLabel(report.periodKey).range && <Text style={s.range}>{weekLabel(report.periodKey).range}{report.status === 'PARTIAL' ? ' · In progress' : ''}</Text>}</>
@@ -217,10 +236,10 @@ export default function Reflection() {
         {creating && <ActivityIndicator size="small" color="#8B6C44" accessible={false} />}
         <Text style={s.statusText}>{creating ? 'Writing last week’s reflection…' : notice}</Text>
       </View>}
-      <Text accessible={false} style={s.ornament}>·  ❦  ·</Text>
+      <View accessible={false} style={s.ornament}><View style={s.goldLine} /><Text style={s.fleuron}>❦</Text><View style={s.goldLine} /></View>
       {compact && detail && <View style={s.textTabs}>{(['Summary', 'Topics', 'Patterns'] as const).map(item => <Pressable key={item} accessibilityRole="tab"
         accessibilityState={{ selected: shown === item, disabled: !interactive || !detail }} aria-selected={shown === item} disabled={!interactive || !detail}
-        onPress={() => setSection(item)} style={[s.textTab, shown === item && s.textTabOn]}><Text style={[s.small, shown === item && s.textTabTextOn]}>{item}</Text></Pressable>)}</View>}
+        onPress={() => setSection(item)} style={[s.textTab, shown === item && { borderColor: accent }]}><Text style={[s.small, shown === item && s.textTabTextOn]}>{item}</Text></Pressable>)}</View>}
       </View>
       <View style={[{ flex: 1, minHeight: 0 }, wide && s.gutter]}>
       {interactive && (loading || reading) && <ActivityIndicator color="#6E744E" accessibilityLabel="Loading reflection" />}
@@ -237,7 +256,7 @@ export default function Reflection() {
           <EmotionalSafetyNote />
           {shown === 'Summary' && (() => {
             const text = detail.summary || detail.narrativeSections?.map(item => item.claim).join('\n\n') || 'No written reflection is available for this saved report.';
-            return <Text selectable={interactive} style={s.body}><Text style={s.initial}>{text.slice(0, 1)}</Text>{text.slice(1)}</Text>;
+            return <Text selectable={interactive} style={s.body}><Text style={[s.initial, { color: accent }]}>{text.slice(0, 1)}</Text>{text.slice(1)}</Text>;
           })()}
           {(shown === 'Summary' || shown === 'Topics') && <>
             <Text style={s.sectionHeading}>Your {title(type)} Themes</Text>
@@ -298,15 +317,26 @@ export default function Reflection() {
         {!compact && <View style={{ position: 'absolute', left: '-6%', top: '10%', gap: 6, zIndex: 2 }}>
           {(['Summary', 'Topics', 'Patterns'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: section === item, disabled: !selected || !details[selected.id] || !!turning }} aria-selected={section === item} disabled={!selected || !details[selected.id] || !!turning} onPress={() => setSection(item)} style={[s.edgeTab, { backgroundColor: ['#BBC09A', '#E1C49A', '#DCA9A0'][i], opacity: section === item ? 1 : .88 }]}><Text style={s.small}>{item}</Text></Pressable>)}
         </View>}
-        {compact && <>{/* Page block: two sheets peeking out at the fore-edge and tail. */}
+        {compact && <>
+          <View pointerEvents="none" style={[s.cover, { backgroundColor: cloth }]}>
+            <View style={s.coverRule} />
+            {/* Gold-tooled corners. */}
+            <View style={[s.corner, { left: 8, top: 8, borderTopWidth: 2, borderLeftWidth: 2 }]} />
+            <View style={[s.corner, { right: 8, top: 8, borderTopWidth: 2, borderRightWidth: 2 }]} />
+            <View style={[s.corner, { left: 8, bottom: 8, borderBottomWidth: 2, borderLeftWidth: 2 }]} />
+            <View style={[s.corner, { right: 8, bottom: 8, borderBottomWidth: 2, borderRightWidth: 2 }]} />
+          </View>
+          {/* Gilt page block: two sheets peeking out at the fore-edge and tail. */}
           <View pointerEvents="none" style={[s.sheetEdge, { left: area.left + 7, top: area.top + 6, width: area.width - 4, height: area.height - 2 }]} />
           <View pointerEvents="none" style={[s.sheetEdge, { left: area.left + 3, top: area.top + 3, width: area.width - 2, height: area.height - 1 }]} />
         </>}
         <View {...swipe.panHandlers} style={[s.pages, { left: area.left, top: area.top, width: area.width, height: area.height, backgroundColor: compact ? paperColor : 'transparent',
-          shadowColor: '#291A0D', shadowOpacity: compact ? .35 : 0, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, overflow: compact ? 'hidden' : 'visible' }]}>
+          borderRadius: compact ? 6 : 12, boxShadow: compact ? '0 2px 6px rgba(25,14,5,.45)' : undefined, overflow: compact ? 'hidden' : 'visible' }]}>
           {compact && <>
             {paintedPaper()}
-            <View pointerEvents="none" style={s.spine}><View style={s.spineLine} /></View>
+            {/* A sprig pressed between the pages. */}
+            {!wide && <Image source={require('../../assets/garden/environment/flowers/sparse_sprig.png')} accessible={false} resizeMode="contain"
+              style={{ position: 'absolute', right: 22, top: 128, width: 82, height: 76, opacity: .5, transform: [{ rotate: '16deg' }] }} />}
             <View pointerEvents="none" style={s.ribbon}><View style={s.ribbonBody} />
               <View style={{ flexDirection: 'row' }}><View style={s.ribbonTailLeft} /><View style={s.ribbonTailRight} /></View></View>
           </>}
@@ -340,7 +370,7 @@ export default function Reflection() {
           </>}
         </View>
         {pages.length > 0 && <View style={[s.turns, compact
-          ? { left: 8, width: area.width - 16, top: area.height - 52, borderTopWidth: 1, borderColor: '#AA8B5933' }
+          ? { left: area.left + 8, width: area.width - 16, top: area.top + area.height - 52, borderTopWidth: 1, borderColor: '#AA8B5933' }
           : { left: area.left, width: area.width, top: area.top + area.height + 4 }]}>
           <Pressable testID="reflection-previous-page" accessibilityRole="button" accessibilityLabel={`Previous ${type === 'weekly' ? 'week' : 'month'}`}
             disabled={!!turning || (atStart && !cursor)} onPress={() => atStart ? void load(cursor || undefined) : void turn(-1)}
@@ -356,7 +386,6 @@ export default function Reflection() {
 const s = StyleSheet.create({
   back: { position: 'absolute', top: 24, left: 24, padding: 13, borderRadius: 4, backgroundColor: '#F3E7CCD9' },
   pages: { position: 'absolute', borderRadius: 12 },
-  rule: { height: 1, backgroundColor: '#AC8A5244', marginVertical: 16 },
   sectionHeading: { fontFamily: 'Georgia', fontSize: 18, color: '#654D30', marginTop: 8, marginBottom: 12 },
   pattern: { fontFamily: 'Georgia', fontSize: 15, lineHeight: 23, color: '#556040', marginBottom: 8 },
   topic: { alignItems: 'center', minWidth: 70, maxWidth: 125, padding: 5 },
@@ -368,31 +397,36 @@ const s = StyleSheet.create({
   body: { fontFamily: 'Georgia', color: '#4D3B28', fontSize: 16, lineHeight: 26, marginBottom: 15 },
   small: { fontFamily: 'Georgia', color: '#53432D', fontSize: 13, lineHeight: 19 },
   link: { fontFamily: 'Georgia', color: '#52613B', textDecorationLine: 'underline', marginVertical: 10 },
-  tab: { paddingHorizontal: 9, paddingVertical: 8, borderRadius: 4 },
   status: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
   statusText: { fontFamily: 'Georgia', fontStyle: 'italic', color: '#7A5E3C', fontSize: 14, flexShrink: 1 },
   turns: { position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   turn: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   arrow: { fontFamily: 'Georgia', color: '#6B5232', fontSize: 30 },
   number: { fontFamily: 'Georgia', color: '#6B5232', fontSize: 13, flexShrink: 1, textAlign: 'center' },
-  eyebrow: { fontFamily: 'Georgia', fontSize: 12, letterSpacing: 2.2, color: '#7E6A48', marginTop: 8 },
+  eyebrow: { fontFamily: 'Georgia', fontSize: 12, letterSpacing: 2.2, color: '#8C6E3A', marginTop: 8 },
   range: { fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 15, color: '#5E4B33', marginTop: 3 },
-  ornament: { fontFamily: 'Georgia', fontSize: 16, color: '#9A845C', textAlign: 'center', marginVertical: 12, letterSpacing: 2 },
+  ornament: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 12 },
+  goldLine: { flex: 1, height: 1, backgroundColor: '#B8934A80' },
+  fleuron: { fontFamily: 'Georgia', fontSize: 17, color: '#A88236' },
   initial: { fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 30, lineHeight: 30, color: '#6C7A4A' },
   textTabs: { flexDirection: 'row', gap: 18, marginBottom: 14, borderBottomWidth: 1, borderColor: '#B4986A40' },
   textTab: { paddingVertical: 8, borderBottomWidth: 2, borderColor: 'transparent', marginBottom: -1 },
-  textTabOn: { borderColor: '#7E8B57' },
   textTabTextOn: { color: '#3F4A2C' },
   gutter: { paddingLeft: 22, borderLeftWidth: 1, borderColor: '#A98A5C55' },
-  sheetEdge: { position: 'absolute', borderRadius: 11, backgroundColor: '#E6D2A8', borderWidth: 1, borderColor: '#B8996A66' },
-  spine: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 12, backgroundColor: '#5A3922', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
-  spineLine: { position: 'absolute', right: 2, top: 10, bottom: 10, width: 1, backgroundColor: '#A27B4C', opacity: .8 },
+  cover: { position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, borderRadius: 14, boxShadow: '0 6px 14px rgba(20,12,5,.5), inset 0 0 16px rgba(0,0,0,.45)' },
+  coverRule: { position: 'absolute', left: 4, top: 4, right: 4, bottom: 4, borderRadius: 11, borderWidth: 1, borderColor: '#C9A45CCC' },
+  sheetEdge: { position: 'absolute', borderRadius: 6, backgroundColor: '#E8D3A0', borderWidth: 1, borderColor: '#C29A4A' },
+  corner: { position: 'absolute', width: 24, height: 24, borderColor: '#D2AE62' },
+  fox: { position: 'absolute', borderRadius: 999, backgroundColor: 'rgba(150,104,48,.05)', boxShadow: '0 0 26px 14px rgba(150,104,48,.07)' },
+  // Aged paper: hinge shadow at the spine and a warm, worn edge all round.
+  aged: { position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, boxShadow: 'inset 14px 0 14px -8px rgba(70,42,16,.45), inset 0 0 36px rgba(128,86,38,.34)' },
+  shelf: { flexDirection: 'row', alignItems: 'flex-end', gap: 20, marginBottom: 10 },
+  shelfItem: { flexDirection: 'row', alignItems: 'flex-end', gap: 8, minHeight: 44 },
+  shelfSpine: { borderRadius: 2, boxShadow: '1px 2px 3px rgba(40,25,10,.35)' },
+  shelfSpineOn: { transform: [{ translateY: -3 }], boxShadow: '1px 5px 6px rgba(40,25,10,.45)' },
+  shelfTextOn: { color: '#3A2C1C', borderBottomWidth: 1, paddingBottom: 2 },
   ribbon: { position: 'absolute', top: 0, right: 9, width: 14, zIndex: 1, shadowColor: '#3B2414', shadowOpacity: .25, shadowRadius: 2, shadowOffset: { width: 1, height: 1 } },
   ribbonBody: { width: 14, height: 70, backgroundColor: '#A55E63' },
   ribbonTailLeft: { width: 0, height: 0, borderTopWidth: 11, borderTopColor: '#A55E63', borderRightWidth: 7, borderRightColor: 'transparent' },
   ribbonTailRight: { width: 0, height: 0, borderTopWidth: 11, borderTopColor: '#A55E63', borderLeftWidth: 7, borderLeftColor: 'transparent' },
-  segment: { flexDirection: 'row', alignSelf: 'flex-start', borderWidth: 1, borderColor: '#A98C5E66', borderRadius: 18, padding: 2, marginBottom: 12 },
-  segmentItem: { minHeight: 34, minWidth: 84, paddingHorizontal: 14, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  segmentOn: { backgroundColor: '#C5CAA2' },
-  segmentText: { color: '#2F3A22' },
 });
