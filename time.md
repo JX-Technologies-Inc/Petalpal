@@ -101,10 +101,22 @@ only with `allowPartial` ([test/back/ai-p0.integration.test.js](test/back/ai-p0.
   the same account-timezone rule as `Event.localDate`. Membership is still the period's
   `[periodStartUtc, periodEndUtc)` on `occurredAt`; previous-week source rows are excluded.
 - **Halves in the factual line:** Monday–Thursday and Friday–Sunday of that local week.
-- No new timestamp, period boundary, trigger rule or idempotency key; the job key and
+- No new period boundary, trigger rule or idempotency key; the job key and
   `generationVersion` are unchanged.
 
-**TESTED BEHAVIOR:** an Event at `2026-09-21T06:30Z` in `America/Vancouver` lands on
+- **"Then and now" lookback:** the four whole account-timezone weeks before the period
+  (`weeklyLookbackStart` in [lib/ai-periods.js](lib/ai-periods.js), four `previousWeeklyPeriod`
+  steps, so DST weeks stay exact). A pair's two Events are at least 7 × 24 hours apart by
+  `occurredAt`; dates shown are each Event's account-timezone local date. The source fence
+  widens to the same window for this contract only. Event deletion looks at short reports whose
+  period ends after the Event and starts up to 35 days later.
+
+**TESTED BEHAVIOR:** the `2026-11-16` Vancouver week (after the 2026-11-01 DST change) looks
+back to `2026-10-19T07:00Z`; an earlier Event five days before is not paired; a worker run reads
+`2026-08-25` but not `2026-08-10` for the `2026-09-14` week
+([test/back/weekly-then-and-now.test.js](test/back/weekly-then-and-now.test.js),
+[test/back/sonnet-weekly.test.js](test/back/sonnet-weekly.test.js)).
+An Event at `2026-09-21T06:30Z` in `America/Vancouver` lands on
 Sunday `2026-09-20` of the `2026-09-14` week; moodless and prior-week rows add no point
 ([test/back/weekly-short.test.js](test/back/weekly-short.test.js)).
 

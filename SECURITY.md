@@ -3226,3 +3226,15 @@ Correction to the 2026-10-16 `weekly-sonnet-v1` entry above (kept unchanged as h
 ## 2026-10-17 — Weekly trigger workflow reuses the integration environment (local, not dispatched)
 
 Update to the trigger-workflow entry above (kept as history): both phases now run in the existing protected environment `petalpal-web-build-integration`, which already holds the verified TEST identity secrets. A new environment would have needed the TEST password to be re-entered, and that value is not available to the owner (a manual sign-in failed with HTTP 400). Its required reviewers are now the human approval for both phases. The script's guards (pre-confirmed owner id, stored email, `main`, `run_attempt == 1`, UTC time, single request, no retry) are unchanged. Offline tests 6/6.
+
+## 2026-10-20 — Short Weekly report (`weekly-short-v1`): fence, deletion and support rules (local, default OFF, not released)
+
+Opt-in contract only (`AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1`); defaults and production are unchanged.
+
+- **Source fence:** the report snapshot now carries each Event's `primaryGardenMood`. For this contract only (`sourceFence.thenAndNowLookback`), the fence covers the four whole weeks before the period (`weeklyLookbackStart`), because "then and now" quotes an earlier Event; any change to those rows makes persistence fail as `REPORT_SOURCE_STALE`. Earlier Events are never sent to the model.
+- **Deletion:** deleting an Event also deletes any short Weekly report that shows it without citing it — a mood-curve point, or either side of "then and now" (reports whose period ends after the Event and starts up to 35 days later).
+- **Support:** the mobile immediate-danger rule also runs on the server (`lib/emotional-safety.js`). A matching week skips the model call (mood curve and support text only); an earlier entry that matches is never quoted.
+- **Retrieval:** English "then and now" compares stored BGE vectors in PostgreSQL (`similarToMemory`): owner-scoped, consent-locked, no new embedding inference; vectors are not logged or returned.
+- **Quotation fidelity fix:** displayed quotes keep the user's own characters; NFKC is used only for matching (it had turned full-width Chinese punctuation into ASCII in the line of the week).
+
+Offline evidence only (PGlite incl. pgvector with all migrations; worker-level fence/persistence tests). No provider call, deployment or configuration change.

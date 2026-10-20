@@ -237,7 +237,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
     await pg.query('INSERT INTO "EventMemory" VALUES ($1,\'alice\',$2,\'2026-09-21\',1,\'EVENT\',$3,$4,0.8,\'GENERATED\',1)',
       [`memory-${i}`, `event-${i}`, summaries(normalized)[i % 2], JSON.stringify([normalized === "en" ? "drawing" : "画画"])]);
   }
-  let response = packet => Response.json(native(output(packet))), retrievalHook, failEvidence = false, expireCompletion = false;
+  let response = packet => Response.json(native(output(packet))), retrievalHook, similarHook = () => [], failEvidence = false, expireCompletion = false;
   const calls = [], logs = []; let retrievalCalls = 0, legacyCalls = 0;
   const adapt = db => {
     const query = async (sql, ...args) => (await db.query(sql, args)).rows;
@@ -297,7 +297,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
     retrievalCalls++; if (retrievalHook) await retrievalHook();
     return (await db.event.findMany({ where: { ownerId: identity.userId, occurredAt: { gte: dateFrom, lt: dateTo } } }))
       .filter(event => event.memory).map(event => ({ ...event.memory, eventDate: event.occurredAt, similarity: 0.9 }));
-  } };
+  }, similarTo: async args => similarHook(args) };
   const fetchImpl = async (url, options) => {
     assert.equal(url, `https://gateway.ai.cloudflare.com/v1/${"a".repeat(32)}/synthetic-weekly/anthropic/v1/messages`);
     const body = JSON.parse(options.body), packet = JSON.parse(body.messages[0].content);
@@ -311,7 +311,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
       claim: summaries("en")[0], evidenceRefs: [{ sourceEventId: "event-0", sourceMemoryId: "memory-0" }], aggregateRefs: [] }] }; } } });
   const run = (env = enabled) => make(env).runJob({ jobId: "job-1", ownerId: "alice", jobType: "WEEKLY_REPORT" });
   return { pg, db, calls, logs, run, make, get retrievalCalls() { return retrievalCalls; }, get legacyCalls() { return legacyCalls; },
-    respond: fn => { response = fn; }, retrievalHook: fn => { retrievalHook = fn; }, failEvidence: () => { failEvidence = true; },
+    respond: fn => { response = fn; }, retrievalHook: fn => { retrievalHook = fn; }, similarHook: fn => { similarHook = fn; }, failEvidence: () => { failEvidence = true; },
     expireCompletion: () => { expireCompletion = true; }, rows: table => db.$queryRawUnsafe(`SELECT * FROM "${table}"`) };
 }
 
@@ -860,4 +860,32 @@ test("short contract: malformed output saves nothing; a week needing support nev
   assert.deepEqual(saved.narrativeSections.map(section => section.kind), ["MOOD_CURVE", "SUPPORT_RESOURCES"]);
   assert.equal(saved.summary.includes("keep myself safe"), false);
   assert.equal(saved.summary.includes(summaries("en")[0]), false);
+});
+
+test("short contract: then and now reaches four earlier weeks through the source fence (zh phrase, en stored vectors)", async t => {
+  for (const locale of ["zh-CN", "en"]) {
+    const f = await fixture(t, { locale, count: 3 });
+    await f.pg.exec(`ALTER TABLE "Event" ADD COLUMN "primaryGardenMood" text`);
+    const [nowText, thenText] = locale === "en" ? ["Slept through the whole night for once.", "Awake again at 3am, staring at the ceiling."]
+      : ["晚上又睡不着觉，脑子停不下来。", "搬家以后一直睡不着觉。"];
+    await f.pg.query('UPDATE "EventMemory" SET "summary"=$1 WHERE "id"=\'memory-2\'', [nowText]);
+    // 2026-08-25 is inside the lookback (from 2026-08-17); 2026-08-10 is outside it and must not be read.
+    for (const [id, date, text] of [["old", "2026-08-25T12:00:00Z", thenText], ["older", "2026-08-10T12:00:00Z", thenText]]) {
+      await f.pg.query('INSERT INTO "Event" VALUES ($1,\'alice\',$2,\'2026-09-21\',true)', [`event-${id}`, new Date(date)]);
+      await f.pg.query('INSERT INTO "EventMemory" VALUES ($1,\'alice\',$2,\'2026-09-21\',1,\'EVENT\',$3,$4,0.8,\'GENERATED\',1)',
+        [`memory-${id}`, `event-${id}`, text, JSON.stringify([])]);
+    }
+    const similar = [];
+    f.similarHook(args => { similar.push(args); return args.memoryId === "memory-2"
+      ? [{ id: "memory-old", ownerId: "alice", sourceEventId: "event-old", similarity: 0.92 }] : []; });
+    f.respond(packet => Response.json(native(shortOutput(packet))));
+    const result = await f.run(shortSettings); assert.equal(result.succeeded, true, result.error?.stack);
+    const saved = (await f.rows("WeeklyReport"))[0].document, section = saved.narrativeSections.find(item => item.kind === "THEN_AND_NOW");
+    assert.equal(section.match, locale === "en" ? "CHANGE" : "REPEAT");
+    assert.deepEqual([section.then.sourceEventId, section.now.sourceEventId], ["event-old", "event-2"]);
+    assert.equal(section.then.quote, locale === "en" ? thenText : "搬家以后一直睡不着觉。");
+    assert.equal(similar.length, locale === "en" ? 3 : 0);
+    for (const args of similar) assert.equal(args.dateFrom.toISOString(), "2026-08-17T00:00:00.000Z");
+    assert.doesNotMatch(JSON.stringify(f.calls[0].packet), /搬家以后|ceiling|event-old|memory-old/); // earlier entries never reach the model
+  }
 });

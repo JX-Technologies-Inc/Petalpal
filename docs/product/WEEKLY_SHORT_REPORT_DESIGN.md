@@ -81,10 +81,28 @@ Open items for the owner:
 - Checked offline (parsing and layout tests, type check) and visually in Expo web at phone width with
   synthetic data; the signed-in tap-to-Event success path is not yet checked against a backend.
 
+## Step 3 — then and now (built, code only)
+
+[lib/weekly-then-and-now.js](../../lib/weekly-then-and-now.js); chosen while the Weekly input is built
+([lib/report-foundation.js](../../lib/report-foundation.js)), saved as `THEN_AND_NOW` between side by side
+and the question. No model involvement; earlier Events never reach the model.
+
+- Looks back four whole weeks before the period; the two Events are ≥ 7 days apart. Up to 8 recent Events
+  of this week × 60 earlier ones are compared.
+- English, change in wording: cosine ≥ 0.85 between stored BGE vectors (PostgreSQL, no new inference) and no
+  shared phrase; quotes each whole entry (≤ 180 characters).
+- Repeated phrase (both languages): longest shared phrase — ≥ 4 Chinese characters or ≥ 2 English words, at
+  least two of them not everyday filler, trimmed of filler at the edges; quotes the sentence containing it
+  (≤ 180 / 60 characters). Count line ("appears in 3 of your entries over the past five weeks" /
+  "过去五周里，你有 3 条记录写到…") only when the phrase is in ≥ 3 entries.
+- Preference: change in wording → repeated phrase → hidden. Hidden too with fewer than 3 Events this week,
+  in a support week, or when either quote would trigger the support hint.
+- The 0.85 threshold and the filler lists are first guesses; tune them in live review.
+- Mobile shows "Then · Sep 21 / Now · Oct 6" (那时 / 现在) quote blocks and the count line.
+
 ## Next steps
 
-- Then and now: English cross-week retrieval can reuse BGE/pgvector; Chinese needs a code-only path
-  (repeated phrase, ≥ 7 days apart), since BGE is English-only today.
-- Live acceptance: owner blind review against the current report, as in the earlier A/Bs.
+- Live acceptance: owner blind review against the current report, as in the earlier A/Bs (needs the hosted
+  TEST contract gate widened and paid-inference approval).
 - Mockup used for approval: low-week example in en and zh-Hans (synthetic data), reviewed in chat on
   2026-10-20; not stored in the repository.

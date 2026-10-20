@@ -165,7 +165,55 @@ test("deleting an Event removes a short Weekly report whose mood curve shows it,
   };
   const result = await new PrivateEventRepository({ $transaction: fn => fn(tx) })
     .deleteEventAndAffectedReports({ identity: { userId: "alice" }, eventId: "event-1" });
-  assert.deepEqual(where, { ownerId: "alice", periodStartUtc: { lte: occurredAt }, periodEndUtc: { gt: occurredAt } });
+  // Reports up to five weeks later can still quote it in "then and now".
+  assert.deepEqual(where, { ownerId: "alice", periodStartUtc: { lte: new Date("2026-10-21T12:00:00Z") }, periodEndUtc: { gt: occurredAt } });
   assert.deepEqual(deleted, ["weekly-short"]);
   assert.deepEqual(result.deletedReports, { weekly: 1, monthly: 0, yearly: 0 });
+});
+
+test("the line of the week keeps the user's own full-width punctuation", () => {
+  const data = input("zh-Hans"), short = prepare(data);
+  const result = renderWeeklyShort(answer("zh-Hans", { line: [{ ref: "E2", quote: TEXTS["zh-Hans"][1] }] }), data, short, "synthetic-model");
+  assert.equal(result.sections[0].claim, "我把画分享给朋友，聊了彼此的近况。");
+});
+
+test("then and now follows side by side, is re-checked against the source fence and never quotes a support signal", () => {
+  const earlier = (summary) => ({ id: "event-old", occurredAt: +new Date("2026-08-30T12:00:00Z"), primaryGardenMood: "QUIET_BLOOM",
+    memory: { summary, topics: [] } });
+  const pair = { match: "REPEAT", phrase: "睡不着觉", count: 3,
+    then: { sourceEventId: "event-old", date: "2026-08-30", quote: "那时候一直睡不着觉。" },
+    now: { sourceEventId: "event-0", date: "2026-09-14", quote: "那个下午很安静。" } };
+  const render = (summary = "那时候一直睡不着觉。", change = {}, texts) => {
+    const data = { ...input("zh-Hans", { extraSources: [earlier(summary)], ...(texts ? { texts } : {}) }), thenAndNow: { ...pair, ...change } };
+    return renderWeeklyShort(answer("zh-Hans"), data, prepare(data), "synthetic-model");
+  };
+  const result = render();
+  assert.deepEqual(kinds(result), ["LINE_OF_WEEK", "MOOD_CURVE", "SIDE_BY_SIDE", "THEN_AND_NOW", "QUESTION"]);
+  const section = result.sections[3];
+  assert.equal(section.claim, "8月30日你写道：“那时候一直睡不着觉。”9月14日：“那个下午很安静。”过去五周里，你有 3 条记录写到“睡不着觉”。");
+  assert.deepEqual([section.then.sourceEventId, section.now.sourceEventId], ["event-old", "event-0"]);
+  assert.deepEqual(section.evidenceRefs, []);
+  // The earlier row is outside the week: no mood-curve point for it.
+  assert.equal(result.sections[1].points.some(point => point.sourceEventId === "event-old"), false);
+  const hidden = list => assert.equal(kinds(list).includes("THEN_AND_NOW"), false);
+  hidden(render("那时候其实睡得很好。")); // quote no longer in the fenced memory
+  hidden(render(undefined, { then: { ...pair.then, date: "2026-09-15" } })); // not in date order
+  hidden(render("我无法保证自己的安全。", { then: { ...pair.then, quote: "我无法保证自己的安全。" } }));
+  hidden(render(undefined, {}, TEXTS["zh-Hans"].slice(0, 2))); // fewer than three Events this week
+});
+
+test("deleting an earlier Event removes a later short report that quotes it in then and now", async () => {
+  const deleted = [];
+  const tx = {
+    $queryRawUnsafe: async () => [],
+    event: { findFirst: async () => ({ id: "event-old", occurredAt: new Date("2026-08-30T12:00:00Z") }), deleteMany: async () => ({ count: 1 }) },
+    aiEvidence: { findMany: async () => [] },
+    weeklyReport: {
+      findMany: async () => [{ id: "weekly-later", narrativeSections: [{ kind: "THEN_AND_NOW",
+        then: { sourceEventId: "event-old" }, now: { sourceEventId: "event-0" } }] }],
+      deleteMany: async args => { deleted.push(...args.where.id.in); }
+    }
+  };
+  await new PrivateEventRepository({ $transaction: fn => fn(tx) }).deleteEventAndAffectedReports({ identity: { userId: "alice" }, eventId: "event-old" });
+  assert.deepEqual(deleted, ["weekly-later"]);
 });

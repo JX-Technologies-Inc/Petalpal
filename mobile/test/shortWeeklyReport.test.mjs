@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { loadPlantingModules } from './loadPlantingModules.mjs';
-const { shortWeekly, moodCurveLayout, moodIcon, SHORT_COPY, WEEKLY_SHORT } = loadPlantingModules()('../../../services/reflections');
+const { shortWeekly, moodCurveLayout, moodIcon, SHORT_COPY, WEEKLY_SHORT, shortDate, thenNowCount } = loadPlantingModules()('../../../services/reflections');
 const { PRIMARY_MOODS } = loadPlantingModules()('../../../services/events');
 const plain = value => JSON.parse(JSON.stringify(value)); // values from the VM sandbox have foreign prototypes
 
@@ -30,7 +30,7 @@ test('short Weekly sections are read only from the short contract; older reports
   assert.equal(shortWeekly({ narrativeSections: [...sections, { kind: 'RECENT_MOMENTS', claim: 'Mixed.' }] }), null);
   assert.equal(shortWeekly({ narrativeSections: [] }), null);
   const support = plain(shortWeekly({ narrativeSections: [{ kind: 'SUPPORT_RESOURCES', claim: 'You do not have to face this alone.', contractVersion: WEEKLY_SHORT, locale: 'en' }] }));
-  assert.deepEqual({ ...support, support: !!support.support }, { locale: 'en', line: null, curve: null, side: null, question: null, support: true });
+  assert.deepEqual({ ...support, support: !!support.support }, { locale: 'en', line: null, curve: null, side: null, question: null, support: true, thenAndNow: null });
 });
 
 test('mood curve puts each day in its column, higher moods higher, and joins points in time order', () => {
@@ -47,4 +47,15 @@ test('mood curve puts each day in its column, higher moods higher, and joins poi
 test('both languages carry the same labels and seven day initials', () => {
   assert.deepEqual(Object.keys(SHORT_COPY.en), Object.keys(SHORT_COPY['zh-Hans']));
   for (const copy of Object.values(SHORT_COPY)) assert.equal(copy.days.length, 7);
+});
+
+test('then and now keeps both quotes and dates; a count appears only with its phrase', () => {
+  const then = { sourceEventId: 'event-old', date: '2026-08-30', quote: '那时候一直睡不着觉。' };
+  const now = { sourceEventId: 'event-0', date: '2026-09-14', quote: '晚上又睡不着觉，脑子停不下来。' };
+  const read = section => plain(shortWeekly({ narrativeSections: [{ kind: 'THEN_AND_NOW', claim: 'x', ...meta, ...section }] })).thenAndNow;
+  assert.deepEqual(read({ then, now, count: 3, phrase: '睡不着觉' }), { then, now, count: 3, phrase: '睡不着觉' });
+  assert.deepEqual(read({ then, now, count: 3, phrase: null }), { then, now, count: null, phrase: null });
+  assert.equal(read({ then: { ...then, date: 'August' }, now }), null);
+  assert.equal(shortDate('2026-08-30', 'zh-Hans'), '8月30日'); assert.equal(shortDate('2026-09-04', 'en'), 'Sep 4');
+  assert.equal(thenNowCount(3, '睡不着觉', 'zh-Hans'), '过去五周里，你有 3 条记录写到“睡不着觉”。');
 });

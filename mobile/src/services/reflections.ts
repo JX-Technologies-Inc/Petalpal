@@ -6,7 +6,9 @@ export interface MoodPoint { date: string; mood: PrimaryMood; level: number; sou
 export interface ReportSection {
   kind: string; claim: string; contractVersion?: string; locale?: string;
   evidenceRefs?: { sourceEventId: string; sourceMemoryId: string }[]; days?: string[]; points?: MoodPoint[];
+  then?: ThenNowSide; now?: ThenNowSide; count?: number | null; phrase?: string | null;
 }
+export interface ThenNowSide { sourceEventId: string; date: string; quote: string }
 export interface SavedReport {
   id: string; type: ReportType; periodKey: string; periodStartUtc: string;
   periodEndUtc: string; createdAt: string; status: string;
@@ -79,6 +81,7 @@ export interface ShortWeekly {
   line: { text: string; eventId: string } | null;
   curve: { claim: string; days: string[]; points: MoodPoint[] } | null;
   side: string | null; question: string | null; support: string | null;
+  thenAndNow: { then: ThenNowSide; now: ThenNowSide; count: number | null; phrase: string | null } | null;
 }
 export function shortWeekly(report: Pick<ReflectionReport, 'narrativeSections'>): ShortWeekly | null {
   const sections = Array.isArray(report.narrativeSections) ? report.narrativeSections : [];
@@ -91,7 +94,24 @@ export function shortWeekly(report: Pick<ReflectionReport, 'narrativeSections'>)
   return { locale: sections[0].locale === 'zh-Hans' ? 'zh-Hans' : 'en',
     line: line && eventId ? { text: line.claim, eventId } : null,
     curve: curve && days && points.length ? { claim: curve.claim, days, points } : null,
-    side: find('SIDE_BY_SIDE')?.claim ?? null, question: find('QUESTION')?.claim ?? null, support: find('SUPPORT_RESOURCES')?.claim ?? null };
+    side: find('SIDE_BY_SIDE')?.claim ?? null, question: find('QUESTION')?.claim ?? null, support: find('SUPPORT_RESOURCES')?.claim ?? null,
+    thenAndNow: thenNow(find('THEN_AND_NOW')) };
+}
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const sideOk = (side?: ThenNowSide) => !!side && DATE.test(side.date) && typeof side.quote === 'string' && !!side.quote.trim() && typeof side.sourceEventId === 'string';
+function thenNow(section?: ReportSection) {
+  if (!section || !sideOk(section.then) || !sideOk(section.now)) return null;
+  const count = Number.isInteger(section.count) && section.phrase ? section.count! : null;
+  return { then: section.then!, now: section.now!, count, phrase: count ? section.phrase! : null };
+}
+// "Sep 21" / "9月21日" from an account-timezone local date.
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export function shortDate(date: string, locale: ShortLocale) {
+  const [, month, day] = date.split('-').map(Number);
+  return locale === 'en' ? `${MONTHS[month - 1]} ${day}` : `${month}月${day}日`;
+}
+export function thenNowCount(count: number, phrase: string, locale: ShortLocale) {
+  return locale === 'en' ? `“${phrase}” appears in ${count} of your entries over the past five weeks.` : `过去五周里，你有 ${count} 条记录写到“${phrase}”。`;
 }
 
 // Seven columns, Monday first; level 3 at the top. Several Events on one day sit side by side,
@@ -114,10 +134,12 @@ export function moodCurveLayout(days: string[], points: MoodPoint[], width: numb
 export const moodIcon = (mood: PrimaryMood) => PRIMARY_MOODS.indexOf(mood) + 1; // EventIllustration index, as in EventsPanel
 
 export const SHORT_COPY = {
-  en: { line: 'Line of the week', curve: 'Your week in moods', side: 'Side by side', question: 'A question for you',
+  en: { line: 'Line of the week', curve: 'Your week in moods', side: 'Side by side', thenNow: 'Then and now', then: 'Then', now: 'Now',
+    question: 'A question for you',
     write: 'Write about it', open: 'Show the whole moment', close: 'Hide', loading: 'Opening…',
     unavailable: 'This moment can’t be opened right now.', support: 'Support', days: ['M', 'T', 'W', 'T', 'F', 'S', 'S'] },
-  'zh-Hans': { line: '本周一句', curve: '这周的心情', side: '两件事并排', question: '留给你的问题',
+  'zh-Hans': { line: '本周一句', curve: '这周的心情', side: '两件事并排', thenNow: '那时与现在', then: '那时', now: '现在',
+    question: '留给你的问题',
     write: '写一写', open: '看完整记录', close: '收起', loading: '正在打开…',
     unavailable: '现在打不开这条记录。', support: '支持', days: ['一', '二', '三', '四', '五', '六', '日'] },
 } as const;

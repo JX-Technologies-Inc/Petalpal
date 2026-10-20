@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { readEvent } from '../../services/events';
-import { moodCurveLayout, moodIcon, SHORT_COPY, type ShortWeekly } from '../../services/reflections';
+import { moodCurveLayout, moodIcon, SHORT_COPY, shortDate, thenNowCount, type ShortWeekly } from '../../services/reflections';
 import { EventIllustration } from './EventIllustration';
 
 const CURVE_HEIGHT = 104, DOT = 26, CHIP = DOT + 6;
@@ -51,6 +51,15 @@ export function ShortWeeklyReport({ short, interactive, onWrite }: { short: Shor
       <Text selectable={interactive} style={s.small}>{short.curve.claim}</Text>
     </>}
     {short.side && <><Text style={s.heading}>{copy.side}</Text><Text selectable={interactive} style={s.body}>{short.side}</Text></>}
+    {short.thenAndNow && <>
+      <Text style={s.heading}>{copy.thenNow}</Text>
+      {([['then', short.thenAndNow.then], ['now', short.thenAndNow.now]] as const).map(([key, side]) => <View key={key} style={s.pair}>
+        <Text style={s.pairLabel}>{copy[key]} · {shortDate(side.date, short.locale)}</Text>
+        <Text selectable={interactive} style={s.pairQuote}>{`“${side.quote}”`}</Text>
+      </View>)}
+      {short.thenAndNow.count && short.thenAndNow.phrase
+        ? <Text selectable={interactive} style={s.small}>{thenNowCount(short.thenAndNow.count, short.thenAndNow.phrase, short.locale)}</Text> : null}
+    </>}
     {short.question && <>
       <Text style={s.heading}>{copy.question}</Text>
       <Text selectable={interactive} style={s.body}>{short.question}</Text>
@@ -75,6 +84,9 @@ const s = StyleSheet.create({
   dot: { position: 'absolute', width: CHIP, height: CHIP, borderRadius: CHIP / 2, alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#FFF8EA', borderWidth: 1, borderColor: '#B8934A66' },
   days: { flexDirection: 'row', marginTop: 4, marginBottom: 8 },
+  pair: { borderLeftWidth: 2, borderColor: '#B8934A88', paddingLeft: 12, marginBottom: 10 },
+  pairLabel: { fontFamily: 'Georgia', color: '#8B6C44', fontSize: 12, letterSpacing: .5, marginBottom: 3 },
+  pairQuote: { fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 16, lineHeight: 24, color: '#4D3B28' },
   day: { flex: 1, textAlign: 'center', fontFamily: 'Georgia', color: '#8B6C44', fontSize: 12 },
   button: { alignSelf: 'flex-start', borderWidth: 1, borderColor: '#B8934A', borderRadius: 18, paddingVertical: 8,
     paddingHorizontal: 16, marginBottom: 14 },
