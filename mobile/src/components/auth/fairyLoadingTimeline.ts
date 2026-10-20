@@ -204,8 +204,8 @@ interface FlightPath {
 // Transition 0 -> 1: Upper-Right to Upper-Left (lifts upward from resting edge, glides across top, lands seated)
 const PATH_PEEKING_TO_SITTING: FlightPath = {
   start: ANCHOR_PEEKING,
-  c1: { x: 0.77, y: -0.16 }, // lifts smoothly upward into open air
-  c2: { x: 0.36, y: -0.12 }, // glides smoothly across top
+  c1: { x: 0.65, y: -0.01 }, // lifts smoothly upward into open air above invitation
+  c2: { x: 0.35, y: -0.02 }, // glides smoothly across top within graceful view
   end: ANCHOR_SITTING,
   startRot: 0,
   midRot: -4,
@@ -227,7 +227,7 @@ const PATH_SITTING_TO_TAPPING: FlightPath = {
 const PATH_TAPPING_TO_PEEKING: FlightPath = {
   start: ANCHOR_TAPPING,
   c1: { x: 1.02, y: 0.20 },
-  c2: { x: 0.82, y: -0.12 },
+  c2: { x: 0.82, y: 0.00 },
   end: ANCHOR_PEEKING,
   startRot: 0,
   midRot: -4,
@@ -338,6 +338,17 @@ export function getFairyLoadingFrame(
   let poseMix = 0;
   let transitionProgress = 0;
 
+  // Micro-animations per action initialized:
+  let wingFlutter = 0;
+  let breatheY = 0;
+  let blink = 0;
+  let headTiltDeg = 0;
+  let isTapping = false;
+  let tapReach = 0;
+  let sparkleActive = false;
+  let sparkleScale = 0;
+  let sparkleOpacity = 0;
+
   if (!isTransitioning) {
     // Holding the pose with subtle organic breathing and secondary motion
     const anchor =
@@ -352,60 +363,94 @@ export function getFairyLoadingFrame(
     poseMix = 0;
     transitionProgress = 0;
   } else {
-    // Graceful flight transition
+    // Multi-stage natural continuous physical action sequence
     const transTime = timeInAction - holdDuration;
     transitionProgress = Math.min(1, Math.max(0, transTime / TRANSITION_DURATION_MS));
-    const easedT = easeInOutSine(transitionProgress);
+    const u = transitionProgress;
 
-    const path = FLIGHT_PATHS[actionIndex];
-    x = cubicBezier(path.start.x, path.c1.x, path.c2.x, path.end.x, easedT);
-    y = cubicBezier(path.start.y, path.c1.y, path.c2.y, path.end.y, easedT);
+    if (actionIndex === 0) {
+      // TRANSITION 1: Pose 01 -> Pose 02 (8800ms - 10000ms)
+      // "lying and daydreaming -> gently pushing herself up -> moving into a seated perch"
+      const easedT = easeInOutSine(u);
+      const path = PATH_PEEKING_TO_SITTING;
+      x = cubicBezier(path.start.x, path.c1.x, path.c2.x, path.end.x, easedT);
+      y = cubicBezier(path.start.y, path.c1.y, path.c2.y, path.end.y, easedT);
 
-    // Subtle bank / tilt during curved flight
-    if (easedT < 0.5) {
-      rotationDeg = path.startRot + (path.midRot - path.startRot) * (easedT * 2);
+      // Phase 1 (0.0 - 0.22): Arm Push-up Anticipation (fairy pushes up with arms from leaning pose)
+      if (u < 0.22) {
+        const p = u / 0.22;
+        const pushUpEase = Math.sin(p * Math.PI);
+        y -= 0.012 * pushUpEase;
+        rotationDeg = -3.0 * pushUpEase;
+        wingFlutter = Math.sin((cycleMs / 180) * 2 * Math.PI) * (0.03 + 0.07 * p);
+      } else if (u < 0.80) {
+        // Phase 2 (0.22 - 0.80): Weight Shift & High Curved Flight Arc Across Top
+        const p = (u - 0.22) / 0.58;
+        rotationDeg = -3.0 - Math.sin(p * Math.PI) * 3.0;
+        wingFlutter = Math.sin((cycleMs / 150) * 2 * Math.PI) * 0.14;
+      } else {
+        // Phase 3 (0.80 - 1.00): Soft Descent, Settle Cushion & Gaze Turn onto Shelf
+        const p = (u - 0.80) / 0.20;
+        const settleEase = Math.sin(p * Math.PI);
+        const rotEase = (1 - Math.cos(p * Math.PI)) / 2;
+        y += 0.003 * settleEase;
+        rotationDeg = -3.0 * (1 - rotEase);
+        wingFlutter = Math.sin((cycleMs / 190) * 2 * Math.PI) * (0.14 - 0.10 * p);
+      }
+
+      poseMix = easedT;
+    } else if (actionIndex === 1) {
+      // TRANSITION 2: Pose 02 -> Pose 03 (13800ms - 15000ms)
+      // "seated observation -> little lift-off -> graceful drift/fly -> curious interaction"
+      const easedT = easeInOutSine(u);
+      const path = PATH_SITTING_TO_TAPPING;
+      x = cubicBezier(path.start.x, path.c1.x, path.c2.x, path.end.x, easedT);
+      y = cubicBezier(path.start.y, path.c1.y, path.c2.y, path.end.y, easedT);
+
+      // Phase 1 (0.0 - 0.22): Small Preparation Movement & Lift-off
+      if (u < 0.22) {
+        const p = u / 0.22;
+        const dipEase = Math.sin(p * Math.PI);
+        y += 0.004 * dipEase;
+        rotationDeg = 1.8 * dipEase;
+        wingFlutter = Math.sin((cycleMs / 180) * 2 * Math.PI) * (0.04 + 0.08 * p);
+      } else if (u < 0.80) {
+        // Phase 2 (0.22 - 0.80): Airy Curved Drift Down Right Flank
+        const p = (u - 0.22) / 0.58;
+        rotationDeg = Math.sin(p * Math.PI) * 5.5;
+        wingFlutter = Math.sin((cycleMs / 150) * 2 * Math.PI) * 0.14;
+      } else {
+        // Phase 3 (0.80 - 1.00): Natural Deceleration & Hover Stabilization
+        const p = (u - 0.80) / 0.20;
+        const settleEase = Math.sin(p * Math.PI);
+        const rotEase = (1 - Math.cos(p * Math.PI)) / 2;
+        y += 0.003 * settleEase;
+        rotationDeg = 5.5 * (1 - rotEase);
+        wingFlutter = Math.sin((cycleMs / 220) * 2 * Math.PI) * (0.14 - 0.04 * p);
+      }
+
+      poseMix = easedT;
     } else {
-      rotationDeg = path.midRot + (path.endRot - path.midRot) * ((easedT - 0.5) * 2);
+      // TRANSITION 3: Pose 03 -> Pose 01 (18800ms - 20000ms)
+      // Graceful return flight looping over upper right and gently landing onto resting edge
+      const easedT = easeInOutSine(u);
+      const path = PATH_TAPPING_TO_PEEKING;
+      x = cubicBezier(path.start.x, path.c1.x, path.c2.x, path.end.x, easedT);
+      y = cubicBezier(path.start.y, path.c1.y, path.c2.y, path.end.y, easedT);
+      rotationDeg = -Math.sin(u * Math.PI) * 4.0;
+      wingFlutter = Math.sin((cycleMs / 160) * 2 * Math.PI) * 0.14;
+      poseMix = easedT;
     }
-
-    // Pose crossfade occurs smoothly during the flight transition
-    poseMix = easedT;
   }
-
-  // Micro-animations per action:
-  let wingFlutter = 0;
-  let breatheY = 0;
-  let blink = 0;
-  let headTiltDeg = 0;
-  let isTapping = false;
-  let tapReach = 0;
-  let sparkleActive = false;
-  let sparkleScale = 0;
-  let sparkleOpacity = 0;
 
   if (actionIndex === 0) {
     // Action 01: Cute Fairy Resting on Invitation (TWO Full Head-Tilt Cycles)
-    // 1. Initial gentle settling onto edge after landing (0 to 700ms)
-    let settleOffset = 0;
-    if (timeInAction < 700) {
-      const settleT = timeInAction / 700;
-      settleOffset = (1 - settleT) * (1 - settleT) * -0.004;
-    }
-
-    // 2. Gentle organic breathing: ~3.4s slow calm period (attenuates smoothly before liftoff at 8800ms)
-    let breathEnvelope = 1;
-    if (timeInAction >= 8200 && timeInAction <= 8800) {
-      breathEnvelope = 1 - (timeInAction - 8200) / 600;
-    } else if (timeInAction > 8800) {
-      breathEnvelope = 0;
-    }
-    breatheY = (Math.sin((timeInAction / 3400) * 2 * Math.PI) * 0.0012 + settleOffset) * breathEnvelope;
-
-    // 3. Delicate, subtle wing shimmer
-    wingFlutter = Math.sin((timeInAction / 2000) * 2 * Math.PI) * 0.02;
-
-    // 4. Production Head Idle Animation: TWO Complete Head-Tilt Cycles
     // Non-destructive head tilt and blinking: body, wings, dress, and elbows remain strictly stationary.
+    breatheY = 0;
+    if (!isTransitioning) {
+      wingFlutter = 0;
+    }
+
     if (!isTransitioning) {
       // Body rotation remains strictly 0 during hold
       rotationDeg = 0;
@@ -528,11 +573,6 @@ export function getFairyLoadingFrame(
         sparkleOpacity = Math.min(1, Math.max(0.1, Math.sin(sparkleProgress * Math.PI) * 1.2));
       }
     }
-  }
-
-  // Adjust wing flutter during flight transitions (active flap)
-  if (isTransitioning) {
-    wingFlutter = Math.sin((cycleMs / 220) * 2 * Math.PI) * 0.12;
   }
 
   // Physical depth layering: fairy rests visibly on invitation card edge and foreground flight plane
