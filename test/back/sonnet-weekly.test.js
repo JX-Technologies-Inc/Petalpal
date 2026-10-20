@@ -13,6 +13,7 @@ import { buildWeeklyReflectionPacket, validateWeeklyReflection, weeklyReportProv
 import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
 import { GATEWAY_TASK_LIMITS } from "../../lib/ai-gateway-config.js";
 import { WEEKLY_RETROSPECTIVE_INSTRUCTIONS, WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS } from "../../lib/weekly-editorial.js";
+import { WEEKLY_SHORT, WEEKLY_SHORT_INSTRUCTIONS } from "../../lib/weekly-short.js";
 import { exemplars as threadExemplars } from "../../experiments/weekly-narrative-thread-v1/fixtures.mjs";
 import { corpus as editorialCorpus, targets as editorialTargets } from "../../experiments/weekly-editorial-quality-v1/fixtures.mjs";
 
@@ -808,4 +809,55 @@ test("evidence significance ON keeps one-call generation, provenance, privacy an
     if (mutation === "budget") { assert.equal(result.error.code, "AI_QUOTA_EXCEEDED"); assert.equal(f.retrievalCalls, 0); }
     if (mutation === "bad-output") { assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1); }
   });
+});
+
+// Short Weekly report (weekly-short-v1): synthetic Events, injected Gateway responses only.
+const shortSettings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: WEEKLY_SHORT };
+const shortOutput = packet => ({ version: WEEKLY_SHORT, locale: packet.locale, line: [{ ref: "E1", quote: packet.evidence[0].text }],
+  sideBySide: [{ text: "You wrote about one afternoon.", refs: ["E1"] }, { text: "You wrote about another moment.", refs: ["E2"] }],
+  question: [{ text: "What do you remember most?", refs: ["E1"] }] });
+async function shortFixture(t) {
+  const f = await fixture(t, { locale: "en", count: 3 });
+  await f.pg.exec(`ALTER TABLE "Event" ADD COLUMN "primaryGardenMood" text; UPDATE "Event" SET "primaryGardenMood"='QUIET_BLOOM'`);
+  return f;
+}
+
+test("short contract: one bounded request; each validated part is saved with its own citations", async t => {
+  const f = await shortFixture(t);
+  f.respond(packet => Response.json(native(shortOutput(packet))));
+  const result = await f.run(shortSettings); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0);
+  const { body, packet } = f.calls[0];
+  assert.equal(body.system, WEEKLY_SHORT_INSTRUCTIONS); assert.equal(packet.version, WEEKLY_SHORT);
+  assert.deepEqual(packet.include, ["line", "sideBySide", "question"]);
+  assert.ok(Buffer.byteLength(JSON.stringify(body)) + 1024 <= GATEWAY_TASK_LIMITS.WEEKLY_REPORT.input);
+  assert.doesNotMatch(JSON.stringify(packet), /alice|event-\d|memory-\d|sourceFence|primaryGardenMood|QUIET_BLOOM/);
+  const saved = (await f.rows("WeeklyReport"))[0].document;
+  assert.equal(saved.narrativeStatus, "GENERATED");
+  assert.deepEqual(saved.narrativeSections.map(section => section.kind), ["LINE_OF_WEEK", "MOOD_CURVE", "SIDE_BY_SIDE", "QUESTION"]);
+  const curve = saved.narrativeSections[1];
+  assert.equal(curve.claim, "Mon–Thu: Quiet 3 times.");
+  // The curve shows every period Event; provenance rows cover only the selected evidence.
+  assert.deepEqual(curve.points.map(point => point.sourceEventId), ["event-0", "event-1", "event-2"]);
+  assert.equal((await f.rows("AIEvidence")).length, packet.evidence.length);
+  await f.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  assert.equal((await f.run(shortSettings)).result.skipped, true); assert.equal(f.calls.length, 1);
+});
+
+test("short contract: malformed output saves nothing; a week needing support never reaches the model", async t => {
+  const bad = await shortFixture(t);
+  bad.respond(packet => Response.json(native({ ...shortOutput(packet), locale: "zh-Hans" })));
+  assert.equal((await bad.run(shortSettings)).succeeded, false); assert.equal(bad.calls.length, 1);
+  assert.equal((await bad.rows("WeeklyReport")).length, 0);
+
+  const f = await shortFixture(t);
+  await f.pg.exec(`UPDATE "EventMemory" SET "summary"='I cannot keep myself safe.' WHERE "id"='memory-1'`);
+  f.respond(() => assert.fail("a support week must not call the model"));
+  const result = await f.run(shortSettings); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 0);
+  const saved = (await f.rows("WeeklyReport"))[0].document;
+  assert.equal(saved.narrativeStatus, "GENERATED");
+  assert.deepEqual(saved.narrativeSections.map(section => section.kind), ["MOOD_CURVE", "SUPPORT_RESOURCES"]);
+  assert.equal(saved.summary.includes("keep myself safe"), false);
+  assert.equal(saved.summary.includes(summaries("en")[0]), false);
 });

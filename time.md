@@ -91,6 +91,23 @@ executor claims it; it does not wait for any period boundary.
 2026-03-08 Vancouver spring-forward week; open-period rejection and `PARTIAL`
 only with `allowPartial` ([test/back/ai-p0.integration.test.js](test/back/ai-p0.integration.test.js)).
 
+### Short Weekly report mood curve (opt-in `weekly-short-v1`, default OFF)
+
+**CURRENT IMPLEMENTATION** (`weeklyMoodCurve` in [lib/weekly-short.js](lib/weekly-short.js)):
+
+- **Days:** the seven calendar dates from the Monday `periodKey`, by plain date
+  arithmetic (no zone math), so a 167- or 169-hour DST week still has seven days.
+- **Which day an Event falls on:** `localDateForInstant(Event.occurredAt, period.timezone)`,
+  the same account-timezone rule as `Event.localDate`. Membership is still the period's
+  `[periodStartUtc, periodEndUtc)` on `occurredAt`; previous-week source rows are excluded.
+- **Halves in the factual line:** Monday–Thursday and Friday–Sunday of that local week.
+- No new timestamp, period boundary, trigger rule or idempotency key; the job key and
+  `generationVersion` are unchanged.
+
+**TESTED BEHAVIOR:** an Event at `2026-09-21T06:30Z` in `America/Vancouver` lands on
+Sunday `2026-09-20` of the `2026-09-14` week; moodless and prior-week rows add no point
+([test/back/weekly-short.test.js](test/back/weekly-short.test.js)).
+
 ## 4. Monthly and Yearly Reports
 
 **CURRENT IMPLEMENTATION**

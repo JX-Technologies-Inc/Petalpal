@@ -1,7 +1,7 @@
 # Weekly short report — design (approved direction, 2026-10-20)
 
-Status: **design approved by the owner; build after the beta.** No code yet. The beta keeps the
-current narrative-thread Weekly report ([BILINGUAL_WEEKLY_ACCEPTANCE.md](../testing/BILINGUAL_WEEKLY_ACCEPTANCE.md)).
+Status: **design approved by the owner; step 1 (backend contract) built, default OFF.** The beta keeps
+the current narrative-thread Weekly report ([BILINGUAL_WEEKLY_ACCEPTANCE.md](../testing/BILINGUAL_WEEKLY_ACCEPTANCE.md)).
 
 ## Why
 
@@ -34,11 +34,42 @@ Healing middle; Quiet, Drifting, Fire low. Points are the user's own flowers.
 5. A model-written section fails validation: hide that section only; the rest still shows
    (today a single failure loses the whole report).
 
-## Build notes (not started)
+## Step 1 — backend contract (built, default OFF, offline tests only)
 
-- English cross-week retrieval can reuse BGE/pgvector; Chinese needs a retrieval path (BGE is
-  English-only today).
-- New per-section contract and validator (exact-quote check for the line of the week and then-and-now).
+Enable with `AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1` (Sonnet provider). Code:
+[lib/weekly-short.js](../../lib/weekly-short.js), wired in [lib/sonnet-weekly.js](../../lib/sonnet-weekly.js).
+
+- One request; the model returns `line`, `sideBySide`, `question` (each may be empty). The packet
+  reuses the v2 builder's selection, aliases and byte trimming; `include` lists the parts wanted.
+- Saved `narrativeSections` kinds, in order: `LINE_OF_WEEK`, `MOOD_CURVE`, `SIDE_BY_SIDE`, `QUESTION`;
+  a support week saves `MOOD_CURVE` + `SUPPORT_RESOURCES`. No schema migration.
+- Per-part checks; a failing part is hidden alone. Malformed JSON or a wrong locale still fails the job.
+  - Line of the week: an exact clause-aligned copy from the cited Event (same rule as v2 quotations).
+  - Side by side: exactly two Events; numbers and quotations must come from cited Events; explanatory
+    links (because / shows / means, 因为 / 所以 / 说明 …) hide it.
+  - Question: one sentence ending in ? / ？; advice words (should / try to, 应该 / 试试 …) hide it.
+- Mood curve: one point per period Event with a `primaryGardenMood` (date, mood, level, Event id) and a
+  code-written line such as "Mon–Thu: Quiet 2 times, Drifting once. Fri–Sun: Healing 2 times."
+  Time rules: [time.md](../../time.md).
+- Fewer than 3 Events: only the line of the week is requested; side by side and question are ignored.
+- Support: the mobile immediate-danger rule now also runs on the server
+  ([lib/emotional-safety.js](../../lib/emotional-safety.js)) over this week's Event memories. A match
+  skips the model call entirely: no quotation, mood curve and support text only.
+- Event deletion also deletes a short report whose mood curve shows that Event, even when it was
+  not cited ([lib/ai-events.js](../../lib/ai-events.js)).
+
+Open items for the owner:
+
+- zh-Hans mood names in the curve line are provisional: 晴朗 平静 温柔 好奇 疗愈 安静 迷茫 火焰.
+- A week with fewer than two selectable Events stays "insufficient evidence" (no curve-only report yet).
+- Hosted TEST only allows the v2 contract (`lib/integration-environment.js`); live acceptance needs that
+  gate widened under a separately approved task, then paid inference approval.
+
+## Next steps
+
+- Then and now: English cross-week retrieval can reuse BGE/pgvector; Chinese needs a code-only path
+  (repeated phrase, ≥ 7 days apart), since BGE is English-only today.
+- Mobile rendering: curve, tap-to-Event, question button starting a new Event.
 - Live acceptance: owner blind review against the current report, as in the earlier A/Bs.
 - Mockup used for approval: low-week example in en and zh-Hans (synthetic data), reviewed in chat on
   2026-10-20; not stored in the repository.
