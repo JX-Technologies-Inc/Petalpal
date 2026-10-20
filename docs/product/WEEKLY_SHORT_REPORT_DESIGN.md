@@ -102,7 +102,9 @@ and the question. No model involvement; earlier Events never reach the model.
 
 ## Next steps
 
-- Live acceptance: owner blind review against the current report, as in the earlier A/Bs (needs the hosted
-  TEST contract gate widened and paid-inference approval).
+- Hosted TEST zh-Hans acceptance: prepared, not executed — [WEEKLY_SHORT_TEST_ACCEPTANCE.md](../testing/WEEKLY_SHORT_TEST_ACCEPTANCE.md)
+  (TEST guard accepts `weekly-short-v1`; trigger targets week 2026-10-19).
+- Owner blind review against the current report, as in the earlier A/Bs: a separate local live run with its own
+  paid-inference approval.
 - Mockup used for approval: low-week example in en and zh-Hans (synthetic data), reviewed in chat on
   2026-10-20; not stored in the repository.

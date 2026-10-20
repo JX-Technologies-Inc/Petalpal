@@ -90,6 +90,12 @@ test('explicit TEST budget allows exactly one bounded Sonnet Weekly v2 call and 
   budgetRejects({ AI_WEEKLY_REPORT_PROVIDER: undefined }, /only Sonnet Weekly reflection v2/);
   budgetRejects({ AI_WEEKLY_REPORT_MODEL: 'claude-opus-5-5' }, /only Sonnet Weekly reflection v2/);
   budgetRejects({ AI_WEEKLY_REFLECTION_CONTRACT: undefined }, /only Sonnet Weekly reflection v2/);
+  // The short report (one call at most, like v2) is the only other accepted contract.
+  assert.equal(assertIntegrationEnvironment({ ...budgeted(), AI_WEEKLY_REFLECTION_CONTRACT: 'weekly-short-v1' }), true);
+  for (const contract of ['weekly-reflection-v1', 'weekly-short-v2', 'monthly-reflection-v2']) {
+    budgetRejects({ AI_WEEKLY_REFLECTION_CONTRACT: contract }, /only Sonnet Weekly reflection v2 or the short report v1/);
+  }
+  budgetRejects({ AI_WEEKLY_REFLECTION_CONTRACT: 'weekly-short-v1', AI_WEEKLY_REPORT_DAILY_LIMIT: '2' }, /AI_WEEKLY_REPORT_DAILY_LIMIT must be 1/);
   budgetRejects({ AI_MONTHLY_REPORT_PROVIDER: 'anthropic' }, /AI_MONTHLY_REPORT_PROVIDER/);
   budgetRejects({ AI_EVENT_EMOTION_PROVIDER: 'anthropic' }, /AI_EVENT_EMOTION_PROVIDER/);
   budgetRejects({ CLOUDFLARE_AI_GATEWAY_ID: 'petalpal-production' }, /TEST Gateway/);

@@ -233,6 +233,15 @@ Chinese fluency and no invented facts by human review. Then remove the budget
 configuration. Monthly/Opus needs its own plan, budget (reservation ≈ US$0.164)
 and approval, never bundled with Weekly.
 
+### F2 — Short Weekly report `weekly-short-v1` (hosted TEST) — PREPARED 2026-10-20
+
+Week 2026-10-12 was consumed by F on 2026-10-19, so F2 targets week **2026-10-19**
+(trigger `{ "localDate": "2026-10-24" }`, real time ≥ **2026-10-26T00:00Z**). Its Events must be
+written during that week (server `occurredAt`, no backdating); "then and now" reaches the
+four earlier weeks (from 2026-09-21T00:00Z), so a phrase repeated from the 2026-10-16/17
+hosted Events can pair. Same budget as F with `AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1`.
+Steps and approvals: [WEEKLY_SHORT_TEST_ACCEPTANCE.md](WEEKLY_SHORT_TEST_ACCEPTANCE.md).
+
 ## 6. Test matrix
 
 | ID | Env | Time | Data | Exec | AI | DB writes | Expected | Status | Evidence | Approval |

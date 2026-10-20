@@ -12,10 +12,12 @@ import { weeklyReportLocale } from '../lib/report-locale.js';
 const BACKEND = 'https://petalpal-backend-test.onrender.com';
 const WEB_ORIGIN = 'https://petalpal-web-integration.petalpal-jx.workers.dev';
 const PROJECT = 'petalpal-integration-test';
-// Fixed, reviewed target: the two hosted zh-Hans Events of week 2026-10-12 (UTC owner).
-export const TARGET_LOCAL_DATE = '2026-10-17';
-export const TARGET_PERIOD_KEY = '2026-10-12';
-export const NOT_BEFORE = Date.parse('2026-10-19T00:00:00.000Z');
+// Fixed, reviewed target: the hosted zh-Hans short Weekly report (weekly-short-v1) of week
+// 2026-10-19 (UTC owner). Week 2026-10-12 was consumed by the v2 acceptance on 2026-10-19.
+export const TARGET_LOCAL_DATE = '2026-10-24';
+export const TARGET_PERIOD_KEY = '2026-10-19';
+const NOT_BEFORE_UTC = '2026-10-26T00:00:00.000Z';
+export const NOT_BEFORE = Date.parse(NOT_BEFORE_UTC);
 const CODES = new Set(['REPORT_NARRATIVE_PROVIDER_NOT_CONFIGURED', 'WEEKLY_REPORT_JOB_FAILED', 'AI_QUOTA_EXCEEDED',
   'AI_BUDGET_UNAVAILABLE', 'AI_INFERENCE_ALREADY_RESERVED', 'AI_GATEWAY_DISABLED', 'AI_GATEWAY_CONFIG_INVALID',
   'AI_GATEWAY_TIMEOUT', 'AI_GATEWAY_PROVIDER_FAILED', 'AI_GATEWAY_INVALID_OUTPUT', 'AI_GATEWAY_GROUNDING_FAILED',
@@ -37,7 +39,7 @@ if (!/^[A-Za-z0-9_-]{1,64}$/.test(env.INTEGRATION_WEEKLY_OWNER_ID)) stop('INTEGR
 if (phase === 'trigger') {
   if (env.GITHUB_REF !== 'refs/heads/main') stop('trigger runs only from main; nothing was sent');
   if (env.GITHUB_RUN_ATTEMPT !== '1') stop('trigger runs only on the first attempt; nothing was sent');
-  if (Date.now() < NOT_BEFORE) stop('the target week is still open (before 2026-10-19T00:00:00Z UTC); nothing was sent');
+  if (Date.now() < NOT_BEFORE) stop(`the target week is still open (before ${NOT_BEFORE_UTC} UTC); nothing was sent`);
 }
 
 const api = async (path, { token, method = 'GET', body } = {}) => {
@@ -77,11 +79,11 @@ try { locale = weeklyReportLocale(user.preferredLocale); } catch { locale = 'UNS
 if (locale !== 'zh-Hans') stop(`owner Weekly locale is ${locale === 'en' ? 'en' : 'not zh-Hans'}`);
 let periodKey;
 try { periodKey = weeklyPeriodForLocalDate(TARGET_LOCAL_DATE, user.timezone).periodKey; } catch { periodKey = null; }
-if (periodKey !== TARGET_PERIOD_KEY) stop('target date does not map to week 2026-10-12 in the owner timezone');
+if (periodKey !== TARGET_PERIOD_KEY) stop(`target date does not map to week ${TARGET_PERIOD_KEY} in the owner timezone`);
 // Memory-consent-gated read: 200 only with all three consents; no write.
 const reports = await api('/ai/reports?limit=50', { token });
 if (reports.status !== 200 || !Array.isArray(reports.json?.reports)) stop(`memory consent not confirmed (report list status ${reports.status})`);
-if (reports.json.reports.some(r => r.type === 'weekly' && r.periodKey === TARGET_PERIOD_KEY)) stop('a Weekly report already exists for week 2026-10-12; no trigger');
+if (reports.json.reports.some(r => r.type === 'weekly' && r.periodKey === TARGET_PERIOD_KEY)) stop(`a Weekly report already exists for week ${TARGET_PERIOD_KEY}; no trigger`);
 say(`CHECK PASS: identity matched; locale zh-Hans; week ${TARGET_PERIOD_KEY}; memory consent on; no existing report for the week`);
 if (phase === 'check') process.exit(0);
 

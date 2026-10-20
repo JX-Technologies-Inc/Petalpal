@@ -3238,3 +3238,7 @@ Opt-in contract only (`AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1`); defaults
 - **Quotation fidelity fix:** displayed quotes keep the user's own characters; NFKC is used only for matching (it had turned full-width Chinese punctuation into ASCII in the line of the week).
 
 Offline evidence only (PGlite incl. pgvector with all migrations; worker-level fence/persistence tests). No provider call, deployment or configuration change.
+
+## 2026-10-20 — TEST budget guard accepts the short Weekly report; trigger retargeted (local, not deployed or dispatched)
+
+`lib/integration-environment.js`: under the explicit `weekly-sonnet-v1` TEST budget, `AI_WEEKLY_REFLECTION_CONTRACT` may now be `weekly-reflection-v2` **or** `weekly-short-v1` (the short report also makes at most one Sonnet call, or none in a support week). Every other bound is unchanged: manual mode, call limits ≤ 2, `AI_WEEKLY_REPORT_DAILY_LIMIT=1`, USD caps ≤ 0.05, TEST Gateway only, Monthly/emotion providers and Worker/dispatch credentials off; any other contract is rejected. `scripts/integration-weekly-trigger.mjs` now targets week 2026-10-19 (localDate 2026-10-24, not before 2026-10-26T00:00Z) because week 2026-10-12 was consumed on 2026-10-19; identity, locale, consent, existing-report, `main`-only and first-attempt checks are unchanged. Offline: guard and trigger suites 22/22. Runbook: `docs/testing/WEEKLY_SHORT_TEST_ACCEPTANCE.md`. No TEST configuration, deployment, workflow dispatch or provider call.
