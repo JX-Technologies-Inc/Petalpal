@@ -24,7 +24,7 @@ const compiled = ts.transpileModule(fs.readFileSync(pagePath, 'utf8'), {
   },
 }).outputText;
 
-function harness({ width = 390, phase = 'idle', platform = 'web' } = {}) {
+function harness({ width = 390, phase = 'idle', platform = 'web', props = {} } = {}) {
   let index = 0;
   let tree;
   let playCount = 0;
@@ -112,6 +112,7 @@ function harness({ width = 390, phase = 'idle', platform = 'web' } = {}) {
       if (name === './LoginEntranceScene') return { LoginEntranceScene: 'LoginEntranceScene', entranceTrack: () => 0 };
       if (name === './useLoginEntrance') return { useLoginEntrance: () => entrance };
       if (name === './entranceTimeline') return { ENTRANCE_STILLS: [] };
+      if (name === './FairyLoadingExperience') return { FairyLoadingExperience: 'FairyLoadingExperience' };
       if (name === 'expo-router') return { Link: 'Link' };
       if (/\.(png|jpg)$/.test(name)) return name;
       assert.fail(`Unexpected preview dependency: ${name}`);
@@ -120,7 +121,7 @@ function harness({ width = 390, phase = 'idle', platform = 'web' } = {}) {
   vm.runInNewContext(compiled, sandbox, { filename: 'LoginPreviewPage.tsx' });
   const render = () => {
     index = 0;
-    tree = sandbox.exports.LoginPreviewPage({});
+    tree = sandbox.exports.LoginPreviewPage(props);
     pendingEffects.splice(0).forEach(effect => effect());
     return tree;
   };
@@ -257,4 +258,28 @@ assert.ok(native.byId('entrance-dev-controls'), 'Native keyboard dismissal resto
 native.assertIdle();
 native.dispose();
 assert.equal(native.keyboardListenerCount(), 0, 'Native keyboard listeners are removed on unmount');
+// Real sign-in (AuthGate): the same card submits through the provided sign-in, with no simulated controls.
+const signIns = [];
+const live = harness({ props: {
+  onSignIn: async (...values) => { signIns.push(values); }, onCreateAccount: () => signIns.push('create'),
+  footer: 'POLICY_LINKS', authError: 'Synthetic sign-in error.',
+} });
+const visible = label => live.nodes().some(({ node }) => node.type === 'Pressable' && (node.props.accessibilityLabel === label || live.text(node).trim() === label));
+for (const label of ['Continue with Apple', 'Continue with Google', 'Forgot password?', 'DEV · Preview Successful Login']) {
+  assert.equal(visible(label), false, `Unconnected control is hidden in real sign-in: ${label}`);
+}
+assert.equal(Boolean(live.byId('entrance-dev-controls')), false, 'Real sign-in hides the DEV overlay');
+assert.match(live.text(live.byId('login-footer')), /POLICY_LINKS/, 'Terms and Privacy links stay on the card');
+assert.match(live.text(live.byId('login-notice')), /Synthetic sign-in error/, 'The account error is shown on the card');
+live.type('Email address', ' fixture@example.test ');
+live.type('Password', 'synthetic password');
+live.nodes().find(({ node }) => node.type === 'Pressable' && /\bLog In\b/.test(live.text(node)))?.node.props.onPress();
+await new Promise(resolve => setImmediate(resolve));
+live.render();
+assert.deepEqual(signIns, [['fixture@example.test', 'synthetic password']], 'Log In sends the trimmed email and password to the real sign-in once');
+assert.equal(live.input('Password').props.value, '', 'The password field is cleared after an attempt');
+live.press('Create account');
+assert.equal(signIns.at(-1), 'create', 'Create account opens real registration');
+live.assertIdle();
+live.dispose();
 console.log('Login preview UI: synthetic validation, error recovery, persistent labels, autofill, password visibility, honest provider notices, 44px controls, readable inputs, transition disabling, native keyboard overlay handling, and cinematic isolation passed.');

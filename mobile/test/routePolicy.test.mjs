@@ -11,6 +11,7 @@ function runtime(path, development = false, signedIn = true) {
   const deps = {
     './features/CommunityGuidelines': { COMMUNITY_VERSION: 'fixture-version', COMMUNITY_TEXT: 'Guidelines' },
     './features/PrivacyAndSupport': { PrivacyAndSupport: () => null, PrivacyLinks: () => null },
+    './auth/LoginPreviewPage': { LoginPreviewPage: () => 'INVITATION_SIGN_IN' },
     'expo-router': { Redirect: 'Redirect', ThemeProvider: Pass, DarkTheme: {}, DefaultTheme: {}, Stack, Slot: Stack, usePathname: () => path, router: { dismissTo: to => navigation.push(to) }, useLocalSearchParams: () => ({ feature: 'fairy' }) },
     'react-native': { Text: 'Text', View: 'View', Pressable: 'Pressable', ScrollView: 'ScrollView', TextInput: 'TextInput', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'ActivityIndicator', Platform: { OS: 'web' }, StyleSheet: { create: value => value }, AppState: {}, useColorScheme: () => 'light' },
     'expo-splash-screen': { preventAutoHideAsync() {}, hideAsync: async () => {} },
@@ -58,7 +59,7 @@ test('real Garden/Fairy/history/feature/visit routes remain production-accessibl
 });
 test('unauthenticated direct links never mount routes in development or production', () => {
   for (const development of [false, true]) for (const path of ['/treehouse-test', '/garden-test', '/feature/fairy']) {
-    const r = runtime(path, development, false); assert.match(r.render(r.load('../../../app/_layout').default()), /Sign in to PetalPal/); assert.equal(r.mounts(), 0);
+    const r = runtime(path, development, false); assert.match(r.render(r.load('../../../app/_layout').default()), /INVITATION_SIGN_IN/); assert.equal(r.mounts(), 0);
   }
 });
 test('unknown and nested preview paths fail closed; no preview fixtures in production catalog', () => {

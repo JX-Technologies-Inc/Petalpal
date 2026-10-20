@@ -6,6 +6,7 @@ import { ActivityIndicator, AppState, KeyboardAvoidingView, Platform, Pressable,
 import * as SplashScreen from 'expo-splash-screen';
 import { Fonts, Spacing } from '../constants/theme';
 import { useAuth } from '../services/auth';
+import { LoginPreviewPage } from './auth/LoginPreviewPage';
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const auth = useAuth();
@@ -17,6 +18,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [avatar, setAvatar] = useState('🦋');
   const [communityAccepted,setCommunityAccepted] = useState(false);
   const [working, setWorking] = useState(false);
+  // Sign-in from the invitation page keeps that page on screen while the account opens.
+  const [invitationSignIn, setInvitationSignIn] = useState(false);
   const busy = useRef(false);
   const checkVerification = useRef(auth.checkVerification);
   checkVerification.current = auth.checkVerification;
@@ -60,6 +63,16 @@ export function AuthGate({ children }: { children: ReactNode }) {
   </View>;
 
   if (auth.phase === 'signedIn' && auth.session) return <>{children}</>;
+  // Signed out: the partner's invitation card is the sign-in screen (real Firebase sign-in).
+  // Registration, verification, profile and session-retry keep the card below.
+  if (mode === 'signIn' && (auth.phase === 'signedOut' || (invitationSignIn && auth.loading)) && !(auth.identity && auth.error)) {
+    return <LoginPreviewPage onCreateAccount={() => { setMode('register'); setPassword(''); setConfirmation(''); }}
+      onSignIn={async (address, secret) => {
+        setInvitationSignIn(true);
+        try { await auth.login(address, secret); } finally { setInvitationSignIn(false); }
+      }}
+      authError={auth.error} authMessage={auth.message} footer={<PrivacyLinks />} />;
+  }
   if (auth.loading) return <View style={styles.loading}>
     <ActivityIndicator color="#365b42" accessibilityLabel="Loading session" />
     <Text style={styles.body}>{auth.phase === 'registering' ? 'Creating your account…' : 'Opening PetalPal…'}</Text>
