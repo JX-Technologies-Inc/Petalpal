@@ -112,6 +112,7 @@ function harness({ width = 390, phase = 'idle', platform = 'web' } = {}) {
       if (name === './LoginEntranceScene') return { LoginEntranceScene: 'LoginEntranceScene', entranceTrack: () => 0 };
       if (name === './useLoginEntrance') return { useLoginEntrance: () => entrance };
       if (name === './entranceTimeline') return { ENTRANCE_STILLS: [] };
+      if (name === './FairyLoadingExperience') return { FairyLoadingExperience: 'FairyLoadingExperience' };
       if (name === 'expo-router') return { Link: 'Link' };
       if (/\.(png|jpg)$/.test(name)) return name;
       assert.fail(`Unexpected preview dependency: ${name}`);

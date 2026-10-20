@@ -1,5 +1,7 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Animated,
+  Easing,
   Image,
   Platform,
   StyleSheet,
@@ -21,10 +23,34 @@ import {
   TAP_CONTACT_POINT,
 } from './fairyLoadingTimeline';
 
+const POSE01_LAYER_CACHE_VERSION = 'pose01_clean_v9';
+
+function withWebAssetVersion(asset: any, version: string) {
+  if (Platform.OS !== 'web' || !asset) return asset;
+  if (typeof asset === 'string') {
+    const sep = asset.includes('?') ? '&' : '?';
+    return `${asset}${sep}v=${version}`;
+  }
+  if (typeof asset === 'object' && typeof asset.uri === 'string') {
+    const sep = asset.uri.includes('?') ? '&' : '?';
+    return { ...asset, uri: `${asset.uri}${sep}v=${version}` };
+  }
+  return asset;
+}
+
 const FAIRY_SPRITE_01 = require('../../../assets/auth/fairy-loading/fairy_pose01_peeking.png');
-const FAIRY_SPRITE_01_BODY = require('../../../assets/auth/fairy-loading/fairy_pose01_body.png');
-const FAIRY_SPRITE_01_HEAD = require('../../../assets/auth/fairy-loading/fairy_pose01_head.png');
-const FAIRY_SPRITE_01_HEAD_BLINK = require('../../../assets/auth/fairy-loading/fairy_pose01_head_blink.png');
+const FAIRY_SPRITE_01_BODY = withWebAssetVersion(
+  require('../../../assets/auth/fairy-loading/fairy_pose01_body.png'),
+  POSE01_LAYER_CACHE_VERSION
+);
+const FAIRY_SPRITE_01_HEAD = withWebAssetVersion(
+  require('../../../assets/auth/fairy-loading/fairy_pose01_head.png'),
+  POSE01_LAYER_CACHE_VERSION
+);
+const FAIRY_SPRITE_01_HEAD_BLINK = withWebAssetVersion(
+  require('../../../assets/auth/fairy-loading/fairy_pose01_head_blink.png'),
+  POSE01_LAYER_CACHE_VERSION
+);
 const FAIRY_SPRITE_02 = require('../../../assets/auth/fairy-loading/fairy_pose02_sitting.png');
 const FAIRY_SPRITE_03 = require('../../../assets/auth/fairy-loading/fairy_pose03_tapping.png');
 
@@ -141,7 +167,7 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
   const animFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
   const exitingRef = useRef(false);
-  const exitOpacity = useRef(1);
+  const exitAnim = useRef(new Animated.Value(isLoading ? 1 : 0)).current;
 
   // Sync manualTimeMs when provided by test controls
   useEffect(() => {
@@ -159,10 +185,10 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
     }
   }, [forceAction]);
 
-  // Animation clock loop
+  // Animation clock loop (runs continuously while idle; pauses immediately on exit)
   useEffect(() => {
     if (manualTimeMs !== null && manualTimeMs !== undefined) return;
-    if (isPaused) {
+    if (isPaused || !isLoading) {
       lastTimeRef.current = null;
       return;
     }
@@ -192,19 +218,33 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
       }
       lastTimeRef.current = null;
     };
-  }, [isPaused, manualTimeMs, loop]);
+  }, [isPaused, manualTimeMs, loop, isLoading]);
 
-  // Graceful loading completion exit
+  // Graceful loading completion exit & reset handling
   useEffect(() => {
-    if (!isLoading && !exitingRef.current) {
-      exitingRef.current = true;
-      // Finish with graceful 350ms exit fade
-      const timer = setTimeout(() => {
-        onComplete?.();
-      }, 350);
-      return () => clearTimeout(timer);
+    if (!isLoading) {
+      if (!exitingRef.current) {
+        exitingRef.current = true;
+        Animated.timing(exitAnim, {
+          toValue: 0,
+          duration: 280,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: Platform.OS !== 'web',
+        }).start(({ finished }) => {
+          if (finished) {
+            onComplete?.();
+          }
+        });
+      }
+    } else {
+      exitingRef.current = false;
+      exitAnim.setValue(1);
+      if (manualTimeMs === null || manualTimeMs === undefined) {
+        setElapsedMs(0);
+      }
+      lastTimeRef.current = null;
     }
-  }, [isLoading, onComplete]);
+  }, [isLoading, onComplete, exitAnim, manualTimeMs]);
 
   // Compute current frame
   const frame = getFairyLoadingFrame(elapsedMs, isReducedMotion);
@@ -248,7 +288,28 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
   const sparkleAbsoluteX = frame.sparkleX * cardWidth;
   const sparkleAbsoluteY = frame.sparkleY * cardHeight;
 
-  // Pose opacities during transition (direct pose handoff at peak flight velocity, zero third-character ghosting)
+  // Anatomical Body / Head Centers for zero-jump spatial continuity during transitions
+  const p1Bx = Math.round(778 * scaleP1);
+  const p1By = Math.round(510 * scaleP1);
+  const p2Bx = Math.round(280 * scaleP2);
+  const p2By = Math.round(208 * scaleP2);
+  const p3Bx = Math.round(376 * scaleP3);
+  const p3By = Math.round(186 * scaleP3);
+
+  // Relative body center offsets in container during native resting hold
+  const bRelHold = [
+    { x: -p1Ax + p1Bx, y: -p1Ay + p1By },
+    { x: -p2Ax + p2Bx, y: -p2Ay + p2By },
+    { x: -p3Ax + p3Bx, y: -p3Ay + p3By },
+  ];
+
+  // Dynamic sprite offsets and opacities
+  let p1Left = -p1Ax;
+  let p1Top = -p1Ay;
+  let p2Left = -p2Ax;
+  let p2Top = -p2Ay;
+  let p3Left = -p3Ax;
+  let p3Top = -p3Ay;
   let op0 = 0;
   let op1 = 0;
   let op2 = 0;
@@ -258,31 +319,35 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
     else if (frame.actionIndex === 1) op1 = 1;
     else op2 = 1;
   } else {
-    // Fast, crisp handoff at the peak of curved flight trajectory (u in [0.35, 0.65])
-    const u = frame.transitionProgress;
-    let fromOp = 1;
-    let toOp = 0;
+    // Continuous, graceful equal-power crossfade during flight transition
+    const fromIdx = frame.currentPoseIndex;
+    const toIdx = frame.nextPoseIndex;
+    const mix = frame.poseMix;
 
-    if (u <= 0.35) {
-      fromOp = 1;
-      toOp = 0;
-    } else if (u >= 0.65) {
-      fromOp = 0;
-      toOp = 1;
-    } else {
-      // Smooth sinusoidal crossfade over a short 360ms window while in rapid motion
-      const t = (u - 0.35) / 0.30;
-      const ease = (1 - Math.cos(t * Math.PI)) / 2;
-      fromOp = 1 - ease;
-      toOp = ease;
-    }
+    // Continuous relative body center in the actor container
+    const bRelCurrent = {
+      x: (1 - mix) * bRelHold[fromIdx].x + mix * bRelHold[toIdx].x,
+      y: (1 - mix) * bRelHold[fromIdx].y + mix * bRelHold[toIdx].y,
+    };
 
-    if (frame.currentPoseIndex === 0) op0 = fromOp;
-    else if (frame.currentPoseIndex === 1) op1 = fromOp;
+    // Dynamic offsets guaranteeing zero spatial jump between silhouettes
+    p1Left = Math.round(bRelCurrent.x - p1Bx);
+    p1Top = Math.round(bRelCurrent.y - p1By);
+    p2Left = Math.round(bRelCurrent.x - p2Bx);
+    p2Top = Math.round(bRelCurrent.y - p2By);
+    p3Left = Math.round(bRelCurrent.x - p3Bx);
+    p3Top = Math.round(bRelCurrent.y - p3By);
+
+    // Smooth equal-power cosine-squared blending (sum is strictly 1.0 at all times)
+    const fromOp = Math.cos(mix * (Math.PI / 2)) ** 2;
+    const toOp = Math.sin(mix * (Math.PI / 2)) ** 2;
+
+    if (fromIdx === 0) op0 = fromOp;
+    else if (fromIdx === 1) op1 = fromOp;
     else op2 = fromOp;
 
-    if (frame.nextPoseIndex === 0) op0 = toOp;
-    else if (frame.nextPoseIndex === 1) op1 = toOp;
+    if (toIdx === 0) op0 = toOp;
+    else if (toIdx === 1) op1 = toOp;
     else op2 = toOp;
   }
 
@@ -300,14 +365,14 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
   const currentZIndex = frame.isBehindCard ? 2 : 6;
 
   return (
-    <View
+    <Animated.View
       testID="fairy-loading-root"
       pointerEvents="none"
       style={[
         StyleSheet.absoluteFill,
         {
           zIndex: currentZIndex,
-          opacity: isLoading ? 1 : exitOpacity.current,
+          opacity: exitAnim,
         },
       ]}
     >
@@ -337,14 +402,14 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
         {/* Pose 01: Cute Fairy Resting on Invitation (Upper-Right) */}
         <View
           testID="fairy-pose-01-container"
-          pointerEvents={op0 > 0.005 ? 'auto' : 'none'}
+          pointerEvents="none"
           style={[
             styles.spriteWrapper,
             {
               width: p1W,
               height: p1H,
-              left: -p1Ax,
-              top: -p1Ay,
+              left: p1Left,
+              top: p1Top,
               opacity: op0,
               visibility: op0 > 0.001 ? 'visible' : 'hidden',
             } as any,
@@ -362,7 +427,10 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
                 height: 5,
                 backgroundColor: 'rgba(60, 40, 30, 0.20)',
                 borderRadius: 6,
-                opacity: op0 * 0.8,
+                opacity:
+                  (frame.isTransitioning && frame.actionIndex === 0
+                    ? Math.max(0, 1 - frame.transitionProgress / 0.22) * op0
+                    : op0) * 0.8,
               },
               Platform.OS === 'web'
                 ? ({ filter: 'blur(2.5px)', boxShadow: '0 2px 4px rgba(60, 40, 30, 0.25)' } as any)
@@ -393,7 +461,7 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
               source={FAIRY_SPRITE_01_HEAD}
               style={[
                 StyleSheet.absoluteFill,
-                { width: p1W, height: p1H, opacity: 1 - frame.blink },
+                { width: p1W, height: p1H, opacity: 1 },
               ]}
               resizeMode="stretch"
             />
@@ -413,14 +481,14 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
         {/* Pose 02: Sitting & Looking Down (Upper-Left) */}
         <View
           testID="fairy-pose-02-container"
-          pointerEvents={op1 > 0.005 ? 'auto' : 'none'}
+          pointerEvents="none"
           style={[
             styles.spriteWrapper,
             {
               width: p2W,
               height: p2H,
-              left: -p2Ax,
-              top: -p2Ay,
+              left: p2Left,
+              top: p2Top,
               opacity: op1,
               visibility: op1 > 0.001 ? 'visible' : 'hidden',
             } as any,
@@ -437,14 +505,14 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
         {/* Pose 03: Flying & Tapping (Lower-Right) */}
         <View
           testID="fairy-pose-03-container"
-          pointerEvents={op2 > 0.005 ? 'auto' : 'none'}
+          pointerEvents="none"
           style={[
             styles.spriteWrapper,
             {
               width: p3W,
               height: p3H,
-              left: -p3Ax,
-              top: -p3Ay,
+              left: p3Left,
+              top: p3Top,
               opacity: op2,
               visibility: op2 > 0.001 ? 'visible' : 'hidden',
             } as any,
@@ -504,7 +572,7 @@ export const FairyLoadingExperience = memo(function FairyLoadingExperience({
           />
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 });
 

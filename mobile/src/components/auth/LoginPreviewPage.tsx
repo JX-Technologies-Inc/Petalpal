@@ -21,6 +21,7 @@ import { FloatingPetalsOverlay } from '../mailbox/FloatingPetalsOverlay';
 import { LoginEntranceScene, entranceTrack } from './LoginEntranceScene';
 import { useLoginEntrance } from './useLoginEntrance';
 import { ENTRANCE_STILLS } from './entranceTimeline';
+import { FairyLoadingExperience } from './FairyLoadingExperience';
 import { Link } from 'expo-router';
 const INVITATION_MATERIALS = require('../../../assets/auth/invitation_materials_repaired.png');
 
@@ -243,6 +244,47 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
     return () => { show.remove(); hide.remove(); };
   }, []);
 
+  // Invitation card layout measurements for anchored fairy coordinates
+  const [cardLayout, setCardLayout] = useState({ width: 420, height: 546 });
+  const [manualFairyTime, setManualFairyTime] = useState<number | null>(null);
+  const [isFairyPaused, setIsFairyPaused] = useState(false);
+
+  // Expose test automation hooks in __DEV__ on Web
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && __DEV__) {
+      (window as any).__SEEK_FAIRY = (ms: number | null) => {
+        if (ms === null || ms === undefined) {
+          setManualFairyTime(null);
+          setIsFairyPaused(false);
+        } else {
+          setIsFairyPaused(true);
+          setManualFairyTime(ms);
+        }
+      };
+      (window as any).__DEV_PLAY_ENTRANCE = () => {
+        setBannerNotice(null);
+        setShowDevControls(false);
+        entrance.play();
+      };
+      (window as any).__DEV_RESET_ENTRANCE = () => {
+        entrance.reset();
+        setBannerNotice(null);
+        setEmailError(null);
+        setPasswordError(null);
+        setManualFairyTime(null);
+        setIsFairyPaused(false);
+        setShowDevControls(false);
+      };
+    }
+    return () => {
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        delete (window as any).__SEEK_FAIRY;
+        delete (window as any).__DEV_PLAY_ENTRANCE;
+        delete (window as any).__DEV_RESET_ENTRANCE;
+      }
+    };
+  }, [entrance]);
+
   // In-world feedback notification banner
   const [bannerNotice, setBannerNotice] = useState<{
     type: 'info' | 'success' | 'warning';
@@ -433,6 +475,12 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
             {/* LAYER B: Formal Botanical Invitation Card */}
             <Animated.View
               testID="login-envelope"
+              onLayout={(e) => {
+                const { width, height } = e.nativeEvent.layout;
+                if (width > 0 && height > 0) {
+                  setCardLayout({ width, height });
+                }
+              }}
               pointerEvents={entrance.active ? "none" : "auto"}
               style={[
                 styles.envelopeCard,
@@ -448,7 +496,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
               ]}
             >
               {/* Clean material artwork replaces the contaminated cutout stack. */}
-              <View style={StyleSheet.absoluteFill} pointerEvents="none">
+              <View style={[StyleSheet.absoluteFill, { zIndex: 4 }]} pointerEvents="none">
                 <Image
                   testID="invitation-materials"
                   source={INVITATION_MATERIALS}
@@ -456,6 +504,16 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                   resizeMode="contain"
                 />
               </View>
+
+              {/* APPROVED REAL FAIRY LOADING ANIMATION SYSTEM */}
+              <FairyLoadingExperience
+                isLoading={entrance.phase === 'idle'}
+                isPaused={isFairyPaused}
+                manualTimeMs={manualFairyTime}
+                isReducedMotion={entrance.reduced}
+                cardWidth={cardLayout.width}
+                cardHeight={cardLayout.height}
+              />
 
               {/* LAYER C: Real Interactive Form UI */}
               <ScrollView
@@ -702,7 +760,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
         <View style={{backgroundColor:'#f8f4e9',borderRadius:12,padding:8,borderWidth:1,borderColor:'#c8cebc',maxWidth:640,width:'100%',gap:6}}>
           <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:12}}>
             <Pressable accessibilityRole="button" disabled={!entrance.ready || entrance.phase !== 'idle'} onPress={()=>{setBannerNotice(null);setShowDevControls(false);entrance.play();}} style={{opacity:entrance.ready && entrance.phase === 'idle' ? 1 : .5,paddingVertical:3}}><Text style={{color:'#245d55',fontSize:12}}>DEV · Preview Successful Login</Text></Pressable>
-            <Pressable accessibilityRole="button" onPress={()=>{entrance.reset();setBannerNotice(null);setEmailError(null);setPasswordError(null);setShowDevControls(false);}} style={{paddingVertical:3}}><Text style={{color:'#245d55',fontSize:12}}>DEV · Reset Entrance</Text></Pressable>
+            <Pressable accessibilityRole="button" onPress={()=>{entrance.reset();setBannerNotice(null);setEmailError(null);setPasswordError(null);setManualFairyTime(null);setIsFairyPaused(false);setShowDevControls(false);}} style={{paddingVertical:3}}><Text style={{color:'#245d55',fontSize:12}}>DEV · Reset Entrance</Text></Pressable>
           </View>
           <Text testID="entrance-phase" accessibilityLiveRegion="polite" style={{fontSize:11,color:'#6b665b',textAlign:'center'}}>{entrance.failedAsset ? 'Scenery failed to load. Reload to retry.' : !entrance.ready ? 'Preparing scenery…' : entrance.entered ? 'Entrance complete · preview only; no account or player state changed' : entrance.phase === 'idle' ? 'Simulation only · no authentication · ready to replay' : entrance.phase.replace(/_/g,' ')}</Text>
           {entrance.entered && <Link href="/player-preview" accessibilityRole="link" style={{fontSize:12,color:'#245d55',textAlign:'center',paddingVertical:4}}>DEV · Open Player Preview</Link>}
