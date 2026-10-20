@@ -152,19 +152,21 @@ export default function Reflection() {
     onPanResponderRelease: (_event, g) => { if (Math.abs(g.dx) > 50) void turnRef.current(g.dx < 0 ? 1 : -1); },
   })).current;
 
-  const compact = width < 700;
+  // Narrow or short screens (phones in either orientation) use the single-page layout.
+  const compact = width < 700 || height < 600;
   const sceneWidth = Math.min(width, 1000);
   const artHeight = sceneWidth * 4 / 3;
-  const bookWidth = sceneWidth * (compact ? .96 : .80);
-  const bookHeight = compact ? 820 : artHeight * .48;
-  const bookTop = artHeight * .365;
-  const bookLeft = compact ? sceneWidth * .02 : sceneWidth * .17;
-  const sceneHeight = compact ? Math.max(artHeight, bookTop + bookHeight + 64) : artHeight;
+  // Phone: a short scenic header, then one page that fills the rest of the screen (content scrolls inside).
+  const bookTop = compact ? Math.min(artHeight * .3, 170, height * .22) : artHeight * .365;
+  const bookWidth = compact ? sceneWidth - 20 : sceneWidth * .80;
+  const bookHeight = compact ? Math.max(320, height - bookTop - 12) : artHeight * .48;
+  const bookLeft = compact ? 10 : sceneWidth * .17;
+  const sceneHeight = compact ? bookTop + bookHeight + 12 : artHeight;
   const camera = { position: 'absolute' as const, left: 0, top: 0, width: sceneWidth, height: artHeight };
   const lakeCamera = { ...camera, top: -artHeight * .14 };
   // The text area inside the book (same fractions as the resting layout below).
   const area = compact
-    ? { left: bookWidth * .03, top: 0, width: bookWidth * .94, height: bookHeight }
+    ? { left: 0, top: 0, width: bookWidth, height: bookHeight }
     : { left: bookWidth * .10, top: bookHeight * .07, width: bookWidth * .85, height: bookHeight * .83 };
   const pageWidth = compact ? area.width : area.width / 2;
   const paperColor = night ? '#E6C495' : '#F3E1BA';
@@ -186,27 +188,30 @@ export default function Reflection() {
     const detail = report ? details[report.id] ?? null : null;
     const shown: Section = interactive ? section : 'Summary';
     return <View style={{ flex: 1, minHeight: 0, paddingRight: compact ? 0 : 30 }}>
-      <Text accessibilityRole="header" style={[s.heading, { fontSize: compact ? 25 : Math.max(21, Math.min(27, sceneWidth * .026)) }]}>Your {title(type)} Reflection</Text>
+      {compact && <View style={s.segment}>{(['weekly', 'monthly'] as const).map(item => <Pressable key={item} accessibilityRole="tab"
+        accessibilityState={{ selected: type === item }} aria-selected={type === item} accessibilityLabel={`${title(item)} reflections`}
+        disabled={!interactive || !!turning} onPress={() => setType(item)} style={[s.segmentItem, type === item && s.segmentOn]}>
+        <Text style={[s.small, type === item && s.segmentText]}>{title(item)}</Text></Pressable>)}</View>}
+      <Text accessibilityRole="header" style={[s.heading, { fontSize: compact ? 22 : Math.max(21, Math.min(27, sceneWidth * .026)) }]}>Your {title(type)} Reflection</Text>
       {report && <Text style={[s.ink, { marginTop: 4 }]}>{heading(report)}{report.status === 'PARTIAL' ? ' · In progress' : ''}</Text>}
       {interactive && type === 'weekly' && (creating || !!notice) && <View testID="reflection-create-status" accessibilityLiveRegion="polite" style={s.status}>
         {creating && <ActivityIndicator size="small" color="#8B6C44" accessible={false} />}
         <Text style={s.statusText}>{creating ? 'Writing last week’s reflection…' : notice}</Text>
       </View>}
       <View style={s.rule} />
-      {compact && <View style={{ flexDirection: 'row', gap: 5, marginBottom: 12 }}>{(['Summary', 'Topics', 'Patterns'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: shown === item, disabled: !interactive || !detail }} aria-selected={shown === item} disabled={!interactive || !detail} onPress={() => setSection(item)} style={[s.tab, { backgroundColor: ['#BBC09A', '#E1C49A', '#DCA9A0'][i] }]}><Text style={s.small}>{item}</Text></Pressable>)}</View>}
+      {compact && detail && <View style={{ flexDirection: 'row', gap: 5, marginBottom: 12 }}>{(['Summary', 'Topics', 'Patterns'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: shown === item, disabled: !interactive || !detail }} aria-selected={shown === item} disabled={!interactive || !detail} onPress={() => setSection(item)} style={[s.tab, { backgroundColor: ['#BBC09A', '#E1C49A', '#DCA9A0'][i] }]}><Text style={s.small}>{item}</Text></Pressable>)}</View>}
       {interactive && (loading || reading) && <ActivityIndicator color="#6E744E" accessibilityLabel="Loading reflection" />}
       {interactive && !!listError && <><Text style={s.body}>{listError}</Text><Pressable accessibilityRole="button" onPress={() => void load(cursor || undefined)}><Text style={s.link}>Try loading again</Text></Pressable></>}
       {interactive && !!readError && <><Text style={s.body}>{readError}</Text><Pressable accessibilityRole="button" onPress={() => setRetry(value => value + 1)}><Text style={s.link}>Try reading again</Text></Pressable></>}
       <ScrollView key={`${report?.id}-${shown}`} style={{ flex: 1 }} scrollEnabled={interactive} contentContainerStyle={{ paddingBottom: 15 }}>
-        {interactive && !loading && !listError && !report && <View style={{ paddingTop: 20 }}>
-          <Text style={[s.heading, { fontSize: 22, marginBottom: 15 }]}>A place to look back</Text>
+        {interactive && !loading && !listError && !report && <View style={{ paddingTop: compact ? 4 : 20 }}>
+          <Text style={[s.heading, { fontSize: compact ? 20 : 22, marginBottom: compact ? 8 : 15 }]}>A place to look back</Text>
           <Text style={s.body}>No saved {type} reflections yet.</Text>
           <Text style={s.body}>When a reflection is available, you can return here to revisit its moments, themes and patterns.{cursor ? ' You can also look through older reflections.' : ''}</Text>
           <Image source={require('../../assets/garden/environment/flowers/ivory_wildflowers.png')} resizeMode="contain" style={{ width: 105, height: 80, marginTop: 8, opacity: .8 }} accessible={false} />
         </View>}
         {detail && <>
           <EmotionalSafetyNote />
-          {interactive && <AiOutputReport kind={type} outputId={detail.id} />}
           {shown === 'Summary' && <Text selectable={interactive} style={s.body}>{detail.summary || detail.narrativeSections?.map(item => item.claim).join('\n\n') || 'No written reflection is available for this saved report.'}</Text>}
           {(shown === 'Summary' || shown === 'Topics') && <>
             <Text style={s.sectionHeading}>Your {title(type)} Themes</Text>
@@ -221,6 +226,8 @@ export default function Reflection() {
               {detail.trendSignals.topicChanges?.map(item => <Text key={item.topic} selectable={interactive} style={s.pattern}>❧  {item.topic}: {item.previousCount} → {item.currentCount}</Text>)}
             </> : <Text style={s.body}>There isn’t enough recorded evidence to compare periods.</Text>}
           </>}
+          {interactive && <View style={{ marginTop: 6, marginBottom: 12 }}><AiOutputReport kind={type} outputId={detail.id} /></View>}
+          {compact && rightFace(report)}
         </>}
       </ScrollView>
       {detail && <Text style={[s.small, { paddingTop: 7, borderTopWidth: 1, borderColor: '#AA8B5933' }]}>{detail.eventCount} recorded {detail.eventCount === 1 ? 'event' : 'events'} · Saved reflection</Text>}
@@ -229,13 +236,13 @@ export default function Reflection() {
   function rightFace(report: SavedReport | null) {
     const detail = report ? details[report.id] ?? null : null;
     return <View style={{ flex: compact ? undefined : 1, minHeight: 0, alignItems: 'center', paddingLeft: compact ? 0 : 18, paddingTop: compact ? 15 : 0, paddingBottom: compact ? 0 : artHeight * .045 }}>
-      <Image source={require('../../assets/reflection/botanical.png')} resizeMode="contain" accessible={false} style={{ width: '100%', height: compact ? 175 : undefined, flex: compact ? undefined : 1, opacity: .88 }} />
-      {detail?.narrativeSections?.length ? <ScrollView style={{ maxHeight: compact ? 100 : 120, alignSelf: 'stretch' }}><Text style={s.note}>{detail.narrativeSections[detail.narrativeSections.length - 1].claim}</Text></ScrollView> : <Text style={s.caption}>❧  {report ? period(report) : 'Your reflections, kept here.'}</Text>}
+      <Image source={require('../../assets/reflection/botanical.png')} resizeMode="contain" accessible={false} style={{ width: '100%', height: compact ? 120 : undefined, flex: compact ? undefined : 1, opacity: .88 }} />
+      {detail?.narrativeSections?.length ? <ScrollView scrollEnabled={!compact} style={{ maxHeight: compact ? undefined : 120, alignSelf: 'stretch' }}><Text style={s.note}>{detail.narrativeSections[detail.narrativeSections.length - 1].claim}</Text></ScrollView> : <Text style={s.caption}>❧  {report ? period(report) : 'Your reflections, kept here.'}</Text>}
     </View>;
   }
   // Phone: a whole page; desktop: a two-page spread split at the spine.
   const page = (report: SavedReport | null, interactive: boolean) => compact
-    ? <View style={{ flex: 1, padding: 22 }}>{leftFace(report, interactive)}{rightFace(report)}</View>
+    ? <View style={{ flex: 1, padding: 18, paddingBottom: 60 }}>{leftFace(report, interactive)}</View>
     : <View style={{ flex: 1, flexDirection: 'row' }}>{leftFace(report, interactive)}{rightFace(report)}</View>;
 
   const from = turning ? pages[turning.from] : null, to = turning ? pages[turning.to] : null;
@@ -254,10 +261,10 @@ export default function Reflection() {
         <Image source={interiorDay} style={camera} />
         <Animated.Image source={interiorNight} style={[camera, { opacity: lighting }]} />
       </View>
-      <Pressable accessibilityRole="button" onPress={() => router.replace('/')} style={[s.back, { top: artHeight * .055, left: sceneWidth * .115 }]}><Text style={s.ink}>←  Back to Garden</Text></Pressable>
+      <Pressable accessibilityRole="button" onPress={() => router.replace('/')} style={[s.back, compact ? { top: 10, left: 10, paddingVertical: 8, paddingHorizontal: 11 } : { top: artHeight * .055, left: sceneWidth * .115 }]}><Text style={[s.ink, compact && { fontSize: 14 }]}>←  Back to Garden</Text></Pressable>
       <Pressable testID="reflection-lantern" accessibilityRole="switch" accessibilityLabel="Lantern — night lighting" accessibilityState={{ checked: night }} aria-checked={night} accessibilityHint="Turn the lantern on for night, or off for day" onPress={() => setNightOverride(!night)} hitSlop={6}
         style={{ position: 'absolute', left: sceneWidth * .91, top: artHeight * .10, width: sceneWidth * .085, height: artHeight * .145, zIndex: 3 }} />
-      {(['weekly', 'monthly'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: type === item }} aria-selected={type === item} accessibilityLabel={`${title(item)} reflections`} disabled={!!turning} onPress={() => setType(item)} style={{ position: 'absolute', left: sceneWidth * (.561 + i * .094), top: artHeight * .075, width: sceneWidth * .086, height: artHeight * .17, alignItems: 'center', paddingTop: artHeight * .042 }}>
+      {!compact && (['weekly', 'monthly'] as const).map((item, i) => <Pressable key={item} accessibilityRole="tab" accessibilityState={{ selected: type === item }} aria-selected={type === item} accessibilityLabel={`${title(item)} reflections`} disabled={!!turning} onPress={() => setType(item)} style={{ position: 'absolute', left: sceneWidth * (.561 + i * .094), top: artHeight * .075, width: sceneWidth * .086, height: artHeight * .17, alignItems: 'center', paddingTop: artHeight * .042 }}>
         <Text style={{ fontFamily: 'Georgia', fontSize: Math.max(12, sceneWidth * .018), color: '#EAD6AA', textShadowColor: '#42301C', textShadowRadius: 2, borderBottomWidth: type === item ? 1 : 0, borderColor: '#DCC49588', paddingBottom: 4 }}>{title(item)}</Text>
       </Pressable>)}
       <View testID="reflection-book" style={{ position: 'absolute', top: bookTop, left: bookLeft, width: bookWidth, height: bookHeight }}>
@@ -295,13 +302,15 @@ export default function Reflection() {
             </Animated.View>
           </>}
         </View>
-        {pages.length > 0 && <View style={[s.turns, { left: area.left, width: area.width, top: area.top + area.height + 4 }]}>
+        {pages.length > 0 && <View style={[s.turns, compact
+          ? { left: 8, width: area.width - 16, top: area.height - 52, borderTopWidth: 1, borderColor: '#AA8B5933' }
+          : { left: area.left, width: area.width, top: area.top + area.height + 4 }]}>
           <Pressable testID="reflection-previous-page" accessibilityRole="button" accessibilityLabel={`Previous ${type === 'weekly' ? 'week' : 'month'}`}
             disabled={!!turning || (atStart && !cursor)} onPress={() => atStart ? void load(cursor || undefined) : void turn(-1)}
-            style={[s.turn, { opacity: atStart && !cursor ? .35 : 1 }]}><Text style={[s.arrow, !compact && s.onPaper]}>‹</Text></Pressable>
-          <Text accessibilityLiveRegion="polite" style={[s.number, !compact && s.onPaper]}>{selected ? `${period(selected)}  ·  ${index + 1} of ${pages.length}` : ''}</Text>
+            style={[s.turn, { opacity: atStart && !cursor ? .35 : 1 }]}><Text style={s.arrow}>‹</Text></Pressable>
+          <Text accessibilityLiveRegion="polite" style={s.number}>{selected ? `${period(selected)}  ·  ${index + 1} of ${pages.length}` : ''}</Text>
           <Pressable testID="reflection-next-page" accessibilityRole="button" accessibilityLabel={`Next ${type === 'weekly' ? 'week' : 'month'}`}
-            disabled={!!turning || atEnd} onPress={() => void turn(1)} style={[s.turn, { opacity: atEnd ? .35 : 1 }]}><Text style={[s.arrow, !compact && s.onPaper]}>›</Text></Pressable>
+            disabled={!!turning || atEnd} onPress={() => void turn(1)} style={[s.turn, { opacity: atEnd ? .35 : 1 }]}><Text style={s.arrow}>›</Text></Pressable>
         </View>}
       </View>
     </View>
@@ -327,8 +336,10 @@ const s = StyleSheet.create({
   statusText: { fontFamily: 'Georgia', fontStyle: 'italic', color: '#7A5E3C', fontSize: 14, flexShrink: 1 },
   turns: { position: 'absolute', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   turn: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
-  arrow: { fontFamily: 'Georgia', color: '#F3E1BA', fontSize: 30, textShadowColor: '#2B1D10', textShadowRadius: 3 },
-  number: { fontFamily: 'Georgia', color: '#F3E1BA', fontSize: 13, textShadowColor: '#2B1D10', textShadowRadius: 3, flexShrink: 1, textAlign: 'center' },
-  // Desktop: the turn row sits on the printed paper, so it uses ink instead of light text.
-  onPaper: { color: '#6B5232', textShadowRadius: 0 },
+  arrow: { fontFamily: 'Georgia', color: '#6B5232', fontSize: 30 },
+  number: { fontFamily: 'Georgia', color: '#6B5232', fontSize: 13, flexShrink: 1, textAlign: 'center' },
+  segment: { flexDirection: 'row', alignSelf: 'flex-start', borderWidth: 1, borderColor: '#A98C5E66', borderRadius: 18, padding: 2, marginBottom: 12 },
+  segmentItem: { minHeight: 34, minWidth: 84, paddingHorizontal: 14, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  segmentOn: { backgroundColor: '#C5CAA2' },
+  segmentText: { color: '#2F3A22' },
 });
