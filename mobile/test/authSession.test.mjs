@@ -254,6 +254,7 @@ test('Phase 1 auth gate separates loading, signed-out, verification, profile and
   const text = (tree) => nodes(tree).filter((n) => n.type === 'Text').map((n) => n.props.children).flat().join(' ');
   const load = loadPlantingModules(undefined, hooks.react, {}, false, {
     '../services/auth': { useAuth: () => auth },
+    './auth/LoginPreviewPage': { LoginPreviewPage: 'LoginPreviewPage' },
     '../constants/theme': { Fonts: { sans: 'sans', rounded: 'rounded' }, Spacing: { two: 8, three: 16, four: 24 } },
     'expo-splash-screen': { hideAsync: async () => {} },
     'react-native': { ActivityIndicator: 'ActivityIndicator', KeyboardAvoidingView: 'KeyboardAvoidingView',
@@ -262,8 +263,15 @@ test('Phase 1 auth gate separates loading, signed-out, verification, profile and
   });
   const gate = load('../../../components/AuthGate'); let tree = hooks.mount(() => gate.AuthGate({ children: 'real-app' }));
   assert.equal(nodes(tree).filter((n) => n.type === 'TextInput').length, 0); assert.doesNotMatch(text(tree), /Sign in|Sign out/i);
-  auth = { ...auth, phase: 'signedOut', loading: false }; tree = hooks.render();
-  assert.match(text(tree), /Sign in to PetalPal/); assert.doesNotMatch(text(tree), /Sign out/i);
+  // Signed out: the invitation page signs in through the real auth provider and keeps the policy links.
+  const logins = [];
+  auth = { ...auth, phase: 'signedOut', loading: false, login: async (...values) => { logins.push(values); } }; tree = hooks.render();
+  const invitation = nodes(tree).find((n) => n.type === 'LoginPreviewPage');
+  assert.ok(invitation); assert.ok(invitation.props.footer); assert.doesNotMatch(text(tree), /Sign out/i);
+  await invitation.props.onSignIn('fixture@example.test', 'synthetic password');
+  assert.deepEqual(logins, [['fixture@example.test', 'synthetic password']]);
+  invitation.props.onCreateAccount(); tree = hooks.render();
+  assert.match(text(tree), /Create your PetalPal account/); assert.equal(nodes(tree).some((n) => n.type === 'LoginPreviewPage'), false);
   assert.equal(nodes(tree).find((n) => n.props.testID === 'auth-card').props.style.maxWidth, 440);
   auth = { ...auth, phase: 'verificationPending', identity: { uid: 'new', email: 'new@example.test' } }; tree = hooks.render();
   assert.match(text(tree), /Verify your email/); assert.equal(nodes(tree).filter((n) => n.type === 'TextInput').length, 0);

@@ -21,6 +21,7 @@ import { FloatingPetalsOverlay } from '../mailbox/FloatingPetalsOverlay';
 import { LoginEntranceScene, entranceTrack } from './LoginEntranceScene';
 import { useLoginEntrance } from './useLoginEntrance';
 import { ENTRANCE_STILLS } from './entranceTimeline';
+import { FairyLoadingExperience } from './FairyLoadingExperience';
 import { Link } from 'expo-router';
 const INVITATION_MATERIALS = require('../../../assets/auth/invitation_materials_repaired.png');
 
@@ -205,6 +206,13 @@ export interface LoginPreviewPageProps {
   onEntranceStart?: () => void;
   onEntranceComplete?: () => void;
   onEntranceReset?: () => void;
+  /** Real email/password sign-in from AuthGate. Without it the page stays the DEV-only simulation. */
+  onSignIn?: (email: string, password: string) => Promise<void>;
+  onCreateAccount?: () => void;
+  authError?: string;
+  authMessage?: string;
+  /** Shown at the end of the invitation card (Terms, Privacy and support links). */
+  footer?: React.ReactNode;
 }
 
 export const LoginPreviewPage = memo(function LoginPreviewPage({
@@ -213,7 +221,13 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
   onEntranceStart,
   onEntranceComplete,
   onEntranceReset,
+  onSignIn,
+  onCreateAccount,
+  authError,
+  authMessage,
+  footer,
 }: LoginPreviewPageProps = {}) {
+  const live = !!onSignIn;
   const insets = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
 
@@ -227,7 +241,8 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
     onComplete: onEntranceComplete,
     onReset: onEntranceReset,
   });
-  const isSubmitting = entrance.phase !== 'idle';
+  const [signingIn, setSigningIn] = useState(false);
+  const isSubmitting = entrance.phase !== 'idle' || signingIn;
   const [showDevControls, setShowDevControls] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -242,6 +257,47 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
     const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardOpen(false));
     return () => { show.remove(); hide.remove(); };
   }, []);
+
+  // Invitation card layout measurements for anchored fairy coordinates
+  const [cardLayout, setCardLayout] = useState({ width: 420, height: 546 });
+  const [manualFairyTime, setManualFairyTime] = useState<number | null>(null);
+  const [isFairyPaused, setIsFairyPaused] = useState(false);
+
+  // Expose test automation hooks in __DEV__ on Web
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && __DEV__ && !live) {
+      (window as any).__SEEK_FAIRY = (ms: number | null) => {
+        if (ms === null || ms === undefined) {
+          setManualFairyTime(null);
+          setIsFairyPaused(false);
+        } else {
+          setIsFairyPaused(true);
+          setManualFairyTime(ms);
+        }
+      };
+      (window as any).__DEV_PLAY_ENTRANCE = () => {
+        setBannerNotice(null);
+        setShowDevControls(false);
+        entrance.play();
+      };
+      (window as any).__DEV_RESET_ENTRANCE = () => {
+        entrance.reset();
+        setBannerNotice(null);
+        setEmailError(null);
+        setPasswordError(null);
+        setManualFairyTime(null);
+        setIsFairyPaused(false);
+        setShowDevControls(false);
+      };
+    }
+    return () => {
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        delete (window as any).__SEEK_FAIRY;
+        delete (window as any).__DEV_PLAY_ENTRANCE;
+        delete (window as any).__DEV_RESET_ENTRANCE;
+      }
+    };
+  }, [entrance, live]);
 
   // In-world feedback notification banner
   const [bannerNotice, setBannerNotice] = useState<{
@@ -306,8 +362,9 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
     return valid;
   }, [email, password]);
 
-  // Primary Login Submit handler (simulated mock auth)
-  const handleLoginSubmit = useCallback(() => {
+  // Primary Login Submit handler: real sign-in when AuthGate provides it, otherwise the DEV simulation.
+  const handleLoginSubmit = useCallback(async () => {
+    if (signingIn) return;
     if (!validateForm()) {
       setBannerNotice({
         type: 'warning',
@@ -316,9 +373,17 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
       });
       return;
     }
+    if (onSignIn) {
+      setBannerNotice(null);
+      setDismissedAuth(null);
+      setSigningIn(true);
+      try { await onSignIn(email.trim(), password); }
+      finally { setSigningIn(false); setPassword(''); }
+      return;
+    }
 
     setBannerNotice({type:'info',title:'Preview only',message:'Authentication is not connected. No credentials were sent. Use the explicitly labeled DEV control to preview the entrance.'});
-  }, [validateForm]);
+  }, [validateForm, onSignIn, signingIn, email, password]);
 
   // Forgot password handler
   const handleForgotPassword = useCallback(() => {
@@ -349,12 +414,18 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
 
   // Create account handler
   const handleCreateAccount = useCallback(() => {
+    if (onCreateAccount) { onCreateAccount(); return; }
     setBannerNotice({
       type: 'info',
       title: 'New Garden Invitation',
       message: 'Garden account registration will open together with player onboarding in the upcoming milestone.',
     });
-  }, []);
+  }, [onCreateAccount]);
+  // The account's own sign-in feedback (wrong password, expired session, …).
+  const [dismissedAuth, setDismissedAuth] = useState<string | null>(null);
+  const authText = authError || authMessage || '';
+  const notice = bannerNotice ?? (signingIn || !authText || authText === dismissedAuth ? null
+    : { type: authError ? 'warning' as const : 'info' as const, title: authError ? 'Couldn’t open the garden' : 'PetalPal', message: authText });
 
   const isWide = windowWidth > 740;
   const handoffOpacity = entranceTrack(entrance.progress, 'handoffOpacity', entrance.reduced);
@@ -393,7 +464,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                 paddingTop: Math.max(insets.top + 56, 56),
                 paddingHorizontal: Math.max(insets.left, insets.right),
                 justifyContent: 'center',
-                paddingBottom: insets.bottom + (__DEV__ && !keyboardOpen ? 116 : 36),
+                paddingBottom: insets.bottom + (__DEV__ && !live && !keyboardOpen ? 116 : 36),
               },
             ]}
             keyboardShouldPersistTaps="handled"
@@ -402,37 +473,43 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
           >
 
             {/* In-World Notice Banner (Floating above card when active) */}
-            {bannerNotice && (
+            {notice && (
               <View testID="login-notice" accessibilityLiveRegion="polite"
                 style={[
                   styles.noticeBanner,
-                  bannerNotice.type === 'success' && styles.noticeSuccess,
-                  bannerNotice.type === 'warning' && styles.noticeWarning,
-                  bannerNotice.type === 'info' && styles.noticeInfo,
+                  notice.type === 'success' && styles.noticeSuccess,
+                  notice.type === 'warning' && styles.noticeWarning,
+                  notice.type === 'info' && styles.noticeInfo,
                 ]}
               >
                 <View style={styles.noticeHeaderRow}>
                   <Text style={styles.noticeIcon}>
-                    {bannerNotice.type === 'success' ? '🌱' : bannerNotice.type === 'warning' ? '🍃' : '💌'}
+                    {notice.type === 'success' ? '🌱' : notice.type === 'warning' ? '🍃' : '💌'}
                   </Text>
-                  <Text style={styles.noticeTitle}>{bannerNotice.title}</Text>
+                  <Text style={styles.noticeTitle}>{notice.title}</Text>
                   <Pressable
                     hitSlop={8}
                     accessibilityRole="button"
                     accessibilityLabel="Dismiss notice"
-                    onPress={() => setBannerNotice(null)}
+                    onPress={() => { setBannerNotice(null); setDismissedAuth(authText); }}
                     style={styles.noticeCloseBtn}
                   >
                     <Text style={styles.noticeCloseTxt}>✕</Text>
                   </Pressable>
                 </View>
-                <Text style={styles.noticeMessage}>{bannerNotice.message}</Text>
+                <Text style={styles.noticeMessage}>{notice.message}</Text>
               </View>
             )}
 
             {/* LAYER B: Formal Botanical Invitation Card */}
             <Animated.View
               testID="login-envelope"
+              onLayout={(e) => {
+                const { width, height } = e.nativeEvent.layout;
+                if (width > 0 && height > 0) {
+                  setCardLayout({ width, height });
+                }
+              }}
               pointerEvents={entrance.active ? "none" : "auto"}
               style={[
                 styles.envelopeCard,
@@ -448,7 +525,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
               ]}
             >
               {/* Clean material artwork replaces the contaminated cutout stack. */}
-              <View style={StyleSheet.absoluteFill} pointerEvents="none">
+              <View style={[StyleSheet.absoluteFill, { zIndex: 4 }]} pointerEvents="none">
                 <Image
                   testID="invitation-materials"
                   source={INVITATION_MATERIALS}
@@ -456,6 +533,16 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                   resizeMode="contain"
                 />
               </View>
+
+              {/* APPROVED REAL FAIRY LOADING ANIMATION SYSTEM */}
+              <FairyLoadingExperience
+                isLoading={entrance.phase === 'idle'}
+                isPaused={isFairyPaused}
+                manualTimeMs={manualFairyTime}
+                isReducedMotion={entrance.reduced}
+                cardWidth={cardLayout.width}
+                cardHeight={cardLayout.height}
+              />
 
               {/* LAYER C: Real Interactive Form UI */}
               <ScrollView
@@ -577,7 +664,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                       returnKeyType="done"
                       editable={!isSubmitting}
                       tabIndex={isSubmitting ? -1 : 0}
-                      onSubmitEditing={handleLoginSubmit}
+                      onSubmitEditing={() => void handleLoginSubmit()}
                     />
                     </View>
                     <Pressable
@@ -606,7 +693,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                 <Pressable
                   accessibilityRole="button"
                   disabled={isSubmitting}
-                  onPress={handleLoginSubmit}
+                  onPress={() => void handleLoginSubmit()}
                   style={({ pressed }) => [
                     styles.primaryButton,
                     isSubmitting && styles.primaryButtonDisabled,
@@ -618,11 +705,13 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                     <View style={styles.buttonSparkleIconWrapper}>
                       <SparkleIcon size={13} color="#FAF7F0" />
                     </View>
-                    <Text style={styles.buttonText}>Log In</Text>
+                    <Text style={styles.buttonText}>{signingIn ? 'Opening…' : 'Log In'}</Text>
                     <Text style={styles.buttonArrow}>→</Text>
                   </View>
                 </Pressable>
 
+                {/* Social sign-in is not connected yet: DEV simulation only. */}
+                {!live && <>
                 {/* Divider Line with "or" */}
                 <View style={styles.dividerRow}>
                   <View style={styles.dividerHairline} />
@@ -664,10 +753,11 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                     </Text>
                   </Pressable>
                 </View>
+                </>}
 
                 {/* Secondary Action: Create Account Footer */}
                 <View style={styles.footerRow}>
-                  <Pressable
+                  {!live && <Pressable
                     hitSlop={8}
                     accessibilityRole="button"
                     disabled={isSubmitting}
@@ -678,7 +768,7 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                     ]}
                   >
                     <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-                  </Pressable>
+                  </Pressable>}
                   <Pressable
                     accessibilityRole="button"
                     hitSlop={8}
@@ -694,15 +784,17 @@ export const LoginPreviewPage = memo(function LoginPreviewPage({
                 </View>
               </ScrollView>
             </Animated.View>
+            {/* Terms, Privacy and support sit on their own paper strip below the card, clear of its artwork. */}
+            {footer ? <View testID="login-footer" style={styles.footerLinks}>{footer}</View> : null}
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
       </Animated.View>
-      {__DEV__ && !keyboardOpen && <View testID="entrance-dev-controls" style={{position:'absolute',bottom:Math.max(insets.bottom,8),left:10,right:10,zIndex:1000,alignItems:'center'}}>
+      {__DEV__ && !live && !keyboardOpen && <View testID="entrance-dev-controls" style={{position:'absolute',bottom:Math.max(insets.bottom,8),left:10,right:10,zIndex:1000,alignItems:'center'}}>
         <View style={{backgroundColor:'#f8f4e9',borderRadius:12,padding:8,borderWidth:1,borderColor:'#c8cebc',maxWidth:640,width:'100%',gap:6}}>
           <View style={{flexDirection:'row',flexWrap:'wrap',justifyContent:'center',gap:12}}>
             <Pressable accessibilityRole="button" disabled={!entrance.ready || entrance.phase !== 'idle'} onPress={()=>{setBannerNotice(null);setShowDevControls(false);entrance.play();}} style={{opacity:entrance.ready && entrance.phase === 'idle' ? 1 : .5,paddingVertical:3}}><Text style={{color:'#245d55',fontSize:12}}>DEV · Preview Successful Login</Text></Pressable>
-            <Pressable accessibilityRole="button" onPress={()=>{entrance.reset();setBannerNotice(null);setEmailError(null);setPasswordError(null);setShowDevControls(false);}} style={{paddingVertical:3}}><Text style={{color:'#245d55',fontSize:12}}>DEV · Reset Entrance</Text></Pressable>
+            <Pressable accessibilityRole="button" onPress={()=>{entrance.reset();setBannerNotice(null);setEmailError(null);setPasswordError(null);setManualFairyTime(null);setIsFairyPaused(false);setShowDevControls(false);}} style={{paddingVertical:3}}><Text style={{color:'#245d55',fontSize:12}}>DEV · Reset Entrance</Text></Pressable>
           </View>
           <Text testID="entrance-phase" accessibilityLiveRegion="polite" style={{fontSize:11,color:'#6b665b',textAlign:'center'}}>{entrance.failedAsset ? 'Scenery failed to load. Reload to retry.' : !entrance.ready ? 'Preparing scenery…' : entrance.entered ? 'Entrance complete · preview only; no account or player state changed' : entrance.phase === 'idle' ? 'Simulation only · no authentication · ready to replay' : entrance.phase.replace(/_/g,' ')}</Text>
           {entrance.entered && <Link href="/player-preview" accessibilityRole="link" style={{fontSize:12,color:'#245d55',textAlign:'center',paddingVertical:4}}>DEV · Open Player Preview</Link>}
@@ -1206,6 +1298,15 @@ const styles = StyleSheet.create({
   },
 
   // Footer: Create Account
+  footerLinks: {
+    width: '100%',
+    maxWidth: 440,
+    marginTop: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    backgroundColor: 'rgba(250, 246, 236, 0.94)',
+  },
   footerRow: {
     gap: 16,
     flexDirection: 'row',
