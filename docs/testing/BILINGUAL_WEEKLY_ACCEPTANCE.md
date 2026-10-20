@@ -76,6 +76,39 @@ The private ledger and prose are in the owner's checkout
 (`.git/petalpal-acceptance/weekly-en-local-bge-dbe41065*`). This proves the EN pipeline
 locally, not hosted TEST behavior; hosted EN still needs a TEST embedding path.
 
+## Beta acceptance of the production configuration — 2026-10-20 (PASS for beta)
+
+Scope: the exact production Weekly configuration (`AI_WEEKLY_EVIDENCE_SELECTOR_V2`,
+`AI_WEEKLY_EVIDENCE_SIGNIFICANCE`, `AI_WEEKLY_REFLECTION_NARRATIVE_THREAD`, Claude Sonnet 5.5,
+`weekly-reflection-v2`) on the week types the 2026-10-19 live A/Bs had not covered. Runner
+`scripts/weekly-beta-acceptance-evaluation.mjs` on eval-only branch `eval/weekly-beta-acceptance`
+(fixture revision `0e85435b`; hard week V in `experiments/weekly-selective-reflection-v1/beta-hard-week.mjs`),
+owner-run with integration credentials at hidden prompts. Synthetic text only; English similarity is 0
+(production BGE ranking is not reproduced offline; significance mode pools every Event either way).
+
+- First batch `weekly-beta-acceptance-0e85435b` (runner `677ebba5`): stopped at its first call with
+  HTTP 401 (credentials rejected, no output). Consumed and never resumed.
+- Batch `weekly-beta-acceptance-r2-0e85435b` (runner `a76d1bd1`): COMPLETE, 5 dispatched,
+  **5 validated**, 0 rejected, no retries; estimated use **US$0.027** (cap US$0.2048).
+
+| Week | Locale | Result | Claude's per-sentence audit |
+|---|---|---|---|
+| D corrections, negation | en | VALIDATED | Corrections kept; "hadn't passed, because you misread the email" blurs which outcome the misreading caused |
+| E sparse ordinary | en | VALIDATED | Three plain sentences; nothing added |
+| H colloquial intensity | en | VALIDATED | Intensities kept ("gutted", "absolutely buzzing", "meh") |
+| V hard, low week | en | VALIDATED | No diagnosis, advice, softening or invented recovery; "you told yourself" adds a framing the entry lacks |
+| V hard, low week | zh-Hans | VALIDATED | Close, natural paraphrase; no issues found |
+
+Invented facts 0, diagnosis/advice 0. Combined with the 2026-10-19 limits re-check (selective arm
+15/16 validated over 6 en and 10 zh busy weeks, important Events cited 31/32), the production
+configuration is accepted **for the beta** in both languages. The owner judged the writing accurate
+but not deep ("organized, not insightful"); numeric scores were not given. English remains less
+verified than Chinese end to end (no hosted TEST run; production depends on Cloudflare BGE for the
+query embedding, with no fallback if it fails). Depth work moved to a new report format
+([WEEKLY_SHORT_REPORT_DESIGN.md](../product/WEEKLY_SHORT_REPORT_DESIGN.md)) after the prompt-only
+attempts below did not satisfy the owner
+([WEEKLY_PATTERN_INSIGHT_CANDIDATE.md](../ai/WEEKLY_PATTERN_INSIGHT_CANDIDATE.md)).
+
 ## Weekly language gate
 
 The Sonnet Weekly path picks its language from `User.preferredLocale` (schema
