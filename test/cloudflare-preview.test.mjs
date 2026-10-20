@@ -27,11 +27,15 @@ test('synthetic preview signs into the unchanged Expo Garden without provider tr
     escaped++; return route.abort();
   });
   await page.goto(`http://${worker.address}:${worker.port}/bookhouse`);
-  await page.getByText('Sign in to PetalPal', { exact: true }).waitFor();
-  await page.getByLabel('Email', { exact: true }).fill('preview@example.invalid');
+  // The invitation card signs in through the real (here synthetic) Firebase email/password flow.
+  const logIn = page.getByText('Log In', { exact: true });
+  await logIn.waitFor();
+  await page.getByLabel('Email address', { exact: true }).fill('preview@example.invalid');
   await page.getByLabel('Password', { exact: true }).fill('preview-only');
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await page.getByText('Sign in to PetalPal', { exact: true }).waitFor({ state: 'hidden' });
+  // The card breathes (a gentle idle animation), so submit from the field instead of waiting for it to settle.
+  await page.getByLabel('Password', { exact: true }).press('Enter');
+  // The button reads "Opening…" while the account opens; the card leaves only once signed in.
+  await page.getByLabel('Email address', { exact: true }).waitFor({ state: 'hidden', timeout: 25000 });
   await page.goto(`http://${worker.address}:${worker.port}/`);
   await page.getByTestId('main-navigation').waitFor({ timeout: 25000 });
   assert.equal(await page.getByRole('note').count(), 1);
