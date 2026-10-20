@@ -73,7 +73,9 @@ test('real Cloudflare runtime serves the actual Expo export, routes, artwork and
   // Actual application export, fresh synthetic context, no external auth/API traffic.
   await page.route('**/*', route => new URL(route.request().url()).hostname === '127.0.0.1' ? route.continue() : route.abort());
   await page.goto(`http://${worker.address}:${worker.port}/bookhouse`);
-  await page.getByText('Sign in to PetalPal', { exact: true }).waitFor({ timeout: 20000 });
+  // Signed out: the partner invitation card is the sign-in screen, with the policy links kept below it.
+  await page.getByText('Log In', { exact: true }).waitFor({ timeout: 20000 });
+  await page.getByText('Terms of Use', { exact: true }).waitFor();
   assert.equal(failures.length, 0, 'Expo runtime has no uncaught browser errors');
   assert.equal(await page.evaluate(async () => (await fetch('/canvaskit.wasm')).headers.get('content-type')), 'application/wasm');
 });
