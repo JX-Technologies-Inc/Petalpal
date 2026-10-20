@@ -211,7 +211,7 @@ test("Daily Grow route preserves the Month 1 vertical-slice contract", async (t)
     assert.equal(result.status, 201);
     assert.equal(result.body.primaryGardenMood, "SUNNY_BLOOM");
     assert.equal(result.body.flower.speciesPoolSource, "PRIMARY_CONFIG");
-    assert.ok(["SUNFLOWER", "TULIP"].includes(result.body.flower.species));
+    assert.ok(["SUNFLOWER", "GERBERA_DAISY", "COREOPSIS", "DAISY"].includes(result.body.flower.species));
     assert.equal(state.journal, null);
     assert.equal(state.emotion.inferencePath, "NO_AI");
     assert.deepEqual(result.body.fairyEvent, {
