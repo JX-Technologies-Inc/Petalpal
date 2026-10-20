@@ -1,4 +1,5 @@
-import { CanonicalFlowerArt, CanonicalFlowerEffects } from './CanonicalFlowerArt';
+import { CanonicalFlowerArt } from './CanonicalFlowerArt';
+import { GardenMoodEffectsLayer } from '../flower-mood-effects/GardenMoodEffects';
 import {runtimeAudit,timeGardenWork} from '../performance/runtimeAudit';
 import { Circle, Group } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
@@ -15,7 +16,8 @@ export function growthPreviewParents(placements:readonly FlowerPlacementRecord[]
 }
 export function ProductionPlantedFlowers({depthPass='all'}:{depthPass?:FlowerDepthPass}) {
   runtimeAudit.render('ProductionPlantedFlowers');
-  const {placements,activeMode,targetFlower,previewCoords,validationResult,showDevFootprints,showDevHitboxes}=usePlanting();
+  const {placements,activeMode,targetFlower,previewCoords,validationResult,showDevFootprints,showDevHitboxes,
+    accountTimeZone,gardenOwnerUserId,currentUserId}=usePlanting();
   // Drag changes only the lightweight validated parent rings. The committed
   // botanical picture remains authoritative until provider Confirm changes
   // placements. Cancel reuses the same field immediately.
@@ -26,7 +28,12 @@ export function ProductionPlantedFlowers({depthPass='all'}:{depthPass?:FlowerDep
     ? timeGardenWork('pendingGrowth',()=>productionGrowth([{...targetFlower,...previewCoords}])):[],[activeMode,targetFlower,previewCoords]);
   const active=activeMode!=='normal'&&targetFlower&&previewCoords&&flowerInDepthPass(targetFlower.month,depthPass);
   const color=validationResult?.isValid?'#22c55e':'#ef4444';
+  // The partner's mood effects, today only and on the owner's own Garden (account timezone).
+  const own=!gardenOwnerUserId||gardenOwnerUserId===currentUserId;
+  const moodFlowers=useMemo(()=>own?parents.filter(p=>(p.sourceType||p.sourceEventId)&&gardenSpecies(p)&&flowerInDepthPass(p.month,depthPass)):[],
+    [own,parents,depthPass]);
   return <Group>
+    <GardenMoodEffectsLayer flowers={moodFlowers} timeZone={accountTimeZone} part="behind"/>
     {scenes.filter(s=>flowerInDepthPass(s.month,depthPass)).map(scene=><Group key={scene.month}>
       <ProductionGrowthLayer growth={scene.growth} month={scene.month} cacheStatic/>
       {scene.unresolved.map(p => p.sourceType || p.sourceEventId ? <CanonicalFlowerArt key={p.id} flower={p} />
@@ -37,7 +44,7 @@ export function ProductionPlantedFlowers({depthPass='all'}:{depthPass?:FlowerDep
       {s.unresolved.map(p => p.sourceType || p.sourceEventId ? <CanonicalFlowerArt key={p.id} flower={p} />
         : __DEV__ ? <Circle key={p.id} cx={p.worldX} cy={p.worldY} r={4} color="#a6643c" style="stroke" strokeWidth={1.5}/> : null)}
     </Group>)}
-    {parents.filter(p => (p.sourceType || p.sourceEventId) && gardenSpecies(p) && flowerInDepthPass(p.month,depthPass)).map(p => <CanonicalFlowerEffects key={`effect-${p.id}`} flower={p} />)}
+    <GardenMoodEffectsLayer flowers={moodFlowers} timeZone={accountTimeZone} part="front"/>
     {active&&<Group>
       <Circle cx={previewCoords.worldX} cy={previewCoords.worldY} r={getFlowerPlacementDefinition(targetFlower.flowerName, targetFlower.speciesCode).footprintRadius+4} color={color} opacity={.2}/>
       <Circle cx={previewCoords.worldX} cy={previewCoords.worldY} r={getFlowerPlacementDefinition(targetFlower.flowerName, targetFlower.speciesCode).footprintRadius} color={color} style="stroke" strokeWidth={2.5}/>

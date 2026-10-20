@@ -40,6 +40,8 @@ export type PlantingMode = 'normal' | 'planting' | 'adjusting';
 
 interface PlantingContextValue {
   placements: FlowerPlacementRecord[];
+  /** Signed-in owner's account timezone (time.md), for day-bound visuals. */
+  accountTimeZone?: string;
   isGardenLoading: boolean;
   gardenError: string;
   refreshGarden: () => Promise<void>;
@@ -531,6 +533,7 @@ function PlantingProviderRoot({ children, gardenOwnerUserId, session: suppliedSe
         selectedFlower,
         isSaving,
         currentUserId: session?.user.id,
+        accountTimeZone: session?.user.timezone,
         gardenOwnerUserId,
         selectedFlowerIsOwner,
         flowerDetailSource,

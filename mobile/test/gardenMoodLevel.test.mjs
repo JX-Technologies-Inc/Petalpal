@@ -33,3 +33,34 @@ test('an effect lasts only for the planting day in the account timezone', () => 
   for (const zone of [undefined, '', 'Not/AZone']) assert.equal(moodEffectActiveToday(planted, zone, new Date(planted)), false);
   assert.equal(moodEffectActiveToday('not-a-date', 'UTC'), false);
 });
+
+const adapter = loadPlantingModules(undefined, undefined, undefined, true, {
+  '@shopify/react-native-skia': {}, 'react-native-reanimated': {}, 'react-native': { AppState: {} },
+})('../flower-mood-effects/GardenMoodEffects');
+const now = new Date('2026-10-20T18:00:00Z');
+const flower = (overrides = {}) => ({ id: 'f1', flowerId: 'f1', sourceEventId: 'e1', mood: 'SUNNY_BLOOM', secondaryEmotions: [],
+  plantedDate: '2026-10-20T16:00:00Z', worldX: 100, worldY: 200, month: 10, ...overrides });
+const types = list => JSON.parse(JSON.stringify(list.map(item => item.effects.map(effect => effect.effectType))));
+
+test('garden effects: the partner\'s effect pair per level, today only, Event flowers only', () => {
+  assert.deepEqual(types(adapter.gardenMoodEffectsFor([flower()], 'UTC', now)), [['sparkle', 'glow']]);
+  assert.deepEqual(types(adapter.gardenMoodEffectsFor([flower({ mood: 'WONDER_BLOOM' })], 'UTC', now)), [['sparkle']]);
+  assert.deepEqual(types(adapter.gardenMoodEffectsFor([flower({ mood: 'QUIET_BLOOM' })], 'UTC', now)), [['light_rain']]);
+  assert.deepEqual(types(adapter.gardenMoodEffectsFor([flower({ mood: 'QUIET_BLOOM', secondaryEmotions: ['remorse'] })], 'UTC', now)), [['light_rain', 'raindrop']]);
+  for (const mood of ['FIRE_BLOOM', 'PEACEFUL_BLOOM', 'HEALING_BLOOM', 'DRIFTING_BLOOM', 'happy']) {
+    assert.deepEqual(adapter.gardenMoodEffectsFor([flower({ mood })], 'UTC', now).length, 0, mood);
+  }
+  assert.equal(adapter.gardenMoodEffectsFor([flower({ plantedDate: '2026-10-19T16:00:00Z' })], 'UTC', now).length, 0); // yesterday
+  assert.equal(adapter.gardenMoodEffectsFor([flower({ sourceEventId: undefined })], 'UTC', now).length, 0); // sample/local flower
+  assert.equal(adapter.gardenMoodEffectsFor([flower()], undefined, now).length, 0); // no account timezone
+});
+
+test('garden effects keep the secondary-emotion accent colour and a stable per-flower seed', () => {
+  const [tinted] = adapter.gardenMoodEffectsFor([flower({ colorAccent: 'SOFT_PINK' })], 'UTC', now);
+  assert.ok(tinted.effects.every(effect => effect.color === '#eba2bd'));
+  const [plain] = adapter.gardenMoodEffectsFor([flower()], 'UTC', now);
+  assert.ok(plain.effects.every(effect => effect.color && effect.color !== '#eba2bd'));
+  const again = adapter.gardenMoodEffectsFor([flower()], 'UTC', now)[0];
+  assert.equal(again.effects[0].seed, plain.effects[0].seed);
+  assert.notEqual(adapter.gardenMoodEffectsFor([flower({ id: 'f2' })], 'UTC', now)[0].effects[0].seed, plain.effects[0].seed);
+});
