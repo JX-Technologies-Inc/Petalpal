@@ -152,6 +152,14 @@ Result: **17/17 pass**. No runtime code, hosted access or provider call.
 - **Hosted:** use the real boundary, 2026-10-19T00:00Z. No clock override exists
   or is needed.
 
+## Short Weekly report (`weekly-short-v1`) — hosted ZH runbook PREPARED (2026-10-20, not executed)
+
+Default OFF. Offline evidence only so far (design doc, Steps 1–3). The TEST budget guard now also accepts
+`weekly-short-v1`, and the trigger script targets week 2026-10-19 (localDate 2026-10-24, not before
+2026-10-26T00:00Z), since week 2026-10-12 is consumed. Steps, approvals and the owner checklist:
+[WEEKLY_SHORT_TEST_ACCEPTANCE.md](WEEKLY_SHORT_TEST_ACCEPTANCE.md). English, the support-week path and the
+blind review against the current report are not covered by that hosted run.
+
 ## Hosted ZH Weekly result — 2026-10-19 (EXECUTED, PASS)
 
 - TEST backend `petalpal-backend-test` Manual Deploy of `main` `5bd75190` (source now

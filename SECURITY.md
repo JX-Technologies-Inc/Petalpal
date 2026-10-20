@@ -3226,3 +3226,23 @@ Correction to the 2026-10-16 `weekly-sonnet-v1` entry above (kept unchanged as h
 ## 2026-10-17 — Weekly trigger workflow reuses the integration environment (local, not dispatched)
 
 Update to the trigger-workflow entry above (kept as history): both phases now run in the existing protected environment `petalpal-web-build-integration`, which already holds the verified TEST identity secrets. A new environment would have needed the TEST password to be re-entered, and that value is not available to the owner (a manual sign-in failed with HTTP 400). Its required reviewers are now the human approval for both phases. The script's guards (pre-confirmed owner id, stored email, `main`, `run_attempt == 1`, UTC time, single request, no retry) are unchanged. Offline tests 6/6.
+
+## 2026-10-20 — Short Weekly report (`weekly-short-v1`): fence, deletion and support rules (local, default OFF, not released)
+
+Opt-in contract only (`AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1`); defaults and production are unchanged.
+
+- **Source fence:** the report snapshot now carries each Event's `primaryGardenMood`. For this contract only (`sourceFence.thenAndNowLookback`), the fence covers the four whole weeks before the period (`weeklyLookbackStart`), because "then and now" quotes an earlier Event; any change to those rows makes persistence fail as `REPORT_SOURCE_STALE`. Earlier Events are never sent to the model.
+- **Deletion:** deleting an Event also deletes any short Weekly report that shows it without citing it — a mood-curve point, or either side of "then and now" (reports whose period ends after the Event and starts up to 35 days later).
+- **Support:** the mobile immediate-danger rule also runs on the server (`lib/emotional-safety.js`). A matching week skips the model call (mood curve and support text only); an earlier entry that matches is never quoted.
+- **Retrieval:** English "then and now" compares stored BGE vectors in PostgreSQL (`similarToMemory`): owner-scoped, consent-locked, no new embedding inference; vectors are not logged or returned.
+- **Quotation fidelity fix:** displayed quotes keep the user's own characters; NFKC is used only for matching (it had turned full-width Chinese punctuation into ASCII in the line of the week).
+
+Offline evidence only (PGlite incl. pgvector with all migrations; worker-level fence/persistence tests). No provider call, deployment or configuration change.
+
+## 2026-10-20 — TEST budget guard accepts the short Weekly report; trigger retargeted (local, not deployed or dispatched)
+
+`lib/integration-environment.js`: under the explicit `weekly-sonnet-v1` TEST budget, `AI_WEEKLY_REFLECTION_CONTRACT` may now be `weekly-reflection-v2` **or** `weekly-short-v1` (the short report also makes at most one Sonnet call, or none in a support week). Every other bound is unchanged: manual mode, call limits ≤ 2, `AI_WEEKLY_REPORT_DAILY_LIMIT=1`, USD caps ≤ 0.05, TEST Gateway only, Monthly/emotion providers and Worker/dispatch credentials off; any other contract is rejected. `scripts/integration-weekly-trigger.mjs` now targets week 2026-10-19 (localDate 2026-10-24, not before 2026-10-26T00:00Z) because week 2026-10-12 was consumed on 2026-10-19; identity, locale, consent, existing-report, `main`-only and first-attempt checks are unchanged. Offline: guard and trigger suites 22/22. Runbook: `docs/testing/WEEKLY_SHORT_TEST_ACCEPTANCE.md`. No TEST configuration, deployment, workflow dispatch or provider call.
+
+## 2026-10-20 — Per-owner short Weekly report switch `AI_WEEKLY_SHORT_OWNER_IDS` (local, default empty, not released)
+
+`lib/weekly-contract.js`: owners listed in `AI_WEEKLY_SHORT_OWNER_IDS` (comma-separated `User.id`, at most 100, `[A-Za-z0-9_-]{1,64}`) get `weekly-short-v1`; all other owners keep the configured contract and flags unchanged. Unset/empty means nobody; a malformed list fails closed with `AI_GATEWAY_CONFIG_INVALID` before any model call. The configured v2 selector/editorial flags are still validated; listed owners use the original selector and the short instructions, so one Sonnet call at most per Weekly, as before. The list holds ids only (no names or emails); owner identity still comes from authentication. Offline: owner-list unit test and worker runs with the production v2 flag set (listed → short, unlisted → narrative-thread v2, malformed → no call); full backend suite has only the 23 known environment failures. No configuration, deployment or provider call.

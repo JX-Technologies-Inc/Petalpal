@@ -1,7 +1,7 @@
 name: Integration Weekly trigger (hosted TEST, zh-Hans, one call)
 
-# Manual only. Fixed TEST hosts and a fixed reviewed target (week 2026-10-12,
-# localDate 2026-10-17) in scripts/integration-weekly-trigger.mjs.
+# Manual only. Fixed TEST hosts and a fixed reviewed target (week 2026-10-19,
+# localDate 2026-10-24, not before 2026-10-26T00:00Z) in scripts/integration-weekly-trigger.mjs.
 #   phase=check    read-only identity/locale/consent/report-state check ($0).
 #   phase=trigger  the same checks, then at most one Weekly trigger request.
 # Authorization comes from the protected GitHub Environment petalpal-web-build-integration

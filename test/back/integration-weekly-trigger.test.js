@@ -20,7 +20,7 @@ globalThis.fetch = (url, init) => { const u = new URL(url);
   return real('http://127.0.0.1:' + process.env.FAKE_PORT + '/' + u.host + u.pathname + u.search, init); };`);
 const PROJECT = "petalpal-integration-test";
 const SECRET = { email: "tester@jastrevia.com", password: "synthetic-password-not-real", owner: "owner-confirmed-1" };
-const AFTER = "2026-10-19T00:00:00.000Z", BEFORE = "2026-10-18T23:59:59.000Z";
+const AFTER = "2026-10-26T00:00:00.000Z", BEFORE = "2026-10-25T23:59:59.000Z";
 
 function fakeState(overrides = {}) {
   return { userId: SECRET.owner, email: SECRET.email, locale: "zh-Hans", timezone: "UTC", reportsStatus: 200,
@@ -42,8 +42,8 @@ async function run(state, { phase = "check", now = AFTER, ref = "refs/heads/main
     if (route === "/ai/reports?limit=50") return send(state.reportsStatus, state.reportsStatus === 200 ? { reports: state.reports } : {});
     if (route === "/ai/reports/weekly/trigger" && req.method === "POST") {
       state.triggers.push(JSON.parse(raw));
-      if (state.triggerStatus === 200) state.reports.push({ type: "weekly", periodKey: "2026-10-12" });
-      return send(state.triggerStatus, state.triggerBody ?? { periodKey: "2026-10-12", execution: "COMPLETED",
+      if (state.triggerStatus === 200) state.reports.push({ type: "weekly", periodKey: "2026-10-19" });
+      return send(state.triggerStatus, state.triggerBody ?? { periodKey: "2026-10-19", execution: "COMPLETED",
         report: { id: "report-secret-id", narrativeStatus: "GENERATED" }, job: { status: "SUCCEEDED" } });
     }
     return send(500, {});
@@ -70,7 +70,7 @@ test("check phase is read-only and passes for the confirmed owner", async () => 
   const state = fakeState();
   const { code, output } = await run(state);
   assert.equal(code, 0, output);
-  assert.match(output, /CHECK PASS: identity matched; locale zh-Hans; week 2026-10-12/);
+  assert.match(output, /CHECK PASS: identity matched; locale zh-Hans; week 2026-10-19/);
   assert.deepEqual(state.requests, READS);
   assert.deepEqual(state.triggers, []);
 });
@@ -81,9 +81,9 @@ test("identity, locale, consent and existing-report problems stop before any tri
     [{ email: "other@jastrevia.com" }, /not the stored, verified TEST identity/],
     [{ locale: "en" }, /owner Weekly locale is en/],
     [{ locale: "zh-Hant" }, /not zh-Hans/],
-    [{ timezone: "Not/AZone" }, /does not map to week 2026-10-12/],
+    [{ timezone: "Not/AZone" }, /does not map to week 2026-10-19/],
     [{ reportsStatus: 403 }, /memory consent not confirmed \(report list status 403\)/],
-    [{ reports: [{ type: "weekly", periodKey: "2026-10-12" }] }, /already exists for week 2026-10-12; no trigger/],
+    [{ reports: [{ type: "weekly", periodKey: "2026-10-19" }] }, /already exists for week 2026-10-19; no trigger/],
   ];
   for (const [overrides, pattern] of cases) {
     for (const phase of ["check", "trigger"]) {
@@ -118,17 +118,17 @@ test("trigger sends exactly one request for the fixed target, and a repeat run s
   const state = fakeState();
   const first = await run(state, { phase: "trigger" });
   assert.equal(first.code, 0, first.output);
-  assert.deepEqual(state.triggers, [{ localDate: "2026-10-17" }]);
-  assert.match(first.output, /TRIGGER: status 200; execution COMPLETED; errorCode none; report present; narrative GENERATED; period 2026-10-12/);
+  assert.deepEqual(state.triggers, [{ localDate: "2026-10-24" }]);
+  assert.match(first.output, /TRIGGER: status 200; execution COMPLETED; errorCode none; report present; narrative GENERATED; period 2026-10-19/);
   const repeat = await run(state, { phase: "trigger" });
   assert.equal(repeat.code, 2);
-  assert.match(repeat.output, /already exists for week 2026-10-12/);
+  assert.match(repeat.output, /already exists for week 2026-10-19/);
   assert.equal(state.triggers.length, 1);
 });
 
 test("a failed trigger is reported with allowlisted codes only and never retried", async () => {
   for (const [status, body, expected] of [
-    [502, { periodKey: "2026-10-12", execution: "FAILED", errorCode: "AI_GATEWAY_TIMEOUT", report: null, message: "raw provider detail" }, /status 502; execution FAILED; errorCode AI_GATEWAY_TIMEOUT; report absent/],
+    [502, { periodKey: "2026-10-19", execution: "FAILED", errorCode: "AI_GATEWAY_TIMEOUT", report: null, message: "raw provider detail" }, /status 502; execution FAILED; errorCode AI_GATEWAY_TIMEOUT; report absent/],
     [429, { errorCode: "AI_QUOTA_EXCEEDED" }, /status 429; execution none; errorCode AI_QUOTA_EXCEEDED/],
     [500, { errorCode: "SOMETHING raw provider detail" }, /status 500; execution none; errorCode OTHER/],
   ]) {
@@ -158,4 +158,11 @@ test("workflow keeps authorization in protected environments, not inputs", () =>
     assert.equal(step.run, "node scripts/integration-weekly-trigger.mjs");
     assert.ok(Object.values(step.env).every((value) => !/inputs\./.test(String(value))), "no secret comes from inputs");
   }
+});
+
+test("the consumed v2 week 2026-10-12 does not block the short-report target week", async () => {
+  const state = fakeState({ reports: [{ type: "weekly", periodKey: "2026-10-12" }] });
+  const { code, output } = await run(state);
+  assert.equal(code, 0);
+  assert.match(output, /CHECK PASS: identity matched; locale zh-Hans; week 2026-10-19/);
 });

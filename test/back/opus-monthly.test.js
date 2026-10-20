@@ -166,6 +166,7 @@ async function fixture(t, { locale = "zh-CN", count = 4, previousCount = 1 } = {
           return { count: (await query(`UPDATE "AIJob" SET ${set} WHERE ${w.sql} RETURNING "id"`, ...w.params, ...changes.map(([, value]) => value))).length };
         }
       },
+      weeklyReport: { findMany: async () => [] }, // no Weekly reports in this Monthly fixture
       monthlyReport: {
         deleteMany: async ({ where }) => query('DELETE FROM "MonthlyReport" WHERE "ownerId"=$1 AND "id"=ANY($2)', where.ownerId, where.id.in),
         findFirst: async ({ where }) => {

@@ -232,7 +232,7 @@ test("Event deletion atomically removes every report that cites it", async () =>
     aiEvidence: {
       findMany: async () => [{ weeklyReportId: "weekly-1", monthlyReportId: "monthly-1", yearlyReportId: "yearly-1" }]
     },
-    weeklyReport: { deleteMany: async ({ where }) => { where.id.in.forEach((id) => state.weekly.delete(id)); } },
+    weeklyReport: { findMany: async () => [], deleteMany: async ({ where }) => { where.id.in.forEach((id) => state.weekly.delete(id)); } },
     monthlyReport: { deleteMany: async ({ where }) => { where.id.in.forEach((id) => state.monthly.delete(id)); } },
     yearlyReport: { deleteMany: async ({ where }) => { where.id.in.forEach((id) => state.yearly.delete(id)); } }
   };

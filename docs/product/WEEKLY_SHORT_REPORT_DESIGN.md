@@ -1,7 +1,7 @@
 # Weekly short report — design (approved direction, 2026-10-20)
 
-Status: **design approved by the owner; build after the beta.** No code yet. The beta keeps the
-current narrative-thread Weekly report ([BILINGUAL_WEEKLY_ACCEPTANCE.md](../testing/BILINGUAL_WEEKLY_ACCEPTANCE.md)).
+Status: **design approved by the owner; step 1 (backend contract) built, default OFF.** The beta keeps
+the current narrative-thread Weekly report ([BILINGUAL_WEEKLY_ACCEPTANCE.md](../testing/BILINGUAL_WEEKLY_ACCEPTANCE.md)).
 
 ## Why
 
@@ -34,11 +34,89 @@ Healing middle; Quiet, Drifting, Fire low. Points are the user's own flowers.
 5. A model-written section fails validation: hide that section only; the rest still shows
    (today a single failure loses the whole report).
 
-## Build notes (not started)
+## Step 1 — backend contract (built, default OFF, offline tests only)
 
-- English cross-week retrieval can reuse BGE/pgvector; Chinese needs a retrieval path (BGE is
-  English-only today).
-- New per-section contract and validator (exact-quote check for the line of the week and then-and-now).
-- Live acceptance: owner blind review against the current report, as in the earlier A/Bs.
+Enable with `AI_WEEKLY_REFLECTION_CONTRACT=weekly-short-v1` (Sonnet provider). Code:
+[lib/weekly-short.js](../../lib/weekly-short.js), wired in [lib/sonnet-weekly.js](../../lib/sonnet-weekly.js).
+
+- One request; the model returns `line`, `sideBySide`, `question` (each may be empty). The packet
+  reuses the v2 builder's selection, aliases and byte trimming; `include` lists the parts wanted.
+- Saved `narrativeSections` kinds, in order: `LINE_OF_WEEK`, `MOOD_CURVE`, `SIDE_BY_SIDE`, `QUESTION`;
+  a support week saves `MOOD_CURVE` + `SUPPORT_RESOURCES`. No schema migration.
+- Per-part checks; a failing part is hidden alone. Malformed JSON or a wrong locale still fails the job.
+  - Line of the week: an exact clause-aligned copy from the cited Event (same rule as v2 quotations).
+  - Side by side: exactly two Events; numbers and quotations must come from cited Events; explanatory
+    links (because / shows / means, 因为 / 所以 / 说明 …) hide it.
+  - Question: one sentence ending in ? / ？; advice words (should / try to, 应该 / 试试 …) hide it.
+- Mood curve: one point per period Event with a `primaryGardenMood` (date, mood, level, Event id) and a
+  code-written line such as "Mon–Thu: Quiet 2 times, Drifting once. Fri–Sun: Healing 2 times."
+  Time rules: [time.md](../../time.md).
+- Fewer than 3 Events: only the line of the week is requested; side by side and question are ignored.
+- Support: the mobile immediate-danger rule now also runs on the server
+  ([lib/emotional-safety.js](../../lib/emotional-safety.js)) over this week's Event memories. A match
+  skips the model call entirely: no quotation, mood curve and support text only.
+- Event deletion also deletes a short report whose mood curve shows that Event, even when it was
+  not cited ([lib/ai-events.js](../../lib/ai-events.js)).
+
+Open items for the owner:
+
+- zh-Hans mood names confirmed by the owner (2026-10-20): 晴朗 平静 温柔 好奇 疗愈 安静 迷茫 火焰.
+- A week with fewer than two selectable Events stays "insufficient evidence" (no curve-only report yet).
+- Hosted TEST only allows the v2 contract (`lib/integration-environment.js`); live acceptance needs that
+  gate widened under a separately approved task, then paid inference approval.
+
+## Step 2 — mobile rendering (built)
+
+[ShortWeeklyReport.tsx](../../mobile/src/components/features/ShortWeeklyReport.tsx), parsing and layout in
+[reflections.ts](../../mobile/src/services/reflections.ts); used by the Reflection Summary tab.
+
+- Only a report whose every section has `contractVersion: weekly-short-v1` renders this way; older
+  reports keep the plain summary text.
+- Line of the week: tapping it loads that Event with the existing `GET /events/:id` and shows its full
+  text inline (or a short "can't be opened" note); no new route.
+- Mood curve: seven columns (Mon first), the user's mood icons from the Event panel as points, joined in
+  time order; the factual line sits below and is the curve's accessibility label.
+- Question: "Write about it" / 写一写 opens the existing Event panel (`/` with `feature=events`).
+- Labels follow the report's locale (en / zh-Hans).
+- Checked offline (parsing and layout tests, type check) and visually in Expo web at phone width with
+  synthetic data; the signed-in tap-to-Event success path is not yet checked against a backend.
+
+## Step 3 — then and now (built, code only)
+
+[lib/weekly-then-and-now.js](../../lib/weekly-then-and-now.js); chosen while the Weekly input is built
+([lib/report-foundation.js](../../lib/report-foundation.js)), saved as `THEN_AND_NOW` between side by side
+and the question. No model involvement; earlier Events never reach the model.
+
+- Looks back four whole weeks before the period; the two Events are ≥ 7 days apart. Up to 8 recent Events
+  of this week × 60 earlier ones are compared.
+- English, change in wording: cosine ≥ 0.85 between stored BGE vectors (PostgreSQL, no new inference) and no
+  shared phrase; quotes each whole entry (≤ 180 characters).
+- Repeated phrase (both languages): longest shared phrase — ≥ 4 Chinese characters or ≥ 2 English words, at
+  least two of them not everyday filler, trimmed of filler at the edges; quotes the sentence containing it
+  (≤ 180 / 60 characters). Count line ("appears in 3 of your entries over the past five weeks" /
+  "过去五周里，你有 3 条记录写到…") only when the phrase is in ≥ 3 entries.
+- Preference: change in wording → repeated phrase → hidden. Hidden too with fewer than 3 Events this week,
+  in a support week, or when either quote would trigger the support hint.
+- The 0.85 threshold and the filler lists are first guesses; tune them in live review.
+- Mobile shows "Then · Sep 21 / Now · Oct 6" (那时 / 现在) quote blocks and the count line.
+
+## Per-owner switch (built)
+
+`AI_WEEKLY_SHORT_OWNER_IDS` ([lib/weekly-contract.js](../../lib/weekly-contract.js)): comma-separated PetalPal
+user ids (`User.id`, the `user.id` of `/session`), at most 100. Listed owners get `weekly-short-v1`; everyone
+else keeps `AI_WEEKLY_REFLECTION_CONTRACT` and its flags (production: v2 with Selector V2, significance and the
+narrative thread). For a listed owner those v2 flags are still validated but not used (original selector, short
+instructions). Unset or empty: nobody. A malformed list fails closed (`AI_GATEWAY_CONFIG_INVALID`, no model call).
+It changes only reports generated afterwards; a saved report keeps its own contract.
+
+Use: beta users stay on the accepted v2 report; add your own (or a few testers') ids to see the short report
+in production without switching everyone.
+
+## Next steps
+
+- Hosted TEST zh-Hans acceptance: prepared, not executed — [WEEKLY_SHORT_TEST_ACCEPTANCE.md](../testing/WEEKLY_SHORT_TEST_ACCEPTANCE.md)
+  (TEST guard accepts `weekly-short-v1`; trigger targets week 2026-10-19).
+- Owner blind review against the current report, as in the earlier A/Bs: a separate local live run with its own
+  paid-inference approval.
 - Mockup used for approval: low-week example in en and zh-Hans (synthetic data), reviewed in chat on
   2026-10-20; not stored in the repository.

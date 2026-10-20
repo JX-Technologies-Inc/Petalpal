@@ -13,6 +13,7 @@ import { buildWeeklyReflectionPacket, validateWeeklyReflection, weeklyReportProv
 import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS } from "../../lib/reflection-v2.js";
 import { GATEWAY_TASK_LIMITS } from "../../lib/ai-gateway-config.js";
 import { WEEKLY_RETROSPECTIVE_INSTRUCTIONS, WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS } from "../../lib/weekly-editorial.js";
+import { WEEKLY_SHORT, WEEKLY_SHORT_INSTRUCTIONS } from "../../lib/weekly-short.js";
 import { exemplars as threadExemplars } from "../../experiments/weekly-narrative-thread-v1/fixtures.mjs";
 import { corpus as editorialCorpus, targets as editorialTargets } from "../../experiments/weekly-editorial-quality-v1/fixtures.mjs";
 
@@ -236,7 +237,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
     await pg.query('INSERT INTO "EventMemory" VALUES ($1,\'alice\',$2,\'2026-09-21\',1,\'EVENT\',$3,$4,0.8,\'GENERATED\',1)',
       [`memory-${i}`, `event-${i}`, summaries(normalized)[i % 2], JSON.stringify([normalized === "en" ? "drawing" : "画画"])]);
   }
-  let response = packet => Response.json(native(output(packet))), retrievalHook, failEvidence = false, expireCompletion = false;
+  let response = packet => Response.json(native(output(packet))), retrievalHook, similarHook = () => [], failEvidence = false, expireCompletion = false;
   const calls = [], logs = []; let retrievalCalls = 0, legacyCalls = 0;
   const adapt = db => {
     const query = async (sql, ...args) => (await db.query(sql, args)).rows;
@@ -296,7 +297,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
     retrievalCalls++; if (retrievalHook) await retrievalHook();
     return (await db.event.findMany({ where: { ownerId: identity.userId, occurredAt: { gte: dateFrom, lt: dateTo } } }))
       .filter(event => event.memory).map(event => ({ ...event.memory, eventDate: event.occurredAt, similarity: 0.9 }));
-  } };
+  }, similarTo: async args => similarHook(args) };
   const fetchImpl = async (url, options) => {
     assert.equal(url, `https://gateway.ai.cloudflare.com/v1/${"a".repeat(32)}/synthetic-weekly/anthropic/v1/messages`);
     const body = JSON.parse(options.body), packet = JSON.parse(body.messages[0].content);
@@ -310,7 +311,7 @@ async function fixture(t, { locale = "zh-CN", count = 2 } = {}) {
       claim: summaries("en")[0], evidenceRefs: [{ sourceEventId: "event-0", sourceMemoryId: "memory-0" }], aggregateRefs: [] }] }; } } });
   const run = (env = enabled) => make(env).runJob({ jobId: "job-1", ownerId: "alice", jobType: "WEEKLY_REPORT" });
   return { pg, db, calls, logs, run, make, get retrievalCalls() { return retrievalCalls; }, get legacyCalls() { return legacyCalls; },
-    respond: fn => { response = fn; }, retrievalHook: fn => { retrievalHook = fn; }, failEvidence: () => { failEvidence = true; },
+    respond: fn => { response = fn; }, retrievalHook: fn => { retrievalHook = fn; }, similarHook: fn => { similarHook = fn; }, failEvidence: () => { failEvidence = true; },
     expireCompletion: () => { expireCompletion = true; }, rows: table => db.$queryRawUnsafe(`SELECT * FROM "${table}"`) };
 }
 
@@ -808,4 +809,107 @@ test("evidence significance ON keeps one-call generation, provenance, privacy an
     if (mutation === "budget") { assert.equal(result.error.code, "AI_QUOTA_EXCEEDED"); assert.equal(f.retrievalCalls, 0); }
     if (mutation === "bad-output") { assert.equal((await f.run(settings)).error.code, "AI_INFERENCE_ALREADY_RESERVED"); assert.equal(f.calls.length, 1); }
   });
+});
+
+// Short Weekly report (weekly-short-v1): synthetic Events, injected Gateway responses only.
+const shortSettings = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: WEEKLY_SHORT };
+const shortOutput = packet => ({ version: WEEKLY_SHORT, locale: packet.locale, line: [{ ref: "E1", quote: packet.evidence[0].text }],
+  sideBySide: [{ text: "You wrote about one afternoon.", refs: ["E1"] }, { text: "You wrote about another moment.", refs: ["E2"] }],
+  question: [{ text: "What do you remember most?", refs: ["E1"] }] });
+async function shortFixture(t) {
+  const f = await fixture(t, { locale: "en", count: 3 });
+  await f.pg.exec(`ALTER TABLE "Event" ADD COLUMN "primaryGardenMood" text; UPDATE "Event" SET "primaryGardenMood"='QUIET_BLOOM'`);
+  return f;
+}
+
+test("short contract: one bounded request; each validated part is saved with its own citations", async t => {
+  const f = await shortFixture(t);
+  f.respond(packet => Response.json(native(shortOutput(packet))));
+  const result = await f.run(shortSettings); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 1); assert.equal(f.legacyCalls, 0);
+  const { body, packet } = f.calls[0];
+  assert.equal(body.system, WEEKLY_SHORT_INSTRUCTIONS); assert.equal(packet.version, WEEKLY_SHORT);
+  assert.deepEqual(packet.include, ["line", "sideBySide", "question"]);
+  assert.ok(Buffer.byteLength(JSON.stringify(body)) + 1024 <= GATEWAY_TASK_LIMITS.WEEKLY_REPORT.input);
+  assert.doesNotMatch(JSON.stringify(packet), /alice|event-\d|memory-\d|sourceFence|primaryGardenMood|QUIET_BLOOM/);
+  const saved = (await f.rows("WeeklyReport"))[0].document;
+  assert.equal(saved.narrativeStatus, "GENERATED");
+  assert.deepEqual(saved.narrativeSections.map(section => section.kind), ["LINE_OF_WEEK", "MOOD_CURVE", "SIDE_BY_SIDE", "QUESTION"]);
+  const curve = saved.narrativeSections[1];
+  assert.equal(curve.claim, "Mon–Thu: Quiet 3 times.");
+  // The curve shows every period Event; provenance rows cover only the selected evidence.
+  assert.deepEqual(curve.points.map(point => point.sourceEventId), ["event-0", "event-1", "event-2"]);
+  assert.equal((await f.rows("AIEvidence")).length, packet.evidence.length);
+  await f.pg.exec(`UPDATE "AIJob" SET "status"='PENDING',"attemptCount"=0,"nextAttemptAt"='2000-01-01'`);
+  assert.equal((await f.run(shortSettings)).result.skipped, true); assert.equal(f.calls.length, 1);
+});
+
+test("short contract: malformed output saves nothing; a week needing support never reaches the model", async t => {
+  const bad = await shortFixture(t);
+  bad.respond(packet => Response.json(native({ ...shortOutput(packet), locale: "zh-Hans" })));
+  assert.equal((await bad.run(shortSettings)).succeeded, false); assert.equal(bad.calls.length, 1);
+  assert.equal((await bad.rows("WeeklyReport")).length, 0);
+
+  const f = await shortFixture(t);
+  await f.pg.exec(`UPDATE "EventMemory" SET "summary"='I cannot keep myself safe.' WHERE "id"='memory-1'`);
+  f.respond(() => assert.fail("a support week must not call the model"));
+  const result = await f.run(shortSettings); assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(f.calls.length, 0);
+  const saved = (await f.rows("WeeklyReport"))[0].document;
+  assert.equal(saved.narrativeStatus, "GENERATED");
+  assert.deepEqual(saved.narrativeSections.map(section => section.kind), ["MOOD_CURVE", "SUPPORT_RESOURCES"]);
+  assert.equal(saved.summary.includes("keep myself safe"), false);
+  assert.equal(saved.summary.includes(summaries("en")[0]), false);
+});
+
+test("short contract: then and now reaches four earlier weeks through the source fence (zh phrase, en stored vectors)", async t => {
+  for (const locale of ["zh-CN", "en"]) {
+    const f = await fixture(t, { locale, count: 3 });
+    await f.pg.exec(`ALTER TABLE "Event" ADD COLUMN "primaryGardenMood" text`);
+    const [nowText, thenText] = locale === "en" ? ["Slept through the whole night for once.", "Awake again at 3am, staring at the ceiling."]
+      : ["晚上又睡不着觉，脑子停不下来。", "搬家以后一直睡不着觉。"];
+    await f.pg.query('UPDATE "EventMemory" SET "summary"=$1 WHERE "id"=\'memory-2\'', [nowText]);
+    // 2026-08-25 is inside the lookback (from 2026-08-17); 2026-08-10 is outside it and must not be read.
+    for (const [id, date, text] of [["old", "2026-08-25T12:00:00Z", thenText], ["older", "2026-08-10T12:00:00Z", thenText]]) {
+      await f.pg.query('INSERT INTO "Event" VALUES ($1,\'alice\',$2,\'2026-09-21\',true)', [`event-${id}`, new Date(date)]);
+      await f.pg.query('INSERT INTO "EventMemory" VALUES ($1,\'alice\',$2,\'2026-09-21\',1,\'EVENT\',$3,$4,0.8,\'GENERATED\',1)',
+        [`memory-${id}`, `event-${id}`, text, JSON.stringify([])]);
+    }
+    const similar = [];
+    f.similarHook(args => { similar.push(args); return args.memoryId === "memory-2"
+      ? [{ id: "memory-old", ownerId: "alice", sourceEventId: "event-old", similarity: 0.92 }] : []; });
+    f.respond(packet => Response.json(native(shortOutput(packet))));
+    const result = await f.run(shortSettings); assert.equal(result.succeeded, true, result.error?.stack);
+    const saved = (await f.rows("WeeklyReport"))[0].document, section = saved.narrativeSections.find(item => item.kind === "THEN_AND_NOW");
+    assert.equal(section.match, locale === "en" ? "CHANGE" : "REPEAT");
+    assert.deepEqual([section.then.sourceEventId, section.now.sourceEventId], ["event-old", "event-2"]);
+    assert.equal(section.then.quote, locale === "en" ? thenText : "搬家以后一直睡不着觉。");
+    assert.equal(similar.length, locale === "en" ? 3 : 0);
+    for (const args of similar) assert.equal(args.dateFrom.toISOString(), "2026-08-17T00:00:00.000Z");
+    assert.doesNotMatch(JSON.stringify(f.calls[0].packet), /搬家以后|ceiling|event-old|memory-old/); // earlier entries never reach the model
+  }
+});
+
+test("short-report owner list: listed owners get the short report, everyone else keeps the production v2 flags", async t => {
+  // The production Weekly configuration (2026-10-20 beta acceptance) plus the per-owner list.
+  const production = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY, AI_WEEKLY_EVIDENCE_SELECTOR_V2: "true",
+    AI_WEEKLY_EVIDENCE_SIGNIFICANCE: "true", AI_WEEKLY_REFLECTION_NARRATIVE_THREAD: "true" };
+  const listed = await shortFixture(t);
+  listed.respond(packet => Response.json(native(shortOutput(packet))));
+  const result = await listed.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "bob,alice" });
+  assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(listed.calls[0].body.system, WEEKLY_SHORT_INSTRUCTIONS);
+  const saved = (await listed.rows("WeeklyReport"))[0].document;
+  assert.ok(saved.narrativeSections.every(section => section.contractVersion === WEEKLY_SHORT));
+
+  const other = await shortFixture(t);
+  other.respond(packet => Response.json(native(quotedV2(packet))));
+  const kept = await other.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "bob" });
+  assert.equal(kept.succeeded, true, kept.error?.stack);
+  assert.equal(other.calls[0].body.system, WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS);
+  assert.ok((await other.rows("WeeklyReport"))[0].document.narrativeSections.every(section => section.contractVersion === REFLECTION_V2.WEEKLY));
+
+  const broken = await shortFixture(t);
+  assert.equal((await broken.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "alice;bob" })).succeeded, false);
+  assert.equal(broken.calls.length, 0); assert.equal((await broken.rows("WeeklyReport")).length, 0);
 });
