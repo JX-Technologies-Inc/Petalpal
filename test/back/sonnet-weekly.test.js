@@ -889,3 +889,27 @@ test("short contract: then and now reaches four earlier weeks through the source
     assert.doesNotMatch(JSON.stringify(f.calls[0].packet), /搬家以后|ceiling|event-old|memory-old/); // earlier entries never reach the model
   }
 });
+
+test("short-report owner list: listed owners get the short report, everyone else keeps the production v2 flags", async t => {
+  // The production Weekly configuration (2026-10-20 beta acceptance) plus the per-owner list.
+  const production = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY, AI_WEEKLY_EVIDENCE_SELECTOR_V2: "true",
+    AI_WEEKLY_EVIDENCE_SIGNIFICANCE: "true", AI_WEEKLY_REFLECTION_NARRATIVE_THREAD: "true" };
+  const listed = await shortFixture(t);
+  listed.respond(packet => Response.json(native(shortOutput(packet))));
+  const result = await listed.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "bob,alice" });
+  assert.equal(result.succeeded, true, result.error?.stack);
+  assert.equal(listed.calls[0].body.system, WEEKLY_SHORT_INSTRUCTIONS);
+  const saved = (await listed.rows("WeeklyReport"))[0].document;
+  assert.ok(saved.narrativeSections.every(section => section.contractVersion === WEEKLY_SHORT));
+
+  const other = await shortFixture(t);
+  other.respond(packet => Response.json(native(quotedV2(packet))));
+  const kept = await other.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "bob" });
+  assert.equal(kept.succeeded, true, kept.error?.stack);
+  assert.equal(other.calls[0].body.system, WEEKLY_NARRATIVE_THREAD_INSTRUCTIONS);
+  assert.ok((await other.rows("WeeklyReport"))[0].document.narrativeSections.every(section => section.contractVersion === REFLECTION_V2.WEEKLY));
+
+  const broken = await shortFixture(t);
+  assert.equal((await broken.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "alice;bob" })).succeeded, false);
+  assert.equal(broken.calls.length, 0); assert.equal((await broken.rows("WeeklyReport")).length, 0);
+});

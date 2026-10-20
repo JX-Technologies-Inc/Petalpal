@@ -217,3 +217,16 @@ test("deleting an earlier Event removes a later short report that quotes it in t
   await new PrivateEventRepository({ $transaction: fn => fn(tx) }).deleteEventAndAffectedReports({ identity: { userId: "alice" }, eventId: "event-old" });
   assert.deepEqual(deleted, ["weekly-later"]);
 });
+
+test("the short-report owner list opts single owners in and fails closed when malformed", async () => {
+  const { weeklyContractFor, weeklyShortOwners } = await import("../../lib/weekly-contract.js");
+  assert.equal(weeklyShortOwners({}).size, 0);
+  assert.equal(weeklyShortOwners({ AI_WEEKLY_SHORT_OWNER_IDS: "" }).size, 0);
+  const env = { AI_WEEKLY_SHORT_OWNER_IDS: "alice,owner_2-x" };
+  assert.equal(weeklyContractFor(env, "alice", "weekly-reflection-v2"), WEEKLY_SHORT);
+  assert.equal(weeklyContractFor(env, "bob", "weekly-reflection-v2"), "weekly-reflection-v2");
+  assert.equal(weeklyContractFor({}, "alice", "weekly-reflection-v2"), "weekly-reflection-v2");
+  for (const value of ["alice,", ",alice", "alice bob", "a".repeat(65), Array(101).fill("x").join(","), "alice;bob"]) {
+    assert.throws(() => weeklyShortOwners({ AI_WEEKLY_SHORT_OWNER_IDS: value }), { code: "AI_GATEWAY_CONFIG_INVALID" }, value);
+  }
+});

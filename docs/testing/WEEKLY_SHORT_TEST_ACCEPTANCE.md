@@ -73,7 +73,8 @@ Same owner-entered table as the 2026-10-19 v2 run ([BILINGUAL_WEEKLY_ACCEPTANCE.
 | Five USD caps | `0.05` (one reservation is at most US$0.04096) |
 | `AI_WEEKLY_EVIDENCE_SELECTOR_V2`, `AI_WEEKLY_EVIDENCE_SIGNIFICANCE`, `AI_WEEKLY_REFLECTION_*` editorial flags | **unset** (the short contract rejects them) |
 
-Provider secrets are entered by the owner in the Render UI only. Save without auto-redeploy, then Manual Deploy
+Alternative: keep `AI_WEEKLY_REFLECTION_CONTRACT=weekly-reflection-v2` and set `AI_WEEKLY_SHORT_OWNER_IDS` to the TEST
+owner id only (the per-owner switch); the TEST guard accepts either. Provider secrets are entered by the owner in the Render UI only. Save without auto-redeploy, then Manual Deploy
 of X. A guard failure at startup means stop, without retrying.
 
 ### 5. `phase=check` — **APPROVAL** (`integration-weekly-trigger.yml`, environment `petalpal-web-build-integration`, `main` at X)

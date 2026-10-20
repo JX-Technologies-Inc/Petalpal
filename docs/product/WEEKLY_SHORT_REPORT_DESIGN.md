@@ -100,6 +100,18 @@ and the question. No model involvement; earlier Events never reach the model.
 - The 0.85 threshold and the filler lists are first guesses; tune them in live review.
 - Mobile shows "Then · Sep 21 / Now · Oct 6" (那时 / 现在) quote blocks and the count line.
 
+## Per-owner switch (built)
+
+`AI_WEEKLY_SHORT_OWNER_IDS` ([lib/weekly-contract.js](../../lib/weekly-contract.js)): comma-separated PetalPal
+user ids (`User.id`, the `user.id` of `/session`), at most 100. Listed owners get `weekly-short-v1`; everyone
+else keeps `AI_WEEKLY_REFLECTION_CONTRACT` and its flags (production: v2 with Selector V2, significance and the
+narrative thread). For a listed owner those v2 flags are still validated but not used (original selector, short
+instructions). Unset or empty: nobody. A malformed list fails closed (`AI_GATEWAY_CONFIG_INVALID`, no model call).
+It changes only reports generated afterwards; a saved report keeps its own contract.
+
+Use: beta users stay on the accepted v2 report; add your own (or a few testers') ids to see the short report
+in production without switching everyone.
+
 ## Next steps
 
 - Hosted TEST zh-Hans acceptance: prepared, not executed — [WEEKLY_SHORT_TEST_ACCEPTANCE.md](../testing/WEEKLY_SHORT_TEST_ACCEPTANCE.md)
