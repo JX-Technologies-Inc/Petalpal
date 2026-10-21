@@ -162,6 +162,20 @@ Sunday `2026-09-20` of the `2026-09-14` week; moodless and prior-week rows add n
 - **Daily Grow** computes its local date with a separate helper
   (`getLocalDate`/`normalizeTimezone` in [server.js](server.js)), also from
   `User.timezone`.
+- **Fairy Moments** (default OFF; owners listed in `FAIRY_MOMENTS_OWNER_IDS`) are
+  planned in [lib/fairy-moments.js](lib/fairy-moments.js) from the seeded Fairy
+  runtime transitions of the last 7 days, when `GET /api/fairy/runtime`
+  reconciles. A post lands 5–25 minutes after she enters the state, only between
+  08:00 and 23:30 in `User.timezone` (an invalid zone falls back to UTC; good-night
+  posts from `SLEEPING` only 21:00–23:30), at least 48 hours after any other post
+  and at most 3 per rolling 7 days. The local hour also picks the photo's light
+  (day 08–18, dusk 18–21, night 21–24); with no photo for that light the post is
+  text only. Her mood is fixed per account-zone local date (`localDateForInstant`).
+  `FairyMoment.postedAt` is stored in UTC; a post still ahead of the server clock
+  stays hidden until then. **VERIFIED:**
+  [test/back/fairy-moments.test.js](test/back/fairy-moments.test.js) (UTC,
+  `America/Vancouver`, `Asia/Shanghai`) and
+  [test/back/fairy-moments.route.test.js](test/back/fairy-moments.route.test.js).
 
 ## 6. Production vs TEST
 
