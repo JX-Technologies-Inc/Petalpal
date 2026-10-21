@@ -10,6 +10,7 @@ import type { MonthlyGrowth } from '../flower-density-sandbox/monthly-growth/mon
 import { BotanicalFlowerImage, botanicalImageBounds } from '../flower-visuals/BotanicalFlowerImage';
 import { botanicalPresentationPose } from '../flower-visuals/botanicalPresentationPose';
 import { composeProductionBed } from './productionBedComposition';
+import { uniformSpeciesSize } from './flowerSpeciesSize';
 
 /** Full rotated image rectangles, including transparent margins and botanical
  * pixels outside soil masks. Recording bounds are not planting constraints. */
@@ -76,7 +77,8 @@ export const ProductionGrowthLayer = memo(function ProductionGrowthLayer({ growt
     const image = images[`${piece.speciesCode}:${piece.componentId}`];
     return image ? botanicalImageBounds(image) : null;
   }), [growth, month, images, initialBed, complete]);
-  const pieces = useMemo(() => growthDrawOrder(bed), [bed]);
+  // One drawn height per species at the approved Garden size; layout is unchanged.
+  const pieces = useMemo(() => uniformSpeciesSize(growthDrawOrder(bed)), [bed]);
   const drawing = useMemo(() => <Group>
     {pieces.map(piece => <BotanicalPiece key={piece.id} piece={piece}
       image={images[`${piece.speciesCode}:${piece.componentId}`]} />)}
