@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, AppState, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GARDEN_FEATURES, gardenFeature } from '../../services/featureCatalog';
 import { usePanelTheme } from '../features/PanelTheme';
@@ -8,6 +8,8 @@ import { FeatureOverlay } from '../features/FeatureOverlay';
 import { FEATURE_COLORS } from '../features/FeatureUI';
 import { SidebarIllustration } from './SidebarIllustration';
 import { usePlanting } from './planting/PlantingContext';
+import { FairyMomentsPanel } from '../moments/FairyMomentsPanel';
+import { syncFairyMoments, type FairyMomentsStatus } from '../../services/fairyMoments';
 
 // One navigation model; only its sizing changes with the viewport.
 export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) {
@@ -21,6 +23,17 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
   const [highlightedFeature, setHighlightedFeature] = useState<string>();
   const [openFeature, setOpenFeature] = useState<string>();
   const { feature: entryFeature } = useLocalSearchParams<{ feature?: string }>();
+  // Fairy Moments: when the server has Moments on for this owner, the Fairy icon opens her
+  // feed (with a dot for new posts); otherwise it keeps focusing the camera on her.
+  const [moments, setMoments] = useState<FairyMomentsStatus>({ enabled: false, unread: false });
+  const [momentsOpen, setMomentsOpen] = useState(false);
+  useEffect(() => {
+    let active = true;
+    const sync = () => { void syncFairyMoments().then(status => { if (active) setMoments(status); }); };
+    sync();
+    const subscription = AppState.addEventListener('change', state => { if (state === 'active') sync(); });
+    return () => { active = false; subscription.remove(); };
+  }, []);
   useEffect(() => {
     if (!entryFeature) return;
     if (entryFeature === 'fairy') {
@@ -36,19 +49,23 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
   const navigationItem = (feature: typeof GARDEN_FEATURES[number]) => {
     const selected = openFeature === feature.id || (feature.id === 'profile' && openFeature === 'settings') || (feature.id === 'garden' && !openFeature);
     return <Pressable key={feature.id} accessibilityRole="button"
-      accessibilityLabel={`${feature.label}, ${feature.status}`} accessibilityState={{ selected }} testID={`hud-${feature.id}`}
+      accessibilityLabel={`${feature.label}, ${feature.status}${feature.id === 'fairy' && moments.unread ? ', new Moments' : ''}`} accessibilityState={{ selected }} testID={`hud-${feature.id}`}
       onHoverIn={() => setHighlightedFeature(feature.id)} onHoverOut={() => setHighlightedFeature(undefined)}
       onFocus={() => setHighlightedFeature(feature.id)} onBlur={() => setHighlightedFeature(undefined)}
       onPress={() => {
         if (feature.id === 'fairy') {
           setOpenFeature(undefined);
-          onFocusFairy?.();
+          if (moments.enabled) { setMomentsOpen(true); setMoments(current => ({ ...current, unread: false })); }
+          else onFocusFairy?.();
         } else setOpenFeature(feature.id === 'garden' ? undefined : feature.id);
       }}
       style={({ pressed }) => [styles.bottomItem,
         (selected || highlightedFeature === feature.id) && [styles.selected, { backgroundColor: light ? '#D6E5DCD9' : theme.input, borderColor: theme.gold }],
         pressed && styles.pressed]}>
-      <SidebarIllustration id={feature.id} size={iconSize} active={selected || highlightedFeature === feature.id} />
+      <View>
+        <SidebarIllustration id={feature.id} size={iconSize} active={selected || highlightedFeature === feature.id} />
+        {feature.id === 'fairy' && moments.unread ? <View style={[styles.unread, { borderColor: theme.background }]} /> : null}
+      </View>
       <Text numberOfLines={1} style={[styles.label, styles.bottomLabel, { fontSize: phone ? 13 : 15, color: theme.text }]}>
         {feature.id === 'events' ? 'Events' : feature.id === 'profile' ? 'Me' : feature.label}
       </Text>
@@ -70,6 +87,8 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
         <Text style={styles.label}>Garden history</Text>
       </Pressable>
     </View>
+    <FairyMomentsPanel visible={momentsOpen} onClose={() => setMomentsOpen(false)}
+      onFindFairy={() => { setMomentsOpen(false); onFocusFairy?.(); }} />
     <FeatureOverlay feature={gardenFeature(openFeature)} onClose={() => setOpenFeature(undefined)} onGardenChanged={refreshGarden} onOpenSettings={() => setOpenFeature('settings')} />
   </View>;
 }
@@ -82,6 +101,7 @@ const styles = StyleSheet.create({
   selected: { backgroundColor: '#D6E5DCD9', borderColor: '#C6A164' },
   label: { color: FEATURE_COLORS.ink, fontSize: 10, fontWeight: '600', textAlign: 'center' },
   pressed: { opacity: .7, transform: [{ scale: .96 }] },
+  unread: { position: 'absolute', top: 0, right: -2, width: 10, height: 10, borderRadius: 5, borderWidth: 1.5, backgroundColor: '#E5735F' },
   info: { position: 'absolute', alignSelf: 'center', gap: 5, maxWidth: 220,
     borderRadius: 14, padding: 8, backgroundColor: '#fffaf0e8' },
 });
