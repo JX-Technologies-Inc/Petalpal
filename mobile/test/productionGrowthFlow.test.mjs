@@ -11,6 +11,7 @@ const react={createContext:()=>({Provider:'Provider'}),useState:initial=>{
 const load=loadPlantingModules(storage,react,undefined,true,{
   '@shopify/react-native-skia':{Group:'Group',Circle:'Circle'},
   './ProductionGrowthLayer':{ProductionGrowthLayer:'ProductionGrowthLayer'},
+  '../flower-mood-effects/GardenMoodEffects':{GardenMoodEffectsLayer:'MoodEffects'},
 });
 const context=load('PlantingContext'),api=load('productionGrowth'),preview=load('ProductionPlantedFlowers').growthPreviewParents;
 function render(){hook=0;const root=context.PlantingProvider({children:null});return root.type(root.props).props.value;}

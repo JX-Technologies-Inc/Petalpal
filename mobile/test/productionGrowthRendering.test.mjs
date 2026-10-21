@@ -14,6 +14,7 @@ const load=loadPlantingModules(undefined,react,undefined,true,{
     useImage:source=>{imageSources.push(source);return source?'decoded-image':null;}},
   '../performance/runtimeAudit':{runtimeAudit:{render(){}},timeGardenWork:(_,fn)=>fn()},
   './PlantingContext':{usePlanting:()=>state},
+  '../flower-mood-effects/GardenMoodEffects':{GardenMoodEffectsLayer:'MoodEffects'},
 });
 const api=load('productionGrowth'),render=load('ProductionPlantedFlowers').ProductionPlantedFlowers;
 assert.equal(api.USE_MONTHLY_GARDEN_GROWTH_V1_1,true,'Release defaults to the approved monthly Flower renderer');

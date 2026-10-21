@@ -209,6 +209,7 @@ test('Garden hydration renderers draw canonical historical art without sourceEve
     '@shopify/react-native-skia': { Group: 'Group', Circle: 'Circle', Image: 'Image', useImage: () => 'image' },
     './PlantingContext': { usePlanting: () => ({ placements: [record], activeMode: 'normal', targetFlower: null, previewCoords: null }) },
     './CanonicalFlowerArt': { CanonicalFlowerArt: 'CanonicalArt', CanonicalFlowerEffects: 'CanonicalEffects' },
+    '../flower-mood-effects/GardenMoodEffects': { GardenMoodEffectsLayer: 'MoodEffects' },
     './ProductionGrowthLayer': { ProductionGrowthLayer: 'GrowthLayer' },
     './productionGrowth': { gardenSpecies: () => null,
       productionGrowth: parents => [{ month: 9, growth: {}, unresolved: parents }] },

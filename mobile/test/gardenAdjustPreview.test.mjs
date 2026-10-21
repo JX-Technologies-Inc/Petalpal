@@ -3,7 +3,7 @@ import {loadPlantingModules} from './loadPlantingModules.mjs';
 const jsx=(type,props)=>({type,props});let cursor=0,calls=0;const slots=[];
 const react={memo:f=>f,useState:init=>[init,()=>{}],useCallback:f=>f,useEffect:()=>{},useMemo(fn,deps){const i=cursor++;const old=slots[i];if(old&&deps.every((d,j)=>d===old.deps[j]))return old.value;return(slots[i]={deps,value:fn()}).value;}};
 const state={placements:[],activeMode:'normal',targetFlower:null,previewCoords:null,validationResult:{isValid:true}};
-const dependencies={'react/jsx-runtime':{jsx,jsxs:jsx},'@shopify/react-native-skia':{Group:'Group',Image:'Image',Skia:{RuntimeEffect:{Make:()=>null}},Circle:'Circle',useImage:()=>null},'./PlantingContext':{usePlanting:()=>state}};
+const dependencies={'react/jsx-runtime':{jsx,jsxs:jsx},'@shopify/react-native-skia':{Group:'Group',Image:'Image',Skia:{RuntimeEffect:{Make:()=>null}},Circle:'Circle',useImage:()=>null},'./PlantingContext':{usePlanting:()=>state},'../flower-mood-effects/GardenMoodEffects':{GardenMoodEffectsLayer:'MoodEffects'}};
 const load=loadPlantingModules(new Proxy({}, {get(){throw Error('No placement writes in preview test');}}),react,undefined,true,dependencies);
 const api=load('productionGrowth'),parents=load('productionGrowthQAData').productionQARecords(30);
 dependencies['./productionGrowth']={productionGrowth:p=>{calls++;return api.productionGrowth(p);}};
