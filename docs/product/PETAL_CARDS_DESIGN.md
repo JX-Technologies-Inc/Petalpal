@@ -35,6 +35,13 @@ In Chinese copy the fairy is 小花仙.
    with the dominant mood.
 5. Stable: a hash of user + week picks within the candidates, so a refresh never changes the card.
 
+As built ([lib/petal-card-match.js](../../lib/petal-card-match.js), 2026-10-21): the moods are the
+short report's mood-curve points (one per period Event with a Primary Garden Mood). The halves are
+the curve's own split, Mon–Thu and Fri–Sun of the account-timezone week. **Lifting** = more than half
+of Mon–Thu low and more than half of Fri–Sun bright; **sinking** the reverse; both need moods in both
+halves. Wonder counts as neither low nor bright. Precedence (owner decision 2026-10-21): lifting /
+sinking before mixed, then steady. The hash is `sha256("petal-card:v1:<owner>:<periodKey>")`.
+
 ## Safety rules
 
 - The 9 **heavy** cards (Death, The Devil, The Tower, Three/Five/Eight/Nine/Ten of Swords,
