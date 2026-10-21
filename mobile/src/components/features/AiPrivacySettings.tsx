@@ -23,6 +23,6 @@ export function AiPrivacySettings() {
 export function AiOutputReport({kind,outputId}:{kind:string;outputId:string}) {
  const [open,setOpen]=useState(false),[status,setStatus]=useState(''),[busy,setBusy]=useState(false);
  return <View style={{gap:8}}><FeatureActionButton secondary title="Report AI output" onPress={()=>setOpen(!open)} disabled={busy}/>
- {open?<><Text style={ui.text}>Only the output reference and reason are sent. Your private text is not attached.</Text>{['HARASSMENT','HATE_SPEECH','SELF_HARM','PRIVACY','OTHER'].map(category=><FeatureActionButton key={category} secondary title={category.replaceAll('_',' ')} disabled={busy} onPress={async()=>{setBusy(true);try{await apiRequest('/ai-output-reports','POST',{kind,outputId,category});setStatus('Report received.');setOpen(false);}catch(e){setStatus((e as Error).message);}finally{setBusy(false);}}}/>)}</>:null}
+ {open?<><Text style={ui.text}>Only the output reference and reason are sent. Your private text is not attached.</Text>{['HARASSMENT','HATE_SPEECH','SELF_HARM','PRIVACY','OTHER'].map(category=><FeatureActionButton key={category} secondary title={category.replaceAll('_',' ')} disabled={busy} onPress={async()=>{setBusy(true);try{await apiRequest('/ai-output-reports','POST',{kind,outputId,category});setStatus('Report received. Our team reviews every report; there is no separate result message.');setOpen(false);}catch(e){setStatus((e as Error).message);}finally{setBusy(false);}}}/>)}</>:null}
  {status?<Text accessibilityRole="alert" style={ui.text}>{status}</Text>:null}</View>;
 }

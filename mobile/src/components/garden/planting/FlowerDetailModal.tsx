@@ -17,6 +17,7 @@ import { MONTH_REGION_METAS } from './plantingRegionData';
 import { resolveFlowerDetail } from './flowerDetailData';
 import { sourceFlowerImageUri } from './flowerDetailApi';
 import { localFlowerArtwork } from './localFlowerArtwork';
+import { readEvent } from '../../../services/events';
 
 const FLOWER_ASSETS: Record<string, any> = {
   pink: require('../../../../assets/garden/flowers/pink.png'),
@@ -43,11 +44,25 @@ export default function FlowerDetailModal() {
   } = usePlanting();
   const [messageText, setMessageText] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // Owner-only, on tap: the Event this flower grew from (GET /events/:id is owner-scoped).
+  const [sourceEvent, setSourceEvent] = useState<{ id: string; state: 'loading' | 'ready' | 'error'; text?: string } | null>(null);
+  const eventId = selectedFlowerIsOwner ? selectedFlower?.sourceEventId : undefined;
 
   useEffect(() => {
     setConfirmDelete(false);
+    setSourceEvent(null);
     if (!selectedFlower) setMessageText('');
   }, [selectedFlower?.flowerId]);
+
+  const toggleSourceEvent = () => {
+    if (!eventId) return;
+    if (sourceEvent?.id === eventId) { setSourceEvent(null); return; }
+    setSourceEvent({ id: eventId, state: 'loading' });
+    readEvent(eventId).then(
+      (event) => setSourceEvent((current) => current?.id === eventId ? { id: eventId, state: 'ready', text: event.content } : current),
+      () => setSourceEvent((current) => current?.id === eventId ? { id: eventId, state: 'error' } : current),
+    );
+  };
 
   if (!selectedFlower) return null;
 
@@ -153,6 +168,14 @@ export default function FlowerDetailModal() {
             <Text style={styles.notesText}>{detail.meaning}</Text>
           </View> : null}
 
+          {eventId && !detail.memory ? <View style={styles.notesContainer}>
+            <Pressable accessibilityRole="button" onPress={toggleSourceEvent}>
+              <Text style={styles.detailLabel}>{sourceEvent?.id === eventId ? 'Hide Event ▴' : 'View Event ▾'}</Text>
+            </Pressable>
+            {sourceEvent?.id === eventId && sourceEvent.state === 'loading' ? <Text style={styles.notesText}>Opening…</Text> : null}
+            {sourceEvent?.id === eventId && sourceEvent.state === 'ready' ? <Text selectable style={styles.notesText}>{sourceEvent.text}</Text> : null}
+            {sourceEvent?.id === eventId && sourceEvent.state === 'error' ? <Text accessibilityRole="alert" style={styles.notesText}>This Event can’t be opened right now.</Text> : null}
+          </View> : null}
           {selectedFlowerIsOwner && selectedFlower?.sourceEventId ? <AiOutputReport kind="event" outputId={selectedFlower.sourceEventId} /> : null}
           <Text style={styles.receivedSupport}>♥ Support received: {detail.supportCount}</Text>
           {detail.messages.length > 0 && <View style={styles.notesContainer}>
