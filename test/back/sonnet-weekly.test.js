@@ -913,3 +913,17 @@ test("short-report owner list: listed owners get the short report, everyone else
   assert.equal((await broken.run({ ...production, AI_WEEKLY_SHORT_OWNER_IDS: "alice;bob" })).succeeded, false);
   assert.equal(broken.calls.length, 0); assert.equal((await broken.rows("WeeklyReport")).length, 0);
 });
+
+test("petal card owner list: a listed short-report owner gets a card after the mood curve; a malformed list only drops the card", async t => {
+  const production = { ...enabled, AI_WEEKLY_REFLECTION_CONTRACT: REFLECTION_V2.WEEKLY, AI_WEEKLY_SHORT_OWNER_IDS: "alice" };
+  for (const [list, expected] of [["bob,alice", true], ["bob", false], ["alice;bob", false], [undefined, false]]) {
+    const f = await shortFixture(t);
+    f.respond(packet => Response.json(native(shortOutput(packet))));
+    const result = await f.run({ ...production, PETAL_CARDS_OWNER_IDS: list });
+    assert.equal(result.succeeded, true, result.error?.stack);
+    const kinds = (await f.rows("WeeklyReport"))[0].document.narrativeSections.map(section => section.kind);
+    assert.equal(kinds.includes("PETAL_CARD"), expected, `${list}: ${kinds}`);
+    if (expected) assert.equal(kinds[kinds.indexOf("MOOD_CURVE") + 1], "PETAL_CARD");
+    assert.equal(f.calls.length, 1, "the card adds no model call");
+  }
+});

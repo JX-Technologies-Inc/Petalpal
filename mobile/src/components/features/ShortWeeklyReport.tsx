@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { readEvent } from '../../services/events';
 import { moodCurveLayout, moodIcon, SHORT_COPY, shortDate, thenNowCount, type ShortWeekly } from '../../services/reflections';
+import { petalCardArt } from '../petalCards/petalCardArt';
 import { EventIllustration } from './EventIllustration';
 
 const CURVE_HEIGHT = 104, DOT = 26, CHIP = DOT + 6;
@@ -25,6 +27,7 @@ export function ShortWeeklyReport({ short, interactive, onWrite }: { short: Shor
       if (id === request.current) setOpened({ state: 'error' });
     }
   }
+  const cardArt = petalCardArt(short.card?.id);
   const layout = short.curve && width ? moodCurveLayout(short.curve.days, short.curve.points, width, CURVE_HEIGHT, CHIP / 2 + 2, CHIP - 4) : null;
   return <View testID="short-weekly-report">
     {short.line && <>
@@ -49,6 +52,17 @@ export function ShortWeeklyReport({ short, interactive, onWrite }: { short: Shor
       </View>
       <View accessible={false} style={s.days}>{copy.days.map((day, i) => <Text key={i} style={s.day}>{day}</Text>)}</View>
       <Text selectable={interactive} style={s.small}>{short.curve.claim}</Text>
+    </>}
+    {short.card && cardArt && <>
+      <Text style={s.heading}>{copy.card}</Text>
+      <View style={s.card}>
+        <Image source={cardArt} contentFit="contain" style={s.cardArt} accessibilityLabel={short.card.name} />
+        <Text style={s.cardName}>{short.card.name}</Text>
+        <Text selectable={interactive} style={s.cardLine}>{short.card.line}</Text>
+        <Text selectable={interactive} style={s.cardText}>{short.card.text}</Text>
+        <Text selectable={interactive} style={[s.small, s.stretch]}>{short.card.fact}</Text>
+        <Text style={s.disclaimer}>{short.card.disclaimer}</Text>
+      </View>
     </>}
     {short.side && <><Text style={s.heading}>{copy.side}</Text><Text selectable={interactive} style={s.body}>{short.side}</Text></>}
     {short.thenAndNow && <>
@@ -91,4 +105,11 @@ const s = StyleSheet.create({
   button: { alignSelf: 'flex-start', borderWidth: 1, borderColor: '#B8934A', borderRadius: 18, paddingVertical: 8,
     paddingHorizontal: 16, marginBottom: 14 },
   buttonText: { fontFamily: 'Georgia', color: '#654D30', fontSize: 15 },
+  card: { alignItems: 'center', marginBottom: 14 },
+  cardArt: { width: 240, height: 360, borderRadius: 10, marginBottom: 12 },
+  cardName: { fontFamily: 'Georgia', color: '#8B6C44', fontSize: 12, letterSpacing: .5, marginBottom: 4 },
+  cardLine: { fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 18, lineHeight: 27, color: '#4D3B28', textAlign: 'center', marginBottom: 8 },
+  cardText: { fontFamily: 'Georgia', color: '#4D3B28', fontSize: 15, lineHeight: 24, marginBottom: 10, alignSelf: 'stretch' },
+  stretch: { alignSelf: 'stretch' },
+  disclaimer: { fontFamily: 'Georgia', color: '#8B6C44', fontSize: 11, lineHeight: 16, alignSelf: 'stretch' },
 });

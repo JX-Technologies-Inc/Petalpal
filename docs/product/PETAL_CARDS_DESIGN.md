@@ -1,8 +1,12 @@
 # PetalPal petal cards — design v1 (approved, 2026-10-20)
 
-Status: **design approved by the owner; build after the beta.** No code yet. Artwork: 78 owner-generated
-PNGs (1024×1536, PetalPal fairy, Rider–Waite–Smith structure), delivered as a local zip; not in the
-repository yet (≈250 MB — compress before adding).
+Status: **design approved by the owner; first build for the beta (2026-10-21).** Artwork: 78
+owner-generated PNGs (1024×1536, PetalPal fairy, Rider–Waite–Smith structure), delivered as a local
+zip (≈250 MB). The 69 drawable cards are bundled in the app as 600×900 WebP
+(`mobile/assets/petal-cards/<id>.webp`, ≈9 MB, `scripts/compress-petal-cards.mjs`); heavy cards are
+not bundled. Card names, moods and the owner-reviewed zh-Hans / en copy live in
+[lib/petal-cards.js](../../lib/petal-cards.js); every description was checked against its artwork.
+In Chinese copy the fairy is 小花仙.
 
 ## Position
 
@@ -31,6 +35,13 @@ repository yet (≈250 MB — compress before adding).
    with the dominant mood.
 5. Stable: a hash of user + week picks within the candidates, so a refresh never changes the card.
 
+As built ([lib/petal-card-match.js](../../lib/petal-card-match.js), 2026-10-21): the moods are the
+short report's mood-curve points (one per period Event with a Primary Garden Mood). The halves are
+the curve's own split, Mon–Thu and Fri–Sun of the account-timezone week. **Lifting** = more than half
+of Mon–Thu low and more than half of Fri–Sun bright; **sinking** the reverse; both need moods in both
+halves. Wonder counts as neither low nor bright. Precedence (owner decision 2026-10-21): lifting /
+sinking before mixed, then steady. The hash is `sha256("petal-card:v1:<owner>:<periodKey>")`.
+
 ## Safety rules
 
 - The 9 **heavy** cards (Death, The Devil, The Tower, Three/Five/Eight/Nine/Ten of Swords,
@@ -41,8 +52,19 @@ repository yet (≈250 MB — compress before adding).
 ## Example (copy style)
 
 Low week, Quiet ×4 and Drifting ×1 early, Healing ×2 late → dominant Quiet, arc lifting → **The Star**.
-Card line: 难过之后，一点点亮起来。 Card text: 星星落在水面上，小仙女把水慢慢倒回池子里。不急，也不用马上变好。
-Fact line (code): 这周你 4 次选了「安静」，后半周多了 2 次「疗愈」。 Question: 这周后半段，是什么让你多了一点光？
+Card line: 难过之后，一点点亮起来。 Card text: 大星星挂在夜空，小花仙跪在池边，把两只罐子里的水慢慢倒出来。不急，也不用马上变好。
+Fact line (code): 这周你 4 次选了「安静」，周五到周日有 2 次「疗愈」。 (The card asks no question; the report keeps its
+one model question.)
+
+## In the short Weekly report (beta, 2026-10-21)
+
+- Owner switch `PETAL_CARDS_OWNER_IDS` on the backend (comma-separated `User.id`, no spaces), only for
+  owners who also get the short report (`AI_WEEKLY_SHORT_OWNER_IDS`). Free during the beta.
+- A `PETAL_CARD` section right after the mood curve: card art, name, card line, card text, the fact
+  line and the disclaimer. Saved with the report, so the card never changes for that week.
+- Fact lines (code, from mood counts): steady/lifting/sinking `这周你 n 次选了「X」[，周五到周日有 m 次「Y」]。`;
+  mixed `这周你选了 k 种心情，最多的是「X」，n 次。`; every mood once `这周你选了 k 种心情，每种 1 次。`
+- Not built yet: daily draw, collection, paid gating (development plan PRs 4–6).
 
 ## The 78 cards
 

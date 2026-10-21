@@ -7,6 +7,8 @@ import { REFLECTION_V2, REFLECTION_V2_INSTRUCTIONS, REFLECTION_V2_SCHEMAS } from
 import { buildWeeklyReflectionV2Packet, weeklyReflectionContract, WEEKLY_REFLECTION_CONTRACT } from "../../lib/sonnet-weekly.js";
 import { weeklyEditorialSettings } from "../../lib/weekly-editorial.js";
 import { immediateSupportRequired } from "../../lib/emotional-safety.js";
+import { ARC_CARDS } from "../../lib/petal-card-match.js";
+import { PETAL_CARD_DISCLAIMER, petalCard } from "../../lib/petal-cards.js";
 import { WEEKLY_SHORT, WEEKLY_SHORT_INSTRUCTIONS, WEEKLY_SHORT_SCHEMA, MOOD_LEVELS, weeklyMoodCurve, weeklyShortPacket,
   renderWeeklyShort, renderWeeklyShortSupport, weeklySupportRequired } from "../../lib/weekly-short.js";
 
@@ -229,4 +231,57 @@ test("the short-report owner list opts single owners in and fails closed when ma
   for (const value of ["alice,", ",alice", "alice bob", "a".repeat(65), Array(101).fill("x").join(","), "alice;bob"]) {
     assert.throws(() => weeklyShortOwners({ AI_WEEKLY_SHORT_OWNER_IDS: value }), { code: "AI_GATEWAY_CONFIG_INVALID" }, value);
   }
+});
+
+test("petal card: off by default; when on, a matched card follows the mood curve with prewritten copy and a code fact line", () => {
+  for (const locale of ["en", "zh-Hans"]) {
+    const data = input(locale), short = prepare(data);
+    assert.ok(!kinds(renderWeeklyShort(answer(locale), data, short, "synthetic-model")).includes("PETAL_CARD"));
+    const result = renderWeeklyShort(answer(locale), data, short, "synthetic-model", { petalCards: true });
+    assert.deepEqual(kinds(result), ["LINE_OF_WEEK", "MOOD_CURVE", "PETAL_CARD", "SIDE_BY_SIDE", "QUESTION"]);
+    const card = result.sections[2], catalog = petalCard(card.cardId);
+    // Quiet, Gentle, Healing once each: steady, and the tie goes to the latest mood.
+    assert.equal(card.arc, "STEADY");
+    assert.ok(catalog.moods.includes("HEALING_BLOOM") && !catalog.heavy);
+    assert.deepEqual([card.claim, card.line, card.text, card.name], [catalog.copy[locale].line, catalog.copy[locale].line,
+      catalog.copy[locale].text, catalog.names[locale]]);
+    assert.equal(card.fact, locale === "en" ? "You chose 3 different moods this week, each once." : "这周你选了 3 种心情，每种 1 次。");
+    assert.equal(card.disclaimer, PETAL_CARD_DISCLAIMER[locale]);
+    assert.deepEqual([card.evidenceRefs, card.contractVersion, card.locale], [[], WEEKLY_SHORT, locale]);
+    assert.ok(result.narrative.includes(card.line) && !result.narrative.includes(card.text));
+  }
+});
+
+test("petal card: the design's lifting week, and fact lines for a shift and a mixed week", () => {
+  const days = [14, 14, 15, 16, 17, 19, 20].map(day => `2026-09-${day}T12:00:00Z`);
+  const notes = { en: days.map((_, i) => `Note ${i + 1}. It was a day.`), "zh-Hans": days.map((_, i) => `第${i + 1}条记录。那天还好。`) };
+  const render = (locale, moods, dates = days) => renderWeeklyShort(answer(locale), input(locale, { texts: notes[locale].slice(0, moods.length),
+    moods, dates }), prepare(input(locale, { texts: notes[locale].slice(0, moods.length), moods, dates })), "synthetic-model", { petalCards: true })
+    .sections.find(section => section.kind === "PETAL_CARD");
+  const Q = "QUIET_BLOOM", D = "DRIFTING_BLOOM", H = "HEALING_BLOOM", S = "SUNNY_BLOOM", W = "WONDER_BLOOM", F = "FIRE_BLOOM";
+  const lifting = [Q, Q, D, Q, Q, H, H];
+  for (const locale of ["en", "zh-Hans"]) {
+    const card = render(locale, lifting);
+    assert.equal(card.arc, "LIFTING");
+    assert.ok(ARC_CARDS.LIFTING.includes(card.cardId));
+    assert.equal(card.fact, locale === "en" ? "You chose Quiet 4 times this week; Fri–Sun had Healing twice."
+      : "这周你 4 次选了「安静」，周五到周日有 2 次「疗愈」。");
+  }
+  const sameMood = render("zh-Hans", [Q, D, H, H], [days[0], days[2], days[5], days[6]]);
+  assert.equal(sameMood.fact, "这周你 2 次选了「疗愈」，都在周五到周日。");
+  assert.equal(render("en", [Q, D, H, H], [days[0], days[2], days[5], days[6]]).fact, "You chose Healing twice this week, all on Fri–Sun.");
+  const mixed = render("zh-Hans", [S, Q, W, F, F], [days[0], days[2], days[4], days[5], days[6]]);
+  assert.equal(mixed.arc, "MIXED");
+  assert.equal(mixed.fact, "这周你选了 4 种心情，最多的是「火焰」，2 次。");
+  assert.equal(render("en", [S, Q, W, F, F], [days[0], days[2], days[4], days[5], days[6]]).fact,
+    "You chose 4 different moods this week, Fire most often (twice).");
+});
+
+test("petal card: never with fewer than three moods or in a support week", () => {
+  const two = input("en", { texts: TEXTS.en.slice(0, 2) });
+  const twoEvents = { ...answer("en"), sideBySide: [], question: [] };
+  assert.ok(!kinds(renderWeeklyShort(twoEvents, two, prepare(two), "synthetic-model", { petalCards: true })).includes("PETAL_CARD"));
+  const risky = input("en", { texts: [TEXTS.en[0], "I cannot keep myself safe.", TEXTS.en[2]] });
+  assert.equal(weeklySupportRequired(risky), true);
+  assert.deepEqual(kinds(renderWeeklyShortSupport(risky)), ["MOOD_CURVE", "SUPPORT_RESOURCES"]);
 });

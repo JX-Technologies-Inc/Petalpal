@@ -20,7 +20,7 @@ model interpreting feelings. Fewer model-written words also means less "AI voice
 | Side by side | Model, at most 2 sentences | Two Events placed next to each other; states what happened only — no "because", no "this shows you…"; per-sentence refs and the existing validators |
 | Then and now | Retrieval + code | An earlier entry about the same thing (≥ 7 days apart), both exact quotes in date order; only factual counts ("the third time this month you wrote about not sleeping") |
 | A question for you | Model, 1 sentence | A question, never advice; its button starts a new Event |
-| Petal card (optional) | Code only | [PETAL_CARDS_DESIGN.md](PETAL_CARDS_DESIGN.md) |
+| Petal card (optional, built 2026-10-21, `PETAL_CARDS_OWNER_IDS`) | Code only, after the mood curve | [PETAL_CARDS_DESIGN.md](PETAL_CARDS_DESIGN.md) |
 
 Mood curve levels (display only, never shown as labels): Sunny high; Peaceful, Gentle, Wonder,
 Healing middle; Quiet, Drifting, Fire low. Points are the user's own flowers.

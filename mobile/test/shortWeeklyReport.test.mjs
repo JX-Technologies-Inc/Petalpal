@@ -30,7 +30,7 @@ test('short Weekly sections are read only from the short contract; older reports
   assert.equal(shortWeekly({ narrativeSections: [...sections, { kind: 'RECENT_MOMENTS', claim: 'Mixed.' }] }), null);
   assert.equal(shortWeekly({ narrativeSections: [] }), null);
   const support = plain(shortWeekly({ narrativeSections: [{ kind: 'SUPPORT_RESOURCES', claim: 'You do not have to face this alone.', contractVersion: WEEKLY_SHORT, locale: 'en' }] }));
-  assert.deepEqual({ ...support, support: !!support.support }, { locale: 'en', line: null, curve: null, side: null, question: null, support: true, thenAndNow: null });
+  assert.deepEqual({ ...support, support: !!support.support }, { locale: 'en', line: null, curve: null, side: null, question: null, support: true, thenAndNow: null, card: null });
 });
 
 test('mood curve puts each day in its column, higher moods higher, and joins points in time order', () => {
@@ -58,4 +58,15 @@ test('then and now keeps both quotes and dates; a count appears only with its ph
   assert.equal(read({ then: { ...then, date: 'August' }, now }), null);
   assert.equal(shortDate('2026-08-30', 'zh-Hans'), '8月30日'); assert.equal(shortDate('2026-09-04', 'en'), 'Sep 4');
   assert.equal(thenNowCount(3, '睡不着觉', 'zh-Hans'), '过去五周里，你有 3 条记录写到“睡不着觉”。');
+});
+
+test('petal card is read only when every field is present', () => {
+  const card = { kind: 'PETAL_CARD', claim: '难过之后，一点点亮起来。', cardId: 'major-17', name: '星星', line: '难过之后，一点点亮起来。',
+    text: '大星星挂在夜空。', fact: '这周你 4 次选了「安静」。', disclaimer: '花语卡只是陪你回看自己。', evidenceRefs: [], ...meta };
+  assert.equal(shortWeekly({ narrativeSections: sections }).card, null);
+  assert.deepEqual(plain(shortWeekly({ narrativeSections: [...sections, card] }).card),
+    { id: 'major-17', name: '星星', line: card.line, text: card.text, fact: card.fact, disclaimer: card.disclaimer });
+  assert.equal(shortWeekly({ narrativeSections: [...sections, { ...card, disclaimer: ' ' }] }).card, null);
+  assert.equal(shortWeekly({ narrativeSections: [...sections, { ...card, fact: undefined }] }).card, null);
+  assert.equal(SHORT_COPY['zh-Hans'].card, '花语卡');
 });
