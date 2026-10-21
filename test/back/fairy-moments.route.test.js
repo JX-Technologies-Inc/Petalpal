@@ -9,7 +9,7 @@ import { vector } from "@electric-sql/pglite/vector";
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
 import { FAIRY_MOMENT_CAPTIONS } from "../../lib/fairy-moment-captions.js";
-import { app } from "../../server.js";
+import { app, setFairyMomentCaptionFillerForTests } from "../../server.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const NOW = new Date("2026-10-20T19:00:00.000Z");
@@ -107,6 +107,8 @@ test("Fairy Moments routes", async (t) => {
   await new Promise(resolve => server.once("listening", resolve));
   t.after(async () => {
     delete process.env.FAIRY_MOMENTS_OWNER_IDS;
+    delete process.env.AI_FAIRY_MOMENT_MODEL;
+    setFairyMomentCaptionFillerForTests();
     restore.forEach(fn => fn());
     setFirebaseTokenVerifierForTests();
     await new Promise(resolve => server.close(resolve));
@@ -175,5 +177,26 @@ test("Fairy Moments routes", async (t) => {
       photoKey: "TEA_TIME/1", caption: "x", postedAt: new Date(NOW.getTime() - 3_600_000), likedAt: null });
     assert.equal((await call("/api/fairy/moments/foreign/like", "POST", { liked: true })).status, 404);
     assert.equal(state.moments.find(moment => moment.id === "foreign").likedAt, null);
+  });
+
+  await t.test("with model captions on, new posts start PENDING and the filler runs after the response", async () => {
+    const fills = [];
+    setFairyMomentCaptionFillerForTests(async args => { fills.push(args); });
+    process.env.AI_FAIRY_MOMENT_MODEL = "claude-haiku-5-5";
+    state.moments.length = 0;
+    Object.assign(state.runtime, state.initialRuntime);
+    assert.equal((await call("/api/fairy/runtime")).status, 200);
+    assert.ok(state.moments.length > 0);
+    assert.ok(state.moments.every(moment => moment.captionSource === "PENDING"));
+    assert.ok(state.moments.every(moment => FAIRY_MOMENT_CAPTIONS["zh-Hans"][moment.state].includes(moment.caption)));
+    assert.equal(fills.length, 1);
+    assert.equal(fills[0].ownerId, "owner-1");
+    assert.equal(fills[0].prisma, prisma);
+    delete process.env.AI_FAIRY_MOMENT_MODEL;
+    state.moments.length = 0;
+    Object.assign(state.runtime, state.initialRuntime);
+    await call("/api/fairy/runtime");
+    assert.ok(state.moments.every(moment => moment.captionSource === "FALLBACK"));
+    assert.equal(fills.length, 1, "no filler without the model setting");
   });
 });

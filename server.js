@@ -48,6 +48,7 @@ import {
   recordFairyMoments,
   setFairyMomentLike
 } from "./lib/fairy-moments.js";
+import { fairyMomentCaptionsEnabled, fillFairyMomentCaptions } from "./lib/haiku-fairy-moment.js";
 import {
   STARTER_FAIRY,
   MONTHLY_FAIRY_UNLOCK_ACTIVE_DAYS,
@@ -183,6 +184,11 @@ export function setFirebaseUserDeleterForTests(deleter) {
 
 export function setWeeklyReportWorkerFactoryForTests(factory) {
   weeklyReportWorkerFactory = factory || createDefaultWeeklyReportWorker;
+}
+
+let fairyMomentCaptionFiller = fillFairyMomentCaptions;
+export function setFairyMomentCaptionFillerForTests(filler) {
+  fairyMomentCaptionFiller = filler || fillFairyMomentCaptions;
 }
 
 export function setAiJobDispatcherForTests(dispatcher) {
@@ -1718,6 +1724,7 @@ app.get("/api/fairy/runtime", async (req, res) => {
     await ensureStarterFairy(req.auth.userId);
     const now = new Date();
     const momentsEnabled = fairyMomentsEnabledFor(req.auth.userId);
+    const captionsEnabled = momentsEnabled && fairyMomentCaptionsEnabled();
     const result = await prisma.$transaction(async (tx) => {
       let activeFairy = await tx.userFairy.findFirst({
         where: { userId: req.auth.userId, isActive: true },
@@ -1755,7 +1762,8 @@ app.get("/api/fairy/runtime", async (req, res) => {
         userFairyId: activeFairy.id,
         entered: reconciled.entered,
         timezone: owner?.timezone,
-        locale: owner?.preferredLocale
+        locale: owner?.preferredLocale,
+        captionSource: captionsEnabled ? "PENDING" : "FALLBACK"
       });
       const unread = await hasUnreadFairyMoments(tx, {
         userFairyId: activeFairy.id,
@@ -1765,6 +1773,11 @@ app.get("/api/fairy/runtime", async (req, res) => {
       return { ...response, moments: { unread } };
     });
     res.json(result);
+    if (captionsEnabled) {
+      // After the response: a slow or failed caption never delays the garden.
+      void fairyMomentCaptionFiller({ prisma, ownerId: req.auth.userId })
+        .catch((error) => logServerError("Fairy Moment caption fill failed", error));
+    }
   } catch (error) {
     logServerError("GET /api/fairy/runtime error", error);
     res.status(500).json({ error: "Unable to load Fairy runtime" });

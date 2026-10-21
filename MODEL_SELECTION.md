@@ -30,6 +30,7 @@ The controlling repository records are [WARNING.md](WARNING.md), [SECURITY.md](S
 | Task | Preferred selection | Execution/provider | Decision |
 | --- | --- | --- | --- |
 | Event secondary emotion analysis | Claude Haiku 5.5 | Anthropic through Cloudflare AI Gateway | Planned Tier 1 |
+| Fairy Moments captions | Claude Haiku 5.5 | Anthropic through Cloudflare AI Gateway | Implemented, default OFF (`AI_FAIRY_MOMENT_MODEL`); preset captions otherwise |
 | EventMemory extraction | Existing deterministic extractor | Local backend | Retain |
 | EventMemory embedding | BGE Small EN v1.5 | Cloudflare Workers AI | Retain active 384d profile |
 | Semantic retrieval | PostgreSQL pgvector | Existing owner-scoped backend | Retain |
@@ -253,6 +254,7 @@ Input budgets include instructions, schema overhead and evidence. Output budgets
 | Operation | Illustrative input / billed output tokens | Estimated model cost | Proposed hard input / output token admission |
 | --- | ---: | ---: | ---: |
 | Event secondary emotions, Haiku | 1,000 / 256 | $0.000228 | 4,096 / 512 |
+| Fairy Moment caption, Haiku | 600 / 60 | $0.00009 | 4,096 / 256 (reserves $0.00064) |
 | EventMemory embedding, BGE | 256 / — | $0.0000051712 before free allowance | Existing profile; provider max 512 input |
 | Weekly, Sonnet | 4,000 / 2,000 | $0.028 | 8,192 / 4,096 |
 | Monthly, Opus | 8,000 / 4,000 | $0.112 | 16,384 / 8,192 |
