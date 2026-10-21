@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
-import { FAIRY_MOMENTS_CONFIG } from '../../lib/fairy-config.js';
+import { FAIRY_MOMENTS_CONFIG, FAIRY_RUNTIME_CONFIG } from '../../lib/fairy-config.js';
 
 const ts = createRequire(import.meta.url)('typescript');
 const src = new URL('../src/', import.meta.url);
@@ -34,6 +34,24 @@ assert.equal(format.momentTimeLabel('not a date', now), '');
 assert.equal(format.momentLocationLabel('TEA_CHAIR'), 'Tea chair');
 assert.equal(format.momentLocationLabel('EAST_BRIDGE'), 'East bridge');
 assert.equal(format.momentLocationLabel('SOMEWHERE_NEW'), 'Garden');
+// Chinese labels follow the owner's chosen language; Traditional and unknown locales stay English.
+assert.equal(format.momentLocale('zh-Hans'), 'zh-Hans'); assert.equal(format.momentLocale('zh-CN'), 'zh-Hans');
+assert.equal(format.momentLocale('zh-Hant'), 'en'); assert.equal(format.momentLocale(undefined), 'en'); assert.equal(format.momentLocale('fr'), 'en');
+const zh = 'zh-Hans';
+assert.equal(format.momentTimeLabel(ago(0), now, zh), '刚刚');
+assert.equal(format.momentTimeLabel(ago(12), now, zh), '12 分钟前');
+assert.equal(format.momentTimeLabel(ago(150), now, zh), '2 小时前');
+assert.equal(format.momentTimeLabel(new Date(2026, 9, 20, 14, 32).toISOString(), now, zh), '昨天 14:32');
+assert.equal(format.momentTimeLabel(new Date(2026, 9, 15, 9, 0).toISOString(), now, zh), '10月15日');
+assert.equal(format.momentTimeLabel(new Date(2025, 11, 31, 9, 0).toISOString(), now, zh), '2025年12月31日');
+assert.equal(format.momentLocationLabel('TEA_CHAIR', zh), '茶座');
+assert.equal(format.momentLocationLabel('SOMEWHERE_NEW', zh), '花园');
+// Every place the server can name has a label in both languages, and both copies have the same keys.
+const places = new Set([...Object.values(FAIRY_RUNTIME_CONFIG.locations), ...FAIRY_MOMENTS_CONFIG.spots]);
+places.delete('DEFAULT_AREA'); // is 'Garden' / '花园' itself
+for (const place of places) for (const locale of ['en', zh]) assert.notEqual(format.momentLocationLabel(place, locale), format.momentLocationLabel('SOMEWHERE_NEW', locale), `${place} ${locale}`);
+assert.deepEqual(Object.keys(format.MOMENTS_COPY.en).sort(), Object.keys(format.MOMENTS_COPY[zh]).sort());
+assert.equal(format.MOMENTS_COPY[zh].title('小花仙'), '小花仙的朋友圈');
 
 // API client: Moments are on only when the runtime response carries them; any failure keeps the old icon.
 const calls = [];
