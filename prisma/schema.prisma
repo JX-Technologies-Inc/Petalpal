@@ -50,6 +50,7 @@ model User {
   subscriptionEntitlement SubscriptionEntitlement?
   fairies                 UserFairy[]
   fairyMonthlyProgress    FairyMonthlyProgress[]
+  fairyMoments            FairyMoment[]
   events                  Event[]
   eventMemories           EventMemory[]
   weeklyReports           WeeklyReport[]
@@ -258,12 +259,15 @@ model UserFairy {
   level        Int      @default(1)
   progression  Int      @default(0)
   unlockedAt   DateTime @default(now())
+  /// Newest Moment the owner has opened; later Moments show the unread dot.
+  momentsSeenAt DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   runtime       FairyRuntime?
   monthlyUnlock FairyMonthlyProgress?
+  moments       FairyMoment[]
 
   @@unique([userId, fairyType])
   @@unique([userId, unlockMonth])
@@ -286,6 +290,28 @@ model FairyRuntime {
   updatedAt        DateTime  @updatedAt
 
   fairy UserFairy @relation(fields: [userFairyId], references: [id], onDelete: Cascade)
+}
+
+/// A selfie the Fairy posts to her own Moments feed while in a runtime state.
+/// One per runtime transition; visible only to the owner.
+model FairyMoment {
+  id             String    @id @default(cuid())
+  userId         String
+  userFairyId    String
+  runtimeVersion Int
+  state          String    @db.VarChar(32)
+  photoKey       String    @db.VarChar(64)
+  caption        String    @db.VarChar(280)
+  captionSource  String    @default("FALLBACK") @db.VarChar(16)
+  postedAt       DateTime
+  likedAt        DateTime?
+  createdAt      DateTime  @default(now())
+
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fairy UserFairy @relation(fields: [userFairyId], references: [id], onDelete: Cascade)
+
+  @@unique([userFairyId, runtimeVersion])
+  @@index([userId, postedAt])
 }
 
 model FairyMonthlyProgress {

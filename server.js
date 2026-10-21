@@ -41,6 +41,14 @@ import {
   formatFairyRuntimeResponse
 } from "./lib/fairy-runtime.js";
 import {
+  fairyMomentsEnabledFor,
+  fairyMomentsSince,
+  hasUnreadFairyMoments,
+  listFairyMoments,
+  recordFairyMoments,
+  setFairyMomentLike
+} from "./lib/fairy-moments.js";
+import {
   STARTER_FAIRY,
   MONTHLY_FAIRY_UNLOCK_ACTIVE_DAYS,
   withOnboardingGuideFairy,
@@ -1708,6 +1716,8 @@ app.get("/api/fairy/runtime", async (req, res) => {
     }
 
     await ensureStarterFairy(req.auth.userId);
+    const now = new Date();
+    const momentsEnabled = fairyMomentsEnabledFor(req.auth.userId);
     const result = await prisma.$transaction(async (tx) => {
       let activeFairy = await tx.userFairy.findFirst({
         where: { userId: req.auth.userId, isActive: true },
@@ -1723,22 +1733,79 @@ app.get("/api/fairy/runtime", async (req, res) => {
         data: { userFairyId: activeFairy.id }
       });
       const reconciled = reconcileFairyRuntime(runtime, {
-        now: new Date()
+        now,
+        enteredSince: momentsEnabled ? fairyMomentsSince(now) : null
       });
       const persisted = await tx.fairyRuntime.update({
         where: { userFairyId: activeFairy.id },
         data: reconciled.update
       });
-      return formatFairyRuntimeResponse(
+      const response = formatFairyRuntimeResponse(
         activeFairy,
         persisted,
         reconciled.transition
       );
+      if (!momentsEnabled) return response;
+      const owner = await tx.user.findUnique({
+        where: { id: req.auth.userId },
+        select: { timezone: true, preferredLocale: true }
+      });
+      await recordFairyMoments(tx, {
+        userId: req.auth.userId,
+        userFairyId: activeFairy.id,
+        entered: reconciled.entered,
+        timezone: owner?.timezone,
+        locale: owner?.preferredLocale
+      });
+      const unread = await hasUnreadFairyMoments(tx, {
+        userFairyId: activeFairy.id,
+        momentsSeenAt: activeFairy.momentsSeenAt,
+        now
+      });
+      return { ...response, moments: { unread } };
     });
     res.json(result);
   } catch (error) {
     logServerError("GET /api/fairy/runtime error", error);
     res.status(500).json({ error: "Unable to load Fairy runtime" });
+  }
+});
+
+const FAIRY_MOMENT_ID = /^[A-Za-z0-9_-]{1,64}$/;
+
+app.get("/api/fairy/moments", async (req, res) => {
+  if (!fairyMomentsEnabledFor(req.auth.userId)) return res.status(404).json({ error: "Not found" });
+  let before = null;
+  if (req.query.before !== undefined) {
+    before = typeof req.query.before === "string" ? new Date(req.query.before) : null;
+    if (!before || Number.isNaN(before.getTime())) {
+      return res.status(400).json({ error: "before must be an ISO timestamp" });
+    }
+  }
+  try {
+    const result = await listFairyMoments(prisma, { userId: req.auth.userId, before, now: new Date() });
+    if (!result) return res.status(404).json({ error: "Not found" });
+    res.json(result);
+  } catch (error) {
+    logServerError("GET /api/fairy/moments error", error);
+    res.status(500).json({ error: "Unable to load Fairy Moments" });
+  }
+});
+
+app.post("/api/fairy/moments/:momentId/like", async (req, res) => {
+  if (!fairyMomentsEnabledFor(req.auth.userId)) return res.status(404).json({ error: "Not found" });
+  if (!FAIRY_MOMENT_ID.test(req.params.momentId) || typeof req.body.liked !== "boolean") {
+    return res.status(400).json({ error: "liked must be a boolean" });
+  }
+  try {
+    const updated = await setFairyMomentLike(prisma, {
+      userId: req.auth.userId, momentId: req.params.momentId, liked: req.body.liked, now: new Date()
+    });
+    if (!updated) return res.status(404).json({ error: "Not found" });
+    res.json({ liked: req.body.liked });
+  } catch (error) {
+    logServerError("POST /api/fairy/moments/:momentId/like error", error);
+    res.status(500).json({ error: "Unable to update Fairy Moment" });
   }
 });
 
