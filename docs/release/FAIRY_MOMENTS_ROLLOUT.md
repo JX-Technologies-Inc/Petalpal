@@ -17,10 +17,17 @@
 
 ## 2. 部署
 
-1. **Render 后端**：部署后 `npm start` 会自动跑 `prisma migrate deploy`，会执行两个新迁移：
+1. **数据库迁移（手动，必须在部署后端之前）**：正式环境 Render 的 Docker Command 是 `node server.js`，
+   部署**不会**跑迁移（见 [INTEGRATION_DEPLOYMENT.md](../../INTEGRATION_DEPLOYMENT.md) §2、§6）。
+   先 `pg_dump` 备份，再从合并后的那个提交的干净代码上，用正式库的直连（非 pooled）地址跑一次
+   `npx prisma migrate deploy`。会执行两个新迁移：
    `202610200001_fairy_moments`（新表 `FairyMoment`、`UserFairy.momentsSeenAt`）和
-   `202610200002_fairy_moments_variety`（`spot`、`mood`，`photoKey` 可空）。只加表和列，不改旧数据。
-2. **网页端**：重新构建并部署 Web（照片在 `mobile/assets/moments/`，随包发布）。
+   `202610200002_fairy_moments_variety`（`spot`、`mood`，`photoKey` 可空）。只加表和可空列，不改旧数据，
+   旧后端照常运行，不用暂停服务。顺序不能反：新后端读 `UserFairy` 会带上 `momentsSeenAt`，
+   没迁移就部署，花仙相关接口都会报错（不管朋友圈开没开）。
+2. **Render 后端**：迁移完成后，用 Deploy a specific commit 部署合并后的那个提交；
+   Dockerfile Path 保持 `./Dockerfile.backend`，Docker Command 保持 `node server.js`。
+3. **网页端**：按 INTEGRATION_DEPLOYMENT.md §4 构建、上传、启用 Web（照片在 `mobile/assets/moments/`，随包发布）。
 
 ## 3. Render 环境变量
 
