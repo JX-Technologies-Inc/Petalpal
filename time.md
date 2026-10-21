@@ -103,6 +103,10 @@ only with `allowPartial` ([test/back/ai-p0.integration.test.js](test/back/ai-p0.
 - **Halves in the factual line:** Monday–Thursday and Friday–Sunday of that local week.
 - No new period boundary, trigger rule or idempotency key; the job key and
   `generationVersion` are unchanged.
+- **Petal card** (opt-in `PETAL_CARDS_OWNER_IDS`, [lib/petal-card-match.js](lib/petal-card-match.js)):
+  reads only the mood curve's points and uses the same Monday–Thursday / Friday–Sunday halves
+  for its arc; the card is picked by a hash of owner + `periodKey`, so a regenerated report of
+  the same week gets the same card. No clock read, no new period logic.
 
 - **"Then and now" lookback:** the four whole account-timezone weeks before the period
   (`weeklyLookbackStart` in [lib/ai-periods.js](lib/ai-periods.js), four `previousWeeklyPeriod`
@@ -119,6 +123,9 @@ back to `2026-10-19T07:00Z`; an earlier Event five days before is not paired; a 
 An Event at `2026-09-21T06:30Z` in `America/Vancouver` lands on
 Sunday `2026-09-20` of the `2026-09-14` week; moodless and prior-week rows add no point
 ([test/back/weekly-short.test.js](test/back/weekly-short.test.js)).
+The petal card's halves and hash are covered in
+[test/back/petal-card-match.test.js](test/back/petal-card-match.test.js) and the `petal card` tests
+of [test/back/weekly-short.test.js](test/back/weekly-short.test.js).
 
 ## 4. Monthly and Yearly Reports
 

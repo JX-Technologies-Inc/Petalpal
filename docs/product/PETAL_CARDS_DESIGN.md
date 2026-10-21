@@ -53,7 +53,18 @@ sinking before mixed, then steady. The hash is `sha256("petal-card:v1:<owner>:<p
 
 Low week, Quiet ×4 and Drifting ×1 early, Healing ×2 late → dominant Quiet, arc lifting → **The Star**.
 Card line: 难过之后，一点点亮起来。 Card text: 大星星挂在夜空，小花仙跪在池边，把两只罐子里的水慢慢倒出来。不急，也不用马上变好。
-Fact line (code): 这周你 4 次选了「安静」，后半周多了 2 次「疗愈」。 Question: 这周后半段，是什么让你多了一点光？
+Fact line (code): 这周你 4 次选了「安静」，周五到周日有 2 次「疗愈」。 (The card asks no question; the report keeps its
+one model question.)
+
+## In the short Weekly report (beta, 2026-10-21)
+
+- Owner switch `PETAL_CARDS_OWNER_IDS` on the backend (comma-separated `User.id`, no spaces), only for
+  owners who also get the short report (`AI_WEEKLY_SHORT_OWNER_IDS`). Free during the beta.
+- A `PETAL_CARD` section right after the mood curve: card art, name, card line, card text, the fact
+  line and the disclaimer. Saved with the report, so the card never changes for that week.
+- Fact lines (code, from mood counts): steady/lifting/sinking `这周你 n 次选了「X」[，周五到周日有 m 次「Y」]。`;
+  mixed `这周你选了 k 种心情，最多的是「X」，n 次。`; every mood once `这周你选了 k 种心情，每种 1 次。`
+- Not built yet: daily draw, collection, paid gating (development plan PRs 4–6).
 
 ## The 78 cards
 

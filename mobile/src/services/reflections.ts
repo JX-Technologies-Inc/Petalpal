@@ -7,6 +7,7 @@ export interface ReportSection {
   kind: string; claim: string; contractVersion?: string; locale?: string;
   evidenceRefs?: { sourceEventId: string; sourceMemoryId: string }[]; days?: string[]; points?: MoodPoint[];
   then?: ThenNowSide; now?: ThenNowSide; count?: number | null; phrase?: string | null;
+  cardId?: string; name?: string; line?: string; text?: string; fact?: string; disclaimer?: string;
 }
 export interface ThenNowSide { sourceEventId: string; date: string; quote: string }
 export interface SavedReport {
@@ -82,7 +83,9 @@ export interface ShortWeekly {
   curve: { claim: string; days: string[]; points: MoodPoint[] } | null;
   side: string | null; question: string | null; support: string | null;
   thenAndNow: { then: ThenNowSide; now: ThenNowSide; count: number | null; phrase: string | null } | null;
+  card: PetalCard | null;
 }
+export interface PetalCard { id: string; name: string; line: string; text: string; fact: string; disclaimer: string }
 export function shortWeekly(report: Pick<ReflectionReport, 'narrativeSections'>): ShortWeekly | null {
   const sections = Array.isArray(report.narrativeSections) ? report.narrativeSections : [];
   if (!sections.length || sections.some(section => section?.contractVersion !== WEEKLY_SHORT)) return null;
@@ -95,7 +98,14 @@ export function shortWeekly(report: Pick<ReflectionReport, 'narrativeSections'>)
     line: line && eventId ? { text: line.claim, eventId } : null,
     curve: curve && days && points.length ? { claim: curve.claim, days, points } : null,
     side: find('SIDE_BY_SIDE')?.claim ?? null, question: find('QUESTION')?.claim ?? null, support: find('SUPPORT_RESOURCES')?.claim ?? null,
-    thenAndNow: thenNow(find('THEN_AND_NOW')) };
+    thenAndNow: thenNow(find('THEN_AND_NOW')), card: petalCard(find('PETAL_CARD')) };
+}
+// Matched on the backend; every field must be present or the card is not shown.
+function petalCard(section?: ReportSection): PetalCard | null {
+  const fields = section && [section.cardId, section.name, section.line, section.text, section.fact, section.disclaimer];
+  if (!fields || !fields.every(value => typeof value === 'string' && value.trim())) return null;
+  const [id, name, line, text, fact, disclaimer] = fields as string[];
+  return { id, name, line, text, fact, disclaimer };
 }
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const sideOk = (side?: ThenNowSide) => !!side && DATE.test(side.date) && typeof side.quote === 'string' && !!side.quote.trim() && typeof side.sourceEventId === 'string';
@@ -135,11 +145,11 @@ export const moodIcon = (mood: PrimaryMood) => PRIMARY_MOODS.indexOf(mood) + 1; 
 
 export const SHORT_COPY = {
   en: { line: 'Line of the week', curve: 'Your week in moods', side: 'Side by side', thenNow: 'Then and now', then: 'Then', now: 'Now',
-    question: 'A question for you',
+    question: 'A question for you', card: 'Petal card',
     write: 'Write about it', open: 'Show the whole moment', close: 'Hide', loading: 'Opening…',
     unavailable: 'This moment can’t be opened right now.', support: 'Support', days: ['M', 'T', 'W', 'T', 'F', 'S', 'S'] },
   'zh-Hans': { line: '本周一句', curve: '这周的心情', side: '两件事并排', thenNow: '那时与现在', then: '那时', now: '现在',
-    question: '留给你的问题',
+    question: '留给你的问题', card: '花语卡',
     write: '写一写', open: '看完整记录', close: '收起', loading: '正在打开…',
     unavailable: '现在打不开这条记录。', support: '支持', days: ['一', '二', '三', '四', '五', '六', '日'] },
 } as const;
