@@ -161,6 +161,7 @@ test("Fairy Moments routes", async (t) => {
     const feed = await call("/api/fairy/moments");
     assert.equal(feed.status, 200);
     assert.deepEqual(feed.body.fairy, { id: "fairy-1", type: "BLOOM", name: "Bloom" });
+    assert.equal(feed.body.locale, "zh-Hans", "the panel follows the owner's chosen language, like her captions");
     const visible = state.moments.filter(moment => moment.postedAt <= NOW).sort((a, b) => b.postedAt - a.postedAt);
     assert.deepEqual(feed.body.posts.map(post => post.id), visible.map(moment => moment.id));
     assert.deepEqual(Object.keys(feed.body.posts[0]).sort(), ["caption", "id", "liked", "location", "mood", "photoKey", "postedAt", "state"]);

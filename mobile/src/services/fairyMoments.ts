@@ -6,6 +6,7 @@ export interface FairyMomentPost {
 }
 export interface FairyMomentsPage {
   fairy: { id: string; type: string; name: string };
+  locale?: string; // 'en' | 'zh-Hans', the owner's chosen language (same as her captions)
   posts: FairyMomentPost[];
   nextBefore: string | null;
 }

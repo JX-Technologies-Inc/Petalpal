@@ -4,7 +4,8 @@ import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePanelTheme, type PanelTheme } from '../features/PanelTheme';
 import { likeFairyMoment, loadFairyMoments, type FairyMomentPost, type FairyMomentsPage } from '../../services/fairyMoments';
-import { momentLocationLabel, momentTimeLabel } from './momentFormat';
+import { useAuth } from '../../services/auth';
+import { momentLocale, momentLocationLabel, momentTimeLabel, MOMENTS_COPY, type MomentLocale } from './momentFormat';
 import { MOMENT_PHOTOS, momentPhoto } from './momentPhotos';
 
 const COVER = MOMENT_PHOTOS['IN_TREEHOUSE/2'];
@@ -20,8 +21,9 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
   const styles = createStyles(theme);
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const { experience } = useAuth();
   const [page, setPage] = useState<FairyMomentsPage | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<'' | 'loadError' | 'moreError'>('');
   const [loadingMore, setLoadingMore] = useState(false);
   const request = useRef(0);
 
@@ -32,7 +34,7 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
       const next = await loadFairyMoments();
       if (current === request.current) setPage(next);
     } catch {
-      if (current === request.current) setError('Her Moments could not load. Try again in a moment.');
+      if (current === request.current) setError('loadError');
     }
   }, []);
   useEffect(() => { if (visible) void load(); else { request.current++; setPage(null); } }, [visible, load]);
@@ -44,7 +46,7 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
       const next = await loadFairyMoments(page.nextBefore);
       setPage(current => current && { ...next, posts: [...current.posts, ...next.posts] });
     } catch {
-      setError('More Moments could not load. Try again in a moment.');
+      setError('moreError');
     } finally { setLoadingMore(false); }
   };
 
@@ -56,22 +58,25 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
     try { await likeFairyMoment(post.id, liked); } catch { set(!liked); }
   };
 
+  // The server's answer is authoritative; the signed-in profile covers the first load.
+  const locale = momentLocale(page?.locale ?? experience?.user.preferredLocale);
+  const copy = MOMENTS_COPY[locale];
   const name = page?.fairy.name ?? 'Bloom';
   return <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
     <View style={styles.overlay}>
-      <Pressable accessibilityLabel="Close Moments" onPress={onClose} style={[StyleSheet.absoluteFill, styles.backdrop]} />
-      <View accessibilityViewIsModal accessibilityLabel={`${name}'s Moments`}
+      <Pressable accessibilityLabel={copy.close} onPress={onClose} style={[StyleSheet.absoluteFill, styles.backdrop]} />
+      <View accessibilityViewIsModal accessibilityLabel={copy.title(name)}
         style={[styles.panel, { width: Math.min(440, width - 24), maxHeight: height - insets.top - insets.bottom - 24 }]}>
         <View style={styles.header}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Close Moments" onPress={onClose}
+          <Pressable accessibilityRole="button" accessibilityLabel={copy.close} onPress={onClose}
             style={({ pressed }) => [styles.close, pressed && styles.pressed]}>
             <Text style={styles.closeText}>×</Text>
           </Pressable>
-          <Text accessibilityRole="header" numberOfLines={1} style={styles.title}>{name}&apos;s Moments</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel={`Find ${name} in the Garden`} onPress={onFindFairy}
+          <Text accessibilityRole="header" numberOfLines={1} style={styles.title}>{copy.title(name)}</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel={copy.findLabel(name)} onPress={onFindFairy}
             style={({ pressed }) => [styles.find, pressed && styles.pressed]}>
             <SymbolView name={{ ios: 'mappin.and.ellipse', android: 'location_on', web: 'location_on' }} size={14} tintColor={theme.gold} />
-            <Text style={styles.findText}>Find her</Text>
+            <Text style={styles.findText}>{copy.find}</Text>
           </Pressable>
         </View>
         <ScrollView contentContainerStyle={styles.content}>
@@ -82,38 +87,38 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
               <Image source={AVATAR} style={styles.avatar} />
             </View>
           </View>
-          <Text style={styles.signature}>Checking whether the flowers opened today.</Text>
-          {!page && !error ? <ActivityIndicator style={styles.status} color={theme.gold} accessibilityLabel="Loading Moments" /> : null}
+          <Text style={styles.signature}>{copy.signature}</Text>
+          {!page && !error ? <ActivityIndicator style={styles.status} color={theme.gold} accessibilityLabel={copy.loading} /> : null}
           {error ? <View style={styles.status}>
-            <Text accessibilityRole="alert" style={styles.muted}>{error}</Text>
-            <Pressable accessibilityRole="button" onPress={() => void load()}><Text style={styles.link}>Try again</Text></Pressable>
+            <Text accessibilityRole="alert" style={styles.muted}>{copy[error]}</Text>
+            <Pressable accessibilityRole="button" onPress={() => void load()}><Text style={styles.link}>{copy.retry}</Text></Pressable>
           </View> : null}
           {page && !page.posts.length ? <Text style={[styles.muted, styles.status]}>
-            {name} hasn&apos;t posted yet. She shares a photo or a small discovery every few days.</Text> : null}
-          {page?.posts.map(post => <MomentPost key={post.id} post={post} name={name} styles={styles} mutedColor={theme.muted} onLike={() => void toggleLike(post)} />)}
+            {copy.empty(name)}</Text> : null}
+          {page?.posts.map(post => <MomentPost key={post.id} post={post} name={name} locale={locale} styles={styles} mutedColor={theme.muted} onLike={() => void toggleLike(post)} />)}
           {page?.nextBefore ? <Pressable accessibilityRole="button" onPress={() => void loadMore()} style={styles.more}>
-            {loadingMore ? <ActivityIndicator color={theme.gold} /> : <Text style={styles.link}>Show earlier Moments</Text>}
-          </Pressable> : page?.posts.length ? <Text style={[styles.muted, styles.end]}>That&apos;s all for now</Text> : null}
+            {loadingMore ? <ActivityIndicator color={theme.gold} /> : <Text style={styles.link}>{copy.more}</Text>}
+          </Pressable> : page?.posts.length ? <Text style={[styles.muted, styles.end]}>{copy.end}</Text> : null}
         </ScrollView>
       </View>
     </View>
   </Modal>;
 }
 
-function MomentPost({ post, name, styles, mutedColor, onLike }: {
-  post: FairyMomentPost; name: string; styles: ReturnType<typeof createStyles>; mutedColor: string; onLike: () => void;
+function MomentPost({ post, name, locale, styles, mutedColor, onLike }: {
+  post: FairyMomentPost; name: string; locale: MomentLocale; styles: ReturnType<typeof createStyles>; mutedColor: string; onLike: () => void;
 }) {
-  const photo = momentPhoto(post.photoKey);
-  const meta = `${momentTimeLabel(post.postedAt)} · ${momentLocationLabel(post.location)}`;
+  const copy = MOMENTS_COPY[locale], photo = momentPhoto(post.photoKey), place = momentLocationLabel(post.location, locale);
+  const meta = `${momentTimeLabel(post.postedAt, new Date(), locale)} · ${place}`;
   return <View style={styles.post}>
     <Image source={AVATAR} style={styles.postAvatar} />
     <View style={styles.postBody}>
       <Text style={styles.postName}>{name}</Text>
       <Text style={[styles.caption, !photo && styles.textOnly]}>{post.caption}</Text>
-      {photo ? <Image source={photo} style={styles.photo} accessibilityLabel={`${name} at the ${momentLocationLabel(post.location).toLowerCase()}`} /> : null}
+      {photo ? <Image source={photo} style={styles.photo} accessibilityLabel={copy.photo(name, place)} /> : null}
       <View style={styles.meta}>
         <Text style={styles.metaText}>{meta}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={post.liked ? 'Unlike' : 'Like'} accessibilityState={{ selected: post.liked }}
+        <Pressable accessibilityRole="button" accessibilityLabel={post.liked ? copy.unlike : copy.like} accessibilityState={{ selected: post.liked }}
           onPress={onLike} hitSlop={8} style={({ pressed }) => [styles.like, pressed && styles.pressed]}>
           <SymbolView name={{ ios: post.liked ? 'heart.fill' : 'heart', android: post.liked ? 'favorite' : 'favorite_border', web: post.liked ? 'favorite' : 'favorite_border' }}
             size={16} tintColor={post.liked ? HEART : mutedColor} />
