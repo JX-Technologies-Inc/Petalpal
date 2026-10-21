@@ -16,6 +16,13 @@ Authoritative curated source count: **26 PNGs across eight Resources flower fold
 | tired | Lavender, Daisy |
 | stressed | Chamomile, Lotus |
 
+**2026-10-20 update:** the eight Primary Garden Mood pools (`PRIMARY_GARDEN_MOOD_CONFIG`) no longer use
+Blue Rose, Lotus or Cherry Blossom, which have no Garden art and could not be planted. They follow the art
+team's `Resources/Flower Type & Mood` table, limited to the 23 species with Garden art (Rose, Tumi and White
+Magnolia join once their Garden art exists); the species are listed under `canonical` in `data/flowerDB.js`.
+The legacy mood lists above are unchanged. Flowers already created as Blue Rose, Lotus or Cherry Blossom keep
+their species.
+
 Blue Rose, Lotus and Cherry Blossom lack matching curated source references, so the manifest adds nine MISSING slots. Blue Rose is not silently mapped to Rose or White Rose. Generic client/mobile sprites and fixture codes (FEBRUARY_TULIP, ORANGE_TULIP, PURPLE_BELL, OCTOBER_BELL, PINK_LILY) remain legacy references; no aliases or saved data are rewritten. Tumi and Chinese Violet Cress retain filename identity with taxonomic uncertainty. Olive is intentionally a foliage/fruit plant.
 
 ## All catalog slots

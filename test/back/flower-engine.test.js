@@ -116,3 +116,37 @@ test("seasonForLocalDate maps calendar months", () => {
   assert.equal(seasonForLocalDate("2026-10-01"), "AUTUMN");
   assert.equal(seasonForLocalDate("2026-01-01"), "WINTER");
 });
+
+// The art team's "Flower Type & Mood" table (Resources/), limited to species with Garden art.
+const MOOD_TABLE_POOLS = {
+  SUNNY_BLOOM: ["SUNFLOWER", "GERBERA_DAISY", "COREOPSIS", "DAISY"],
+  GENTLE_BLOOM: ["HYDRANGEA"],
+  QUIET_BLOOM: ["BLUEBELL", "ANEMONE", "HEATHER"],
+  HEALING_BLOOM: ["CHAMOMILE", "SNOWDROP"],
+  FIRE_BLOOM: ["POPPY", "PETUNIA", "GENTIAN"],
+  WONDER_BLOOM: ["TULIP", "BIRD_OF_PARADISE", "YELLOW_DAFFODIL", "WHITE_ROSE"],
+  DRIFTING_BLOOM: ["DANDELION", "ASTER", "YELLOW_RAPESEED_FLOWER"],
+  PEACEFUL_BLOOM: ["LAVENDER", "CHINESE_VIOLET_CRESS", "OLIVE"]
+};
+
+test("Primary Bloom pools follow the mood table and every species can be planted and drawn", async () => {
+  const { readFileSync, existsSync, readdirSync } = await import("node:fs");
+  const root = new URL("../../mobile/", import.meta.url);
+  // Mobile refuses to plant a species without a parent collision class ("not ready for planting").
+  const collision = readFileSync(new URL("src/components/garden/planting/parentCollision.ts", root), "utf8");
+  const plantable = new Set([...collision.match(/PARENT_COLLISION_CLASSES[^{]*\{([^}]*)\}/)[1].matchAll(/([A-Z_]+):'[SML]'/g)].map(m => m[1]));
+  const seen = new Set();
+  for (const mood of CANONICAL_PRIMARY_GARDEN_MOODS) {
+    const { pool } = speciesPoolForPrimary(mood, flowerDB);
+    assert.deepEqual(pool.map(({ speciesCode }) => speciesCode), MOOD_TABLE_POOLS[mood], mood);
+    for (const flower of pool) {
+      assert.ok(plantable.has(flower.speciesCode), `${flower.speciesCode} has a planting size`);
+      const art = new URL(`assets/garden/flowers/species/${flower.speciesCode.toLowerCase()}/`, root);
+      assert.ok(existsSync(art) && readdirSync(art, { recursive: true }).some(f => String(f).endsWith(".png")), `${flower.speciesCode} has Garden art`);
+      assert.ok(typeof flower.meaning === "string" && flower.meaning.length > 0 && flower.meaning.length <= 40, `${flower.speciesCode} meaning`);
+      assert.equal(seen.has(flower.speciesCode), false, `${flower.speciesCode} belongs to one mood`);
+      seen.add(flower.speciesCode);
+    }
+  }
+  for (const missing of ["BLUE_ROSE", "LOTUS", "CHERRY_BLOSSOM", "ROSE", "TUMI", "WHITE_MAGNOLIA"]) assert.equal(seen.has(missing), false, missing);
+});
