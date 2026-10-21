@@ -4,8 +4,9 @@
 
 New gateway action `FAIRY_MOMENT` (Haiku 5.5, [lib/haiku-fairy-moment.js](lib/haiku-fairy-moment.js)) writes the
 caption of an owner-only Fairy Moment. It is off unless `AI_FAIRY_MOMENT_MODEL=claude-haiku-5-5` and the Anthropic
-gateway flags are set, and only for owners on `FAIRY_MOMENTS_OWNER_IDS`. Input is the Fairy's name, place, part of day
-and her own five previous captions; no Event, Journal, memory, profile or other owner content is sent. Because of
+gateway flags are set, and only for owners on `FAIRY_MOMENTS_OWNER_IDS`. Input is the Fairy's name, place, part of day,
+her own mood, the post kind (photo or text-only) and her own five previous captions; no Event, Journal, memory, profile
+or other owner content is sent. Because of
 that, the cost gate treats it like `EVENT_EMOTION`: AI Processing consent is required, Personalization and Memory are
 not (`PROCESSING_ONLY_GATEWAY_ACTIONS` in [lib/ai-cost-gate.js](lib/ai-cost-gate.js)). The authorize policy rechecks
 consent and Moment ownership under row locks. One reservation key per Moment (`<momentId>:fairy-moment-caption-v1`),

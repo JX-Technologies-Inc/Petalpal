@@ -28,11 +28,11 @@ async function fixture(t, { locale = "zh-Hans", aiProcessing = true } = {}) {
       "outcome" varchar(32),"actorUserId" varchar(128),"targetClass" varchar(64),"targetSafeId" varchar(128),"actionCode" varchar(64),"reasonCode" varchar(64));
     CREATE TABLE "UserFairy" ("id" text PRIMARY KEY,"name" text);
     INSERT INTO "UserFairy" VALUES ('fairy','Bloom');
-    CREATE TABLE "FairyMoment" ("id" text PRIMARY KEY,"userId" text,"userFairyId" text,"state" text,
-      "postedAt" timestamp(3),"caption" text,"captionSource" text);
+    CREATE TABLE "FairyMoment" ("id" text PRIMARY KEY,"userId" text,"userFairyId" text,"state" text,"spot" text,"mood" text,
+      "photoKey" text,"postedAt" timestamp(3),"caption" text,"captionSource" text);
     INSERT INTO "FairyMoment" VALUES
-      ('old','alice','fairy','SWINGING','2026-10-15T20:00:00Z','好像比昨天荡得高一点','AI'),
-      ('new','alice','fairy','TEA_TIME','2026-10-18T21:30:00Z','茶还有点烫，就先陪它坐一会儿','PENDING');`);
+      ('old','alice','fairy','SWINGING',NULL,'HAPPY','SWINGING/1','2026-10-15T20:00:00Z','好像比昨天荡得高一点','AI'),
+      ('new','alice','fairy','TEA_TIME',NULL,'CURIOUS','TEA_TIME/1','2026-10-18T21:30:00Z','茶还有点烫，就先陪它坐一会儿','PENDING');`);
   const adapt = db => ({ $queryRawUnsafe: async (sql, ...params) => (await db.query(sql, params)).rows });
   const prisma = { ...adapt(pg), $transaction: fn => pg.transaction(tx => fn(adapt(tx))) };
   const calls = [];
@@ -54,13 +54,26 @@ test("Haiku caption replaces the preset once, from the Fairy's own context only"
   const [request] = f.calls;
   assert.equal(request.model, HAIKU_FAIRY_MOMENT_MODEL_ID);
   assert.deepEqual(JSON.parse(request.messages[0].content), {
-    n: "Bloom", p: "her little tea chair under the leaves", t: "afternoon", l: "zh-Hans", r: ["好像比昨天荡得高一点"]
+    n: "Bloom", p: "her little tea chair under the leaves", t: "afternoon", m: "curious", k: "photo", l: "zh-Hans", r: ["好像比昨天荡得高一点"]
   });
   const reserved = (await f.pg.query(`SELECT "eventType","actionCode" FROM "AuditEvent" WHERE "actorUserId"='alice' ORDER BY "eventType"`)).rows;
   assert.ok(reserved.some(row => row.eventType === "AI_GATEWAY_USD_RESERVED" && row.actionCode === "FAIRY_MOMENT"));
   // Nothing left PENDING: a second run makes no call.
   assert.equal(await fillFairyMomentCaptions({ prisma: f.prisma, ownerId: "alice", env: enabled, fetchImpl: f.fetchImpl }), 0);
   assert.equal(f.calls.length, 1);
+});
+
+test("a text-only walk post asks for one small discovery and may run longer", async (t) => {
+  const f = await fixture(t);
+  await f.pg.exec(`UPDATE "FairyMoment" SET "state"='IDLE',"spot"='EAST_BRIDGE',"photoKey"=NULL,"mood"='CURIOUS' WHERE "id"='new'`);
+  const discovery = "从桥上往下看，水里的云走得比天上的慢。想了半天也没想明白，明天再来看看是不是还这样";
+  f.respond(() => Response.json(native(discovery)));
+  assert.equal(await fillFairyMomentCaptions({ prisma: f.prisma, ownerId: "alice", env: enabled, fetchImpl: f.fetchImpl }), 1);
+  assert.deepEqual(await f.moment("new"), { caption: discovery, captionSource: "AI" });
+  const input = JSON.parse(f.calls[0].messages[0].content);
+  assert.deepEqual([input.k, input.m, input.p], ["text", "curious", "a walk over the wooden east bridge"]);
+  assert.match(f.calls[0].system, /one small, specific, slightly delightful discovery/);
+  assert.match(f.calls[0].system, /Never list what she did/);
 });
 
 test("AI Processing alone is enough; Personalization and Memory are not required", async (t) => {
@@ -118,6 +131,8 @@ test("caption validation", () => {
   assert.equal(validFairyMomentCaption("", "en"), false);
   assert.equal(validFairyMomentCaption("x".repeat(121), "en"), false);
   assert.equal(validFairyMomentCaption("茶".repeat(61), "zh-Hans"), false);
+  assert.equal(validFairyMomentCaption("茶".repeat(90), "zh-Hans", [], true), true);
+  assert.equal(validFairyMomentCaption("茶".repeat(101), "zh-Hans", [], true), false);
   assert.equal(validFairyMomentCaption("line one\nline two", "en"), false);
   assert.equal(validFairyMomentCaption("see www.example.com", "en"), false);
   assert.equal(validFairyMomentCaption("hi @friend", "en"), false);

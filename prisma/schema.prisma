@@ -292,15 +292,20 @@ model FairyRuntime {
   fairy UserFairy @relation(fields: [userFairyId], references: [id], onDelete: Cascade)
 }
 
-/// A selfie the Fairy posts to her own Moments feed while in a runtime state.
-/// One per runtime transition; visible only to the owner.
+/// A post on the Fairy's own Moments feed while in a runtime state: a selfie or a
+/// text-only small discovery. One per runtime transition; visible only to the owner.
 model FairyMoment {
   id             String    @id @default(cuid())
   userId         String
   userFairyId    String
   runtimeVersion Int
   state          String    @db.VarChar(32)
-  photoKey       String    @db.VarChar(64)
+  /// Walk sight for IDLE posts (PAVILION, EAST_BRIDGE, ...); null otherwise.
+  spot           String?   @db.VarChar(32)
+  /// The Fairy's own mood that day (HAPPY, CURIOUS, ...), never the owner's.
+  mood           String?   @db.VarChar(16)
+  /// Bundled photo key; null for a text-only post.
+  photoKey       String?   @db.VarChar(64)
   caption        String    @db.VarChar(280)
   captionSource  String    @default("FALLBACK") @db.VarChar(16)
   postedAt       DateTime

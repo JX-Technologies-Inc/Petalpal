@@ -166,8 +166,11 @@ Sunday `2026-09-20` of the `2026-09-14` week; moodless and prior-week rows add n
   planned in [lib/fairy-moments.js](lib/fairy-moments.js) from the seeded Fairy
   runtime transitions of the last 7 days, when `GET /api/fairy/runtime`
   reconciles. A post lands 5–25 minutes after she enters the state, only between
-  08:00 and 23:30 in `User.timezone` (an invalid zone falls back to UTC), at least
-  48 hours after any other post and at most 3 per rolling 7 days.
+  08:00 and 23:30 in `User.timezone` (an invalid zone falls back to UTC; good-night
+  posts from `SLEEPING` only 21:00–23:30), at least 48 hours after any other post
+  and at most 3 per rolling 7 days. The local hour also picks the photo's light
+  (day 08–18, dusk 18–21, night 21–24); with no photo for that light the post is
+  text only. Her mood is fixed per account-zone local date (`localDateForInstant`).
   `FairyMoment.postedAt` is stored in UTC; a post still ahead of the server clock
   stays hidden until then. **VERIFIED:**
   [test/back/fairy-moments.test.js](test/back/fairy-moments.test.js) (UTC,

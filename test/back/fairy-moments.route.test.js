@@ -9,6 +9,9 @@ import { vector } from "@electric-sql/pglite/vector";
 import prisma from "../../lib/prisma.js";
 import { setFirebaseTokenVerifierForTests } from "../../lib/auth.js";
 import { FAIRY_MOMENT_CAPTIONS } from "../../lib/fairy-moment-captions.js";
+import { fairyMomentTopic } from "../../lib/fairy-moments.js";
+const zhCaptions = moment => FAIRY_MOMENT_CAPTIONS["zh-Hans"][moment.photoKey ? "photo" : "text"][fairyMomentTopic(moment.state, moment.spot)]
+  .map(entry => Array.isArray(entry) ? entry[1] : entry);
 import { app, setFairyMomentCaptionFillerForTests } from "../../server.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -26,6 +29,9 @@ test("migration adds owner-scoped, cascading Fairy Moments with one post per run
       INSERT INTO "FairyMoment" (id, "userId", "userFairyId", "runtimeVersion", state, "photoKey", caption, "postedAt")
         VALUES ('m1', 'owner', 'fairy', 7, 'TEA_TIME', 'TEA_TIME/1', 'hi', CURRENT_TIMESTAMP);`);
     assert.equal((await db.query(`SELECT "momentsSeenAt", "captionSource" FROM "UserFairy", "FairyMoment"`)).rows[0].captionSource, "FALLBACK");
+    await db.exec(`INSERT INTO "FairyMoment" (id, "userId", "userFairyId", "runtimeVersion", state, spot, mood, caption, "postedAt")
+      VALUES ('text', 'owner', 'fairy', 8, 'IDLE', 'EAST_BRIDGE', 'CURIOUS', 'a discovery', CURRENT_TIMESTAMP)`);
+    assert.equal((await db.query(`SELECT "photoKey" FROM "FairyMoment" WHERE id = 'text'`)).rows[0].photoKey, null);
     await assert.rejects(db.exec(`INSERT INTO "FairyMoment" (id, "userId", "userFairyId", "runtimeVersion", state, "photoKey", caption, "postedAt")
       VALUES ('m2', 'owner', 'fairy', 7, 'SWINGING', 'SWINGING/1', 'again', CURRENT_TIMESTAMP)`), /unique/i);
     await db.exec(`DELETE FROM "UserFairy" WHERE id = 'fairy'`);
@@ -140,8 +146,9 @@ test("Fairy Moments routes", async (t) => {
     const since = NOW.getTime() - 7 * 24 * 3_600_000;
     for (const moment of state.moments) {
       assert.equal(moment.userId, "owner-1");
-      assert.ok(["TEA_TIME", "SWINGING", "AT_MAILBOX", "IN_TREEHOUSE"].includes(moment.state));
-      assert.ok(FAIRY_MOMENT_CAPTIONS["zh-Hans"][moment.state].includes(moment.caption));
+      assert.ok(["TEA_TIME", "SWINGING", "AT_MAILBOX", "IN_TREEHOUSE", "IDLE", "SLEEPING"].includes(moment.state));
+      assert.ok(zhCaptions(moment).includes(moment.caption));
+      assert.ok(moment.mood);
       assert.ok(moment.postedAt.getTime() > since && moment.postedAt.getTime() <= NOW.getTime() + 25 * 60_000);
     }
     const count = state.moments.length;
@@ -156,7 +163,7 @@ test("Fairy Moments routes", async (t) => {
     assert.deepEqual(feed.body.fairy, { id: "fairy-1", type: "BLOOM", name: "Bloom" });
     const visible = state.moments.filter(moment => moment.postedAt <= NOW).sort((a, b) => b.postedAt - a.postedAt);
     assert.deepEqual(feed.body.posts.map(post => post.id), visible.map(moment => moment.id));
-    assert.deepEqual(Object.keys(feed.body.posts[0]).sort(), ["caption", "id", "liked", "location", "photoKey", "postedAt", "state"]);
+    assert.deepEqual(Object.keys(feed.body.posts[0]).sort(), ["caption", "id", "liked", "location", "mood", "photoKey", "postedAt", "state"]);
     assert.equal(feed.body.nextBefore, null);
     assert.equal(state.fairy.momentsSeenAt.getTime(), visible[0].postedAt.getTime());
     assert.equal((await call("/api/fairy/runtime")).body.moments.unread, false);
@@ -188,7 +195,7 @@ test("Fairy Moments routes", async (t) => {
     assert.equal((await call("/api/fairy/runtime")).status, 200);
     assert.ok(state.moments.length > 0);
     assert.ok(state.moments.every(moment => moment.captionSource === "PENDING"));
-    assert.ok(state.moments.every(moment => FAIRY_MOMENT_CAPTIONS["zh-Hans"][moment.state].includes(moment.caption)));
+    assert.ok(state.moments.every(moment => zhCaptions(moment).includes(moment.caption)));
     assert.equal(fills.length, 1);
     assert.equal(fills[0].ownerId, "owner-1");
     assert.equal(fills[0].prisma, prisma);
