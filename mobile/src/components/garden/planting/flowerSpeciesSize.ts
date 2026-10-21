@@ -13,7 +13,7 @@ export const SPECIES_BLOOM_HEIGHT: Readonly<Record<string, number>> = {
   ASTER: 26.1, DANDELION: 26.3, YELLOW_RAPESEED_FLOWER: 25.3, CHINESE_VIOLET_CRESS: 25.8, LAVENDER: 26.3, OLIVE: 24.8,
 };
 /** Owner-approved Garden flower size, applied to blooms and leaves alike. */
-export const GARDEN_FLOWER_SIZE = 1.25;
+export const GARDEN_FLOWER_SIZE = 1.75;
 
 type SizedComponent = { category?: string; contentBounds: readonly number[] };
 
