@@ -20,10 +20,13 @@ const plain = value => JSON.parse(JSON.stringify(value));
 // 20:00 UTC is 13:00 in Vancouver (PDT, UTC-7) on these dates.
 const at = (localDate, hourUtc = 20) => new Date(`${localDate}T${String(hourUtc).padStart(2, "0")}:00:00.000Z`);
 
-test("keepsake catalog: unique ids, both languages, one brooch per month", () => {
+test("keepsake catalog follows the icon sheet: 24 common, 8 rare, the October brooch", () => {
   assert.equal(new Set(FAIRY_KEEPSAKES.map(keepsake => keepsake.id)).size, FAIRY_KEEPSAKES.length);
-  assert.deepEqual(["COMMON", "RARE", "MONTHLY", "SPECIAL"].map(rarity => keepsakesOf(rarity).length), [24, 8, 12, 1]);
-  assert.deepEqual(keepsakesOf("MONTHLY").map(keepsake => keepsake.month), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  assert.equal(FAIRY_KEEPSAKES.length, 33);
+  assert.deepEqual(["COMMON", "RARE", "MONTHLY"].map(rarity => keepsakesOf(rarity).length), [24, 8, 1]);
+  assert.deepEqual(keepsakesOf("MONTHLY").map(keepsake => keepsake.month), [10]);
+  assert.equal(KEEPSAKES_BY_ID.get("firefly-bottle").name["zh-Hans"], "萤火虫瓶");
+  assert.equal(KEEPSAKES_BY_ID.get("moonlit-letter-set").rarity, "RARE");
   for (const keepsake of FAIRY_KEEPSAKES) {
     assert.match(keepsake.id, /^[a-z0-9-]{1,48}$/);
     for (const locale of ["en", "zh-Hans"]) assert.ok(keepsake.name[locale] && keepsake.note[locale], `${keepsake.id} ${locale}`);
@@ -44,7 +47,7 @@ test("levels: each level needs 15 more points, 20 is the top", () => {
   assert.equal(top, 3230);
   assert.equal(closenessLevel(top - 1).level, 19);
   assert.deepEqual(plain(closenessLevel(top + 999, "en")), {
-    level: 20, title: "Forever companions", total: top + 999, pointsIntoLevel: 0, pointsForNextLevel: null, nextTitle: null, maxed: true
+    level: 20, title: "Eternal Bloom", total: top + 999, pointsIntoLevel: 0, pointsForNextLevel: null, nextTitle: null, maxed: true
   });
 });
 
@@ -70,6 +73,7 @@ test("keepsake plan: deterministic, 7th day rare, brooch once the month's days a
   assert.equal(planKeepsakes({ ...base, monthCheckIns: 16 }).length, 1);
   assert.equal(planKeepsakes({ ...base, monthCheckIns: 16, level: 16 }).at(-1).reason, "MONTHLY", "Lv16 needs 16 days");
   assert.equal(planKeepsakes({ ...base, monthCheckIns: 25, monthlyGrantedThisMonth: true }).length, 1);
+  assert.equal(planKeepsakes({ ...base, today: "2026-11-25", monthCheckIns: 25 }).length, 1, "no brooch drawn for November yet");
   // Over many days most daily keepsakes are common, and unowned ones are preferred.
   const owned = new Set(keepsakesOf("COMMON").slice(0, 20).map(keepsake => keepsake.id));
   const days = Array.from({ length: 200 }, (_, i) => planKeepsakes({ ...base, today: `2026-${String(1 + (i % 12)).padStart(2, "0")}-${String(1 + (i % 28)).padStart(2, "0")}`, userId: `u${i}`, owned })[0]);
@@ -94,6 +98,7 @@ function fakeDatabase(users) {
   let id = 0;
   const cmp = (value, filter) => {
     if (filter === null || typeof filter !== "object" || filter instanceof Date) return value === filter;
+    if (Array.isArray(filter.in)) return filter.in.includes(value);
     return (filter.lt === undefined || value < filter.lt) && (filter.lte === undefined || value <= filter.lte) &&
       (filter.gt === undefined || value > filter.gt) && (filter.startsWith === undefined || value.startsWith(filter.startsWith));
   };
@@ -125,6 +130,7 @@ function fakeDatabase(users) {
   const db = {
     tables,
     user: { findUnique: async ({ where }) => users[where.id] || null },
+    userFairy: { findFirst: async ({ where }) => (users[where.userId]?.unlockedAt ? { unlockedAt: users[where.userId].unlockedAt } : null) },
     fairyCheckIn: model("fairyCheckIn"), fairyKeepsakeGrant: model("fairyKeepsakeGrant"), fairyClosenessAward: model("fairyClosenessAward"),
     $queryRaw: async () => [{ locked: "" }]
   };
@@ -132,7 +138,7 @@ function fakeDatabase(users) {
   return db;
 }
 
-const OWNER = { "owner-1": { timezone: "America/Vancouver", preferredLocale: "zh-Hans" } };
+const OWNER = { "owner-1": { timezone: "America/Vancouver", preferredLocale: "zh-Hans", unlockedAt: new Date("2026-10-04T18:00:00Z") } };
 
 test("check-in: once a local day, streak, 7th-day reward, grace and the calendar month", async () => {
   const db = fakeDatabase(OWNER);
@@ -171,6 +177,9 @@ test("check-in: once a local day, streak, 7th-day reward, grace and the calendar
   assert.equal(month.month, "2026-10");
   assert.deepEqual(month.days.map(day => day.localDate.slice(8)), ["16", "17", "18", "19", "20", "21", "22", "24", "26"]);
   assert.deepEqual(month.days[6].keepsakes.map(k => k.reason), ["DAILY", "STREAK_7"]);
+  assert.equal(month.days[6].points, 30);
+  assert.equal(month.days[0].points, 10);
+  assert.ok(month.days[6].keepsakes.every(k => k.name && k.rarity && !("note" in k)));
   assert.deepEqual(plain((await listCheckIns(db, { userId: "owner-1", month: "2026-09", now: at("2026-10-26") })).days), []);
 });
 
@@ -195,14 +204,12 @@ test("closeness awards: daily caps, each thing counts once, level-up reported", 
   assert.equal((await awardCloseness(db, { userId: "missing", source: "EVENT", key: "e", now })).awarded, 0);
 });
 
-test("reaching the top level gives her forever keepsake once", async () => {
+test("reaching the top level reports the last title", async () => {
   const db = fakeDatabase(OWNER);
   db.tables.fairyClosenessAward.push({ id: "seed", userId: "owner-1", source: "EVENT", awardKey: "seed", localDate: "2026-01-01", points: 3229 });
   const result = await awardCloseness(db, { userId: "owner-1", source: "EVENT", key: "last", now: at("2026-10-22") });
-  assert.deepEqual(plain(result.levelUp), { level: 20, title: "一生花伴" });
-  assert.equal(result.keepsake.id, "forever-petal");
-  await awardCloseness(db, { userId: "owner-1", source: "EVENT", key: "more", now: at("2026-10-22") });
-  assert.equal(db.tables.fairyKeepsakeGrant.filter(grant => grant.keepsakeId === "forever-petal").length, 1);
+  assert.deepEqual(plain(result), { awarded: 5, levelUp: { level: 20, title: "一生花伴" } });
+  assert.equal(db.tables.fairyKeepsakeGrant.length, 0);
 });
 
 test("summary and keepsake book", async () => {
@@ -213,16 +220,22 @@ test("summary and keepsake book", async () => {
   assert.equal(before.localDate, "2026-10-21");
   assert.equal(before.total, 65);
   assert.equal(before.level, 2);
-  assert.deepEqual(plain(before.checkIn), { checkedInToday: false, streak: 6, graceAvailable: true, checkInsToStreakReward: 1 });
+  assert.deepEqual(plain(before.checkIn), { checkedInToday: false, streak: 6, cycleDay: 6, graceAvailable: true, checkInsToStreakReward: 1 });
+  assert.equal(before.daysTogether, 18, "met on Oct 4 (local), Oct 21 is day 18");
+  assert.ok(before.greeting.length > 4);
+  assert.equal(before.greeting, (await closenessSummary(db, { userId: "owner-1", now: at("2026-10-21", 23) })).greeting, "one greeting per local day");
+  assert.equal(before.collection.received, db.tables.fairyKeepsakeGrant.length);
   assert.deepEqual(plain(before.today.find(row => row.source === "EVENT")), { source: "EVENT", count: 1, dailyCap: 3, points: 5, pointsEach: 5 });
   assert.equal(before.today.length, Object.keys(CLOSENESS_SOURCES).length);
   assert.deepEqual(plain(before.monthly), {
     month: "2026-10", checkIns: 6, needed: 20, keepsake: { id: "crocus-brooch", rarity: "MONTHLY", name: "番红花胸针", month: 10 }, earned: false
   });
   assert.deepEqual(before.unlocks.map(unlock => [unlock.level, unlock.unlocked]), [[3, false], [5, false], [8, false], [12, false], [16, false], [20, false]]);
+  // A keepsake id that left the catalog (renamed artwork) is ignored everywhere.
+  db.tables.fairyKeepsakeGrant.push({ id: "old", userId: "owner-1", keepsakeId: "acorn-cup", reason: "DAILY", localDate: "2026-10-01" });
   await checkInWithFairy(db, { userId: "owner-1", now: at("2026-10-21") });
   const after = await closenessSummary(db, { userId: "owner-1", now: at("2026-10-21") });
-  assert.deepEqual(plain(after.checkIn), { checkedInToday: true, streak: 7, graceAvailable: true, checkInsToStreakReward: 7 });
+  assert.deepEqual(plain(after.checkIn), { checkedInToday: true, streak: 7, cycleDay: 7, graceAvailable: true, checkInsToStreakReward: 7 });
   assert.equal((await closenessSummary(db, { userId: "owner-1", now: at("2026-10-25") })).checkIn.streak, 0, "three days away ends the streak");
 
   const book = await listKeepsakes(db, { userId: "owner-1", now: at("2026-10-21") });
@@ -307,6 +320,6 @@ test("closeness routes", async (t) => {
     assert.equal((await call("/api/fairy/check-ins?month=oct")).status, 400);
     const book = await call("/api/fairy/keepsakes");
     assert.equal(book.body.owned, 1);
-    assert.deepEqual(plain((await call("/api/fairy/closeness/tap", "POST")).body), { awarded: 1, levelUp: null, keepsake: null });
+    assert.deepEqual(plain((await call("/api/fairy/closeness/tap", "POST")).body), { awarded: 1, levelUp: null });
   });
 });
