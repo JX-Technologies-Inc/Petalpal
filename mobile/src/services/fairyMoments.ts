@@ -10,19 +10,8 @@ export interface FairyMomentsPage {
   posts: FairyMomentPost[];
   nextBefore: string | null;
 }
-export interface FairyMomentsStatus { enabled: boolean; unread: boolean }
-
-// Reconciles the Fairy's server-side day, which is also what records her new Moments.
-// The response carries `moments` only for owners on the server's Moments allowlist;
-// anything else (not listed, onboarding unfinished, offline) keeps the Fairy icon as before.
-export async function syncFairyMoments(): Promise<FairyMomentsStatus> {
-  try {
-    const runtime = await apiRequest<{ moments?: { unread?: boolean } }>('/api/fairy/runtime');
-    return runtime.moments ? { enabled: true, unread: Boolean(runtime.moments.unread) } : { enabled: false, unread: false };
-  } catch {
-    return { enabled: false, unread: false };
-  }
-}
+// Whether her Moments are on and unread comes with her runtime (services/fairyRuntime.ts),
+// whose reconcile is also what records her new Moments.
 
 export const loadFairyMoments = (before?: string | null) =>
   apiRequest<FairyMomentsPage>(`/api/fairy/moments${before ? `?before=${encodeURIComponent(before)}` : ''}`);

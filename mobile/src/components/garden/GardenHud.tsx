@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, AppState, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GARDEN_FEATURES, gardenFeature } from '../../services/featureCatalog';
 import { usePanelTheme } from '../features/PanelTheme';
@@ -9,7 +9,7 @@ import { FEATURE_COLORS } from '../features/FeatureUI';
 import { SidebarIllustration } from './SidebarIllustration';
 import { usePlanting } from './planting/PlantingContext';
 import { FairyMomentsPanel } from '../moments/FairyMomentsPanel';
-import { syncFairyMoments, type FairyMomentsStatus } from '../../services/fairyMoments';
+import { markFairyMomentsRead, useFairyRuntime } from '../../services/fairyRuntime';
 
 // One navigation model; only its sizing changes with the viewport.
 export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) {
@@ -25,15 +25,10 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
   const { feature: entryFeature } = useLocalSearchParams<{ feature?: string }>();
   // Fairy Moments: when the server has Moments on for this owner, the Fairy icon opens her
   // feed (with a dot for new posts); otherwise it keeps focusing the camera on her.
-  const [moments, setMoments] = useState<FairyMomentsStatus>({ enabled: false, unread: false });
+  // The runtime response carries `moments` only for owners on the server's Moments allowlist.
+  const runtime = useFairyRuntime();
+  const moments = { enabled: Boolean(runtime?.moments), unread: Boolean(runtime?.moments?.unread) };
   const [momentsOpen, setMomentsOpen] = useState(false);
-  useEffect(() => {
-    let active = true;
-    const sync = () => { void syncFairyMoments().then(status => { if (active) setMoments(status); }); };
-    sync();
-    const subscription = AppState.addEventListener('change', state => { if (state === 'active') sync(); });
-    return () => { active = false; subscription.remove(); };
-  }, []);
   useEffect(() => {
     if (!entryFeature) return;
     if (entryFeature === 'fairy') {
@@ -55,7 +50,7 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
       onPress={() => {
         if (feature.id === 'fairy') {
           setOpenFeature(undefined);
-          if (moments.enabled) { setMomentsOpen(true); setMoments(current => ({ ...current, unread: false })); }
+          if (moments.enabled) { setMomentsOpen(true); markFairyMomentsRead(); }
           else onFocusFairy?.();
         } else setOpenFeature(feature.id === 'garden' ? undefined : feature.id);
       }}

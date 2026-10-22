@@ -183,5 +183,20 @@ export class FairyNavigation {
     if(!this.remaining.length){this.state='idle';if((this.swingTarget||this.moonTarget||this.teaTarget||this.treehouseTarget||this.mailboxTarget)&&this.target&&distance(this.position,this.target)<.05)this.align();else this.target=null;}
     return next.moved;
   }
+  // Opening the Garden on her schedule: she is already there, so no travel. A letter sequence
+  // in progress keeps the character. `at` is the path point for 'path'.
+  place(rest:'tea'|'swing'|'moon'|'treehouse'|'mailbox'|'path',at:Point=WALK_START){
+    if(this.mailboxSequenceActive)return false;
+    this.remaining=[];this.target=null;this.flight=[];this.alignment=[];this.lift=0;this.flightTime=0;this.flightProgress=0;
+    this.mailboxTarget=false;this.mailboxElapsedMs=0;this.swingTarget=false;this.moonTarget=false;this.teaTarget=false;
+    this.treehouseTarget=false;this.treehouseEntryProgress=0;this.treehouseDepth=0;this.treehouseScale=1;this.entryTime=0;this.seatedTime=0;
+    if(rest==='tea'){this.position={...TEA_SEAT};this.teaTarget=true;this.state='drinkingTea';}
+    else if(rest==='swing'){this.position={...SWING_FLIGHT_SEAT};this.swingTarget=true;this.state='sittingOnSwing';}
+    else if(rest==='moon'){this.position={...MOON_SLEEP_ANCHOR};this.moonTarget=true;this.state='sleepingOnMoonBed';}
+    else if(rest==='treehouse'){this.position={...treehouseInteriorAnchor};this.treehouseTarget=true;this.treehouseEntryProgress=1;
+      this.treehouseDepth=1;this.treehouseScale=.84;this.state='insideTreehouse';}
+    else {this.position={...(rest==='mailbox'?mailboxApproachAnchor:at)};this.state='idle';}
+    return true;
+  }
   stop(){if(this.airborne||this.traversingTreehouse||this.state==='insideTreehouse'||this.mailboxSequenceActive)return;this.remaining=[];this.target=null;if(!this.atTea&&this.state!=='sittingOnSwing'&&this.state!=='sleepingOnMoonBed')this.state='idle';}
 }

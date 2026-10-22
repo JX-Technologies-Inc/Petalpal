@@ -6,6 +6,7 @@ import { hitsSwing } from './fairy/swingDestination';
 import type { FairyState } from './fairy/FairyNavigation';
 import { constrainGardenCamera, zoomGardenAt, GARDEN_WORLD_BOUNDS } from './rendering/gardenWorldBounds';
 import GardenFairy, { type FairyHandle } from './fairy/GardenFairy';
+import { useFairySchedule } from './fairy/useFairySchedule';
 import { GardenCalendar } from './GardenCalendar';
 import type { FlowerSession } from './planting/flowerDetailApi';
 import { Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
@@ -312,6 +313,8 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   const [fairyState, setFairyState] = useState<FairyState>('idle');
   // Read by the memoized tap handler without re-creating it on every Fairy state.
   const fairyStateRef = useRef<FairyState>('idle'); fairyStateRef.current = fairyState;
+  // Her own day (server schedule), for owners the server enables; a user's tap holds it off a minute.
+  const noteFairyUser = useFairySchedule(fairyRef, enableFairyWalk && !readOnly);
 
   const mailboxPhase: MailboxInteractionPhase = useMemo(() => {
     if (fairyState === 'movingToMailbox' || fairyState === 'flyingToMailbox') return 'walking';
@@ -594,9 +597,9 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       const point = fairyRef.current?.getPosition();
       if (point) focusCoords(point.x, point.y, cameraZoom.value);
     },
-    returnFromTreehouse:()=>fairyRef.current?.returnFromTreehouse()??false,
-    returnFromMailbox:()=>fairyRef.current?.returnFromMailbox()??false,
-    visitMailbox:()=>fairyRef.current?.visitMailbox()??false,
+    returnFromTreehouse:()=>{noteFairyUser();return fairyRef.current?.returnFromTreehouse()??false;},
+    returnFromMailbox:()=>{noteFairyUser();return fairyRef.current?.returnFromMailbox()??false;},
+    visitMailbox:()=>{noteFairyUser();return fairyRef.current?.visitMailbox()??false;},
     isMailboxBusy:()=>fairyRef.current?.isMailboxBusy()??false,
   }),[focusCoords,cameraZoom,selectedFlower]);
 
@@ -917,6 +920,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       }
       // Placement and flower details own taps before any Fairy destination.
       if (enableFairyWalk && fairyRef.current?.isMailboxBusy()) return;
+      if (enableFairyWalk) noteFairyUser();
       if (enableFairyWalk && hitsMailbox({x:worldX,y:worldY},treehousePlacement)) {
         fairyRef.current?.visitMailbox();
         return;
