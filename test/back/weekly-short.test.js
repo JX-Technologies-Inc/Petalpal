@@ -228,7 +228,9 @@ test("the short-report owner list opts single owners in and fails closed when ma
   assert.equal(weeklyContractFor(env, "alice", "weekly-reflection-v2"), WEEKLY_SHORT);
   assert.equal(weeklyContractFor(env, "bob", "weekly-reflection-v2"), "weekly-reflection-v2");
   assert.equal(weeklyContractFor({}, "alice", "weekly-reflection-v2"), "weekly-reflection-v2");
-  for (const value of ["alice,", ",alice", "alice bob", "a".repeat(65), Array(101).fill("x").join(","), "alice;bob"]) {
+  // "*" alone opens the short report to every owner (the beta behind Cloudflare Access).
+  for (const owner of ["alice", "bob", "user_any"]) assert.equal(weeklyContractFor({ AI_WEEKLY_SHORT_OWNER_IDS: "*" }, owner, "weekly-reflection-v2"), WEEKLY_SHORT);
+  for (const value of ["*,alice", "alice,*", " *", "**", "alice,", ",alice", "alice bob", "a".repeat(65), Array(101).fill("x").join(","), "alice;bob"]) {
     assert.throws(() => weeklyShortOwners({ AI_WEEKLY_SHORT_OWNER_IDS: value }), { code: "AI_GATEWAY_CONFIG_INVALID" }, value);
   }
 });

@@ -58,7 +58,8 @@ one model question.)
 
 ## In the short Weekly report (beta, 2026-10-21)
 
-- Owner switch `PETAL_CARDS_OWNER_IDS` on the backend (comma-separated `User.id`, no spaces), only for
+- Owner switch `PETAL_CARDS_OWNER_IDS` on the backend (comma-separated `User.id`, no spaces, or `*` alone for
+  every owner), only for
   owners who also get the short report (`AI_WEEKLY_SHORT_OWNER_IDS`). Free during the beta.
 - A `PETAL_CARD` section right after the mood curve: card art, name, card line, card text, the fact
   line and the disclaimer. Saved with the report, so the card never changes for that week.

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { CANONICAL_PRIMARY_GARDEN_MOODS } from "../../lib/flower-variant-config.js";
-import { DRAWABLE_PETAL_CARDS, PETAL_CARD_DISCLAIMER, PETAL_CARDS, petalCard } from "../../lib/petal-cards.js";
+import { DRAWABLE_PETAL_CARDS, PETAL_CARD_DISCLAIMER, PETAL_CARDS, petalCard, petalCardsEnabledFor } from "../../lib/petal-cards.js";
 
 const HEAVY = ["major-13", "major-15", "major-16", "swords-03", "swords-05", "swords-08", "swords-09", "swords-10", "pentacles-05"];
 
@@ -42,4 +42,13 @@ test("copy: no prediction, fortune or advice words", () => {
     assert.ok(!banned[locale].test(`${line} ${text}`), `${card.id} ${locale}`);
   }
   assert.ok(PETAL_CARD_DISCLAIMER.en && PETAL_CARD_DISCLAIMER["zh-Hans"]);
+});
+
+test("owner switch: a listed id, or \"*\" alone for every owner; anything else stays off", () => {
+  assert.equal(petalCardsEnabledFor({}, "user_1"), false);
+  assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "user_1,user_2" }, "user_2"), true);
+  assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "user_1" }, "user_3"), false);
+  assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "*" }, "user_3"), true);
+  assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "*" }, ""), false);
+  for (const value of ["*,user_1", " *", "user_1, user_2"]) assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: value }, "user_1"), false, value);
 });

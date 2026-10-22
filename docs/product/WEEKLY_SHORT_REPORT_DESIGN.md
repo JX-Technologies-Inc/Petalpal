@@ -103,7 +103,8 @@ and the question. No model involvement; earlier Events never reach the model.
 ## Per-owner switch (built)
 
 `AI_WEEKLY_SHORT_OWNER_IDS` ([lib/weekly-contract.js](../../lib/weekly-contract.js)): comma-separated PetalPal
-user ids (`User.id`, the `user.id` of `/session`), at most 100. Listed owners get `weekly-short-v1`; everyone
+user ids (`User.id`, the `user.id` of `/session`), at most 100, or `*` alone for every owner (the beta, behind
+Cloudflare Access). Listed owners get `weekly-short-v1`; everyone
 else keeps `AI_WEEKLY_REFLECTION_CONTRACT` and its flags (production: v2 with Selector V2, significance and the
 narrative thread). For a listed owner those v2 flags are still validated but not used (original selector, short
 instructions). Unset or empty: nobody. A malformed list fails closed (`AI_GATEWAY_CONFIG_INVALID`, no model call).
