@@ -7,13 +7,13 @@ import { GardenHud } from '../components/garden/GardenHud';
 import { useAuth } from '../services/auth';
 
 export default function HomeScreen() {
-  const { session } = useAuth();
+  const { session, experience } = useAuth();
   const gardenRef = useRef<GardenSceneHandle>(null);
   const focusFairy = useCallback(() => gardenRef.current?.focusFairy(), []);
   useEffect(() => { void SplashScreen.hideAsync(); }, []);
   if (!session) return null;
   return <GestureHandlerRootView style={{ flex: 1 }}>
-    <GardenScene ref={gardenRef} enableFairyWalk key={session.user.id} initialWaterfallVersion="v2" session={session} gardenOwnerUserId={session.user.id} backendMode showCalendar onOpenBookhouse={() => router.push('/bookhouse')} onOpenReflection={() => router.push('/reflection')} showDevControls={false}>
+    <GardenScene ref={gardenRef} enableFairyWalk key={session.user.id} initialWaterfallVersion="v2" session={session} gardenOwnerUserId={session.user.id} backendMode showCalendar locale={experience?.user.preferredLocale} onOpenBookhouse={() => router.push('/bookhouse')} onOpenReflection={() => router.push('/reflection')} showDevControls={false}>
       <GardenHud onFocusFairy={focusFairy} />
     </GardenScene>
   </GestureHandlerRootView>;

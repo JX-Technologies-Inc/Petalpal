@@ -8,6 +8,7 @@ import { authErrorMessage, profileError, registrationError, type ProfileInput } 
 import { scopeFlowerPlacements, setNativeSecurityExpectedOwner } from '../components/garden/planting/plantingPersistence';
 import { recordNativeLogoutWitness } from './nativeSecurityLogoutWitness';
 import type { FlowerSession } from '../components/garden/planting/flowerDetailApi';
+import { DEFAULT_AVATAR } from '../components/avatars/avatarArt';
 
 export type AuthPhase = 'initializing' | 'signedOut' | 'registering' | 'verificationPending' | 'profileRequired' | 'signedIn';
 interface AuthSnapshot {
@@ -26,6 +27,8 @@ interface AuthState extends AuthSnapshot {
   resendVerification: () => Promise<void>;
   checkVerification: () => Promise<void>;
   completeProfile: (profile: ProfileInput | string) => Promise<void>;
+  /** Saves a library avatar (components/avatars) for the signed-in owner. */
+  updateAvatar: (avatar: string) => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   retry: () => Promise<void>;
@@ -125,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         onUnauthorized: () => { if (isCurrent(capturedUser, generation)) void logout('Your session expired. Please sign in again.'); },
       });
       const result = await apiRequest<{ user: SessionUser | null; needsProfile?: boolean }>('/auth/session', 'POST', profile
-        ? { name: profile.name.trim(), avatar: profile.avatar || '🦋',
+        ? { name: profile.name.trim(), avatar: profile.avatar || DEFAULT_AVATAR,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
           preferredLocale: profile.preferredLocale || 'en', communityTermsVersion: profile.communityTermsVersion, aiConsent: profile.aiConsent === true }
         : { deferProfileCreation: true });
@@ -222,6 +225,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const error = profileError(profile);
       if (error) { setState((current) => ({ ...current, error })); return; }
       await sync(profile);
+    },
+    updateAvatar: async (avatar) => {
+      const owner = state.session?.user.id;
+      if (state.phase !== 'signedIn' || !owner) throw new Error('Sign in to change your avatar.');
+      const saved = await apiRequest<{ id: string; avatar: string }>('/users/avatar', 'PUT', { avatar });
+      setState(current => current.session?.user.id !== owner || saved.id !== owner ? current : {
+        ...current,
+        session: { ...current.session, user: { ...current.session.user, avatar: saved.avatar } },
+        experience: current.experience && { ...current.experience, user: { ...current.experience.user, avatar: saved.avatar } },
+      });
     },
     logout: () => logout(), deleteAccount, retry: () => sync(),
   };

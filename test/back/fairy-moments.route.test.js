@@ -34,6 +34,7 @@ test("migration adds owner-scoped, cascading Fairy Moments with one post per run
     assert.equal((await db.query(`SELECT "photoKey" FROM "FairyMoment" WHERE id = 'text'`)).rows[0].photoKey, null);
     await assert.rejects(db.exec(`INSERT INTO "FairyMoment" (id, "userId", "userFairyId", "runtimeVersion", state, "photoKey", caption, "postedAt")
       VALUES ('m2', 'owner', 'fairy', 7, 'SWINGING', 'SWINGING/1', 'again', CURRENT_TIMESTAMP)`), /unique/i);
+    await db.exec(`UPDATE "UserFairy" SET "momentsAvatar" = 'fairy-3' WHERE id = 'fairy'`);
     await db.exec(`DELETE FROM "UserFairy" WHERE id = 'fairy'`);
     assert.equal((await db.query(`SELECT count(*)::int AS n FROM "FairyMoment"`)).rows[0].n, 0);
   } finally { await db.close(); }
@@ -49,7 +50,7 @@ const matches = (row, where) => Object.entries(where).every(([key, value]) =>
 const pick = (row, select) => select ? Object.fromEntries(Object.keys(select).map(key => [key, row[key]])) : { ...row };
 
 function fakeDatabase() {
-  const fairy = { id: "fairy-1", userId: "owner-1", fairyType: "BLOOM", name: "Bloom", level: 1, progression: 0, isActive: true, momentsSeenAt: null };
+  const fairy = { id: "fairy-1", userId: "owner-1", fairyType: "BLOOM", name: "Bloom", level: 1, progression: 0, isActive: true, momentsSeenAt: null, momentsAvatar: null };
   const initialRuntime = {
     id: "runtime-1", userFairyId: "fairy-1", currentState: "IDLE", currentLocation: "DEFAULT_AREA",
     stateStartedAt: new Date(NOW.getTime() - 10 * 24 * 3_600_000), nextTransitionAt: null, runtimeVersion: 0, transitionId: null
@@ -67,7 +68,9 @@ function fakeDatabase() {
     userFairy: {
       findUnique: async ({ where, include }) => where.id === fairy.id || where.userId_fairyType?.userId === fairy.userId ? withRuntime(include) : null,
       findFirst: async ({ where, include, select }) => where.userId === fairy.userId ? pick(withRuntime(include), select) : null,
-      update: async ({ data }) => Object.assign(fairy, data)
+      update: async ({ data }) => Object.assign(fairy, data),
+      updateMany: async ({ where, data }) => where.userId === fairy.userId && where.isActive === fairy.isActive
+        ? (Object.assign(fairy, data), { count: 1 }) : { count: 0 }
     },
     fairyRuntime: { update: async ({ data }) => Object.assign(state.runtime, data) },
     fairyMoment: {
@@ -105,7 +108,7 @@ test("Fairy Moments routes", async (t) => {
   };
   stub(null, "$transaction", async operation => operation(state.db));
   for (const [model, methods] of Object.entries({ user: ["findUnique"], fairyState: ["findUnique"],
-    userFairy: ["findFirst", "update"], fairyMoment: ["findMany", "findFirst", "updateMany"] })) {
+    userFairy: ["findFirst", "update", "updateMany"], fairyMoment: ["findMany", "findFirst", "updateMany"] })) {
     for (const method of methods) stub(model, method, state.db[model][method]);
   }
   setFirebaseTokenVerifierForTests(async () => ({ uid: "owner-uid", email: "owner@example.test", email_verified: true }));
@@ -135,6 +138,7 @@ test("Fairy Moments routes", async (t) => {
     assert.equal(state.moments.length, 0);
     assert.equal((await call("/api/fairy/moments")).status, 404);
     assert.equal((await call("/api/fairy/moments/moment-1/like", "POST", { liked: true })).status, 404);
+    assert.equal((await call("/api/fairy/moments/avatar", "PUT", { avatar: "fairy-2" })).status, 404);
   });
 
   await t.test("runtime records seeded posts in the owner's locale, once per transition", async () => {
@@ -167,7 +171,7 @@ test("Fairy Moments routes", async (t) => {
   await t.test("feed lists visible posts newest first and marks them seen", async () => {
     const feed = await call("/api/fairy/moments");
     assert.equal(feed.status, 200);
-    assert.deepEqual(feed.body.fairy, { id: "fairy-1", type: "BLOOM", name: "Bloom" });
+    assert.deepEqual(feed.body.fairy, { id: "fairy-1", type: "BLOOM", name: "Bloom", avatar: null });
     assert.equal(feed.body.locale, "zh-Hans", "the panel follows the owner's chosen language, like her captions");
     const visible = state.moments.filter(moment => moment.postedAt <= NOW).sort((a, b) => b.postedAt - a.postedAt);
     assert.deepEqual(feed.body.posts.map(post => post.id), visible.map(moment => moment.id));
@@ -192,6 +196,17 @@ test("Fairy Moments routes", async (t) => {
       photoKey: "TEA_TIME/1", caption: "x", postedAt: new Date(NOW.getTime() - 3_600_000), likedAt: null });
     assert.equal((await call("/api/fairy/moments/foreign/like", "POST", { liked: true })).status, 404);
     assert.equal(state.moments.find(moment => moment.id === "foreign").likedAt, null);
+  });
+
+  await t.test("her Moments avatar is a library id or null, chosen apart from the owner's avatar", async () => {
+    assert.deepEqual(await call("/api/fairy/moments/avatar", "PUT", { avatar: "fairy-3" }), { status: 200, body: { avatar: "fairy-3" } });
+    assert.equal((await call("/api/fairy/moments")).body.fairy.avatar, "fairy-3");
+    for (const avatar of ["fairy-9", "🦋", "https://example.test/a.png", 3]) {
+      assert.equal((await call("/api/fairy/moments/avatar", "PUT", { avatar })).status, 400, String(avatar));
+    }
+    assert.equal(state.fairy.momentsAvatar, "fairy-3");
+    assert.deepEqual(await call("/api/fairy/moments/avatar", "PUT", { avatar: null }), { status: 200, body: { avatar: null } });
+    assert.equal((await call("/api/fairy/moments")).body.fairy.avatar, null);
   });
 
   await t.test("with model captions on, new posts start PENDING and the filler runs after the response", async () => {

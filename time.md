@@ -24,6 +24,7 @@ Change policy: see [§10](#10-change-policy). Security and privacy rules in
 | UTC timestamp | Every stored instant (`occurredAt`, `createdAt`, `periodStartUtc`, `periodEndUtc`, job times) is an absolute instant in UTC | PostgreSQL `timestamp(3)` via Prisma |
 | Server clock | `new Date()` on the Render backend | Real time only; no override (see §6) |
 | Account timezone | `User.timezone`, an IANA name, set once at profile creation | `POST /auth/session` in [server.js](server.js): `normalizeTimezone(req.body.timezone) \|\| "UTC"` |
+| Account timezone (display) | Me page shows it as city · zone name (`Vancouver · Pacific Time` / `温哥华 · 北美太平洋时间`); display only, the stored IANA id is unchanged. There is no `Canada/Vancouver` IANA id | `timezoneLabel` in [mobile/src/services/timezoneLabel.ts](mobile/src/services/timezoneLabel.ts) |
 | Device timezone | The phone/browser zone. Sent **only** at profile creation | [mobile/src/services/auth.tsx](mobile/src/services/auth.tsx): `Intl.DateTimeFormat().resolvedOptions().timeZone \|\| 'UTC'` |
 | Event occurrence time | `Event.occurredAt` = server `new Date()` at save | `POST /events` rejects a client `occurredAt` (400) and the `x-petalpal-simulated-time` header (403) |
 | Event creation time | `Event.createdAt` (database default) | Practically equal to `occurredAt`; not used for periods |

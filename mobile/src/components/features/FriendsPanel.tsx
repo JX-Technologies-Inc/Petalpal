@@ -9,6 +9,7 @@ import { useAuth } from '../../services/auth';
 import { loadFriends, loadFriendRequests, searchFriends, sendFriendRequest, respondToFriendRequest,
   removeFriend, type FriendUser, type FriendRequest, type FriendRequests } from '../../services/friends';
 import { FEATURE_COLORS as colors, FeatureActionButton, ui } from './FeatureUI';
+import { UserAvatar } from '../avatars/UserAvatar';
 
 export function FriendsPanel({ addingFriend = false, onAddFriend = () => {}, onCloseAddFriend = () => {}, onClose = () => {} }: {
   addingFriend?: boolean; onAddFriend?: () => void; onCloseAddFriend?: () => void; onClose?: () => void;
@@ -110,7 +111,7 @@ export function FriendsPanel({ addingFriend = false, onAddFriend = () => {}, onC
   }
   function identity(user?: FriendUser) {
     return <View style={styles.identity}>
-      <Text style={styles.avatar}>{user?.avatar || '🦋'}</Text>
+      <UserAvatar avatar={user?.avatar} size={44} style={styles.avatar} />
       <View style={styles.name}><Text style={styles.displayName}>{user?.displayName?.trim() || user?.name?.trim() || user?.accountId || user?.id || 'PetalPal user'}</Text>
         <Text style={styles.caption}>{user?.accountId ? `@${user.accountId}` : 'No username set'}</Text>
       </View>
@@ -207,9 +208,10 @@ export function FriendsPanel({ addingFriend = false, onAddFriend = () => {}, onC
       </View> : null}
     <View style={styles.section}><Text style={styles.sectionTitle}>Outgoing Requests</Text>
       {!busy && !requests.outgoing.length ? <Text style={styles.caption}>No outgoing requests.</Text> : null}
-      {requests.outgoing.map(request => <Text key={request.id} style={styles.caption}>
-        {request.receiver?.avatar || '🦋'} {request.receiver?.name || 'PetalPal user'} · Pending
-      </Text>)}
+      {requests.outgoing.map(request => <View key={request.id} style={styles.pending}>
+        <UserAvatar avatar={request.receiver?.avatar} size={24} />
+        <Text style={styles.caption}>{request.receiver?.name || 'PetalPal user'} · Pending</Text>
+      </View>)}
     </View>
   </View>;
 }
@@ -234,8 +236,8 @@ const createStyles = (theme: PanelTheme, light: boolean) => StyleSheet.create({
   listRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 10,
     borderWidth: 1, borderRadius: light ? 20 : 16, borderColor: light ? theme.gold : theme.border, backgroundColor: theme.surface, flexWrap: 'wrap' },
   identity: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, minWidth: 100 },
-  avatar: { width: 44, height: 44, textAlign: 'center', lineHeight: 42, fontSize: 26,
-    backgroundColor: light ? theme.input : '#315B52', borderColor: light ? theme.gold : '#C7A86B', borderWidth: 1, borderRadius: 22, overflow: 'hidden' },
+  avatar: { backgroundColor: light ? theme.input : '#315B52', borderColor: light ? theme.gold : '#C7A86B', borderWidth: 1 },
+  pending: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   name: { flex: 1, gap: 4 }, displayName: { fontFamily: 'serif', fontSize: 17, color: theme.text },
   requestActions: { flexDirection: 'row', gap: 8 },
   smallAction: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center', borderRadius: 22,

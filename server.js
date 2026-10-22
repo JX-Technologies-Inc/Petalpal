@@ -46,8 +46,10 @@ import {
   hasUnreadFairyMoments,
   listFairyMoments,
   recordFairyMoments,
-  setFairyMomentLike
+  setFairyMomentLike,
+  setFairyMomentsAvatar
 } from "./lib/fairy-moments.js";
+import { isLibraryAvatar } from "./lib/avatars.js";
 import { fairyMomentCaptionsEnabled, fillFairyMomentCaptions } from "./lib/haiku-fairy-moment.js";
 import {
   STARTER_FAIRY,
@@ -1424,7 +1426,8 @@ app.post("/legacy-register-disabled", async (req, res) => {
         },
         data: {
           avatar: avatar.trim()
-        }
+        },
+        select: { id: true, avatar: true }
       });
   
       res.json(user);
@@ -1822,6 +1825,22 @@ app.post("/api/fairy/moments/:momentId/like", async (req, res) => {
   } catch (error) {
     logServerError("POST /api/fairy/moments/:momentId/like error", error);
     res.status(500).json({ error: "Unable to update Fairy Moment" });
+  }
+});
+
+app.put("/api/fairy/moments/avatar", async (req, res) => {
+  if (!fairyMomentsEnabledFor(req.auth.userId)) return res.status(404).json({ error: "Not found" });
+  const avatar = req.body?.avatar ?? null;
+  if (avatar !== null && !isLibraryAvatar(avatar)) {
+    return res.status(400).json({ error: "avatar must be a library avatar id or null" });
+  }
+  try {
+    const updated = await setFairyMomentsAvatar(prisma, { userId: req.auth.userId, avatar });
+    if (!updated) return res.status(404).json({ error: "Not found" });
+    res.json({ avatar });
+  } catch (error) {
+    logServerError("PUT /api/fairy/moments/avatar error", error);
+    res.status(500).json({ error: "Unable to update the Moments avatar" });
   }
 });
 

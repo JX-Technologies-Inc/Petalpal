@@ -61,6 +61,7 @@ type LandmarkLayerProps = {
   fairyAtTea?: 'seatedAtTea'|'drinkingTea'|null;
   fairyOnMoonBed?: boolean;
   fairyOnSwing?: boolean;
+  fairyInTreehouse?: boolean;
   moonBedIntegrationEnabled?: boolean;
   moonBedShadowOpacity?: number;
   topWaterAssemblyEnabled?: boolean;
@@ -119,6 +120,7 @@ export default function LandmarkLayer({
   swingLightingEnabled = false,
   fairyOnSwing = false,
   fairyOnMoonBed = false,
+  fairyInTreehouse = false,
   fairyAtTea = null,
   fairySeconds,
   moonBedIntegrationEnabled = true,
@@ -238,7 +240,7 @@ export default function LandmarkLayer({
       </Group>}
       <GardenProfile name="Landmark animation" enabled={landmarksVisible && renderPass !== 'static-front'}>
       <TreehouseEntity x={x} y={y} scale={scale}
-        animationEnabled={landmarkAnimationEnabled} lightingEnabled={treehouseLightingEnabled} onDebugStatus={onDebugStatus} />
+        animationEnabled={landmarkAnimationEnabled} lightingEnabled={treehouseLightingEnabled} occupied={fairyInTreehouse} onDebugStatus={onDebugStatus} />
       {/* Map-level landmark order: Treehouse, then Swing. Internal Swing stacking is untouched. */}
       <Group origin={swingCenter} transform={swingMapTransform}>
         <SwingEntity x={swing.x} y={swing.y} scale={swing.scale}

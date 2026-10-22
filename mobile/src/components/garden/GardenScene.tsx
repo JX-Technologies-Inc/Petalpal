@@ -241,11 +241,19 @@ export type GardenSceneProps = {
   onOpenBookhouse?: () => void;
   onOpenReflection?: () => void;
   showCalendar?: boolean;
+  /** The owner's language ('en' | 'zh-Hans' …) for the Fairy's in-Garden hints. */
+  locale?: string | null;
   /** Partner preview alias: 'player' hides the same DEV controls as showDevControls={false}. */
   mode?: 'development' | 'player';
 };
 
-function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, readOnly = false, onOpenBookhouse, onOpenReflection, showCalendar = false, children, onTreehouseEntered, onTreehouseExited, onMailboxOpened, onMailboxPhaseChange, interactionRef, mode = 'development' }: GardenSceneProps & {interactionRef?:Ref<GardenSceneHandle>} = {}) {
+// Chinese except Traditional (same rule as the server's weeklyReportLocale), else English.
+const treehouseHint = (locale?: string | null) =>
+  /^zh(?:-|$)/i.test(locale || '') && !/(?:^|-)(hant|tw|hk|mo)(?:-|$)/i.test(locale || '')
+    ? { label: '小花仙在树屋里 ✨', hint: '点一下叫她出来' }
+    : { label: 'Your fairy is in the treehouse ✨', hint: 'Tap to call her out' };
+
+function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true, initialWaterfallVersion = 'legacy', showDevControls = true, readOnly = false, onOpenBookhouse, onOpenReflection, showCalendar = false, locale, children, onTreehouseEntered, onTreehouseExited, onMailboxOpened, onMailboxPhaseChange, interactionRef, mode = 'development' }: GardenSceneProps & {interactionRef?:Ref<GardenSceneHandle>} = {}) {
   const isDev = showDevControls && mode === 'development';
   runtimeAudit.render('GardenScene');
   const planting = usePlanting();
@@ -334,6 +342,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
   }, [mailboxPhase, onMailboxPhaseChange]);
   const fairyOnMoonBed = fairyState === 'sleepingOnMoonBed';
   const fairyOnSwing = fairyState === 'sittingOnSwing';
+  const fairyInTreehouse = fairyState === 'insideTreehouse';
   const [fairyDebug, setFairyDebug] = useState(false);
   const [fairyStatus, setFairyStatus] = useState("Tap dry ground to move");
   const handledParamRef = useRef<string | null>(null);
@@ -575,6 +584,12 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
     left: baseX + cameraX.value + (treehousePlacement.x + 870 * treehousePlacement.scale) * fit * cameraZoom.value - 28,
     top: baseY + cameraY.value + (treehousePlacement.y + 690 * treehousePlacement.scale) * fit * cameraZoom.value - 28,
     width: 56, height: 56,
+  }));
+  // Inside, she is hidden behind the door; a bubble above it says she is there.
+  const treehouseHintStyle = useAnimatedStyle(() => ({
+    left: baseX + cameraX.value + (treehousePlacement.x + 870 * treehousePlacement.scale) * fit * cameraZoom.value - 100,
+    top: baseY + cameraY.value + (treehousePlacement.y + 690 * treehousePlacement.scale) * fit * cameraZoom.value - 120,
+    width: 200,
   }));
   const focusCoords = useCallback((worldX: number, worldY: number, targetZoom = 1.8) => {
     if (viewport.width === 0 || viewport.height === 0 || fit <= 0) return;
@@ -1399,7 +1414,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
           </Group>
           <Group transform={cameraTransform}>
             {showLandmarks && (
-              <LandmarkLayer fairyOnMoonBed={fairyOnMoonBed} fairyOnSwing={fairyOnSwing} renderPass="motion"
+              <LandmarkLayer fairyOnMoonBed={fairyOnMoonBed} fairyOnSwing={fairyOnSwing} fairyInTreehouse={fairyInTreehouse} renderPass="motion"
                 landmarksVisible={perf.Landmarks}
                 waterEnabled={perf.Water}
                 waterAnimationEnabled={perf.WaterAnimation}
@@ -1535,6 +1550,16 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
               if (enableFairyWalk) fairyRef.current?.visitTreehouse(); else onOpenBookhouse();
             }}
             style={({ pressed }) => ({ flex: 1, borderRadius: 28, backgroundColor: pressed ? '#FFF4DC22' : 'transparent' })} />
+        </Animated.View>
+      )}
+      {enableFairyWalk && !readOnly && activeMode === 'normal' && !selectedFlower && fairyInTreehouse && (
+        <Animated.View testID="fairy-treehouse-hint" style={[{ position: 'absolute', alignItems: 'center', zIndex: 25 }, treehouseHintStyle]}>
+          <Pressable accessibilityRole="button" accessibilityLabel={treehouseHint(locale).label} accessibilityHint={treehouseHint(locale).hint}
+            onPress={() => fairyRef.current?.returnFromTreehouse()} style={({ pressed }) => [styles.treehouseHint, pressed && { opacity: 0.75 }]}>
+            <Text style={styles.treehouseHintText}>{treehouseHint(locale).label}</Text>
+            <Text style={styles.treehouseHintHint}>{treehouseHint(locale).hint}</Text>
+          </Pressable>
+          <View style={styles.treehouseHintTail} />
         </Animated.View>
       )}
       {enableFairyWalk && !readOnly && activeMode === 'normal' && !selectedFlower &&
@@ -2101,6 +2126,12 @@ const styles = StyleSheet.create({
   scene: { flex: 1, backgroundColor: GARDEN_WATER_COLOR },
   fairyAction: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 8, backgroundColor: '#365b42', alignItems: 'center' },
   fairyActionText: { color: '#fff', fontSize: 14 },
+  treehouseHint: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 16, alignItems: 'center',
+    backgroundColor: '#FFF6E2F2', borderWidth: 1, borderColor: '#C9A44C' },
+  treehouseHintText: { color: '#5A4630', fontSize: 13, fontWeight: '600' },
+  treehouseHintHint: { color: '#8A7354', fontSize: 11, marginTop: 1 },
+  treehouseHintTail: { width: 10, height: 10, marginTop: -6, transform: [{ rotate: '45deg' }], backgroundColor: '#FFF6E2F2',
+    borderRightWidth: 1, borderBottomWidth: 1, borderColor: '#C9A44C' },
   zoomButton: { width: 40, height: 40, borderRadius: 8, backgroundColor: '#365b42', borderWidth: 1, borderColor: '#e3edda', alignItems: 'center', justifyContent: 'center' },
   zoomButtonText: { color: '#fff', fontSize: 25, lineHeight: 30 },
   controls: { position: 'absolute', top: 8, left: 8, right: 8, padding: 8, gap: 6, backgroundColor: '#FFFFFFE8' },

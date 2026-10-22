@@ -3,13 +3,15 @@ import { ActivityIndicator, Image, Modal, Pressable, ScrollView, StyleSheet, Tex
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePanelTheme, type PanelTheme } from '../features/PanelTheme';
-import { likeFairyMoment, loadFairyMoments, type FairyMomentPost, type FairyMomentsPage } from '../../services/fairyMoments';
+import { likeFairyMoment, loadFairyMoments, setFairyMomentsAvatar, type FairyMomentPost, type FairyMomentsPage } from '../../services/fairyMoments';
 import { useAuth } from '../../services/auth';
 import { momentLocale, momentLocationLabel, momentTimeLabel, MOMENTS_COPY, type MomentLocale } from './momentFormat';
 import { MOMENT_PHOTOS, momentPhoto } from './momentPhotos';
+import { avatarArt } from '../avatars/avatarArt';
+import { AvatarPicker } from '../avatars/AvatarPicker';
 
 const COVER = MOMENT_PHOTOS['IN_TREEHOUSE/2'];
-const AVATAR = MOMENT_PHOTOS['TEA_TIME/3'];
+const DEFAULT_AVATAR = MOMENT_PHOTOS['TEA_TIME/3']; // her own photo until the owner picks a library avatar
 const HEART = '#E7A3B8';
 
 // The Fairy's own feed: photos and text-only small discoveries, newest first. Opening it
@@ -25,6 +27,7 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
   const [page, setPage] = useState<FairyMomentsPage | null>(null);
   const [error, setError] = useState<'' | 'loadError' | 'moreError'>('');
   const [loadingMore, setLoadingMore] = useState(false);
+  const [choosing, setChoosing] = useState(false), [savingAvatar, setSavingAvatar] = useState(false), [avatarError, setAvatarError] = useState('');
   const request = useRef(0);
 
   const load = useCallback(async () => {
@@ -58,10 +61,23 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
     try { await likeFairyMoment(post.id, liked); } catch { set(!liked); }
   };
 
+  const chooseAvatar = async (avatar: string | null) => {
+    if (!page || savingAvatar) return;
+    if (avatar === (page.fairy.avatar ?? null)) { setChoosing(false); return; }
+    setSavingAvatar(true); setAvatarError('');
+    try {
+      const saved = await setFairyMomentsAvatar(avatar);
+      setPage(current => current && { ...current, fairy: { ...current.fairy, avatar: saved.avatar } });
+      setChoosing(false);
+    } catch { setAvatarError(MOMENTS_COPY[locale].avatarFailed); }
+    finally { setSavingAvatar(false); }
+  };
+
   // The server's answer is authoritative; the signed-in profile covers the first load.
   const locale = momentLocale(page?.locale ?? experience?.user.preferredLocale);
   const copy = MOMENTS_COPY[locale];
   const name = page?.fairy.name ?? 'Bloom';
+  const avatar = avatarArt(page?.fairy.avatar) ?? DEFAULT_AVATAR;
   return <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
     <View style={styles.overlay}>
       <Pressable accessibilityLabel={copy.close} onPress={onClose} style={[StyleSheet.absoluteFill, styles.backdrop]} />
@@ -84,7 +100,10 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
             <Image source={COVER} style={styles.coverImage} resizeMode="cover" accessibilityIgnoresInvertColors />
             <View style={styles.identity}>
               <Text style={styles.name}>{name}</Text>
-              <Image source={AVATAR} style={styles.avatar} />
+              <Pressable accessibilityRole="button" accessibilityLabel={copy.avatarChange(name)} disabled={!page}
+                onPress={() => { setAvatarError(''); setChoosing(true); }} style={({ pressed }) => [pressed && styles.pressed]}>
+                <Image source={avatar} style={styles.avatar} />
+              </Pressable>
             </View>
           </View>
           <Text style={styles.signature}>{copy.signature}</Text>
@@ -95,23 +114,27 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
           </View> : null}
           {page && !page.posts.length ? <Text style={[styles.muted, styles.status]}>
             {copy.empty(name)}</Text> : null}
-          {page?.posts.map(post => <MomentPost key={post.id} post={post} name={name} locale={locale} styles={styles} mutedColor={theme.muted} onLike={() => void toggleLike(post)} />)}
+          {page?.posts.map(post => <MomentPost key={post.id} post={post} name={name} avatar={avatar} locale={locale} styles={styles} mutedColor={theme.muted} onLike={() => void toggleLike(post)} />)}
           {page?.nextBefore ? <Pressable accessibilityRole="button" onPress={() => void loadMore()} style={styles.more}>
             {loadingMore ? <ActivityIndicator color={theme.gold} /> : <Text style={styles.link}>{copy.more}</Text>}
           </Pressable> : page?.posts.length ? <Text style={[styles.muted, styles.end]}>{copy.end}</Text> : null}
         </ScrollView>
       </View>
     </View>
+    <AvatarPicker visible={choosing} title={copy.avatarTitle(name)} selected={page?.fairy.avatar ?? null} busy={savingAvatar}
+      error={avatarError} closeLabel={copy.avatarClose} optionLabel={copy.avatarOption}
+      defaultOption={{ source: DEFAULT_AVATAR, label: copy.avatarDefault(name) }}
+      onSelect={next => void chooseAvatar(next)} onClose={() => setChoosing(false)} />
   </Modal>;
 }
 
-function MomentPost({ post, name, locale, styles, mutedColor, onLike }: {
-  post: FairyMomentPost; name: string; locale: MomentLocale; styles: ReturnType<typeof createStyles>; mutedColor: string; onLike: () => void;
+function MomentPost({ post, name, avatar, locale, styles, mutedColor, onLike }: {
+  post: FairyMomentPost; name: string; avatar: number; locale: MomentLocale; styles: ReturnType<typeof createStyles>; mutedColor: string; onLike: () => void;
 }) {
   const copy = MOMENTS_COPY[locale], photo = momentPhoto(post.photoKey), place = momentLocationLabel(post.location, locale);
   const meta = `${momentTimeLabel(post.postedAt, new Date(), locale)} · ${place}`;
   return <View style={styles.post}>
-    <Image source={AVATAR} style={styles.postAvatar} />
+    <Image source={avatar} style={styles.postAvatar} />
     <View style={styles.postBody}>
       <Text style={styles.postName}>{name}</Text>
       <Text style={[styles.caption, !photo && styles.textOnly]}>{post.caption}</Text>

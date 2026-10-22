@@ -15,6 +15,10 @@ import { EventIllustration } from './EventIllustration';
 import { FriendsPanel } from './FriendsPanel';
 import { GardenPrivacySettings } from './GardenPrivacySettings';
 import { FEATURE_COLORS as colors, FeatureActionButton, FeatureSection, StatusChip, ui } from './FeatureUI';
+import { AvatarPicker } from '../avatars/AvatarPicker';
+import { UserAvatar } from '../avatars/UserAvatar';
+import { momentLocale } from '../moments/momentFormat';
+import { timezoneLabel } from '../../services/timezoneLabel';
 
 type Feature = typeof GARDEN_FEATURES[number];
 const messages: Record<string, [string, string]> = {
@@ -78,22 +82,17 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
 }) {
   const { theme, light, loading, error: themeError, setLight } = usePanelTheme();
   const styles = createStyles(theme);
-  const { session, experience, logout } = useAuth();
+  const { session, logout } = useAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const profile = experience?.user || session?.user;
   if (feature.id === 'events') return <EventsPanel onClose={onClose} onGardenChanged={onGardenChanged} />;
   if (feature.id === 'friends') return <FriendsPanel key={session?.user.id} addingFriend={addingFriend}
     onAddFriend={onAddFriend} onCloseAddFriend={onCloseAddFriend} onClose={onClose} />;
   if (feature.id === 'profile' || feature.id === 'settings') return <View style={ui.body}>
-    <View style={styles.profileHero}>
-      <View style={styles.avatar}><Text style={styles.avatarText}>{profile?.avatar || '○'}</Text></View>
-      <Text style={[ui.title, { color: theme.text }]}>{profile?.name || 'PetalPal account'}</Text>
-      <Text style={[ui.caption, { color: theme.muted }]}>{profile?.timezone || 'UTC'}</Text>
-    </View>
+    <ProfileHero theme={theme} />
     {feature.id === 'profile' ? <FeatureSection title="Your Garden profile">
-      <Text style={[ui.text, { color: theme.text }]}>This is your saved profile. Name and avatar editing will be connected later.</Text>
-      <Text style={[ui.caption, { color: theme.muted }]}>Read only · synced from your account</Text>
+      <Text style={[ui.text, { color: theme.text }]}>Tap your avatar to choose a new one from the avatar library. Name editing will be connected later.</Text>
+      <Text style={[ui.caption, { color: theme.muted }]}>Synced from your account</Text>
       {onOpenSettings ? <FeatureActionButton title="Settings" onPress={onOpenSettings} /> : null}
     </FeatureSection> : <>
       <FeatureSection title="Your account">
@@ -139,6 +138,42 @@ function FeatureContent({ feature, onClose, onGardenChanged, onOpenSettings, add
   </View>;
 }
 
+const PROFILE_COPY = {
+  en: { change: 'Change avatar', title: 'Choose your avatar', option: (n: number) => `Avatar ${n}`, close: 'Close',
+    failed: 'Your avatar was not saved. Please try again.' },
+  'zh-Hans': { change: '更换头像', title: '选择你的头像', option: (n: number) => `头像 ${n}`, close: '关闭',
+    failed: '头像没有保存成功，请再试一次。' },
+};
+
+// Your avatar (tap to choose from the avatar library), name and time zone.
+function ProfileHero({ theme }: { theme: PanelTheme }) {
+  const styles = createStyles(theme);
+  const { session, experience, updateAvatar } = useAuth();
+  const profile = experience?.user || session?.user;
+  const locale = momentLocale(experience?.user.preferredLocale);
+  const copy = PROFILE_COPY[locale];
+  const [choosing, setChoosing] = useState(false), [saving, setSaving] = useState(false), [error, setError] = useState('');
+  async function choose(avatar: string | null) {
+    if (!avatar || saving) return;
+    if (avatar === profile?.avatar) { setChoosing(false); return; }
+    setSaving(true); setError('');
+    try { await updateAvatar(avatar); setChoosing(false); }
+    catch { setError(copy.failed); }
+    finally { setSaving(false); }
+  }
+  return <View style={styles.profileHero}>
+    <Pressable accessibilityRole="button" accessibilityLabel={copy.change} disabled={!profile}
+      onPress={() => { setError(''); setChoosing(true); }} style={({ pressed }) => [pressed && ui.pressed]}>
+      <UserAvatar avatar={profile?.avatar} size={76} style={styles.avatar} fallback="○" />
+      <View style={styles.avatarEdit}><SymbolView name={{ ios: 'pencil', android: 'edit', web: 'edit' }} size={13} tintColor={colors.ink} /></View>
+    </Pressable>
+    <Text style={[ui.title, { color: theme.text }]}>{profile?.name || 'PetalPal account'}</Text>
+    <Text style={[ui.caption, { color: theme.muted }]}>{timezoneLabel(profile?.timezone, locale)}</Text>
+    <AvatarPicker visible={choosing} title={copy.title} selected={profile?.avatar} busy={saving} error={error}
+      closeLabel={copy.close} optionLabel={copy.option} onSelect={avatar => void choose(avatar)} onClose={() => setChoosing(false)} />
+  </View>;
+}
+
 const createStyles = (theme: PanelTheme) => StyleSheet.create({
   eventsPanel: { padding: 9, backgroundColor: '#528F83', borderColor: '#D4BD85', borderWidth: 2, borderRadius: 32, boxShadow: 'inset 0 0 0 2px #A5C6AC, 0 12px 30px #163D4050' },
   eventsHeader: { backgroundColor: theme.background, borderBottomWidth: 0, borderTopLeftRadius: 22, borderTopRightRadius: 22, paddingHorizontal: 14, paddingVertical: 12 },
@@ -174,6 +209,7 @@ const createStyles = (theme: PanelTheme) => StyleSheet.create({
     backgroundColor: colors.tealWash, borderWidth: 1, borderColor: colors.line },
   orbitDot: { position: 'absolute', top: 4, right: 4, width: 18, height: 18, borderRadius: 9, backgroundColor: colors.secondary },
   profileHero: { alignItems: 'center', gap: 10 },
-  avatar: { width: 76, height: 76, alignItems: 'center', justifyContent: 'center', borderRadius: 28, backgroundColor: colors.purpleWash },
-  avatarText: { fontSize: 36 },
+  avatar: { backgroundColor: colors.purpleWash, borderWidth: 2, borderColor: colors.secondary },
+  avatarEdit: { position: 'absolute', right: -2, bottom: -2, width: 26, height: 26, borderRadius: 13, alignItems: 'center',
+    justifyContent: 'center', backgroundColor: colors.tealWash, borderWidth: 1, borderColor: colors.line },
 });
