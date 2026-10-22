@@ -10,6 +10,10 @@ import { SidebarIllustration } from './SidebarIllustration';
 import { usePlanting } from './planting/PlantingContext';
 import { FairyMomentsPanel } from '../moments/FairyMomentsPanel';
 import { markFairyMomentsRead, useFairyRuntime } from '../../services/fairyRuntime';
+import { useClosenessSummary } from '../../services/fairyCloseness';
+import { useAuth } from '../../services/auth';
+import { FairyEntryCard } from '../fairy/FairyEntryCard';
+import { momentLocale } from '../moments/momentFormat';
 
 // One navigation model; only its sizing changes with the viewport.
 export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) {
@@ -29,6 +33,15 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
   const runtime = useFairyRuntime();
   const moments = { enabled: Boolean(runtime?.moments), unread: Boolean(runtime?.moments?.unread) };
   const [momentsOpen, setMomentsOpen] = useState(false);
+  // The Fairy icon opens her entry card (亲密度 · Our Bond / 朋友圈 · Fairy Moments) when
+  // either room is on; the closeness summary reloads each time the card opens.
+  const [entryOpens, setEntryOpens] = useState(0);
+  const [entryOpen, setEntryOpen] = useState(false);
+  const closeness = useClosenessSummary(entryOpens);
+  const { experience } = useAuth();
+  const locale = momentLocale(experience?.user.preferredLocale);
+  const bondWaiting = Boolean(closeness.summary && !closeness.summary.checkIn.checkedInToday);
+  const fairyDot = moments.unread || bondWaiting;
   useEffect(() => {
     if (!entryFeature) return;
     if (entryFeature === 'fairy') {
@@ -44,13 +57,13 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
   const navigationItem = (feature: typeof GARDEN_FEATURES[number]) => {
     const selected = openFeature === feature.id || (feature.id === 'profile' && openFeature === 'settings') || (feature.id === 'garden' && !openFeature);
     return <Pressable key={feature.id} accessibilityRole="button"
-      accessibilityLabel={`${feature.label}, ${feature.status}${feature.id === 'fairy' && moments.unread ? ', new Moments' : ''}`} accessibilityState={{ selected }} testID={`hud-${feature.id}`}
+      accessibilityLabel={`${feature.label}, ${feature.status}${feature.id === 'fairy' && fairyDot ? ', something new' : ''}`} accessibilityState={{ selected }} testID={`hud-${feature.id}`}
       onHoverIn={() => setHighlightedFeature(feature.id)} onHoverOut={() => setHighlightedFeature(undefined)}
       onFocus={() => setHighlightedFeature(feature.id)} onBlur={() => setHighlightedFeature(undefined)}
       onPress={() => {
         if (feature.id === 'fairy') {
           setOpenFeature(undefined);
-          if (moments.enabled) { setMomentsOpen(true); markFairyMomentsRead(); }
+          if (moments.enabled || closeness.on) { setEntryOpen(true); setEntryOpens(count => count + 1); }
           else onFocusFairy?.();
         } else setOpenFeature(feature.id === 'garden' ? undefined : feature.id);
       }}
@@ -59,7 +72,7 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
         pressed && styles.pressed]}>
       <View>
         <SidebarIllustration id={feature.id} size={iconSize} active={selected || highlightedFeature === feature.id} />
-        {feature.id === 'fairy' && moments.unread ? <View style={[styles.unread, { borderColor: theme.background }]} /> : null}
+        {feature.id === 'fairy' && fairyDot ? <View style={[styles.unread, { borderColor: theme.background }]} /> : null}
       </View>
       <Text numberOfLines={1} style={[styles.label, styles.bottomLabel, { fontSize: phone ? 13 : 15, color: theme.text }]}>
         {feature.id === 'events' ? 'Events' : feature.id === 'profile' ? 'Me' : feature.label}
@@ -82,6 +95,9 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
         <Text style={styles.label}>Garden history</Text>
       </Pressable>
     </View>
+    <FairyEntryCard visible={entryOpen} locale={locale} closeness={closeness.summary} closenessOn={closeness.on === true}
+      momentsOn={moments.enabled} momentsUnread={moments.unread} onClose={() => setEntryOpen(false)}
+      onOpenMoments={() => { setEntryOpen(false); setMomentsOpen(true); markFairyMomentsRead(); }} />
     <FairyMomentsPanel visible={momentsOpen} onClose={() => setMomentsOpen(false)}
       onFindFairy={() => { setMomentsOpen(false); onFocusFairy?.(); }} />
     <FeatureOverlay feature={gardenFeature(openFeature)} onClose={() => setOpenFeature(undefined)} onGardenChanged={refreshGarden} onOpenSettings={() => setOpenFeature('settings')} />

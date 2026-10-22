@@ -7,6 +7,7 @@ import type { FairyState } from './fairy/FairyNavigation';
 import { constrainGardenCamera, zoomGardenAt, GARDEN_WORLD_BOUNDS } from './rendering/gardenWorldBounds';
 import GardenFairy, { type FairyHandle } from './fairy/GardenFairy';
 import { useFairySchedule } from './fairy/useFairySchedule';
+import { noteFairyInteraction } from '../../services/fairyCloseness';
 import { GardenCalendar } from './GardenCalendar';
 import type { FlowerSession } from './planting/flowerDetailApi';
 import { Circle, Group, Image, Path, Rect, useCanvasRef, useImage } from '@shopify/react-native-skia';
@@ -936,6 +937,7 @@ function GardenSceneContent({ enableFairyWalk = false, initialPreviewMode = true
       // Placement and flower details own taps before any Fairy destination.
       if (enableFairyWalk && fairyRef.current?.isMailboxBusy()) return;
       if (enableFairyWalk) noteFairyUser();
+      if (enableFairyWalk && !readOnly) noteFairyInteraction();
       if (enableFairyWalk && hitsMailbox({x:worldX,y:worldY},treehousePlacement)) {
         fairyRef.current?.visitMailbox();
         return;

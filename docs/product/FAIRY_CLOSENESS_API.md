@@ -12,6 +12,15 @@
 - 语言：返回里的 `locale` 是 `en` 或 `zh-Hans`，跟用户设置里的语言走。信物名字、PPL 的话、称号都已经按这个语言给好，前端直接显示。
 - 「一天」按账号时区算，不是手机时区。日期都是 `YYYY-MM-DD` 字符串。
 
+## App 里已经做好的
+
+- [mobile/src/services/fairyCloseness.ts](../../mobile/src/services/fairyCloseness.ts)：5 个接口的调用函数和返回类型已经写好，404 会自动当成功能没开、返回 null，直接用就行。
+- 画面 2 的花仙入口卡片已经做好了，代码在 [FairyEntryCard.tsx](../../mobile/src/components/fairy/FairyEntryCard.tsx)，图标在 `mobile/assets/fairy-entry/`。
+  - 点底部的 Fairy 图标会打开它，两个按钮的红点都已经接好。
+  - 「朋友圈」打开现有的朋友圈面板。
+  - 「亲密度」现在只显示等级和「马上就来」；亲密度页面做好后，把它传给 `onOpenBond` 就能接上。
+- 在花园里指挥 PPL 去喝茶、荡秋千等，会自动调用 `POST /api/fairy/closeness/tap`。前端最多每分钟调一次，服务器那边每天最多算 5 次。
+
 ## 设计稿 → 接口对照
 
 | 画面 | 用哪个接口 |
