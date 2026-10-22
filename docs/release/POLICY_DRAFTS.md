@@ -1,5 +1,7 @@
 # PetalPal public policies — publication drafts
 
+> **Superseded 2026-10-22** by the published pages in `mobile/public/legal/` — see [LEGAL_PUBLICATION.md](LEGAL_PUBLICATION.md). Kept for history.
+
 Prepared 2026-10-15. **OWNER/LEGAL REVIEW REQUIRED; NOT PUBLISHED.** Effective date: [OWNER TO SET]. Product: PetalPal. Brand: Jastrevia. Publisher/controller: **[LEGAL PUBLISHER NAME — OWNER CONFIRMATION REQUIRED]**. Website: https://jastrevia.com/ (owner supplied; automated availability check was inconclusive). Contact: **contact@jastrevia.com — delivery and staffing pending owner verification**. Internal use of “JX Technology Inc.” does not establish registration or legal status. No address, registration number or jurisdiction is asserted.
 
 Before publication, replace approval fields, verify publisher identity against the Apple/Google developer account, set justified retention periods, verify processor contracts/locations and user-rights requirements in intended markets, and test the actual URLs/inbox. Do not publish these unresolved fields as final legal promises.

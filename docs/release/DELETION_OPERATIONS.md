@@ -2,7 +2,7 @@
 
 Local code only. No production execution authorized.
 
-- Owner confirms delivery/access coverage for contact@jastrevia.com and the legal publisher. Publish `account-deletion.html` on an approved HTTPS page in the corporate website repository only after owner review. Replace the draft banner, approve retention wording, and remove `noindex` if appropriate. No new URL is claimed here.
+- Owner confirms delivery/access coverage for contact@jastrevia.com and the legal publisher. The deletion page is published from `mobile/public/legal/account-deletion.html` at https://app.jastrevia.com/legal/account-deletion.html (2026-10-22, see [LEGAL_PUBLICATION.md](LEGAL_PUBLICATION.md)). No new URL is claimed here.
 - Test opening the public resource on an uninstalled-device browser, sending from a disposable account mailbox, receiving and processing it, and receiving completion. Add the exact tested URL in Play Console. A mailto action opens a draft, not a submission confirmation.
 - Staff verify control of the registered mailbox using an approved challenge. Never request passwords/tokens/private entries. For lost-mailbox cases, use an owner-approved recovery process; do not delete on an unverified claim.
 - Approved operator executes the same `requestAccountDeletion` service with the verified server-resolved user/UID pair. Never accept raw caller-supplied ownership as proof. Use least-privilege server tooling, record minimal audit outcome and notify the requester. No public unauthenticated deletion API is prepared.
