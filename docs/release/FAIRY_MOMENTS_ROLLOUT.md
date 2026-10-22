@@ -33,7 +33,7 @@
 
 | 变量 | 值 | 必需 |
 |---|---|---|
-| `FAIRY_MOMENTS_OWNER_IDS` | 逗号分隔的 PetalPal **User id**（`user_…`，不是 Firebase UID），不能有空格；或者只填 `*`，表示所有登录用户（内测站点在 Cloudflare Access 后面，等于所有内测用户）。同一份名单也控制花园里的小花仙跟着作息走 | 是 |
+| `FAIRY_MOMENTS_OWNER_IDS` | 逗号分隔的 PetalPal **User id**（`user_…`，不是 Firebase UID），前后多出的空格或换行会被忽略；或者只填 `*`，表示所有登录用户（内测站点在 Cloudflare Access 后面，等于所有内测用户）。同一份名单也控制花园里的小花仙跟着作息走 | 是 |
 | `AI_FAIRY_MOMENT_MODEL` | `claude-haiku-5-5`。不设就一直用预写文案 | 否 |
 | `AI_FAIRY_MOMENT_DAILY_LIMIT` | 每人每天最多几次 Haiku 调用，默认 6；`0` 等于关掉 | 否 |
 

@@ -230,7 +230,11 @@ test("the short-report owner list opts single owners in and fails closed when ma
   assert.equal(weeklyContractFor({}, "alice", "weekly-reflection-v2"), "weekly-reflection-v2");
   // "*" alone opens the short report to every owner (the beta behind Cloudflare Access).
   for (const owner of ["alice", "bob", "user_any"]) assert.equal(weeklyContractFor({ AI_WEEKLY_SHORT_OWNER_IDS: "*" }, owner, "weekly-reflection-v2"), WEEKLY_SHORT);
-  for (const value of ["*,alice", "alice,*", " *", "**", "alice,", ",alice", "alice bob", "a".repeat(65), Array(101).fill("x").join(","), "alice;bob"]) {
+  // A pasted space or line break around the value or the ids is ignored.
+  for (const value of [" *", "*\n", " * "]) assert.equal(weeklyContractFor({ AI_WEEKLY_SHORT_OWNER_IDS: value }, "bob", "weekly-reflection-v2"), WEEKLY_SHORT, JSON.stringify(value));
+  assert.equal(weeklyContractFor({ AI_WEEKLY_SHORT_OWNER_IDS: "alice, bob\n" }, "bob", "weekly-reflection-v2"), WEEKLY_SHORT);
+  assert.equal(weeklyShortOwners({ AI_WEEKLY_SHORT_OWNER_IDS: " \n" }).size, 0);
+  for (const value of ["*,alice", "alice,*", "**", "alice,", ",alice", "alice bob", "a".repeat(65), Array(101).fill("x").join(","), "alice;bob"]) {
     assert.throws(() => weeklyShortOwners({ AI_WEEKLY_SHORT_OWNER_IDS: value }), { code: "AI_GATEWAY_CONFIG_INVALID" }, value);
   }
 });
