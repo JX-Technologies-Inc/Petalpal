@@ -204,6 +204,19 @@ of [test/back/weekly-short.test.js](test/back/weekly-short.test.js).
   [test/back/fairy-moments.test.js](test/back/fairy-moments.test.js) (UTC,
   `America/Vancouver`, `Asia/Shanghai`) and
   [test/back/fairy-moments.route.test.js](test/back/fairy-moments.route.test.js).
+- **Fairy closeness, calendar check-in and keepsakes** (default OFF; owners listed in
+  `FAIRY_CLOSENESS_OWNER_IDS`, [lib/fairy-closeness.js](lib/fairy-closeness.js)). A
+  "day" is the account-zone local date of the request (`localDateForInstant(now,
+  User.timezone)`, invalid zone → UTC): one check-in per local date
+  (`FairyCheckIn @@unique([userId, localDate])`), the per-source daily caps count
+  `FairyClosenessAward.localDate`, and a month is the `YYYY-MM` prefix of that
+  date. The streak continues when the previous check-in is the day before; a gap of
+  exactly one missed day is bridged once per 7 local days (`graceUsed`). Day
+  arithmetic is calendar-date only (`addLocalDays`, UTC date numbers), so DST
+  changes never add or drop a day. Changing `User.timezone` later starts using the
+  new zone's dates from then on; stored rows keep the date they were written with.
+  **VERIFIED:** [test/back/fairy-closeness.test.js](test/back/fairy-closeness.test.js)
+  (`America/Vancouver`, a UTC instant that is still the previous local evening).
 
 ## 6. Production vs TEST
 
