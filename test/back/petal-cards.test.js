@@ -50,5 +50,6 @@ test("owner switch: a listed id, or \"*\" alone for every owner; anything else s
   assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "user_1" }, "user_3"), false);
   assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "*" }, "user_3"), true);
   assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: "*" }, ""), false);
-  for (const value of ["*,user_1", " *", "user_1, user_2"]) assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: value }, "user_1"), false, value);
+  for (const value of [" *", "*\n", "user_1, user_2", " user_1\n"]) assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: value }, "user_1"), true, JSON.stringify(value));
+  for (const value of ["*,user_1", "**", "user_1 user_2", "\n"]) assert.equal(petalCardsEnabledFor({ PETAL_CARDS_OWNER_IDS: value }, "user_1"), false, value);
 });
