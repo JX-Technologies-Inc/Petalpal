@@ -40,6 +40,25 @@ test("migration adds owner-scoped, cascading Fairy Moments with one post per run
   } finally { await db.close(); }
 });
 
+test("migration renames only starter Fairies still called Bloom to PPL", async () => {
+  const db = new PGlite({ extensions: { vector } });
+  try {
+    const names = (await readdir(path.join(root, "prisma/migrations"), { withFileTypes: true }))
+      .filter(item => item.isDirectory()).map(item => item.name).sort();
+    const rename = "202610220002_rename_starter_fairy_ppl";
+    assert.ok(names.includes(rename));
+    for (const name of names.filter(name => name < rename)) await db.exec(await readFile(path.join(root, "prisma/migrations", name, "migration.sql"), "utf8"));
+    await db.exec(`INSERT INTO "User" (id, name) VALUES ('a', 'A'), ('b', 'B'), ('c', 'C');
+      INSERT INTO "UserFairy" (id, "userId", "fairyType", name, "unlockSource", "updatedAt") VALUES
+        ('starter', 'a', 'BLOOM', 'Bloom', 'ONBOARDING', CURRENT_TIMESTAMP),
+        ('renamed', 'b', 'BLOOM', 'Petal', 'ONBOARDING', CURRENT_TIMESTAMP),
+        ('other', 'c', 'LUMI', 'Bloom', 'MONTHLY_ACTIVITY', CURRENT_TIMESTAMP);`);
+    await db.exec(await readFile(path.join(root, "prisma/migrations", rename, "migration.sql"), "utf8"));
+    const rows = (await db.query(`SELECT id, name FROM "UserFairy" ORDER BY id`)).rows;
+    assert.deepEqual(rows.map(row => [row.id, row.name]), [["other", "Bloom"], ["renamed", "Petal"], ["starter", "PPL"]]);
+  } finally { await db.close(); }
+});
+
 function timeMatches(value, filter) {
   const time = value.getTime();
   return (filter.gte === undefined || time >= filter.gte.getTime()) && (filter.gt === undefined || time > filter.gt.getTime()) &&

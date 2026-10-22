@@ -46,7 +46,7 @@ export function momentTimeLabel(postedAt: string, now = new Date(), locale: Mome
 export const MOMENTS_COPY = {
   en: {
     title: (name: string) => `${name}'s Moments`, close: 'Close Moments', find: 'Find her',
-    findLabel: (name: string) => `Find ${name} in the Garden`, signature: 'Checking whether the flowers opened today.',
+    findLabel: (name: string) => `Find ${name} in the Garden`, signature: 'Cherish the present, rejoice in new beginnings.', // crocus flower language
     loading: 'Loading Moments', loadError: 'Her Moments could not load. Try again in a moment.',
     moreError: 'More Moments could not load. Try again in a moment.', retry: 'Try again',
     empty: (name: string) => `${name} hasn't posted yet. She shares a photo or a small discovery every few days.`,
@@ -58,7 +58,7 @@ export const MOMENTS_COPY = {
   },
   'zh-Hans': {
     title: (name: string) => `${name}的朋友圈`, close: '关闭朋友圈', find: '去找她',
-    findLabel: (name: string) => `在花园里找到${name}`, signature: '在看今天的花开了没有。',
+    findLabel: (name: string) => `在花园里找到${name}`, signature: '珍惜当下，喜悦新生。', // 番红花的花语
     loading: '正在加载朋友圈', loadError: '朋友圈没加载出来，等一下再试试。',
     moreError: '更早的动态没加载出来，等一下再试试。', retry: '再试一次',
     empty: (name: string) => `${name}还没有发过动态。她每隔几天会分享一张照片或一个小发现。`,
