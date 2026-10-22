@@ -50,6 +50,15 @@ import {
   setFairyMomentsAvatar
 } from "./lib/fairy-moments.js";
 import { isLibraryAvatar } from "./lib/avatars.js";
+import {
+  awardCloseness,
+  awardFairyTap,
+  checkInWithFairy,
+  closenessSummary,
+  fairyClosenessEnabledFor,
+  listCheckIns,
+  listKeepsakes
+} from "./lib/fairy-closeness.js";
 import { fairyMomentCaptionsEnabled, fillFairyMomentCaptions } from "./lib/haiku-fairy-moment.js";
 import {
   STARTER_FAIRY,
@@ -1821,6 +1830,7 @@ app.post("/api/fairy/moments/:momentId/like", async (req, res) => {
       userId: req.auth.userId, momentId: req.params.momentId, liked: req.body.liked, now: new Date()
     });
     if (!updated) return res.status(404).json({ error: "Not found" });
+    if (req.body.liked) await rewardCloseness(req.auth.userId, "MOMENT_LIKE", req.params.momentId);
     res.json({ liked: req.body.liked });
   } catch (error) {
     logServerError("POST /api/fairy/moments/:momentId/like error", error);
@@ -1843,6 +1853,51 @@ app.put("/api/fairy/moments/avatar", async (req, res) => {
     res.status(500).json({ error: "Unable to update the Moments avatar" });
   }
 });
+
+// Closeness with PPL, the calendar check-in and her keepsakes (lib/fairy-closeness.js).
+// Owner-scoped by req.auth.userId; off unless FAIRY_CLOSENESS_OWNER_IDS lists the owner.
+async function rewardCloseness(userId, source, key) {
+  if (!fairyClosenessEnabledFor(userId)) return null;
+  try {
+    return await awardCloseness(prisma, { userId, source, key, now: new Date() });
+  } catch (error) {
+    logServerError("Fairy closeness award error", error);
+    return null;
+  }
+}
+
+const closenessRoute = (label, handler) => async (req, res) => {
+  if (!fairyClosenessEnabledFor(req.auth.userId)) return res.status(404).json({ error: "Not found" });
+  try {
+    const result = await handler(req);
+    if (!result) return res.status(404).json({ error: "Not found" });
+    res.json(result);
+  } catch (error) {
+    logServerError(`${label} error`, error);
+    res.status(500).json({ error: "Unable to load closeness" });
+  }
+};
+
+app.get("/api/fairy/closeness", closenessRoute("GET /api/fairy/closeness",
+  req => closenessSummary(prisma, { userId: req.auth.userId, now: new Date() })));
+
+app.get("/api/fairy/check-ins", (req, res, next) => {
+  const month = req.query.month;
+  if (month !== undefined && (typeof month !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month))) {
+    return res.status(400).json({ error: "month must be YYYY-MM" });
+  }
+  next();
+}, closenessRoute("GET /api/fairy/check-ins",
+  req => listCheckIns(prisma, { userId: req.auth.userId, month: req.query.month, now: new Date() })));
+
+app.post("/api/fairy/check-in", allowBodyFields([]), closenessRoute("POST /api/fairy/check-in",
+  req => checkInWithFairy(prisma, { userId: req.auth.userId, now: new Date() })));
+
+app.get("/api/fairy/keepsakes", closenessRoute("GET /api/fairy/keepsakes",
+  req => listKeepsakes(prisma, { userId: req.auth.userId, now: new Date() })));
+
+app.post("/api/fairy/closeness/tap", allowBodyFields([]), closenessRoute("POST /api/fairy/closeness/tap",
+  req => awardFairyTap(prisma, { userId: req.auth.userId, now: new Date() })));
 
 app.put("/users/:userId/fairy-state", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;
@@ -2107,6 +2162,7 @@ app.post("/events", aiRateLimit, async (req, res) => {
       idempotencyKey: req.get("idempotency-key")
     });
     transactionElapsedMs = Date.now() - transactionStartedAt;
+    if (result.created) await rewardCloseness(req.auth.userId, "EVENT", result.event.id);
     const enrichment = result.created
       ? (primaryGardenMood
           ? await enrichCreatedEvent(result.event, primaryGardenMood, result.aiProcessingAllowed, result.aiProcessingConsentUpdatedAt)
@@ -2247,6 +2303,7 @@ app.get("/ai/reports/:reportType/:reportId", async (req, res) => {
   try {
     const report = await read();
     if (!report) return res.status(404).json({ error: "AI report not found" });
+    if (req.params.reportType === "weekly") await rewardCloseness(req.auth.userId, "WEEKLY_READ", req.params.reportId);
     return res.json(report);
   } catch (error) {
     if (error?.code === "AI_FORBIDDEN") return res.status(403).json({ error: "AI processing is not currently authorized" });

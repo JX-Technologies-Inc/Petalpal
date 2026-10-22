@@ -10,6 +10,8 @@ const routes = [
   ["PUT /users/:userId/fairy-state", "requireOwnUser and allowlisted fields"],
   ["POST /api/fairy/moments/:momentId/like", "updateMany scopes the Moment to req.auth.userId"],
   ["PUT /api/fairy/moments/avatar", "updateMany scopes the active Fairy to req.auth.userId; library ids only"],
+  ["POST /api/fairy/check-in", "owner is req.auth.userId; empty body only; one check-in per local day under an advisory lock"],
+  ["POST /api/fairy/closeness/tap", "owner is req.auth.userId; empty body only; capped per local day"],
   ["PUT /users/:userId/ai-consent", "requireOwnUser and boolean allowlist"],
   ["POST /events", "ownerId/userId rejected; create helper receives req.auth identity"],
   ["DELETE /events/:eventId", "repository receives req.auth identity"],
@@ -37,7 +39,7 @@ test("authenticated HTTP mutation inventory has an explicit security disposition
     assert.equal(source.includes(declaration) || multiline, true, `${route} missing from server.js`);
     assert.ok(reason.length > 0);
   }
-  assert.equal(routes.length, 23);
+  assert.equal(routes.length, 25);
 });
 
 test("server-controlled identity and entitlement names are not accepted as generic mutation fields", () => {
