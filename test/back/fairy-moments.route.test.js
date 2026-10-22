@@ -131,6 +131,7 @@ test("Fairy Moments routes", async (t) => {
     const runtime = await call("/api/fairy/runtime");
     assert.equal(runtime.status, 200);
     assert.equal("moments" in runtime.body, false);
+    assert.equal("gardenSchedule" in runtime.body, false, "the Garden keeps its old Fairy for unlisted owners");
     assert.equal(state.moments.length, 0);
     assert.equal((await call("/api/fairy/moments")).status, 404);
     assert.equal((await call("/api/fairy/moments/moment-1/like", "POST", { liked: true })).status, 404);
@@ -143,6 +144,12 @@ test("Fairy Moments routes", async (t) => {
     assert.equal(runtime.status, 200);
     assert.ok(state.moments.length > 0, "a week of visits produces at least one post");
     assert.equal(runtime.body.moments.unread, state.moments.some(moment => moment.postedAt <= NOW));
+    assert.equal(runtime.body.gardenSchedule, true);
+    // Her schedule runs in the owner's zone (America/Vancouver): asleep at local night, awake by day.
+    const asleep = ["SLEEPING"].includes(runtime.body.currentState);
+    const localHour = Number(new Intl.DateTimeFormat("en-CA", { timeZone: "America/Vancouver", hour: "2-digit", hourCycle: "h23" }).format(NOW));
+    if (localHour >= 8 && localHour < 22) assert.equal(asleep, false, `awake at ${localHour}:00`);
+    if (localHour >= 1 && localHour < 6) assert.equal(asleep, true, `asleep at ${localHour}:00`);
     const since = NOW.getTime() - 7 * 24 * 3_600_000;
     for (const moment of state.moments) {
       assert.equal(moment.userId, "owner-1");
