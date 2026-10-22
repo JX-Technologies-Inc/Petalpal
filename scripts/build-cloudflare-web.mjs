@@ -46,9 +46,15 @@ if (config.expo.web.output !== 'single') throw new Error('Review hosting routing
 const names = ['API_KEY', 'AUTH_DOMAIN', 'PROJECT_ID', 'APP_ID'].map(x => `EXPO_PUBLIC_FIREBASE_${x}`);
 // Do not inherit unrelated provider credentials or native test flags into Expo.
 const env = Object.fromEntries(['PATH', 'HOME', 'TMPDIR', 'SystemRoot'].filter(k => process.env[k]).map(k => [k, process.env[k]]));
+// Published policies (mobile/public/legal, served by the Worker). Public pages: Cloudflare
+// Access must bypass /legal/* so people who are not signed in, and store review, can read them.
+const legal = 'https://app.jastrevia.com/legal';
 Object.assign(env, {
   NODE_ENV: 'production', EXPO_NO_DOTENV: '1', EXPO_NO_TELEMETRY: '1', CI: '1',
-  EXPO_PUBLIC_API_BASE_URL: apiOrigin
+  EXPO_PUBLIC_API_BASE_URL: apiOrigin,
+  EXPO_PUBLIC_PRIVACY_POLICY_URL: `${legal}/privacy.html`,
+  EXPO_PUBLIC_TERMS_URL: `${legal}/terms.html`,
+  EXPO_PUBLIC_DELETION_URL: `${legal}/account-deletion.html`
 });
 const fixtures = ['synthetic-public-build-fixture', 'fixture.invalid', 'petalpal-synthetic', 'synthetic-public-app'];
 for (const [index, name] of names.entries()) {

@@ -40,7 +40,7 @@ IMPLEMENTED / TESTED: Settings has a prominent destructive confirmation and exis
 
 Policy: Apple 5.1.1(v), Google deletion/User Data. Evidence: disposable real PostgreSQL with all migrations, actual DELETE API, vector cleanup and partial failures (integrated 5/5); updated deletion regressions 2/2. Initial vector test omitted the required GENERATED state/timestamp; fixed without weakening constraints. Signed-device cache erasure remains NOT VERIFIED.
 
-External resource: `docs/release/account-deletion.html` opens a deletion-request email without reinstalling the app. NOT PUBLISHED; inbox delivery, identity verification/recovery process, retention limits, backup restoration exclusions and provider erasure must be approved/tested. `DELETION_OPERATIONS.md` includes the bounded operator retry command. No production identity was created/deleted.
+External resource: published 2026-10-22 as https://app.jastrevia.com/legal/account-deletion.html (source `mobile/public/legal/account-deletion.html`, see `docs/release/LEGAL_PUBLICATION.md`); it opens a deletion-request email without reinstalling the app. Earlier note: inbox delivery, identity verification/recovery process, retention limits, backup restoration exclusions and provider erasure must be approved/tested. `DELETION_OPERATIONS.md` includes the bounded operator retry command. No production identity was created/deleted.
 
 ## E — Policies and disclosures
 
