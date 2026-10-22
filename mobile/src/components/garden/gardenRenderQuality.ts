@@ -20,13 +20,18 @@ export function backingSize(tier: GardenQuality, signals: QualitySignals) {
   return { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) };
 }
 export type FrameSample = { p90FrameMs: number; p90DrawMs: number; count: number };
-// Two slow windows vs four smooth windows; 20s between changes. Never switch during gestures.
+// AUTO opens at the display's native resolution (HIGH, up to 3x) and steps down to BALANCED
+// (2x) only when this device cannot keep up; it never drops below 2x (PERFORMANCE stays a dev
+// override). Two slow windows vs four smooth windows; 20s between changes, except that the
+// first step down is not held back, so a slow phone settles within a few seconds. Never
+// switches during gestures.
 export class GardenQualitySelector {
-  tier: GardenQuality = 'BALANCED';
+  tier: GardenQuality;
   private smooth = 0;
   private slow = 0;
   private lastChange: number;
-  constructor(now: number) { this.lastChange = now; }
+  private changed = false;
+  constructor(now: number, start: GardenQuality = 'HIGH') { this.lastChange = now; this.tier = start; }
   resetSamples() { this.smooth = this.slow = 0; }
   observe(sample: FrameSample, signals: QualitySignals, now: number, gesturing: boolean) {
     if (sample.count < 10 || gesturing) { this.resetSamples(); return this.tier; }
@@ -34,9 +39,10 @@ export class GardenQualitySelector {
     const smooth = sample.p90FrameMs <= 20 && sample.p90DrawMs <= 9;
     this.slow = slow ? this.slow + 1 : 0;
     this.smooth = smooth ? this.smooth + 1 : 0;
-    if (now - this.lastChange < 20_000) return this.tier;
+    const firstStepDown = !this.changed && this.slow >= 2 && this.tier === 'HIGH';
+    if (now - this.lastChange < 20_000 && !firstStepDown) return this.tier;
     let next = this.tier;
-    if (this.slow >= 2) next = this.tier === 'HIGH' ? 'BALANCED' : 'PERFORMANCE';
+    if (this.slow >= 2 && this.tier === 'HIGH') next = 'BALANCED';
     // Hardware hints limit speculative upgrades only. Slow runtime always wins.
     const constrained = (signals.memoryGB !== undefined && signals.memoryGB <= 4)
       || (signals.cores !== undefined && signals.cores <= 2);
@@ -46,7 +52,7 @@ export class GardenQualitySelector {
       const cost = higher.width * higher.height / (current.width * current.height);
       if (sample.p90DrawMs * cost <= 9) next = candidate;
     }
-    if (next !== this.tier) { this.tier = next; this.lastChange = now; this.resetSamples(); }
+    if (next !== this.tier) { this.tier = next; this.lastChange = now; this.changed = true; this.resetSamples(); }
     return this.tier;
   }
 }
