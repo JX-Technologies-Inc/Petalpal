@@ -39,10 +39,10 @@ test("all monthly Fairies use the centralized 20-day requirement", () => {
   assert.equal(secondMonthly.type, "MOSS");
 });
 
-test("onboarding state explicitly identifies Bloom as the guide Fairy", () => {
+test("onboarding state explicitly identifies PPL (type BLOOM) as the guide Fairy", () => {
   assert.deepEqual(withOnboardingGuideFairy({ onboardingStep: "MOOD_SELECTION" }), {
     onboardingStep: "MOOD_SELECTION",
     guideFairyType: "BLOOM",
-    guideFairy: { type: "BLOOM", name: "Bloom" }
+    guideFairy: { type: "BLOOM", name: "PPL" }
   });
 });

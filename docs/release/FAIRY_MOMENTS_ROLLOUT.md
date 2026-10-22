@@ -62,6 +62,10 @@ User id 的查法：登录网页端，在浏览器开发者工具 Network 里看
   或者选回她原来那张喝茶照。存在 `UserFairy.momentsAvatar`（迁移 `202610220001_fairy_moments_avatar`），
   `PUT /api/fairy/moments/avatar {avatar: "fairy-1"…"fairy-8" | null}`，只接受头像库里的 id；
   `GET /api/fairy/moments` 的 `fairy.avatar` 返回当前选择（null = 原照片）。
+- 初始花仙从 Bloom 改名为 **PPL**（`lib/fairy-config.js`），朋友圈签名是番红花的花语「珍惜当下，喜悦新生」/
+  "Cherish the present, rejoice in new beginnings."。已有账号靠迁移 `202610220002_rename_starter_fairy_ppl`
+  改名（只改类型是 BLOOM、名字还是 Bloom 的那些）。正式环境部署不跑迁移，要按 §2 手动 `prisma migrate deploy`；
+  不跑也不会报错，只是老账号还显示 Bloom。
 - 她在树屋里时人是藏在门后的（没有坐在树屋里的画），所以树屋窗户会更亮，门上方有一个气泡
   「小花仙在树屋里 ✨ / 点一下叫她出来」，点了她就走出来。
 - 没有评论和回复（v2）。

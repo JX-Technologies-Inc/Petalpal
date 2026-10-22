@@ -76,7 +76,7 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
   // The server's answer is authoritative; the signed-in profile covers the first load.
   const locale = momentLocale(page?.locale ?? experience?.user.preferredLocale);
   const copy = MOMENTS_COPY[locale];
-  const name = page?.fairy.name ?? 'Bloom';
+  const name = page?.fairy.name ?? 'PPL';
   const avatar = avatarArt(page?.fairy.avatar) ?? DEFAULT_AVATAR;
   return <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
     <View style={styles.overlay}>
