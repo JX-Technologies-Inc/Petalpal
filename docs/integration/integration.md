@@ -89,11 +89,11 @@ Daily Check-in: connect the existing owner-scoped submission/onboarding contract
 |---|---|---|
 | HIGH | ~2–3× | Reference/Jinyin-quality output; passed the 2× raster-equivalence/reference-detail check |
 | BALANCED | ~1.5–2× | Visually close to HIGH; identical backing at the validated DPR-2 viewport |
-| PERFORMANCE | ~1–1.25× | Visibly softer; intended for sustained constrained-load situations |
-| AUTO | Starts BALANCED | Upgrades with sustained smooth headroom; downgrades with sustained slow frames |
+| PERFORMANCE | ~1–1.25× | Visibly softer; development override only since 2026-10-22 (AUTO never selects it) |
+| AUTO | Starts HIGH (native, up to 3×) | Owner decision 2026-10-22: BALANCED capped 3× phones at 2× (about 67% of native sharpness), which read as blurry on iPhones. AUTO now opens at native resolution, steps down once to BALANCED (2×) after two slow windows (no 20 s hold for that first step), never goes below BALANCED, and can upgrade back with sustained headroom |
 
 - Web ceilings: HIGH/BALANCED/PERFORMANCE use 8/4/2 million backing pixels and a 4096-pixel maximum texture dimension; large viewports may therefore render below the nominal scale ranges. All tiers retain the same artwork, effects and sampling.
-- AUTO uses local-only DPR/viewport pixels, optional core/device-memory hints and runtime frame/draw timing. Cooldown/hysteresis prevent rapid switching; no tier switch occurs during active gestures. On the 8 GB Mac, AUTO selected BALANCED in quieter conditions and PERFORMANCE under sustained load.
+- AUTO uses local-only DPR/viewport pixels, optional core/device-memory hints and runtime frame/draw timing. Cooldown/hysteresis prevent rapid switching; no tier switch occurs during active gestures. On the 8 GB Mac (before 2026-10-22), AUTO selected BALANCED in quieter conditions and PERFORMANCE under sustained load; AUTO's floor is now BALANCED.
 - Development-only URL override: `http://localhost:8107/?gardenQuality=AUTO` (replace AUTO with HIGH, BALANCED or PERFORMANCE). No hardware telemetry or production settings panel.
 - Web raster/cache decisions do not apply to native iOS/Android, which retain upstream Canvas and original artwork.
 

@@ -27,29 +27,37 @@ test('re-reads DPR instead of keeping startup DPR after changing displays', () =
   assert.equal(backingSize('HIGH', { ...retina, dpr: 2 }).width, 1460);
   assert.equal(backingSize('HIGH', { ...retina, dpr: 3 }).width, 2190);
 });
-test('AUTO starts BALANCED; warm-up, sustained headroom and cooldown precede upgrade', () => {
-  const selector = new GardenQualitySelector(0);
+test('AUTO opens at native HIGH: a 3x phone gets its full resolution, a 2x display stays 2x', () => {
+  assert.equal(new GardenQualitySelector(0).tier, 'HIGH');
+  const phone = { width: 390, height: 844, dpr: 3 };
+  assert.equal(JSON.stringify(backingSize('HIGH', phone)), JSON.stringify({ width: 1170, height: 2532 }));
+  assert.equal(backingSize('BALANCED', phone).width, 780, 'the floor is 2x');
+});
+test('from BALANCED, warm-up, sustained headroom and cooldown precede upgrade', () => {
+  const selector = new GardenQualitySelector(0, 'BALANCED');
   assert.equal(selector.tier, 'BALANCED');
   for (let now = 2500; now < 20000; now += 2500) assert.equal(selector.observe(fast, retina, now, false), 'BALANCED');
   assert.equal(selector.observe(fast, retina, 20000, false), 'HIGH');
   assert.equal(selector.observe(slow, retina, 22500, false), 'HIGH');
   assert.equal(selector.observe(slow, retina, 25000, false), 'HIGH');
 });
-test('runtime downgrade wins over strong hardware; isolated stalls do not downgrade', () => {
+test('a slow device steps down to 2x within two windows and never below it', () => {
   const selector = new GardenQualitySelector(0);
-  assert.equal(selector.observe(slow, retina, 21000, false), 'BALANCED');
-  assert.equal(selector.observe(fast, retina, 23500, false), 'BALANCED');
-  selector.observe(slow, retina, 26000, false);
-  assert.equal(selector.observe(slow, retina, 28500, false), 'PERFORMANCE');
+  assert.equal(selector.observe(slow, retina, 2500, false), 'HIGH', 'one slow window is not enough');
+  assert.equal(selector.observe(fast, retina, 5000, false), 'HIGH', 'an isolated stall resets');
+  selector.observe(slow, retina, 7500, false);
+  assert.equal(selector.observe(slow, retina, 10000, false), 'BALANCED', 'the first step down is not held for 20s');
+  for (let now = 12500; now <= 60000; now += 2500) assert.equal(selector.observe(slow, retina, now, false), 'BALANCED');
 });
 test('active gestures and insufficient samples cannot trigger a switch', () => {
   const selector = new GardenQualitySelector(0);
-  for (let now = 30000; now < 60000; now += 2500) assert.equal(selector.observe(slow, retina, now, true), 'BALANCED');
-  assert.equal(selector.observe({ ...slow, count: 3 }, retina, 62500, false), 'BALANCED');
+  for (let now = 30000; now < 60000; now += 2500) assert.equal(selector.observe(slow, retina, now, true), 'HIGH');
+  assert.equal(selector.observe({ ...slow, count: 3 }, retina, 62500, false), 'HIGH');
 });
 test('hardware hints never select lower quality alone and absent hints allow runtime upgrades', () => {
-  const constrained = new GardenQualitySelector(0);
-  const unknown = new GardenQualitySelector(0);
+  assert.equal(new GardenQualitySelector(0).tier, 'HIGH', 'hints do not lower the opening tier');
+  const constrained = new GardenQualitySelector(0, 'BALANCED');
+  const unknown = new GardenQualitySelector(0, 'BALANCED');
   for (let now = 21000; now <= 31000; now += 2500) {
     constrained.observe(fast, { ...retina, memoryGB: 4 }, now, false);
     unknown.observe(fast, { ...retina, memoryGB: undefined, cores: undefined }, now, false);
@@ -57,7 +65,7 @@ test('hardware hints never select lower quality alone and absent hints allow run
   assert.equal(constrained.tier, 'BALANCED'); assert.equal(unknown.tier, 'HIGH');
 });
 test('upgrades account for the candidate pixel cost instead of trusting CPU labels', () => {
-  const selector = new GardenQualitySelector(0);
+  const selector = new GardenQualitySelector(0, 'BALANCED');
   for (let now = 21000; now <= 31000; now += 2500) selector.observe({ ...fast, p90DrawMs: 8 }, { ...retina, dpr: 3 }, now, false);
   assert.equal(selector.tier, 'BALANCED');
   assert.equal(qualityMode('PERFORMANCE'), 'PERFORMANCE'); assert.equal(qualityMode('garbage'), 'AUTO');
@@ -98,7 +106,8 @@ test('very low FPS can still downgrade instead of failing the minimum sample gat
   const selector = new GardenQualitySelector(0);
   const stalled = { count: 12, p90FrameMs: 180, p90DrawMs: 80 };
   selector.observe(stalled, retina, 21000, false);
-  assert.equal(selector.observe(stalled, retina, 23500, false), 'PERFORMANCE');
+  assert.equal(selector.observe(stalled, retina, 23500, false), 'BALANCED');
+  assert.equal(selector.observe(stalled, retina, 46000, false), 'BALANCED', 'never below 2x');
 });
 test('HIGH draws the identical recorded artwork at the safe 2x scale in actual CanvasKit', async () => {
   const { createRequire } = await import('node:module');
