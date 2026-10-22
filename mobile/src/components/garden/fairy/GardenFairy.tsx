@@ -10,6 +10,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { useDerivedValue, useSharedValue, type SharedValue } from 'react-native-reanimated';
 import { WALK_NETWORK, WALK_START, walkFrame, type Point } from './walkNetwork';
 import { groundRoute } from './groundNavigation';
+import type { ScheduleRest } from './fairySchedule';
 
 // Static, explicit V2-only sources. Original PNGs are copied byte-for-byte.
 const sources = [
@@ -22,7 +23,7 @@ const sources = [
   require('@/assets/garden/fairy/walk-v2/walk_07.png'),
   require('@/assets/garden/fairy/walk-v2/walk_08.png'),
 ];
-export type FairyHandle = { getPosition:()=>Point; move:(p:Point)=>boolean; visitSwing:()=>boolean; visitMoonBed:()=>boolean; visitTea:()=>boolean; visitTreehouse:()=>boolean; visitMailbox:()=>boolean; isMailboxBusy:()=>boolean; returnFromMailbox:()=>boolean; returnFromTreehouse:()=>boolean; pointer:(p:Point)=>void; stop:()=>void };
+export type FairyHandle = { getPosition:()=>Point; getState:()=>FairyState; place:(rest:ScheduleRest,at?:Point)=>boolean; move:(p:Point)=>boolean; visitSwing:()=>boolean; visitMoonBed:()=>boolean; visitTea:()=>boolean; visitTreehouse:()=>boolean; visitMailbox:()=>boolean; isMailboxBusy:()=>boolean; returnFromMailbox:()=>boolean; returnFromTreehouse:()=>boolean; pointer:(p:Point)=>void; stop:()=>void };
 type Props={motionClock?:SharedValue<number>;onMailboxOpened?:()=>void;onTreehouseEntered?:()=>void;onTreehouseExited?:()=>void;pixelsPerUnit?:()=>number;onStateChange?:(state:FairyState)=>void;blocked:(p:Point)=>boolean;active:boolean;debug:boolean;onStatus:(s:string)=>void};
 const polyline=(points:Point[])=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
 const networkPath=WALK_NETWORK.edges.map(e=>polyline([WALK_NETWORK.nodes[e.a],WALK_NETWORK.nodes[e.b]])).join(' ');
@@ -85,6 +86,14 @@ const GardenFairy=forwardRef<FairyHandle,Props>(function GardenFairy({blocked,ac
   };
   if(!controls.current)controls.current={
     getPosition:()=>({...nav.current.position}),
+    getState:()=>nav.current.state,
+    // Her schedule's resting place, without travel (the Garden just opened).
+    place:(rest,at)=>{
+      if(!nav.current.place(rest,at))return false;
+      elapsed.current=0;facing.value=1;lean.value=0;frame.value=3;flightBlend.value=0;
+      if(rest==='treehouse'){entryCount.current=++nav.current.treehouseEntryCount;config.current.onTreehouseEntered?.();}
+      publish();step.current(performance.now());return true;
+    },
     move:p=>requestMove(p),
     returnFromTreehouse:()=>{
       const accepted=nav.current.returnFromTreehouse();if(!accepted)return false;

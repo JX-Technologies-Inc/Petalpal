@@ -53,17 +53,23 @@ for (const place of places) for (const locale of ['en', zh]) assert.notEqual(for
 assert.deepEqual(Object.keys(format.MOMENTS_COPY.en).sort(), Object.keys(format.MOMENTS_COPY[zh]).sort());
 assert.equal(format.MOMENTS_COPY[zh].title('小花仙'), '小花仙的朋友圈');
 
-// API client: Moments are on only when the runtime response carries them; any failure keeps the old icon.
+// Runtime store (shared by the Garden and the Moments dot): one request at a time, the last good
+// answer kept on failure, Moments marked read locally.
 const calls = [];
 let reply = async () => ({});
-const service = load('services/fairyMoments.ts', { './api': { apiRequest: async (...args) => { calls.push(args); return reply(...args); } } });
-reply = async () => ({ fairy: {}, moments: { unread: true } });
-same(await service.syncFairyMoments(), { enabled: true, unread: true });
-same(calls.at(-1), ['/api/fairy/runtime']);
-reply = async () => ({ fairy: {} });
-same(await service.syncFairyMoments(), { enabled: false, unread: false });
+const api = { apiRequest: async (...args) => { calls.push(args); return reply(...args); } };
+const runtime = load('services/fairyRuntime.ts', { './api': api, react: { useEffect() {}, useState: value => [value, () => {}] },
+  'react-native': { AppState: { addEventListener: () => ({ remove() {} }) } } });
+reply = async () => ({ currentState: 'TEA_TIME', nextTransitionAt: null, gardenSchedule: true, moments: { unread: true } });
+const [first, second] = await Promise.all([runtime.refreshFairyRuntime(), runtime.refreshFairyRuntime()]);
+same(first, second); same(calls, [['/api/fairy/runtime']]);
 reply = async () => { throw Object.assign(new Error('Complete onboarding'), { status: 409 }); };
-same(await service.syncFairyMoments(), { enabled: false, unread: false });
+assert.equal(await runtime.refreshFairyRuntime(), null);
+same(runtime.peekFairyRuntime().currentState, 'TEA_TIME', 'a failed refresh keeps her last known day');
+runtime.markFairyMomentsRead();
+same(runtime.peekFairyRuntime().moments, { unread: false });
+same(calls.length, 2);
+const service = load('services/fairyMoments.ts', { './api': api });
 reply = async () => ({ posts: [] });
 await service.loadFairyMoments();
 same(calls.at(-1), ['/api/fairy/moments']);

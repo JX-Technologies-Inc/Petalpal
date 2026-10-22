@@ -234,13 +234,17 @@ test('normal Garden taps prioritize placement and flower details before all Fair
     hitProductionFlower: () => null, updatePreview: () => calls.push('placement'), openFlowerDetail: () => calls.push('detail'),
     enableFairyWalk: true, treehousePlacement: {}, swingPlacement: {}, teaSetPlacement: {}, moonBedPlacement: {}, Platform: { OS: 'web' },
     canvasRef: { current: { redraw: () => calls.push('redraw') } },
+    // A tap that may send her somewhere holds her schedule off (fairySchedule.ts).
+    notes: 0, noteFairyUser: () => { context.notes++; },
     fairyRef: { current: { isMailboxBusy: () => false, move: () => { calls.push('move'); return true; } } },
   };
   for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
     context[hit] = () => false; context.fairyRef.current[action] = () => calls.push(action);
   }
   const tap = vm.runInNewContext(compile(`(${source})`), context);
-  const expect = expected => { calls.length = 0; tap(100, 100); assert.deepEqual(calls, expected); };
+  const expect = (expected, noted = expected.some(call => call === 'move' || call.startsWith('visit'))) => {
+    calls.length = 0; context.notes = 0; tap(100, 100); assert.deepEqual(calls, expected); assert.equal(context.notes, noted ? 1 : 0, String(expected));
+  };
   expect(['move', 'redraw']);
   context.hitsMailbox = () => true; context.fairyRef.current.isMailboxBusy = () => true;
   context.activeModeRef.current = 'plant'; expect(['placement']);

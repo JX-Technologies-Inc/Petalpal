@@ -184,8 +184,11 @@ of [test/back/weekly-short.test.js](test/back/weekly-short.test.js).
   `Europe/London`, `America/Vancouver`) and
   [test/back/fairy-moments.route.test.js](test/back/fairy-moments.route.test.js).
   The Garden shows this schedule for owners in `FAIRY_MOMENTS_OWNER_IDS` (`gardenSchedule`
-  in the runtime response); its night scenery uses the phone's clock (22:00–06:00), so the two
-  can differ when the phone and account zones differ.
+  in the runtime response; [mobile/src/components/garden/fairy/fairySchedule.ts](mobile/src/components/garden/fairy/fairySchedule.ts)):
+  the app re-reads the runtime 1.5 s after `nextTransitionAt` and on returning to the
+  foreground, and holds the schedule for 60 s after a user tap (device clock, durations only).
+  Its night scenery uses the phone's clock (22:00–06:00), so the two can differ when the phone
+  and account zones differ.
 - **Fairy Moments** (default OFF; owners listed in `FAIRY_MOMENTS_OWNER_IDS`) are
   planned in [lib/fairy-moments.js](lib/fairy-moments.js) from the seeded Fairy
   runtime transitions of the last 7 days, when `GET /api/fairy/runtime`
