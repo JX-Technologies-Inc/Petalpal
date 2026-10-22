@@ -1739,8 +1739,14 @@ app.get("/api/fairy/runtime", async (req, res) => {
       const runtime = activeFairy.runtime || await tx.fairyRuntime.create({
         data: { userFairyId: activeFairy.id }
       });
+      // Her day and night follow the account time zone (lib/fairy-runtime.js).
+      const owner = await tx.user.findUnique({
+        where: { id: req.auth.userId },
+        select: { timezone: true, preferredLocale: true }
+      });
       const reconciled = reconcileFairyRuntime(runtime, {
         now,
+        timezone: owner?.timezone,
         enteredSince: momentsEnabled ? fairyMomentsSince(now) : null
       });
       const persisted = await tx.fairyRuntime.update({
@@ -1753,10 +1759,6 @@ app.get("/api/fairy/runtime", async (req, res) => {
         reconciled.transition
       );
       if (!momentsEnabled) return response;
-      const owner = await tx.user.findUnique({
-        where: { id: req.auth.userId },
-        select: { timezone: true, preferredLocale: true }
-      });
       await recordFairyMoments(tx, {
         userId: req.auth.userId,
         userFairyId: activeFairy.id,
@@ -1770,7 +1772,8 @@ app.get("/api/fairy/runtime", async (req, res) => {
         momentsSeenAt: activeFairy.momentsSeenAt,
         now
       });
-      return { ...response, moments: { unread } };
+      // Same owner list: the Garden places her by this schedule (she has her own day).
+      return { ...response, moments: { unread }, gardenSchedule: true };
     });
     res.json(result);
     if (captionsEnabled) {

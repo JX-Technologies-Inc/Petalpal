@@ -169,6 +169,23 @@ of [test/back/weekly-short.test.js](test/back/weekly-short.test.js).
 - **Daily Grow** computes its local date with a separate helper
   (`getLocalDate`/`normalizeTimezone` in [server.js](server.js)), also from
   `User.timezone`.
+- **Fairy day and night** ([lib/fairy-runtime.js](lib/fairy-runtime.js) `fairyDayPhase`,
+  `FAIRY_RUNTIME_CONFIG.night`; owner decision 2026-10-21): the seeded runtime states follow
+  `User.timezone` (invalid or missing: UTC). Every local evening at 22:00 her night starts and
+  she is `SLEEPING` until 06:00; she is never asleep by day. About one night in five (seeded
+  per account-zone local date) she stays up in `SWINGING` / `IN_TREEHOUSE` / `IDLE` until a
+  bedtime between 23:30 and 01:00, then sleeps until 07:30. Boundaries are local wall-clock
+  times (`localTimeToUtc` in [lib/ai-periods.js](lib/ai-periods.js)), so a DST change moves them
+  in UTC, not on the clock. A state that would run past a boundary it is not allowed beyond
+  ends there; a state written under the older time-blind schedule (e.g. daytime sleep) ends at
+  once on the next reconcile. **VERIFIED:** [test/back/fairy-runtime.test.js](test/back/fairy-runtime.test.js)
+  (60 simulated days in `Asia/Shanghai` and `America/Vancouver`; 22:00 / 06:00 / 07:30 and the
+  late bedtime on the local clock across the 2026-10/11 changes in `America/New_York`,
+  `Europe/London`, `America/Vancouver`) and
+  [test/back/fairy-moments.route.test.js](test/back/fairy-moments.route.test.js).
+  The Garden shows this schedule for owners in `FAIRY_MOMENTS_OWNER_IDS` (`gardenSchedule`
+  in the runtime response); its night scenery uses the phone's clock (22:00–06:00), so the two
+  can differ when the phone and account zones differ.
 - **Fairy Moments** (default OFF; owners listed in `FAIRY_MOMENTS_OWNER_IDS`) are
   planned in [lib/fairy-moments.js](lib/fairy-moments.js) from the seeded Fairy
   runtime transitions of the last 7 days, when `GET /api/fairy/runtime`
