@@ -43,6 +43,10 @@ test("owner allowlist is off by default and fails closed when malformed", () => 
   assert.equal(fairyMomentsEnabledFor("user_3", { FAIRY_MOMENTS_OWNER_IDS: "user_1,user_2" }), false);
   assert.equal(fairyMomentsEnabledFor("user_1", { FAIRY_MOMENTS_OWNER_IDS: "user_1, user_2" }), false);
   assert.equal(fairyMomentsEnabledFor("user_1", { FAIRY_MOMENTS_OWNER_IDS: "user_1,,user_2" }), false);
+  // "*" alone: every signed-in owner (the beta); mixed or padded forms stay closed.
+  assert.equal(fairyMomentsEnabledFor("user_9", { FAIRY_MOMENTS_OWNER_IDS: "*" }), true);
+  assert.equal(fairyMomentsEnabledFor(undefined, { FAIRY_MOMENTS_OWNER_IDS: "*" }), false);
+  for (const value of ["*,user_1", " *", "**"]) assert.equal(fairyMomentsEnabledFor("user_1", { FAIRY_MOMENTS_OWNER_IDS: value }), false, value);
 });
 
 test("planning is deterministic and posts some, but not every, visit", () => {
