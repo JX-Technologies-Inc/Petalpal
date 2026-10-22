@@ -58,5 +58,11 @@ User id 的查法：登录网页端，在浏览器开发者工具 Network 里看
 - 发帖时间按账号时区（注册时手机的时区）算，换时区不跟着变；显示时间按手机本地时间。
 - 面板上的文字、时间和地点跟用户选的语言走（设置里的周报语言：English / 简体中文，和她的文案一致）；
   `GET /api/fairy/moments` 返回 `locale`。App 其他界面目前仍只有英文。
+- 她的朋友圈头像单独选，跟用户自己的头像没关系：面板里点她的头像，从头像库（`lib/avatars.js`，8 张）里选，
+  或者选回她原来那张喝茶照。存在 `UserFairy.momentsAvatar`（迁移 `202610220001_fairy_moments_avatar`），
+  `PUT /api/fairy/moments/avatar {avatar: "fairy-1"…"fairy-8" | null}`，只接受头像库里的 id；
+  `GET /api/fairy/moments` 的 `fairy.avatar` 返回当前选择（null = 原照片）。
+- 她在树屋里时人是藏在门后的（没有坐在树屋里的画），所以树屋窗户会更亮，门上方有一个气泡
+  「小花仙在树屋里 ✨ / 点一下叫她出来」，点了她就走出来。
 - 没有评论和回复（v2）。
 - 本地没有 Postgres，后端在真实数据库上的完整流程没跑过；Haiku 从没真正调用过（测试都用模拟）。

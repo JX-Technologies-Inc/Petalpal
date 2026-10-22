@@ -7,6 +7,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Fonts, Spacing } from '../constants/theme';
 import { useAuth } from '../services/auth';
 import { LoginPreviewPage } from './auth/LoginPreviewPage';
+import { AVATAR_IDS, DEFAULT_AVATAR } from './avatars/avatarArt';
+import { UserAvatar } from './avatars/UserAvatar';
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const auth = useAuth();
@@ -15,7 +17,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
   const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState('🦋');
+  const [avatar, setAvatar] = useState(DEFAULT_AVATAR);
   const [communityAccepted,setCommunityAccepted] = useState(false);
   const [working, setWorking] = useState(false);
   // Sign-in from the invitation page keeps that page on screen while the account opens.
@@ -26,7 +28,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setEmail(''); setPassword(''); setConfirmation(''); setName('');
-    setAvatar('🦋'); setCommunityAccepted(false); setMode('signIn');
+    setAvatar(DEFAULT_AVATAR); setCommunityAccepted(false); setMode('signIn');
   }, [auth.identity?.uid]);
   useEffect(() => {
     if (!auth.loading) void SplashScreen.hideAsync().catch(() => {});
@@ -95,10 +97,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
         </> : profile ? <>
           {field('Display name', { value: name, onChangeText: setName, maxLength: 80, autoComplete: 'name' })}
           <Text style={styles.label}>Garden avatar</Text>
-          <View style={styles.avatars}>{['🦋', '🐝', '🐦'].map((choice) => <Pressable key={choice}
-            accessibilityRole="radio" accessibilityLabel={{ '🦋': 'Butterfly', '🐝': 'Bee', '🐦': 'Bird' }[choice]}
+          <View style={styles.avatars}>{AVATAR_IDS.map((choice, index) => <Pressable key={choice}
+            accessibilityRole="radio" accessibilityLabel={`Avatar ${index + 1}`}
             accessibilityState={{ selected: avatar === choice }} disabled={working} onPress={() => setAvatar(choice)}
-            style={[styles.avatar, avatar === choice && styles.selected]}><Text style={styles.avatarText}>{choice}</Text></Pressable>)}</View>
+            style={[styles.avatar, avatar === choice && styles.selected]}><UserAvatar avatar={choice} size={52} /></Pressable>)}</View>
           <Text style={styles.body}>{COMMUNITY_TEXT}</Text>
           <Pressable accessibilityRole="checkbox" accessibilityLabel="Accept Community Guidelines" accessibilityState={{checked:communityAccepted}} disabled={working} onPress={()=>setCommunityAccepted(!communityAccepted)} style={styles.consent}>
             <Text style={styles.label}>{communityAccepted ? '☑' : '☐'} I accept the Community Guidelines</Text>
@@ -150,9 +152,8 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.5 },
   switchMode: { paddingVertical: Spacing.two, alignItems: 'center' },
   link: { color: '#365b42', fontFamily: Fonts.sans, fontSize: 14, textAlign: 'center' },
-  avatars: { flexDirection: 'row', gap: Spacing.two },
-  avatar: { padding: Spacing.three, borderRadius: 12, borderWidth: 1, borderColor: '#c8d6c1' },
-  avatarText: { fontSize: 24 },
+  avatars: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },
+  avatar: { padding: 3, borderRadius: 32, borderWidth: 2, borderColor: 'transparent' },
   selected: { backgroundColor: '#e3edda', borderColor: '#365b42' },
   consent: { paddingVertical: Spacing.two },
   hint: { color: '#536653', fontSize: 12, lineHeight: 18 },

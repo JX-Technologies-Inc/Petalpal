@@ -261,6 +261,8 @@ model UserFairy {
   unlockedAt   DateTime @default(now())
   /// Newest Moment the owner has opened; later Moments show the unread dot.
   momentsSeenAt DateTime?
+  /// Avatar-library id (lib/avatars.js) shown on her Moments; null = her default photo.
+  momentsAvatar String?  @db.VarChar(32)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

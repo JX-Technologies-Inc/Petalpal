@@ -52,6 +52,9 @@ export const MOMENTS_COPY = {
     empty: (name: string) => `${name} hasn't posted yet. She shares a photo or a small discovery every few days.`,
     more: 'Show earlier Moments', end: "That's all for now", like: 'Like', unlike: 'Unlike',
     photo: (name: string, place: string) => `${name} at the ${place.toLowerCase()}`,
+    avatarChange: (name: string) => `Change ${name}'s avatar`, avatarTitle: (name: string) => `Choose ${name}'s avatar`,
+    avatarDefault: (name: string) => `${name}'s own photo`, avatarOption: (n: number) => `Avatar ${n}`,
+    avatarClose: 'Close', avatarFailed: 'The avatar was not saved. Please try again.',
   },
   'zh-Hans': {
     title: (name: string) => `${name}的朋友圈`, close: '关闭朋友圈', find: '去找她',
@@ -61,5 +64,8 @@ export const MOMENTS_COPY = {
     empty: (name: string) => `${name}还没有发过动态。她每隔几天会分享一张照片或一个小发现。`,
     more: '查看更早的动态', end: '暂时就这些', like: '点赞', unlike: '取消点赞',
     photo: (name: string, place: string) => `${name}在${place}`,
+    avatarChange: (name: string) => `更换${name}的头像`, avatarTitle: (name: string) => `选择${name}的头像`,
+    avatarDefault: (name: string) => `${name}原来的照片`, avatarOption: (n: number) => `头像 ${n}`,
+    avatarClose: '关闭', avatarFailed: '头像没有保存成功，请再试一次。',
   },
 } as const;

@@ -100,6 +100,8 @@ export type TreehouseEntityProps = {
   onDebugStatus?: (status: string) => void;
   animationEnabled?: boolean;
   lightingEnabled?: boolean;
+  /** The Fairy is inside: the windows glow brighter, day or night. */
+  occupied?: boolean;
 };
 
 /** Skia scene node. Motion is opt-in; render inside a Canvas. */
@@ -107,15 +109,16 @@ export default function TreehouseEntity({
   x = 0, y = 0, scale = 1, debugMode = 'all', onDebugStatus,
   animationEnabled = false,
   lightingEnabled = false,
+  occupied = false,
 }: TreehouseEntityProps) {
   const reducedMotion = useReducedMotion();
   const motionEnabled = animationEnabled && !reducedMotion;
   const canopyTransform = useVegetationWind(motionEnabled, 8000, 0, 0.3, 2, 0.5);
   const wisteriaTransform = useVegetationWind(motionEnabled, 6000, 600, 0.65, 0, 0, -1);
   const foregroundTransform = useVegetationWind(motionEnabled, 9000, 1200, 0.12, 0.8, 0.3);
-  const lightsEnabled = motionEnabled && lightingEnabled && debugMode === 'all';
-  const windowOpacity = useLightBreathing(lightsEnabled, 0.52, 0.58, 7000, 0);
-  const libraryOpacity = useLightBreathing(lightsEnabled, 0.61, 0.69, 8500, 1300);
+  const lightsEnabled = motionEnabled && (lightingEnabled || occupied) && debugMode === 'all';
+  const windowOpacity = useLightBreathing(lightsEnabled, occupied ? 0.74 : 0.52, occupied ? 0.86 : 0.58, 7000, 0);
+  const libraryOpacity = useLightBreathing(lightsEnabled, occupied ? 0.78 : 0.61, occupied ? 0.9 : 0.69, 8500, 1300);
   const treeBase = useProductionImage(require('@/assets/garden/landmarks/treehouse/tree-base.png'));
   const canopy = useProductionImage(require('@/assets/garden/landmarks/treehouse/canopy-overlay.png'));
   const wisteria = useProductionImage(require('@/assets/garden/landmarks/treehouse/wisteria-overlay.png'));
