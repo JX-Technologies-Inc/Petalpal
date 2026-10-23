@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '../services/auth';
-import { createEvent, eventFlowers, plantingRecord, readEvent,
-  type BackendFlower, type EventResponse, type PrimaryMood } from '../services/events';
+import { createEvent, eventFlowers, loadFlowersToday, plantingRecord, readEvent,
+  type BackendFlower, type EventResponse, type FlowersToday, type PrimaryMood } from '../services/events';
 import { loadFlowerPlacements, type FlowerPlacementRecord } from '../components/garden/planting/plantingPersistence';
 
 // Existing Event orchestration, kept independent of the replaceable panel.
@@ -17,6 +17,7 @@ export function useEventJournal(onGardenChanged?: () => void) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [pollError, setPollError] = useState('');
+  const [today, setToday] = useState<FlowersToday | null>(null);
   const pending = useRef<{ content: string; mood: PrimaryMood; key: string } | null>(null);
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
@@ -26,6 +27,8 @@ export function useEventJournal(onGardenChanged?: () => void) {
     try {
       const [remote, layout] = await Promise.all([eventFlowers(session.user.id), loadFlowerPlacements()]);
       if (mounted.current) { setFlowers(remote); setPlacements(layout); }
+      // An older server without the route just shows no count.
+      loadFlowersToday().then(count => { if (mounted.current) setToday(count); }).catch(() => undefined);
     } catch (err) { if (mounted.current) setError((err as Error).message); }
     finally { if (mounted.current) setLoading(false); }
   }, [session]);
@@ -86,6 +89,7 @@ export function useEventJournal(onGardenChanged?: () => void) {
     } else plant(flower);
   }
   const currentFlowers = result ? flowers.filter(flower => flower.sourceEventId === result.event.id) : [];
-  return { flowers: currentFlowers, placements, content, setContent, mood, setMood, result, busy, loading,
+  const flowersLeft = today?.limit == null ? null : today.remaining;
+  return { flowers: currentFlowers, flowersToday: today, flowersLeft, placements, content, setContent, mood, setMood, result, busy, loading,
     error, pollError, refresh, saveEvent, refreshEventStatus, placeFlower };
 }

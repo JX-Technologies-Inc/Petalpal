@@ -44,6 +44,12 @@ const owner = {
 };
 
 const transaction = {
+  // The day's flower count (lib/flower-quota.js): each grow takes one of two.
+  $queryRawUnsafe: async (sql) => {
+    assert.match(sql, /flower-quota:reserve/);
+    state.planted = (state.planted || 0) + 1;
+    return state.planted <= 2 ? [{ planted: state.planted }] : [];
+  },
   dailyCheckIn: {
     create: async ({ data }) => {
       state.journal = data.journal?.create

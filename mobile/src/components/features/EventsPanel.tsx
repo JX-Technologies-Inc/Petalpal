@@ -6,7 +6,7 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View 
 import { useEventVoiceInput } from '../../hooks/useEventVoiceInput';
 import { useEventJournal } from '../../hooks/useEventJournal';
 import { emotionMessage, memoryMessage, PRIMARY_MOODS } from '../../services/events';
-import { sourceFlowerImageUri } from '../garden/planting/flowerDetailApi';
+import { FlowerThumb } from '../garden/planting/FlowerThumb';
 import { ui } from './FeatureUI';
 import { EventIllustration } from './EventIllustration';
 
@@ -58,12 +58,17 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
       </View>
       <EventAction title={journal.busy ? 'Saving Event…' : 'Save Event'} onPress={() => void journal.saveEvent()}
         disabled={journal.busy || voice.active || !journal.content.trim() || !journal.mood} />
+      {journal.flowersToday?.limit != null ? <Text style={styles.caption}>{journal.flowersLeft
+        ? `${journal.flowersLeft} of ${journal.flowersToday.limit} flowers left to grow today.`
+        : `You've grown today's ${journal.flowersToday.limit} flowers. Events still save; new flowers tomorrow.`}</Text> : null}
       <Text style={styles.caption}>Emotion and memory processing follow your existing account consent.</Text>
     {journal.result ? <EventSection title="Your Event is saved">
       <Text style={styles.text}>{emotionMessage(journal.result.event.emotionStatus)}</Text>
       <Text style={styles.caption}>AI emotion suggestions (not a diagnosis): {journal.result.event.secondaryEmotions.join(', ') || 'None'}</Text>
       <Text style={styles.caption}>{memoryMessage(journal.result.memoryJob)}</Text>
       {journal.pollError ? <Text accessibilityRole="alert" style={styles.text}>{journal.pollError}</Text> : null}
+      {journal.result.dailyFlowers?.limitReached ? <Text style={styles.text}>
+        {`Today's ${journal.result.dailyFlowers.limit} flowers are already growing, so this Event didn't add one. Come back tomorrow for new flowers.`}</Text> : null}
       <EventAction secondary title="Refresh Event status" onPress={() => void journal.refreshEventStatus()} />
     </EventSection> : null}
     {journal.error ? <View style={styles.notice}><Text accessibilityRole="alert" style={styles.text}>{journal.error}</Text></View> : null}
@@ -77,12 +82,9 @@ export function EventsPanel({ onClose, onGardenChanged }: { onClose: () => void;
     </View> : null}
     {journal.flowers.map(flower => {
       const placed = journal.placements.some(item => item.flowerId === flower.id);
-      const imageUri = sourceFlowerImageUri(flower.img);
       return <EventSection key={flower.id}>
         <View style={ui.row}>
-          {imageUri
-            ? <Image accessibilityLabel={flower.name} source={{ uri: imageUri }} style={styles.flowerImage} resizeMode="contain" />
-            : <Text accessibilityLabel={flower.name} style={[styles.flowerImage, styles.flowerEmoji]}>{flower.img}</Text>}
+          <FlowerThumb speciesCode={flower.speciesCode} name={flower.name} image={flower.img} size={64} style={styles.flowerImage} />
           <View style={{ flex: 1, gap: 5 }}>
             <Text style={styles.sectionTitle}>{flower.name}</Text>
             <Text style={styles.caption}>{flower.mood.replace('_BLOOM', '').toLowerCase()} · Primary Mood</Text>
@@ -151,5 +153,4 @@ const createStyles = (theme: PanelTheme) => StyleSheet.create({
   secondaryAction: { backgroundColor: '#ECF0E3', borderColor: '#CBD4BF' },
   secondaryActionText: { color: '#385F52', fontSize: 16 },
   flowerImage: { width: 64, height: 64, borderRadius: 18, backgroundColor: theme.input },
-  flowerEmoji: { fontSize: 42, lineHeight: 64, textAlign: 'center' },
 });

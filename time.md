@@ -222,6 +222,16 @@ of [test/back/weekly-short.test.js](test/back/weekly-short.test.js).
   localDate])`, the same `localDateForInstant(now, User.timezone)` rule). The deck order is seeded
   by owner + local date, and the card back alternates by calendar-day number, so both change at
   local midnight. **VERIFIED:** [test/back/petal-card-draw.test.js](test/back/petal-card-draw.test.js).
+- **Daily flower limit** ([lib/flower-quota.js](lib/flower-quota.js), on unless
+  `DAILY_GROW_LIMIT_ENABLED=false`): at most 2 new flowers per account-local date, counted in
+  `DailyFlowerQuota(userId, localDate)`. An Event's flower counts against `Event.localDate` (set at
+  save from `User.timezone`); legacy Daily Grow and `GET /api/flowers/today` use the server's
+  current local date for the same zone. Deleting a flower never lowers the count; a third Event that
+  day is still saved, just without a flower. The new day's count starts at local midnight.
+  **VERIFIED:** [test/back/flower-quota.test.js](test/back/flower-quota.test.js) (the migration's
+  conditional upsert on PGlite, 4 concurrent reserves → 2 granted) and the `two Flowers a day` test in
+  [test/back/haiku-event-emotion.test.js](test/back/haiku-event-emotion.test.js) (third Event saved
+  without a Flower; deleting a Flower does not free the day).
 
 ## 6. Production vs TEST
 
