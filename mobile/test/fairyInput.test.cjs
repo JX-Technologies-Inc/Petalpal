@@ -238,7 +238,9 @@ test('normal Garden taps prioritize placement and flower details before all Fair
     notes: 0, noteFairyUser: () => { context.notes++; },
     // …and earns closeness with her (services/fairyCloseness.ts), counted like the hold.
     interactions: 0, noteFairyInteraction: () => { context.interactions++; },
-    fairyRef: { current: { isMailboxBusy: () => false, move: () => { calls.push('move'); return true; } } },
+    fairyRef: { current: { isMailboxBusy: () => false, getPosition: () => ({ x: 100, y: 120 }), move: () => { calls.push('move'); return true; } } },
+    // Tapping PPL herself while she rests shows a line (fairy/tapLines.ts) instead of a trip.
+    hitsFairySprite: () => false, showTapBubble: (state) => { calls.push(`bubble:${state}`); return true; },
   };
   for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
     context[hit] = () => false; context.fairyRef.current[action] = () => calls.push(action);
@@ -258,5 +260,12 @@ test('normal Garden taps prioritize placement and flower details before all Fair
   for (const [hit, action] of [['hitsMailbox','visitMailbox'],['hitsTreehouse','visitTreehouse'],['hitsSwing','visitSwing'],['hitsTeaArea','visitTea'],['hitsMoonBed','visitMoonBed']]) {
     context[hit] = () => true; expect([action]); context[hit] = () => false;
   }
+  context.hitsFairySprite = () => true; expect(['bubble:idle'], true);
+  context.fairyStateRef.current = 'walking'; expect(['move', 'redraw']); context.hitsFairySprite = () => false;
+  // Seated, the swing, tea set or moon bed stands for her: a tap there talks instead of re-sending her.
+  for (const [state, hit] of [['sittingOnSwing','hitsSwing'],['drinkingTea','hitsTeaArea'],['sleepingOnMoonBed','hitsMoonBed']]) {
+    context.fairyStateRef.current = state; context[hit] = () => true; expect([`bubble:${state}`], true); context[hit] = () => false;
+  }
+  context.fairyStateRef.current = 'idle';
   context.readOnly = true; expect([]);
 });

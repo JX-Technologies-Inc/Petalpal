@@ -27,6 +27,7 @@
         "test:security:ci": "node scripts/security-ci.js"
     },
     "devDependencies": {
+        "@anthropic-ai/sdk": "0.132.1",
         "@electric-sql/pglite": "^0.3.16"
     },
     "dependencies": {
