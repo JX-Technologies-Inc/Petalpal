@@ -40,3 +40,13 @@ test('the Moments cover library matches the server ids, one WebP each', async ()
   assert.equal(momentCover(null), undefined);
   assert.equal(momentCover('cover-99'), undefined);
 });
+
+test('every keepsake has bundled art under its server id', async () => {
+  const { FAIRY_KEEPSAKES } = await import('../../lib/fairy-keepsakes.js');
+  const { KEEPSAKE_ART } = load('../../bond/keepsakeArt');
+  assert.deepEqual(Object.keys(plain(KEEPSAKE_ART)), FAIRY_KEEPSAKES.map(keepsake => keepsake.id));
+  for (const keepsake of FAIRY_KEEPSAKES) {
+    assert.equal(KEEPSAKE_ART[keepsake.id], `@/assets/keepsakes/${keepsake.id}.webp`);
+    assert.ok(fs.statSync(new URL(`../assets/keepsakes/${keepsake.id}.webp`, import.meta.url)).size < 80_000, keepsake.id);
+  }
+});
