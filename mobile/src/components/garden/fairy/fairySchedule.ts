@@ -49,4 +49,9 @@ export function wanderTarget(nodes: readonly Point[], from: Point, random: () =>
   return pool.length ? pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))] : null;
 }
 
+// The path points she may stand on by herself: dry ground only. A few points of the walk network
+// lie in water (the pond's stepping stones) or in the flower beds, where a tap may never send her;
+// the schedule keeps to the same rule, for placing her as well as for strolls.
+export const standableNodes = (nodes: readonly Point[], blocked: (point: Point) => boolean) => nodes.filter(node => !blocked(node));
+
 export const wanderPause = (random: () => number) => WANDER_PAUSE_MS[0] + random() * (WANDER_PAUSE_MS[1] - WANDER_PAUSE_MS[0]);
