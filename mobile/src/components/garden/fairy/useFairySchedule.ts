@@ -2,10 +2,13 @@ import { useCallback, useEffect, useRef, type RefObject } from 'react';
 import { useFairyRuntime } from '../../../services/fairyRuntime';
 import type { FairyHandle } from './GardenFairy';
 import { mailboxApproachAnchor } from './mailboxDestination';
-import { RETRY_MS, scheduleAction, scheduleRest, wanderPause, wanderTarget } from './fairySchedule';
+import { RETRY_MS, scheduleAction, scheduleRest, standableNodes, wanderPause, wanderTarget } from './fairySchedule';
+import { isGardenGroundBlocked } from './gardenGround';
 import { WALK_NETWORK } from './walkNetwork';
 
 const NOWHERE = { x: -1e9, y: -1e9 };
+// Dry-ground path points only: never the stepping stones in the pond or the flower beds.
+const STANDABLE = standableNodes(WALK_NETWORK.nodes, isGardenGroundBlocked);
 
 // Drives the Garden Fairy from her server-side day (fairySchedule.ts) once a second. Returns the
 // call the Garden makes whenever the user sends her somewhere, which holds the schedule off a minute.
@@ -29,17 +32,17 @@ export function useFairySchedule(fairyRef: RefObject<FairyHandle | null>, enable
         placed: m.placed, now, userAt: m.userAt, idleSince: m.idleSince, pauseMs: m.pauseMs, retryAt: m.retryAt });
       let started: boolean;
       if (action === 'place') {
-        started = fairy.place(current, current === 'path' ? wanderTarget(WALK_NETWORK.nodes, NOWHERE, Math.random, [0, Infinity]) ?? undefined : undefined);
+        started = fairy.place(current, current === 'path' ? wanderTarget(STANDABLE, NOWHERE, Math.random, [0, Infinity]) ?? undefined : undefined);
         m.placed = started; m.idleSince = now;
       } else if (action === 'leaveTreehouse') started = fairy.returnFromTreehouse();
       else if (action === 'go') {
         started = current === 'tea' ? fairy.visitTea() : current === 'swing' ? fairy.visitSwing() : current === 'moon' ? fairy.visitMoonBed()
           : current === 'treehouse' ? fairy.visitTreehouse() : fairy.move(mailboxApproachAnchor);
       } else if (action === 'wander') {
-        // A few path points sit on ground the Garden blocks; try another before waiting.
+        // Dry ground only; a point she cannot reach right now is retried with another.
         started = false;
         for (let attempt = 0; attempt < 5 && !started; attempt++) {
-          const target = wanderTarget(WALK_NETWORK.nodes, fairy.getPosition(), Math.random);
+          const target = wanderTarget(STANDABLE, fairy.getPosition(), Math.random);
           started = !!target && fairy.move(target);
         }
       } else return;

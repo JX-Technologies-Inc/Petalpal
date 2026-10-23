@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { loadPlantingModules } from './loadPlantingModules.mjs';
@@ -93,4 +94,20 @@ test('placing her needs no travel and leaves her able to move on', () => {
   assert.deepEqual(plain(path.position), plain(WALK_NETWORK.nodes[7]));
   const mailbox = new FairyNavigation(); mailbox.place('mailbox');
   assert.deepEqual(plain(mailbox.position), plain(mailboxApproachAnchor));
+});
+
+test('on her own she only ever stands on dry ground: never the pond stepping stones or the flower beds', () => {
+  const { standableNodes } = load('../fairy/fairySchedule');
+  const { gardenGroundKind, isGardenGroundBlocked } = load('../fairy/gardenGround');
+  const standable = standableNodes(WALK_NETWORK.nodes, isGardenGroundBlocked);
+  const off = WALK_NETWORK.nodes.filter(node => gardenGroundKind(node) !== 'ground');
+  assert.ok(off.length > 0, 'the walk network does reach a few points off dry ground');
+  assert.equal(standable.length, WALK_NETWORK.nodes.length - off.length);
+  assert.ok(standable.every(node => gardenGroundKind(node) === 'ground'));
+  for (let i = 0; i < 400; i++) {
+    const pick = wanderTarget(standable, { x: -1e9, y: -1e9 }, () => (i * 0.6180339) % 1, [0, Infinity]);
+    assert.equal(gardenGroundKind(pick), 'ground');
+  }
+  const source = fs.readFileSync(new URL('../src/components/garden/fairy/useFairySchedule.ts', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /wanderTarget\(WALK_NETWORK\.nodes/, 'the schedule never picks from the unfiltered network');
 });

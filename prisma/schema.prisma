@@ -55,6 +55,7 @@ model User {
   fairyKeepsakeGrants     FairyKeepsakeGrant[]
   fairyClosenessAwards    FairyClosenessAward[]
   petalCardDraws          PetalCardDraw[]
+  dailyFlowerQuotas       DailyFlowerQuota[]
   events                  Event[]
   eventMemories           EventMemory[]
   weeklyReports           WeeklyReport[]
@@ -342,6 +343,18 @@ model FairyCheckIn {
   keepsakes FairyKeepsakeGrant[]
 
   @@unique([userId, localDate])
+}
+
+// New flowers planted on one account-local day; deleting a flower never lowers it.
+model DailyFlowerQuota {
+  userId    String
+  localDate String   @db.VarChar(10)
+  planted   Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, localDate])
 }
 
 /// A keepsake PPL gave the owner (lib/fairy-keepsakes.js ids); the collection is these rows.

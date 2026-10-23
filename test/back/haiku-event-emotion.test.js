@@ -327,10 +327,58 @@ test("final fence blocks deleted/changed/finalized Events and rolls back failed 
   assert.equal((await f.ledger()).length, 12);
 });
 
+test("Events grow at most two Flowers a day; deleting one does not free the day", async t => {
+  const f = await fixture(t);
+  await f.pg.exec(`CREATE TABLE "DailyFlowerQuota" ("userId" text,"localDate" varchar(10),"planted" integer NOT NULL DEFAULT 0,
+    "updatedAt" timestamp(3) NOT NULL, PRIMARY KEY ("userId","localDate"))`);
+  for (const [name, value] of Object.entries({ ...enabled, AI_ASYNC_EXECUTION_MODE: "manual", NODE_ENV: "test", DAILY_GROW_LIMIT_ENABLED: undefined })) {
+    const previous = process.env[name];
+    if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    t.after(() => { if (previous === undefined) delete process.env[name]; else process.env[name] = previous; });
+  }
+  const replace = (object, name, implementation) => {
+    const original = object[name]; object[name] = implementation;
+    t.after(() => { object[name] = original; });
+  };
+  replace(prisma, "$transaction", f.db.$transaction);
+  for (const name of ["user", "event", "garden", "flower", "aiJob"]) {
+    for (const [method, implementation] of Object.entries(f.db[name])) replace(prisma[name], method, implementation);
+  }
+  setAiJobDispatcherForTests(async () => {});
+  setFirebaseTokenVerifierForTests(async token => ({ uid: `firebase-${token}`, email_verified: true, email: "synthetic@example.com" }));
+  t.after(() => { setAiJobDispatcherForTests(); setFirebaseTokenVerifierForTests(); });
+  t.mock.method(globalThis, "fetch", f.fetchImpl);
+  const listener = app.listen(0, "127.0.0.1"); await new Promise(resolve => listener.once("listening", resolve));
+  t.after(() => new Promise(resolve => listener.close(resolve)));
+  const save = async key => {
+    const response = await httpFetch(`http://127.0.0.1:${listener.address().port}/events`, {
+      method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": `synthetic-${key}-0001`, Authorization: "Bearer alice" },
+      body: JSON.stringify({ content: `Synthetic moment ${key}`, primaryGardenMood: "SUNNY_BLOOM" })
+    });
+    return { status: response.status, data: await response.json() };
+  };
+  const first = await save("quota-1"), second = await save("quota-2");
+  assert.ok(first.data.flower); assert.ok(second.data.flower);
+  assert.deepEqual(second.data.dailyFlowers, { limit: 2, planted: 2, limitReached: false });
+  const replay = await save("quota-2");
+  assert.equal(replay.status, 200); assert.equal(replay.data.flower.id, second.data.flower.id);
+  const third = await save("quota-3");
+  assert.equal(third.status, 201, "the Event itself is still saved");
+  assert.equal(third.data.flower, null);
+  assert.deepEqual(third.data.dailyFlowers, { limit: 2, planted: 2, limitReached: true });
+  await f.pg.query('DELETE FROM "Flower" WHERE "sourceEventId"=$1', [first.data.event.id]);
+  const afterDelete = await save("quota-4");
+  assert.equal(afterDelete.data.flower, null);
+  assert.equal(afterDelete.data.dailyFlowers.limitReached, true);
+  assert.deepEqual((await f.pg.query('SELECT "planted" FROM "DailyFlowerQuota"')).rows, [{ planted: 2 }]);
+});
+
 test("Event HTTP pipeline saves one Flower, keeps memory deterministic and isolates Haiku from legacy/preview/Journal", async t => {
   const f = await fixture(t);
   for (const [name, value] of Object.entries({ ...enabled, AI_ASYNC_EXECUTION_MODE: "manual", NODE_ENV: "test", AUTH_E2E_TEST_EMAIL: "synthetic@example.com",
-    CLOUDFLARE_WORKER_AI_URL: "https://synthetic-worker.invalid", CLOUDFLARE_WORKER_AI_TOKEN: "synthetic-worker-token" })) {
+    CLOUDFLARE_WORKER_AI_URL: "https://synthetic-worker.invalid", CLOUDFLARE_WORKER_AI_TOKEN: "synthetic-worker-token",
+    // Several same-day Events each need their Flower here; the 2-a-day limit is test/back/flower-quota.test.js.
+    DAILY_GROW_LIMIT_ENABLED: "false" })) {
     const previous = process.env[name]; process.env[name] = value;
     t.after(() => { if (previous === undefined) delete process.env[name]; else process.env[name] = previous; });
   }

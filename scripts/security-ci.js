@@ -33,7 +33,7 @@ export const additionalSecurityTests = [
   // Opt-in Prompt-First v2 reflection contracts: pure offline validators, no inference.
   { file: 'test/back/reflection-v2.test.js', pattern: '.', count: 17 },
   // Phase 2 Event routing: mocked Gateway and disposable PGlite, no real AI.
-  { file: 'test/back/haiku-event-emotion.test.js', pattern: '.', count: 16 },
+  { file: 'test/back/haiku-event-emotion.test.js', pattern: '.', count: 17 },
   { file: 'test/back/speech-admission.test.js', pattern: '^speech admission ', count: 4 },
   { file: 'test/back/ai-cost-gate.test.js', pattern: '^(per-user shared quota blocks provider call, while another owner remains independent|revoked AI-processing consent blocks speech/emotion before quota reservation or provider work)$', count: 2 },
   { file: 'test/back/ai-consent-lifecycle.test.js', pattern: '^same-millisecond revoke/regrant advances the consent epoch deterministically$', count: 1 },

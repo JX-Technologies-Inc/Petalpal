@@ -141,6 +141,7 @@ import { apiDocsEnabled, assertAllowedOrigin, isAllowedOrigin, trustProxySetting
 import { assertIntegrationEnvironment } from "./lib/integration-environment.js";
 import { httpSecurity, securityHeaders, privateResponse } from "./lib/http-security.js";
 import { historyFlowerSelect, historyFlowerMetadata, sessionMetadata } from "./lib/history-metadata.js";
+import { flowerQuotaToday, reserveFlowerPlanting } from "./lib/flower-quota.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1938,6 +1939,19 @@ const petalDrawRoute = (label, handler) => async (req, res) => {
   }
 };
 
+// Today's planting count for the Events panel; see lib/flower-quota.js.
+app.get("/api/flowers/today", async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.auth.userId }, select: { id: true, timezone: true } });
+    if (!user) return res.status(404).json({ error: "User not found" });
+    const localDate = getLocalDate(normalizeTimezone(user.timezone) || "UTC");
+    res.json(await flowerQuotaToday(prisma, { userId: user.id, localDate }));
+  } catch (err) {
+    logServerError("GET /api/flowers/today error", err);
+    res.status(500).json({ error: "Failed to load today's flowers" });
+  }
+});
+
 app.get("/api/petal-cards/today", petalDrawRoute("GET /api/petal-cards/today",
   req => todaysPetalDraw(prisma, { userId: req.auth.userId, now: new Date() })));
 
@@ -2123,12 +2137,17 @@ async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed,
   });
   const persist = async (database, safeEmotion) => {
     let flower = null;
+    let flowerQuota = null;
     const metadata = eventEmotionMetadata(safeEmotion);
     await database.event.update({
       where: { id: event.id, ownerId: event.ownerId },
       data: { primaryGardenMood, secondaryEmotions: safeEmotion.labels, ...metadata }
     });
-    if (primaryGardenMood) {
+    // A third Event in one day is still saved; it just grows no flower (lib/flower-quota.js).
+    if (primaryGardenMood && !await database.flower.findUnique({ where: { sourceEventId: event.id } })) {
+      flowerQuota = await reserveFlowerPlanting(database, { userId: event.ownerId, localDate: event.localDate });
+    }
+    if (primaryGardenMood && flowerQuota?.granted !== false) {
       const garden = await ensureGarden(event.ownerId, database);
       const recentFlowers = await database.flower.findMany({
         where: { userId: event.ownerId }, orderBy: { createdAt: "desc" }, take: 5,
@@ -2151,7 +2170,7 @@ async function enrichCreatedEvent(event, primaryGardenMood, aiProcessingAllowed,
         }
       });
     }
-    return { emotion: safeEmotion, flower };
+    return { emotion: safeEmotion, flower, flowerQuota };
   };
   try {
     return await withHaikuEventWriteFence(prisma, { event, emotion }, persist);
@@ -2233,6 +2252,8 @@ app.post("/events", aiRateLimit, async (req, res) => {
         secondaryEmotions: enrichment.emotion.labels, ...(result.created ? eventEmotionMetadata(enrichment.emotion) : {}) },
       emotion: { status: enrichment.emotion.status, labels: enrichment.emotion.labels, latencyMs: enrichment.emotion.latencyMs, fallbackReason: enrichment.emotion.fallbackReason },
       flower: enrichment.flower,
+      ...(enrichment.flowerQuota?.limit ? { dailyFlowers: { limit: enrichment.flowerQuota.limit,
+        planted: enrichment.flowerQuota.planted, limitReached: !enrichment.flowerQuota.granted } } : {}),
       memoryJob: result.job ? { id: result.job.id, status: result.job.status } : null
     });
   } catch (error) {
@@ -2949,6 +2970,7 @@ const position =
   getNonOverlappingPosition(existingFlowers);
 
 const createdFlower = await prisma.$transaction(async (tx) => {
+  if (!(await reserveFlowerPlanting(tx, { userId: user.id, localDate })).granted) return null;
   const checkIn = await tx.dailyCheckIn.create({
     data: {
       userId: user.id,
@@ -3033,6 +3055,9 @@ const createdFlower = await prisma.$transaction(async (tx) => {
 
   return createdFlower;
 });
+    if (!createdFlower) {
+      return res.status(409).json({ error: "Today's flowers are already planted", code: "DAILY_FLOWER_LIMIT" });
+    }
 
     let fairyProgress = null;
     try {
