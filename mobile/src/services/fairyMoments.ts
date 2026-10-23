@@ -5,7 +5,8 @@ export interface FairyMomentPost {
   photoKey: string | null; caption: string; liked: boolean;
 }
 export interface FairyMomentsPage {
-  fairy: { id: string; type: string; name: string; avatar?: string | null }; // avatar: library id, null = her photo
+  // avatar / cover: library ids (lib/avatars.js, lib/moment-covers.js); null = her default photo
+  fairy: { id: string; type: string; name: string; avatar?: string | null; cover?: string | null };
   locale?: string; // 'en' | 'zh-Hans', the owner's chosen language (same as her captions)
   posts: FairyMomentPost[];
   nextBefore: string | null;
@@ -22,3 +23,7 @@ export const likeFairyMoment = (momentId: string, liked: boolean) =>
 // Her Moments avatar is chosen apart from the owner's own avatar; null restores her photo.
 export const setFairyMomentsAvatar = (avatar: string | null) =>
   apiRequest<{ avatar: string | null }>('/api/fairy/moments/avatar', 'PUT', { avatar });
+
+// The cover at the top of her Moments, chosen from the cover library; null restores her photo.
+export const setFairyMomentsCover = (cover: string | null) =>
+  apiRequest<{ cover: string | null }>('/api/fairy/moments/cover', 'PUT', { cover });

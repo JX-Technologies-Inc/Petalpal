@@ -3,14 +3,16 @@ import { ActivityIndicator, Image, Modal, Pressable, ScrollView, StyleSheet, Tex
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePanelTheme, type PanelTheme } from '../features/PanelTheme';
-import { likeFairyMoment, loadFairyMoments, setFairyMomentsAvatar, type FairyMomentPost, type FairyMomentsPage } from '../../services/fairyMoments';
+import { likeFairyMoment, loadFairyMoments, setFairyMomentsAvatar, setFairyMomentsCover, type FairyMomentPost, type FairyMomentsPage } from '../../services/fairyMoments';
 import { useAuth } from '../../services/auth';
 import { momentLocale, momentLocationLabel, momentTimeLabel, MOMENTS_COPY, type MomentLocale } from './momentFormat';
 import { MOMENT_PHOTOS, momentPhoto } from './momentPhotos';
 import { avatarArt } from '../avatars/avatarArt';
 import { AvatarPicker } from '../avatars/AvatarPicker';
+import { CoverPicker } from './CoverPicker';
+import { momentCover } from './momentCovers';
 
-const COVER = MOMENT_PHOTOS['IN_TREEHOUSE/2'];
+const DEFAULT_COVER = MOMENT_PHOTOS['IN_TREEHOUSE/2']; // until the owner picks a cover from the library
 const DEFAULT_AVATAR = MOMENT_PHOTOS['TEA_TIME/3']; // her own photo until the owner picks a library avatar
 const HEART = '#E7A3B8';
 
@@ -28,6 +30,7 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
   const [error, setError] = useState<'' | 'loadError' | 'moreError'>('');
   const [loadingMore, setLoadingMore] = useState(false);
   const [choosing, setChoosing] = useState(false), [savingAvatar, setSavingAvatar] = useState(false), [avatarError, setAvatarError] = useState('');
+  const [choosingCover, setChoosingCover] = useState(false), [savingCover, setSavingCover] = useState(false), [coverError, setCoverError] = useState('');
   const request = useRef(0);
 
   const load = useCallback(async () => {
@@ -73,11 +76,24 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
     finally { setSavingAvatar(false); }
   };
 
+  const chooseCover = async (next: string | null) => {
+    if (!page || savingCover) return;
+    if (next === (page.fairy.cover ?? null)) { setChoosingCover(false); return; }
+    setSavingCover(true); setCoverError('');
+    try {
+      const saved = await setFairyMomentsCover(next);
+      setPage(current => current && { ...current, fairy: { ...current.fairy, cover: saved.cover } });
+      setChoosingCover(false);
+    } catch { setCoverError(MOMENTS_COPY[locale].coverFailed); }
+    finally { setSavingCover(false); }
+  };
+
   // The server's answer is authoritative; the signed-in profile covers the first load.
   const locale = momentLocale(page?.locale ?? experience?.user.preferredLocale);
   const copy = MOMENTS_COPY[locale];
   const name = page?.fairy.name ?? 'PPL';
   const avatar = avatarArt(page?.fairy.avatar) ?? DEFAULT_AVATAR;
+  const cover = momentCover(page?.fairy.cover) ?? DEFAULT_COVER;
   return <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
     <View style={styles.overlay}>
       <Pressable accessibilityLabel={copy.close} onPress={onClose} style={[StyleSheet.absoluteFill, styles.backdrop]} />
@@ -97,7 +113,13 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
         </View>
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.cover}>
-            <Image source={COVER} style={styles.coverImage} resizeMode="cover" accessibilityIgnoresInvertColors />
+            <Image source={cover} style={styles.coverImage} resizeMode="cover" accessibilityIgnoresInvertColors />
+            {page ? <Pressable accessibilityRole="button" accessibilityLabel={copy.coverChange}
+              onPress={() => { setCoverError(''); setChoosingCover(true); }}
+              style={({ pressed }) => [styles.coverButton, pressed && styles.pressed]}>
+              <SymbolView name={{ ios: 'photo', android: 'image', web: 'image' }} size={13} tintColor="#FFF4DC" />
+              <Text style={styles.coverButtonText}>{copy.coverChange}</Text>
+            </Pressable> : null}
             <View style={styles.identity}>
               <Text style={styles.name}>{name}</Text>
               <Pressable accessibilityRole="button" accessibilityLabel={copy.avatarChange(name)} disabled={!page}
@@ -125,6 +147,9 @@ export function FairyMomentsPanel({ visible, onClose, onFindFairy }: {
       error={avatarError} closeLabel={copy.avatarClose} optionLabel={copy.avatarOption}
       defaultOption={{ source: DEFAULT_AVATAR, label: copy.avatarDefault(name) }}
       onSelect={next => void chooseAvatar(next)} onClose={() => setChoosing(false)} />
+    <CoverPicker visible={choosingCover} title={copy.coverTitle} selected={page?.fairy.cover ?? null} busy={savingCover}
+      error={coverError} closeLabel={copy.avatarClose} defaultCover={DEFAULT_COVER} defaultLabel={copy.coverDefault}
+      optionLabel={copy.coverOption} onSelect={next => void chooseCover(next)} onClose={() => setChoosingCover(false)} />
   </Modal>;
 }
 
@@ -165,6 +190,9 @@ const createStyles = (theme: PanelTheme) => StyleSheet.create({
   content: { paddingBottom: 8 },
   cover: { height: 150 },
   coverImage: { width: '100%', height: 150 },
+  coverButton: { position: 'absolute', top: 10, right: 10, flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 9, paddingVertical: 4, borderRadius: 12, backgroundColor: '#103431BF' },
+  coverButtonText: { fontSize: 11, color: '#FFF4DC' },
   identity: { position: 'absolute', right: 14, bottom: -26, flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
   name: { marginBottom: 30, paddingHorizontal: 8, borderRadius: 8, overflow: 'hidden', fontSize: 15, fontWeight: '600', color: '#FFF4DC', backgroundColor: '#103431BF' },
   avatar: { width: 62, height: 62, borderRadius: 12, borderWidth: 2, borderColor: theme.gold },

@@ -47,8 +47,10 @@ import {
   listFairyMoments,
   recordFairyMoments,
   setFairyMomentLike,
-  setFairyMomentsAvatar
+  setFairyMomentsAvatar,
+  setFairyMomentsCover
 } from "./lib/fairy-moments.js";
+import { isMomentCover } from "./lib/moment-covers.js";
 import { isLibraryAvatar } from "./lib/avatars.js";
 import {
   awardCloseness,
@@ -1851,6 +1853,22 @@ app.put("/api/fairy/moments/avatar", async (req, res) => {
   } catch (error) {
     logServerError("PUT /api/fairy/moments/avatar error", error);
     res.status(500).json({ error: "Unable to update the Moments avatar" });
+  }
+});
+
+app.put("/api/fairy/moments/cover", allowBodyFields(["cover"]), async (req, res) => {
+  if (!fairyMomentsEnabledFor(req.auth.userId)) return res.status(404).json({ error: "Not found" });
+  const cover = req.body?.cover ?? null;
+  if (cover !== null && !isMomentCover(cover)) {
+    return res.status(400).json({ error: "cover must be a cover library id or null" });
+  }
+  try {
+    const updated = await setFairyMomentsCover(prisma, { userId: req.auth.userId, cover });
+    if (!updated) return res.status(404).json({ error: "Not found" });
+    res.json({ cover });
+  } catch (error) {
+    logServerError("PUT /api/fairy/moments/cover error", error);
+    res.status(500).json({ error: "Unable to update the Moments cover" });
   }
 });
 

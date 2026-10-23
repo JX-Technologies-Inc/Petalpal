@@ -266,6 +266,8 @@ model UserFairy {
   momentsSeenAt DateTime?
   /// Avatar-library id (lib/avatars.js) shown on her Moments; null = her default photo.
   momentsAvatar String?   @db.VarChar(32)
+  /// Cover-library id (lib/moment-covers.js) at the top of her Moments; null = default photo.
+  momentsCover  String?   @db.VarChar(32)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

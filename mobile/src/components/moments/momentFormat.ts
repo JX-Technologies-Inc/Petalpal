@@ -55,6 +55,8 @@ export const MOMENTS_COPY = {
     avatarChange: (name: string) => `Change ${name}'s avatar`, avatarTitle: (name: string) => `Choose ${name}'s avatar`,
     avatarDefault: (name: string) => `${name}'s own photo`, avatarOption: (n: number) => `Avatar ${n}`,
     avatarClose: 'Close', avatarFailed: 'The avatar was not saved. Please try again.',
+    coverChange: 'Change cover', coverTitle: 'Choose a cover', coverDefault: 'Her treehouse photo',
+    coverOption: (n: number) => `Garden scene ${n}`, coverFailed: 'The cover was not saved. Please try again.',
   },
   'zh-Hans': {
     title: (name: string) => `${name}的朋友圈`, close: '关闭朋友圈', find: '去找她',
@@ -67,5 +69,7 @@ export const MOMENTS_COPY = {
     avatarChange: (name: string) => `更换${name}的头像`, avatarTitle: (name: string) => `选择${name}的头像`,
     avatarDefault: (name: string) => `${name}原来的照片`, avatarOption: (n: number) => `头像 ${n}`,
     avatarClose: '关闭', avatarFailed: '头像没有保存成功，请再试一次。',
+    coverChange: '更换封面', coverTitle: '选择封面', coverDefault: '她的树屋照片',
+    coverOption: (n: number) => `花园风景 ${n}`, coverFailed: '封面没有保存成功，请再试一次。',
   },
 } as const;
