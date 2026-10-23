@@ -13,6 +13,7 @@ import { markFairyMomentsRead, useFairyRuntime } from '../../services/fairyRunti
 import { useClosenessSummary } from '../../services/fairyCloseness';
 import { useAuth } from '../../services/auth';
 import { FairyEntryCard } from '../fairy/FairyEntryCard';
+import { OurBondPanel } from '../bond/OurBondPanel';
 import { momentLocale } from '../moments/momentFormat';
 
 // One navigation model; only its sizing changes with the viewport.
@@ -37,6 +38,7 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
   // either room is on; the closeness summary reloads each time the card opens.
   const [entryOpens, setEntryOpens] = useState(0);
   const [entryOpen, setEntryOpen] = useState(false);
+  const [bondOpen, setBondOpen] = useState(false);
   const closeness = useClosenessSummary(entryOpens);
   const { experience } = useAuth();
   const locale = momentLocale(experience?.user.preferredLocale);
@@ -97,7 +99,10 @@ export function GardenHud({ onFocusFairy }: { onFocusFairy?: () => void } = {}) 
     </View>
     <FairyEntryCard visible={entryOpen} locale={locale} closeness={closeness.summary} closenessOn={closeness.on === true}
       momentsOn={moments.enabled} momentsUnread={moments.unread} onClose={() => setEntryOpen(false)}
-      onOpenMoments={() => { setEntryOpen(false); setMomentsOpen(true); markFairyMomentsRead(); }} />
+      onOpenMoments={() => { setEntryOpen(false); setMomentsOpen(true); markFairyMomentsRead(); }}
+      onOpenBond={() => { setEntryOpen(false); setBondOpen(true); setEntryOpens(count => count + 1); }} />
+    <OurBondPanel visible={bondOpen} locale={locale} summary={closeness.summary} loading={closeness.on === null}
+      onClose={() => setBondOpen(false)} />
     <FairyMomentsPanel visible={momentsOpen} onClose={() => setMomentsOpen(false)}
       onFindFairy={() => { setMomentsOpen(false); onFocusFairy?.(); }} />
     <FeatureOverlay feature={gardenFeature(openFeature)} onClose={() => setOpenFeature(undefined)} onGardenChanged={refreshGarden} onOpenSettings={() => setOpenFeature('settings')} />

@@ -40,8 +40,18 @@ async function orOff<T>(request: Promise<T>): Promise<T | null> {
   try { return await request; } catch (error) { if (off(error)) return null; throw error; }
 }
 
+// Screens that show closeness (the Fairy card dot, Our Bond, the calendar) reload together
+// whenever something changed it here, such as a check-in.
+const changeListeners = new Set<() => void>();
+export function onClosenessChanged(listener: () => void) { changeListeners.add(listener); return () => { changeListeners.delete(listener); }; }
+export const closenessChanged = () => changeListeners.forEach(listener => listener());
+
 export const loadClosenessSummary = () => orOff(apiRequest<ClosenessSummary>('/api/fairy/closeness'));
-export const checkInWithFairy = () => orOff(apiRequest<CheckInResult>('/api/fairy/check-in', 'POST', {}));
+export async function checkInWithFairy() {
+  const result = await orOff(apiRequest<CheckInResult>('/api/fairy/check-in', 'POST', {}));
+  if (result?.created) closenessChanged();
+  return result;
+}
 export const loadCheckInMonth = (month?: string) =>
   orOff(apiRequest<CheckInMonth>(`/api/fairy/check-ins${month ? `?month=${encodeURIComponent(month)}` : ''}`));
 export const loadKeepsakeBook = () => orOff(apiRequest<KeepsakeBook>('/api/fairy/keepsakes'));
@@ -50,13 +60,15 @@ export const loadKeepsakeBook = () => orOff(apiRequest<KeepsakeBook>('/api/fairy
 // `on` is null until the server has answered, false when the switch leaves the owner out.
 export function useClosenessSummary(refreshKey: unknown) {
   const [state, setState] = useState<{ on: boolean | null; summary: ClosenessSummary | null }>({ on: null, summary: null });
+  const [changes, setChanges] = useState(0);
+  useEffect(() => onClosenessChanged(() => setChanges(count => count + 1)), []);
   useEffect(() => {
     let active = true;
     loadClosenessSummary()
       .then(summary => { if (active) setState({ on: Boolean(summary), summary }); })
       .catch(() => undefined); // offline: keep what we had
     return () => { active = false; };
-  }, [refreshKey]);
+  }, [refreshKey, changes]);
   return state;
 }
 
@@ -71,4 +83,18 @@ export function noteFairyInteraction(now = Date.now()) {
   apiRequest<{ awarded: number }>('/api/fairy/closeness/tap', 'POST', {})
     .then(result => { if (!result.awarded) quietUntilDay = day; })
     .catch(error => { if (off(error)) switchedOff = true; });
+}
+
+// Calendar marks for one month (YYYY-MM): reloads when the month changes or after a check-in.
+export function useCheckInMonth(month: string, enabled: boolean) {
+  const [data, setData] = useState<CheckInMonth | null>(null);
+  const [changes, setChanges] = useState(0);
+  useEffect(() => onClosenessChanged(() => setChanges(count => count + 1)), []);
+  useEffect(() => {
+    if (!enabled) { setData(null); return; }
+    let active = true;
+    loadCheckInMonth(month).then(result => { if (active) setData(result); }).catch(() => undefined);
+    return () => { active = false; };
+  }, [month, enabled, changes]);
+  return data;
 }

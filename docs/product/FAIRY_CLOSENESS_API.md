@@ -12,14 +12,16 @@
 - 语言：返回里的 `locale` 是 `en` 或 `zh-Hans`，跟用户设置里的语言走。信物名字、PPL 的话、称号都已经按这个语言给好，前端直接显示。
 - 「一天」按账号时区算，不是手机时区。日期都是 `YYYY-MM-DD` 字符串。
 
-## App 里已经做好的
+## App 里已经做好的（全部按设计稿接好了）
 
-- [mobile/src/services/fairyCloseness.ts](../../mobile/src/services/fairyCloseness.ts)：5 个接口的调用函数和返回类型已经写好，404 会自动当成功能没开、返回 null，直接用就行。
-- 画面 2 的花仙入口卡片已经做好了，代码在 [FairyEntryCard.tsx](../../mobile/src/components/fairy/FairyEntryCard.tsx)，图标在 `mobile/assets/fairy-entry/`。
-  - 点底部的 Fairy 图标会打开它，两个按钮的红点都已经接好。
-  - 「朋友圈」打开现有的朋友圈面板。
-  - 「亲密度」现在只显示等级和「马上就来」；亲密度页面做好后，把它传给 `onOpenBond` 就能接上。
-- 在花园里指挥 PPL 去喝茶、荡秋千等，会自动调用 `POST /api/fairy/closeness/tap`。前端最多每分钟调一次，服务器那边每天最多算 5 次。
+- 画面 2 花仙入口卡片：[FairyEntryCard.tsx](../../mobile/src/components/fairy/FairyEntryCard.tsx)。点底部的 Fairy 图标会打开，两个按钮的红点都已接好。
+- 画面 3、4、5 日历签到：日历顶部是签到卡片，签过的日子有小花，连续的日子之间连一条藤，当天详情里有签到记录。签到后弹出信物。
+  代码在 [CalendarCheckIn.tsx](../../mobile/src/components/bond/CalendarCheckIn.tsx) 和 [KeepsakeReveal.tsx](../../mobile/src/components/bond/KeepsakeReveal.tsx)，日历是 [GardenCalendar.tsx](../../mobile/src/components/garden/GardenCalendar.tsx)。
+- 画面 5–8 亲密度页面：等级、进度条、PPL 的话、陪伴天数、信物数量、今日进度、签到奖励、等级与解锁，都在 [OurBondPanel.tsx](../../mobile/src/components/bond/OurBondPanel.tsx)。
+- 画面 9、10 信物收藏册和详情：[KeepsakeBook.tsx](../../mobile/src/components/bond/KeepsakeBook.tsx)。
+- 文案在 [bondCopy.ts](../../mobile/src/components/bond/bondCopy.ts)，默认英文，用户设了简体中文才显示中文。
+- 信物图在 `mobile/assets/keepsakes/<id>.webp`，是从 Keepsake Icons 图里切出来的，按同样文件名换成原图就会更清楚。
+- 在花园里指挥 PPL 去喝茶、荡秋千等，会自动调用 `POST /api/fairy/closeness/tap`。前端最多每分钟调一次，服务器每天最多算 5 次。
 
 ## 设计稿 → 接口对照
 
