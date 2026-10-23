@@ -48,6 +48,8 @@ export const BOND_COPY = {
     checkInFailed: "The check-in didn't go through. Try again.",
     dayCheckIn: (name: string, points: number) => `Daily check-in · ${name} · +${points}`, legendCheckIn: 'Checked in',
     legendFlowers: '· n flowers or events',
+    petalDraw: "Draw today's petal card", petalSee: (name: string) => `Today's petal card · ${name}`,
+    dayPetal: (name: string) => `Petal card · ${name}`,
   },
   'zh-Hans': {
     title: '亲密度', close: '关闭', loading: '正在加载…', error: '没加载出来，再试一次。', retry: '再试一次',
@@ -81,6 +83,8 @@ export const BOND_COPY = {
     checkInFailed: '签到没有成功，再试一次。',
     dayCheckIn: (name: string, points: number) => `每日签到 · ${name} · +${points}`, legendCheckIn: '已签到',
     legendFlowers: '· n 朵花或心情',
+    petalDraw: '抽今日花语卡', petalSee: (name: string) => `今日花语卡 · ${name}`,
+    dayPetal: (name: string) => `花语卡 · ${name}`,
   },
 };
 

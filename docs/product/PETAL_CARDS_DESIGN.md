@@ -159,3 +159,20 @@ are not used ([Wikipedia](https://en.wikipedia.org/wiki/Rider%E2%80%93Waite_Taro
 
 File-name notes: `13.Death` has no `.png` extension; `3.The Emprees` and `bf King of Sword` keep the
 artwork's spelling.
+
+## Daily draw: the petal ring (built 2026-10-23)
+
+After the calendar check-in the owner spins the **petal ring** and picks one card a day.
+
+- The ring shows a few card places at a time; the whole drawable deck (69 cards) flows
+  through them: one step forward brings the next card to the front, a full turn shows the next
+  batch, and after the last card it starts again from the first.
+- The deck order is shuffled per owner and local day on the server ([lib/petal-card-draw.js](../../lib/petal-card-draw.js)),
+  so a refresh or another device shows the same deck. The app learns only the deck size until
+  it sends the chosen place; the server then returns that card. One draw a day; a second draw
+  returns the first.
+- Card backs: the two designs chosen by the owner (`lilac`, `violet`), alternating by day.
+- The calendar shows the day's card next to its check-in.
+- API: `GET /api/petal-cards/today` (deck size, back, today's card if drawn),
+  `POST /api/petal-cards/draw {position}`; `GET /api/fairy/check-ins` adds `petalCards` for the month.
+- Migration `202610230003_petal_card_draw` (run it by hand before the backend deploy).

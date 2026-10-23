@@ -94,6 +94,9 @@ export function GardenCalendar({ onFocusFlower }: { onFocusFlower: (flower: Flow
               <Text style={{ color: popup.muted, fontSize: 11 }}>{bondCopy.legendFlowers}</Text>
             </View> : null}
             <Text style={[popupLabel, { marginVertical: 10 }]}>{selected}</Text>
+            {checkInMonth?.petalCards?.find(day => day.localDate === selected) ? <Text style={[popupLabel, { fontSize: 14, paddingVertical: 8, borderBottomWidth: 1, borderColor: popup.rule }]}>
+              <Text style={{ color: '#C9A55C' }}>✦ </Text>{bondCopy.dayPetal(checkInMonth.petalCards.find(day => day.localDate === selected)!.name)}
+            </Text> : null}
             {checkedDays.get(selected) ? <Text style={[popupLabel, { fontSize: 14, paddingVertical: 8, borderBottomWidth: 1, borderColor: popup.rule }]}>
               <Text style={{ color: '#B486D8' }}>✿ </Text>{bondCopy.dayCheckIn(checkedDays.get(selected)!.keepsakes[0]?.name ?? '', checkedDays.get(selected)!.points)}
             </Text> : null}
