@@ -50,3 +50,12 @@ test('every keepsake has bundled art under its server id', async () => {
     assert.ok(fs.statSync(new URL(`../assets/keepsakes/${keepsake.id}.webp`, import.meta.url)).size < 80_000, keepsake.id);
   }
 });
+
+test('both petal card backs are bundled under the server names', async () => {
+  const { PETAL_CARD_BACKS } = await import('../../lib/petal-card-draw.js');
+  const source = fs.readFileSync(new URL('../src/components/petalCards/PetalRing.tsx', import.meta.url), 'utf8');
+  for (const back of PETAL_CARD_BACKS) {
+    assert.ok(fs.statSync(new URL(`../assets/petal-card-backs/${back}.webp`, import.meta.url)).size < 120_000, back);
+    assert.match(source, new RegExp(`${back}: require\\('@/assets/petal-card-backs/${back}\\.webp'\\)`));
+  }
+});

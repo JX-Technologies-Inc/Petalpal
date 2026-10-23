@@ -29,6 +29,7 @@ export interface CheckInResult {
 export interface CheckInMonth {
   locale: 'en' | 'zh-Hans'; month: string; today: string;
   days: { localDate: string; streak: number; graceUsed: boolean; points: number; keepsakes: (Keepsake & { reason: string })[] }[];
+  petalCards?: { localDate: string; id: string; name: string }[]; // the day's drawn petal card, when petal cards are on
 }
 export interface KeepsakeBook {
   locale: 'en' | 'zh-Hans'; owned: number; received: number; total: number;

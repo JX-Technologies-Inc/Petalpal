@@ -3,6 +3,8 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'rea
 import { checkInWithFairy, type CheckInResult, type ClosenessSummary } from '../../services/fairyCloseness';
 import { BOND, BOND_COPY, type BondLocale } from './bondCopy';
 import { KeepsakeReveal } from './KeepsakeReveal';
+import { PetalRing } from '../petalCards/PetalRing';
+import { usePetalToday } from '../../services/petalCardDraw';
 
 const REWARD = require('@/assets/keepsakes/star-candy-jar.webp');
 
@@ -13,6 +15,8 @@ export function CalendarCheckIn({ summary, locale, ink, muted }: {
 }) {
   const copy = BOND_COPY[locale];
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [result, setResult] = useState<CheckInResult | null>(null);
+  // After the keepsake, today's petal card from the ring (once a day; off with the petal card switch).
+  const petal = usePetalToday(result), [ringOpen, setRingOpen] = useState(false);
   const { checkedInToday, streak, cycleDay, checkInsToStreakReward } = summary.checkIn;
   async function checkIn() {
     if (busy) return;
@@ -41,7 +45,12 @@ export function CalendarCheckIn({ summary, locale, ink, muted }: {
         : <Text style={[styles.buttonText, checkedInToday && styles.buttonTextDone]}>{checkedInToday ? `✓ ${copy.checkedIn}` : copy.checkInButton}</Text>}
     </Pressable>
     {error ? <Text accessibilityRole="alert" style={[styles.small, styles.center, styles.error]}>{error}</Text> : null}
-    <KeepsakeReveal result={result} locale={locale} onDone={() => setResult(null)} />
+    {checkedInToday && petal ? <Pressable accessibilityRole="button" onPress={() => setRingOpen(true)}
+      style={({ pressed }) => [styles.petalButton, pressed && styles.pressed]}>
+      <Text style={styles.petalText}>{petal.drawn?.card ? copy.petalSee(petal.drawn.card.name) : `✦ ${copy.petalDraw}`}</Text>
+    </Pressable> : null}
+    <KeepsakeReveal result={result} locale={locale} onDone={() => { setResult(null); if (petal && !petal.drawn) setRingOpen(true); }} />
+    <PetalRing visible={ringOpen} today={petal} onClose={() => setRingOpen(false)} />
   </View>;
 }
 
@@ -62,4 +71,6 @@ const styles = StyleSheet.create({
   buttonTextDone: { color: BOND.purple },
   pressed: { opacity: 0.8 },
   error: { color: '#A23B4A' },
+  petalButton: { paddingVertical: 9, borderRadius: 12, alignItems: 'center', backgroundColor: '#2B2457' },
+  petalText: { fontFamily: 'Georgia', fontSize: 14, color: '#E9CF8A' },
 });

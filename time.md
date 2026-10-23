@@ -217,6 +217,11 @@ of [test/back/weekly-short.test.js](test/back/weekly-short.test.js).
   new zone's dates from then on; stored rows keep the date they were written with.
   **VERIFIED:** [test/back/fairy-closeness.test.js](test/back/fairy-closeness.test.js)
   (`America/Vancouver`, a UTC instant that is still the previous local evening).
+- **Daily petal card draw** ([lib/petal-card-draw.js](lib/petal-card-draw.js), switch
+  `PETAL_CARDS_OWNER_IDS`): one draw per account-local date (`PetalCardDraw @@unique([userId,
+  localDate])`, the same `localDateForInstant(now, User.timezone)` rule). The deck order is seeded
+  by owner + local date, and the card back alternates by calendar-day number, so both change at
+  local midnight. **VERIFIED:** [test/back/petal-card-draw.test.js](test/back/petal-card-draw.test.js).
 
 ## 6. Production vs TEST
 

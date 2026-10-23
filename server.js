@@ -61,6 +61,8 @@ import {
   listCheckIns,
   listKeepsakes
 } from "./lib/fairy-closeness.js";
+import { petalCardsEnabledFor } from "./lib/petal-cards.js";
+import { drawPetalCard, petalDrawsForMonth, todaysPetalDraw } from "./lib/petal-card-draw.js";
 import { fairyMomentCaptionsEnabled, fillFairyMomentCaptions } from "./lib/haiku-fairy-moment.js";
 import {
   STARTER_FAIRY,
@@ -1905,8 +1907,14 @@ app.get("/api/fairy/check-ins", (req, res, next) => {
     return res.status(400).json({ error: "month must be YYYY-MM" });
   }
   next();
-}, closenessRoute("GET /api/fairy/check-ins",
-  req => listCheckIns(prisma, { userId: req.auth.userId, month: req.query.month, now: new Date() })));
+}, closenessRoute("GET /api/fairy/check-ins", async req => {
+  const month = await listCheckIns(prisma, { userId: req.auth.userId, month: req.query.month, now: new Date() });
+  // The day's petal card sits beside its check-in on the calendar when petal cards are on.
+  if (month && petalCardsEnabledFor(process.env, req.auth.userId)) {
+    month.petalCards = await petalDrawsForMonth(prisma, { userId: req.auth.userId, month: month.month, lang: month.locale });
+  }
+  return month;
+}));
 
 app.post("/api/fairy/check-in", allowBodyFields([]), closenessRoute("POST /api/fairy/check-in",
   req => checkInWithFairy(prisma, { userId: req.auth.userId, now: new Date() })));
@@ -1916,6 +1924,31 @@ app.get("/api/fairy/keepsakes", closenessRoute("GET /api/fairy/keepsakes",
 
 app.post("/api/fairy/closeness/tap", allowBodyFields([]), closenessRoute("POST /api/fairy/closeness/tap",
   req => awardFairyTap(prisma, { userId: req.auth.userId, now: new Date() })));
+
+// The daily petal card draw (lib/petal-card-draw.js), owner-scoped, once per local day.
+const petalDrawRoute = (label, handler) => async (req, res) => {
+  if (!petalCardsEnabledFor(process.env, req.auth.userId)) return res.status(404).json({ error: "Not found" });
+  try {
+    const result = await handler(req);
+    if (!result) return res.status(404).json({ error: "Not found" });
+    res.json(result);
+  } catch (error) {
+    logServerError(`${label} error`, error);
+    res.status(500).json({ error: "Unable to draw a petal card" });
+  }
+};
+
+app.get("/api/petal-cards/today", petalDrawRoute("GET /api/petal-cards/today",
+  req => todaysPetalDraw(prisma, { userId: req.auth.userId, now: new Date() })));
+
+app.post("/api/petal-cards/draw", allowBodyFields(["position"]), (req, res, next) => {
+  const position = req.body?.position;
+  if (!Number.isInteger(position) || position < 0 || position > 100_000) {
+    return res.status(400).json({ error: "position must be a whole number from 0" });
+  }
+  next();
+}, petalDrawRoute("POST /api/petal-cards/draw",
+  req => drawPetalCard(prisma, { userId: req.auth.userId, position: req.body.position, now: new Date() })));
 
 app.put("/users/:userId/fairy-state", async (req, res) => {
   if (!requireOwnUser(req, res, req.params.userId)) return;

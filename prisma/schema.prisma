@@ -54,6 +54,7 @@ model User {
   fairyCheckIns           FairyCheckIn[]
   fairyKeepsakeGrants     FairyKeepsakeGrant[]
   fairyClosenessAwards    FairyClosenessAward[]
+  petalCardDraws          PetalCardDraw[]
   events                  Event[]
   eventMemories           EventMemory[]
   weeklyReports           WeeklyReport[]
@@ -375,6 +376,21 @@ model FairyClosenessAward {
 
   @@unique([userId, source, awardKey])
   @@index([userId, localDate])
+}
+
+/// The daily petal card draw (lib/petal-card-draw.js): one per account-local day; `position`
+/// is the place chosen in that day's shuffled deck, `cardId` the card it held.
+model PetalCardDraw {
+  id        String   @id @default(cuid())
+  userId    String
+  localDate String   @db.VarChar(10)
+  position  Int
+  cardId    String   @db.VarChar(32)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, localDate])
 }
 
 model FairyMonthlyProgress {
