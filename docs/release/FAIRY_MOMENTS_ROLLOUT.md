@@ -62,6 +62,10 @@ User id 的查法：登录网页端，在浏览器开发者工具 Network 里看
   或者选回她原来那张喝茶照。存在 `UserFairy.momentsAvatar`（迁移 `202610220001_fairy_moments_avatar`），
   `PUT /api/fairy/moments/avatar {avatar: "fairy-1"…"fairy-8" | null}`，只接受头像库里的 id；
   `GET /api/fairy/moments` 的 `fairy.avatar` 返回当前选择（null = 原照片）。
+- 朋友圈顶部封面可以从背景图库（`lib/moment-covers.js`，12 张花园风景，`mobile/assets/moment-covers/`）里换，
+  也可以选回她原来的树屋照片。存在 `UserFairy.momentsCover`（迁移 `202610230002_fairy_moments_cover`），
+  `PUT /api/fairy/moments/cover {cover: "cover-01"…"cover-12" | null}`。现在的图是从两张拼图里切出来的，
+  分辨率偏低；拿到原图后按同样的文件名替换就会变清楚，不用改代码。
 - 初始花仙从 Bloom 改名为 **PPL**（`lib/fairy-config.js`），朋友圈签名是番红花的花语「珍惜当下，喜悦新生」/
   "Cherish the present, rejoice in new beginnings."。已有账号靠迁移 `202610220002_rename_starter_fairy_ppl`
   改名（只改类型是 BLOOM、名字还是 Bloom 的那些）。正式环境部署不跑迁移，要按 §2 手动 `prisma migrate deploy`；

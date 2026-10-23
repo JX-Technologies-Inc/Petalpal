@@ -14,8 +14,9 @@ const COPY = {
     bondSoon: (s: ClosenessSummary | null) => s ? `Lv ${s.level} · ${s.title}。完整的亲密度页面马上就来。` : '亲密度页面马上就来。' },
 };
 
-// What the Fairy icon opens: her two rooms, closeness (亲密度 · Our Bond) and her Moments
-// (朋友圈 · Fairy Moments). Each shows a dot when something waits: today's check-in, new posts.
+// What the Fairy icon opens: her two rooms, closeness (Our Bond · 亲密度) and her Moments
+// (Fairy Moments · 朋友圈). Each shows a dot when something waits: today's check-in, new posts.
+// Labels are English; zh-Hans owners also see the Chinese name underneath.
 export function FairyEntryCard({ visible, locale, closeness, closenessOn, momentsOn, momentsUnread, onOpenMoments, onOpenBond, onClose }: {
   visible: boolean; locale: 'en' | 'zh-Hans';
   closeness: ClosenessSummary | null; closenessOn: boolean; momentsOn: boolean; momentsUnread: boolean;
@@ -28,13 +29,14 @@ export function FairyEntryCard({ visible, locale, closeness, closenessOn, moment
   return <Modal transparent visible={visible} animationType="fade" onRequestClose={close} statusBarTranslucent>
     <Pressable accessibilityLabel={copy.close} onPress={close} style={styles.backdrop}>
       <Pressable accessibilityViewIsModal onPress={() => undefined} style={styles.frame}>
-        <Text style={styles.heading}>{copy.heading}</Text>
-        {locale === 'zh-Hans' ? <Text style={styles.subheading}>{COPY.en.heading}</Text> : null}
+        {/* English leads; Chinese is the quieter second line, only for zh-Hans owners. */}
+        <Text style={styles.heading}>{COPY.en.heading}</Text>
+        {locale === 'zh-Hans' ? <Text style={styles.subheading}>{COPY['zh-Hans'].heading}</Text> : null}
         <View style={styles.row}>
-          {closenessOn ? <Tile image={HEART} zh="亲密度" en="Our Bond" dot={bondDot}
+          {closenessOn ? <Tile image={HEART} en="Our Bond" zh={locale === 'zh-Hans' ? '亲密度' : undefined} dot={bondDot}
             label={copy.bond + (bondDot ? copy.checkIn : '')}
             onPress={() => { if (onOpenBond) onOpenBond(); else setNote(copy.bondSoon(closeness)); }} /> : null}
-          {momentsOn ? <Tile image={BOOK} zh="朋友圈" en="Fairy Moments" dot={momentsUnread}
+          {momentsOn ? <Tile image={BOOK} en="Fairy Moments" zh={locale === 'zh-Hans' ? '朋友圈' : undefined} dot={momentsUnread}
             label={copy.moments + (momentsUnread ? copy.newMoments : '')} onPress={() => { setNote(''); onOpenMoments(); }} /> : null}
         </View>
         {note ? <Text accessibilityLiveRegion="polite" style={styles.note}>{note}</Text> : null}
@@ -43,16 +45,16 @@ export function FairyEntryCard({ visible, locale, closeness, closenessOn, moment
   </Modal>;
 }
 
-function Tile({ image, zh, en, dot, label, onPress }: {
-  image: ImageSourcePropType; zh: string; en: string; dot: boolean; label: string; onPress: () => void;
+function Tile({ image, en, zh, dot, label, onPress }: {
+  image: ImageSourcePropType; en: string; zh?: string; dot: boolean; label: string; onPress: () => void;
 }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
     style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
     <Image source={image} style={styles.art} resizeMode="contain" accessibilityIgnoresInvertColors />
     <View style={styles.labelRow}>
-      <Text style={styles.spark}>✦</Text><Text style={styles.zh}>{zh}</Text><Text style={styles.spark}>✦</Text>
+      <Text style={styles.spark}>✦</Text><Text numberOfLines={1} adjustsFontSizeToFit style={styles.en}>{en}</Text><Text style={styles.spark}>✦</Text>
     </View>
-    <Text style={styles.en}>{en}</Text>
+    {zh ? <Text style={styles.zh}>{zh}</Text> : null}
     {dot ? <View style={styles.dot} /> : null}
   </Pressable>;
 }
@@ -71,8 +73,8 @@ const styles = StyleSheet.create({
   art: { flex: 1, width: '100%' },
   labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   spark: { fontSize: 10, color: GOLD },
-  zh: { fontFamily: 'serif', fontSize: 22, lineHeight: 28, color: INK },
-  en: { fontFamily: 'serif', fontSize: 12, color: INK },
+  en: { fontFamily: 'serif', fontSize: 19, lineHeight: 25, color: INK, flexShrink: 1 },
+  zh: { fontFamily: 'serif', fontSize: 13, color: INK },
   dot: { position: 'absolute', top: 8, right: 8, width: 14, height: 14, borderRadius: 7, backgroundColor: '#E2554B', borderWidth: 2, borderColor: '#FBE3D6' },
   note: { fontFamily: 'serif', fontSize: 13, lineHeight: 19, color: '#F3EBD3', textAlign: 'center' },
 });

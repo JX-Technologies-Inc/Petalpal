@@ -28,3 +28,15 @@ test('time zones show as a city and zone name in the owner\'s language', () => {
   assert.equal(timezoneLabel(null, 'en'), 'Coordinated Universal Time (UTC)');
   assert.equal(timezoneLabel('Not/AZone', 'en'), 'AZone', 'an unknown zone still shows its city part');
 });
+
+test('the Moments cover library matches the server ids, one WebP each', async () => {
+  const { MOMENT_COVER_IDS } = await import('../../lib/moment-covers.js');
+  const { MOMENT_COVERS, MOMENT_COVER_IDS: appIds, momentCover } = load('../../moments/momentCovers');
+  assert.deepEqual(plain(appIds), [...MOMENT_COVER_IDS]);
+  for (const id of MOMENT_COVER_IDS) {
+    assert.equal(MOMENT_COVERS[id], `@/assets/moment-covers/${id}.webp`);
+    assert.ok(fs.statSync(new URL(`../assets/moment-covers/${id}.webp`, import.meta.url)).size < 120_000, id);
+  }
+  assert.equal(momentCover(null), undefined);
+  assert.equal(momentCover('cover-99'), undefined);
+});
