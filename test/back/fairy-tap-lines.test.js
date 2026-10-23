@@ -42,6 +42,15 @@ test("writer, persona and safety agents each filter, then rules drop duplicates 
   }
 });
 
+test("new ids continue after the highest existing number when reviewed lines were deleted", async () => {
+  const gapped = { lines: [...bank.lines,
+    { id: "swinging-gen-1", activity: "SWINGING", source: "generated", en: "First kept line.", zh: "第一句" },
+    { id: "swinging-gen-3", activity: "SWINGING", source: "generated", en: "Third kept line.", zh: "第三句" }] };
+  const { added } = await runPipeline({ client: fakeClient({ writer, persona: allPass, safety: allPass }), bank: gapped,
+    perActivity: 4, activities: ["SWINGING"] });
+  assert.deepEqual(added.map(line => line.id), ["swinging-gen-4", "swinging-gen-5"]);
+});
+
 test("safety only sees lines the persona reviewer passed", async () => {
   const persona = params => ({ verdicts: allPass(params).verdicts.map(v => ({ ...v, pass: v.index === 0 })) });
   let seen;

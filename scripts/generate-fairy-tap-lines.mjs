@@ -111,7 +111,8 @@ export async function runPipeline({ client, bank, perActivity = 6, activities = 
       const afterSafety = afterPersona.filter((_, i) => safetyOk(i));
       row.safety = afterSafety.length;
       const prefix = activity.toLowerCase().replace("_", "");
-      let next = bank.lines.filter(l => l.id.startsWith(`${prefix}-gen-`)).length + 1;
+      // Continue after the highest number so ids stay unique when reviewed lines were deleted.
+      let next = Math.max(0, ...bank.lines.map(l => l.id.startsWith(`${prefix}-gen-`) ? Number(l.id.slice(prefix.length + 5)) || 0 : 0)) + 1;
       for (const line of afterSafety) {
         if (ruleCheck(line, seen)) continue;
         seen.add(normalize(line.en)); seen.add(normalize(line.zh));
