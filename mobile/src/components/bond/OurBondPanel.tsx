@@ -1,13 +1,13 @@
 import { useState, type ReactNode } from 'react';
 import { ActivityIndicator, Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ClosenessSummary } from '../../services/fairyCloseness';
-import { MOMENT_PHOTOS } from '../moments/momentPhotos';
 import { BOND, BOND_COPY, BOND_TIERS, type BondLocale } from './bondCopy';
 import { KeepsakeBook } from './KeepsakeBook';
 import { keepsakeArt } from './keepsakeArt';
 
-const PORTRAIT = MOMENT_PHOTOS['TEA_TIME/3'];
-const BANNER = MOMENT_PHOTOS['IN_TREEHOUSE/2'];
+// PPL lying on the paper, chin in her hands (the owner's illustration), and her face from it.
+const BANNER = require('@/assets/bond/ppl-banner.webp');
+const PORTRAIT = require('@/assets/bond/ppl-portrait.webp');
 const REWARD = require('@/assets/keepsakes/star-candy-jar.webp');
 
 // Our Bond (亲密度): the design's closeness screens in one scroll — level and progress (6),
@@ -25,13 +25,14 @@ export function OurBondPanel({ visible, locale, summary, loading, onClose }: {
     <View style={styles.backdrop}>
       <View accessibilityViewIsModal accessibilityLabel={copy.title} style={styles.sheet}>
         <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.banner}>
-            <Image source={BANNER} style={StyleSheet.absoluteFill} resizeMode="cover" accessibilityIgnoresInvertColors />
-            <View style={styles.bannerShade} />
+          <View style={styles.titleRow}>
             <Text accessibilityRole="header" style={styles.bannerTitle}>{copy.title}</Text>
             <Pressable accessibilityRole="button" accessibilityLabel={copy.close} onPress={onClose} style={styles.close}>
               <Text style={styles.closeText}>×</Text>
             </Pressable>
+          </View>
+          <View style={styles.banner}>
+            <Image source={BANNER} style={StyleSheet.absoluteFill} resizeMode="cover" accessibilityIgnoresInvertColors />
           </View>
           {!summary ? <View style={styles.status}>
             {loading ? <ActivityIndicator color={BOND.gold} accessibilityLabel={copy.loading} /> : <Text style={styles.muted}>{copy.error}</Text>}
@@ -138,11 +139,11 @@ const styles = StyleSheet.create({
   backdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 12, backgroundColor: '#0B1F1B99' },
   sheet: { width: '100%', maxWidth: 440, maxHeight: '94%', borderRadius: 22, overflow: 'hidden', backgroundColor: BOND.paper, borderWidth: 1.5, borderColor: BOND.edge },
   content: { paddingBottom: 18, gap: 12 },
-  banner: { height: 120, justifyContent: 'center', alignItems: 'center' },
-  bannerShade: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: '#0E2E2A55' },
-  bannerTitle: { fontFamily: 'serif', fontSize: 24, color: '#FFF7E2' },
-  close: { position: 'absolute', top: 10, right: 10, width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0E2E2A88' },
-  closeText: { fontSize: 24, lineHeight: 28, color: '#FFF7E2' },
+  banner: { width: '100%', aspectRatio: 1100 / 596, backgroundColor: BOND.paper },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 14, paddingHorizontal: 56, marginBottom: -6 },
+  bannerTitle: { fontFamily: 'serif', fontSize: 22, color: BOND.ink, textAlign: 'center' },
+  close: { position: 'absolute', top: 8, right: 10, width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FAF3DFCC', borderWidth: 1, borderColor: BOND.edge },
+  closeText: { fontSize: 24, lineHeight: 28, color: BOND.ink },
   status: { padding: 24, alignItems: 'center' },
   levelCard: { flexDirection: 'row', alignItems: 'center', gap: 14, marginHorizontal: 16 },
   portrait: { width: 74, height: 74, borderRadius: 37, borderWidth: 2, borderColor: BOND.gold },
