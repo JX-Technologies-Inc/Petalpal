@@ -1,0 +1,19 @@
+{
+  "lines": [
+    { "id": "swing-seed-1", "activity": "SWINGING", "source": "seed", "en": "Wheee! One more swing, then I'm all yours.", "zh": "呼～再荡一下，就来陪你！" },
+    { "id": "swing-seed-2", "activity": "SWINGING", "source": "seed", "en": "From up here, your garden looks so cozy.", "zh": "从这么高看，你的花园好温馨呀。" },
+    { "id": "swing-seed-3", "activity": "SWINGING", "source": "seed", "en": "Want a turn? I'll push gently, promise.", "zh": "要不要也来荡一荡？我会轻轻推哦。" },
+    { "id": "sleep-seed-1", "activity": "SLEEPING", "source": "seed", "en": "Mmm… five more minutes…", "zh": "嗯……再睡五分钟……" },
+    { "id": "sleep-seed-2", "activity": "SLEEPING", "source": "seed", "en": "Zzz… I was dreaming about your flowers.", "zh": "呼……我刚梦到你的花了。" },
+    { "id": "sleep-seed-3", "activity": "SLEEPING", "source": "seed", "en": "*yawn* Oh, hello. Sit with me a while?", "zh": "（打哈欠）啊，你来啦，陪我待一会儿？" },
+    { "id": "tea-seed-1", "activity": "TEA_TIME", "source": "seed", "en": "The tea is just warm. Join me?", "zh": "茶刚好温温的，一起喝一杯吗？" },
+    { "id": "tea-seed-2", "activity": "TEA_TIME", "source": "seed", "en": "Chamomile today. It smells like sunshine.", "zh": "今天泡的是洋甘菊，闻起来像阳光。" },
+    { "id": "tea-seed-3", "activity": "TEA_TIME", "source": "seed", "en": "A sip of tea, a slow breath. That's enough.", "zh": "喝口茶，慢慢呼吸，这样就很好。" },
+    { "id": "idle-seed-1", "activity": "IDLE", "source": "seed", "en": "Hi! I was just counting petals.", "zh": "嗨！我刚刚在数花瓣呢。" },
+    { "id": "idle-seed-2", "activity": "IDLE", "source": "seed", "en": "Tap somewhere else and I'll fly over!", "zh": "点点别的地方，我就飞过去啦！" },
+    { "id": "idle-seed-3", "activity": "IDLE", "source": "seed", "en": "The garden feels a little brighter today.", "zh": "今天的花园好像更亮一点了。" },
+    { "id": "any-seed-1", "activity": "ANY", "source": "seed", "en": "I'm glad you're here.", "zh": "你来了，真好。" },
+    { "id": "any-seed-2", "activity": "ANY", "source": "seed", "en": "Every flower here started with you.", "zh": "这里的每一朵花，都是从你开始的。" },
+    { "id": "any-seed-3", "activity": "ANY", "source": "seed", "en": "No rush. The garden will wait for you.", "zh": "不着急，花园会一直等你。" }
+  ]
+}
