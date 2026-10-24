@@ -112,6 +112,11 @@ def main():
     for name, frame in tables.items():
         frame.to_csv(out / name, index=False, date_format="%Y-%m-%d", float_format="%.6f")
         print(f"{name}: {len(frame)} rows")
+    # One workbook, one sheet per table: the Power BI service imports a single file at a time.
+    with pd.ExcelWriter(out / "PetalPal_Ops.xlsx", date_format="yyyy-mm-dd", datetime_format="yyyy-mm-dd") as book:
+        for name, frame in tables.items():
+            frame.to_excel(book, sheet_name=name.removesuffix(".csv"), index=False)
+    print("PetalPal_Ops.xlsx: all tables, one sheet each")
     print(f"Wrote Power BI tables to {out}" + (" (SYNTHETIC demo data)" if args.demo else ""))
 
 

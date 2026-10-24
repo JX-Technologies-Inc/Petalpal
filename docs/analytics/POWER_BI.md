@@ -42,7 +42,7 @@ python3 -m venv output/.venv-ops && output/.venv-ops/bin/pip install -r scripts/
 output/.venv-ops/bin/python scripts/ops-metrics/prepare_powerbi.py
 ```
 
-Writes `Calendar`, `DailySummary` (gap days filled with 0, 7-day averages, job success rate,
+Writes `PetalPal_Ops.xlsx` (one sheet per table, for the Power BI service) and CSVs of `Calendar`, `DailySummary` (gap days filled with 0, 7-day averages, job success rate,
 cost per active user), `AiCostByModel`, `AiCalls` and `AiJobs`. `--demo --out output/powerbi-demo`
 writes 60 days of **synthetic** practice data with the same columns; never quote demo figures.
 Tests: `output/.venv-ops/bin/python -m unittest scripts/ops-metrics/test_prepare_powerbi.py`.
@@ -50,7 +50,7 @@ Tests: `output/.venv-ops/bin/python -m unittest scripts/ops-metrics/test_prepare
 ## 3. Build the report
 
 Power BI Desktop runs only on Windows. On a Mac, use the Power BI service at app.powerbi.com with a
-work or school Microsoft account (Get data → Upload a file, one CSV at a time), or a Windows machine.
+work or school Microsoft account (Create → Excel → upload `PetalPal_Ops.xlsx` and select every sheet), or a Windows machine.
 
 1. Load all five CSVs. Set `date` to type **Date** in every table.
 2. Model: `Calendar[date]` one-to-many to `date` in `DailySummary`, `AiCostByModel`, `AiCalls`, `AiJobs`.
