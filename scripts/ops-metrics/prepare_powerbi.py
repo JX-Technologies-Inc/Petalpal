@@ -36,7 +36,8 @@ def calendar(start, end):
 
 
 def daily_summary(raw, days):
-    per_day = lambda frame, column: frame.groupby("date")[column].sum()
+    # astype(float): an empty export (e.g. no Claude calls yet) would otherwise sum to an object column.
+    per_day = lambda frame, column: frame.groupby("date")[column].sum().astype(float)
     summary = days[["date"]].set_index("date")
     activity = raw["activity"].set_index("date")
     for column in ["newUsers", "events", "activeUsers", "flowers"]:

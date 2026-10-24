@@ -39,6 +39,14 @@ class PreparePowerBiTest(unittest.TestCase):
         self.assertTrue(pd.isna(summary.loc[D("2026-10-03"), "costPerActiveUser"]))
         self.assertEqual(summary.loc[D("2026-10-03"), "events7dAvg"], 2.0)  # (4 + 0 + 2) / 3
 
+    def test_empty_exports_give_zero_cost_not_errors(self):
+        raw = raw_fixture()
+        raw["gateway"] = raw["gateway"].iloc[0:0]
+        raw["calls"] = raw["calls"].iloc[0:0]
+        summary = prepare(raw)["DailySummary.csv"]
+        self.assertEqual(summary["aiCostUsd"].sum(), 0)
+        self.assertEqual(summary["claudeCalls"].dtype.kind, "i")
+
     def test_calendar_covers_every_day_with_labels(self):
         days = prepare(raw_fixture())["Calendar.csv"]
         self.assertEqual(len(days), 3)
